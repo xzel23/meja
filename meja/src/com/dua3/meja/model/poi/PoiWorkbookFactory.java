@@ -28,15 +28,15 @@ import org.apache.poi.ss.usermodel.Workbook;
  *
  * @author axel
  */
-public final class PoiFactory extends WorkbookFactory {
+public final class PoiWorkbookFactory extends WorkbookFactory {
 
-    private static final PoiFactory INSTANCE = new PoiFactory();
+    private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
 
-    public static PoiFactory instance() {
+    public static PoiWorkbookFactory instance() {
         return INSTANCE;
     }
 
-    private PoiFactory() {
+    private PoiWorkbookFactory() {
     }
 
     @Override
