@@ -16,6 +16,7 @@ Required libraries (currently that's just Apache POI) should be automatically do
 - Rendering a workbook or single sheets (currently .xls seems to give better results). As of today, there is support for styled text in cells, colors etc.
 
 ## What doesn't
+- The CSV part is still completely missing.
 - Editing cells is not yet supported!
 - Modifying data, I will implement this when I am satisfied with rendering results (as I need that first).
 
