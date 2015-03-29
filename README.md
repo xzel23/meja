@@ -11,6 +11,9 @@ Méja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
  
 Required libraries (currently that's just Apache POI) should be automatically downloaded by Ant (provided I got the Ivy part right).
 
+## License
+Méja is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+
 ## What already works
 - Reading and writing Excel files in both .xls and .xlsx format. 
 - Rendering a workbook or single sheets (currently .xls seems to give better results). As of today, there is support for styled text in cells, colors etc.
