@@ -38,7 +38,7 @@ public interface Cell {
 
     /**
      * Return formula.
-     * @return the cell's formula
+     * @return the cell`s formula
      * @throws IllegalArgumentException if no formula is set
      */
     String getFormula();

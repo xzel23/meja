@@ -178,7 +178,7 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
                     color = workbook.getColor(poiCellStyle.getRightBorderColor());
                     width = getBorderWidth(poiCellStyle.getBorderRight());
                     break;
-                case SOUHT:
+                case SOUTH:
                     color = workbook.getColor(poiCellStyle.getBottomBorderColor());
                     width = getBorderWidth(poiCellStyle.getBorderBottom());
                     break;
@@ -233,7 +233,7 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
                     color = workbook.getColor(poiCellStyle.getRightBorderXSSFColor());
                     width = getBorderWidth(poiCellStyle.getBorderRight());
                     break;
-                case SOUHT:
+                case SOUTH:
                     color = workbook.getColor(poiCellStyle.getBottomBorderXSSFColor());
                     width = getBorderWidth(poiCellStyle.getBorderBottom());
                     break;

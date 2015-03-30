@@ -22,6 +22,6 @@ package com.dua3.meja.model;
 public enum Direction {
     NORTH,
     EAST,
-    SOUHT,
+    SOUTH,
     WEST;
 }

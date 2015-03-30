@@ -36,6 +36,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextLayout;
@@ -46,7 +47,12 @@ import java.text.AttributedString;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
@@ -70,11 +76,122 @@ public class SheetView extends JComponent implements Scrollable {
     private Color selectionColor = Color.BLACK;
     private Stroke selectionStroke = new BasicStroke(4);
 
+    private void move(Direction d) {
+        switch (d) {
+            case NORTH:
+                setCurrentRowNum(getCurrentRowNum()-1);
+                break;
+            case SOUTH:
+                setCurrentRowNum(getCurrentRowNum()+1);
+                break;
+            case WEST:
+                setCurrentColNum(getCurrentColNum()-1);
+                break;
+            case EAST:
+                setCurrentColNum(getCurrentColNum()+1);
+                break;
+        }
+    }
+
+    public int getCurrentRowNum() {
+        return currentRowNum;
+    }
+
+    public void setCurrentRowNum(int rowNum) {
+        int old = currentRowNum;
+        currentRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
+        if (currentRowNum!=old) {
+            repaint();
+        }
+    }
+
+    public int getCurrentColNum() {
+        return currentColNum;
+    }
+
+    public void setCurrentColNum(int colNum) {
+        int old = currentColNum;
+        currentColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
+        if (currentColNum!=old) {
+            repaint();
+        }
+    }
+
+    static enum Actions {
+        MOVE_UP {
+            @Override
+            public Action getAction(final SheetView view) {
+                return new AbstractAction("MOVE_UP") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.move(Direction.NORTH);
+                    }
+                };
+            }
+        },
+        MOVE_DOWN {
+            @Override
+            public Action getAction(final SheetView view) {
+                return new AbstractAction("MOVE_DOWN") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.move(Direction.SOUTH);
+                    }
+                };
+            }
+        },
+        MOVE_LEFT {
+            @Override
+            public Action getAction(final SheetView view) {
+                return new AbstractAction("MOVE_LEFT") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.move(Direction.WEST);
+                    }
+                };
+            }
+        },
+        MOVE_RIGHT {
+            @Override
+            public Action getAction(final SheetView view) {
+                return new AbstractAction("MOVE_RIGHT") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.move(Direction.EAST);
+                    }
+                };
+            }
+        };
+
+        abstract Action getAction(SheetView view);
+    }
+
     public SheetView(Sheet sheet) {
         this.sheet = sheet;
         this.currentRowNum = 0;
         this.currentColNum = 0;
+        init();
         update();
+    }
+
+    private void init() {
+        final InputMap inputMap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
+        getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_UP, 0), Actions.MOVE_UP);
+        getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, 0), Actions.MOVE_DOWN);
+        getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_DOWN, 0), Actions.MOVE_DOWN);
+        getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, 0), Actions.MOVE_LEFT);
+        getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_LEFT, 0), Actions.MOVE_LEFT);
+        getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
+        getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
+
+        final ActionMap actionMap = getActionMap();
+        for (Actions action: Actions.values()) {
+            actionMap.put(action, action.getAction(this));
+        }
+
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     /**
@@ -402,7 +519,7 @@ public class SheetView extends JComponent implements Scrollable {
                 case EAST:
                     g.drawLine(x + w - 1, y, x + w - 1, y + h - 1);
                     break;
-                case SOUHT:
+                case SOUTH:
                     g.drawLine(x, y + h - 1, x + w - 1, y + h - 1);
                     break;
                 case WEST:
