@@ -74,18 +74,27 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             this.spanX = 1;
             this.spanY = 1;
             this.logicalCell = this;
-        } else if (getRowNumber() == mergedRegion.getFirstRow() && getColumnNumber() == mergedRegion.getFirstColumn()) {
-            // cell is top left cell of merged region
-            this.spanX = 1 + mergedRegion.getLastColumn() - mergedRegion.getFirstColumn();
-            this.spanY = 1 + mergedRegion.getLastRow() - mergedRegion.getFirstRow();
-            this.logicalCell = this;
+        } else if (getRowNumber() == mergedRegion.getFirstRow()) {
+            // cell part of the top row of a merged region
+            if (getColumnNumber() == mergedRegion.getFirstColumn()) {
+                // cell is the top left cell of the merged region
+                this.spanX = 1 + mergedRegion.getLastColumn() - mergedRegion.getFirstColumn();
+                this.spanY = 1 + mergedRegion.getLastRow() - mergedRegion.getFirstRow();
+                this.logicalCell = this;
+            } else {
+                // cell is in top row of merged region, but not the leftmost cell
+                this.spanX = 0;
+                this.spanY = 0;
+                this.logicalCell = row.getCell(mergedRegion.getFirstColumn());                
+            }
         } else {
-            // cell is merged, but not top left cell
+            // cell is merged, but not top row of merged region
             this.spanX = 0;
             this.spanY = 0;
-            this.logicalCell = row.getCell(mergedRegion.getFirstColumn());
+            this.logicalCell = row.getSheet()
+                    .getRow(mergedRegion.getFirstRow())
+                    .getCell(mergedRegion.getFirstColumn());
         }
-
     }
 
     public abstract PoiWorkbook getWorkbook();
