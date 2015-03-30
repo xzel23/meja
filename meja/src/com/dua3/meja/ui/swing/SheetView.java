@@ -34,6 +34,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
@@ -61,12 +62,18 @@ public class SheetView extends JComponent implements Scrollable {
     int rowPos[];
     int sheetWidth;
     int sheetHeight;
+    int currentColNum;
+    int currentRowNum;
 
     private final Sheet sheet;
     private Color gridColor = Color.LIGHT_GRAY;
+    private Color selectionColor = Color.BLACK;
+    private Stroke selectionStroke = new BasicStroke(4);
 
     public SheetView(Sheet sheet) {
         this.sheet = sheet;
+        this.currentRowNum = 0;
+        this.currentColNum = 0;
         update();
     }
 
@@ -249,6 +256,7 @@ public class SheetView extends JComponent implements Scrollable {
         drawCells(g2d, cells, CellDrawMode.DRAW_CELL_BACKGROUND);
         drawCells(g2d, cells, CellDrawMode.DRAW_CELL_BORDER);
         drawCells(g2d, cells, CellDrawMode.DRAW_CELL_FOREGROUND);
+        drawSelection(g2d);
     }
 
     /**
@@ -292,6 +300,7 @@ public class SheetView extends JComponent implements Scrollable {
                 }
             }
         }
+
         return cells;
     }
 
@@ -473,11 +482,11 @@ public class SheetView extends JComponent implements Scrollable {
         final int xt = (int) Math.round((x + xd) / scale);
         final int yt = (int) Math.round((y + yd) / scale);
 
-        final boolean wrap = style.isWrap() || style.getHAlign()==HAlign.ALIGN_JUSTIFY || style.getVAlign()==VAlign.ALIGN_JUSTIFY;
+        final boolean wrap = style.isWrap() || style.getHAlign() == HAlign.ALIGN_JUSTIFY || style.getVAlign() == VAlign.ALIGN_JUSTIFY;
         if (!wrap) {
             g.drawString(text.getIterator(), xt, yt);
         } else {
-            drawAttributedStringWithWrap(g, text, xt, yt, (int)Math.round((w/scale)), (int) Math.round(h/scale));
+            drawAttributedStringWithWrap(g, text, xt, yt, (int) Math.round((w / scale)), (int) Math.round(h / scale));
         }
 
         g.setTransform(at);
@@ -543,8 +552,32 @@ public class SheetView extends JComponent implements Scrollable {
     }
 
     private java.awt.Font createAwtFont(Font font) {
-        int style = (font.isBold()?java.awt.Font.BOLD:0)|(font.isItalic()?java.awt.Font.ITALIC:0);
+        int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
         return new java.awt.Font(font.getFamily(), style, (int) Math.round(font.getSizeInPoints()));
+    }
+
+    private void drawSelection(Graphics2D g2d) {
+        if (!isVisible(g2d, currentRowNum, currentColNum)) {
+            return;
+        }
+
+        int x = columnPos[currentColNum];
+        int y = rowPos[currentRowNum];
+        int w = columnPos[currentColNum + 1] - x;
+        int h = rowPos[currentRowNum + 1] - y;
+
+        g2d.setColor(selectionColor);
+        g2d.setStroke(selectionStroke);
+        g2d.drawRect(x, y, w, h);
+    }
+
+    private boolean isVisible(Graphics2D g, int row, int col) {
+        Rectangle clipBounds = g.getClipBounds();
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
+        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x));
+        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width));
+        return startRow <= row && row <= endRow && startColumn <= col && col <= endColumn;
     }
 
     protected static enum CellDrawMode {
