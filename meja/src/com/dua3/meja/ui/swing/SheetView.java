@@ -77,18 +77,19 @@ public class SheetView extends JComponent implements Scrollable {
     private Stroke selectionStroke = new BasicStroke(4);
 
     private void move(Direction d) {
+        Cell cell = getCurrentCell().getLogicalCell();
         switch (d) {
             case NORTH:
-                setCurrentRowNum(getCurrentRowNum()-1);
+                setCurrentRowNum(cell.getRowNumber()-1);
                 break;
             case SOUTH:
-                setCurrentRowNum(getCurrentRowNum()+1);
+                setCurrentRowNum(cell.getRowNumber()+cell.getVerticalSpan());
                 break;
             case WEST:
-                setCurrentColNum(getCurrentColNum()-1);
+                setCurrentColNum(cell.getColumnNumber()-1);
                 break;
             case EAST:
-                setCurrentColNum(getCurrentColNum()+1);
+                setCurrentColNum(cell.getColumnNumber()+cell.getHorizontalSpan());
                 break;
         }
     }
@@ -673,15 +674,30 @@ public class SheetView extends JComponent implements Scrollable {
         return new java.awt.Font(font.getFamily(), style, (int) Math.round(font.getSizeInPoints()));
     }
 
+    /**
+     * Return the current cell.
+     * @return current cell
+     */
+    private Cell getCurrentCell() {
+        return sheet.getRow(currentRowNum).getCell(currentColNum);
+    }
+    
+    /** 
+     * Draw frame around current selection.
+     * @param g2d graphics used for drawing
+     */
     private void drawSelection(Graphics2D g2d) {
-        if (!isVisible(g2d, currentRowNum, currentColNum)) {
-            return;
-        }
+        Cell logicalCell = getCurrentCell().getLogicalCell();
+        
+        int rowNum =logicalCell.getRowNumber();
+        int colNum = logicalCell.getColumnNumber();
+        int spanX = logicalCell.getHorizontalSpan();
+        int spanY = logicalCell.getVerticalSpan();
 
-        int x = columnPos[currentColNum];
-        int y = rowPos[currentRowNum];
-        int w = columnPos[currentColNum + 1] - x;
-        int h = rowPos[currentRowNum + 1] - y;
+        int x = columnPos[colNum];
+        int y = rowPos[rowNum];
+        int w = columnPos[colNum + spanX] - x;
+        int h = rowPos[rowNum + spanY] - y;
 
         g2d.setColor(selectionColor);
         g2d.setStroke(selectionStroke);
@@ -698,7 +714,6 @@ public class SheetView extends JComponent implements Scrollable {
     }
 
     protected static enum CellDrawMode {
-
         DRAW_CELL_BACKGROUND, DRAW_CELL_BORDER, DRAW_CELL_FOREGROUND
     }
 
