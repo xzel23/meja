@@ -28,6 +28,7 @@ import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import java.text.AttributedString;
+import java.util.Date;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -208,6 +209,50 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         return at;
     }
 
+    public void clear() {
+        poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+    }
+    
+    @Override
+    public void set(Boolean arg) {
+        if (arg==null) {
+            clear();            
+        } else {
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN);
+            poiCell.setCellValue(arg);
+        }
+    }
+
+    @Override
+    public void set(Date arg) {
+        if (arg==null) {
+            clear();            
+        } else {
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+            poiCell.setCellValue(arg);
+        }
+    }
+
+    @Override
+    public void set(Number arg) {
+        if (arg==null) {
+            clear();            
+        } else {
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+            poiCell.setCellValue(arg.doubleValue());
+        }
+    }
+
+    @Override
+    public void set(String arg) {
+        if (arg==null) {
+            clear();            
+        } else {
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+            poiCell.setCellValue(arg);
+        }
+    }
+    
     static class PoiHssfCell extends PoiCell<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 

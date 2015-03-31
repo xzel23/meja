@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.excelviewer;
 
-import com.dua3.meja.model.InvalidFormatException;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
@@ -180,7 +179,7 @@ public class ApplicationWindow extends JFrame {
             Logger.getLogger(ApplicationWindow.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", file);
             setTitle(APPLICATION_NAME+ " - "+file.getName());
             currentDir=file.getParentFile();
-        } catch (IOException | InvalidFormatException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(ApplicationWindow.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error loading file", JOptionPane.ERROR_MESSAGE);
         }

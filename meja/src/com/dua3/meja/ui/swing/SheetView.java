@@ -45,6 +45,7 @@ import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;
@@ -71,7 +72,7 @@ public class SheetView extends JComponent implements Scrollable {
     int currentColNum;
     int currentRowNum;
 
-    private final Sheet sheet;
+    private Sheet sheet;
     private Color gridColor = Color.LIGHT_GRAY;
     private Color selectionColor = Color.BLACK;
     private Stroke selectionStroke = new BasicStroke(4);
@@ -167,11 +168,19 @@ public class SheetView extends JComponent implements Scrollable {
         abstract Action getAction(SheetView view);
     }
 
+    public SheetView() {
+        this(null);
+    }
+    
     public SheetView(Sheet sheet) {
-        this.sheet = sheet;
+        init();
+        setSheet(sheet);
+    }
+
+    public void setSheet(Sheet sheet1) {
+        this.sheet = sheet1;
         this.currentRowNum = 0;
         this.currentColNum = 0;
-        init();
         update();
     }
 
@@ -220,6 +229,14 @@ public class SheetView extends JComponent implements Scrollable {
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         scale = dpi / 72.0;
 
+        if (sheet==null) {
+            sheetWidth = 0;
+            sheetHeight = 0;
+            rowPos=new int[] { 0 };
+            columnPos=new int[] { 0 };
+            return;
+        }
+        
         sheetHeight = 0;
         rowPos = new int[2 + sheet.getLastRowNum()];
         rowPos[0] = 0;
@@ -393,6 +410,11 @@ public class SheetView extends JComponent implements Scrollable {
     }
 
     Collection<Cell> determineCellsToDraw(Graphics g) {
+        // no sheet, no drawing
+        if (sheet==null) {
+            return Collections.emptyList();
+        }
+        
         // determine visible rows and columns
         Rectangle clipBounds = g.getClipBounds();
         int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
@@ -687,6 +709,11 @@ public class SheetView extends JComponent implements Scrollable {
      * @param g2d graphics used for drawing
      */
     private void drawSelection(Graphics2D g2d) {
+        // no sheet, no drawing
+        if (sheet==null) {
+            return;
+        }
+        
         Cell logicalCell = getCurrentCell().getLogicalCell();
         
         int rowNum =logicalCell.getRowNumber();

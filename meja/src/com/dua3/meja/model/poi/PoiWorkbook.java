@@ -23,6 +23,8 @@ import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import java.awt.Color;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -107,6 +109,16 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         return poiWorkbook;
     }
 
+    @Override
+    public void write(OutputStream out) throws IOException {
+        poiWorkbook.write(out);
+    }
+
+    @Override
+    public void close () throws IOException {
+        poiWorkbook.close();
+    }
+    
     static class PoiHssfWorkbook extends PoiWorkbook<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 

@@ -15,7 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.meja.model.InvalidFormatException;
+import com.dua3.meja.model.InvalidFileFormatException;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
@@ -40,19 +40,23 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public PoiWorkbook open(File file) throws IOException, InvalidFormatException {
+    public PoiWorkbook open(File file) throws IOException {
         try {
             Locale locale = Locale.getDefault();
             final Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file);
-            if (poiWorkbook instanceof org.apache.poi.hssf.usermodel.HSSFWorkbook) {
-                return new PoiHssfWorkbook((org.apache.poi.hssf.usermodel.HSSFWorkbook) poiWorkbook, locale);
-            } else if (poiWorkbook instanceof org.apache.poi.xssf.usermodel.XSSFWorkbook) {
-                return new PoiXssfWorkbook((org.apache.poi.xssf.usermodel.XSSFWorkbook) poiWorkbook, locale);
-            } else {
-                throw new IllegalStateException();
-            }
+            return createWorkbook(poiWorkbook, locale);
         } catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException ex) {
-            throw new InvalidFormatException(ex.getMessage());
+            throw new InvalidFileFormatException(ex.getMessage());
+        }
+    }
+
+    private PoiWorkbook createWorkbook(final Workbook poiWorkbook, Locale locale) {
+        if (poiWorkbook instanceof org.apache.poi.hssf.usermodel.HSSFWorkbook) {
+            return new PoiHssfWorkbook((org.apache.poi.hssf.usermodel.HSSFWorkbook) poiWorkbook, locale);
+        } else if (poiWorkbook instanceof org.apache.poi.xssf.usermodel.XSSFWorkbook) {
+            return new PoiXssfWorkbook((org.apache.poi.xssf.usermodel.XSSFWorkbook) poiWorkbook, locale);
+        } else {
+            throw new IllegalStateException();
         }
     }
 
