@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.meja.util.Cache;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
@@ -23,9 +24,12 @@ import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import java.awt.Color;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -107,6 +111,30 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         return poiWorkbook;
     }
 
+    @Override
+    public void write(OutputStream out) throws IOException {
+        poiWorkbook.write(out);
+    }
+
+    @Override
+    public void close () throws IOException {
+        poiWorkbook.close();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PoiWorkbook) {
+            return Objects.equals(poiWorkbook, ((PoiWorkbook)obj).poiWorkbook);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return poiWorkbook.hashCode();
+    }
+            
     static class PoiHssfWorkbook extends PoiWorkbook<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
@@ -161,7 +189,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return new PoiHssfSheet(this, poiSheet);
         }
 
-        private final PoiCache<HSSFCellStyle, PoiHssfCellStyle> styleCache = new PoiCache<HSSFCellStyle, PoiHssfCellStyle>() {
+        private final Cache<HSSFCellStyle, PoiHssfCellStyle> styleCache = new Cache<HSSFCellStyle, PoiHssfCellStyle>(Cache.Type.WEAK_KEYS) {
 
             @Override
             protected PoiHssfCellStyle create(HSSFCellStyle poiStyle) {
@@ -175,7 +203,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return styleCache.get(cellStyle);
         }
 
-        private final PoiCache<HSSFFont, PoiHssfFont> fontCache = new PoiCache<HSSFFont, PoiHssfFont>() {
+        private final Cache<HSSFFont, PoiHssfFont> fontCache = new Cache<HSSFFont, PoiHssfFont>(Cache.Type.WEAK_KEYS) {
 
             @Override
             protected PoiHssfFont create(HSSFFont poiFont) {
@@ -245,7 +273,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return new PoiXssfSheet(this, poiSheet);
         }
 
-        private final PoiCache<XSSFCellStyle, PoiXssfCellStyle> styleCache = new PoiCache<XSSFCellStyle, PoiXssfCellStyle>() {
+        private final Cache<XSSFCellStyle, PoiXssfCellStyle> styleCache = new Cache<XSSFCellStyle, PoiXssfCellStyle>(Cache.Type.WEAK_KEYS) {
 
             @Override
             protected PoiXssfCellStyle create(XSSFCellStyle poiStyle) {
@@ -259,7 +287,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return styleCache.get(cellStyle);
         }
 
-        private final PoiCache<XSSFFont, PoiXssfFont> fontCache = new PoiCache<XSSFFont, PoiXssfFont>() {
+        private final Cache<XSSFFont, PoiXssfFont> fontCache = new Cache<XSSFFont, PoiXssfFont>(Cache.Type.WEAK_KEYS) {
 
             @Override
             protected PoiXssfFont create(XSSFFont poiFont) {

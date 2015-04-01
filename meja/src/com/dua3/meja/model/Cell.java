@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import java.text.AttributedString;
+import java.util.Date;
 
 /**
  *
@@ -97,5 +98,10 @@ public interface Cell {
     int getColumnNumber();
     Sheet getSheet();
     AttributedString getAttributedString();
+
+    void set(Date arg);
+    void set(Number arg);
+    void set(String s);
+    void set(Boolean b);
 
 }

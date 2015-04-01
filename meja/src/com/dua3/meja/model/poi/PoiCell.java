@@ -28,6 +28,8 @@ import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import java.text.AttributedString;
+import java.util.Date;
+import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -115,6 +117,8 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
                 return CellType.NUMERIC;
             case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
                 return CellType.TEXT;
+            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA:
+                return CellType.FORMULA;
             default:
                 throw new IllegalArgumentException();
         }
@@ -208,6 +212,64 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         return at;
     }
 
+    public void clear() {
+        poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+    }
+    
+    @Override
+    public void set(Boolean arg) {
+        if (arg==null) {
+            clear();            
+        } else {
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN);
+            poiCell.setCellValue(arg);
+        }
+    }
+
+    @Override
+    public void set(Date arg) {
+        if (arg==null) {
+            clear();            
+        } else {
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+            poiCell.setCellValue(arg);
+        }
+    }
+
+    @Override
+    public void set(Number arg) {
+        if (arg==null) {
+            clear();            
+        } else {
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
+            poiCell.setCellValue(arg.doubleValue());
+        }
+    }
+
+    @Override
+    public void set(String arg) {
+        if (arg==null) {
+            clear();            
+        } else {
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
+            poiCell.setCellValue(arg);
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PoiCell) {
+            return Objects.equals(poiCell, ((PoiCell)obj).poiCell);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return poiCell.hashCode();
+    }
+        
     static class PoiHssfCell extends PoiCell<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 

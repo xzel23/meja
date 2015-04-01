@@ -24,6 +24,8 @@ import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;
 import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
+import com.dua3.meja.util.Cache;
+import java.util.Objects;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -151,6 +153,20 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PoiSheet) {
+            return Objects.equals(poiSheet, ((PoiSheet)obj).poiSheet);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return poiSheet.hashCode();
+    }
+
+    @Override
     public TableModel getTableModel() {
         return new AbstractTableModel() {
 
@@ -215,7 +231,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
         private final PoiHssfWorkbook workbook;
         private final PoiHssfCellStyle defaultCellStyle;
-        private final PoiCache<HSSFRow, PoiHssfRow> cache = new PoiCache<HSSFRow, PoiHssfRow>() {
+        private final Cache<HSSFRow, PoiHssfRow> cache = new Cache<HSSFRow, PoiHssfRow>(Cache.Type.WEAK_KEYS){
 
             @Override
             protected PoiHssfRow create(HSSFRow poiRow) {
@@ -232,7 +248,11 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
         @Override
         public PoiHssfRow getRow(int row) {
-            return cache.get(poiSheet.getRow(row));
+            HSSFRow poiRow = poiSheet.getRow(row);
+            if(poiRow==null) {
+                poiRow=poiSheet.createRow(row);
+            }
+            return cache.get(poiRow);
         }
 
         @Override
@@ -251,7 +271,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
         private final PoiXssfWorkbook workbook;
         private final PoiXssfCellStyle defaultCellStyle;
-        private final PoiCache<XSSFRow, PoiXssfRow> cache = new PoiCache<XSSFRow, PoiXssfRow>() {
+        private final Cache<XSSFRow, PoiXssfRow> cache = new Cache<XSSFRow, PoiXssfRow>(Cache.Type.WEAK_KEYS) {
 
             @Override
             protected PoiXssfRow create(XSSFRow poiRow) {
@@ -268,7 +288,11 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
         @Override
         public PoiXssfRow getRow(int row) {
-            return cache.get(poiSheet.getRow(row));
+            XSSFRow poiRow = poiSheet.getRow(row);
+            if(poiRow==null) {
+                poiRow=poiSheet.createRow(row);
+            }
+            return cache.get(poiRow);
         }
 
         @Override

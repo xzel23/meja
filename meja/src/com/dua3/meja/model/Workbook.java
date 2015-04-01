@@ -15,6 +15,9 @@
  */
 package com.dua3.meja.model;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * Workbook class.
  *
@@ -23,7 +26,7 @@ package com.dua3.meja.model;
  *
  * @author axel
  */
-public interface Workbook {
+public interface Workbook extends AutoCloseable {
 
     /**
      * Returns number of sheets in this workbook.
@@ -45,4 +48,11 @@ public interface Workbook {
      */
     Sheet getSheetByName(String sheetName);
 
+    /**
+     * Writes the workbook to a stream.
+     * @param out 
+     * @throws java.io.IOException 
+     */
+    void write(OutputStream out) throws IOException;
+    
 }

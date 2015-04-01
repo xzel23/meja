@@ -49,10 +49,10 @@ public class WorkbookView extends JComponent {
             for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
                 Sheet sheet = workbook.getSheetByNr(i);
                 final SheetView sheetView = new SheetView(sheet);
-                content.addTab(sheet.getSheetName(),
-                        new JScrollPane(sheetView,
-                                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+                final JScrollPane scrollPane = new JScrollPane(sheetView,
+                        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                content.addTab(sheet.getSheetName(), scrollPane);
             }
             content.setSelectedIndex(0);
             add(content);

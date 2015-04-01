@@ -20,6 +20,8 @@ import com.dua3.meja.model.poi.PoiCell.PoiHssfCell;
 import com.dua3.meja.model.poi.PoiCell.PoiXssfCell;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
+import com.dua3.meja.util.Cache;
+import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -54,6 +56,20 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PoiRow) {
+            return Objects.equals(poiRow, ((PoiRow)obj).poiRow);
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return poiRow.hashCode();
+    }
+
+    @Override
     public abstract PoiSheet getSheet();
 
     static class PoiXssfRow extends PoiRow<
@@ -70,7 +86,7 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
         public PoiXssfSheet getSheet() {
             return sheet;
         }
-        private final PoiCache<XSSFCell, PoiXssfCell> cache = new PoiCache<XSSFCell, PoiXssfCell>() {
+        private final Cache<XSSFCell, PoiXssfCell> cache = new Cache<XSSFCell, PoiXssfCell>(Cache.Type.WEAK_KEYS) {
 
             @Override
             protected PoiXssfCell create(XSSFCell poiCell) {
@@ -81,7 +97,11 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
 
         @Override
         public PoiXssfCell getCell(int col) {
-            return cache.get(poiRow.getCell(col));
+            XSSFCell poiCell = poiRow.getCell(col);
+            if(poiCell==null) {
+                poiCell=poiRow.createCell(col);
+            }
+            return cache.get(poiCell);
         }
     }
 
@@ -100,7 +120,7 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
             return sheet;
         }
 
-        private final PoiCache<HSSFCell, PoiHssfCell> cache = new PoiCache<HSSFCell, PoiHssfCell>() {
+        private final Cache<HSSFCell, PoiHssfCell> cache = new Cache<HSSFCell, PoiHssfCell>(Cache.Type.WEAK_KEYS) {
 
             @Override
             protected PoiHssfCell create(HSSFCell poiCell) {
@@ -111,7 +131,11 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
 
         @Override
         public PoiHssfCell getCell(int col) {
-            return cache.get(poiRow.getCell(col));
+            HSSFCell poiCell = poiRow.getCell(col);
+            if(poiCell==null) {
+                poiCell=poiRow.createCell(col);
+            }
+            return cache.get(poiCell);
         }
     }
 

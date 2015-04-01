@@ -21,6 +21,7 @@ import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import java.awt.Color;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
+import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -100,6 +101,20 @@ public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PoiFont) {
+            return Objects.equals(getPoiFont(), ((PoiFont)obj).getPoiFont());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return getPoiFont().hashCode();
+    }
+    
     static class PoiHssfFont extends PoiFont<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
         private final PoiHssfWorkbook workbook;

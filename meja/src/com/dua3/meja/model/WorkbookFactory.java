@@ -24,6 +24,6 @@ import java.io.IOException;
  */
 public abstract class WorkbookFactory {
 
-    public abstract Workbook open(File file) throws IOException, InvalidFormatException;
+    public abstract Workbook open(File file) throws IOException;
 
 }

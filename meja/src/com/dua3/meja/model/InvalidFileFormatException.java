@@ -15,12 +15,14 @@
  */
 package com.dua3.meja.model;
 
+import java.io.IOException;
+
 /**
  *
  * @author axel
  */
-public class InvalidFormatException extends Exception {
-    public InvalidFormatException(String message) {
+public class InvalidFileFormatException extends IOException {
+    public InvalidFileFormatException(String message) {
         super(message);
     }
 }
