@@ -101,6 +101,8 @@ public class SheetView extends JPanel implements Scrollable {
     private void move(Direction d) {        
         Cell cell = getCurrentCell().getLogicalCell();
         
+    private void move(Direction d) {
+        Cell cell = getCurrentCell().getLogicalCell();
         switch (d) {
             case NORTH:
                 setCurrentRowNum(cell.getRowNumber()-1);

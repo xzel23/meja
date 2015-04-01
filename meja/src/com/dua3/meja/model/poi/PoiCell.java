@@ -87,7 +87,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
                 // cell is in top row of merged region, but not the leftmost cell
                 this.spanX = 0;
                 this.spanY = 0;
-                this.logicalCell = row.getCell(mergedRegion.getFirstColumn());                
+                this.logicalCell = row.getCell(mergedRegion.getFirstColumn());
             }
         } else {
             // cell is merged, but not top row of merged region
@@ -215,11 +215,11 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     public void clear() {
         poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
     }
-    
+
     @Override
     public void set(Boolean arg) {
         if (arg==null) {
-            clear();            
+            clear();
         } else {
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN);
             poiCell.setCellValue(arg);
@@ -229,7 +229,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     @Override
     public void set(Date arg) {
         if (arg==null) {
-            clear();            
+            clear();
         } else {
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
             poiCell.setCellValue(arg);
@@ -239,7 +239,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     @Override
     public void set(Number arg) {
         if (arg==null) {
-            clear();            
+            clear();
         } else {
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
             poiCell.setCellValue(arg.doubleValue());
@@ -249,7 +249,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     @Override
     public void set(String arg) {
         if (arg==null) {
-            clear();            
+            clear();
         } else {
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
             poiCell.setCellValue(arg);
@@ -269,7 +269,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     public int hashCode() {
         return poiCell.hashCode();
     }
-        
+
     static class PoiHssfCell extends PoiCell<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
