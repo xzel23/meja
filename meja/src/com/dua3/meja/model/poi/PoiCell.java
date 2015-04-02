@@ -38,6 +38,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -151,8 +152,9 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
     @Override
     public String getAsText() {
-        // TODO handle formula
-        return toString();
+        DataFormatter dataFormatter = getWorkbook().getDataFormatter();
+        FormulaEvaluator evaluator = getWorkbook().evaluator;
+        return dataFormatter.formatCellValue(poiCell, evaluator);
     }
 
     @Override

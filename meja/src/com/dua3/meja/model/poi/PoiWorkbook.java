@@ -37,6 +37,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -59,11 +60,13 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         implements Workbook {
 
     protected final WORKBOOK poiWorkbook;
+    protected final FormulaEvaluator evaluator;
     protected final List<PoiSheet> sheets = new ArrayList<>();
     protected final org.apache.poi.ss.usermodel.DataFormatter dataFormatter;
 
     protected PoiWorkbook(WORKBOOK poiWorkbook, Locale locale) {
         this.poiWorkbook = poiWorkbook;
+        this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
         this.dataFormatter = new org.apache.poi.ss.usermodel.DataFormatter(locale);
     }
 
