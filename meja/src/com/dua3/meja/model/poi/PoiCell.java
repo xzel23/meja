@@ -150,6 +150,12 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
+    public String getAsText() {
+        // TODO handle formula
+        return toString();
+    }
+
+    @Override
     public String toString() {
         DataFormatter dataFormatter = getWorkbook().getDataFormatter();
         return dataFormatter.formatCellValue(poiCell);
@@ -350,6 +356,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
                 return getCellStyle().getFont();
             }
         }
+
     }
 
 }

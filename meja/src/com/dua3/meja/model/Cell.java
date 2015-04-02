@@ -66,6 +66,12 @@ public interface Cell {
     String getText();
 
     /**
+     * Return text representaion of value.
+     * @return cell value as String, as it would be displayed
+     */
+    String getAsText();
+
+    /**
      * Return the cell style.
      * @return cell style
      */
