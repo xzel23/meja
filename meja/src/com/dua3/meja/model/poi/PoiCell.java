@@ -135,6 +135,11 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
+    public Date getDate() {
+        return poiCell.getDateCellValue();
+    }
+
+    @Override
     public Number getNumber() {
         return poiCell.getNumericCellValue();
     }

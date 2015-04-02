@@ -45,6 +45,13 @@ public interface Cell {
     String getFormula();
 
     /**
+     * Return date value.
+     * @return date cell value
+     * @throws IllegalArgumentException if cell is not of date value
+     */
+    Date getDate();
+
+    /**
      * Return numeric value.
      * @return numeric cell value
      * @throws IllegalArgumentException if cell is not of numeric type
