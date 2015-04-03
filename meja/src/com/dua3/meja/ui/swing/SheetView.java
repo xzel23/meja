@@ -38,6 +38,7 @@ import java.awt.event.ActionEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class SheetView extends JPanel implements Scrollable {
         }
     };
 
-    double scale = 1;
+    float scale = 1;
 
     int columnPos[];
     int rowPos[];
@@ -292,7 +293,7 @@ public class SheetView extends JPanel implements Scrollable {
      */
     private void update() {
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-        //scale = dpi / 72.0;
+        scale = dpi / 72f;
 
         if (sheet==null) {
             sheetWidth = 0;
@@ -444,11 +445,11 @@ public class SheetView extends JPanel implements Scrollable {
 
     @Override
     protected void paintComponent(Graphics g) {
-        g.getClipBounds(clipBounds);
-
-        g.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
-
         Graphics2D g2d = (Graphics2D) g;
+
+        g2d.getClipBounds(clipBounds);
+
+        g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
 
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -623,7 +624,7 @@ public class SheetView extends JPanel implements Scrollable {
             }
 
             g.setColor(color);
-            g.setStroke(getStroke(b.getWidth()));
+            g.setStroke(getStroke(b.getWidth()*scale));
             switch (d) {
                 case NORTH:
                     g.drawLine(cr.x, cr.y, cr.x + cr.width - 1, cr.y);
@@ -661,10 +662,15 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        Rectangle cr = getCellRect(cell);
         int paddingX=2;
         int paddingY=1;
-        float width = cr.width-2*paddingX-1;
+        Rectangle cr = getCellRect(cell);
+        cr.x+=paddingX;
+        cr.width-=2*paddingX-1;
+        cr.y+=paddingY;
+        cr.height-=2*paddingY;
+
+        float width = cr.width/scale;
 
         CellStyle style = cell.getCellStyle();
         Font font = style.getFont();
@@ -673,8 +679,13 @@ public class SheetView extends JPanel implements Scrollable {
         g.setFont(getAwtFont(font));
         g.setColor(color == null ? Color.BLACK : color);
 
+        AffineTransform originalTransform = g.getTransform();
+        g.translate(cr.x, cr.y);
+        g.scale(scale, scale);
+
         // layout text
         float wrapWidth = style.isWrap() ? width : 0;
+
         FontRenderContext frc = new FontRenderContext(g.getTransform(), true, true);
         List<TextLayout> layouts = prepareText(g, frc, text.getIterator(), wrapWidth);
 
@@ -682,8 +693,8 @@ public class SheetView extends JPanel implements Scrollable {
         float textWidth = 0;
         float textHeight = 0;
         for (TextLayout layout: layouts) {
-            textWidth=Math.max(textWidth, layout.getVisibleAdvance());
-            textHeight += layout.getAscent()+layout.getDescent() + layout.getLeading();
+            textWidth=Math.max(textWidth, scale*layout.getVisibleAdvance());
+            textHeight += scale*(layout.getAscent()+layout.getDescent() + layout.getLeading());
         }
 
         // calculate text position
@@ -691,13 +702,13 @@ public class SheetView extends JPanel implements Scrollable {
         switch (style.getHAlign()) {
             case ALIGN_LEFT:
             case ALIGN_JUSTIFY:
-                xd = cr.x+paddingX;
+                xd = cr.x;
                 break;
             case ALIGN_CENTER:
                 xd = (float) (cr.x+(cr.width - textWidth) / 2.0);
                 break;
             case ALIGN_RIGHT:
-                xd = cr.x+cr.width - textWidth-paddingX;
+                xd = cr.x+cr.width - textWidth;
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -705,26 +716,30 @@ public class SheetView extends JPanel implements Scrollable {
         switch (style.getVAlign()) {
             case ALIGN_TOP:
             case ALIGN_JUSTIFY:
-                yd = cr.y+paddingY;
+                yd = cr.y;
                 break;
             case ALIGN_MIDDLE:
-                yd = (float) (cr.y+(cr.height - textHeight-layouts.get(layouts.size()-1).getLeading()) / 2.0);
+                yd = (float) (cr.y+(cr.height - textHeight-scale*layouts.get(layouts.size()-1).getLeading()) / 2.0);
                 break;
             case ALIGN_BOTTOM:
                 final TextLayout lastLayout = layouts.get(layouts.size()-1);
-                yd = cr.y+cr.height-paddingY - lastLayout.getDescent()-lastLayout.getAscent();
+                yd = cr.y+cr.height - scale*(lastLayout.getDescent()+lastLayout.getAscent());
                 break;
             default:
                 throw new IllegalArgumentException();
         }
 
         // draw text
-        float drawPosY = yd;
+        g.setTransform(originalTransform);
+        g.translate(xd, yd);
+        g.scale(scale, scale);
+
+        float drawPosY = 0;
         for (TextLayout layout: layouts) {
             // Compute pen x position. If the paragraph
             // is right-to-left we will align the
             // TextLayouts to the right edge of the panel.
-            float drawPosX = layout.isLeftToRight() ? xd : xd + width - layout.getAdvance();
+            float drawPosX = layout.isLeftToRight() ? 0 : width - layout.getAdvance();
 
             // Move y-coordinate by the ascent of the
             // layout.
@@ -737,6 +752,8 @@ public class SheetView extends JPanel implements Scrollable {
             // layout.
             drawPosY += layout.getDescent() + layout.getLeading();
         }
+
+        g.setTransform(originalTransform);
     }
 
     private List<TextLayout> prepareText(Graphics2D g, FontRenderContext frc, AttributedCharacterIterator text, float width) {
@@ -768,14 +785,14 @@ public class SheetView extends JPanel implements Scrollable {
 
             // Move y-coordinate by the ascent of the
             // layout.
-            drawPosY += layout.getAscent();
+            drawPosY += scale*layout.getAscent();
 
             // Draw the TextLayout at (drawPosX,drawPosY).
             tls.add(layout);
 
             // Move y-coordinate in preparation for next
             // layout.
-            drawPosY += layout.getDescent() + layout.getLeading();
+            drawPosY += scale*(layout.getDescent() + layout.getLeading());
         }
         return tls;
     }
