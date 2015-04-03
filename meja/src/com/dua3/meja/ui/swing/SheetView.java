@@ -682,8 +682,7 @@ public class SheetView extends JPanel implements Scrollable {
         float textWidth = 0;
         float textHeight = 0;
         for (TextLayout layout: layouts) {
-            Rectangle bounds = layout.getPixelBounds(frc, 0, 0);
-            textWidth=Math.max(textWidth, bounds.width);
+            textWidth=Math.max(textWidth, layout.getVisibleAdvance());
             textHeight += layout.getAscent()+layout.getDescent() + layout.getLeading();
         }
 
