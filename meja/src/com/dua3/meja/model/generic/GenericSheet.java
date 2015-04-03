@@ -16,6 +16,7 @@
 package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Helper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
@@ -27,14 +28,22 @@ import javax.swing.table.TableModel;
  */
 public class GenericSheet implements Sheet {
 
+    private final GenericWorkbook workbook;
+    private String sheetName;
+
+    public GenericSheet(GenericWorkbook workbook, String sheetName) {
+        this.workbook = workbook;
+        this.sheetName = sheetName;
+    }
+
     @Override
     public TableModel getTableModel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Helper.getTableModel(this);
     }
 
     @Override
     public String getSheetName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return sheetName;
     }
 
     @Override
@@ -89,7 +98,7 @@ public class GenericSheet implements Sheet {
 
     @Override
     public Workbook getWorkbook() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return workbook;
     }
 
 }

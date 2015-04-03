@@ -15,8 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Helper;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
@@ -26,7 +25,6 @@ import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.Cache;
 import java.util.Objects;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -168,62 +166,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
     @Override
     public TableModel getTableModel() {
-        return new AbstractTableModel() {
-
-            @Override
-            public int getRowCount() {
-                return getNumberOfRows();
-            }
-
-            @Override
-            public int getColumnCount() {
-                return getNumberOfColumns();
-            }
-
-            @Override
-            public String getColumnName(int columnIndex) {
-                int col = getSheetCol(columnIndex);
-                StringBuilder sb = new StringBuilder();
-                do {
-                    sb.append((char) ('A' + col % 26));
-                    col /= 26;
-                } while (col > 0);
-                return sb.toString();
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return Cell.class;
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return false;
-            }
-
-            @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                int rowNum = getSheetRow(rowIndex);
-                int colNum = getSheetCol(columnIndex);
-                Row row = getRow(rowNum);
-                Cell cell = row == null ? null : row.getCell(colNum);
-                return cell;
-            }
-
-            @Override
-            public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            private int getSheetCol(int columnIndex) {
-                return columnIndex + getFirstColNum();
-            }
-
-            private int getSheetRow(int rowIndex) {
-                return rowIndex + getFirstRowNum();
-            }
-        };
-
+        return Helper.getTableModel(this);
     }
 
     static class PoiHssfSheet extends PoiSheet<
