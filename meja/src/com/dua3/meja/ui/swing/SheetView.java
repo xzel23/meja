@@ -663,7 +663,7 @@ public class SheetView extends JPanel implements Scrollable {
 
         Rectangle cr = getCellRect(cell);
         int paddingX=2;
-        int paddingY=2;
+        int paddingY=1;
         float width = cr.width-2*paddingX-1;
 
         CellStyle style = cell.getCellStyle();
@@ -712,7 +712,7 @@ public class SheetView extends JPanel implements Scrollable {
                 break;
             case ALIGN_BOTTOM:
                 final TextLayout lastLayout = layouts.get(layouts.size()-1);
-                yd = cr.y+cr.height - lastLayout.getDescent()-lastLayout.getAscent()-paddingY;
+                yd = cr.y+cr.height-paddingY - lastLayout.getDescent()-lastLayout.getAscent();
                 break;
             default:
                 throw new IllegalArgumentException();
