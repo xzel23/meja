@@ -17,7 +17,6 @@ package com.dua3.meja.excelviewer;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.meja.ui.swing.WorkbookView;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -31,6 +30,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -103,6 +105,7 @@ public class ApplicationWindow extends JFrame {
     private void createMenu() {
         JMenuBar menuBar = new JMenuBar();
 
+        // File menu
         JMenu mnFile = new JMenu("File");
         mnFile.add(new AbstractAction("Open") {
 
@@ -121,7 +124,59 @@ public class ApplicationWindow extends JFrame {
         });
         menuBar.add(mnFile);
 
+        // Options menu
+        JMenu mnOptions = new JMenu("Options");
+
+        JMenu mnLookAndFeel = new JMenu("Look & Feel");
+        mnLookAndFeel.add(new AbstractAction("System Default") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        });
+        mnLookAndFeel.add(new AbstractAction("Cross Platform") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            }
+        });
+        mnLookAndFeel.addSeparator();
+        for (final UIManager.LookAndFeelInfo lAF : UIManager.getInstalledLookAndFeels()) {
+            mnLookAndFeel.add(new AbstractAction(lAF.getName()) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setLookAndFeel(lAF.getClassName());
+                }
+            });
+        }
+
+        mnOptions.add(mnLookAndFeel);
+
+        menuBar.add(mnOptions);
+
+        // Help menu
+        JMenu mnHelp = new JMenu("Help");
+        mnHelp.add(new AbstractAction("About ...") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = "About "+ExcelViewer.getApplicationName();
+                String msg = ExcelViewer.getLicenseText();
+                JOptionPane.showMessageDialog(ApplicationWindow.this, msg, title, JOptionPane.INFORMATION_MESSAGE, null);
+                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        });
+        menuBar.add(mnHelp);
+
         setJMenuBar(menuBar);
+    }
+
+    private void setLookAndFeel(String lookAndFeelClassName) {
+        try {
+            UIManager.setLookAndFeel(lookAndFeelClassName);
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        SwingUtilities.updateComponentTreeUI(this);
     }
 
     private void createContent() {
@@ -129,7 +184,6 @@ public class ApplicationWindow extends JFrame {
         workbookView = new WorkbookView();
         add(workbookView, BorderLayout.CENTER);
     }
-
 
     /**
      * Close the application window.
@@ -153,32 +207,29 @@ public class ApplicationWindow extends JFrame {
 
         if (rc == JFileChooser.APPROVE_OPTION) {
             final File file = jfc.getSelectedFile();
-
             FileFilter filter = jfc.getFileFilter();
-            if (filter instanceof FilterDef) {
-                final Object factory = ((FilterDef) filter).getFactory();
-                if (!(factory instanceof WorkbookFactory)) {
-                    throw new IllegalStateException("Factory must be instance of WorkbookFactory");
-                }
-                openFile(file, (WorkbookFactory) factory);
-            } else {
-                openFile(file, PoiWorkbookFactory.instance());
-            }
 
+            if (filter instanceof FilterDef) {
+                final WorkbookFactory factory = ((FilterDef) filter).getFactory();
+                openFile(file, factory);
+            } else {
+                openFile(file);
+            }
         }
     }
 
     /**
-     * Open the file.
+     * Open file.
+     *
+     * This method does not propagate IOExceptions. Instead, a message dialog is
+     * shown.
      *
      * @param file the file to open
+     * @param factory the factory to use
      */
-    private void openFile(File file, WorkbookFactory factory) {
+    public void openFile(File file, WorkbookFactory factory) {
         try {
-            setWorkbook(factory.open(file));
-            Logger.getLogger(ApplicationWindow.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", file);
-            setTitle(APPLICATION_NAME+ " - "+file.getName());
-            currentDir=file.getParentFile();
+            doOpenFile(file, factory);
         } catch (IOException ex) {
             Logger.getLogger(ApplicationWindow.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error loading file", JOptionPane.ERROR_MESSAGE);
@@ -186,11 +237,63 @@ public class ApplicationWindow extends JFrame {
     }
 
     /**
+     * Open file.
+     *
+     * @param file the file to open
+     * @param factory the factory to use
+     * @throws IOException
+     */
+    private void doOpenFile(File file, WorkbookFactory factory) throws IOException {
+        setWorkbook(factory.open(file));
+        Logger.getLogger(ApplicationWindow.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", file);
+        setTitle(APPLICATION_NAME + " - " + file.getName());
+        currentDir = file.getParentFile();
+    }
+
+    /**
+     * Open file, trying all available filters.
+     *
+     * This method does not propagate IOExceptions. Instead, a message dialog is
+     * shown.
+     *
+     * @param file the file to open
+     */
+    public void openFile(File file) {
+        try {
+            doOpenFile(file);
+        } catch (IOException ex) {
+            Logger.getLogger(ApplicationWindow.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error loading file", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Open file, trying all available filters.
+     *
+     * @param file the file to open
+     * @throws IOException
+     */
+    private void doOpenFile(File file) throws IOException {
+        for (FilterDef filter : application.getFileFilters(OpenMode.READ)) {
+            try {
+                if (filter.accept(file)) {
+                    doOpenFile(file, filter.getFactory());
+                    return;
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ApplicationWindow.class.getName()).log(Level.WARNING, null, ex);
+            }
+        }
+        throw new IOException("Could not load '" + file.getPath() + "' with any of the available filters.");
+    }
+
+    /**
      * Set the current workbook.
+     *
      * @param workbook
      */
     public void setWorkbook(Workbook workbook) {
-        this.workbook=workbook;
+        this.workbook = workbook;
         workbookView.setWorkbook(workbook);
     }
 
