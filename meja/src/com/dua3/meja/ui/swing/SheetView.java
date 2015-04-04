@@ -27,6 +27,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -50,11 +51,16 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 /**
  *
@@ -88,6 +94,9 @@ public class SheetView extends JPanel implements Scrollable {
 
     private Sheet sheet;
     private Color gridColor = Color.LIGHT_GRAY;
+
+    private boolean showColumnHeader = true;
+    private boolean showRowHeader = true;
 
     /**
      * Horizontal padding.
@@ -342,33 +351,84 @@ public class SheetView extends JPanel implements Scrollable {
      * Update sheet layout data.
      */
     private void update() {
+        // scale according to screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         scale = dpi / 72f;
 
+        // determine sheet dimensions
         if (sheet == null) {
             sheetWidth = 0;
             sheetHeight = 0;
             rowPos = new int[]{0};
             columnPos = new int[]{0};
             return;
+        } else {
+            sheetHeight = 0;
+            rowPos = new int[2 + sheet.getLastRowNum()];
+            rowPos[0] = 0;
+            for (int i = 1; i < rowPos.length; i++) {
+                sheetHeight += Math.round(sheet.getRowHeight(i - 1) * scale);
+                rowPos[i] = sheetHeight;
+            }
+
+            sheetWidth = 0;
+            columnPos = new int[2 + sheet.getLastColNum()];
+            columnPos[0] = 0;
+            for (int j = 1; j < columnPos.length; j++) {
+                sheetWidth += Math.round(sheet.getColumnWidth(j - 1) * scale);
+                columnPos[j] = sheetWidth;
+            }
         }
 
-        sheetHeight = 0;
-        rowPos = new int[2 + sheet.getLastRowNum()];
-        rowPos[0] = 0;
-        for (int i = 1; i < rowPos.length; i++) {
-            sheetHeight += Math.round(sheet.getRowHeight(i - 1) * scale);
-            rowPos[i] = sheetHeight;
-        }
+        // set headers
+        addAncestorListener(new AncestorListener() {
 
-        sheetWidth = 0;
-        columnPos = new int[2 + sheet.getLastColNum()];
-        columnPos[0] = 0;
-        for (int j = 1; j < columnPos.length; j++) {
-            sheetWidth += Math.round(sheet.getColumnWidth(j - 1) * scale);
-            columnPos[j] = sheetWidth;
-        }
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+                addHeadersAsNeeded();
+            }
+
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+                // nop
+            }
+
+            @Override
+            public void ancestorMoved(AncestorEvent event) {
+                // nop
+            }
+        });
+
+        // revalidate the layout
         revalidate();
+    }
+
+    /**
+     * Add custom headers to the JScrollPane the view is displayed in.
+     */
+    private void addHeadersAsNeeded() {
+        Container parent = getParent();
+        if (parent instanceof JViewport) {
+            parent = parent.getParent();
+            if (parent instanceof JScrollPane) {
+                JScrollPane jsp = (JScrollPane) parent;
+                if (showColumnHeader) {
+                    jsp.setColumnHeaderView(new ColumnHeader());
+                } else {
+                    jsp.setColumnHeaderView(null);
+                }
+                if (showRowHeader) {
+                    jsp.setRowHeaderView(new RowHeader());
+                } else {
+                    jsp.setRowHeaderView(null);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void addAncestorListener(AncestorListener listener) {
+        super.addAncestorListener(listener); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -603,7 +663,7 @@ public class SheetView extends JPanel implements Scrollable {
                         // skip the other cells of this row that belong to the same merged region
                         j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
                         // filter out cells that cannot overflow into the visible region
-                        if (j<startColumn&&cell.getCellStyle().isWrap()) {
+                        if (j < startColumn && cell.getCellStyle().isWrap()) {
                             continue;
                         }
                     }
@@ -893,6 +953,19 @@ public class SheetView extends JPanel implements Scrollable {
         return fontCache.get(font);
     }
 
+    public String getColumnName(int j) {
+        StringBuilder sb = new StringBuilder();
+        do {
+            sb.append((char)('A'+(j%25)));
+            j /= 25;
+        } while (j>0);
+        return sb.toString();
+    }
+
+    public String getRowName(int i) {
+        return Integer.toString(i);
+    }
+
     /**
      * Return the current cell.
      *
@@ -935,4 +1008,62 @@ public class SheetView extends JPanel implements Scrollable {
         DRAW_CELL_BACKGROUND, DRAW_CELL_BORDER, DRAW_CELL_FOREGROUND
     }
 
+    class ColumnHeader extends JComponent {
+
+        private final JButton painter;
+
+        public ColumnHeader() {
+            painter = new JButton("A");
+            setPreferredSize(new Dimension(SheetView.this.getPreferredSize().width, painter.getPreferredSize().height));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            int h = getHeight();
+            for (int j=0;j<getNumberOfColumns();j++) {
+                int x = columnPos[j];
+                int w = columnPos[j+1]-x+1;
+                String text = getColumnName(j);
+
+                painter.setBounds(0, 0, w, h);
+                painter.setText(text);
+                painter.paint(g.create(x, 0, w, h));
+            }
+        }
+
+    }
+
+    class RowHeader extends JComponent {
+
+        private final JButton painter;
+
+        public RowHeader() {
+            // create a string with the maximum number of digits needed to
+            // represent the highest row number (use a string only consisting
+            // of zeroes instead of the last row number because a proportional
+            // font might be used)
+            StringBuilder sb = new StringBuilder();
+            for (int i=1; i<=getNumberOfRows(); i*=10) {
+                sb.append('0');
+
+            }
+            painter = new JButton(sb.toString());
+            setPreferredSize(new Dimension(painter.getPreferredSize().width, SheetView.this.getPreferredSize().height));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            int w = getWidth();
+            for (int i=0;i<getNumberOfRows();i++) {
+                int y = rowPos[i];
+                int h = rowPos[i+1]-y+1;
+                String text = getRowName(i);
+
+                painter.setBounds(0, 0, w, h);
+                painter.setText(text);
+                painter.paint(g.create(0, y, w, h));
+            }
+        }
+
+    }
 }
