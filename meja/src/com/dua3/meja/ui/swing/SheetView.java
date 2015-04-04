@@ -86,13 +86,40 @@ public class SheetView extends JPanel implements Scrollable {
 
     private Sheet sheet;
     private Color gridColor = Color.LIGHT_GRAY;
+
+    /**
+     * Horizontal padding.
+     */
+    private final int paddingX = 2;
+    /**
+     * Vertical padding.
+     */
+    private final int paddingY = 1;
+
+    /**
+     * Color used to draw the selection rectangle.
+     */
     private Color selectionColor = Color.BLACK;
 
+    /**
+     * Width of the selection rectangle borders.
+     */
     private final int selectionStrokeWidth = 4;
+
+    /**
+     * Stroke used to draw the selection rectangle.
+     */
     private Stroke selectionStroke = getStroke((float) selectionStrokeWidth);
 
+    /**
+     * Active clip bounds when drawing.
+     */
     private final Rectangle clipBounds = new Rectangle();
 
+    /**
+     * Move the selection rectangle to an adjacent cell.
+     * @param d direction
+     */
     private void move(Direction d) {
         Cell cell = getCurrentCell().getLogicalCell();
 
@@ -114,6 +141,10 @@ public class SheetView extends JPanel implements Scrollable {
         scrollToCurrentCell();
     }
 
+    /**
+     * Get display coordinates of selection rectangle.
+     * @return selection rectangle in display coordinates
+     */
     private Rectangle getSelectionRect() {
         Rectangle cellRect = getCellRect(getCurrentCell().getLogicalCell());
         int extra = (selectionStrokeWidth + 1) / 2;
@@ -125,7 +156,7 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     public void scrollToCurrentCell() {
-        ensureCellIsVisibile(getCurrentCell());
+        ensureCellIsVisibile(getCurrentCell().getLogicalCell());
     }
 
     public void ensureCellIsVisibile(Cell cell) {
@@ -667,8 +698,6 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        int paddingX = 2;
-        int paddingY = 1;
         Rectangle cr = getCellRect(cell);
         cr.x += paddingX;
         cr.width -= 2 * paddingX - 1;
