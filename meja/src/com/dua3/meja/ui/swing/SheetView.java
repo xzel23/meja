@@ -35,6 +35,8 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextLayout;
@@ -155,10 +157,17 @@ public class SheetView extends JPanel implements Scrollable {
         return cellRect;
     }
 
+    /**
+     * Scroll the currently selected cell into view.
+     */
     public void scrollToCurrentCell() {
         ensureCellIsVisibile(getCurrentCell().getLogicalCell());
     }
 
+    /**
+     * Scroll cell into view.
+     * @param cell the cell to scroll to
+     */
     public void ensureCellIsVisibile(Cell cell) {
         scrollRectToVisible(getCellRect(cell));
     }
@@ -180,18 +189,7 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     public void setCurrentRowNum(int rowNum) {
-        int oldRowNum = currentRowNum;
-        int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
-        if (newRowNum != oldRowNum) {
-            // get old selection for repainting
-            Rectangle oldRect = getSelectionRect();
-            // update current position
-            currentRowNum = newRowNum;
-            // get new selection for repainting
-            Rectangle newRect = getSelectionRect();
-            repaint(oldRect);
-            repaint(newRect);
-        }
+        setCurrent(rowNum, currentColNum);
     }
 
     public int getCurrentColNum() {
@@ -199,12 +197,19 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     public void setCurrentColNum(int colNum) {
+        setCurrent(currentRowNum, colNum);
+    }
+
+    public void setCurrent(int rowNum, int colNum) {
+        int oldRowNum = currentRowNum;
+        int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
         int oldColNum = currentColNum;
         int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
-        if (newColNum != oldColNum) {
+        if (newRowNum != oldRowNum || newColNum != oldColNum) {
             // get old selection for repainting
             Rectangle oldRect = getSelectionRect();
             // update current position
+            currentRowNum = newRowNum;
             currentColNum = newColNum;
             // get new selection for repainting
             Rectangle newRect = getSelectionRect();
@@ -280,6 +285,7 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     private void init() {
+        // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
         getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_UP, 0), Actions.MOVE_UP);
@@ -295,6 +301,18 @@ public class SheetView extends JPanel implements Scrollable {
             actionMap.put(action, action.getAction(this));
         }
 
+        // listen to mouse events
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int row = getRowNumberFromY(e.getY());
+                int col = getColumnNumberFromX(e.getX());
+                setCurrent(row, col);
+                requestFocusInWindow();
+            }
+        });
+
+        // make focusable
         setFocusable(true);
         requestFocusInWindow();
     }
@@ -347,6 +365,7 @@ public class SheetView extends JPanel implements Scrollable {
             sheetWidth += Math.round(sheet.getColumnWidth(j - 1) * scale);
             columnPos[j] = sheetWidth;
         }
+        revalidate();
     }
 
     @Override
@@ -529,6 +548,12 @@ public class SheetView extends JPanel implements Scrollable {
             }
             g.drawLine(gridX, minY, gridX, maxY);
         }
+    }
+
+    void setCurrentCell(Cell cell) {
+        int rowNumber = cell.getRowNumber();
+        int colNumber = cell.getColumnNumber();
+        setCurrentColNum(colNumber);
     }
 
     void drawCells(Graphics2D g, CellDrawMode cellDrawMode) {
