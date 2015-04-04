@@ -30,4 +30,4 @@ Méja is released under the [Apache License 2.0](http://www.apache.org/licenses/
 
 *But my table still doesn't look the same as in Excel!* Just grab the code, I am looking forward for your contribution.
 
-*And what about the name?* This library is about tables, and it's about working with tables in Java. So I chose called it after the javanese word for the furniture. (Normally, it is written without accent, but found it to look more interesting like this...)
+*And what about the name?* This library is about tables, and it's about working with tables in Java. So I called it after the javanese word for the furniture. (Normally, it is written without accent, but found it to look more interesting like this...)
