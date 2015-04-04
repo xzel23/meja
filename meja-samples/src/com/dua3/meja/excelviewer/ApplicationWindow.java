@@ -151,7 +151,21 @@ public class ApplicationWindow extends JFrame {
         }
 
         mnOptions.add(mnLookAndFeel);
+
         menuBar.add(mnOptions);
+
+        // Help menu
+        JMenu mnHelp = new JMenu("Help");
+        mnHelp.add(new AbstractAction("About ...") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = "About "+ExcelViewer.getApplicationName();
+                String msg = ExcelViewer.getLicenseText();
+                JOptionPane.showMessageDialog(ApplicationWindow.this, msg, title, JOptionPane.INFORMATION_MESSAGE, null);
+                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        });
+        menuBar.add(mnHelp);
 
         setJMenuBar(menuBar);
     }

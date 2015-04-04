@@ -83,9 +83,17 @@ public class ExcelViewer {
         }
     }
 
+    public static String getApplicationName() {
+        return PROGRAM_NAME;
+    }
+
+    public static String getLicenseText() {
+        return String.format(LICENSE, YEAR, AUTHOR);
+    }
+
     private static void info() {
-        System.out.format("%s%n%n", PROGRAM_NAME);
-        System.out.format(LICENSE, YEAR, AUTHOR);
+
+        System.out.format("%s%n%n%s%n", getApplicationName(), getLicenseText());
     }
 
     private FilterDef[] filters = {
