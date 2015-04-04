@@ -81,7 +81,7 @@ public class GenericSheet implements Sheet {
 
     @Override
     public double getColumnWidth(int colNum) {
-        throw new UnsupportedOperationExceptioncol("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
