@@ -30,6 +30,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -102,6 +105,7 @@ public class ApplicationWindow extends JFrame {
     private void createMenu() {
         JMenuBar menuBar = new JMenuBar();
 
+        // File menu
         JMenu mnFile = new JMenu("File");
         mnFile.add(new AbstractAction("Open") {
 
@@ -120,7 +124,45 @@ public class ApplicationWindow extends JFrame {
         });
         menuBar.add(mnFile);
 
+        // Options menu
+        JMenu mnOptions = new JMenu("Options");
+
+        JMenu mnLookAndFeel = new JMenu("Look & Feel");
+        mnLookAndFeel.add(new AbstractAction("System Default") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        });
+        mnLookAndFeel.add(new AbstractAction("Cross Platform") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            }
+        });
+        mnLookAndFeel.addSeparator();
+        for (final UIManager.LookAndFeelInfo lAF : UIManager.getInstalledLookAndFeels()) {
+            mnLookAndFeel.add(new AbstractAction(lAF.getName()) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setLookAndFeel(lAF.getClassName());
+                }
+            });
+        }
+
+        mnOptions.add(mnLookAndFeel);
+        menuBar.add(mnOptions);
+
         setJMenuBar(menuBar);
+    }
+
+    private void setLookAndFeel(String lookAndFeelClassName) {
+        try {
+            UIManager.setLookAndFeel(lookAndFeelClassName);
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        SwingUtilities.updateComponentTreeUI(this);
     }
 
     private void createContent() {
