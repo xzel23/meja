@@ -1030,7 +1030,7 @@ public class SheetView extends JPanel implements Scrollable {
             int endCol = Math.min(1+getColumnNumberFromX(clipBounds.x+clipBounds.width), getNumberOfColumns());
             for (int j=startCol;j<endCol;j++) {
                 int x = columnPos[j];
-                int w = columnPos[j+1]-x+1;
+                int w = columnPos[j+1]-x;
                 String text = getColumnName(j);
 
                 painter.setBounds(0, 0, w, h);
@@ -1071,9 +1071,9 @@ public class SheetView extends JPanel implements Scrollable {
             int endRow = Math.min(1+getRowNumberFromY(clipBounds.y+clipBounds.height), getNumberOfRows());
             for (int i=startRow;i<endRow;i++) {
                 int y = rowPos[i];
-                int h = rowPos[i+1]-y+1;
+                int h = rowPos[i+1]-y;
                 String text = getRowName(i);
-
+                
                 painter.setBounds(0, 0, w, h);
                 painter.setText(text);
                 painter.paint(g.create(0, y, w, h));
