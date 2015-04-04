@@ -42,11 +42,8 @@ import java.awt.geom.AffineTransform;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -456,11 +453,9 @@ public class SheetView extends JPanel implements Scrollable {
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
         drawGrid(g2d);
-
-        Collection<Cell> cells = determineCellsToDraw(g);
-        drawCells(g2d, cells, CellDrawMode.DRAW_CELL_BACKGROUND);
-        drawCells(g2d, cells, CellDrawMode.DRAW_CELL_BORDER);
-        drawCells(g2d, cells, CellDrawMode.DRAW_CELL_FOREGROUND);
+        drawCells(g2d, CellDrawMode.DRAW_CELL_BACKGROUND);
+        drawCells(g2d, CellDrawMode.DRAW_CELL_BORDER);
+        drawCells(g2d, CellDrawMode.DRAW_CELL_FOREGROUND);
         drawSelection(g2d);
     }
 
@@ -504,10 +499,10 @@ public class SheetView extends JPanel implements Scrollable {
         }
     }
 
-    Collection<Cell> determineCellsToDraw(Graphics g) {
+    void drawCells(Graphics2D g, CellDrawMode cellDrawMode) {
         // no sheet, no drawing
         if (sheet==null) {
-            return Collections.emptyList();
+            return;
         }
 
         // determine visible rows and columns
@@ -515,8 +510,6 @@ public class SheetView extends JPanel implements Scrollable {
         int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height));
         int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x));
         int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width));
-
-        Set<Cell> cells = new HashSet<>();
 
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
@@ -530,32 +523,37 @@ public class SheetView extends JPanel implements Scrollable {
                 Cell cell = row.getCell(j);
 
                 if (cell != null) {
-                    cells.add(cell.getLogicalCell());
+                    Cell logicalCell = cell.getLogicalCell();
+
+                    final boolean visible;
+                    if (cell==logicalCell) {
+                        // if cell is not merged or the topleft cell of the
+                        // merged region, then it is visible
+                        visible = true;
+                    } else {
+                        // otherwise calculate row and column numbers of the
+                        // first visible cell of the merged region
+                        int iCell = Math.max(i, logicalCell.getRowNumber());
+                        int jCell = Math.max(j, logicalCell.getColumnNumber());
+                        visible = i==iCell && j==jCell;
+                    }
+
+                    // draw cell
+                    if (visible) {
+                        switch (cellDrawMode) {
+                            case DRAW_CELL_BACKGROUND:
+                                drawCellBackground(g, logicalCell);
+                                break;
+                            case DRAW_CELL_BORDER:
+                                drawCellBorder(g, logicalCell);
+                                break;
+                            case DRAW_CELL_FOREGROUND:
+                                drawCellForeground(g, logicalCell);
+                                break;
+                        }
+                    }
                 }
-            }
-        }
 
-        return cells;
-    }
-
-    /**
-     * Draw cells.
-     *
-     * Depending on {@code cellDrawMode}, either background, border or
-     * foreground is drawn.
-     */
-    private void drawCells(Graphics2D g, Collection<Cell> cells, CellDrawMode cellDrawMode) {
-        for (Cell cell : cells) {
-            switch (cellDrawMode) {
-                case DRAW_CELL_BACKGROUND:
-                    drawCellBackground(g, cell);
-                    break;
-                case DRAW_CELL_BORDER:
-                    drawCellBorder(g, cell);
-                    break;
-                case DRAW_CELL_FOREGROUND:
-                    drawCellForeground(g, cell);
-                    break;
             }
         }
     }
