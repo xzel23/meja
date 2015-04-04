@@ -120,6 +120,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Move the selection rectangle to an adjacent cell.
+     *
      * @param d direction
      */
     private void move(Direction d) {
@@ -145,6 +146,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Get display coordinates of selection rectangle.
+     *
      * @return selection rectangle in display coordinates
      */
     private Rectangle getSelectionRect() {
@@ -166,6 +168,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Scroll cell into view.
+     *
      * @param cell the cell to scroll to
      */
     public void ensureCellIsVisibile(Cell cell) {
@@ -177,9 +180,9 @@ public class SheetView extends JPanel implements Scrollable {
         final int j = cell.getColumnNumber();
 
         final int y = rowPos[i];
-        final int h = rowPos[i + cell.getVerticalSpan()] - y;
+        final int h = rowPos[i + cell.getVerticalSpan()] - y + 1;
         final int x = columnPos[j];
-        final int w = columnPos[cell.getColumnNumber() + cell.getHorizontalSpan()] - x;
+        final int w = columnPos[cell.getColumnNumber() + cell.getHorizontalSpan()] - x + 1;
 
         return new Rectangle(x, y, w, h);
     }
