@@ -15,10 +15,40 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Row;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Axel Howind <axel@dua3.com>
  */
-public class GenericRow {
+public class GenericRow implements Row {
+
+    private final GenericSheet sheet;
+    private final List<GenericCell> cells = new ArrayList<>();
+
+    public GenericRow(GenericSheet sheet) {
+        this.sheet = sheet;
+        reserve(sheet.getNumberOfColumns());
+    }
+
+    @Override
+    public GenericSheet getSheet() {
+        return sheet;
+    }
+
+    @Override
+    public Cell getCell(int col) {
+        reserve(col);
+        return cells.get(col);
+    }
+
+    private void reserve(int col) {
+        for (int colNum=cells.size(); colNum<=col; colNum++) {
+            cells.add(new GenericCell(this));
+        }
+    }
 
 }
