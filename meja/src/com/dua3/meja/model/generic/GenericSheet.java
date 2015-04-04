@@ -20,6 +20,8 @@ import com.dua3.meja.model.Helper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.TableModel;
 
 /**
@@ -30,6 +32,7 @@ public class GenericSheet implements Sheet {
 
     private final GenericWorkbook workbook;
     private String sheetName;
+    private final List<GenericRow> rows = new ArrayList<>();
 
     public GenericSheet(GenericWorkbook workbook, String sheetName) {
         this.workbook = workbook;
@@ -48,22 +51,22 @@ public class GenericSheet implements Sheet {
 
     @Override
     public int getFirstColNum() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     @Override
     public int getFirstRowNum() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return 0;
     }
 
     @Override
     public int getLastColNum() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getNumberOfColumns()-1;
     }
 
     @Override
     public int getLastRowNum() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getNumberOfRows()-1;
     }
 
     @Override
@@ -73,12 +76,12 @@ public class GenericSheet implements Sheet {
 
     @Override
     public int getNumberOfRows() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return rows.size();
     }
 
     @Override
     public double getColumnWidth(int colNum) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationExceptioncol("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -93,7 +96,14 @@ public class GenericSheet implements Sheet {
 
     @Override
     public Row getRow(int row) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        reserve(row);
+        return rows.get(row);
+    }
+
+    private void reserve(int row) {
+        for (int rowNum=rows.size(); rowNum<=row; rowNum++) {
+            rows.add(new GenericRow(this));
+        }
     }
 
     @Override
