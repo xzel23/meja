@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.meja.model.WorkbookFactory;
 import java.io.File;
 import java.io.FileFilter;
 
@@ -62,8 +63,8 @@ public class FilterDef extends javax.swing.filechooser.FileFilter implements Fil
         return description;
     }
 
-    public Object getFactory() {
-        return factory;
+    public WorkbookFactory getFactory() {
+        return (WorkbookFactory) factory;
     }
 
 }

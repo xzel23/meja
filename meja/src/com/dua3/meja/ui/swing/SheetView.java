@@ -602,6 +602,10 @@ public class SheetView extends JPanel implements Scrollable {
                         visible = i == iCell && j == jCell;
                         // skip the other cells of this row that belong to the same merged region
                         j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
+                        // filter out cells that cannot overflow into the visible region
+                        if (j<startColumn&&cell.getCellStyle().isWrap()) {
+                            continue;
+                        }
                     }
 
                     // draw cell

@@ -17,7 +17,6 @@ package com.dua3.meja.excelviewer;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.meja.ui.swing.WorkbookView;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -130,7 +129,6 @@ public class ApplicationWindow extends JFrame {
         add(workbookView, BorderLayout.CENTER);
     }
 
-
     /**
      * Close the application window.
      */
@@ -153,32 +151,29 @@ public class ApplicationWindow extends JFrame {
 
         if (rc == JFileChooser.APPROVE_OPTION) {
             final File file = jfc.getSelectedFile();
-
             FileFilter filter = jfc.getFileFilter();
-            if (filter instanceof FilterDef) {
-                final Object factory = ((FilterDef) filter).getFactory();
-                if (!(factory instanceof WorkbookFactory)) {
-                    throw new IllegalStateException("Factory must be instance of WorkbookFactory");
-                }
-                openFile(file, (WorkbookFactory) factory);
-            } else {
-                openFile(file, PoiWorkbookFactory.instance());
-            }
 
+            if (filter instanceof FilterDef) {
+                final WorkbookFactory factory = ((FilterDef) filter).getFactory();
+                openFile(file, factory);
+            } else {
+                openFile(file);
+            }
         }
     }
 
     /**
-     * Open the file.
+     * Open file.
+     *
+     * This method does not propagate IOExceptions. Instead, a message dialog is
+     * shown.
      *
      * @param file the file to open
+     * @param factory the factory to use
      */
-    private void openFile(File file, WorkbookFactory factory) {
+    public void openFile(File file, WorkbookFactory factory) {
         try {
-            setWorkbook(factory.open(file));
-            Logger.getLogger(ApplicationWindow.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", file);
-            setTitle(APPLICATION_NAME+ " - "+file.getName());
-            currentDir=file.getParentFile();
+            doOpenFile(file, factory);
         } catch (IOException ex) {
             Logger.getLogger(ApplicationWindow.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error loading file", JOptionPane.ERROR_MESSAGE);
@@ -186,11 +181,63 @@ public class ApplicationWindow extends JFrame {
     }
 
     /**
+     * Open file.
+     *
+     * @param file the file to open
+     * @param factory the factory to use
+     * @throws IOException
+     */
+    private void doOpenFile(File file, WorkbookFactory factory) throws IOException {
+        setWorkbook(factory.open(file));
+        Logger.getLogger(ApplicationWindow.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", file);
+        setTitle(APPLICATION_NAME + " - " + file.getName());
+        currentDir = file.getParentFile();
+    }
+
+    /**
+     * Open file, trying all available filters.
+     *
+     * This method does not propagate IOExceptions. Instead, a message dialog is
+     * shown.
+     *
+     * @param file the file to open
+     */
+    public void openFile(File file) {
+        try {
+            doOpenFile(file);
+        } catch (IOException ex) {
+            Logger.getLogger(ApplicationWindow.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error loading file", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Open file, trying all available filters.
+     *
+     * @param file the file to open
+     * @throws IOException
+     */
+    private void doOpenFile(File file) throws IOException {
+        for (FilterDef filter : application.getFileFilters(OpenMode.READ)) {
+            try {
+                if (filter.accept(file)) {
+                    doOpenFile(file, filter.getFactory());
+                    return;
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ApplicationWindow.class.getName()).log(Level.WARNING, null, ex);
+            }
+        }
+        throw new IOException("Could not load '" + file.getPath() + "' with any of the available filters.");
+    }
+
+    /**
      * Set the current workbook.
+     *
      * @param workbook
      */
     public void setWorkbook(Workbook workbook) {
-        this.workbook=workbook;
+        this.workbook = workbook;
         workbookView.setWorkbook(workbook);
     }
 
