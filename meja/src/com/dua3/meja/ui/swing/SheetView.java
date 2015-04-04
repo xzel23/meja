@@ -50,9 +50,10 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
+import javax.swing.BorderFactory;
 import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
@@ -1010,17 +1011,24 @@ public class SheetView extends JPanel implements Scrollable {
 
     class ColumnHeader extends JComponent {
 
-        private final JButton painter;
+        private final JLabel painter;
 
         public ColumnHeader() {
-            painter = new JButton("A");
+            painter = new JLabel("A");
+            painter.setHorizontalAlignment(SwingConstants.CENTER);
+            painter.setVerticalAlignment(SwingConstants.CENTER);
+            painter.setBorder(BorderFactory.createRaisedBevelBorder());
             setPreferredSize(new Dimension(SheetView.this.getPreferredSize().width, painter.getPreferredSize().height));
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             int h = getHeight();
-            for (int j=0;j<getNumberOfColumns();j++) {
+
+            Rectangle clipBounds = g.getClipBounds();
+            int startCol = Math.max(0, getColumnNumberFromX(clipBounds.x));
+            int endCol = Math.min(1+getColumnNumberFromX(clipBounds.x+clipBounds.width), getNumberOfColumns());
+            for (int j=startCol;j<endCol;j++) {
                 int x = columnPos[j];
                 int w = columnPos[j+1]-x+1;
                 String text = getColumnName(j);
@@ -1035,7 +1043,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     class RowHeader extends JComponent {
 
-        private final JButton painter;
+        private final JLabel painter;
 
         public RowHeader() {
             // create a string with the maximum number of digits needed to
@@ -1047,14 +1055,21 @@ public class SheetView extends JPanel implements Scrollable {
                 sb.append('0');
 
             }
-            painter = new JButton(sb.toString());
+            painter = new JLabel(sb.toString());
+            painter.setHorizontalAlignment(SwingConstants.RIGHT);
+            painter.setVerticalAlignment(SwingConstants.CENTER);
+            painter.setBorder(BorderFactory.createRaisedBevelBorder());
             setPreferredSize(new Dimension(painter.getPreferredSize().width, SheetView.this.getPreferredSize().height));
         }
 
         @Override
         protected void paintComponent(Graphics g) {
             int w = getWidth();
-            for (int i=0;i<getNumberOfRows();i++) {
+
+            Rectangle clipBounds = g.getClipBounds();
+            int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
+            int endRow = Math.min(1+getRowNumberFromY(clipBounds.y+clipBounds.height), getNumberOfRows());
+            for (int i=startRow;i<endRow;i++) {
                 int y = rowPos[i];
                 int h = rowPos[i+1]-y+1;
                 String text = getRowName(i);
