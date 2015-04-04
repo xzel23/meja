@@ -88,8 +88,8 @@ public class SheetView extends JPanel implements Scrollable {
     private Color gridColor = Color.LIGHT_GRAY;
     private Color selectionColor = Color.BLACK;
 
-    private final int selectionStrokeWidth=4;
-    private Stroke selectionStroke = getStroke((float)selectionStrokeWidth);
+    private final int selectionStrokeWidth = 4;
+    private Stroke selectionStroke = getStroke((float) selectionStrokeWidth);
 
     private final Rectangle clipBounds = new Rectangle();
 
@@ -98,16 +98,16 @@ public class SheetView extends JPanel implements Scrollable {
 
         switch (d) {
             case NORTH:
-                setCurrentRowNum(cell.getRowNumber()-1);
+                setCurrentRowNum(cell.getRowNumber() - 1);
                 break;
             case SOUTH:
-                setCurrentRowNum(cell.getRowNumber()+cell.getVerticalSpan());
+                setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
                 break;
             case WEST:
-                setCurrentColNum(cell.getColumnNumber()-1);
+                setCurrentColNum(cell.getColumnNumber() - 1);
                 break;
             case EAST:
-                setCurrentColNum(cell.getColumnNumber()+cell.getHorizontalSpan());
+                setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
                 break;
         }
 
@@ -116,11 +116,11 @@ public class SheetView extends JPanel implements Scrollable {
 
     private Rectangle getSelectionRect() {
         Rectangle cellRect = getCellRect(getCurrentCell().getLogicalCell());
-        int extra = (selectionStrokeWidth+1)/2;
-        cellRect.x-=extra;
-        cellRect.y-=extra;
-        cellRect.width+=2*extra;
-        cellRect.height+=2*extra;
+        int extra = (selectionStrokeWidth + 1) / 2;
+        cellRect.x -= extra;
+        cellRect.y -= extra;
+        cellRect.width += 2 * extra;
+        cellRect.height += 2 * extra;
         return cellRect;
     }
 
@@ -151,7 +151,7 @@ public class SheetView extends JPanel implements Scrollable {
     public void setCurrentRowNum(int rowNum) {
         int oldRowNum = currentRowNum;
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
-        if (newRowNum!=oldRowNum) {
+        if (newRowNum != oldRowNum) {
             // get old selection for repainting
             Rectangle oldRect = getSelectionRect();
             // update current position
@@ -170,7 +170,7 @@ public class SheetView extends JPanel implements Scrollable {
     public void setCurrentColNum(int colNum) {
         int oldColNum = currentColNum;
         int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
-        if (newColNum!=oldColNum) {
+        if (newColNum != oldColNum) {
             // get old selection for repainting
             Rectangle oldRect = getSelectionRect();
             // update current position
@@ -183,50 +183,51 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     static enum Actions {
+
         MOVE_UP {
-            @Override
-            public Action getAction(final SheetView view) {
-                return new AbstractAction("MOVE_UP") {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.NORTH);
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_UP") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.move(Direction.NORTH);
+                            }
+                        };
                     }
-                };
-            }
-        },
+                },
         MOVE_DOWN {
-            @Override
-            public Action getAction(final SheetView view) {
-                return new AbstractAction("MOVE_DOWN") {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.SOUTH);
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_DOWN") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.move(Direction.SOUTH);
+                            }
+                        };
                     }
-                };
-            }
-        },
+                },
         MOVE_LEFT {
-            @Override
-            public Action getAction(final SheetView view) {
-                return new AbstractAction("MOVE_LEFT") {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.WEST);
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_LEFT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.move(Direction.WEST);
+                            }
+                        };
                     }
-                };
-            }
-        },
+                },
         MOVE_RIGHT {
-            @Override
-            public Action getAction(final SheetView view) {
-                return new AbstractAction("MOVE_RIGHT") {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.EAST);
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_RIGHT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.move(Direction.EAST);
+                            }
+                        };
                     }
                 };
-            }
-        };
 
         abstract Action getAction(SheetView view);
     }
@@ -259,7 +260,7 @@ public class SheetView extends JPanel implements Scrollable {
         getInputMap().put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
 
         final ActionMap actionMap = getActionMap();
-        for (Actions action: Actions.values()) {
+        for (Actions action : Actions.values()) {
             actionMap.put(action, action.getAction(this));
         }
 
@@ -292,11 +293,11 @@ public class SheetView extends JPanel implements Scrollable {
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         scale = dpi / 72f;
 
-        if (sheet==null) {
+        if (sheet == null) {
             sheetWidth = 0;
             sheetHeight = 0;
-            rowPos=new int[] { 0 };
-            columnPos=new int[] { 0 };
+            rowPos = new int[]{0};
+            columnPos = new int[]{0};
             return;
         }
 
@@ -468,17 +469,17 @@ public class SheetView extends JPanel implements Scrollable {
         g.setColor(gridColor);
 
         final int minY = clipBounds.y;
-        final int maxY = clipBounds.y+clipBounds.height;
+        final int maxY = clipBounds.y + clipBounds.height;
         final int minX = clipBounds.x;
-        final int maxX = clipBounds.x+clipBounds.width;
+        final int maxX = clipBounds.x + clipBounds.width;
 
         // draw horizontal grid lines
-        for (int gridY: rowPos) {
-            if (gridY<minY) {
+        for (int gridY : rowPos) {
+            if (gridY < minY) {
                 // visible region not reached
                 continue;
             }
-            if (gridY>maxY) {
+            if (gridY > maxY) {
                 // out of visible region
                 break;
             }
@@ -486,12 +487,12 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         // draw vertical grid lines
-        for (int gridX: columnPos) {
-            if (gridX<minX) {
+        for (int gridX : columnPos) {
+            if (gridX < minX) {
                 // visible region not reached
                 continue;
             }
-            if (gridX>maxX) {
+            if (gridX > maxX) {
                 // out of visible region
                 break;
             }
@@ -501,19 +502,19 @@ public class SheetView extends JPanel implements Scrollable {
 
     void drawCells(Graphics2D g, CellDrawMode cellDrawMode) {
         // no sheet, no drawing
-        if (sheet==null) {
+        if (sheet == null) {
             return;
         }
 
         // since text can overflow into other cells, add a margin of cells to be
         // drawn that normally aren't visible when drawing foreground
-        int extra = cellDrawMode==CellDrawMode.DRAW_CELL_FOREGROUND ? 10: 0;
+        int extra = cellDrawMode == CellDrawMode.DRAW_CELL_FOREGROUND ? 10 : 0;
 
         // determine visible rows and columns
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y)-extra);
-        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height)+extra);
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x)-extra);
-        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width)+extra);
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y) - extra);
+        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height) + extra);
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x) - extra);
+        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width) + extra);
 
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
@@ -530,7 +531,7 @@ public class SheetView extends JPanel implements Scrollable {
                     Cell logicalCell = cell.getLogicalCell();
 
                     final boolean visible;
-                    if (cell==logicalCell) {
+                    if (cell == logicalCell) {
                         // if cell is not merged or the topleft cell of the
                         // merged region, then it is visible
                         visible = true;
@@ -539,7 +540,9 @@ public class SheetView extends JPanel implements Scrollable {
                         // first visible cell of the merged region
                         int iCell = Math.max(i, logicalCell.getRowNumber());
                         int jCell = Math.max(j, logicalCell.getColumnNumber());
-                        visible = i==iCell && j==jCell;
+                        visible = i == iCell && j == jCell;
+                        // skip the other cells of this row that belong to the same merged region
+                        j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
                     }
 
                     // draw cell
@@ -626,7 +629,7 @@ public class SheetView extends JPanel implements Scrollable {
             }
 
             g.setColor(color);
-            g.setStroke(getStroke(b.getWidth()*scale));
+            g.setStroke(getStroke(b.getWidth() * scale));
             switch (d) {
                 case NORTH:
                     g.drawLine(cr.x, cr.y, cr.x + cr.width - 1, cr.y);
@@ -664,15 +667,15 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        int paddingX=2;
-        int paddingY=1;
+        int paddingX = 2;
+        int paddingY = 1;
         Rectangle cr = getCellRect(cell);
-        cr.x+=paddingX;
-        cr.width-=2*paddingX-1;
-        cr.y+=paddingY;
-        cr.height-=2*paddingY;
+        cr.x += paddingX;
+        cr.width -= 2 * paddingX - 1;
+        cr.y += paddingY;
+        cr.height -= 2 * paddingY;
 
-        float width = cr.width/scale;
+        float width = cr.width / scale;
 
         CellStyle style = cell.getCellStyle();
         Font font = style.getFont();
@@ -694,9 +697,9 @@ public class SheetView extends JPanel implements Scrollable {
         // determine size of text
         float textWidth = 0;
         float textHeight = 0;
-        for (TextLayout layout: layouts) {
-            textWidth=Math.max(textWidth, scale*layout.getVisibleAdvance());
-            textHeight += scale*(layout.getAscent()+layout.getDescent() + layout.getLeading());
+        for (TextLayout layout : layouts) {
+            textWidth = Math.max(textWidth, scale * layout.getVisibleAdvance());
+            textHeight += scale * (layout.getAscent() + layout.getDescent() + layout.getLeading());
         }
 
         // calculate text position
@@ -707,10 +710,10 @@ public class SheetView extends JPanel implements Scrollable {
                 xd = cr.x;
                 break;
             case ALIGN_CENTER:
-                xd = (float) (cr.x+(cr.width - textWidth) / 2.0);
+                xd = (float) (cr.x + (cr.width - textWidth) / 2.0);
                 break;
             case ALIGN_RIGHT:
-                xd = cr.x+cr.width - textWidth;
+                xd = cr.x + cr.width - textWidth;
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -721,11 +724,11 @@ public class SheetView extends JPanel implements Scrollable {
                 yd = cr.y;
                 break;
             case ALIGN_MIDDLE:
-                yd = (float) (cr.y+(cr.height - textHeight-scale*layouts.get(layouts.size()-1).getLeading()) / 2.0);
+                yd = (float) (cr.y + (cr.height - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2.0);
                 break;
             case ALIGN_BOTTOM:
-                final TextLayout lastLayout = layouts.get(layouts.size()-1);
-                yd = cr.y+cr.height - scale*(lastLayout.getDescent()+lastLayout.getAscent());
+                final TextLayout lastLayout = layouts.get(layouts.size() - 1);
+                yd = cr.y + cr.height - scale * (lastLayout.getDescent() + lastLayout.getAscent());
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -737,7 +740,7 @@ public class SheetView extends JPanel implements Scrollable {
         g.scale(scale, scale);
 
         float drawPosY = 0;
-        for (TextLayout layout: layouts) {
+        for (TextLayout layout : layouts) {
             // Compute pen x position. If the paragraph
             // is right-to-left we will align the
             // TextLayouts to the right edge of the panel.
@@ -760,9 +763,9 @@ public class SheetView extends JPanel implements Scrollable {
 
     private List<TextLayout> prepareText(Graphics2D g, FontRenderContext frc, AttributedCharacterIterator text, float width) {
 
-        if (width<=0) {
+        if (width <= 0) {
             // no width is given, so no wrapping will be applied.
-            return Collections.singletonList(new TextLayout(text,frc));
+            return Collections.singletonList(new TextLayout(text, frc));
         }
 
         AttributedCharacterIterator paragraph = text;
@@ -784,17 +787,16 @@ public class SheetView extends JPanel implements Scrollable {
             // Compute pen x position. If the paragraph
             // is right-to-left we will align the
             // TextLayouts to the right edge of the panel.
-
             // Move y-coordinate by the ascent of the
             // layout.
-            drawPosY += scale*layout.getAscent();
+            drawPosY += scale * layout.getAscent();
 
             // Draw the TextLayout at (drawPosX,drawPosY).
             tls.add(layout);
 
             // Move y-coordinate in preparation for next
             // layout.
-            drawPosY += scale*(layout.getDescent() + layout.getLeading());
+            drawPosY += scale * (layout.getDescent() + layout.getLeading());
         }
         return tls;
     }
@@ -832,6 +834,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Return the current cell.
+     *
      * @return current cell
      */
     private Cell getCurrentCell() {
@@ -840,17 +843,18 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Draw frame around current selection.
+     *
      * @param g2d graphics used for drawing
      */
     private void drawSelection(Graphics2D g2d) {
         // no sheet, no drawing
-        if (sheet==null) {
+        if (sheet == null) {
             return;
         }
 
         Cell logicalCell = getCurrentCell().getLogicalCell();
 
-        int rowNum =logicalCell.getRowNumber();
+        int rowNum = logicalCell.getRowNumber();
         int colNum = logicalCell.getColumnNumber();
         int spanX = logicalCell.getHorizontalSpan();
         int spanY = logicalCell.getVerticalSpan();
@@ -866,6 +870,7 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     protected static enum CellDrawMode {
+
         DRAW_CELL_BACKGROUND, DRAW_CELL_BORDER, DRAW_CELL_FOREGROUND
     }
 
