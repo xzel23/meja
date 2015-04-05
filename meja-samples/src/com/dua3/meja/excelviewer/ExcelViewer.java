@@ -92,7 +92,6 @@ public class ExcelViewer {
     }
 
     private static void info() {
-
         System.out.format("%s%n%n%s%n", getApplicationName(), getLicenseText());
     }
 

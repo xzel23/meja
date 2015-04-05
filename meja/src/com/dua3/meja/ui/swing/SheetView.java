@@ -64,6 +64,7 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 /**
+ * Swing component for displaying sheets.
  *
  * @author axel
  */
@@ -84,25 +85,68 @@ public class SheetView extends JPanel implements Scrollable {
         }
     };
 
+    /**
+     * The scale used to calculate screen sizes dependent of display resolution.
+     */
     float scale = 1;
 
+    /**
+     * Array with column positions (x-axis) in pixels.
+     */
     int columnPos[];
+
+    /**
+     * Array with column positions (y-axis) in pixels.
+     */
     int rowPos[];
+
+    /**
+     * Height of the sheet in pixels.
+     */
     int sheetWidth;
+
+    /**
+     * Width of the sheet in pixels.
+     */
     int sheetHeight;
+
+    /**
+     * The column number of the selected cell.
+     */
     int currentColNum;
+
+    /**
+     * The row number of the selected cell.
+     */
     int currentRowNum;
 
+    /**
+     * The sheet displayed.
+     */
     private Sheet sheet;
+
+    /**
+     * The color to use for the grid lines.
+     */
     private Color gridColor = Color.LIGHT_GRAY;
 
+    /**
+     * Flag indicating whether column headers should be shown when added to a
+     * JScrollPane.
+     */
     private boolean showColumnHeader = true;
+
+    /**
+     * Flag indicating whether row headers should be shown when added to a
+     * JScrollPane.
+     */
     private boolean showRowHeader = true;
 
     /**
      * Horizontal padding.
      */
     private final int paddingX = 2;
+
     /**
      * Vertical padding.
      */
@@ -185,6 +229,11 @@ public class SheetView extends JPanel implements Scrollable {
         scrollRectToVisible(getCellRect(cell));
     }
 
+    /**
+     * Calculate the rectangle the cell occupies on screen.
+     * @param cell
+     * @return rectangle
+     */
     public Rectangle getCellRect(Cell cell) {
         final int i = cell.getRowNumber();
         final int j = cell.getColumnNumber();
@@ -197,22 +246,48 @@ public class SheetView extends JPanel implements Scrollable {
         return new Rectangle(x, y, w, h);
     }
 
+    /**
+     * Get the current row number.
+     *
+     * @return row number of the selected cell
+     */
     public int getCurrentRowNum() {
         return currentRowNum;
     }
 
+    /**
+     * Set the current row number.
+     *
+     * @param rowNum number of row to be set
+     */
     public void setCurrentRowNum(int rowNum) {
         setCurrent(rowNum, currentColNum);
     }
 
+    /**
+     * Get the current column number.
+     *
+     * @return column number of the selected cell
+     */
     public int getCurrentColNum() {
         return currentColNum;
     }
 
+    /**
+     * Set the current column number.
+     *
+     * @param colNum number of column to be set
+     */
     public void setCurrentColNum(int colNum) {
         setCurrent(currentRowNum, colNum);
     }
 
+    /**
+     * Set current row and column.
+     *
+     * @param rowNum number of row to be set
+     * @param colNum number of column to be set
+     */
     public void setCurrent(int rowNum, int colNum) {
         int oldRowNum = currentRowNum;
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
@@ -231,6 +306,9 @@ public class SheetView extends JPanel implements Scrollable {
         }
     }
 
+    /**
+     * Actions for key bindings.
+     */
     static enum Actions {
 
         MOVE_UP {
@@ -281,22 +359,44 @@ public class SheetView extends JPanel implements Scrollable {
         abstract Action getAction(SheetView view);
     }
 
+    /**
+     * Constructor.
+     *
+     * No sheet is set.
+     */
     public SheetView() {
         this(null);
     }
 
+    /**
+     * Construct a new SheetView for the given sheet.
+     *
+     * @param sheet the sheet to display
+     */
     public SheetView(Sheet sheet) {
         init();
         setSheet(sheet);
     }
 
-    public void setSheet(Sheet sheet1) {
-        this.sheet = sheet1;
+    /**
+     * Set sheet to display.
+     *
+     * @param sheet the sheet to display
+     */
+    public void setSheet(Sheet sheet) {
+        this.sheet = sheet;
         this.currentRowNum = 0;
         this.currentColNum = 0;
         update();
     }
 
+    /**
+     * Initialization method.
+     *
+     * <li>initialize the input map
+     * <li>set up mouse handling
+     * <li>make focusable
+     */
     private void init() {
         // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -425,11 +525,6 @@ public class SheetView extends JPanel implements Scrollable {
                 }
             }
         }
-    }
-
-    @Override
-    public void addAncestorListener(AncestorListener listener) {
-        super.addAncestorListener(listener); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -614,12 +709,21 @@ public class SheetView extends JPanel implements Scrollable {
         }
     }
 
-    void setCurrentCell(Cell cell) {
-        int rowNumber = cell.getRowNumber();
-        int colNumber = cell.getColumnNumber();
-        setCurrentColNum(colNumber);
-    }
-
+    /**
+     * Draw cells.
+     *
+     * Since borders can be draw over by the background of adjacent cells
+     * and text can overlap, drawing is done in three steps:
+     * <ul>
+     * <li> draw background for <em>all</em> cells
+     * <li> draw borders for <em>all</em> cells
+     * <li> draw foreground <em>all</em> cells
+     * </ul>
+     * This is controlled by {@code cellDrawMode}.
+     *
+     * @param g the graphics object to use
+     * @param cellDrawMode the draw mode to use
+     */
     void drawCells(Graphics2D g, CellDrawMode cellDrawMode) {
         // no sheet, no drawing
         if (sheet == null) {
@@ -693,10 +797,6 @@ public class SheetView extends JPanel implements Scrollable {
      * Draw cell background.
      *
      * @param g the graphics context to use
-     * @param x x-coordinate of the cells top-left corner
-     * @param y y-coordinate of the cells top-left corner
-     * @param w width of the cell in pixels
-     * @param h height of the cell in pixels
      * @param cell cell to draw
      */
     private void drawCellBackground(Graphics2D g, Cell cell) {
@@ -730,10 +830,6 @@ public class SheetView extends JPanel implements Scrollable {
      * Draw cell border.
      *
      * @param g the graphics context to use
-     * @param x x-coordinate of the cells top-left corner
-     * @param y y-coordinate of the cells top-left corner
-     * @param w width of the cell in pixels
-     * @param h height of the cell in pixels
      * @param cell cell to draw
      */
     private void drawCellBorder(Graphics2D g, Cell cell) {
@@ -775,10 +871,6 @@ public class SheetView extends JPanel implements Scrollable {
      * Draw cell foreground.
      *
      * @param g the graphics context to use
-     * @param x x-coordinate of the cells top-left corner
-     * @param y y-coordinate of the cells top-left corner
-     * @param w width of the cell in pixels
-     * @param h height of the cell in pixels
      * @param cell cell to draw
      */
     private void drawCellForeground(Graphics2D g, Cell cell) {
@@ -926,7 +1018,7 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Get number of columns for the currently loaded sheet.
      *
-     * @return
+     * @return number of columns
      */
     private int getNumberOfColumns() {
         return columnPos.length - 1;
@@ -935,7 +1027,7 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Get number of rows for the currently loaded sheet.
      *
-     * @return
+     * @return number of rows
      */
     private int getNumberOfRows() {
         return rowPos.length - 1;
@@ -954,15 +1046,25 @@ public class SheetView extends JPanel implements Scrollable {
         return fontCache.get(font);
     }
 
+    /**
+     * Get column name.
+     * @param j the column number
+     * @return name of column
+     */
     public String getColumnName(int j) {
         StringBuilder sb = new StringBuilder();
         do {
-            sb.append((char)('A'+(j%25)));
+            sb.append((char) ('A' + (j % 25)));
             j /= 25;
-        } while (j>0);
+        } while (j > 0);
         return sb.toString();
     }
 
+    /**
+     * Get row name.
+     * @param i the row number
+     * @return name of row
+     */
     public String getRowName(int i) {
         return Integer.toString(i);
     }
@@ -979,7 +1081,7 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Draw frame around current selection.
      *
-     * @param g2d graphics used for drawing
+     * @param g2d graphics object used for drawing
      */
     private void drawSelection(Graphics2D g2d) {
         // no sheet, no drawing
@@ -1009,7 +1111,8 @@ public class SheetView extends JPanel implements Scrollable {
         DRAW_CELL_BACKGROUND, DRAW_CELL_BORDER, DRAW_CELL_FOREGROUND
     }
 
-    class ColumnHeader extends JComponent {
+    @SuppressWarnings("serial")
+    private class ColumnHeader extends JComponent {
 
         private final JLabel painter;
 
@@ -1027,10 +1130,10 @@ public class SheetView extends JPanel implements Scrollable {
 
             Rectangle clipBounds = g.getClipBounds();
             int startCol = Math.max(0, getColumnNumberFromX(clipBounds.x));
-            int endCol = Math.min(1+getColumnNumberFromX(clipBounds.x+clipBounds.width), getNumberOfColumns());
-            for (int j=startCol;j<endCol;j++) {
+            int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x + clipBounds.width), getNumberOfColumns());
+            for (int j = startCol; j < endCol; j++) {
                 int x = columnPos[j];
-                int w = columnPos[j+1]-x;
+                int w = columnPos[j + 1] - x;
                 String text = getColumnName(j);
 
                 painter.setBounds(0, 0, w, h);
@@ -1041,7 +1144,8 @@ public class SheetView extends JPanel implements Scrollable {
 
     }
 
-    class RowHeader extends JComponent {
+    @SuppressWarnings("serial")
+    private class RowHeader extends JComponent {
 
         private final JLabel painter;
 
@@ -1051,7 +1155,7 @@ public class SheetView extends JPanel implements Scrollable {
             // of zeroes instead of the last row number because a proportional
             // font might be used)
             StringBuilder sb = new StringBuilder();
-            for (int i=1; i<=getNumberOfRows(); i*=10) {
+            for (int i = 1; i <= getNumberOfRows(); i *= 10) {
                 sb.append('0');
 
             }
@@ -1068,12 +1172,12 @@ public class SheetView extends JPanel implements Scrollable {
 
             Rectangle clipBounds = g.getClipBounds();
             int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
-            int endRow = Math.min(1+getRowNumberFromY(clipBounds.y+clipBounds.height), getNumberOfRows());
-            for (int i=startRow;i<endRow;i++) {
+            int endRow = Math.min(1 + getRowNumberFromY(clipBounds.y + clipBounds.height), getNumberOfRows());
+            for (int i = startRow; i < endRow; i++) {
                 int y = rowPos[i];
-                int h = rowPos[i+1]-y;
+                int h = rowPos[i + 1] - y;
                 String text = getRowName(i);
-                
+
                 painter.setBounds(0, 0, w, h);
                 painter.setText(text);
                 painter.paint(g.create(0, y, w, h));
