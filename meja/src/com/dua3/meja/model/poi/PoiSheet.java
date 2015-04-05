@@ -138,7 +138,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     }
 
     @Override
-    public abstract PoiWorkbook getWorkbook();
+    public abstract PoiWorkbook<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getWorkbook();
 
     @Override
     public double getColumnWidth(int col) {
@@ -169,6 +169,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     @Override
     public TableModel getTableModel() {
         return new AbstractTableModel() {
+            private static final long serialVersionUID = 1L;
 
             @Override
             public int getRowCount() {

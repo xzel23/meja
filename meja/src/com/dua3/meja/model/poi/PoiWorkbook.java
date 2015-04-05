@@ -61,7 +61,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
 
     protected final WORKBOOK poiWorkbook;
     protected final FormulaEvaluator evaluator;
-    protected final List<PoiSheet> sheets = new ArrayList<>();
+    protected final List<PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR>> sheets = new ArrayList<>();
     protected final org.apache.poi.ss.usermodel.DataFormatter dataFormatter;
 
     protected PoiWorkbook(WORKBOOK poiWorkbook, Locale locale) {
@@ -70,7 +70,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         this.dataFormatter = new org.apache.poi.ss.usermodel.DataFormatter(locale);
     }
 
-    protected abstract PoiSheet createSheet(SHEET poiSheet);
+    protected abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> createSheet(SHEET poiSheet);
 
     @SuppressWarnings("unchecked")
     protected void init() {
@@ -92,13 +92,13 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     }
 
     @Override
-    public PoiSheet getSheetByNr(int sheetNr) {
+    public PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheetByNr(int sheetNr) {
         return sheets.get(sheetNr);
     }
 
     @Override
-    public PoiSheet getSheetByName(String sheetName) {
-        for (PoiSheet sheet : sheets) {
+    public PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheetByName(String sheetName) {
+        for (PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> sheet : sheets) {
             if (sheet.getSheetName().equals(sheetName)) {
                 return sheet;
             }
@@ -106,9 +106,9 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         throw new IllegalArgumentException("No sheet '" + sheetName + "'.");
     }
 
-    public abstract PoiCellStyle getPoiCellStyle(CELLSTYLE cellStyle);
+    public abstract PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getPoiCellStyle(CELLSTYLE cellStyle);
 
-    public abstract PoiCellStyle getDefaultCellStyle();
+    public abstract PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getDefaultCellStyle();
 
     WORKBOOK getPoiWorkbook() {
         return poiWorkbook;
@@ -138,8 +138,8 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         return poiWorkbook.hashCode();
     }
 
-    static class PoiHssfWorkbook extends PoiWorkbook<
-            HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
+    static class PoiHssfWorkbook
+    extends PoiWorkbook<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
         private final PoiHssfCellStyle defaultCellStyle;
 
@@ -188,7 +188,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         }
 
         @Override
-        protected PoiSheet createSheet(HSSFSheet poiSheet) {
+        protected PoiHssfSheet createSheet(HSSFSheet poiSheet) {
             return new PoiHssfSheet(this, poiSheet);
         }
 
@@ -272,7 +272,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         }
 
         @Override
-        protected PoiSheet createSheet(XSSFSheet poiSheet) {
+        protected PoiXssfSheet createSheet(XSSFSheet poiSheet) {
             return new PoiXssfSheet(this, poiSheet);
         }
 

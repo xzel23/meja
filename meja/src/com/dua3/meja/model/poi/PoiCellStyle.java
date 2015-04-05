@@ -102,7 +102,7 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
     }
 
     @Override
-    public abstract PoiFont getFont();
+    public abstract PoiFont<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getFont();
 
     protected float getBorderWidth(short poiBorder) {
         switch (poiBorder) {
