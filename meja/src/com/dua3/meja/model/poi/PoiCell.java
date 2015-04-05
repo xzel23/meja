@@ -68,7 +68,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     private final int spanY;
     private final Cell logicalCell;
 
-    protected PoiCell(CELL cell, PoiRow row) {
+    protected PoiCell(CELL cell, PoiRow<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> row) {
         this.poiCell = cell;
         this.mergedRegion = row.getSheet().getMergedRegion(cell.getRowIndex(), cell.getColumnIndex());
 
@@ -100,7 +100,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         }
     }
 
-    public abstract PoiWorkbook getWorkbook();
+    public abstract PoiWorkbook<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getWorkbook();
 
     @Override
     public abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheet();
@@ -153,8 +153,12 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     @Override
     public String getAsText() {
         DataFormatter dataFormatter = getWorkbook().getDataFormatter();
-        FormulaEvaluator evaluator = getWorkbook().evaluator;
-        return dataFormatter.formatCellValue(poiCell, evaluator);
+        try {
+            FormulaEvaluator evaluator = getWorkbook().evaluator;
+            return dataFormatter.formatCellValue(poiCell, evaluator);
+        } catch (Exception ex) {
+            return Cell.ERROR_TEXT;
+        }
     }
 
     @Override
@@ -189,14 +193,14 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
-    public abstract PoiCellStyle getCellStyle();
+    public abstract PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCellStyle();
 
-    protected abstract PoiFont getFontForFormattingRun(RichTextString richText, int i);
+    protected abstract PoiFont<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getFontForFormattingRun(RichTextString richText, int i);
 
     @Override
     public AttributedString getAttributedString() {
         if (getCellType()!=CellType.TEXT) {
-            return new AttributedString(toString());
+            return new AttributedString(getAsText());
         }
 
         RichTextString richText = poiCell.getRichStringCellValue();
@@ -207,7 +211,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         text = text.replace((char) 160, ' ');
 
         AttributedString at = new AttributedString(text);
-        PoiFont font = getCellStyle().getFont();
+        PoiFont<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> font = getCellStyle().getFont();
         font.addAttributes(at, 0, text.length());
 
         for (int i = 0; i < richText.numFormattingRuns(); i++) {

@@ -24,6 +24,8 @@ import java.util.Date;
  */
 public interface Cell {
 
+    public final String ERROR_TEXT = "#ERROR";
+
     /**
      * Return the cell type.
      * @return cell type
@@ -66,7 +68,7 @@ public interface Cell {
     String getText();
 
     /**
-     * Return text representaion of value.
+     * Return text representation of value.
      * @return cell value as String, as it would be displayed
      */
     String getAsText();
