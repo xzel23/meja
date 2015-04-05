@@ -231,6 +231,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Calculate the rectangle the cell occupies on screen.
+     *
      * @param cell
      * @return rectangle
      */
@@ -712,8 +713,8 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Draw cells.
      *
-     * Since borders can be draw over by the background of adjacent cells
-     * and text can overlap, drawing is done in three steps:
+     * Since borders can be draw over by the background of adjacent cells and
+     * text can overlap, drawing is done in three steps:
      * <ul>
      * <li> draw background for <em>all</em> cells
      * <li> draw borders for <em>all</em> cells
@@ -941,8 +942,7 @@ public class SheetView extends JPanel implements Scrollable {
                 yd = (float) (cr.y + (cr.height - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2.0);
                 break;
             case ALIGN_BOTTOM:
-                final TextLayout lastLayout = layouts.get(layouts.size() - 1);
-                yd = cr.y + cr.height - scale * (lastLayout.getDescent() + lastLayout.getAscent());
+                yd = cr.y + cr.height - textHeight;
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -1048,6 +1048,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Get column name.
+     *
      * @param j the column number
      * @return name of column
      */
@@ -1062,6 +1063,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Get row name.
+     *
      * @param i the row number
      * @return name of row
      */
@@ -1132,7 +1134,7 @@ public class SheetView extends JPanel implements Scrollable {
             int startCol = Math.max(0, getColumnNumberFromX(clipBounds.x));
             int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x + clipBounds.width), getNumberOfColumns());
             for (int j = startCol; j < endCol; j++) {
-                int x = columnPos[j];
+                int x = columnPos[j] + 1;
                 int w = columnPos[j + 1] - x;
                 String text = getColumnName(j);
 
@@ -1174,7 +1176,7 @@ public class SheetView extends JPanel implements Scrollable {
             int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
             int endRow = Math.min(1 + getRowNumberFromY(clipBounds.y + clipBounds.height), getNumberOfRows());
             for (int i = startRow; i < endRow; i++) {
-                int y = rowPos[i];
+                int y = rowPos[i] + 1;
                 int h = rowPos[i + 1] - y;
                 String text = getRowName(i);
 
