@@ -69,6 +69,7 @@ import javax.swing.event.AncestorListener;
  * @author axel
  */
 public class SheetView extends JPanel implements Scrollable {
+    private static final long serialVersionUID = 1L;
 
     Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
         @Override
