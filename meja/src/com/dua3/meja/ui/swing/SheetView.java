@@ -21,7 +21,6 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.model.Font;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
@@ -38,15 +37,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineBreakMeasurer;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -69,20 +61,14 @@ import javax.swing.event.AncestorListener;
  * @author axel
  */
 public class SheetView extends JPanel implements Scrollable {
+
     private static final long serialVersionUID = 1L;
+    private final CellRenderer renderer = new DefaultCellRenderer();
 
     Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
         @Override
         protected java.awt.Stroke create(Float width) {
             return new BasicStroke(width);
-        }
-    };
-
-    Cache<Font, java.awt.Font> fontCache = new Cache<Font, java.awt.Font>() {
-        @Override
-        protected java.awt.Font create(Font font) {
-            int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-            return new java.awt.Font(font.getFamily(), style, (int) Math.round(font.getSizeInPoints()));
         }
     };
 
@@ -891,129 +877,7 @@ public class SheetView extends JPanel implements Scrollable {
         cr.y += paddingY;
         cr.height -= 2 * paddingY;
 
-        float width = cr.width / scale;
-
-        CellStyle style = cell.getCellStyle();
-        Font font = style.getFont();
-        final Color color = font.getColor();
-
-        g.setFont(getAwtFont(font));
-        g.setColor(color == null ? Color.BLACK : color);
-
-        AffineTransform originalTransform = g.getTransform();
-        g.translate(cr.x, cr.y);
-        g.scale(scale, scale);
-
-        // layout text
-        float wrapWidth = style.isWrap() ? width : 0;
-
-        FontRenderContext frc = new FontRenderContext(g.getTransform(), true, true);
-        List<TextLayout> layouts = prepareText(g, frc, text.getIterator(), wrapWidth);
-
-        // determine size of text
-        float textWidth = 0;
-        float textHeight = 0;
-        for (TextLayout layout : layouts) {
-            textWidth = Math.max(textWidth, scale * layout.getVisibleAdvance());
-            textHeight += scale * (layout.getAscent() + layout.getDescent() + layout.getLeading());
-        }
-
-        // calculate text position
-        final float xd, yd;
-        switch (style.getHAlign()) {
-            case ALIGN_LEFT:
-            case ALIGN_JUSTIFY:
-                xd = cr.x;
-                break;
-            case ALIGN_CENTER:
-                xd = (float) (cr.x + (cr.width - textWidth) / 2.0);
-                break;
-            case ALIGN_RIGHT:
-                xd = cr.x + cr.width - textWidth;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-        switch (style.getVAlign()) {
-            case ALIGN_TOP:
-            case ALIGN_JUSTIFY:
-                yd = cr.y;
-                break;
-            case ALIGN_MIDDLE:
-                yd = (float) (cr.y + (cr.height - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2.0);
-                break;
-            case ALIGN_BOTTOM:
-                yd = cr.y + cr.height - textHeight;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-
-        // draw text
-        g.setTransform(originalTransform);
-        g.translate(xd, yd);
-        g.scale(scale, scale);
-
-        float drawPosY = 0;
-        for (TextLayout layout : layouts) {
-            // Compute pen x position. If the paragraph
-            // is right-to-left we will align the
-            // TextLayouts to the right edge of the panel.
-            float drawPosX = layout.isLeftToRight() ? 0 : width - layout.getAdvance();
-
-            // Move y-coordinate by the ascent of the
-            // layout.
-            drawPosY += layout.getAscent();
-
-            // Draw the TextLayout at (drawPosX,drawPosY).
-            layout.draw(g, drawPosX, drawPosY);
-
-            // Move y-coordinate in preparation for next
-            // layout.
-            drawPosY += layout.getDescent() + layout.getLeading();
-        }
-
-        g.setTransform(originalTransform);
-    }
-
-    private List<TextLayout> prepareText(Graphics2D g, FontRenderContext frc, AttributedCharacterIterator text, float width) {
-
-        if (width <= 0) {
-            // no width is given, so no wrapping will be applied.
-            return Collections.singletonList(new TextLayout(text, frc));
-        }
-
-        AttributedCharacterIterator paragraph = text;
-        int paragraphStart = paragraph.getBeginIndex();
-        int paragraphEnd = paragraph.getEndIndex();
-        LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(paragraph, frc);
-        float drawPosY = 0;
-        List<TextLayout> tls = new ArrayList<>();
-        // Set position to the index of the first
-        // character in the paragraph.
-        lineMeasurer.setPosition(paragraphStart);
-
-        // Get lines from until the entire paragraph
-        // has been displayed.
-        while (lineMeasurer.getPosition() < paragraphEnd) {
-
-            TextLayout layout = lineMeasurer.nextLayout(width);
-
-            // Compute pen x position. If the paragraph
-            // is right-to-left we will align the
-            // TextLayouts to the right edge of the panel.
-            // Move y-coordinate by the ascent of the
-            // layout.
-            drawPosY += scale * layout.getAscent();
-
-            // Draw the TextLayout at (drawPosX,drawPosY).
-            tls.add(layout);
-
-            // Move y-coordinate in preparation for next
-            // layout.
-            drawPosY += scale * (layout.getDescent() + layout.getLeading());
-        }
-        return tls;
+        renderer.render(g, cell, cr.x,cr.y,cr.width,cr.height, scale);
     }
 
     /**
@@ -1041,10 +905,6 @@ public class SheetView extends JPanel implements Scrollable {
 
     private java.awt.Stroke getStroke(Float width) {
         return strokeCache.get(width);
-    }
-
-    private java.awt.Font getAwtFont(Font font) {
-        return fontCache.get(font);
     }
 
     /**
