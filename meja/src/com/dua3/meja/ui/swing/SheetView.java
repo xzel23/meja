@@ -664,10 +664,6 @@ public class SheetView extends JPanel implements Scrollable {
 
         g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
 
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
         drawGrid(g2d);
         drawCells(g2d, CellDrawMode.DRAW_CELL_BACKGROUND);
         drawCells(g2d, CellDrawMode.DRAW_CELL_BORDER);
