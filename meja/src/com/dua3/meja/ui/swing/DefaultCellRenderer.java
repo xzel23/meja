@@ -22,6 +22,7 @@ import com.dua3.meja.model.Font;
 import com.dua3.meja.util.Cache;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextLayout;
@@ -69,14 +70,12 @@ public class DefaultCellRenderer implements CellRenderer {
         g.setColor(color == null ? Color.BLACK : color);
 
         AffineTransform originalTransform = g.getTransform();
-        g.translate(x, y);
         g.scale(scale, scale);
 
-        float wrapWidth = style.isWrap() ? w/scale : 0;
+        float wrapWidth = style.isWrap() ? w / scale : 0;
 
         // layout text
-
-        FontRenderContext frc = new FontRenderContext(g.getTransform(), true, true);
+        FontRenderContext frc = g.getFontRenderContext();
         List<TextLayout> layouts = prepareText(g, scale, frc, text.getIterator(), wrapWidth);
 
         // determine size of text
@@ -119,69 +118,50 @@ public class DefaultCellRenderer implements CellRenderer {
         }
 
         // draw text
+        Rectangle area = new Rectangle((int) xd, (int) yd, (int) textWidth, (int) textHeight);
         g.setTransform(originalTransform);
-        g.translate(xd, yd);
-        g.scale(scale, scale);
+        if (g.getClipBounds().intersects(area)) {
+            g.translate(xd, yd);
+            g.scale(scale, scale);
 
-        float drawPosY = 0;
-        for (TextLayout layout : layouts) {
+            float drawPosY = 0;
+            for (TextLayout layout : layouts) {
             // Compute pen x position. If the paragraph
-            // is right-to-left we will align the
-            // TextLayouts to the right edge of the panel.
-            float drawPosX = layout.isLeftToRight() ? 0 : w - layout.getAdvance();
+                // is right-to-left we will align the
+                // TextLayouts to the right edge of the panel.
+                float drawPosX = layout.isLeftToRight() ? 0 : w - layout.getAdvance();
 
             // Move y-coordinate by the ascent of the
-            // layout.
-            drawPosY += layout.getAscent();
+                // layout.
+                drawPosY += layout.getAscent();
 
-            // Draw the TextLayout at (drawPosX,drawPosY).
-            layout.draw(g, drawPosX, drawPosY);
+                // Draw the TextLayout at (drawPosX,drawPosY).
+                layout.draw(g, drawPosX, drawPosY);
 
-            // Move y-coordinate in preparation for next
-            // layout.
-            drawPosY += layout.getDescent() + layout.getLeading();
+                // Move y-coordinate in preparation for next
+                // layout.
+                drawPosY += layout.getDescent() + layout.getLeading();
+            }
+            g.setTransform(originalTransform);
         }
-
-        g.setTransform(originalTransform);
     }
 
-
     protected List<TextLayout> prepareText(Graphics2D g, float scale, FontRenderContext frc, AttributedCharacterIterator text, float width) {
-
         if (width <= 0) {
             // no width is given, so no wrapping will be applied.
             return Collections.singletonList(new TextLayout(text, frc));
         }
 
-        AttributedCharacterIterator paragraph = text;
-        int paragraphStart = paragraph.getBeginIndex();
-        int paragraphEnd = paragraph.getEndIndex();
-        LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(paragraph, frc);
-        float drawPosY = 0;
-        List<TextLayout> tls = new ArrayList<>();
-        // Set position to the index of the first
-        // character in the paragraph.
+        int paragraphStart = text.getBeginIndex();
+        int paragraphEnd = text.getEndIndex();
+
+        LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(text, frc);
         lineMeasurer.setPosition(paragraphStart);
 
-        // Get lines from until the entire paragraph
-        // has been displayed.
+        // Get all lines from text.
+        List<TextLayout> tls = new ArrayList<>();
         while (lineMeasurer.getPosition() < paragraphEnd) {
-
-            TextLayout layout = lineMeasurer.nextLayout(width);
-
-            // Compute pen x position. If the paragraph
-            // is right-to-left we will align the
-            // TextLayouts to the right edge of the panel.
-            // Move y-coordinate by the ascent of the
-            // layout.
-            drawPosY += scale * layout.getAscent();
-
-            // Draw the TextLayout at (drawPosX,drawPosY).
-            tls.add(layout);
-
-            // Move y-coordinate in preparation for next
-            // layout.
-            drawPosY += scale * (layout.getDescent() + layout.getLeading());
+            tls.add(lineMeasurer.nextLayout(width));
         }
         return tls;
     }

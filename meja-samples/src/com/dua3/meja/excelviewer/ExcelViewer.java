@@ -96,7 +96,7 @@ public class ExcelViewer {
     }
 
     private FilterDef[] filters = {
-        new FilterDef("Excel Files", OpenMode.READ_AND_WRITE, PoiWorkbookFactory.instance(), ".xls", ".xlsx")
+        new FilterDef("Excel Files", OpenMode.READ_AND_WRITE, PoiWorkbookFactory.instance(), ".xls", ".xlsx", ".xlsm")
     };
 
     public List<FilterDef> getFileFilters(OpenMode mode) {

@@ -470,6 +470,9 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         // set headers
+        addHeadersAsNeeded();
+
+        // listen to Ancestorevents to add headers when view is added to a JScrollPane
         addAncestorListener(new AncestorListener() {
 
             @Override
@@ -646,6 +649,7 @@ public class SheetView extends JPanel implements Scrollable {
 
         g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
 
+        // TODO keep?
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
@@ -718,15 +722,16 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        // since text can overflow into other cells, add a margin of cells to be
-        // drawn that normally aren't visible when drawing foreground
-        int extra = cellDrawMode == CellDrawMode.DRAW_CELL_FOREGROUND ? 20 : 0;
+        // Since text can overflow into other cells, add a margin (in pixels)
+        // for cells to be drawn that normally aren't visible when drawing
+        // foreground.
+        int extra = cellDrawMode == CellDrawMode.DRAW_CELL_FOREGROUND ? 200 : 0;
 
         // determine visible rows and columns
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y) - extra);
-        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height) + extra);
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x) - extra);
-        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width) + extra);
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y - extra));
+        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height + extra));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x - extra));
+        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width + extra));
 
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
@@ -916,8 +921,8 @@ public class SheetView extends JPanel implements Scrollable {
     public String getColumnName(int j) {
         StringBuilder sb = new StringBuilder();
         do {
-            sb.append((char) ('A' + (j % 25)));
-            j /= 25;
+            sb.append((char) ('A' + (j % 26)));
+            j /= 26;
         } while (j > 0);
         return sb.toString();
     }
