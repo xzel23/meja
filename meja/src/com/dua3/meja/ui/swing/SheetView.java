@@ -722,16 +722,11 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        // Since text can overflow into other cells, add a margin (in pixels)
-        // for cells to be drawn that normally aren't visible when drawing
-        // foreground.
-        int extraX = cellDrawMode == CellDrawMode.DRAW_CELL_FOREGROUND ? 800 : 0;
-
         // determine visible rows and columns
         int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
         int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height));
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x - extraX));
-        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width + extraX));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x));
+        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width));
 
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
@@ -741,7 +736,20 @@ public class SheetView extends JPanel implements Scrollable {
                 continue;
             }
 
-            for (int j = startColumn; j < endColumn; j++) {
+            // if first/last displayed cell of row is empty, start drawing at
+            // the first non-empty cell to the left/right to make sure
+            // overflowing text is visible.
+            int first = startColumn;
+            while (first>0 && columnPos[first]+800>clipBounds.x && row.getCell(first).getCellType()==CellType.BLANK) {
+                first--;
+            }
+
+            int end = endColumn;
+            while (end<getNumberOfColumns() && columnPos[end]-800<clipBounds.x+clipBounds.width && row.getCell(end).getCellType()==CellType.BLANK) {
+                end++;
+            }
+
+            for (int j = first; j < end; j++) {
                 Cell cell = row.getCell(j);
 
                 if (cell != null) {
