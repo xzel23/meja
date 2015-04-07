@@ -25,8 +25,6 @@ import com.dua3.meja.model.Font;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
@@ -487,6 +485,9 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         // set headers
+        addHeadersAsNeeded();
+        
+        // listen to Ancestorevents to add headers when view is added to a JScrollPane
         addAncestorListener(new AncestorListener() {
 
             @Override
@@ -660,8 +661,6 @@ public class SheetView extends JPanel implements Scrollable {
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.getClipBounds(clipBounds);
-
-        Logger.getLogger(SheetView.class.getName()).log(Level.INFO, "paintComponent - clipRect: {0}", clipBounds.toString());
 
         g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
 
@@ -1063,8 +1062,8 @@ public class SheetView extends JPanel implements Scrollable {
     public String getColumnName(int j) {
         StringBuilder sb = new StringBuilder();
         do {
-            sb.append((char) ('A' + (j % 25)));
-            j /= 25;
+            sb.append((char) ('A' + (j % 26)));
+            j /= 26;
         } while (j > 0);
         return sb.toString();
     }
