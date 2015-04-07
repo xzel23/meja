@@ -71,15 +71,10 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
                 return HAlign.ALIGN_RIGHT;
             case org.apache.poi.ss.usermodel.CellStyle.ALIGN_CENTER_SELECTION:
                 return HAlign.ALIGN_CENTER;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_FILL:
-                return HAlign.ALIGN_JUSTIFY;
             case org.apache.poi.ss.usermodel.CellStyle.ALIGN_GENERAL:
                 return HAlign.ALIGN_LEFT;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_JUSTIFY:
-                return HAlign.ALIGN_JUSTIFY;
             default:
-                Logger.getLogger(PoiCellStyle.class.getName()).log(Level.WARNING, "Unknown value for horizontal algnment: {0}", alignment);
-                return HAlign.ALIGN_LEFT;
+                return HAlign.ALIGN_JUSTIFY;
         }
     }
 

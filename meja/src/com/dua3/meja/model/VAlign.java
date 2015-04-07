@@ -20,8 +20,19 @@ package com.dua3.meja.model;
  * @author axel
  */
 public enum VAlign {
-    ALIGN_TOP,
-    ALIGN_MIDDLE,
-    ALIGN_BOTTOM,
-    ALIGN_JUSTIFY;
+    ALIGN_TOP(false),
+    ALIGN_MIDDLE(false),
+    ALIGN_BOTTOM(false),
+    ALIGN_JUSTIFY(false);
+
+    private final boolean wrap;
+
+    private VAlign(boolean wrap) {
+        this.wrap = wrap;
+
+    }
+
+    public boolean isWrap() {
+        return wrap;
+    }
 }

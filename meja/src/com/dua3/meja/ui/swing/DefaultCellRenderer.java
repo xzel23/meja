@@ -72,7 +72,8 @@ public class DefaultCellRenderer implements CellRenderer {
         AffineTransform originalTransform = g.getTransform();
         g.scale(scale, scale);
 
-        float wrapWidth = style.isWrap() ? w / scale : 0;
+        boolean wrapText = style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
+        float wrapWidth = wrapText ? w / scale : 0;
 
         // layout text
         FontRenderContext frc = g.getFontRenderContext();
