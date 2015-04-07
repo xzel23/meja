@@ -32,7 +32,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -902,14 +901,12 @@ public class SheetView extends JPanel implements Scrollable {
         g.setColor(color == null ? Color.BLACK : color);
 
         AffineTransform originalTransform = g.getTransform();
-
-        AffineTransform textTransform = g.getTransform();
-        textTransform.scale(scale, scale);
+        g.scale(scale, scale);
 
         // layout text
         float wrapWidth = style.isWrap() ? width : 0;
-
-        FontRenderContext frc = new FontRenderContext(textTransform, true, true);
+        
+        FontRenderContext frc = g.getFontRenderContext();
         List<TextLayout> layouts = prepareText(g, frc, text.getIterator(), wrapWidth);
 
         // determine size of text
@@ -954,8 +951,9 @@ public class SheetView extends JPanel implements Scrollable {
         Rectangle area = new Rectangle((int) xd, (int) yd, (int) textWidth, (int) textHeight);
         if (clipBounds.intersects(area)) {
             // draw text
-            Graphics2D gText = (Graphics2D) g.create(area.x, area.y,area.width,area.height);
-            gText.scale(scale, scale);
+            g.setTransform(originalTransform);
+            g.translate(area.x, area.y);
+            g.scale(scale, scale);
 
             float drawPosY = 0;
             for (TextLayout layout : layouts) {
@@ -969,51 +967,29 @@ public class SheetView extends JPanel implements Scrollable {
                 drawPosY += layout.getAscent();
 
                 // Draw the TextLayout at (drawPosX,drawPosY).
-                layout.draw(gText, drawPosX, drawPosY);
+                layout.draw(g, drawPosX, drawPosY);
 
                 // Move y-coordinate in preparation for next
                 // layout.
                 drawPosY += layout.getDescent() + layout.getLeading();
             }
         }
+        g.setTransform(originalTransform);
     }
 
     private List<TextLayout> prepareText(Graphics2D g, FontRenderContext frc, AttributedCharacterIterator text, float width) {
-
         if (width <= 0) {
             // no width is given, so no wrapping will be applied.
             return Collections.singletonList(new TextLayout(text, frc));
         }
 
-        AttributedCharacterIterator paragraph = text;
-        int paragraphStart = paragraph.getBeginIndex();
-        int paragraphEnd = paragraph.getEndIndex();
-        LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(paragraph, frc);
-        float drawPosY = 0;
+        int paragraphStart = text.getBeginIndex();
+        int paragraphEnd = text.getEndIndex();
+        LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(text, frc);
         List<TextLayout> tls = new ArrayList<>();
-        // Set position to the index of the first
-        // character in the paragraph.
         lineMeasurer.setPosition(paragraphStart);
-
-        // Get lines from until the entire paragraph
-        // has been displayed.
         while (lineMeasurer.getPosition() < paragraphEnd) {
-
-            TextLayout layout = lineMeasurer.nextLayout(width);
-
-            // Compute pen x position. If the paragraph
-            // is right-to-left we will align the
-            // TextLayouts to the right edge of the panel.
-            // Move y-coordinate by the ascent of the
-            // layout.
-            drawPosY += scale * layout.getAscent();
-
-            // Draw the TextLayout at (drawPosX,drawPosY).
-            tls.add(layout);
-
-            // Move y-coordinate in preparation for next
-            // layout.
-            drawPosY += scale * (layout.getDescent() + layout.getLeading());
+            tls.add(lineMeasurer.nextLayout(width));
         }
         return tls;
     }
