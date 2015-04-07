@@ -17,6 +17,7 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 /**
  *
@@ -24,6 +25,6 @@ import java.awt.Graphics2D;
  */
 public interface CellRenderer {
 
-    void render(Graphics2D g, Cell cell, int x, int y, int w, int h, float scale);
+    void render(Graphics2D g, Cell cell, Rectangle cr, float scale);
 
 }

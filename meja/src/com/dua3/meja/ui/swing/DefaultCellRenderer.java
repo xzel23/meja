@@ -55,7 +55,7 @@ public class DefaultCellRenderer implements CellRenderer {
     }
 
     @Override
-    public void render(Graphics2D g, Cell cell, int x, int y, int w, int h, float scale) {
+    public void render(Graphics2D g, Cell cell, Rectangle cr, float scale) {
         if (cell.getCellType() == CellType.BLANK) {
             return;
         }
@@ -73,7 +73,7 @@ public class DefaultCellRenderer implements CellRenderer {
         g.scale(scale, scale);
 
         boolean wrapText = style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
-        float wrapWidth = wrapText ? w / scale : 0;
+        float wrapWidth = wrapText ? cr.width / scale : 0;
 
         // layout text
         FontRenderContext frc = g.getFontRenderContext();
@@ -88,31 +88,18 @@ public class DefaultCellRenderer implements CellRenderer {
         }
 
         // calculate text position
-        final float xd, yd;
-        switch (style.getHAlign()) {
-            case ALIGN_LEFT:
-            case ALIGN_JUSTIFY:
-                xd = x;
-                break;
-            case ALIGN_CENTER:
-                xd = (float) (x + (w - textWidth) / 2.0);
-                break;
-            case ALIGN_RIGHT:
-                xd = x + w - textWidth;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        final float xd = cr.x;
+        float yd;
         switch (style.getVAlign()) {
             case ALIGN_TOP:
             case ALIGN_JUSTIFY:
-                yd = y;
+                yd = cr.y;
                 break;
             case ALIGN_MIDDLE:
-                yd = (float) (y + (h - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2.0);
+                yd = (float) (cr.y + (cr.height - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2.0);
                 break;
             case ALIGN_BOTTOM:
-                yd = y + h - textHeight;
+                yd = cr.y + cr.height - textHeight;
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -127,20 +114,29 @@ public class DefaultCellRenderer implements CellRenderer {
 
             float drawPosY = 0;
             for (TextLayout layout : layouts) {
-            // Compute pen x position. If the paragraph
-                // is right-to-left we will align the
-                // TextLayouts to the right edge of the panel.
-                float drawPosX = layout.isLeftToRight() ? 0 : w - layout.getAdvance();
+                // Compute pen x position. If the paragraph is right-to-left
+                // we will align the TextLayouts to the right edge of the panel.
+                float drawPosX;
+                switch (style.getHAlign()) {
+                    default:
+                        // default is left aligned
+                        drawPosX = layout.isLeftToRight() ? 0 : cr.width/scale - layout.getAdvance();
+                        break;
+                    case ALIGN_RIGHT:
+                        drawPosX = layout.isLeftToRight() ? cr.width/scale - layout.getAdvance() : 0;
+                        break;
+                    case ALIGN_CENTER:
+                        drawPosX = (cr.width/scale - layout.getAdvance())/2f;
+                        break;
+                }
 
-            // Move y-coordinate by the ascent of the
-                // layout.
+                // Move y-coordinate by the ascent of the layout.
                 drawPosY += layout.getAscent();
 
                 // Draw the TextLayout at (drawPosX,drawPosY).
                 layout.draw(g, drawPosX, drawPosY);
 
-                // Move y-coordinate in preparation for next
-                // layout.
+                // Move y-coordinate in preparation for next layout.
                 drawPosY += layout.getDescent() + layout.getLeading();
             }
             g.setTransform(originalTransform);

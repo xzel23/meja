@@ -878,11 +878,11 @@ public class SheetView extends JPanel implements Scrollable {
 
         Rectangle cr = getCellRect(cell);
         cr.x += paddingX;
-        cr.width -= 2 * paddingX - 1;
+        cr.width -= 2 * paddingX;
         cr.y += paddingY;
         cr.height -= 2 * paddingY;
 
-        renderer.render(g, cell, cr.x,cr.y,cr.width,cr.height, scale);
+        renderer.render(g, cell, cr, scale);
     }
 
     /**
