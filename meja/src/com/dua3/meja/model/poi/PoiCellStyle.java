@@ -147,12 +147,12 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
 
         @Override
         public Color getFillBgColor() {
-            return workbook.getColor(poiCellStyle.getFillBackgroundColorColor());
+            return workbook.getColor(poiCellStyle.getFillBackgroundColorColor(),Color.WHITE);
         }
 
         @Override
         public Color getFillFgColor() {
-            return workbook.getColor(poiCellStyle.getFillForegroundColorColor());
+            return workbook.getColor(poiCellStyle.getFillForegroundColorColor(), null);
         }
 
         @Override
@@ -202,12 +202,12 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
 
         @Override
         public Color getFillBgColor() {
-            return workbook.getColor(poiCellStyle.getFillBackgroundXSSFColor());
+            return workbook.getColor(poiCellStyle.getFillBackgroundXSSFColor(),Color.WHITE);
         }
 
         @Override
         public Color getFillFgColor() {
-            return workbook.getColor(poiCellStyle.getFillForegroundXSSFColor());
+            return workbook.getColor(poiCellStyle.getFillForegroundXSSFColor(), null);
         }
 
         @Override
@@ -221,19 +221,19 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
             final float width;
             switch (d) {
                 case NORTH:
-                    color = workbook.getColor(poiCellStyle.getTopBorderXSSFColor());
+                    color = workbook.getColor(poiCellStyle.getTopBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderTop());
                     break;
                 case EAST:
-                    color = workbook.getColor(poiCellStyle.getRightBorderXSSFColor());
+                    color = workbook.getColor(poiCellStyle.getRightBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderRight());
                     break;
                 case SOUTH:
-                    color = workbook.getColor(poiCellStyle.getBottomBorderXSSFColor());
+                    color = workbook.getColor(poiCellStyle.getBottomBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderBottom());
                     break;
                 case WEST:
-                    color = workbook.getColor(poiCellStyle.getLeftBorderXSSFColor());
+                    color = workbook.getColor(poiCellStyle.getLeftBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderLeft());
                     break;
                 default:

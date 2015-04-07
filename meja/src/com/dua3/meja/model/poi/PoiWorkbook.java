@@ -83,7 +83,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         return dataFormatter;
     }
 
-    abstract Color getColor(COLOR poiColor);
+    abstract Color getColor(COLOR poiColor, Color defaultColor);
 
     @Override
     public int getNumberOfSheets() {
@@ -155,13 +155,13 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         }
 
         Color getColor(short idx) {
-            return getColor(poiWorkbook.getCustomPalette().getColor(idx));
+            return getColor(poiWorkbook.getCustomPalette().getColor(idx), null);
         }
 
         @Override
-        Color getColor(org.apache.poi.hssf.util.HSSFColor poiColor) {
+        Color getColor(org.apache.poi.hssf.util.HSSFColor poiColor, Color defaultColor) {
             if (poiColor == null || poiColor==HSSFColor.AUTOMATIC.getInstance()) {
-                return null;
+                return defaultColor;
             }
 
             short[] triplet = poiColor.getTriplet();
@@ -242,9 +242,9 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         }
 
         @Override
-        Color getColor(org.apache.poi.xssf.usermodel.XSSFColor poiColor) {
+        Color getColor(org.apache.poi.xssf.usermodel.XSSFColor poiColor, Color defaultColor) {
             if (poiColor == null || poiColor.isAuto()) {
-                return null;
+                return defaultColor;
             }
 
             byte[] rgb = poiColor.getARgb();
