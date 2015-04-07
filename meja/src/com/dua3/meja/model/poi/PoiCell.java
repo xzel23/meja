@@ -207,8 +207,8 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
         String text = richText.getString();
         //TODO: properly process tabs
-        text = text.replace('\t', ' ');
-        text = text.replace((char) 160, ' ');
+        text = text.replace('\t', ' '); // tab
+        text = text.replace((char) 160, ' '); // non-breaking space
 
         AttributedString at = new AttributedString(text);
         PoiFont<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> font = getCellStyle().getFont();
