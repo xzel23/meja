@@ -725,13 +725,13 @@ public class SheetView extends JPanel implements Scrollable {
         // Since text can overflow into other cells, add a margin (in pixels)
         // for cells to be drawn that normally aren't visible when drawing
         // foreground.
-        int extra = cellDrawMode == CellDrawMode.DRAW_CELL_FOREGROUND ? 200 : 0;
+        int extraX = cellDrawMode == CellDrawMode.DRAW_CELL_FOREGROUND ? 800 : 0;
 
         // determine visible rows and columns
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y - extra));
-        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height + extra));
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x - extra));
-        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width + extra));
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
+        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x - extraX));
+        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width + extraX));
 
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
