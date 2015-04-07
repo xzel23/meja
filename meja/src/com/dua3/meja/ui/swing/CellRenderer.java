@@ -25,6 +25,6 @@ import java.awt.Rectangle;
  */
 public interface CellRenderer {
 
-    void render(Graphics2D g, Cell cell, Rectangle cr, float scale);
+    void render(Graphics2D g, Cell cell, Rectangle cellRect, Rectangle clipRect, float scale);
 
 }

@@ -876,13 +876,36 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        Rectangle cr = getCellRect(cell);
-        cr.x += paddingX;
-        cr.width -= 2 * paddingX;
-        cr.y += paddingY;
-        cr.height -= 2 * paddingY;
+        // the cell rectangle, used for positioning the text
+        Rectangle cellRect = getCellRect(cell);
+        cellRect.x += paddingX;
+        cellRect.width -= 2 * paddingX;
+        cellRect.y += paddingY;
+        cellRect.height -= 2 * paddingY;
 
-        renderer.render(g, cell, cr, scale);
+        // the clipping rectangle
+        final Rectangle clipRect;
+        final CellStyle style = cell.getCellStyle();
+        if (style.isWrap()||style.getHAlign().isWrap()||style.getVAlign().isWrap()) {
+            clipRect = cellRect;
+        } else {
+            Row row = cell.getRow();
+            int clipXMin =cellRect.x;
+            for (int j=cell.getColumnNumber()-1;j>0;j--) {
+                if (row.getCell(j).getCellType()==CellType.BLANK) {
+                    clipXMin = columnPos[j]+paddingX;
+                }
+            }
+            int clipXMax =cellRect.x+cellRect.width;
+            for (int j=cell.getColumnNumber()+1;j<getNumberOfColumns();j++) {
+                if (row.getCell(j).getCellType()==CellType.BLANK) {
+                    clipXMax = columnPos[j+1]-paddingX;
+                }
+            }
+            clipRect = new Rectangle(clipXMin, cellRect.y, clipXMax-clipXMin, cellRect.height);
+        }
+
+        renderer.render(g, cell, cellRect, clipRect, scale);
     }
 
     /**

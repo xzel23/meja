@@ -297,6 +297,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             this.row = row;
         }
 
+        @Override
         public final PoiHssfRow getRow() {
             return row;
         }
@@ -333,6 +334,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             this.row = row;
         }
 
+        @Override
         public final PoiXssfRow getRow() {
             return row;
         }

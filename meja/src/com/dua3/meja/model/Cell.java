@@ -119,4 +119,10 @@ public interface Cell {
     void set(String s);
     void set(Boolean b);
 
+    /**
+     * Get the row this cell belongs to.
+     * @return the row for this cell
+     */
+    public Row getRow();
+
 }

@@ -55,7 +55,7 @@ public class DefaultCellRenderer implements CellRenderer {
     }
 
     @Override
-    public void render(Graphics2D g, Cell cell, Rectangle cr, float scale) {
+    public void render(Graphics2D g, Cell cell, Rectangle cr, Rectangle clipRect, float scale) {
         if (cell.getCellType() == CellType.BLANK) {
             return;
         }
@@ -109,7 +109,8 @@ public class DefaultCellRenderer implements CellRenderer {
         Rectangle area = new Rectangle((int) xd, (int) yd, (int) textWidth, (int) textHeight);
         g.setTransform(originalTransform);
         if (g.getClipBounds().intersects(area)) {
-            g.translate(xd, yd);
+            g = (Graphics2D) g.create(clipRect.x, clipRect.y, clipRect.width, clipRect.height);
+            g.translate(xd-clipRect.x, yd-clipRect.y);
             g.scale(scale, scale);
 
             float drawPosY = 0;
