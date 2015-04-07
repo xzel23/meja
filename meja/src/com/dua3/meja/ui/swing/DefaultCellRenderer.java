@@ -150,14 +150,10 @@ public class DefaultCellRenderer implements CellRenderer {
             return Collections.singletonList(new TextLayout(text, frc));
         }
 
-        int paragraphStart = text.getBeginIndex();
-        int paragraphEnd = text.getEndIndex();
-
-        LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(text, frc);
-        lineMeasurer.setPosition(paragraphStart);
-
         // Get all lines from text.
         List<TextLayout> tls = new ArrayList<>();
+        int paragraphEnd = text.getEndIndex();
+        LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(text, frc);
         while (lineMeasurer.getPosition() < paragraphEnd) {
             tls.add(lineMeasurer.nextLayout(width));
         }
