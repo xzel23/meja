@@ -48,7 +48,7 @@ public class AttributedStringHelper {
                 Map<AttributedCharacterIterator.Attribute, Object> attributes = iter.getAttributes();
                 String endTag = setAttributes(attributes, true);
                 for (int i = runStart; i < runLimit; i++, iter.next()) {
-                    buffer.append(iter.current());
+                    appendChar(iter.current());
                 }
                 buffer.append(endTag);
             }
@@ -101,6 +101,33 @@ public class AttributedStringHelper {
         @Override
         public String toString() {
             return buffer.toString();
+        }
+
+        private void appendChar(char c) {
+            // escape characters as suggested by OWASP.org
+            switch(c) {
+                case '<':
+                    buffer.append("&lt;");
+                    break;
+                case '>':
+                    buffer.append("&gt;");
+                    break;
+                case '&':
+                    buffer.append("&amp;");
+                    break;
+                case '"':
+                    buffer.append("&quot;");
+                    break;
+                case '\'':
+                    buffer.append("&#x27;");
+                    break;
+                case '/':
+                    buffer.append("&#x2F;");
+                    break;
+                default:
+                    buffer.append(c);
+                    break;
+            }
         }
 
     }
