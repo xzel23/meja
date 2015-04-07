@@ -25,6 +25,8 @@ import com.dua3.meja.model.Font;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
@@ -69,6 +71,7 @@ import javax.swing.event.AncestorListener;
  * @author axel
  */
 public class SheetView extends JPanel implements Scrollable {
+
     private static final long serialVersionUID = 1L;
 
     Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
@@ -658,6 +661,8 @@ public class SheetView extends JPanel implements Scrollable {
 
         g2d.getClipBounds(clipBounds);
 
+        Logger.getLogger(SheetView.class.getName()).log(Level.INFO, "paintComponent - clipRect: {0}", clipBounds.toString());
+
         g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
 
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -732,15 +737,16 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        // since text can overflow into other cells, add a margin of cells to be
-        // drawn that normally aren't visible when drawing foreground
-        int extra = cellDrawMode == CellDrawMode.DRAW_CELL_FOREGROUND ? 20 : 0;
+        // Since text can overflow into other cells, add a margin (in pixels) 
+        // for cells to be drawn that normally aren't visible when drawing 
+        // foreground. 
+        int extra = cellDrawMode == CellDrawMode.DRAW_CELL_FOREGROUND ? 200 : 0;
 
         // determine visible rows and columns
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y) - extra);
-        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height) + extra);
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x) - extra);
-        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width) + extra);
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y - extra));
+        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height + extra));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x - extra));
+        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width + extra));
 
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
@@ -901,13 +907,14 @@ public class SheetView extends JPanel implements Scrollable {
         g.setColor(color == null ? Color.BLACK : color);
 
         AffineTransform originalTransform = g.getTransform();
-        g.translate(cr.x, cr.y);
-        g.scale(scale, scale);
+
+        AffineTransform textTransform = g.getTransform();
+        textTransform.scale(scale, scale);
 
         // layout text
         float wrapWidth = style.isWrap() ? width : 0;
 
-        FontRenderContext frc = new FontRenderContext(g.getTransform(), true, true);
+        FontRenderContext frc = new FontRenderContext(textTransform, true, true);
         List<TextLayout> layouts = prepareText(g, frc, text.getIterator(), wrapWidth);
 
         // determine size of text
@@ -949,31 +956,31 @@ public class SheetView extends JPanel implements Scrollable {
                 throw new IllegalArgumentException();
         }
 
-        // draw text
-        g.setTransform(originalTransform);
-        g.translate(xd, yd);
-        g.scale(scale, scale);
+        Rectangle area = new Rectangle((int) xd, (int) yd, (int) textWidth, (int) textHeight);
+        if (clipBounds.intersects(area)) {
+            // draw text
+            Graphics2D gText = (Graphics2D) g.create(area.x, area.y,area.width,area.height);
+            gText.scale(scale, scale);
 
-        float drawPosY = 0;
-        for (TextLayout layout : layouts) {
-            // Compute pen x position. If the paragraph
-            // is right-to-left we will align the
-            // TextLayouts to the right edge of the panel.
-            float drawPosX = layout.isLeftToRight() ? 0 : width - layout.getAdvance();
+            float drawPosY = 0;
+            for (TextLayout layout : layouts) {
+                // Compute pen x position. If the paragraph
+                // is right-to-left we will align the
+                // TextLayouts to the right edge of the panel.
+                float drawPosX = layout.isLeftToRight() ? 0 : width - layout.getAdvance();
 
-            // Move y-coordinate by the ascent of the
-            // layout.
-            drawPosY += layout.getAscent();
+                // Move y-coordinate by the ascent of the
+                // layout.
+                drawPosY += layout.getAscent();
 
-            // Draw the TextLayout at (drawPosX,drawPosY).
-            layout.draw(g, drawPosX, drawPosY);
+                // Draw the TextLayout at (drawPosX,drawPosY).
+                layout.draw(gText, drawPosX, drawPosY);
 
-            // Move y-coordinate in preparation for next
-            // layout.
-            drawPosY += layout.getDescent() + layout.getLeading();
+                // Move y-coordinate in preparation for next
+                // layout.
+                drawPosY += layout.getDescent() + layout.getLeading();
+            }
         }
-
-        g.setTransform(originalTransform);
     }
 
     private List<TextLayout> prepareText(Graphics2D g, FontRenderContext frc, AttributedCharacterIterator text, float width) {
