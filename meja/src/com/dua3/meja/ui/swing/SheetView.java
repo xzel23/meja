@@ -24,7 +24,6 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
@@ -40,7 +39,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -885,8 +883,7 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        AttributedString text = cell.getAttributedString();
-        if (isEmpty(text)) {
+        if (cell.getCellType()==CellType.BLANK) {
             return;
         }
 
