@@ -24,7 +24,6 @@ import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.util.Cache;
-
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -171,7 +169,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             short[] triplet = poiColor.getTriplet();
 
             if (triplet == null) {
-                return null;
+                return defaultColor;
             }
 
             int a = 0xff;
@@ -262,7 +260,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             byte[] rgb = poiColor.getARgb();
 
             if (rgb == null) {
-                return null;
+                return defaultColor;
             }
 
             int a = rgb[0] & 0xFF;

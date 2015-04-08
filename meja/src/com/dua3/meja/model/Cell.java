@@ -129,9 +129,9 @@ public interface Cell {
 
     /**
      * Get the cell`s content as AttributedString for display.
-     * 
+     *
      * If the cell is of formula type, the result of evaluation is returned.
-     * 
+     *
      * @return cell content as AttributedString
      */
     AttributedString getAttributedString();
@@ -141,19 +141,19 @@ public interface Cell {
      * @param arg date
      */
     void set(Date arg);
-    
-    /** 
+
+    /**
      * Set cell value to number.
      * @param arg number
      */
     void set(Number arg);
-    
+
     /**
      * Set cell value to string.
      * @param s string
      */
     void set(String s);
-    
+
     /**
      * Set cell value to boolean value.
      * @param b boolean value
@@ -164,11 +164,17 @@ public interface Cell {
      * Get the row this cell belongs to.
      * @return the row for this cell
      */
-    public Row getRow();
+    Row getRow();
 
     /**
      * Clear the cell`s content.
      */
-    public void clear();
+    void clear();
+
+    /**
+     * Set cell style.
+     * @param cellStyle cell style
+     */
+    void setCellStyle(CellStyle cellStyle);
 
 }

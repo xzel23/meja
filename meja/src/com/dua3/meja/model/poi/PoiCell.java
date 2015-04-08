@@ -16,6 +16,7 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
@@ -64,11 +65,11 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         implements Cell {
 
     protected final CELL poiCell;
-    private final CellRangeAddress mergedRegion;
-    private final int spanX;
-    private final int spanY;
-    private final Cell logicalCell;
-    private SoftReference<AttributedString> attributedString = new SoftReference<>(null);
+    protected final CellRangeAddress mergedRegion;
+    protected final int spanX;
+    protected final int spanY;
+    protected final Cell logicalCell;
+    protected SoftReference<AttributedString> attributedString = new SoftReference<>(null);
 
     protected PoiCell(CELL cell, PoiRow<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> row) {
         this.poiCell = cell;
@@ -218,7 +219,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
                 text = text.replace((char) 160, ' '); // non-breaking space
 
                 as = new AttributedString(text);
-                
+
                 // apply cell style font attributes first
                 getCellStyle().getFont().addAttributes(as, 0, text.length());
 
@@ -340,6 +341,16 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             return getWorkbook().getFont(((HSSFRichTextString) richText).getFontOfFormattingRun(i));
         }
 
+        @Override
+        public void setCellStyle(CellStyle cellStyle) {
+            if (cellStyle instanceof PoiHssfCellStyle) {
+                poiCell.setCellStyle(((PoiHssfCellStyle) cellStyle).poiCellStyle);
+                attributedString.clear();
+            } else {
+                throw new IllegalArgumentException("Incompatible implementation.");
+            }
+        }
+
     }
 
     static class PoiXssfCell extends PoiCell<
@@ -380,6 +391,16 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
                 return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
             } catch (NullPointerException e) {
                 return getCellStyle().getFont();
+            }
+        }
+
+        @Override
+        public void setCellStyle(CellStyle cellStyle) {
+            if (cellStyle instanceof PoiXssfCellStyle) {
+                poiCell.setCellStyle(((PoiXssfCellStyle) cellStyle).poiCellStyle);
+                attributedString.clear();
+            } else {
+                throw new IllegalArgumentException("Incompatible implementation.");
             }
         }
 
