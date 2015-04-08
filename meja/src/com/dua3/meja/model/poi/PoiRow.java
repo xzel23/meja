@@ -15,13 +15,17 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.poi.PoiCell.PoiHssfCell;
 import com.dua3.meja.model.poi.PoiCell.PoiXssfCell;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.util.Cache;
+
+import java.util.Iterator;
 import java.util.Objects;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -55,7 +59,8 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
         this.poiRow = row;
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiRow) {
             return Objects.equals(poiRow, ((PoiRow)obj).poiRow);
@@ -72,6 +77,29 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
     @Override
     public abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheet();
 
+	@Override
+	public Iterator<Cell> iterator() {
+		return new Iterator<Cell>() {
+
+			private int colNum=PoiRow.this.poiRow.getFirstCellNum();
+			
+			@Override
+			public boolean hasNext() {
+				return colNum<PoiRow.this.poiRow.getLastCellNum();
+			}
+
+			@Override
+			public Cell next() {
+				return getCell(colNum++);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("Removing of cells is not supported.");
+			}
+		};
+	}
+    
     static class PoiXssfRow extends PoiRow<
             XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
 
@@ -103,6 +131,7 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
             }
             return cache.get(poiCell);
         }
+
     }
 
     static class PoiHssfRow extends PoiRow<

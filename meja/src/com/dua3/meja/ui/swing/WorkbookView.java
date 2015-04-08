@@ -28,7 +28,9 @@ import javax.swing.JTabbedPane;
  */
 public class WorkbookView extends JComponent {
 
-    private Workbook workbook;
+	private static final long serialVersionUID = 1L;
+	
+	private Workbook workbook;
     private JTabbedPane content = null;
 
     public WorkbookView() {

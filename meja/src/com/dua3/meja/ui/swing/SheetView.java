@@ -24,6 +24,7 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
@@ -39,6 +40,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -300,7 +302,8 @@ public class SheetView extends JPanel implements Scrollable {
     static enum Actions {
 
         MOVE_UP {
-                    @Override
+                    @SuppressWarnings("serial")
+					@Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_UP") {
                             @Override
@@ -311,7 +314,8 @@ public class SheetView extends JPanel implements Scrollable {
                     }
                 },
         MOVE_DOWN {
-                    @Override
+                    @SuppressWarnings("serial")
+					@Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_DOWN") {
                             @Override
@@ -322,6 +326,7 @@ public class SheetView extends JPanel implements Scrollable {
                     }
                 },
         MOVE_LEFT {
+                    @SuppressWarnings("serial")
                     @Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_LEFT") {
@@ -333,6 +338,7 @@ public class SheetView extends JPanel implements Scrollable {
                     }
                 },
         MOVE_RIGHT {
+                    @SuppressWarnings("serial")
                     @Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_RIGHT") {

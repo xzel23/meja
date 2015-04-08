@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
@@ -23,6 +24,7 @@ import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.util.Cache;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -124,7 +127,8 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         poiWorkbook.close();
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiWorkbook) {
             return Objects.equals(poiWorkbook, ((PoiWorkbook)obj).poiWorkbook);
@@ -223,6 +227,14 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return getFont(poiWorkbook.getFontAt(idx));
         }
 
+		@Override
+		public Sheet createSheet(String sheetName) {
+			HSSFSheet poiSheet = poiWorkbook.createSheet(sheetName);
+			PoiSheet<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> sheet = new PoiHssfSheet(this, poiSheet);
+			sheets.add(sheet);
+			return sheet;
+		}
+
     }
 
     static class PoiXssfWorkbook extends PoiWorkbook<
@@ -302,6 +314,14 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         public PoiXssfFont getFont(XSSFFont poiFont) {
             return fontCache.get(poiFont);
         }
+
+		@Override
+		public Sheet createSheet(String sheetName) {
+			XSSFSheet poiSheet = poiWorkbook.createSheet(sheetName);
+			PoiSheet<XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> sheet = new PoiXssfSheet(this, poiSheet);
+			sheets.add(sheet);
+			return sheet;
+		}
 
     }
 

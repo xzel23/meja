@@ -21,6 +21,7 @@ import java.io.IOException;
  *
  * @author axel
  */
+@SuppressWarnings("serial")
 public class InvalidFileFormatException extends IOException {
     public InvalidFileFormatException(String message) {
         super(message);

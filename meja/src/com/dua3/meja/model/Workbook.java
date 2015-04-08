@@ -55,4 +55,10 @@ public interface Workbook extends AutoCloseable {
      */
     void write(OutputStream out) throws IOException;
     
+    /**
+     * Add a new sheet as last sheet of this workbook.
+     * @param sheetName
+     * @return the new sheet
+     */
+    Sheet createSheet(String sheetName);
 }

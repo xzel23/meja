@@ -25,9 +25,12 @@ import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.Cache;
+
 import java.util.Objects;
+
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -152,7 +155,8 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         return poiRow == null ? poiSheet.getDefaultRowHeightInPoints() : poiRow.getHeightInPoints();
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiSheet) {
             return Objects.equals(poiSheet, ((PoiSheet)obj).poiSheet);

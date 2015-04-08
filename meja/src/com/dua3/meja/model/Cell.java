@@ -109,14 +109,55 @@ public interface Cell {
      */
     Cell getLogicalCell();
 
+    /**
+     * Get the cell`s row number.
+     * @return row number of this cell
+     */
     int getRowNumber();
+
+    /**
+     * Get the cell`s column number.
+     * @return column number of this cell
+     */
     int getColumnNumber();
+
+    /**
+     * Get the cell`s sheet.
+     * @return sheet this cell belongs to
+     */
     Sheet getSheet();
+
+    /**
+     * Get the cell`s content as AttributedString for display.
+     * 
+     * If the cell is of formula type, the result of evaluation is returned.
+     * 
+     * @return cell content as AttributedString
+     */
     AttributedString getAttributedString();
 
+    /**
+     * Set cell value to date.
+     * @param arg date
+     */
     void set(Date arg);
+    
+    /** 
+     * Set cell value to number.
+     * @param arg number
+     */
     void set(Number arg);
+    
+    /**
+     * Set cell value to string.
+     * @param s string
+     */
     void set(String s);
+    
+    /**
+     * Set cell value to boolean value.
+     * @param b boolean value
+     */
     void set(Boolean b);
 
     /**
@@ -124,5 +165,10 @@ public interface Cell {
      * @return the row for this cell
      */
     public Row getRow();
+
+    /**
+     * Clear the cell`s content.
+     */
+    public void clear();
 
 }
