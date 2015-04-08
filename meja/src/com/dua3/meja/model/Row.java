@@ -19,7 +19,7 @@ package com.dua3.meja.model;
  *
  * @author axel
  */
-public interface Row {
+public interface Row extends Iterable<Cell> {
 
     Sheet getSheet();
     Cell getCell(int col);

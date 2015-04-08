@@ -40,7 +40,7 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public PoiWorkbook open(File file) throws IOException {
+    public PoiWorkbook<?,?,?,?,?,?> open(File file) throws IOException {
         try {
             Locale locale = Locale.getDefault();
             final Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file);
@@ -50,7 +50,7 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
         }
     }
 
-    private PoiWorkbook createWorkbook(final Workbook poiWorkbook, Locale locale) {
+    private PoiWorkbook<?,?,?,?,?,?> createWorkbook(final Workbook poiWorkbook, Locale locale) {
         if (poiWorkbook instanceof org.apache.poi.hssf.usermodel.HSSFWorkbook) {
             return new PoiHssfWorkbook((org.apache.poi.hssf.usermodel.HSSFWorkbook) poiWorkbook, locale);
         } else if (poiWorkbook instanceof org.apache.poi.xssf.usermodel.XSSFWorkbook) {

@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.model;
+package com.dua3.meja.ui.swing;
+
+import com.dua3.meja.model.Cell;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 /**
  *
- * @author axel
+ * @author Axel Howind <axel@dua3.com>
  */
-public enum VAlign {
-    ALIGN_TOP(false),
-    ALIGN_MIDDLE(false),
-    ALIGN_BOTTOM(false),
-    ALIGN_JUSTIFY(false);
+public interface CellRenderer {
 
-    private final boolean wrap;
+    void render(Graphics2D g, Cell cell, Rectangle cellRect, Rectangle clipRect, float scale);
 
-    private VAlign(boolean wrap) {
-        this.wrap = wrap;
-
-    }
-
-    public boolean isWrap() {
-        return wrap;
-    }
 }

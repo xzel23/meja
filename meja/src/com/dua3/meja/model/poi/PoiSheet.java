@@ -136,7 +136,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     }
 
     @Override
-    public abstract PoiWorkbook getWorkbook();
+    public abstract PoiWorkbook<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getWorkbook();
 
     @Override
     public double getColumnWidth(int col) {
@@ -150,7 +150,8 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         return poiRow == null ? poiSheet.getDefaultRowHeightInPoints() : poiRow.getHeightInPoints();
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiSheet) {
             return Objects.equals(poiSheet, ((PoiSheet)obj).poiSheet);

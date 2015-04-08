@@ -20,8 +20,19 @@ package com.dua3.meja.model;
  * @author axel
  */
 public enum HAlign {
-    ALIGN_LEFT,
-    ALIGN_CENTER,
-    ALIGN_RIGHT,
-    ALIGN_JUSTIFY;
+    ALIGN_LEFT(false),
+    ALIGN_CENTER(false),
+    ALIGN_RIGHT(false),
+    ALIGN_JUSTIFY(true);
+
+    private final boolean wrap;
+
+    private HAlign(boolean wrap) {
+        this.wrap = wrap;
+
+    }
+
+    public boolean isWrap() {
+        return wrap;
+    }
 }

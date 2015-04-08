@@ -71,15 +71,10 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
                 return HAlign.ALIGN_RIGHT;
             case org.apache.poi.ss.usermodel.CellStyle.ALIGN_CENTER_SELECTION:
                 return HAlign.ALIGN_CENTER;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_FILL:
-                return HAlign.ALIGN_JUSTIFY;
             case org.apache.poi.ss.usermodel.CellStyle.ALIGN_GENERAL:
                 return HAlign.ALIGN_LEFT;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_JUSTIFY:
-                return HAlign.ALIGN_JUSTIFY;
             default:
-                Logger.getLogger(PoiCellStyle.class.getName()).log(Level.WARNING, "Unknown value for horizontal algnment: {0}", alignment);
-                return HAlign.ALIGN_LEFT;
+                return HAlign.ALIGN_JUSTIFY;
         }
     }
 
@@ -102,7 +97,7 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
     }
 
     @Override
-    public abstract PoiFont getFont();
+    public abstract PoiFont<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getFont();
 
     protected float getBorderWidth(short poiBorder) {
         switch (poiBorder) {
@@ -152,12 +147,12 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
 
         @Override
         public Color getFillBgColor() {
-            return workbook.getColor(poiCellStyle.getFillBackgroundColorColor());
+            return workbook.getColor(poiCellStyle.getFillBackgroundColorColor(),Color.WHITE);
         }
 
         @Override
         public Color getFillFgColor() {
-            return workbook.getColor(poiCellStyle.getFillForegroundColorColor());
+            return workbook.getColor(poiCellStyle.getFillForegroundColorColor(), null);
         }
 
         @Override
@@ -207,12 +202,12 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
 
         @Override
         public Color getFillBgColor() {
-            return workbook.getColor(poiCellStyle.getFillBackgroundXSSFColor());
+            return workbook.getColor(poiCellStyle.getFillBackgroundXSSFColor(),Color.WHITE);
         }
 
         @Override
         public Color getFillFgColor() {
-            return workbook.getColor(poiCellStyle.getFillForegroundXSSFColor());
+            return workbook.getColor(poiCellStyle.getFillForegroundXSSFColor(), null);
         }
 
         @Override
@@ -226,19 +221,19 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
             final float width;
             switch (d) {
                 case NORTH:
-                    color = workbook.getColor(poiCellStyle.getTopBorderXSSFColor());
+                    color = workbook.getColor(poiCellStyle.getTopBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderTop());
                     break;
                 case EAST:
-                    color = workbook.getColor(poiCellStyle.getRightBorderXSSFColor());
+                    color = workbook.getColor(poiCellStyle.getRightBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderRight());
                     break;
                 case SOUTH:
-                    color = workbook.getColor(poiCellStyle.getBottomBorderXSSFColor());
+                    color = workbook.getColor(poiCellStyle.getBottomBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderBottom());
                     break;
                 case WEST:
-                    color = workbook.getColor(poiCellStyle.getLeftBorderXSSFColor());
+                    color = workbook.getColor(poiCellStyle.getLeftBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderLeft());
                     break;
                 default:

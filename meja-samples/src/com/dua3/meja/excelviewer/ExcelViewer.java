@@ -92,12 +92,11 @@ public class ExcelViewer {
     }
 
     private static void info() {
-
         System.out.format("%s%n%n%s%n", getApplicationName(), getLicenseText());
     }
 
     private FilterDef[] filters = {
-        new FilterDef("Excel Files", OpenMode.READ_AND_WRITE, PoiWorkbookFactory.instance(), ".xls", ".xlsx")
+        new FilterDef("Excel Files", OpenMode.READ_AND_WRITE, PoiWorkbookFactory.instance(), ".xls", ".xlsx", ".xlsm")
     };
 
     public List<FilterDef> getFileFilters(OpenMode mode) {

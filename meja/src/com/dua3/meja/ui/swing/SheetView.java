@@ -21,7 +21,6 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.model.Font;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
@@ -38,15 +37,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineBreakMeasurer;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -64,10 +56,14 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 /**
+ * Swing component for displaying sheets.
  *
  * @author axel
  */
 public class SheetView extends JPanel implements Scrollable {
+
+    private static final long serialVersionUID = 1L;
+    private final CellRenderer renderer = new DefaultCellRenderer();
 
     Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
         @Override
@@ -76,33 +72,68 @@ public class SheetView extends JPanel implements Scrollable {
         }
     };
 
-    Cache<Font, java.awt.Font> fontCache = new Cache<Font, java.awt.Font>() {
-        @Override
-        protected java.awt.Font create(Font font) {
-            int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-            return new java.awt.Font(font.getFamily(), style, (int) Math.round(font.getSizeInPoints()));
-        }
-    };
-
+    /**
+     * The scale used to calculate screen sizes dependent of display resolution.
+     */
     float scale = 1;
 
+    /**
+     * Array with column positions (x-axis) in pixels.
+     */
     int columnPos[];
+
+    /**
+     * Array with column positions (y-axis) in pixels.
+     */
     int rowPos[];
+
+    /**
+     * Height of the sheet in pixels.
+     */
     int sheetWidth;
+
+    /**
+     * Width of the sheet in pixels.
+     */
     int sheetHeight;
+
+    /**
+     * The column number of the selected cell.
+     */
     int currentColNum;
+
+    /**
+     * The row number of the selected cell.
+     */
     int currentRowNum;
 
+    /**
+     * The sheet displayed.
+     */
     private Sheet sheet;
+
+    /**
+     * The color to use for the grid lines.
+     */
     private Color gridColor = Color.LIGHT_GRAY;
 
+    /**
+     * Flag indicating whether column headers should be shown when added to a
+     * JScrollPane.
+     */
     private boolean showColumnHeader = true;
+
+    /**
+     * Flag indicating whether row headers should be shown when added to a
+     * JScrollPane.
+     */
     private boolean showRowHeader = true;
 
     /**
      * Horizontal padding.
      */
     private final int paddingX = 2;
+
     /**
      * Vertical padding.
      */
@@ -185,6 +216,12 @@ public class SheetView extends JPanel implements Scrollable {
         scrollRectToVisible(getCellRect(cell));
     }
 
+    /**
+     * Calculate the rectangle the cell occupies on screen.
+     *
+     * @param cell
+     * @return rectangle
+     */
     public Rectangle getCellRect(Cell cell) {
         final int i = cell.getRowNumber();
         final int j = cell.getColumnNumber();
@@ -197,22 +234,48 @@ public class SheetView extends JPanel implements Scrollable {
         return new Rectangle(x, y, w, h);
     }
 
+    /**
+     * Get the current row number.
+     *
+     * @return row number of the selected cell
+     */
     public int getCurrentRowNum() {
         return currentRowNum;
     }
 
+    /**
+     * Set the current row number.
+     *
+     * @param rowNum number of row to be set
+     */
     public void setCurrentRowNum(int rowNum) {
         setCurrent(rowNum, currentColNum);
     }
 
+    /**
+     * Get the current column number.
+     *
+     * @return column number of the selected cell
+     */
     public int getCurrentColNum() {
         return currentColNum;
     }
 
+    /**
+     * Set the current column number.
+     *
+     * @param colNum number of column to be set
+     */
     public void setCurrentColNum(int colNum) {
         setCurrent(currentRowNum, colNum);
     }
 
+    /**
+     * Set current row and column.
+     *
+     * @param rowNum number of row to be set
+     * @param colNum number of column to be set
+     */
     public void setCurrent(int rowNum, int colNum) {
         int oldRowNum = currentRowNum;
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
@@ -231,10 +294,14 @@ public class SheetView extends JPanel implements Scrollable {
         }
     }
 
+    /**
+     * Actions for key bindings.
+     */
     static enum Actions {
 
         MOVE_UP {
-                    @Override
+                    @SuppressWarnings("serial")
+					@Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_UP") {
                             @Override
@@ -245,7 +312,8 @@ public class SheetView extends JPanel implements Scrollable {
                     }
                 },
         MOVE_DOWN {
-                    @Override
+                    @SuppressWarnings("serial")
+					@Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_DOWN") {
                             @Override
@@ -256,6 +324,7 @@ public class SheetView extends JPanel implements Scrollable {
                     }
                 },
         MOVE_LEFT {
+                    @SuppressWarnings("serial")
                     @Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_LEFT") {
@@ -267,6 +336,7 @@ public class SheetView extends JPanel implements Scrollable {
                     }
                 },
         MOVE_RIGHT {
+                    @SuppressWarnings("serial")
                     @Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_RIGHT") {
@@ -281,22 +351,44 @@ public class SheetView extends JPanel implements Scrollable {
         abstract Action getAction(SheetView view);
     }
 
+    /**
+     * Constructor.
+     *
+     * No sheet is set.
+     */
     public SheetView() {
         this(null);
     }
 
+    /**
+     * Construct a new SheetView for the given sheet.
+     *
+     * @param sheet the sheet to display
+     */
     public SheetView(Sheet sheet) {
         init();
         setSheet(sheet);
     }
 
-    public void setSheet(Sheet sheet1) {
-        this.sheet = sheet1;
+    /**
+     * Set sheet to display.
+     *
+     * @param sheet the sheet to display
+     */
+    public void setSheet(Sheet sheet) {
+        this.sheet = sheet;
         this.currentRowNum = 0;
         this.currentColNum = 0;
         update();
     }
 
+    /**
+     * Initialization method.
+     *
+     * <li>initialize the input map
+     * <li>set up mouse handling
+     * <li>make focusable
+     */
     private void init() {
         // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -382,6 +474,9 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         // set headers
+        addHeadersAsNeeded();
+
+        // listen to Ancestorevents to add headers when view is added to a JScrollPane
         addAncestorListener(new AncestorListener() {
 
             @Override
@@ -425,11 +520,6 @@ public class SheetView extends JPanel implements Scrollable {
                 }
             }
         }
-    }
-
-    @Override
-    public void addAncestorListener(AncestorListener listener) {
-        super.addAncestorListener(listener); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -563,6 +653,7 @@ public class SheetView extends JPanel implements Scrollable {
 
         g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
 
+        // TODO keep?
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
@@ -614,27 +705,32 @@ public class SheetView extends JPanel implements Scrollable {
         }
     }
 
-    void setCurrentCell(Cell cell) {
-        int rowNumber = cell.getRowNumber();
-        int colNumber = cell.getColumnNumber();
-        setCurrentColNum(colNumber);
-    }
-
+    /**
+     * Draw cells.
+     *
+     * Since borders can be draw over by the background of adjacent cells and
+     * text can overlap, drawing is done in three steps:
+     * <ul>
+     * <li> draw background for <em>all</em> cells
+     * <li> draw borders for <em>all</em> cells
+     * <li> draw foreground <em>all</em> cells
+     * </ul>
+     * This is controlled by {@code cellDrawMode}.
+     *
+     * @param g the graphics object to use
+     * @param cellDrawMode the draw mode to use
+     */
     void drawCells(Graphics2D g, CellDrawMode cellDrawMode) {
         // no sheet, no drawing
         if (sheet == null) {
             return;
         }
 
-        // since text can overflow into other cells, add a margin of cells to be
-        // drawn that normally aren't visible when drawing foreground
-        int extra = cellDrawMode == CellDrawMode.DRAW_CELL_FOREGROUND ? 20 : 0;
-
         // determine visible rows and columns
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y) - extra);
-        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height) + extra);
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x) - extra);
-        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width) + extra);
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
+        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x));
+        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width));
 
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
@@ -644,7 +740,20 @@ public class SheetView extends JPanel implements Scrollable {
                 continue;
             }
 
-            for (int j = startColumn; j < endColumn; j++) {
+            // if first/last displayed cell of row is empty, start drawing at
+            // the first non-empty cell to the left/right to make sure
+            // overflowing text is visible.
+            int first = startColumn;
+            while (first>0 && columnPos[first]+800>clipBounds.x && row.getCell(first).getCellType()==CellType.BLANK) {
+                first--;
+            }
+
+            int end = endColumn;
+            while (end<getNumberOfColumns() && columnPos[end]-800<clipBounds.x+clipBounds.width && row.getCell(end).getCellType()==CellType.BLANK) {
+                end++;
+            }
+
+            for (int j = first; j < end; j++) {
                 Cell cell = row.getCell(j);
 
                 if (cell != null) {
@@ -693,10 +802,6 @@ public class SheetView extends JPanel implements Scrollable {
      * Draw cell background.
      *
      * @param g the graphics context to use
-     * @param x x-coordinate of the cells top-left corner
-     * @param y y-coordinate of the cells top-left corner
-     * @param w width of the cell in pixels
-     * @param h height of the cell in pixels
      * @param cell cell to draw
      */
     private void drawCellBackground(Graphics2D g, Cell cell) {
@@ -730,10 +835,6 @@ public class SheetView extends JPanel implements Scrollable {
      * Draw cell border.
      *
      * @param g the graphics context to use
-     * @param x x-coordinate of the cells top-left corner
-     * @param y y-coordinate of the cells top-left corner
-     * @param w width of the cell in pixels
-     * @param h height of the cell in pixels
      * @param cell cell to draw
      */
     private void drawCellBorder(Graphics2D g, Cell cell) {
@@ -775,10 +876,6 @@ public class SheetView extends JPanel implements Scrollable {
      * Draw cell foreground.
      *
      * @param g the graphics context to use
-     * @param x x-coordinate of the cells top-left corner
-     * @param y y-coordinate of the cells top-left corner
-     * @param w width of the cell in pixels
-     * @param h height of the cell in pixels
      * @param cell cell to draw
      */
     private void drawCellForeground(Graphics2D g, Cell cell) {
@@ -786,147 +883,46 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        AttributedString text = cell.getAttributedString();
-        if (isEmpty(text)) {
+        if (cell.getCellType()==CellType.BLANK) {
             return;
         }
 
-        Rectangle cr = getCellRect(cell);
-        cr.x += paddingX;
-        cr.width -= 2 * paddingX - 1;
-        cr.y += paddingY;
-        cr.height -= 2 * paddingY;
+        // the cell rectangle, used for positioning the text
+        Rectangle cellRect = getCellRect(cell);
+        cellRect.x += paddingX;
+        cellRect.width -= 2 * paddingX;
+        cellRect.y += paddingY;
+        cellRect.height -= 2 * paddingY;
 
-        float width = cr.width / scale;
-
-        CellStyle style = cell.getCellStyle();
-        Font font = style.getFont();
-        final Color color = font.getColor();
-
-        g.setFont(getAwtFont(font));
-        g.setColor(color == null ? Color.BLACK : color);
-
-        AffineTransform originalTransform = g.getTransform();
-        g.translate(cr.x, cr.y);
-        g.scale(scale, scale);
-
-        // layout text
-        float wrapWidth = style.isWrap() ? width : 0;
-
-        FontRenderContext frc = new FontRenderContext(g.getTransform(), true, true);
-        List<TextLayout> layouts = prepareText(g, frc, text.getIterator(), wrapWidth);
-
-        // determine size of text
-        float textWidth = 0;
-        float textHeight = 0;
-        for (TextLayout layout : layouts) {
-            textWidth = Math.max(textWidth, scale * layout.getVisibleAdvance());
-            textHeight += scale * (layout.getAscent() + layout.getDescent() + layout.getLeading());
+        // the clipping rectangle
+        final Rectangle clipRect;
+        final CellStyle style = cell.getCellStyle();
+        if (style.isWrap()||style.getHAlign().isWrap()||style.getVAlign().isWrap()) {
+            clipRect = cellRect;
+        } else {
+            Row row = cell.getRow();
+            int clipXMin =cellRect.x;
+            for (int j=cell.getColumnNumber()-1;j>0;j--) {
+                if (row.getCell(j).getCellType()==CellType.BLANK) {
+                    clipXMin = columnPos[j]+paddingX;
+                }
+            }
+            int clipXMax =cellRect.x+cellRect.width;
+            for (int j=cell.getColumnNumber()+1;j<getNumberOfColumns();j++) {
+                if (row.getCell(j).getCellType()==CellType.BLANK) {
+                    clipXMax = columnPos[j+1]-paddingX;
+                }
+            }
+            clipRect = new Rectangle(clipXMin, cellRect.y, clipXMax-clipXMin, cellRect.height);
         }
 
-        // calculate text position
-        final float xd, yd;
-        switch (style.getHAlign()) {
-            case ALIGN_LEFT:
-            case ALIGN_JUSTIFY:
-                xd = cr.x;
-                break;
-            case ALIGN_CENTER:
-                xd = (float) (cr.x + (cr.width - textWidth) / 2.0);
-                break;
-            case ALIGN_RIGHT:
-                xd = cr.x + cr.width - textWidth;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-        switch (style.getVAlign()) {
-            case ALIGN_TOP:
-            case ALIGN_JUSTIFY:
-                yd = cr.y;
-                break;
-            case ALIGN_MIDDLE:
-                yd = (float) (cr.y + (cr.height - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2.0);
-                break;
-            case ALIGN_BOTTOM:
-                final TextLayout lastLayout = layouts.get(layouts.size() - 1);
-                yd = cr.y + cr.height - scale * (lastLayout.getDescent() + lastLayout.getAscent());
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-
-        // draw text
-        g.setTransform(originalTransform);
-        g.translate(xd, yd);
-        g.scale(scale, scale);
-
-        float drawPosY = 0;
-        for (TextLayout layout : layouts) {
-            // Compute pen x position. If the paragraph
-            // is right-to-left we will align the
-            // TextLayouts to the right edge of the panel.
-            float drawPosX = layout.isLeftToRight() ? 0 : width - layout.getAdvance();
-
-            // Move y-coordinate by the ascent of the
-            // layout.
-            drawPosY += layout.getAscent();
-
-            // Draw the TextLayout at (drawPosX,drawPosY).
-            layout.draw(g, drawPosX, drawPosY);
-
-            // Move y-coordinate in preparation for next
-            // layout.
-            drawPosY += layout.getDescent() + layout.getLeading();
-        }
-
-        g.setTransform(originalTransform);
-    }
-
-    private List<TextLayout> prepareText(Graphics2D g, FontRenderContext frc, AttributedCharacterIterator text, float width) {
-
-        if (width <= 0) {
-            // no width is given, so no wrapping will be applied.
-            return Collections.singletonList(new TextLayout(text, frc));
-        }
-
-        AttributedCharacterIterator paragraph = text;
-        int paragraphStart = paragraph.getBeginIndex();
-        int paragraphEnd = paragraph.getEndIndex();
-        LineBreakMeasurer lineMeasurer = new LineBreakMeasurer(paragraph, frc);
-        float drawPosY = 0;
-        List<TextLayout> tls = new ArrayList<>();
-        // Set position to the index of the first
-        // character in the paragraph.
-        lineMeasurer.setPosition(paragraphStart);
-
-        // Get lines from until the entire paragraph
-        // has been displayed.
-        while (lineMeasurer.getPosition() < paragraphEnd) {
-
-            TextLayout layout = lineMeasurer.nextLayout(width);
-
-            // Compute pen x position. If the paragraph
-            // is right-to-left we will align the
-            // TextLayouts to the right edge of the panel.
-            // Move y-coordinate by the ascent of the
-            // layout.
-            drawPosY += scale * layout.getAscent();
-
-            // Draw the TextLayout at (drawPosX,drawPosY).
-            tls.add(layout);
-
-            // Move y-coordinate in preparation for next
-            // layout.
-            drawPosY += scale * (layout.getDescent() + layout.getLeading());
-        }
-        return tls;
+        renderer.render(g, cell, cellRect, clipRect, scale);
     }
 
     /**
      * Get number of columns for the currently loaded sheet.
      *
-     * @return
+     * @return number of columns
      */
     private int getNumberOfColumns() {
         return columnPos.length - 1;
@@ -935,7 +931,7 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Get number of rows for the currently loaded sheet.
      *
-     * @return
+     * @return number of rows
      */
     private int getNumberOfRows() {
         return rowPos.length - 1;
@@ -950,19 +946,27 @@ public class SheetView extends JPanel implements Scrollable {
         return strokeCache.get(width);
     }
 
-    private java.awt.Font getAwtFont(Font font) {
-        return fontCache.get(font);
-    }
-
+    /**
+     * Get column name.
+     *
+     * @param j the column number
+     * @return name of column
+     */
     public String getColumnName(int j) {
         StringBuilder sb = new StringBuilder();
         do {
-            sb.append((char)('A'+(j%25)));
-            j /= 25;
-        } while (j>0);
+            sb.append((char) ('A' + (j % 26)));
+            j /= 26;
+        } while (j > 0);
         return sb.toString();
     }
 
+    /**
+     * Get row name.
+     *
+     * @param i the row number
+     * @return name of row
+     */
     public String getRowName(int i) {
         return Integer.toString(i);
     }
@@ -979,7 +983,7 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Draw frame around current selection.
      *
-     * @param g2d graphics used for drawing
+     * @param g2d graphics object used for drawing
      */
     private void drawSelection(Graphics2D g2d) {
         // no sheet, no drawing
@@ -1009,7 +1013,8 @@ public class SheetView extends JPanel implements Scrollable {
         DRAW_CELL_BACKGROUND, DRAW_CELL_BORDER, DRAW_CELL_FOREGROUND
     }
 
-    class ColumnHeader extends JComponent {
+    @SuppressWarnings("serial")
+    private class ColumnHeader extends JComponent {
 
         private final JLabel painter;
 
@@ -1027,10 +1032,10 @@ public class SheetView extends JPanel implements Scrollable {
 
             Rectangle clipBounds = g.getClipBounds();
             int startCol = Math.max(0, getColumnNumberFromX(clipBounds.x));
-            int endCol = Math.min(1+getColumnNumberFromX(clipBounds.x+clipBounds.width), getNumberOfColumns());
-            for (int j=startCol;j<endCol;j++) {
-                int x = columnPos[j];
-                int w = columnPos[j+1]-x;
+            int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x + clipBounds.width), getNumberOfColumns());
+            for (int j = startCol; j < endCol; j++) {
+                int x = columnPos[j] + 1;
+                int w = columnPos[j + 1] - x;
                 String text = getColumnName(j);
 
                 painter.setBounds(0, 0, w, h);
@@ -1041,7 +1046,8 @@ public class SheetView extends JPanel implements Scrollable {
 
     }
 
-    class RowHeader extends JComponent {
+    @SuppressWarnings("serial")
+    private class RowHeader extends JComponent {
 
         private final JLabel painter;
 
@@ -1051,7 +1057,7 @@ public class SheetView extends JPanel implements Scrollable {
             // of zeroes instead of the last row number because a proportional
             // font might be used)
             StringBuilder sb = new StringBuilder();
-            for (int i=1; i<=getNumberOfRows(); i*=10) {
+            for (int i = 1; i <= getNumberOfRows(); i *= 10) {
                 sb.append('0');
 
             }
@@ -1068,12 +1074,12 @@ public class SheetView extends JPanel implements Scrollable {
 
             Rectangle clipBounds = g.getClipBounds();
             int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
-            int endRow = Math.min(1+getRowNumberFromY(clipBounds.y+clipBounds.height), getNumberOfRows());
-            for (int i=startRow;i<endRow;i++) {
-                int y = rowPos[i];
-                int h = rowPos[i+1]-y;
+            int endRow = Math.min(1 + getRowNumberFromY(clipBounds.y + clipBounds.height), getNumberOfRows());
+            for (int i = startRow; i < endRow; i++) {
+                int y = rowPos[i] + 1;
+                int h = rowPos[i + 1] - y;
                 String text = getRowName(i);
-                
+
                 painter.setBounds(0, 0, w, h);
                 painter.setText(text);
                 painter.paint(g.create(0, y, w, h));

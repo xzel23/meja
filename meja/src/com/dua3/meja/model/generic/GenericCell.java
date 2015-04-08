@@ -18,6 +18,7 @@ package com.dua3.meja.model.generic;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.Row;
 import java.text.AttributedString;
 import java.util.Date;
 
@@ -143,6 +144,21 @@ class GenericCell implements Cell {
     public void set(Boolean arg) {
         this.type=CellType.BOOLEAN;
         this.value=arg;
+    }
+
+    @Override
+    public Row getRow() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void clear() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setCellStyle(CellStyle cellStyle) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

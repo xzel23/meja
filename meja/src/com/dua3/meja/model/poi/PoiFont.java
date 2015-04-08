@@ -101,7 +101,8 @@ public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         }
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiFont) {
             return Objects.equals(getPoiFont(), ((PoiFont)obj).getPoiFont());
@@ -114,7 +115,7 @@ public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     public int hashCode() {
         return getPoiFont().hashCode();
     }
-    
+
     static class PoiHssfFont extends PoiFont<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
         private final PoiHssfWorkbook workbook;
@@ -133,7 +134,7 @@ public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
         @Override
         public Color getColor() {
-            return workbook.getColor(poiFont.getHSSFColor(workbook.getPoiWorkbook()));
+            return workbook.getColor(poiFont.getHSSFColor(workbook.getPoiWorkbook()), Color.BLACK);
         }
     }
 
@@ -155,7 +156,7 @@ public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
         @Override
         public Color getColor() {
-            return workbook.getColor(poiFont.getXSSFColor());
+            return workbook.getColor(poiFont.getXSSFColor(), Color.BLACK);
         }
     }
 
