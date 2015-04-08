@@ -31,6 +31,13 @@ class GenericCell implements Cell {
     private final GenericRow row;
     private CellType type;
     private Object value;
+    private CellStyle cellStyle;
+    private int spanX;
+    private int spanY;
+    private Cell logicalCell;
+    private int rowNumber;
+    private int columnNumber;
+    private Row Row;
 
     public GenericCell(GenericRow row) {
         this.row = row;
@@ -43,39 +50,39 @@ class GenericCell implements Cell {
 
     @Override
     public boolean getBoolean() {
-        if (type==CellType.BOOLEAN) {
+        if (type == CellType.BOOLEAN) {
             return (boolean) value;
         }
-        throw new IllegalStateException("Cannot get boolean value from cell of type "+type.name()+".");
+        throw new IllegalStateException("Cannot get boolean value from cell of type " + type.name() + ".");
     }
 
     @Override
     public String getFormula() {
-        if (type==CellType.FORMULA) {
+        if (type == CellType.FORMULA) {
             return (String) value;
         }
-        throw new IllegalStateException("Cannot get formula from cell of type "+type.name()+".");
+        throw new IllegalStateException("Cannot get formula from cell of type " + type.name() + ".");
     }
 
     @Override
     public Date getDate() {
-        throw new IllegalStateException("Cannot get boolean value from cell of type "+type.name()+".");
+        throw new IllegalStateException("Cannot get boolean value from cell of type " + type.name() + ".");
     }
 
     @Override
     public Number getNumber() {
-        if (type==CellType.NUMERIC) {
+        if (type == CellType.NUMERIC) {
             return (Number) value;
         }
-        throw new IllegalStateException("Cannot get numeric value from cell of type "+type.name()+".");
+        throw new IllegalStateException("Cannot get numeric value from cell of type " + type.name() + ".");
     }
 
     @Override
     public String getText() {
-        if (type==CellType.TEXT) {
+        if (type == CellType.TEXT) {
             return (String) value;
         }
-        throw new IllegalStateException("Cannot get text value from cell of type "+type.name()+".");
+        throw new IllegalStateException("Cannot get text value from cell of type " + type.name() + ".");
     }
 
     @Override
@@ -85,32 +92,32 @@ class GenericCell implements Cell {
 
     @Override
     public CellStyle getCellStyle() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return cellStyle;
     }
 
     @Override
     public int getHorizontalSpan() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return spanX;
     }
 
     @Override
     public int getVerticalSpan() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return spanY;
     }
 
     @Override
     public Cell getLogicalCell() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return logicalCell;
     }
 
     @Override
     public int getRowNumber() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return rowNumber;
     }
 
     @Override
     public int getColumnNumber() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return columnNumber;
     }
 
     @Override
@@ -125,40 +132,42 @@ class GenericCell implements Cell {
 
     @Override
     public void set(Date arg) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.type = CellType.NUMERIC;
+        this.value = arg;
     }
 
     @Override
     public void set(Number arg) {
-        this.type=CellType.NUMERIC;
-        this.value=arg;
+        this.type = CellType.NUMERIC;
+        this.value = arg;
     }
 
     @Override
     public void set(String arg) {
-        this.type=CellType.TEXT;
-        this.value=arg;
+        this.type = CellType.TEXT;
+        this.value = arg;
     }
 
     @Override
     public void set(Boolean arg) {
-        this.type=CellType.BOOLEAN;
-        this.value=arg;
+        this.type = CellType.BOOLEAN;
+        this.value = arg;
     }
 
     @Override
     public Row getRow() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Row;
     }
 
     @Override
     public void clear() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.type = CellType.BLANK;
+        this.value = null;
     }
 
     @Override
     public void setCellStyle(CellStyle cellStyle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.cellStyle = cellStyle;
     }
 
 }
