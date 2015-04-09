@@ -15,11 +15,18 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.meja.model.MejaHelper;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
+import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
+import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;
+import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
+import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
+import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import java.util.Iterator;
 import java.util.Objects;
-
 import javax.swing.table.TableModel;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -33,17 +40,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import com.dua3.meja.model.MejaHelper;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
-import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;
-import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
-import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
-import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
-import com.dua3.meja.util.Cache;
 
 /**
  *
@@ -179,34 +175,34 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     public void freeze(int i, int j) {
         poiSheet.createFreezePane(i+1, j+1);
     }
-    
+
     @Override
     public abstract PoiRow<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getRow(int i);
-    
+
     @Override
     public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCell(int i, int j) {
     	return getRow(i).getCell(j);
     }
-    
+
     @Override
     public void autoSizeColumn(int j) {
     	poiSheet.autoSizeColumn(j);
     }
-    
+
     @Override
     public void setAutofilter(int rowNumber) {
         org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNumber);
-		short col1 = poiRow.getFirstCellNum();    
+		short col1 = poiRow.getFirstCellNum();
         short coln = poiRow.getLastCellNum();
         poiSheet.setAutoFilter(new CellRangeAddress(rowNumber, rowNumber, col1, coln));
     }
-    
+
 	@Override
 	public Iterator<Row> iterator() {
 		return new Iterator<Row>() {
 
 			private int rowNum=PoiSheet.this.poiSheet.getFirstRowNum();
-			
+
 			@Override
 			public boolean hasNext() {
 				return rowNum<PoiSheet.this.poiSheet.getLastRowNum();
@@ -229,14 +225,6 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
         private final PoiHssfWorkbook workbook;
         private final PoiHssfCellStyle defaultCellStyle;
-        private final Cache<HSSFRow, PoiHssfRow> cache = new Cache<HSSFRow, PoiHssfRow>(Cache.Type.WEAK_KEYS){
-
-            @Override
-            protected PoiHssfRow create(HSSFRow poiRow) {
-                return new PoiHssfRow(PoiHssfSheet.this, poiRow);
-            }
-
-        };
 
         public PoiHssfSheet(PoiHssfWorkbook workbook, HSSFSheet poiSheet) {
             super(poiSheet);
@@ -250,7 +238,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
             if(poiRow==null) {
                 poiRow=poiSheet.createRow(row);
             }
-            return cache.get(poiRow);
+            return new PoiHssfRow(PoiHssfSheet.this, poiRow);
         }
 
         @Override
@@ -269,14 +257,6 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
         private final PoiXssfWorkbook workbook;
         private final PoiXssfCellStyle defaultCellStyle;
-        private final Cache<XSSFRow, PoiXssfRow> cache = new Cache<XSSFRow, PoiXssfRow>(Cache.Type.WEAK_KEYS) {
-
-            @Override
-            protected PoiXssfRow create(XSSFRow poiRow) {
-                return new PoiXssfRow(PoiXssfSheet.this, poiRow);
-            }
-
-        };
 
         public PoiXssfSheet(PoiXssfWorkbook workbook, XSSFSheet poiSheet) {
             super(poiSheet);
@@ -290,7 +270,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
             if(poiRow==null) {
                 poiRow=poiSheet.createRow(row);
             }
-            return cache.get(poiRow);
+            return new PoiXssfRow(PoiXssfSheet.this, poiRow);
         }
 
         @Override
