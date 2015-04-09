@@ -4,13 +4,13 @@
 	<classpathentry kind="lib" path="lib/CopyLibs/org-netbeans-modules-java-j2seproject-copylibstask.jar"/>
 	<classpathentry kind="lib" path="lib/ant-1.8.2.jar"/>
 	<classpathentry kind="lib" path="lib/ant-launcher-1.8.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-3.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-excelant-3.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-3.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/poi-ooxml-schemas-3.11.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/stax-api-1.0.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/xmlbeans-2.6.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
