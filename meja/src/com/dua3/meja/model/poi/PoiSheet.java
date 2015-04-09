@@ -15,17 +15,10 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.meja.model.Helper;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
-import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;
-import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
-import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
-import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
-import com.dua3.meja.util.Cache;
 import java.util.Objects;
+
 import javax.swing.table.TableModel;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -39,6 +32,16 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.dua3.meja.model.Helper;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
+import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
+import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;
+import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
+import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
+import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
+import com.dua3.meja.util.Cache;
 
 /**
  *
@@ -173,6 +176,14 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     @Override
     public void freeze(int i, int j) {
         poiSheet.createFreezePane(i+1, j+1);
+    }
+    
+    @Override
+    public abstract PoiRow<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getRow(int i);
+    
+    @Override
+    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCell(int i, int j) {
+    	return getRow(i).getCell(j);
     }
     
     static class PoiHssfSheet extends PoiSheet<

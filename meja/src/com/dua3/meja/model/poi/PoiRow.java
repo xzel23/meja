@@ -84,6 +84,9 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
     @Override
     public abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheet();
 
+    @Override
+    public abstract PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCell(int col);
+    
 	@Override
 	public Iterator<Cell> iterator() {
 		return new Iterator<Cell>() {

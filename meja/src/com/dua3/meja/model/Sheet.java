@@ -57,6 +57,8 @@ public interface Sheet {
 
     Workbook getWorkbook();
 
+    Cell getCell(int i, int j);
+    
     /**
      * Freeze view.
      * 
