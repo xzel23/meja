@@ -47,9 +47,9 @@ public interface Sheet extends Iterable<Row> {
 
     int getNumberOfRows();
 
-    double getColumnWidth(int colNum);
+    float getColumnWidth(int colNum);
 
-    double getRowHeight(int rowNum);
+    float getRowHeight(int rowNum);
 
     CellStyle getDefaultCellStyle();
 
@@ -58,12 +58,13 @@ public interface Sheet extends Iterable<Row> {
     Workbook getWorkbook();
 
     Cell getCell(int i, int j);
-    
+
     /**
      * Freeze view.
-     * 
-     * Freezes the sheet so, that rows <em>above</em> i and columns <em>to the left<em> of j remain in view when scrolling.
-     *  
+     *
+     * Freezes the sheet so, that rows <em>above</em> i and columns
+     * <em>to the left</em> of j remain in view when scrolling.
+     *
      * @param i row number
      * @param j column number
      */
@@ -79,5 +80,5 @@ public interface Sheet extends Iterable<Row> {
 	 * Sets an automatic filter on the given row (optional operation).
 	 * @param i the row number
 	 */
-	void setAutofilter(int headRowNrAus);
+	void setAutofilter(int i);
 }

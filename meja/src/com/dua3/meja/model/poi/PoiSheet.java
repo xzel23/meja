@@ -140,13 +140,13 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     public abstract PoiWorkbook<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getWorkbook();
 
     @Override
-    public double getColumnWidth(int col) {
-        double fontSize = getWorkbook().getDefaultCellStyle().getFont().getSizeInPoints();
-        return poiSheet.getColumnWidth(col) * fontSize * 0.6175 / 256.0;
+    public float getColumnWidth(int col) {
+        float fontSize = getWorkbook().getDefaultCellStyle().getFont().getSizeInPoints();
+        return poiSheet.getColumnWidth(col) * fontSize * 0.6175f / 256;
     }
 
     @Override
-    public double getRowHeight(int rowNum) {
+    public float getRowHeight(int rowNum) {
         final org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNum);
         return poiRow == null ? poiSheet.getDefaultRowHeightInPoints() : poiRow.getHeightInPoints();
     }
