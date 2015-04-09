@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -50,10 +51,18 @@ public interface Workbook extends AutoCloseable {
 
     /**
      * Writes the workbook to a stream.
-     * @param out 
+     * @param out output stream to write to
      * @throws java.io.IOException 
      */
     void write(OutputStream out) throws IOException;
+    
+    /**
+     * Writes the workbook to a file.
+     * @param file file to write to
+     * @param overwriteIfExists set to true if an existing file should be overwritten
+     * @throws java.io.IOException 
+     */
+    void write(File file, boolean overwriteIfExists) throws IOException;
     
     /**
      * Add a new sheet as last sheet of this workbook.

@@ -24,13 +24,17 @@ import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.util.Cache;
+
 import java.awt.Color;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -118,6 +122,18 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     @Override
     public void write(OutputStream out) throws IOException {
         poiWorkbook.write(out);
+    }
+
+    @Override
+    public void write(File file, boolean overwriteIfExists) throws IOException {
+    	boolean exists = file.createNewFile();
+    	if (!exists || overwriteIfExists) {
+    		try (FileOutputStream out = new FileOutputStream(file)) {
+    			poiWorkbook.write(out);
+    		}
+    	} else {
+    		throw new IOException("File '"+file.getAbsolutePath()+"' already present and overwriteIfExists is false.");
+    	}
     }
 
     @Override
