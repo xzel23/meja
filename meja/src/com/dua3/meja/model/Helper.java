@@ -33,7 +33,8 @@ public class Helper {
      * @param sheet
      * @return table model
      */
-    public static TableModel getTableModel(final Sheet sheet) {
+    @SuppressWarnings("serial")
+	public static TableModel getTableModel(final Sheet sheet) {
         return new AbstractTableModel() {
 
             @Override

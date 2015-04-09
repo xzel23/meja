@@ -50,6 +50,27 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
         }
     }
 
+    @Override
+    public PoiWorkbook<?,?,?,?,?,?> create() {
+    	return createXls(Locale.getDefault());
+    }
+    
+    public PoiHssfWorkbook createXls() {
+    	return createXls(Locale.getDefault());
+    }
+    
+    public PoiHssfWorkbook createXls(Locale locale) {
+        return new PoiHssfWorkbook(new org.apache.poi.hssf.usermodel.HSSFWorkbook(), locale);
+    }
+    
+    public PoiXssfWorkbook createXlsx() {
+    	return createXlsx(Locale.getDefault());
+    }
+    
+    public PoiXssfWorkbook createXlsx(Locale locale) {
+        return new PoiXssfWorkbook(new org.apache.poi.xssf.usermodel.XSSFWorkbook(), locale);
+    }
+    
     private PoiWorkbook<?,?,?,?,?,?> createWorkbook(final Workbook poiWorkbook, Locale locale) {
         if (poiWorkbook instanceof org.apache.poi.hssf.usermodel.HSSFWorkbook) {
             return new PoiHssfWorkbook((org.apache.poi.hssf.usermodel.HSSFWorkbook) poiWorkbook, locale);
