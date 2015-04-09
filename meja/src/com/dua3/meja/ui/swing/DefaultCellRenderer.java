@@ -15,6 +15,10 @@
  */
 package com.dua3.meja.ui.swing;
 
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Font;
+import com.dua3.meja.util.Cache;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -28,11 +32,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Font;
-import com.dua3.meja.util.Cache;
-
 /**
  *
  * @author Axel Howind <axel@dua3.com>
@@ -43,7 +42,7 @@ public class DefaultCellRenderer implements CellRenderer {
         @Override
         protected java.awt.Font create(Font font) {
             int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-            return new java.awt.Font(font.getFamily(), style, (int) Math.round(font.getSizeInPoints()));
+            return new java.awt.Font(font.getFamily(), style, Math.round(font.getSizeInPoints()));
         }
     };
 
@@ -96,7 +95,7 @@ public class DefaultCellRenderer implements CellRenderer {
                 yd = cr.y;
                 break;
             case ALIGN_MIDDLE:
-                yd = (float) (cr.y + (cr.height - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2.0);
+                yd = cr.y + (cr.height - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2f;
                 break;
             case ALIGN_BOTTOM:
                 yd = cr.y + cr.height - textHeight;

@@ -24,7 +24,7 @@ import java.awt.Color;
 public interface Font {
 
     Color getColor();
-    double getSizeInPoints();
+    float getSizeInPoints();
     String getFamily();
     boolean isBold();
     boolean isItalic();
