@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
@@ -31,8 +32,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -68,6 +71,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     protected final WORKBOOK poiWorkbook;
     protected final FormulaEvaluator evaluator;
     protected final List<PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR>> sheets = new ArrayList<>();
+    protected final Map<String, Short> cellStyles = new HashMap<>(); 
     protected final org.apache.poi.ss.usermodel.DataFormatter dataFormatter;
 
     protected PoiWorkbook(WORKBOOK poiWorkbook, Locale locale) {
@@ -157,6 +161,30 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         return poiWorkbook.hashCode();
     }
 
+    @SuppressWarnings("rawtypes")
+    @Override
+    public PoiCellStyle createCellStyle(String styleName) {
+    	@SuppressWarnings("unchecked")
+		CELLSTYLE poiCellStyle = (CELLSTYLE) poiWorkbook.createCellStyle();    	
+		cellStyles.put(styleName, poiCellStyle.getIndex());
+    	return getPoiCellStyle(poiCellStyle);
+    }
+
+    @SuppressWarnings("rawtypes")
+	@Override
+    public CellStyle copyCellStyle(String styleName, CellStyle style) {
+    	PoiCellStyle cellStyle = createCellStyle(styleName);
+    	cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
+    	return cellStyle;
+    }
+
+    @SuppressWarnings("unchecked")
+	@Override
+    public CellStyle getCellStyle(String name) {
+    	Short index = cellStyles.get(name);
+    	return index==null ? null : getPoiCellStyle((CELLSTYLE) poiWorkbook.getCellStyleAt(index));
+    }
+    
     static class PoiHssfWorkbook
             extends PoiWorkbook<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 

@@ -70,4 +70,27 @@ public interface Workbook extends AutoCloseable {
      * @return the new sheet
      */
     Sheet createSheet(String sheetName);
+    
+    /**
+     * Get registered cell style.
+     * @param name cell style name
+     * @return the registered cell style for {@code name} or null if not found
+     */
+    CellStyle getCellStyle(String name);
+    
+    /**
+     * Create and register a new cell style.
+     * @param styleName name for this cell style.
+     * @return the new cell style
+     */
+    CellStyle createCellStyle(String styleName);
+    
+    /**
+     * Register a copy of a cell style.
+     * @param styleName name for this cell style.
+     * @param style the style to copy
+     * @return the new cell style
+     */
+    CellStyle copyCellStyle(String styleName, CellStyle style);
+        
 }
