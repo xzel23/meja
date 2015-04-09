@@ -34,7 +34,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.dua3.meja.model.Helper;
+import com.dua3.meja.model.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
@@ -172,7 +172,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
     @Override
     public TableModel getTableModel() {
-        return Helper.getTableModel(this);
+        return MejaHelper.getTableModel(this);
     }
 
     @Override

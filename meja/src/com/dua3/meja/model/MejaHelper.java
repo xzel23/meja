@@ -23,9 +23,18 @@ import javax.swing.table.TableModel;
  *
  * @author Axel Howind <axel@dua3.com>
  */
-public class Helper {
+public class MejaHelper {
 
-    private Helper() {
+    private MejaHelper() {
+    }
+
+    public static String getColumnName(int j) {
+        StringBuilder sb = new StringBuilder();
+        do {
+            sb.append((char) ('A' + j % 26));
+            j /= 26;
+        } while (j > 0);
+        return sb.toString();
     }
 
     /**
@@ -49,13 +58,7 @@ public class Helper {
 
             @Override
             public String getColumnName(int columnIndex) {
-                int col = getSheetCol(columnIndex);
-                StringBuilder sb = new StringBuilder();
-                do {
-                    sb.append((char) ('A' + col % 26));
-                    col /= 26;
-                } while (col > 0);
-                return sb.toString();
+            	return MejaHelper.getColumnName(columnIndex);
             }
 
             @Override
@@ -69,25 +72,15 @@ public class Helper {
             }
 
             @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                int rowNum = getSheetRow(rowIndex);
-                int colNum = getSheetCol(columnIndex);
-                Row row = sheet.getRow(rowNum);
-                Cell cell = row == null ? null : row.getCell(colNum);
+            public Object getValueAt(int i, int j) {
+                Row row = sheet.getRow(i);
+                Cell cell = row == null ? null : row.getCell(j);
                 return cell;
             }
 
             @Override
             public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
                 throw new UnsupportedOperationException("Not supported yet.");
-            }
-
-            private int getSheetCol(int columnIndex) {
-                return columnIndex + sheet.getFirstColNum();
-            }
-
-            private int getSheetRow(int rowIndex) {
-                return rowIndex + sheet.getFirstRowNum();
             }
         };
 

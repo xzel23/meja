@@ -38,6 +38,7 @@ import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -249,6 +250,11 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return sheet;
         }
 
+        public HSSFColor getPoiColor(Color color) {
+        	HSSFPalette palette = poiWorkbook.getCustomPalette();
+        	return palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
+		}
+
     }
 
     static class PoiXssfWorkbook extends PoiWorkbook<
@@ -336,6 +342,10 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             sheets.add(sheet);
             return sheet;
         }
+
+		public XSSFColor getPoiColor(Color color) {
+			return new XSSFColor(color);
+		}
 
     }
 
