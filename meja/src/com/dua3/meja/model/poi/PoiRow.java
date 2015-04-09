@@ -54,9 +54,11 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
 
 
     protected final ROW poiRow;
+    protected final int rowNumber;
 
     public PoiRow(ROW row) {
         this.poiRow = row;
+        this.rowNumber = poiRow.getRowNum();
     }
 
     @SuppressWarnings("rawtypes")
@@ -74,6 +76,11 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
         return poiRow.hashCode();
     }
 
+    @Override
+    public int getRowNumber() {
+    	return rowNumber;
+    }
+    
     @Override
     public abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheet();
 

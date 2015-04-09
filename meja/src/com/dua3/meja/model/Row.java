@@ -23,5 +23,6 @@ public interface Row extends Iterable<Cell> {
 
     Sheet getSheet();
     Cell getCell(int col);
-
+    int getRowNumber();
+    
 }
