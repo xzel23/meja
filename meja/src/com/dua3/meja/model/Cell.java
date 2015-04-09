@@ -183,4 +183,10 @@ public interface Cell {
      */
     void setCellStyle(CellStyle cellStyle);
 
+    /**
+     * Sets the cell style registered under name in the workbook.
+     * @param cellStyleName cell style name
+     */
+	void setCellStyle(String cellStyleName);
+
 }

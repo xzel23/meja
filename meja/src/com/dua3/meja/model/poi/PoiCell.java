@@ -28,10 +28,12 @@ import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
+
 import java.lang.ref.SoftReference;
 import java.text.AttributedString;
 import java.util.Date;
 import java.util.Objects;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -318,13 +320,31 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     	}
     }
     
+    @SuppressWarnings("rawtypes")
+	@Override
+    public void setCellStyle(CellStyle cellStyle) {
+        if (cellStyle instanceof PoiCellStyle) {
+            poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
+            attributedString.clear();
+        } else {
+            throw new IllegalArgumentException("Incompatible implementation.");
+        }
+    }
+    
+    @Override
+    public void setCellStyle(String cellStyleName) {
+    	setCellStyle(getWorkbook().getCellStyle(cellStyleName));
+    }
+    
     static class PoiHssfCell extends PoiCell<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
+        private final PoiHssfWorkbook workbook;
         private final PoiHssfRow row;
 
         PoiHssfCell(PoiHssfRow row, HSSFCell cell) {
             super(cell, row);
+            this.workbook = row.getWorkbook();
             this.row = row;
         }
 
@@ -335,7 +355,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
         @Override
         public final PoiHssfWorkbook getWorkbook() {
-            return row.getSheet().getWorkbook();
+            return workbook;
         }
 
         @Override
@@ -345,12 +365,12 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
         @Override
         public PoiHssfCellStyle getCellStyle() {
-            return getWorkbook().getPoiCellStyle(poiCell.getCellStyle());
+            return workbook.getPoiCellStyle(poiCell.getCellStyle());
         }
 
         @Override
         protected PoiHssfFont getFontForFormattingRun(RichTextString richText, int i) {
-            return getWorkbook().getFont(((HSSFRichTextString) richText).getFontOfFormattingRun(i));
+            return workbook.getFont(((HSSFRichTextString) richText).getFontOfFormattingRun(i));
         }
 
         @Override
@@ -368,10 +388,12 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     static class PoiXssfCell extends PoiCell<
             XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
 
+    	private final PoiXssfWorkbook workbook;
         private final PoiXssfRow row;
 
         PoiXssfCell(PoiXssfRow row, XSSFCell cell) {
             super(cell, row);
+            this.workbook = row.getWorkbook();
             this.row = row;
         }
 
@@ -382,7 +404,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
         @Override
         public final PoiXssfWorkbook getWorkbook() {
-            return row.getSheet().getWorkbook();
+        	return workbook;
         }
 
         @Override
@@ -392,7 +414,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
         @Override
         public PoiXssfCellStyle getCellStyle() {
-            return getWorkbook().getPoiCellStyle(poiCell.getCellStyle());
+            return workbook.getPoiCellStyle(poiCell.getCellStyle());
         }
 
         @Override
@@ -400,19 +422,9 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             // Catch NPE as Workaround for Apache POI Bug 56511 (will be fixed in 3.12)
             // https://bz.apache.org/bugzilla/show_bug.cgi?id=56511
             try {
-                return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
+                return workbook.getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
             } catch (NullPointerException e) {
                 return getCellStyle().getFont();
-            }
-        }
-
-        @Override
-        public void setCellStyle(CellStyle cellStyle) {
-            if (cellStyle instanceof PoiXssfCellStyle) {
-                poiCell.setCellStyle(((PoiXssfCellStyle) cellStyle).poiCellStyle);
-                attributedString.clear();
-            } else {
-                throw new IllegalArgumentException("Incompatible implementation.");
             }
         }
 
