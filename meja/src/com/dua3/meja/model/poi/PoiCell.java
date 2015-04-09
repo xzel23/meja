@@ -306,6 +306,18 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         return poiCell.hashCode();
     }
 
+    @Override
+    public boolean isEmpty() {
+    	switch (poiCell.getCellType()) {
+    	case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
+    		return true;
+    	case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
+    		return poiCell.getStringCellValue().isEmpty();
+    	default:
+    		return false;
+    	}
+    }
+    
     static class PoiHssfCell extends PoiCell<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 

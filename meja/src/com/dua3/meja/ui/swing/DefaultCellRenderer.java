@@ -15,11 +15,6 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.Font;
-import com.dua3.meja.util.Cache;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -32,6 +27,11 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Font;
+import com.dua3.meja.util.Cache;
 
 /**
  *
@@ -56,7 +56,7 @@ public class DefaultCellRenderer implements CellRenderer {
 
     @Override
     public void render(Graphics2D g, Cell cell, Rectangle cr, Rectangle clipRect, float scale) {
-        if (cell.getCellType() == CellType.BLANK) {
+        if (cell.isEmpty()) {
             return;
         }
 

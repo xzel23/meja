@@ -74,6 +74,12 @@ public interface Cell {
     String getAsText();
 
     /**
+     * Test for empty cell.
+     * @return true if cell has cell type BLANK or contains the empty string.
+     */
+    boolean isEmpty();
+    
+    /**
      * Return the cell style.
      * @return cell style
      */

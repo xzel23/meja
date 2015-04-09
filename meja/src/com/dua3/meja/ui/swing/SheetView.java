@@ -48,7 +48,6 @@ import javax.swing.event.AncestorListener;
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
@@ -744,12 +743,12 @@ public class SheetView extends JPanel implements Scrollable {
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
             int first = startColumn;
-            while (first>0 && columnPos[first]+800>clipBounds.x && row.getCell(first).getCellType()==CellType.BLANK) {
+            while (first>0 && columnPos[first]+800>clipBounds.x && row.getCell(first).isEmpty()) {
                 first--;
             }
 
             int end = endColumn;
-            while (end<getNumberOfColumns() && columnPos[end]-800<clipBounds.x+clipBounds.width && row.getCell(end).getCellType()==CellType.BLANK) {
+            while (end<getNumberOfColumns() && columnPos[end]-800<clipBounds.x+clipBounds.width && row.getCell(end).isEmpty()) {
                 end++;
             }
 
@@ -879,11 +878,7 @@ public class SheetView extends JPanel implements Scrollable {
      * @param cell cell to draw
      */
     private void drawCellForeground(Graphics2D g, Cell cell) {
-        if (cell.getCellType() == CellType.BLANK) {
-            return;
-        }
-
-        if (cell.getCellType()==CellType.BLANK) {
+        if (cell.isEmpty()) {
             return;
         }
 
@@ -903,13 +898,13 @@ public class SheetView extends JPanel implements Scrollable {
             Row row = cell.getRow();
             int clipXMin =cellRect.x;
             for (int j=cell.getColumnNumber()-1;j>0;j--) {
-                if (row.getCell(j).getCellType()==CellType.BLANK) {
+                if (row.getCell(j).isEmpty()) {
                     clipXMin = columnPos[j]+paddingX;
                 }
             }
             int clipXMax =cellRect.x+cellRect.width;
             for (int j=cell.getColumnNumber()+1;j<getNumberOfColumns();j++) {
-                if (row.getCell(j).getCellType()==CellType.BLANK) {
+                if (row.getCell(j).isEmpty()) {
                     clipXMax = columnPos[j+1]-paddingX;
                 }
             }
