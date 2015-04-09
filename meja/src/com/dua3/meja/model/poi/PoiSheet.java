@@ -188,6 +188,19 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     	return getRow(i).getCell(j);
     }
     
+    @Override
+    public void autoSizeColumn(int j) {
+    	poiSheet.autoSizeColumn(j);
+    }
+    
+    @Override
+    public void setAutofilter(int rowNumber) {
+        org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNumber);
+		short col1 = poiRow.getFirstCellNum();    
+        short coln = poiRow.getLastCellNum();
+        poiSheet.setAutoFilter(new CellRangeAddress(rowNumber, rowNumber, col1, coln));
+    }
+    
 	@Override
 	public Iterator<Row> iterator() {
 		return new Iterator<Row>() {

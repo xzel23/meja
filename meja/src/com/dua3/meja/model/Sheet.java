@@ -68,4 +68,16 @@ public interface Sheet extends Iterable<Row> {
      * @param j column number
      */
 	void freeze(int i, int j);
+
+	/**
+	 * Adjusts the size of the column to its contents (optional operation).
+	 * @param j the column to resize
+	 */
+	void autoSizeColumn(int j);
+
+	/**
+	 * Sets an automatic filter on the given row (optional operation).
+	 * @param i the row number
+	 */
+	void setAutofilter(int headRowNrAus);
 }
