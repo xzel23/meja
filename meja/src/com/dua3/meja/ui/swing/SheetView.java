@@ -15,6 +15,15 @@
  */
 package com.dua3.meja.ui.swing;
 
+import com.dua3.meja.model.BorderStyle;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Direction;
+import com.dua3.meja.model.FillPattern;
+import com.dua3.meja.model.MejaHelper;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.Cache;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
@@ -28,7 +37,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -44,15 +52,6 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-
-import com.dua3.meja.model.BorderStyle;
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Direction;
-import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.util.Cache;
 
 /**
  * Swing component for displaying sheets.
@@ -943,12 +942,7 @@ public class SheetView extends JPanel implements Scrollable {
      * @return name of column
      */
     public String getColumnName(int j) {
-        StringBuilder sb = new StringBuilder();
-        do {
-            sb.append((char) ('A' + (j % 26)));
-            j /= 26;
-        } while (j > 0);
-        return sb.toString();
+        return MejaHelper.getColumnName(j);
     }
 
     /**
