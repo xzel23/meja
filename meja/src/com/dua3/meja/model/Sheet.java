@@ -21,7 +21,7 @@ import javax.swing.table.TableModel;
  *
  * @author axel
  */
-public interface Sheet {
+public interface Sheet extends Iterable<Row> {
 
 	/**
 	 * Get table model suitable for displaying sheet data in a JTable.

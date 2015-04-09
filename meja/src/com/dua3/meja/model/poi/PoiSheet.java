@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import java.util.Iterator;
 import java.util.Objects;
 
 import javax.swing.table.TableModel;
@@ -34,6 +35,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.dua3.meja.model.Helper;
+import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
@@ -186,7 +188,30 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     	return getRow(i).getCell(j);
     }
     
-    static class PoiHssfSheet extends PoiSheet<
+	@Override
+	public Iterator<Row> iterator() {
+		return new Iterator<Row>() {
+
+			private int rowNum=PoiSheet.this.poiSheet.getFirstRowNum();
+			
+			@Override
+			public boolean hasNext() {
+				return rowNum<PoiSheet.this.poiSheet.getLastRowNum();
+			}
+
+			@Override
+			public Row next() {
+				return getRow(rowNum++);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("Removing of rows is not supported.");
+			}
+		};
+	}
+
+	static class PoiHssfSheet extends PoiSheet<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
         private final PoiHssfWorkbook workbook;
