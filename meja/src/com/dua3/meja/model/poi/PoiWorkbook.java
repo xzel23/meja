@@ -24,8 +24,6 @@ import com.dua3.meja.model.poi.PoiFont.PoiHssfFont;
 import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
-import com.dua3.meja.util.Cache;
-
 import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,7 +35,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -71,7 +68,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     protected final WORKBOOK poiWorkbook;
     protected final FormulaEvaluator evaluator;
     protected final List<PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR>> sheets = new ArrayList<>();
-    protected final Map<String, Short> cellStyles = new HashMap<>(); 
+    protected final Map<String, Short> cellStyles = new HashMap<>();
     protected final org.apache.poi.ss.usermodel.DataFormatter dataFormatter;
 
     protected PoiWorkbook(WORKBOOK poiWorkbook, Locale locale) {
@@ -131,14 +128,14 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
 
     @Override
     public void write(File file, boolean overwriteIfExists) throws IOException {
-    	boolean exists = file.createNewFile();
-    	if (!exists || overwriteIfExists) {
-    		try (FileOutputStream out = new FileOutputStream(file)) {
-    			poiWorkbook.write(out);
-    		}
-    	} else {
-    		throw new IOException("File '"+file.getAbsolutePath()+"' already present and overwriteIfExists is false.");
-    	}
+        boolean exists = file.createNewFile();
+        if (!exists || overwriteIfExists) {
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                poiWorkbook.write(out);
+            }
+        } else {
+            throw new IOException("File '" + file.getAbsolutePath() + "' already present and overwriteIfExists is false.");
+        }
     }
 
     @Override
@@ -164,27 +161,27 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     @SuppressWarnings("rawtypes")
     @Override
     public PoiCellStyle createCellStyle(String styleName) {
-    	@SuppressWarnings("unchecked")
-		CELLSTYLE poiCellStyle = (CELLSTYLE) poiWorkbook.createCellStyle();    	
-		cellStyles.put(styleName, poiCellStyle.getIndex());
-    	return getPoiCellStyle(poiCellStyle);
+        @SuppressWarnings("unchecked")
+        CELLSTYLE poiCellStyle = (CELLSTYLE) poiWorkbook.createCellStyle();
+        cellStyles.put(styleName, poiCellStyle.getIndex());
+        return getPoiCellStyle(poiCellStyle);
     }
 
     @SuppressWarnings("rawtypes")
-	@Override
+    @Override
     public CellStyle copyCellStyle(String styleName, CellStyle style) {
-    	PoiCellStyle cellStyle = createCellStyle(styleName);
-    	cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
-    	return cellStyle;
+        PoiCellStyle cellStyle = createCellStyle(styleName);
+        cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
+        return cellStyle;
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public CellStyle getCellStyle(String name) {
-    	Short index = cellStyles.get(name);
-    	return index==null ? null : getPoiCellStyle((CELLSTYLE) poiWorkbook.getCellStyleAt(index));
+        Short index = cellStyles.get(name);
+        return index == null ? null : getPoiCellStyle((CELLSTYLE) poiWorkbook.getCellStyleAt(index));
     }
-    
+
     static class PoiHssfWorkbook
             extends PoiWorkbook<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
@@ -239,31 +236,13 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return new PoiHssfSheet(this, poiSheet);
         }
 
-        private final Cache<HSSFCellStyle, PoiHssfCellStyle> styleCache = new Cache<HSSFCellStyle, PoiHssfCellStyle>(Cache.Type.WEAK_KEYS) {
-
-            @Override
-            protected PoiHssfCellStyle create(HSSFCellStyle poiStyle) {
-                return new PoiHssfCellStyle(PoiHssfWorkbook.this, poiStyle);
-            }
-
-        };
-
         @Override
-        public PoiHssfCellStyle getPoiCellStyle(HSSFCellStyle cellStyle) {
-            return styleCache.get(cellStyle);
+        public PoiHssfCellStyle getPoiCellStyle(HSSFCellStyle poiStyle) {
+            return new PoiHssfCellStyle(PoiHssfWorkbook.this, poiStyle);
         }
 
-        private final Cache<HSSFFont, PoiHssfFont> fontCache = new Cache<HSSFFont, PoiHssfFont>(Cache.Type.WEAK_KEYS) {
-
-            @Override
-            protected PoiHssfFont create(HSSFFont poiFont) {
-                return new PoiHssfFont(PoiHssfWorkbook.this, poiFont);
-            }
-
-        };
-
         public PoiHssfFont getFont(HSSFFont poiFont) {
-            return fontCache.get(poiFont);
+            return new PoiHssfFont(PoiHssfWorkbook.this, poiFont);
         }
 
         public PoiHssfFont getFont(short idx) {
@@ -279,9 +258,9 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         }
 
         public HSSFColor getPoiColor(Color color) {
-        	HSSFPalette palette = poiWorkbook.getCustomPalette();
-        	return palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
-		}
+            HSSFPalette palette = poiWorkbook.getCustomPalette();
+            return palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
+        }
 
     }
 
@@ -336,31 +315,13 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return new PoiXssfSheet(this, poiSheet);
         }
 
-        private final Cache<XSSFCellStyle, PoiXssfCellStyle> styleCache = new Cache<XSSFCellStyle, PoiXssfCellStyle>(Cache.Type.WEAK_KEYS) {
-
-            @Override
-            protected PoiXssfCellStyle create(XSSFCellStyle poiStyle) {
-                return new PoiXssfCellStyle(PoiXssfWorkbook.this, poiStyle);
-            }
-
-        };
-
         @Override
-        public PoiXssfCellStyle getPoiCellStyle(XSSFCellStyle cellStyle) {
-            return styleCache.get(cellStyle);
+        public PoiXssfCellStyle getPoiCellStyle(XSSFCellStyle poiStyle) {
+            return new PoiXssfCellStyle(PoiXssfWorkbook.this, poiStyle);
         }
 
-        private final Cache<XSSFFont, PoiXssfFont> fontCache = new Cache<XSSFFont, PoiXssfFont>(Cache.Type.WEAK_KEYS) {
-
-            @Override
-            protected PoiXssfFont create(XSSFFont poiFont) {
-                return new PoiXssfFont(PoiXssfWorkbook.this, poiFont);
-            }
-
-        };
-
         public PoiXssfFont getFont(XSSFFont poiFont) {
-            return fontCache.get(poiFont);
+            return new PoiXssfFont(PoiXssfWorkbook.this, poiFont);
         }
 
         @Override
@@ -371,9 +332,9 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return sheet;
         }
 
-		public XSSFColor getPoiColor(Color color) {
-			return new XSSFColor(color);
-		}
+        public XSSFColor getPoiColor(Color color) {
+            return new XSSFColor(color);
+        }
 
     }
 
