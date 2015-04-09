@@ -170,6 +170,11 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         return Helper.getTableModel(this);
     }
 
+    @Override
+    public void freeze(int i, int j) {
+        poiSheet.createFreezePane(i+1, j+1);
+    }
+    
     static class PoiHssfSheet extends PoiSheet<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 

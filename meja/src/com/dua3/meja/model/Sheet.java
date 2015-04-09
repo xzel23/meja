@@ -23,8 +23,16 @@ import javax.swing.table.TableModel;
  */
 public interface Sheet {
 
+	/**
+	 * Get table model suitable for displaying sheet data in a JTable.
+	 * @return table model
+	 */
     TableModel getTableModel();
 
+    /**
+     * Get name of sheet.
+     * @return name of sheet
+     */
     String getSheetName();
 
     int getFirstColNum();
@@ -49,4 +57,13 @@ public interface Sheet {
 
     Workbook getWorkbook();
 
+    /**
+     * Freeze view.
+     * 
+     * Freezes the sheet so, that rows <em>above</em> i and columns <em>to the left<em> of j remain in view when scrolling.
+     *  
+     * @param i row number
+     * @param j column number
+     */
+	void freeze(int i, int j);
 }
