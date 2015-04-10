@@ -31,7 +31,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -299,7 +298,7 @@ public class SheetView extends JPanel implements Scrollable {
 
         MOVE_UP {
                     @SuppressWarnings("serial")
-					@Override
+                    @Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_UP") {
                             @Override
@@ -311,7 +310,7 @@ public class SheetView extends JPanel implements Scrollable {
                 },
         MOVE_DOWN {
                     @SuppressWarnings("serial")
-					@Override
+                    @Override
                     public Action getAction(final SheetView view) {
                         return new AbstractAction("MOVE_DOWN") {
                             @Override
@@ -388,7 +387,7 @@ public class SheetView extends JPanel implements Scrollable {
      * <li>make focusable
      */
     private void init() {
-    	setOpaque(false);
+        setOpaque(false);
         // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
@@ -420,12 +419,12 @@ public class SheetView extends JPanel implements Scrollable {
         setFocusable(true);
         requestFocusInWindow();
     }
-    
+
     @Override
     public boolean isOptimizedDrawingEnabled() {
-    	return true;
+        return true;
     }
-    
+
     /**
      * Set the grid color.
      *
@@ -651,8 +650,8 @@ public class SheetView extends JPanel implements Scrollable {
 
     @Override
     protected void paintComponent(Graphics g) {
-    	super.paintComponent(g);
-    	
+        super.paintComponent(g);
+
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.getClipBounds(clipBounds);
@@ -745,53 +744,50 @@ public class SheetView extends JPanel implements Scrollable {
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
             int first = startColumn;
-            while (first>0 && columnPos[first]+800>clipBounds.x && row.getCell(first).isEmpty()) {
+            while (first > 0 && columnPos[first] + 800 > clipBounds.x && row.getCell(first).isEmpty()) {
                 first--;
             }
 
             int end = endColumn;
-            while (end<getNumberOfColumns() && columnPos[end]-800<clipBounds.x+clipBounds.width && row.getCell(end).isEmpty()) {
+            while (end < getNumberOfColumns() && columnPos[end] - 800 < clipBounds.x + clipBounds.width && row.getCell(end).isEmpty()) {
                 end++;
             }
 
             for (int j = first; j < end; j++) {
                 Cell cell = row.getCell(j);
+                Cell logicalCell = cell.getLogicalCell();
 
-                if (cell != null) {
-                    Cell logicalCell = cell.getLogicalCell();
-
-                    final boolean visible;
-                    if (cell == logicalCell) {
-                        // if cell is not merged or the topleft cell of the
-                        // merged region, then it is visible
-                        visible = true;
-                    } else {
-                        // otherwise calculate row and column numbers of the
-                        // first visible cell of the merged region
-                        int iCell = Math.max(i, logicalCell.getRowNumber());
-                        int jCell = Math.max(j, logicalCell.getColumnNumber());
-                        visible = i == iCell && j == jCell;
-                        // skip the other cells of this row that belong to the same merged region
-                        j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
-                        // filter out cells that cannot overflow into the visible region
-                        if (j < startColumn && cell.getCellStyle().isWrap()) {
-                            continue;
-                        }
+                final boolean visible;
+                if (cell == logicalCell) {
+                    // if cell is not merged or the topleft cell of the
+                    // merged region, then it is visible
+                    visible = true;
+                } else {
+                    // otherwise calculate row and column numbers of the
+                    // first visible cell of the merged region
+                    int iCell = Math.max(i, logicalCell.getRowNumber());
+                    int jCell = Math.max(j, logicalCell.getColumnNumber());
+                    visible = i == iCell && j == jCell;
+                    // skip the other cells of this row that belong to the same merged region
+                    j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
+                    // filter out cells that cannot overflow into the visible region
+                    if (j < startColumn && cell.getCellStyle().isWrap()) {
+                        continue;
                     }
+                }
 
-                    // draw cell
-                    if (visible) {
-                        switch (cellDrawMode) {
-                            case DRAW_CELL_BACKGROUND:
-                                drawCellBackground(g, logicalCell);
-                                break;
-                            case DRAW_CELL_BORDER:
-                                drawCellBorder(g, logicalCell);
-                                break;
-                            case DRAW_CELL_FOREGROUND:
-                                drawCellForeground(g, logicalCell);
-                                break;
-                        }
+                // draw cell
+                if (visible) {
+                    switch (cellDrawMode) {
+                        case DRAW_CELL_BACKGROUND:
+                            drawCellBackground(g, logicalCell);
+                            break;
+                        case DRAW_CELL_BORDER:
+                            drawCellBorder(g, logicalCell);
+                            break;
+                        case DRAW_CELL_FOREGROUND:
+                            drawCellForeground(g, logicalCell);
+                            break;
                     }
                 }
 
@@ -894,23 +890,23 @@ public class SheetView extends JPanel implements Scrollable {
         // the clipping rectangle
         final Rectangle clipRect;
         final CellStyle style = cell.getCellStyle();
-        if (style.isWrap()||style.getHAlign().isWrap()||style.getVAlign().isWrap()) {
+        if (style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap()) {
             clipRect = cellRect;
         } else {
             Row row = cell.getRow();
-            int clipXMin =cellRect.x;
-            for (int j=cell.getColumnNumber()-1;j>0;j--) {
+            int clipXMin = cellRect.x;
+            for (int j = cell.getColumnNumber() - 1; j > 0; j--) {
                 if (row.getCell(j).isEmpty()) {
-                    clipXMin = columnPos[j]+paddingX;
+                    clipXMin = columnPos[j] + paddingX;
                 }
             }
-            int clipXMax =cellRect.x+cellRect.width;
-            for (int j=cell.getColumnNumber()+1;j<getNumberOfColumns();j++) {
+            int clipXMax = cellRect.x + cellRect.width;
+            for (int j = cell.getColumnNumber() + 1; j < getNumberOfColumns(); j++) {
                 if (row.getCell(j).isEmpty()) {
-                    clipXMax = columnPos[j+1]-paddingX;
+                    clipXMax = columnPos[j + 1] - paddingX;
                 }
             }
-            clipRect = new Rectangle(clipXMin, cellRect.y, clipXMax-clipXMin, cellRect.height);
+            clipRect = new Rectangle(clipXMin, cellRect.y, clipXMax - clipXMin, cellRect.height);
         }
 
         renderer.render(g, cell, cellRect, clipRect, scale);
@@ -1009,7 +1005,7 @@ public class SheetView extends JPanel implements Scrollable {
             painter = new JLabel("A");
             painter.setHorizontalAlignment(SwingConstants.CENTER);
             painter.setVerticalAlignment(SwingConstants.CENTER);
-            painter.setBorder(BorderFactory.createRaisedBevelBorder());
+            painter.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, gridColor));
             setPreferredSize(new Dimension(SheetView.this.getPreferredSize().width, painter.getPreferredSize().height));
         }
 
@@ -1051,7 +1047,7 @@ public class SheetView extends JPanel implements Scrollable {
             painter = new JLabel(sb.toString());
             painter.setHorizontalAlignment(SwingConstants.RIGHT);
             painter.setVerticalAlignment(SwingConstants.CENTER);
-            painter.setBorder(BorderFactory.createRaisedBevelBorder());
+            painter.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, gridColor));
             setPreferredSize(new Dimension(painter.getPreferredSize().width, SheetView.this.getPreferredSize().height));
         }
 
