@@ -27,10 +27,10 @@ public class RectangularRegion {
     private final int colMax;
 
     public RectangularRegion(int rowMin, int rowMax, int colMin, int colMax) {
-        this.rowMin = 0;
-        this.rowMax = 0;
-        this.colMin = 0;
-        this.colMax = 0;
+        this.rowMin = rowMin;
+        this.rowMax = rowMax;
+        this.colMin = colMin;
+        this.colMax = colMax;
     }
 
     public boolean contains(int i, int j) {
