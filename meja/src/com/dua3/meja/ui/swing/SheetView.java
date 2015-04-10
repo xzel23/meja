@@ -754,7 +754,7 @@ public class SheetView extends JPanel implements Scrollable {
             }
 
             int end = endColumn;
-            while (end < getNumberOfColumns() && columnPos[end] - 800 < clipBounds.x + clipBounds.width && row.getCell(end).isEmpty()) {
+            while (end < getNumberOfColumns() && columnPos[end] - 800 < clipBounds.x + clipBounds.width && row.getCell(end-1).isEmpty()) {
                 end++;
             }
 
@@ -901,15 +901,17 @@ public class SheetView extends JPanel implements Scrollable {
             Row row = cell.getRow();
             int clipXMin = cellRect.x;
             for (int j = cell.getColumnNumber() - 1; j > 0; j--) {
-                if (row.getCell(j).isEmpty()) {
-                    clipXMin = columnPos[j] + paddingX;
+                if (!row.getCell(j).isEmpty()) {
+                    break;
                 }
+                clipXMin = columnPos[j] + paddingX;
             }
             int clipXMax = cellRect.x + cellRect.width;
             for (int j = cell.getColumnNumber() + 1; j < getNumberOfColumns(); j++) {
-                if (row.getCell(j).isEmpty()) {
-                    clipXMax = columnPos[j + 1] - paddingX;
+                if (!row.getCell(j).isEmpty()) {
+                    break;
                 }
+                clipXMax = columnPos[j + 1] - paddingX;
             }
             clipRect = new Rectangle(clipXMin, cellRect.y, clipXMax - clipXMin, cellRect.height);
         }
