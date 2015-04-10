@@ -105,42 +105,39 @@ public class DefaultCellRenderer implements CellRenderer {
         }
 
         // draw text
-        Rectangle area = new Rectangle((int) xd, (int) yd, (int) textWidth, (int) textHeight);
         g.setTransform(originalTransform);
-        if (g.getClipBounds().intersects(area)) {
-            g = (Graphics2D) g.create(clipRect.x, clipRect.y, clipRect.width, clipRect.height);
-            g.translate(xd-clipRect.x, yd-clipRect.y);
-            g.scale(scale, scale);
+        g = (Graphics2D) g.create(clipRect.x, clipRect.y, clipRect.width, clipRect.height);
+        g.translate(xd - clipRect.x, yd - clipRect.y);
+        g.scale(scale, scale);
 
-            float drawPosY = 0;
-            for (TextLayout layout : layouts) {
+        float drawPosY = 0;
+        for (TextLayout layout : layouts) {
                 // Compute pen x position. If the paragraph is right-to-left
-                // we will align the TextLayouts to the right edge of the panel.
-                float drawPosX;
-                switch (style.getHAlign()) {
-                    default:
-                        // default is left aligned
-                        drawPosX = layout.isLeftToRight() ? 0 : cr.width/scale - layout.getAdvance();
-                        break;
-                    case ALIGN_RIGHT:
-                        drawPosX = layout.isLeftToRight() ? cr.width/scale - layout.getAdvance() : 0;
-                        break;
-                    case ALIGN_CENTER:
-                        drawPosX = (cr.width/scale - layout.getAdvance())/2f;
-                        break;
-                }
-
-                // Move y-coordinate by the ascent of the layout.
-                drawPosY += layout.getAscent();
-
-                // Draw the TextLayout at (drawPosX,drawPosY).
-                layout.draw(g, drawPosX, drawPosY);
-
-                // Move y-coordinate in preparation for next layout.
-                drawPosY += layout.getDescent() + layout.getLeading();
+            // we will align the TextLayouts to the right edge of the panel.
+            float drawPosX;
+            switch (style.getHAlign()) {
+                default:
+                    // default is left aligned
+                    drawPosX = layout.isLeftToRight() ? 0 : cr.width / scale - layout.getAdvance();
+                    break;
+                case ALIGN_RIGHT:
+                    drawPosX = layout.isLeftToRight() ? cr.width / scale - layout.getAdvance() : 0;
+                    break;
+                case ALIGN_CENTER:
+                    drawPosX = (cr.width / scale - layout.getAdvance()) / 2f;
+                    break;
             }
-            g.setTransform(originalTransform);
+
+            // Move y-coordinate by the ascent of the layout.
+            drawPosY += layout.getAscent();
+
+            // Draw the TextLayout at (drawPosX,drawPosY).
+            layout.draw(g, drawPosX, drawPosY);
+
+            // Move y-coordinate in preparation for next layout.
+            drawPosY += layout.getDescent() + layout.getLeading();
         }
+        g.setTransform(originalTransform);
     }
 
     protected List<TextLayout> prepareText(Graphics2D g, float scale, FontRenderContext frc, AttributedCharacterIterator text, float width) {
