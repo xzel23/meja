@@ -28,6 +28,7 @@ import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
+import com.dua3.meja.util.RectangularRegion;
 
 import java.lang.ref.SoftReference;
 import java.text.AttributedString;
@@ -67,7 +68,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         implements Cell {
 
     protected final CELL poiCell;
-    protected final CellRangeAddress mergedRegion;
+    protected final RectangularRegion mergedRegion;
     protected final int spanX;
     protected final int spanY;
     protected final Cell logicalCell;
