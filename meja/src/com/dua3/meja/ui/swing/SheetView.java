@@ -388,7 +388,7 @@ public class SheetView extends JPanel implements Scrollable {
      * <li>make focusable
      */
     private void init() {
-        setOpaque(false);
+        setOpaque(true);
         // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
