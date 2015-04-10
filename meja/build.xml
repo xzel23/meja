@@ -40,11 +40,11 @@
                  uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>    
     
-    <!--<target name="-pre-init" depends="init-ivy"/>-->
+    <target name="-pre-init" depends="init-ivy"/>
 
     <!-- Automatically retrieve dependencies using ivy -->
     <target name="-pre-compile">
-        <!--<ivy:retrieve />-->
+        <ivy:retrieve />
     </target>
     
     <!--
