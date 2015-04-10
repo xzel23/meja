@@ -45,7 +45,6 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -205,13 +204,14 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
     @Override
     public AttributedString getAttributedString() {
-        if (getCellType() == CellType.FORMULA) {
+        final CellType cellType = getCellType();
+        if (cellType == CellType.FORMULA) {
             return new AttributedString(getAsText());
         }
 
         AttributedString as = attributedString.get();
         if (as == null) {
-            if (getCellType() != CellType.TEXT) {
+            if (cellType != CellType.TEXT) {
                 as = new AttributedString(getAsText());
             } else {
                 RichTextString richText = poiCell.getRichStringCellValue();
@@ -320,7 +320,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     		return false;
     	}
     }
-    
+
     @SuppressWarnings("rawtypes")
 	@Override
     public void setCellStyle(CellStyle cellStyle) {
@@ -331,12 +331,12 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             throw new IllegalArgumentException("Incompatible implementation.");
         }
     }
-    
+
     @Override
     public void setCellStyle(String cellStyleName) {
     	setCellStyle(getWorkbook().getCellStyle(cellStyleName));
     }
-    
+
     static class PoiHssfCell extends PoiCell<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
