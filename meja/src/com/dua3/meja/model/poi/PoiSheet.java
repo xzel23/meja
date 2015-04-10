@@ -85,7 +85,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         // update row and column information
         firstColumn = Integer.MAX_VALUE;
         lastColumn = 0;
-        for (int i = poiSheet.getFirstRowNum(); i < poiSheet.getLastRowNum(); i++) {
+        for (int i = poiSheet.getFirstRowNum(); i < poiSheet.getLastRowNum()+1; i++) {
             final org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
             if (poiRow != null) {
                 final short firstCellNum = poiRow.getFirstCellNum();
@@ -103,7 +103,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
             firstColumn = 0;
             lastColumn = 0;
         }
-        
+
         // extract merged regions
         final int numMergedRegions = poiSheet.getNumMergedRegions(); // SLOW in XssfSheet (poi 3.11)
         mergedRegions = new ArrayList<>(numMergedRegions);
