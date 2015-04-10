@@ -388,6 +388,7 @@ public class SheetView extends JPanel implements Scrollable {
      * <li>make focusable
      */
     private void init() {
+    	setOpaque(false);
         // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
@@ -419,7 +420,12 @@ public class SheetView extends JPanel implements Scrollable {
         setFocusable(true);
         requestFocusInWindow();
     }
-
+    
+    @Override
+    public boolean isOptimizedDrawingEnabled() {
+    	return true;
+    }
+    
     /**
      * Set the grid color.
      *
@@ -645,16 +651,13 @@ public class SheetView extends JPanel implements Scrollable {
 
     @Override
     protected void paintComponent(Graphics g) {
+    	super.paintComponent(g);
+    	
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.getClipBounds(clipBounds);
 
         g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
-
-        // TODO keep?
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
         drawGrid(g2d);
         drawCells(g2d, CellDrawMode.DRAW_CELL_BACKGROUND);
