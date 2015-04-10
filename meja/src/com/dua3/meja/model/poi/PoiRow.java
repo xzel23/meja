@@ -128,6 +128,7 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
         public PoiXssfSheet getSheet() {
             return sheet;
         }
+        
         private final Cache<XSSFCell, PoiXssfCell> cache = new Cache<XSSFCell, PoiXssfCell>(Cache.Type.WEAK_KEYS) {
 
             @Override

@@ -24,7 +24,10 @@ import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;
 import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
+import com.dua3.meja.util.RectangularRegion;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import javax.swing.table.TableModel;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -58,6 +61,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     protected final SHEET poiSheet;
     private int firstColumn;
     private int lastColumn;
+    private List<RectangularRegion> mergedRegions;
 
     public PoiSheet(SHEET poiSheet) {
         this.poiSheet = poiSheet;
@@ -68,17 +72,17 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         return poiSheet;
     }
 
-    public CellRangeAddress getMergedRegion(int rowNum, int colNum) {
-        for (int i = 0; i < poiSheet.getNumMergedRegions(); i++) {
-            CellRangeAddress mergedRegion = poiSheet.getMergedRegion(i);
-            if (mergedRegion.isInRange(rowNum, colNum)) {
-                return mergedRegion;
+    public RectangularRegion getMergedRegion(int rowNum, int colNum) {
+        for (RectangularRegion rr: mergedRegions) {
+            if (rr.contains(rowNum, colNum)) {
+                return rr;
             }
         }
         return null;
     }
 
     private void update() {
+        // update row and column information
         firstColumn = Integer.MAX_VALUE;
         lastColumn = 0;
         for (int i = poiSheet.getFirstRowNum(); i < poiSheet.getLastRowNum(); i++) {
@@ -98,6 +102,15 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         if (firstColumn == Integer.MAX_VALUE) {
             firstColumn = 0;
             lastColumn = 0;
+        }
+        
+        // extract merged regions
+        final int numMergedRegions = poiSheet.getNumMergedRegions(); // SLOW in XssfSheet (poi 3.11)
+        mergedRegions = new ArrayList<>(numMergedRegions);
+        for (int i = 0; i < numMergedRegions; i++) {
+            CellRangeAddress r = poiSheet.getMergedRegion(i);
+            final RectangularRegion rr = new RectangularRegion(r.getFirstRow(), r.getLastRow(), r.getFirstColumn(), r.getLastColumn());
+            mergedRegions.add(rr);
         }
     }
 
