@@ -660,6 +660,7 @@ public class SheetView extends JPanel implements Scrollable {
 
         g2d.getClipBounds(clipBounds);
 
+        g2d.setBackground(sheet.getDefaultCellStyle().getFillBgColor());
         g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
 
         drawGrid(g2d);
