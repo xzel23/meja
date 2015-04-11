@@ -29,12 +29,10 @@ import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.RectangularRegion;
-
 import java.lang.ref.SoftReference;
 import java.text.AttributedString;
 import java.util.Date;
 import java.util.Objects;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -110,9 +108,8 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     @Override
     public abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheet();
 
-    @Override
-    public CellType getCellType() {
-        switch (poiCell.getCellType()) {
+    private CellType translateCellType(int poiType) {
+        switch (poiType) {
             case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
                 return CellType.BLANK;
             case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN:
@@ -128,6 +125,20 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             default:
                 throw new IllegalArgumentException();
         }
+    }
+
+    @Override
+    public CellType getCellType() {
+        return translateCellType(poiCell.getCellType());
+    }
+
+    @Override
+    public CellType getResultType() {
+        int poiType = poiCell.getCellType();
+        if (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
+            poiType = poiCell.getCachedFormulaResultType();
+        }
+        return translateCellType(poiType);
     }
 
     @Override
@@ -311,18 +322,18 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
     @Override
     public boolean isEmpty() {
-    	switch (poiCell.getCellType()) {
-    	case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
-    		return true;
-    	case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
-    		return poiCell.getStringCellValue().isEmpty();
-    	default:
-    		return false;
-    	}
+        switch (poiCell.getCellType()) {
+            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
+                return true;
+            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
+                return poiCell.getStringCellValue().isEmpty();
+            default:
+                return false;
+        }
     }
 
     @SuppressWarnings("rawtypes")
-	@Override
+    @Override
     public void setCellStyle(CellStyle cellStyle) {
         if (cellStyle instanceof PoiCellStyle) {
             poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
@@ -334,7 +345,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
     @Override
     public void setCellStyle(String cellStyleName) {
-    	setCellStyle(getWorkbook().getCellStyle(cellStyleName));
+        setCellStyle(getWorkbook().getCellStyle(cellStyleName));
     }
 
     static class PoiHssfCell extends PoiCell<
@@ -389,7 +400,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     static class PoiXssfCell extends PoiCell<
             XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
 
-    	private final PoiXssfWorkbook workbook;
+        private final PoiXssfWorkbook workbook;
         private final PoiXssfRow row;
 
         PoiXssfCell(PoiXssfRow row, XSSFCell cell) {
@@ -405,7 +416,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
         @Override
         public final PoiXssfWorkbook getWorkbook() {
-        	return workbook;
+            return workbook;
         }
 
         @Override

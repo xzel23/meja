@@ -23,7 +23,8 @@ public enum HAlign {
     ALIGN_LEFT(false),
     ALIGN_CENTER(false),
     ALIGN_RIGHT(false),
-    ALIGN_JUSTIFY(true);
+    ALIGN_JUSTIFY(true),
+    ALIGN_AUTOMATIC(false);
 
     private final boolean wrap;
 

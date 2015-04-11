@@ -17,7 +17,10 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Font;
+import com.dua3.meja.model.HAlign;
+import com.dua3.meja.model.VAlign;
 import com.dua3.meja.util.Cache;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -62,6 +65,7 @@ public class DefaultCellRenderer implements CellRenderer {
         AttributedString text = cell.getAttributedString();
 
         CellStyle style = cell.getCellStyle();
+        CellType type = cell.getResultType();
         Font font = style.getFont();
         final Color color = font.getColor();
 
@@ -86,10 +90,14 @@ public class DefaultCellRenderer implements CellRenderer {
             textHeight += scale * (layout.getAscent() + layout.getDescent() + layout.getLeading());
         }
 
+        // get the effective alignment settings
+        final VAlign vAlign = getVAlign(style, type);
+        final HAlign hAlign = getHAlign(style, type);
+
         // calculate text position
         final float xd = cr.x;
         float yd;
-        switch (style.getVAlign()) {
+        switch (vAlign) {
             case ALIGN_TOP:
             case ALIGN_JUSTIFY:
                 yd = cr.y;
@@ -115,7 +123,7 @@ public class DefaultCellRenderer implements CellRenderer {
                 // Compute pen x position. If the paragraph is right-to-left
             // we will align the TextLayouts to the right edge of the panel.
             float drawPosX;
-            switch (style.getHAlign()) {
+            switch (hAlign) {
                 default:
                     // default is left aligned
                     drawPosX = layout.isLeftToRight() ? 0 : cr.width / scale - layout.getAdvance();
@@ -138,6 +146,22 @@ public class DefaultCellRenderer implements CellRenderer {
             drawPosY += layout.getDescent() + layout.getLeading();
         }
         g.setTransform(originalTransform);
+    }
+
+    protected static HAlign getHAlign(CellStyle style, CellType type) {
+        HAlign hAlign = style.getHAlign();
+        if (hAlign==HAlign.ALIGN_AUTOMATIC) {
+            if (type==CellType.TEXT) {
+                hAlign = HAlign.ALIGN_LEFT;
+            } else {
+                hAlign = HAlign.ALIGN_RIGHT;
+            }
+        }
+        return hAlign;
+    }
+
+    protected static VAlign getVAlign(CellStyle style, CellType type) {
+        return style.getVAlign();
     }
 
     protected List<TextLayout> prepareText(Graphics2D g, float scale, FontRenderContext frc, AttributedCharacterIterator text, float width) {

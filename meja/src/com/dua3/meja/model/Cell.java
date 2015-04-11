@@ -34,6 +34,17 @@ public interface Cell {
     CellType getCellType();
 
     /**
+     * Return the result type.
+     *
+     * For non-formula cells, this is the same as the value returned by
+     * {@link getCellType()}. For formula cells, the result type of the last
+     * evaluation is returned.
+     *
+     * @return cell type
+     */
+    CellType getResultType();
+
+    /**
      * Return boolean cell value.
      *
      * @return boolean cell value

@@ -74,7 +74,7 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
             case org.apache.poi.ss.usermodel.CellStyle.ALIGN_CENTER_SELECTION:
                 return HAlign.ALIGN_CENTER;
             case org.apache.poi.ss.usermodel.CellStyle.ALIGN_GENERAL:
-                return HAlign.ALIGN_LEFT;
+                return HAlign.ALIGN_AUTOMATIC;
             default:
                 return HAlign.ALIGN_JUSTIFY;
         }
@@ -98,6 +98,10 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
             case ALIGN_JUSTIFY:
                 poiCellStyle
                         .setAlignment(org.apache.poi.ss.usermodel.CellStyle.ALIGN_JUSTIFY);
+                break;
+            case ALIGN_AUTOMATIC:
+                poiCellStyle
+                        .setAlignment(org.apache.poi.ss.usermodel.CellStyle.ALIGN_GENERAL);
                 break;
             default:
                 throw new IllegalArgumentException();
