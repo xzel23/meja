@@ -30,6 +30,21 @@ public class AttributedStringHelper {
         return "<"+tag+">"+text+"</"+tag+">";
     }
 
+    public static String toString(AttributedString text) {
+        AttributedCharacterIterator iter = text.getIterator();
+        final int endIndex = iter.getEndIndex();
+        StringBuilder sb = new StringBuilder(endIndex);
+        while (iter.getIndex()<endIndex) {
+            sb.append(iter.current());
+            iter.next();
+        }
+        return sb.toString();
+    }
+
+    public static boolean isEmpty(AttributedString text) {
+        return text.getIterator().getEndIndex()==0;
+    }
+
     private AttributedStringHelper() {
     }
 

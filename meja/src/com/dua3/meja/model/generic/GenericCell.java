@@ -19,6 +19,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
+import com.dua3.meja.util.AttributedStringHelper;
 import java.text.AttributedString;
 import java.util.Date;
 
@@ -80,7 +81,7 @@ class GenericCell implements Cell {
     @Override
     public String getText() {
         if (type == CellType.TEXT) {
-            return (String) value;
+            return AttributedStringHelper.toString((AttributedString)value);
         }
         throw new IllegalStateException("Cannot get text value from cell of type " + type.name() + ".");
     }
@@ -145,7 +146,7 @@ class GenericCell implements Cell {
     @Override
     public void set(String arg) {
         this.type = CellType.TEXT;
-        this.value = arg;
+        this.value = new AttributedString(arg);
     }
 
     @Override
@@ -177,7 +178,8 @@ class GenericCell implements Cell {
 
     @Override
     public boolean isEmpty() {
-        return type==CellType.BLANK || type==CellType.TEXT&&((String)value).isEmpty();
+        return type==CellType.BLANK
+                || type==CellType.TEXT&&AttributedStringHelper.isEmpty((AttributedString)value);
     }
 
     @Override
