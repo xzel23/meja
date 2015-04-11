@@ -32,16 +32,17 @@ class GenericCell implements Cell {
     private final GenericRow row;
     private CellType type;
     private Object value;
-    private CellStyle cellStyle;
+    private GenericCellStyle cellStyle;
     private int spanX;
     private int spanY;
-    private Cell logicalCell;
+    private GenericCell logicalCell;
     private int rowNumber;
     private int columnNumber;
-    private Row Row;
 
-    public GenericCell(GenericRow row) {
+    public GenericCell(GenericRow row, GenericCellStyle cellStyle) {
         this.row = row;
+        this.logicalCell = this;
+        this.cellStyle=cellStyle;
     }
 
     @Override
@@ -157,7 +158,7 @@ class GenericCell implements Cell {
 
     @Override
     public Row getRow() {
-        return Row;
+        return row;
     }
 
     @Override
@@ -168,7 +169,7 @@ class GenericCell implements Cell {
 
     @Override
     public void setCellStyle(CellStyle cellStyle) {
-        this.cellStyle = cellStyle;
+        this.cellStyle = (GenericCellStyle) cellStyle;
     }
 
     @Override
@@ -185,6 +186,12 @@ class GenericCell implements Cell {
     @Override
     public void setCellStyle(String cellStyleName) {
         this.cellStyle = getSheet().getWorkbook().getCellStyle(cellStyleName);
+    }
+
+    @Override
+    public void setFormula(String value) {
+        this.type = CellType.FORMULA;
+        this.value = value;
     }
 
 }

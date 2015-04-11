@@ -158,28 +158,26 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         return poiWorkbook.hashCode();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public PoiCellStyle createCellStyle(String styleName) {
-        @SuppressWarnings("unchecked")
-        CELLSTYLE poiCellStyle = (CELLSTYLE) poiWorkbook.createCellStyle();
-        cellStyles.put(styleName, poiCellStyle.getIndex());
-        return getPoiCellStyle(poiCellStyle);
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public CellStyle copyCellStyle(String styleName, CellStyle style) {
-        PoiCellStyle cellStyle = createCellStyle(styleName);
+    public PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> copyCellStyle(String styleName, CellStyle style) {
+        PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> cellStyle = getCellStyle(styleName);
         cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
         return cellStyle;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public CellStyle getCellStyle(String name) {
+    public PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCellStyle(String name) {
         Short index = cellStyles.get(name);
-        return index == null ? null : getPoiCellStyle((CELLSTYLE) poiWorkbook.getCellStyleAt(index));
+        CELLSTYLE poiCellStyle;
+        if (index == 0) {
+            poiCellStyle = (CELLSTYLE) poiWorkbook.createCellStyle();
+            index = poiCellStyle.getIndex();
+            cellStyles.put(name, index);
+        } else {
+            poiCellStyle = (CELLSTYLE) poiWorkbook.getCellStyleAt(index);
+        }
+        return getPoiCellStyle(poiCellStyle);
     }
 
     static class PoiHssfWorkbook

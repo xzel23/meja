@@ -52,39 +52,35 @@ public interface Workbook extends AutoCloseable {
     /**
      * Writes the workbook to a stream.
      * @param out output stream to write to
-     * @throws java.io.IOException 
+     * @throws java.io.IOException
      */
     void write(OutputStream out) throws IOException;
-    
+
     /**
      * Writes the workbook to a file.
      * @param file file to write to
      * @param overwriteIfExists set to true if an existing file should be overwritten
-     * @throws java.io.IOException 
+     * @throws java.io.IOException
      */
     void write(File file, boolean overwriteIfExists) throws IOException;
-    
+
     /**
      * Add a new sheet as last sheet of this workbook.
      * @param sheetName
      * @return the new sheet
      */
     Sheet createSheet(String sheetName);
-    
+
+    CellStyle getDefaultCellStyle();
+
     /**
      * Get registered cell style.
+     * If no style is registered under {@code name}, a new one is created.
      * @param name cell style name
-     * @return the registered cell style for {@code name} or null if not found
+     * @return the registered cell style for {@code name}
      */
     CellStyle getCellStyle(String name);
-    
-    /**
-     * Create and register a new cell style.
-     * @param styleName name for this cell style.
-     * @return the new cell style
-     */
-    CellStyle createCellStyle(String styleName);
-    
+
     /**
      * Register a copy of a cell style.
      * @param styleName name for this cell style.
@@ -92,5 +88,5 @@ public interface Workbook extends AutoCloseable {
      * @return the new cell style
      */
     CellStyle copyCellStyle(String styleName, CellStyle style);
-        
+
 }

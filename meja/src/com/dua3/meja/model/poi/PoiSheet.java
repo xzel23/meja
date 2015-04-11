@@ -18,8 +18,6 @@ package com.dua3.meja.model.poi;
 import com.dua3.meja.model.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;
 import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
@@ -237,12 +235,10 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
         private final PoiHssfWorkbook workbook;
-        private final PoiHssfCellStyle defaultCellStyle;
 
         public PoiHssfSheet(PoiHssfWorkbook workbook, HSSFSheet poiSheet) {
             super(poiSheet);
             this.workbook = workbook;
-            this.defaultCellStyle = workbook.getDefaultCellStyle();
         }
 
         @Override
@@ -255,11 +251,6 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         }
 
         @Override
-        public PoiHssfCellStyle getDefaultCellStyle() {
-            return defaultCellStyle;
-        }
-
-        @Override
         public PoiHssfWorkbook getWorkbook() {
             return workbook;
         }
@@ -269,12 +260,10 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
             XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
 
         private final PoiXssfWorkbook workbook;
-        private final PoiXssfCellStyle defaultCellStyle;
 
         public PoiXssfSheet(PoiXssfWorkbook workbook, XSSFSheet poiSheet) {
             super(poiSheet);
             this.workbook = workbook;
-            this.defaultCellStyle = workbook.getDefaultCellStyle();
         }
 
         @Override
@@ -284,11 +273,6 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
                 poiRow=poiSheet.createRow(row);
             }
             return new PoiXssfRow(PoiXssfSheet.this, poiRow);
-        }
-
-        @Override
-        public PoiXssfCellStyle getDefaultCellStyle() {
-            return defaultCellStyle;
         }
 
         @Override

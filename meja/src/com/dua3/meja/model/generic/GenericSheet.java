@@ -16,7 +16,6 @@
 package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Helper;
 import com.dua3.meja.model.MejaHelper;
 import com.dua3.meja.model.Row;
@@ -35,7 +34,6 @@ public class GenericSheet implements Sheet {
     private final GenericWorkbook workbook;
     private String sheetName;
     private final List<GenericRow> rows = new ArrayList<>();
-    private CellStyle defaultCellStyle;
     private int freezeRow;
     private int freezeColumn;
     private int autoFilterRow;
@@ -97,11 +95,6 @@ public class GenericSheet implements Sheet {
     public float getRowHeight(int rowNum) {
         // TODO
         return 12f;
-    }
-
-    @Override
-    public CellStyle getDefaultCellStyle() {
-        return defaultCellStyle;
     }
 
     @Override

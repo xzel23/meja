@@ -305,6 +305,17 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         }
     }
 
+    @Override
+    public void setFormula(String arg) {
+        if (arg == null) {
+            clear();
+        } else {
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
+            poiCell.setCellValue(arg);
+            attributedString.clear();
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {

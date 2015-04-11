@@ -25,7 +25,7 @@ import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.dua3.meja.model.InvalidFileFormatException;
+import com.dua3.meja.io.FileFormatException;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
@@ -53,7 +53,7 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 					.create(file);
 			return createWorkbook(poiWorkbook, locale);
 		} catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException ex) {
-			throw new InvalidFileFormatException(ex.getMessage());
+			throw new FileFormatException(ex.getMessage());
 		}
 	}
 
@@ -69,7 +69,7 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 					.create(in);
 			return createWorkbook(poiWorkbook, locale);
 		} catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException ex) {
-			throw new InvalidFileFormatException(ex.getMessage());
+			throw new FileFormatException(ex.getMessage());
 		}
 	}
 

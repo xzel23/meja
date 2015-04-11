@@ -220,4 +220,6 @@ public interface Cell {
      */
     void setCellStyle(String cellStyleName);
 
+    public void setFormula(String value);
+
 }

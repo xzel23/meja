@@ -30,84 +30,109 @@ import java.awt.Color;
  */
 public class GenericCellStyle implements CellStyle {
 
+    private static final BorderStyle defaultBorderStyle = new BorderStyle(0.0f, Color.BLACK);
+
+    private Font font;
+    private Color fillBgColor;
+    private Color fillFgColor;
+    private FillPattern fillPattern;
+    private HAlign hAlign;
+    private VAlign vAlign;
+    private final BorderStyle[] borderStyle = new BorderStyle[Direction.values().length];
+    private boolean wrap;
+
+    public GenericCellStyle() {
+        this.font = new GenericFont();
+        this.fillPattern = FillPattern.NONE;
+        this.fillBgColor = Color.WHITE;
+        this.fillFgColor = Color.WHITE;
+        this.hAlign = HAlign.ALIGN_AUTOMATIC;
+        this.vAlign = VAlign.ALIGN_MIDDLE;
+        this.wrap = false;
+
+        for (Direction d : Direction.values()) {
+            borderStyle[d.ordinal()] = defaultBorderStyle;
+        }
+    }
+
     @Override
     public Font getFont() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return font;
     }
 
     @Override
     public Color getFillBgColor() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return fillBgColor;
     }
 
     @Override
     public Color getFillFgColor() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return fillFgColor;
     }
 
     @Override
     public FillPattern getFillPattern() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return fillPattern;
     }
 
     @Override
     public HAlign getHAlign() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return hAlign;
     }
 
     @Override
     public VAlign getVAlign() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return vAlign;
     }
 
     @Override
     public BorderStyle getBorderStyle(Direction d) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return borderStyle[d.ordinal()];
     }
 
     @Override
     public boolean isWrap() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return wrap;
     }
 
     @Override
     public void setFont(Font font) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setFillBgColor(Color color) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setFillFgColor(Color color) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setFillPattern(FillPattern pattern) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.font = font;
     }
 
     @Override
     public void setHAlign(HAlign hAlign) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.hAlign = hAlign;
     }
 
     @Override
     public void setVAlign(VAlign vAlign) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setBorderStyle(Direction d, BorderStyle borderStyle) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.vAlign = vAlign;
     }
 
     @Override
     public void setWrap(boolean wrap) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.wrap = wrap;
+    }
+
+    @Override
+    public void setFillBgColor(Color fillBgColor) {
+        this.fillBgColor = fillBgColor;
+    }
+
+    @Override
+    public void setFillFgColor(Color fillFgColor) {
+        this.fillFgColor = fillFgColor;
+    }
+
+    @Override
+    public void setFillPattern(FillPattern fillPattern) {
+        this.fillPattern = fillPattern;
+    }
+
+    @Override
+    public void setBorderStyle(Direction d, BorderStyle borderStyle) {
+        this.borderStyle[d.ordinal()] = borderStyle;
     }
 
 }

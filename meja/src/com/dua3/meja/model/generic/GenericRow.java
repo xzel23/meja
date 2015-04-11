@@ -49,10 +49,13 @@ public class GenericRow implements Row {
     }
 
     private void reserve(int col) {
-        for (int colNum=cells.size(); colNum<=col; colNum++) {
-            cells.add(new GenericCell(this));
+        if (col >= cells.size()) {
+            GenericCellStyle cellStyle = getSheet().getWorkbook().getDefaultCellStyle();
+            for (int colNum = cells.size(); colNum <= col; colNum++) {
+                cells.add(new GenericCell(this, cellStyle));
+            }
+            sheet.reserveColumn(col);
         }
-        sheet.reserveColumn(col);
     }
 
     @Override

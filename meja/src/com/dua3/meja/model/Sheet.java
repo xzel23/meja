@@ -53,8 +53,6 @@ public interface Sheet extends Iterable<Row> {
 
     float getRowHeight(int rowNum);
 
-    CellStyle getDefaultCellStyle();
-
     Row getRow(int row);
 
     Workbook getWorkbook();

@@ -13,17 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.model;
-
-import java.io.IOException;
+package com.dua3.meja.io;
 
 /**
  *
- * @author axel
+ * @author Axel Howind <axel@dua3.com>
  */
-@SuppressWarnings("serial")
-public class InvalidFileFormatException extends IOException {
-    public InvalidFileFormatException(String message) {
+public class DataException extends Exception {
+    private static final long serialVersionUID = 1L;
+
+    public DataException(String message) {
         super(message);
     }
+
+    public DataException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public DataException(Throwable cause) {
+        super(cause);
+    }
+ 
 }
