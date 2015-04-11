@@ -34,7 +34,7 @@ public class GenericRow implements Row {
     public GenericRow(GenericSheet sheet, int rowNumber) {
         this.sheet = sheet;
         this.rowNumber = rowNumber;
-        reserve(sheet.getNumberOfColumns());
+        reserve(sheet.getNumberOfColumns()-1);
     }
 
     @Override
