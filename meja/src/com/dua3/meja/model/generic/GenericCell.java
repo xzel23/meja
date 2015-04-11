@@ -36,13 +36,17 @@ class GenericCell implements Cell {
     private int spanX;
     private int spanY;
     private GenericCell logicalCell;
-    private int rowNumber;
-    private int columnNumber;
+    private final int columnNumber;
 
-    public GenericCell(GenericRow row, GenericCellStyle cellStyle) {
+    public GenericCell(GenericRow row, int colNumber, GenericCellStyle cellStyle) {
         this.row = row;
         this.logicalCell = this;
-        this.cellStyle=cellStyle;
+        this.cellStyle = cellStyle;
+        this.columnNumber = colNumber;
+        this.spanX = 1;
+        this.spanY = 1;
+        this.type = CellType.BLANK;
+        this.value = null;
     }
 
     @Override
@@ -82,14 +86,21 @@ class GenericCell implements Cell {
     @Override
     public String getText() {
         if (type == CellType.TEXT) {
-            return AttributedStringHelper.toString((AttributedString)value);
+            return AttributedStringHelper.toString((AttributedString) value);
         }
         throw new IllegalStateException("Cannot get text value from cell of type " + type.name() + ".");
     }
 
     @Override
     public String getAsText() {
-        return String.valueOf(value);
+        switch (getCellType()) {
+            case BLANK:
+                return "";
+            case TEXT:
+                return AttributedStringHelper.toString((AttributedString) value);
+            default:
+                return String.valueOf(value);
+        }
     }
 
     @Override
@@ -114,7 +125,7 @@ class GenericCell implements Cell {
 
     @Override
     public int getRowNumber() {
-        return rowNumber;
+        return row.getRowNumber();
     }
 
     @Override
@@ -129,7 +140,11 @@ class GenericCell implements Cell {
 
     @Override
     public AttributedString getAttributedString() {
-        return new AttributedString(getAsText());
+        if (getCellType()==CellType.TEXT) {
+            return (AttributedString) value;
+        } else {
+            return new AttributedString(getAsText());
+        }
     }
 
     @Override
@@ -179,8 +194,8 @@ class GenericCell implements Cell {
 
     @Override
     public boolean isEmpty() {
-        return type==CellType.BLANK
-                || type==CellType.TEXT&&AttributedStringHelper.isEmpty((AttributedString)value);
+        return type == CellType.BLANK
+                || type == CellType.TEXT && AttributedStringHelper.isEmpty((AttributedString) value);
     }
 
     @Override

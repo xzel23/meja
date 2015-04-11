@@ -52,7 +52,7 @@ public class GenericRow implements Row {
         if (col >= cells.size()) {
             GenericCellStyle cellStyle = getSheet().getWorkbook().getDefaultCellStyle();
             for (int colNum = cells.size(); colNum <= col; colNum++) {
-                cells.add(new GenericCell(this, cellStyle));
+                cells.add(new GenericCell(this, colNum, cellStyle));
             }
             sheet.reserveColumn(col);
         }
