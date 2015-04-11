@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class GenericRow implements Row {
 

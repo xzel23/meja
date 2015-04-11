@@ -25,7 +25,7 @@ import java.util.Date;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 class GenericCell implements Cell {
 

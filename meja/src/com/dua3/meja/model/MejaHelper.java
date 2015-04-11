@@ -22,7 +22,7 @@ import javax.swing.table.TableModel;
 /**
  * Helper class.
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class MejaHelper {
 

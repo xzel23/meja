@@ -21,7 +21,7 @@ import java.awt.Rectangle;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public interface CellRenderer {
 

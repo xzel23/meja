@@ -17,7 +17,7 @@ package com.dua3.meja.io;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class CsvFormatException extends FileFormatException {
     private static final long serialVersionUID = 1L;

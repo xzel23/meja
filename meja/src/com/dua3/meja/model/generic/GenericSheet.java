@@ -16,7 +16,6 @@
 package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Helper;
 import com.dua3.meja.model.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
@@ -27,7 +26,7 @@ import javax.swing.table.TableModel;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class GenericSheet implements Sheet {
 
@@ -47,7 +46,7 @@ public class GenericSheet implements Sheet {
 
     @Override
     public TableModel getTableModel() {
-        return Helper.getTableModel(this);
+        return MejaHelper.getTableModel(this);
     }
 
     @Override

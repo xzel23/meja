@@ -24,7 +24,7 @@ import java.util.Locale;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class GenericWorkbookFactory extends WorkbookFactory {
 

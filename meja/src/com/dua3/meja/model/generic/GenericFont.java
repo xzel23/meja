@@ -20,7 +20,7 @@ import java.awt.Color;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class GenericFont implements Font {
 
