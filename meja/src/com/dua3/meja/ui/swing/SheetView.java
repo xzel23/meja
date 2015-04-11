@@ -776,7 +776,7 @@ public class SheetView extends JPanel implements Scrollable {
                     // skip the other cells of this row that belong to the same merged region
                     j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
                     // filter out cells that cannot overflow into the visible region
-                    if (j < startColumn && cell.getCellStyle().isWrap()) {
+                    if (j < startColumn && isWrapping(cell.getCellStyle())) {
                         continue;
                     }
                 }
@@ -895,7 +895,7 @@ public class SheetView extends JPanel implements Scrollable {
         // the clipping rectangle
         final Rectangle clipRect;
         final CellStyle style = cell.getCellStyle();
-        if (style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap()) {
+        if (isWrapping(style)) {
             clipRect = cellRect;
         } else {
             Row row = cell.getRow();
@@ -917,6 +917,17 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         renderer.render(g, cell, cellRect, clipRect, scale);
+    }
+
+    /**
+     * Test whether style uses text wrapping.
+     * While there is a property for text wrapping, the alignment settings
+     * have to be taken into account too.
+     * @param style style
+     * @return true if cell content should be displayed with text wrapping
+     */
+    static boolean isWrapping(CellStyle style) {
+        return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
     }
 
     /**

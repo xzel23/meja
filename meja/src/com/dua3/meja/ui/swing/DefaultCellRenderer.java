@@ -71,7 +71,7 @@ public class DefaultCellRenderer implements CellRenderer {
         AffineTransform originalTransform = g.getTransform();
         g.scale(scale, scale);
 
-        boolean wrapText = style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
+        boolean wrapText = SheetView.isWrapping(style);
         float wrapWidth = wrapText ? cr.width / scale : 0;
 
         // layout text
