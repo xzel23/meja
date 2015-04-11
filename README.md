@@ -16,12 +16,12 @@ Méja is released under the [Apache License 2.0](http://www.apache.org/licenses/
 
 ## What already works
 - Reading and writing Excel files in both .xls and .xlsx format. 
-- Rendering a workbook or single sheets (currently .xls seems to give better results). As of today, there is support for styled text in cells, colors etc.
+- Reading CSV files.
+- Rendering a workbook or single sheets (currently .xls seems to give better results).
+- Formula Evaluation in Excel files.
 
 ## What doesn't
-- The CSV part is still completely missing.
-- Editing cells is not yet supported!
-- Modifying data, I will implement this when I am satisfied with rendering results (as I need that first).
+- Editing cells is not yet supported! (I have a local branch where I am working on this).
 
 ## Questions?
 *So why not just use Apache POI?* While it's a great library (and it is used for processing excel files by Méja), there is no support for other file types, and while newer versions introduced interfaces that make using the same code for old and new file types (.xls and .xlsx) much easier, this goal has not yet been fully reached.
