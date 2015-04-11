@@ -21,10 +21,18 @@ import javax.swing.table.TableModel;
  *
  * @author axel
  */
-public interface Sheet {
+public interface Sheet extends Iterable<Row> {
 
+	/**
+	 * Get table model suitable for displaying sheet data in a JTable.
+	 * @return table model
+	 */
     TableModel getTableModel();
 
+    /**
+     * Get name of sheet.
+     * @return name of sheet
+     */
     String getSheetName();
 
     int getFirstColNum();
@@ -39,9 +47,9 @@ public interface Sheet {
 
     int getNumberOfRows();
 
-    double getColumnWidth(int colNum);
+    float getColumnWidth(int colNum);
 
-    double getRowHeight(int rowNum);
+    float getRowHeight(int rowNum);
 
     CellStyle getDefaultCellStyle();
 
@@ -49,4 +57,28 @@ public interface Sheet {
 
     Workbook getWorkbook();
 
+    Cell getCell(int i, int j);
+
+    /**
+     * Freeze view.
+     *
+     * Freezes the sheet so, that rows <em>above</em> i and columns
+     * <em>to the left</em> of j remain in view when scrolling.
+     *
+     * @param i row number
+     * @param j column number
+     */
+	void freeze(int i, int j);
+
+	/**
+	 * Adjusts the size of the column to its contents (optional operation).
+	 * @param j the column to resize
+	 */
+	void autoSizeColumn(int j);
+
+	/**
+	 * Sets an automatic filter on the given row (optional operation).
+	 * @param i the row number
+	 */
+	void setAutofilter(int i);
 }

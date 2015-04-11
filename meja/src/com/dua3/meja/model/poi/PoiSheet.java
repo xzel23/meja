@@ -15,7 +15,8 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.meja.model.Helper;
+import com.dua3.meja.model.MejaHelper;
+import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
@@ -23,7 +24,10 @@ import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;
 import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
-import com.dua3.meja.util.Cache;
+import com.dua3.meja.util.RectangularRegion;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import javax.swing.table.TableModel;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -57,6 +61,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     protected final SHEET poiSheet;
     private int firstColumn;
     private int lastColumn;
+    private List<RectangularRegion> mergedRegions;
 
     public PoiSheet(SHEET poiSheet) {
         this.poiSheet = poiSheet;
@@ -67,20 +72,20 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         return poiSheet;
     }
 
-    public CellRangeAddress getMergedRegion(int rowNum, int colNum) {
-        for (int i = 0; i < poiSheet.getNumMergedRegions(); i++) {
-            CellRangeAddress mergedRegion = poiSheet.getMergedRegion(i);
-            if (mergedRegion.isInRange(rowNum, colNum)) {
-                return mergedRegion;
+    public RectangularRegion getMergedRegion(int rowNum, int colNum) {
+        for (RectangularRegion rr: mergedRegions) {
+            if (rr.contains(rowNum, colNum)) {
+                return rr;
             }
         }
         return null;
     }
 
     private void update() {
+        // update row and column information
         firstColumn = Integer.MAX_VALUE;
         lastColumn = 0;
-        for (int i = poiSheet.getFirstRowNum(); i < poiSheet.getLastRowNum(); i++) {
+        for (int i = poiSheet.getFirstRowNum(); i < poiSheet.getLastRowNum()+1; i++) {
             final org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
             if (poiRow != null) {
                 final short firstCellNum = poiRow.getFirstCellNum();
@@ -97,6 +102,15 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         if (firstColumn == Integer.MAX_VALUE) {
             firstColumn = 0;
             lastColumn = 0;
+        }
+
+        // extract merged regions
+        final int numMergedRegions = poiSheet.getNumMergedRegions(); // SLOW in XssfSheet (poi 3.11)
+        mergedRegions = new ArrayList<>(numMergedRegions);
+        for (int i = 0; i < numMergedRegions; i++) {
+            CellRangeAddress r = poiSheet.getMergedRegion(i);
+            final RectangularRegion rr = new RectangularRegion(r.getFirstRow(), r.getLastRow(), r.getFirstColumn(), r.getLastColumn());
+            mergedRegions.add(rr);
         }
     }
 
@@ -139,13 +153,13 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     public abstract PoiWorkbook<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getWorkbook();
 
     @Override
-    public double getColumnWidth(int col) {
-        double fontSize = getWorkbook().getDefaultCellStyle().getFont().getSizeInPoints();
-        return poiSheet.getColumnWidth(col) * fontSize * 0.6175 / 256.0;
+    public float getColumnWidth(int col) {
+        float fontSize = getWorkbook().getDefaultCellStyle().getFont().getSizeInPoints();
+        return poiSheet.getColumnWidth(col) * fontSize * 0.6175f / 256;
     }
 
     @Override
-    public double getRowHeight(int rowNum) {
+    public float getRowHeight(int rowNum) {
         final org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNum);
         return poiRow == null ? poiSheet.getDefaultRowHeightInPoints() : poiRow.getHeightInPoints();
     }
@@ -167,22 +181,63 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
     @Override
     public TableModel getTableModel() {
-        return Helper.getTableModel(this);
+        return MejaHelper.getTableModel(this);
     }
 
-    static class PoiHssfSheet extends PoiSheet<
+    @Override
+    public void freeze(int i, int j) {
+        poiSheet.createFreezePane(i+1, j+1);
+    }
+
+    @Override
+    public abstract PoiRow<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getRow(int i);
+
+    @Override
+    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCell(int i, int j) {
+    	return getRow(i).getCell(j);
+    }
+
+    @Override
+    public void autoSizeColumn(int j) {
+    	poiSheet.autoSizeColumn(j);
+    }
+
+    @Override
+    public void setAutofilter(int rowNumber) {
+        org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNumber);
+		short col1 = poiRow.getFirstCellNum();
+        short coln = poiRow.getLastCellNum();
+        poiSheet.setAutoFilter(new CellRangeAddress(rowNumber, rowNumber, col1, coln));
+    }
+
+	@Override
+	public Iterator<Row> iterator() {
+		return new Iterator<Row>() {
+
+			private int rowNum=PoiSheet.this.poiSheet.getFirstRowNum();
+
+			@Override
+			public boolean hasNext() {
+				return rowNum<PoiSheet.this.poiSheet.getLastRowNum();
+			}
+
+			@Override
+			public Row next() {
+				return getRow(rowNum++);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("Removing of rows is not supported.");
+			}
+		};
+	}
+
+	static class PoiHssfSheet extends PoiSheet<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
         private final PoiHssfWorkbook workbook;
         private final PoiHssfCellStyle defaultCellStyle;
-        private final Cache<HSSFRow, PoiHssfRow> cache = new Cache<HSSFRow, PoiHssfRow>(Cache.Type.WEAK_KEYS){
-
-            @Override
-            protected PoiHssfRow create(HSSFRow poiRow) {
-                return new PoiHssfRow(PoiHssfSheet.this, poiRow);
-            }
-
-        };
 
         public PoiHssfSheet(PoiHssfWorkbook workbook, HSSFSheet poiSheet) {
             super(poiSheet);
@@ -196,7 +251,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
             if(poiRow==null) {
                 poiRow=poiSheet.createRow(row);
             }
-            return cache.get(poiRow);
+            return new PoiHssfRow(PoiHssfSheet.this, poiRow);
         }
 
         @Override
@@ -215,14 +270,6 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
         private final PoiXssfWorkbook workbook;
         private final PoiXssfCellStyle defaultCellStyle;
-        private final Cache<XSSFRow, PoiXssfRow> cache = new Cache<XSSFRow, PoiXssfRow>(Cache.Type.WEAK_KEYS) {
-
-            @Override
-            protected PoiXssfRow create(XSSFRow poiRow) {
-                return new PoiXssfRow(PoiXssfSheet.this, poiRow);
-            }
-
-        };
 
         public PoiXssfSheet(PoiXssfWorkbook workbook, XSSFSheet poiSheet) {
             super(poiSheet);
@@ -236,7 +283,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
             if(poiRow==null) {
                 poiRow=poiSheet.createRow(row);
             }
-            return cache.get(poiRow);
+            return new PoiXssfRow(PoiXssfSheet.this, poiRow);
         }
 
         @Override

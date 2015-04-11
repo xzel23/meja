@@ -57,4 +57,9 @@ public class GenericRow implements Row {
         return cells.iterator();
     }
 
+    @Override
+    public int getRowNumber() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

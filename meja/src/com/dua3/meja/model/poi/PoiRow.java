@@ -21,6 +21,8 @@ import com.dua3.meja.model.poi.PoiCell.PoiHssfCell;
 import com.dua3.meja.model.poi.PoiCell.PoiXssfCell;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
+import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
+import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.Cache;
 
 import java.util.Iterator;
@@ -54,9 +56,11 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
 
 
     protected final ROW poiRow;
+    protected final int rowNumber;
 
     public PoiRow(ROW row) {
         this.poiRow = row;
+        this.rowNumber = poiRow.getRowNum();
     }
 
     @SuppressWarnings("rawtypes")
@@ -75,8 +79,16 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
     }
 
     @Override
+    public int getRowNumber() {
+    	return rowNumber;
+    }
+    
+    @Override
     public abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheet();
 
+    @Override
+    public abstract PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCell(int col);
+    
 	@Override
 	public Iterator<Cell> iterator() {
 		return new Iterator<Cell>() {
@@ -103,10 +115,12 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
     static class PoiXssfRow extends PoiRow<
             XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
 
+        private final PoiXssfWorkbook workbook;
         private final PoiXssfSheet sheet;
 
         public PoiXssfRow(PoiXssfSheet sheet, XSSFRow row) {
             super(row);
+            this.workbook = sheet.getWorkbook();
             this.sheet = sheet;
         }
 
@@ -114,6 +128,7 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
         public PoiXssfSheet getSheet() {
             return sheet;
         }
+        
         private final Cache<XSSFCell, PoiXssfCell> cache = new Cache<XSSFCell, PoiXssfCell>(Cache.Type.WEAK_KEYS) {
 
             @Override
@@ -132,15 +147,20 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
             return cache.get(poiCell);
         }
 
+        public PoiXssfWorkbook getWorkbook() {
+			return workbook;
+		}
     }
 
     static class PoiHssfRow extends PoiRow<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
+        private final PoiHssfWorkbook workbook;
         private final PoiHssfSheet sheet;
 
         public PoiHssfRow(PoiHssfSheet sheet, HSSFRow row) {
             super(row);
+            this.workbook = sheet.getWorkbook();
             this.sheet = sheet;
         }
 
@@ -166,6 +186,10 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
             }
             return cache.get(poiCell);
         }
+        
+        public PoiHssfWorkbook getWorkbook() {
+			return workbook;
+		}
     }
 
 }
