@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import java.io.File;
 import java.util.ArrayList;
@@ -96,7 +97,8 @@ public class ExcelViewer {
     }
 
     private FilterDef[] filters = {
-        new FilterDef("Excel Files", OpenMode.READ_AND_WRITE, PoiWorkbookFactory.instance(), ".xls", ".xlsx", ".xlsm")
+        new FilterDef("Excel Files", OpenMode.READ_AND_WRITE, PoiWorkbookFactory.instance(), ".xls", ".xlsx", ".xlsm"),
+        new FilterDef("CSV Files", OpenMode.READ_AND_WRITE, GenericWorkbookFactory.instance(), ".csv", ".txt")
     };
 
     public List<FilterDef> getFileFilters(OpenMode mode) {
