@@ -29,9 +29,11 @@ public class GenericRow implements Row {
 
     private final GenericSheet sheet;
     private final List<Cell> cells = new ArrayList<>();
+    private final int rowNumber;
 
-    public GenericRow(GenericSheet sheet) {
+    public GenericRow(GenericSheet sheet, int rowNumber) {
         this.sheet = sheet;
+        this.rowNumber = rowNumber;
         reserve(sheet.getNumberOfColumns());
     }
 
@@ -50,6 +52,7 @@ public class GenericRow implements Row {
         for (int colNum=cells.size(); colNum<=col; colNum++) {
             cells.add(new GenericCell(this));
         }
+        sheet.reserveColumn(col);
     }
 
     @Override
@@ -59,7 +62,17 @@ public class GenericRow implements Row {
 
     @Override
     public int getRowNumber() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return rowNumber;
+    }
+
+    @Override
+    public int getFirstCellNum() {
+        return 0;
+    }
+
+    @Override
+    public int getLastCellNum() {
+        return cells.size();
     }
 
 }

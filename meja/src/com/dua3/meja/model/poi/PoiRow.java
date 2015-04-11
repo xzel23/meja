@@ -16,6 +16,7 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.poi.PoiCell.PoiHssfCell;
 import com.dua3.meja.model.poi.PoiCell.PoiXssfCell;
@@ -24,10 +25,8 @@ import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.Cache;
-
 import java.util.Iterator;
 import java.util.Objects;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -54,7 +53,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbook, SHEET extends org.apache.poi.ss.usermodel.Sheet, ROW extends org.apache.poi.ss.usermodel.Row, CELL extends org.apache.poi.ss.usermodel.Cell, CELLSTYLE extends org.apache.poi.ss.usermodel.CellStyle, COLOR extends org.apache.poi.ss.usermodel.Color>
         implements Row {
 
-
     protected final ROW poiRow;
     protected final int rowNumber;
 
@@ -64,10 +62,10 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
     }
 
     @SuppressWarnings("rawtypes")
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiRow) {
-            return Objects.equals(poiRow, ((PoiRow)obj).poiRow);
+            return Objects.equals(poiRow, ((PoiRow) obj).poiRow);
         } else {
             return false;
         }
@@ -80,38 +78,30 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
 
     @Override
     public int getRowNumber() {
-    	return rowNumber;
+        return rowNumber;
     }
-    
+
     @Override
     public abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheet();
 
     @Override
     public abstract PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCell(int col);
-    
-	@Override
-	public Iterator<Cell> iterator() {
-		return new Iterator<Cell>() {
 
-			private int colNum=PoiRow.this.poiRow.getFirstCellNum();
-			
-			@Override
-			public boolean hasNext() {
-				return colNum<PoiRow.this.poiRow.getLastCellNum();
-			}
+    @Override
+    public Iterator<Cell> iterator() {
+        return MejaHelper.createCellIterator(this);
+    }
 
-			@Override
-			public Cell next() {
-				return getCell(colNum++);
-			}
+    @Override
+    public int getFirstCellNum() {
+        return poiRow.getFirstCellNum();
+    }
 
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException("Removing of cells is not supported.");
-			}
-		};
-	}
-    
+    @Override
+    public int getLastCellNum() {
+        return poiRow.getLastCellNum();
+    }
+
     static class PoiXssfRow extends PoiRow<
             XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
 
@@ -128,7 +118,7 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
         public PoiXssfSheet getSheet() {
             return sheet;
         }
-        
+
         private final Cache<XSSFCell, PoiXssfCell> cache = new Cache<XSSFCell, PoiXssfCell>(Cache.Type.WEAK_KEYS) {
 
             @Override
@@ -141,15 +131,15 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
         @Override
         public PoiXssfCell getCell(int col) {
             XSSFCell poiCell = poiRow.getCell(col);
-            if(poiCell==null) {
-                poiCell=poiRow.createCell(col);
+            if (poiCell == null) {
+                poiCell = poiRow.createCell(col);
             }
             return cache.get(poiCell);
         }
 
         public PoiXssfWorkbook getWorkbook() {
-			return workbook;
-		}
+            return workbook;
+        }
     }
 
     static class PoiHssfRow extends PoiRow<
@@ -181,15 +171,15 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
         @Override
         public PoiHssfCell getCell(int col) {
             HSSFCell poiCell = poiRow.getCell(col);
-            if(poiCell==null) {
-                poiCell=poiRow.createCell(col);
+            if (poiCell == null) {
+                poiCell = poiRow.createCell(col);
             }
             return cache.get(poiCell);
         }
-        
+
         public PoiHssfWorkbook getWorkbook() {
-			return workbook;
-		}
+            return workbook;
+        }
     }
 
 }

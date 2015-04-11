@@ -23,14 +23,16 @@ import javax.swing.table.TableModel;
  */
 public interface Sheet extends Iterable<Row> {
 
-	/**
-	 * Get table model suitable for displaying sheet data in a JTable.
-	 * @return table model
-	 */
+    /**
+     * Get table model suitable for displaying sheet data in a JTable.
+     *
+     * @return table model
+     */
     TableModel getTableModel();
 
     /**
      * Get name of sheet.
+     *
      * @return name of sheet
      */
     String getSheetName();
@@ -68,17 +70,19 @@ public interface Sheet extends Iterable<Row> {
      * @param i row number
      * @param j column number
      */
-	void freeze(int i, int j);
+    void freeze(int i, int j);
 
-	/**
-	 * Adjusts the size of the column to its contents (optional operation).
-	 * @param j the column to resize
-	 */
-	void autoSizeColumn(int j);
+    /**
+     * Adjusts the size of the column to its contents (optional operation).
+     *
+     * @param j the column to resize
+     */
+    void autoSizeColumn(int j);
 
-	/**
-	 * Sets an automatic filter on the given row (optional operation).
-	 * @param i the row number
-	 */
-	void setAutofilter(int i);
+    /**
+     * Sets an automatic filter on the given row (optional operation).
+     *
+     * @param i the row number
+     */
+    void setAutofilter(int i);
 }

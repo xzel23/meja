@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model;
 
+import java.util.Iterator;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -39,11 +40,12 @@ public class MejaHelper {
 
     /**
      * Create a TableModel to be used with JTable.
+     *
      * @param sheet
      * @return table model
      */
     @SuppressWarnings("serial")
-	public static TableModel getTableModel(final Sheet sheet) {
+    public static TableModel getTableModel(final Sheet sheet) {
         return new AbstractTableModel() {
 
             @Override
@@ -58,7 +60,7 @@ public class MejaHelper {
 
             @Override
             public String getColumnName(int columnIndex) {
-            	return MejaHelper.getColumnName(columnIndex);
+                return MejaHelper.getColumnName(columnIndex);
             }
 
             @Override
@@ -86,4 +88,47 @@ public class MejaHelper {
 
     }
 
+    public static Iterator<Row> createRowIterator(final Sheet sheet) {
+        return new Iterator<Row>() {
+
+            private int rowNum = sheet.getFirstRowNum();
+
+            @Override
+            public boolean hasNext() {
+                return rowNum < sheet.getLastRowNum();
+            }
+
+            @Override
+            public Row next() {
+                return sheet.getRow(rowNum++);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Removing of rows is not supported.");
+            }
+        };
+    }
+
+    public static Iterator<Cell> createCellIterator(final Row row) {
+        return new Iterator<Cell>() {
+
+            private int colNum = row.getFirstCellNum();
+
+            @Override
+            public boolean hasNext() {
+                return colNum < row.getLastCellNum();
+            }
+
+            @Override
+            public Cell next() {
+                return row.getCell(colNum++);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Removing of rows is not supported.");
+            }
+        };
+    }
 }

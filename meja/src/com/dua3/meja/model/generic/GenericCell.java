@@ -172,17 +172,17 @@ class GenericCell implements Cell {
 
     @Override
     public CellType getResultType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getCellType();
     }
 
     @Override
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return type==CellType.BLANK || type==CellType.TEXT&&((String)value).isEmpty();
     }
 
     @Override
     public void setCellStyle(String cellStyleName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.cellStyle = getSheet().getWorkbook().getCellStyle(cellStyleName);
     }
 
 }

@@ -18,9 +18,9 @@ package com.dua3.meja.model.generic;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Helper;
+import com.dua3.meja.model.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,10 +35,16 @@ public class GenericSheet implements Sheet {
     private final GenericWorkbook workbook;
     private String sheetName;
     private final List<GenericRow> rows = new ArrayList<>();
+    private CellStyle defaultCellStyle;
+    private int freezeRow;
+    private int freezeColumn;
+    private int autoFilterRow;
+    private int numberOfColumns;
 
     public GenericSheet(GenericWorkbook workbook, String sheetName) {
         this.workbook = workbook;
         this.sheetName = sheetName;
+        this.numberOfColumns=0;
     }
 
     @Override
@@ -73,7 +79,7 @@ public class GenericSheet implements Sheet {
 
     @Override
     public int getNumberOfColumns() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return numberOfColumns;
     }
 
     @Override
@@ -83,17 +89,19 @@ public class GenericSheet implements Sheet {
 
     @Override
     public float getColumnWidth(int colNum) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO
+        return 80f;
     }
 
     @Override
     public float getRowHeight(int rowNum) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO
+        return 12f;
     }
 
     @Override
     public CellStyle getDefaultCellStyle() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return defaultCellStyle;
     }
 
     @Override
@@ -104,38 +112,43 @@ public class GenericSheet implements Sheet {
 
     private void reserve(int row) {
         for (int rowNum=rows.size(); rowNum<=row; rowNum++) {
-            rows.add(new GenericRow(this));
+            rows.add(new GenericRow(this, rowNum));
         }
     }
 
     @Override
-    public Workbook getWorkbook() {
+    public GenericWorkbook getWorkbook() {
         return workbook;
     }
 
     @Override
     public Cell getCell(int i, int j) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getRow(i).getCell(j);
     }
 
     @Override
     public void freeze(int i, int j) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        freezeRow=i;
+        freezeColumn=j;
     }
 
     @Override
     public void autoSizeColumn(int j) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO
     }
 
     @Override
     public void setAutofilter(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        autoFilterRow=i;
     }
 
     @Override
     public Iterator<Row> iterator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return MejaHelper.createRowIterator(this);
+    }
+
+    void reserveColumn(int col) {
+        numberOfColumns=Math.max(col+1, numberOfColumns);
     }
 
 }
