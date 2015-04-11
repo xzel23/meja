@@ -36,6 +36,7 @@ public class GenericRowBuilder implements RowBuilder {
     private final Locale locale;
     private final Sheet sheet;
     private Row currentRow;
+    private int colNr;
 
     private final DecimalFormat decimalFormat;
     private final DateFormat dateFormat;
@@ -54,11 +55,12 @@ public class GenericRowBuilder implements RowBuilder {
     @Override
     public void startRow() {
         currentRow = sheet.getRow(sheet.getNumberOfRows());
+        colNr=0;
     }
 
     @Override
     public void add(String value) throws DataException {
-        Cell cell = currentRow.getCell(currentRow.getLastCellNum());
+        Cell cell = currentRow.getCell(colNr++);
         if (value.isEmpty()) {
             // blank
             cell.clear();
@@ -103,7 +105,8 @@ public class GenericRowBuilder implements RowBuilder {
 
     @Override
     public void endRow() {
-        currentRow = sheet.getRow(sheet.getNumberOfRows());
+        currentRow = null;
+        colNr = 0;
     }
 
 }
