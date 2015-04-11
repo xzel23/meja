@@ -21,7 +21,7 @@ Méja is released under the [Apache License 2.0](http://www.apache.org/licenses/
 - Formula Evaluation in Excel files.
 
 ## What doesn't
-- Editing cells is not yet supported! (I hav a local branch where I am working on this).
+- Editing cells is not yet supported! (I have a local branch where I am working on this).
 
 ## Questions?
 *So why not just use Apache POI?* While it's a great library (and it is used for processing excel files by Méja), there is no support for other file types, and while newer versions introduced interfaces that make using the same code for old and new file types (.xls and .xlsx) much easier, this goal has not yet been fully reached.
