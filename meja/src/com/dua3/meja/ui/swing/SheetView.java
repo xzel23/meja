@@ -409,10 +409,7 @@ public class SheetView extends JPanel implements Scrollable {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                int row = getRowNumberFromY(e.getY());
-                int col = getColumnNumberFromX(e.getX());
-                setCurrent(row, col);
-                requestFocusInWindow();
+                onMousePressed(e.getX(), e.getY());
             }
         });
 
@@ -424,6 +421,13 @@ public class SheetView extends JPanel implements Scrollable {
     @Override
     public boolean isOptimizedDrawingEnabled() {
         return true;
+    }
+
+    void onMousePressed(int x, int y) {
+        int row = getRowNumberFromY(y);
+        int col = getColumnNumberFromX(x);
+        setCurrent(row, col);
+        requestFocusInWindow();
     }
 
     /**
@@ -754,7 +758,7 @@ public class SheetView extends JPanel implements Scrollable {
             }
 
             int end = endColumn;
-            while (end < getNumberOfColumns() && columnPos[end] - 800 < clipBounds.x + clipBounds.width && row.getCell(end-1).isEmpty()) {
+            while (end < getNumberOfColumns() && columnPos[end] - 800 < clipBounds.x + clipBounds.width && row.getCell(end - 1).isEmpty()) {
                 end++;
             }
 
@@ -920,9 +924,9 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     /**
-     * Test whether style uses text wrapping.
-     * While there is a property for text wrapping, the alignment settings
-     * have to be taken into account too.
+     * Test whether style uses text wrapping. While there is a property for text
+     * wrapping, the alignment settings have to be taken into account too.
+     *
      * @param style style
      * @return true if cell content should be displayed with text wrapping
      */
