@@ -22,7 +22,9 @@ import java.io.IOException;
  * @author axel
  */
 public class FileFormatException extends IOException {
-    public FileFormatException(String message) {
+	private static final long serialVersionUID = 1L;
+
+	public FileFormatException(String message) {
         super(message);
     }
 }

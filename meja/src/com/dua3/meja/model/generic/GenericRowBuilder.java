@@ -33,7 +33,6 @@ import java.util.Locale;
  */
 public class GenericRowBuilder implements RowBuilder {
 
-    private final Locale locale;
     private final Sheet sheet;
     private Row currentRow;
     private int colNr;
@@ -44,7 +43,6 @@ public class GenericRowBuilder implements RowBuilder {
     private final String booleanFalse;
 
     public GenericRowBuilder(Sheet sheet, Locale locale) {
-        this.locale = locale;
         this.sheet = sheet;
         this.decimalFormat = new DecimalFormat("#", new DecimalFormatSymbols(locale));
         this.booleanTrue = Boolean.toString(true);
