@@ -16,10 +16,9 @@
 package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.util.AttributedStringHelper;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.awt.Color;
+import javax.swing.JComponent;
 import javax.swing.JTextPane;
 
 /**
@@ -28,39 +27,69 @@ import javax.swing.JTextPane;
  */
 public class DefaultCellEditor implements CellEditor {
 
-    private final JTextPane painter = new JTextPane();
+    private final JTextPane component;
+    private Cell cell;
 
     public DefaultCellEditor() {
-        painter.setContentType("text/html");
-        painter.setOpaque(false);
+        component = new JTextPane();
+        component.setContentType("text/html");
+        component.setOpaque(false);
+        component.setBackground(Color.WHITE);
+        cell = null;
     }
 
-    public void render(Graphics2D g, Cell cell, Rectangle cr, Rectangle clipRect, float scale) {
-        painter.setBounds(clipRect);
-        painter.setText(AttributedStringHelper.toHtml(cell.getAttributedString(), true));
+    @Override
+    public boolean isEditing() {
+        return cell != null;
+    }
 
-        CellStyle style = cell.getCellStyle();
-        final int x;
-        final int w;
-        if (style.isWrap()||style.getHAlign().isWrap()||style.getVAlign().isWrap()) {
-            x = cr.x;
-            w = cr.width;
-        } else {
-            switch (style.getHAlign()) {
-                default:
-                    x = cr.x;
-                    w = Math.max(cr.width, clipRect.x+clipRect.width-cr.x);
-                    break;
-                case ALIGN_CENTER:
-                    x = cr.x;
-                    w = cr.width;
-                    break;
-            }
+    @Override
+    public JComponent startEditing(Cell cell) {
+        if (isEditing()) {
+            throw new IllegalStateException("Already editing.");
         }
-
-        final Graphics2D g_ = (Graphics2D) g.create(x, cr.y, w, cr.height);
-        g_.scale(scale, scale);
-        painter.paint(g_);
+        this.cell = cell;
+        component.setText(AttributedStringHelper.toHtml(cell.getAttributedString(), true));
+        return component;
     }
 
+    @Override
+    public void stopEditing(boolean commit) {
+        if (commit) {
+            // TODO
+        }
+        this.cell=null;
+        component.setText("");
+        component.setVisible(false);
+    }
+
+    /*
+     public void render(Graphics2D g, Cell cell, Rectangle cr, Rectangle clipRect, float scale) {
+     component.setBounds(clipRect);
+     component.setText(AttributedStringHelper.toHtml(cell.getAttributedString(), true));
+
+     CellStyle style = cell.getCellStyle();
+     final int x;
+     final int w;
+     if (style.isWrap()||style.getHAlign().isWrap()||style.getVAlign().isWrap()) {
+     x = cr.x;
+     w = cr.width;
+     } else {
+     switch (style.getHAlign()) {
+     default:
+     x = cr.x;
+     w = Math.max(cr.width, clipRect.x+clipRect.width-cr.x);
+     break;
+     case ALIGN_CENTER:
+     x = cr.x;
+     w = cr.width;
+     break;
+     }
+     }
+
+     final Graphics2D g_ = (Graphics2D) g.create(x, cr.y, w, cr.height);
+     g_.scale(scale, scale);
+     component.paint(g_);
+     }
+     */
 }

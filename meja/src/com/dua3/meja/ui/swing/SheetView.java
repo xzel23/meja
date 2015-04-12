@@ -62,6 +62,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     private static final long serialVersionUID = 1L;
     private final CellRenderer renderer = new DefaultCellRenderer();
+    private final CellEditor editor = new DefaultCellEditor();
 
     Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
         @Override
@@ -273,8 +274,9 @@ public class SheetView extends JPanel implements Scrollable {
      *
      * @param rowNum number of row to be set
      * @param colNum number of column to be set
+     * @return true if the current cell changed
      */
-    public void setCurrent(int rowNum, int colNum) {
+    public boolean setCurrent(int rowNum, int colNum) {
         int oldRowNum = currentRowNum;
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
         int oldColNum = currentColNum;
@@ -289,7 +291,31 @@ public class SheetView extends JPanel implements Scrollable {
             Rectangle newRect = getSelectionRect();
             repaint(oldRect);
             repaint(newRect);
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    /**
+     * Enter edit mode for the current cell.
+     */
+    private void startEditing() {
+        Cell cell = getCurrentCell();
+        final JComponent editorComp = editor.startEditing(cell);
+        editorComp.setBounds(getCellRect(cell));
+        add(editorComp);
+        editorComp.validate();
+        editorComp.setVisible(true);
+        editorComp.repaint();
+    }
+
+    /**
+     * End edit mode for the current cell.
+     * @param commit true if the content of the edited cell is to be updated
+     */
+    private void stopEditing(boolean commit) {
+        editor.stopEditing(commit);
     }
 
     /**
@@ -424,10 +450,19 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     void onMousePressed(int x, int y) {
+        // make the cell under pointer the current cell
         int row = getRowNumberFromY(y);
         int col = getColumnNumberFromX(x);
-        setCurrent(row, col);
+        boolean currentCellChanged = setCurrent(row, col);
         requestFocusInWindow();
+
+        if (!currentCellChanged) {
+        // if it already was the current cell, start cell editing
+            startEditing();
+        } else {
+        // otherwise stop cell editing
+            stopEditing(false);
+        }
     }
 
     /**
