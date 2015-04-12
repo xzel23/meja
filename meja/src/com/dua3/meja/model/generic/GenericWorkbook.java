@@ -15,17 +15,25 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Workbook;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
-public abstract class GenericWorkbook implements Workbook {
+public class GenericWorkbook implements Workbook {
 
     final List<GenericSheet> sheets = new ArrayList<>();
+    final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
+    private GenericCellStyle defaultCellStyle = new GenericCellStyle();
 
     public GenericWorkbook() {
     }
@@ -48,6 +56,43 @@ public abstract class GenericWorkbook implements Workbook {
             }
         }
         throw new IllegalArgumentException("No sheet '" + sheetName + "'.");
+    }
+
+    @Override
+    public void write(OutputStream out) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void write(File file, boolean overwriteIfExists) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public GenericSheet createSheet(String sheetName) {
+        final GenericSheet sheet = new GenericSheet(this, sheetName);
+        sheets.add(sheet);
+        return sheet;
+    }
+
+    @Override
+    public GenericCellStyle getDefaultCellStyle() {
+        return defaultCellStyle;
+    }
+
+    @Override
+    public GenericCellStyle getCellStyle(String name) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public GenericCellStyle copyCellStyle(String styleName, CellStyle style) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void close() throws Exception {
+        // nop
     }
 
 }

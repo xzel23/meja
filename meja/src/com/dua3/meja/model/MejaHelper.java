@@ -15,24 +15,36 @@
  */
 package com.dua3.meja.model;
 
+import java.util.Iterator;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 /**
  * Helper class.
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
-public class Helper {
+public class MejaHelper {
 
-    private Helper() {
+    private MejaHelper() {
+    }
+
+    public static String getColumnName(int j) {
+        StringBuilder sb = new StringBuilder();
+        do {
+            sb.append((char) ('A' + j % 26));
+            j /= 26;
+        } while (j > 0);
+        return sb.toString();
     }
 
     /**
      * Create a TableModel to be used with JTable.
+     *
      * @param sheet
      * @return table model
      */
+    @SuppressWarnings("serial")
     public static TableModel getTableModel(final Sheet sheet) {
         return new AbstractTableModel() {
 
@@ -48,13 +60,7 @@ public class Helper {
 
             @Override
             public String getColumnName(int columnIndex) {
-                int col = getSheetCol(columnIndex);
-                StringBuilder sb = new StringBuilder();
-                do {
-                    sb.append((char) ('A' + col % 26));
-                    col /= 26;
-                } while (col > 0);
-                return sb.toString();
+                return MejaHelper.getColumnName(columnIndex);
             }
 
             @Override
@@ -68,11 +74,9 @@ public class Helper {
             }
 
             @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                int rowNum = getSheetRow(rowIndex);
-                int colNum = getSheetCol(columnIndex);
-                Row row = sheet.getRow(rowNum);
-                Cell cell = row == null ? null : row.getCell(colNum);
+            public Object getValueAt(int i, int j) {
+                Row row = sheet.getRow(i);
+                Cell cell = row == null ? null : row.getCell(j);
                 return cell;
             }
 
@@ -80,16 +84,51 @@ public class Helper {
             public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
-
-            private int getSheetCol(int columnIndex) {
-                return columnIndex + sheet.getFirstColNum();
-            }
-
-            private int getSheetRow(int rowIndex) {
-                return rowIndex + sheet.getFirstRowNum();
-            }
         };
 
     }
 
+    public static Iterator<Row> createRowIterator(final Sheet sheet) {
+        return new Iterator<Row>() {
+
+            private int rowNum = sheet.getFirstRowNum();
+
+            @Override
+            public boolean hasNext() {
+                return rowNum < sheet.getLastRowNum();
+            }
+
+            @Override
+            public Row next() {
+                return sheet.getRow(rowNum++);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Removing of rows is not supported.");
+            }
+        };
+    }
+
+    public static Iterator<Cell> createCellIterator(final Row row) {
+        return new Iterator<Cell>() {
+
+            private int colNum = row.getFirstCellNum();
+
+            @Override
+            public boolean hasNext() {
+                return colNum < row.getLastCellNum();
+            }
+
+            @Override
+            public Cell next() {
+                return row.getCell(colNum++);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Removing of rows is not supported.");
+            }
+        };
+    }
 }

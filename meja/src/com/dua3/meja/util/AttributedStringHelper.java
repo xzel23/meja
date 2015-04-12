@@ -22,12 +22,27 @@ import java.util.Map;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class AttributedStringHelper {
 
     private static String wrap(String text, String tag) {
         return "<"+tag+">"+text+"</"+tag+">";
+    }
+
+    public static String toString(AttributedString text) {
+        AttributedCharacterIterator iter = text.getIterator();
+        final int endIndex = iter.getEndIndex();
+        StringBuilder sb = new StringBuilder(endIndex);
+        while (iter.getIndex()<endIndex) {
+            sb.append(iter.current());
+            iter.next();
+        }
+        return sb.toString();
+    }
+
+    public static boolean isEmpty(AttributedString text) {
+        return text.getIterator().getEndIndex()==0;
     }
 
     private AttributedStringHelper() {

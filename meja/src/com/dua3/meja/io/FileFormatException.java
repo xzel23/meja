@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.ui.swing;
+package com.dua3.meja.io;
 
-import com.dua3.meja.model.Cell;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import java.io.IOException;
 
 /**
  *
- * @author Axel Howind (axel@dua3.com)
+ * @author axel
  */
-public interface CellRenderer {
+public class FileFormatException extends IOException {
+	private static final long serialVersionUID = 1L;
 
-    void render(Graphics2D g, Cell cell, Rectangle cellRect, Rectangle clipRect, float scale);
-
+	public FileFormatException(String message) {
+        super(message);
+    }
 }

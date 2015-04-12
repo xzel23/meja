@@ -15,20 +15,43 @@
  */
 package com.dua3.meja.model.generic;
 
-import com.dua3.meja.model.Workbook;
+import com.dua3.meja.io.CsvReader;
+import com.dua3.meja.io.DataException;
 import com.dua3.meja.model.WorkbookFactory;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class GenericWorkbookFactory extends WorkbookFactory {
 
+    private static final GenericWorkbookFactory INSTANCE = new GenericWorkbookFactory();
+
+    public static GenericWorkbookFactory instance() {
+        return INSTANCE;
+    }
+
+    private GenericWorkbookFactory() {
+    }
+
     @Override
-    public Workbook open(File file) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public GenericWorkbook open(File file) throws IOException {
+        GenericWorkbook workbook = new GenericWorkbook();
+        GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(file.getName()), Locale.FRENCH);
+        try (CsvReader reader = CsvReader.createReader(builder, file)) {
+            reader.readAll();
+        } catch (DataException ex) {
+            throw new IOException(ex);
+        }
+        return workbook;
+    }
+
+    @Override
+    public GenericWorkbook create() {
+        return new GenericWorkbook();
     }
 
 }

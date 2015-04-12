@@ -23,16 +23,18 @@ import java.util.List;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class GenericRow implements Row {
 
     private final GenericSheet sheet;
     private final List<Cell> cells = new ArrayList<>();
+    private final int rowNumber;
 
-    public GenericRow(GenericSheet sheet) {
+    public GenericRow(GenericSheet sheet, int rowNumber) {
         this.sheet = sheet;
-        reserve(sheet.getNumberOfColumns());
+        this.rowNumber = rowNumber;
+        reserve(sheet.getNumberOfColumns()-1);
     }
 
     @Override
@@ -47,14 +49,33 @@ public class GenericRow implements Row {
     }
 
     private void reserve(int col) {
-        for (int colNum=cells.size(); colNum<=col; colNum++) {
-            cells.add(new GenericCell(this));
+        if (col >= cells.size()) {
+            GenericCellStyle cellStyle = getSheet().getWorkbook().getDefaultCellStyle();
+            for (int colNum = cells.size(); colNum <= col; colNum++) {
+                cells.add(new GenericCell(this, colNum, cellStyle));
+            }
+            sheet.reserveColumn(col);
         }
     }
 
     @Override
     public Iterator<Cell> iterator() {
         return cells.iterator();
+    }
+
+    @Override
+    public int getRowNumber() {
+        return rowNumber;
+    }
+
+    @Override
+    public int getFirstCellNum() {
+        return 0;
+    }
+
+    @Override
+    public int getLastCellNum() {
+        return cells.size();
     }
 
 }

@@ -24,6 +24,21 @@ import java.io.IOException;
  */
 public abstract class WorkbookFactory {
 
-    public abstract Workbook open(File file) throws IOException;
+	/**
+	 * Create a new Workbook instance.
+	 * 
+	 * @return workbook
+	 */
+	public abstract Workbook create();
+
+	/**
+	 * Load workbook from file.
+	 * 
+	 * @param file
+	 *            workbook file
+	 * @return workbook
+	 * @throws IOException
+	 */
+	public abstract Workbook open(File file) throws IOException;
 
 }

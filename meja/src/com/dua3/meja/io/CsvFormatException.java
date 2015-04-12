@@ -13,18 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.ui.swing;
-
-import com.dua3.meja.model.Cell;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+package com.dua3.meja.io;
 
 /**
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public interface CellRenderer {
+public class CsvFormatException extends FileFormatException {
+    private static final long serialVersionUID = 1L;
 
-    void render(Graphics2D g, Cell cell, Rectangle cellRect, Rectangle clipRect, float scale);
+    private final String source;
+    private final int line;
+
+    public CsvFormatException(String message, String source, int line) {
+        super(message);
+        this.source=source;
+        this.line = line;
+    }
+
+    @Override
+    public String getMessage() {
+        if (source!=null && !source.isEmpty()) {
+            return "["+source+":"+line+"] "+super.getMessage();
+        } else {
+            return "["+line+"] "+super.getMessage();
+        }
+    }
 
 }

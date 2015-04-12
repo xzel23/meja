@@ -30,7 +30,17 @@ public interface  CellStyle {
     HAlign getHAlign();
     VAlign getVAlign();
     BorderStyle getBorderStyle(Direction d);
+    boolean isWrap();
+    String getDataFormat();
 
-    public boolean isWrap();
+    void setFont(Font font);
+    void setFillBgColor(Color color);
+    void setFillFgColor(Color color);
+    void setFillPattern(FillPattern pattern);
+    void setHAlign(HAlign hAlign);
+    void setVAlign(VAlign vAlign);
+    void setBorderStyle(Direction d, BorderStyle borderStyle);
+    void setWrap(boolean wrap);
+    void setDataFormat(String format);
 
 }

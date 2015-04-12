@@ -19,6 +19,8 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Font;
+import com.dua3.meja.model.HAlign;
+import com.dua3.meja.model.VAlign;
 import com.dua3.meja.util.Cache;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -35,7 +37,7 @@ import java.util.List;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 public class DefaultCellRenderer implements CellRenderer {
 
@@ -43,7 +45,7 @@ public class DefaultCellRenderer implements CellRenderer {
         @Override
         protected java.awt.Font create(Font font) {
             int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-            return new java.awt.Font(font.getFamily(), style, (int) Math.round(font.getSizeInPoints()));
+            return new java.awt.Font(font.getFamily(), style, Math.round(font.getSizeInPoints()));
         }
     };
 
@@ -56,13 +58,14 @@ public class DefaultCellRenderer implements CellRenderer {
 
     @Override
     public void render(Graphics2D g, Cell cell, Rectangle cr, Rectangle clipRect, float scale) {
-        if (cell.getCellType() == CellType.BLANK) {
+        if (cell.isEmpty()) {
             return;
         }
 
         AttributedString text = cell.getAttributedString();
 
         CellStyle style = cell.getCellStyle();
+        CellType type = cell.getResultType();
         Font font = style.getFont();
         final Color color = font.getColor();
 
@@ -72,7 +75,7 @@ public class DefaultCellRenderer implements CellRenderer {
         AffineTransform originalTransform = g.getTransform();
         g.scale(scale, scale);
 
-        boolean wrapText = style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
+        boolean wrapText = SheetView.isWrapping(style);
         float wrapWidth = wrapText ? cr.width / scale : 0;
 
         // layout text
@@ -87,16 +90,20 @@ public class DefaultCellRenderer implements CellRenderer {
             textHeight += scale * (layout.getAscent() + layout.getDescent() + layout.getLeading());
         }
 
+        // get the effective alignment settings
+        final VAlign vAlign = getVAlign(style, type);
+        final HAlign hAlign = getHAlign(style, type);
+
         // calculate text position
         final float xd = cr.x;
         float yd;
-        switch (style.getVAlign()) {
+        switch (vAlign) {
             case ALIGN_TOP:
             case ALIGN_JUSTIFY:
                 yd = cr.y;
                 break;
             case ALIGN_MIDDLE:
-                yd = (float) (cr.y + (cr.height - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2.0);
+                yd = cr.y + (cr.height - textHeight - scale * layouts.get(layouts.size() - 1).getLeading()) / 2f;
                 break;
             case ALIGN_BOTTOM:
                 yd = cr.y + cr.height - textHeight;
@@ -106,42 +113,55 @@ public class DefaultCellRenderer implements CellRenderer {
         }
 
         // draw text
-        Rectangle area = new Rectangle((int) xd, (int) yd, (int) textWidth, (int) textHeight);
         g.setTransform(originalTransform);
-        if (g.getClipBounds().intersects(area)) {
-            g = (Graphics2D) g.create(clipRect.x, clipRect.y, clipRect.width, clipRect.height);
-            g.translate(xd-clipRect.x, yd-clipRect.y);
-            g.scale(scale, scale);
+        g = (Graphics2D) g.create(clipRect.x, clipRect.y, clipRect.width, clipRect.height);
+        g.translate(xd - clipRect.x, yd - clipRect.y);
+        g.scale(scale, scale);
 
-            float drawPosY = 0;
-            for (TextLayout layout : layouts) {
+        float drawPosY = 0;
+        for (TextLayout layout : layouts) {
                 // Compute pen x position. If the paragraph is right-to-left
-                // we will align the TextLayouts to the right edge of the panel.
-                float drawPosX;
-                switch (style.getHAlign()) {
-                    default:
-                        // default is left aligned
-                        drawPosX = layout.isLeftToRight() ? 0 : cr.width/scale - layout.getAdvance();
-                        break;
-                    case ALIGN_RIGHT:
-                        drawPosX = layout.isLeftToRight() ? cr.width/scale - layout.getAdvance() : 0;
-                        break;
-                    case ALIGN_CENTER:
-                        drawPosX = (cr.width/scale - layout.getAdvance())/2f;
-                        break;
-                }
-
-                // Move y-coordinate by the ascent of the layout.
-                drawPosY += layout.getAscent();
-
-                // Draw the TextLayout at (drawPosX,drawPosY).
-                layout.draw(g, drawPosX, drawPosY);
-
-                // Move y-coordinate in preparation for next layout.
-                drawPosY += layout.getDescent() + layout.getLeading();
+            // we will align the TextLayouts to the right edge of the panel.
+            float drawPosX;
+            switch (hAlign) {
+                default:
+                    // default is left aligned
+                    drawPosX = layout.isLeftToRight() ? 0 : cr.width / scale - layout.getAdvance();
+                    break;
+                case ALIGN_RIGHT:
+                    drawPosX = layout.isLeftToRight() ? cr.width / scale - layout.getAdvance() : 0;
+                    break;
+                case ALIGN_CENTER:
+                    drawPosX = (cr.width / scale - layout.getAdvance()) / 2f;
+                    break;
             }
-            g.setTransform(originalTransform);
+
+            // Move y-coordinate by the ascent of the layout.
+            drawPosY += layout.getAscent();
+
+            // Draw the TextLayout at (drawPosX,drawPosY).
+            layout.draw(g, drawPosX, drawPosY);
+
+            // Move y-coordinate in preparation for next layout.
+            drawPosY += layout.getDescent() + layout.getLeading();
         }
+        g.setTransform(originalTransform);
+    }
+
+    protected static HAlign getHAlign(CellStyle style, CellType type) {
+        HAlign hAlign = style.getHAlign();
+        if (hAlign==HAlign.ALIGN_AUTOMATIC) {
+            if (type==CellType.TEXT) {
+                hAlign = HAlign.ALIGN_LEFT;
+            } else {
+                hAlign = HAlign.ALIGN_RIGHT;
+            }
+        }
+        return hAlign;
+    }
+
+    protected static VAlign getVAlign(CellStyle style, CellType type) {
+        return style.getVAlign();
     }
 
     protected List<TextLayout> prepareText(Graphics2D g, float scale, FontRenderContext frc, AttributedCharacterIterator text, float width) {

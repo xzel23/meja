@@ -19,28 +19,34 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
+import com.dua3.meja.util.AttributedStringHelper;
 import java.text.AttributedString;
 import java.util.Date;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  */
 class GenericCell implements Cell {
 
     private final GenericRow row;
     private CellType type;
     private Object value;
-    private CellStyle cellStyle;
+    private GenericCellStyle cellStyle;
     private int spanX;
     private int spanY;
-    private Cell logicalCell;
-    private int rowNumber;
-    private int columnNumber;
-    private Row Row;
+    private GenericCell logicalCell;
+    private final int columnNumber;
 
-    public GenericCell(GenericRow row) {
+    public GenericCell(GenericRow row, int colNumber, GenericCellStyle cellStyle) {
         this.row = row;
+        this.logicalCell = this;
+        this.cellStyle = cellStyle;
+        this.columnNumber = colNumber;
+        this.spanX = 1;
+        this.spanY = 1;
+        this.type = CellType.BLANK;
+        this.value = null;
     }
 
     @Override
@@ -80,14 +86,21 @@ class GenericCell implements Cell {
     @Override
     public String getText() {
         if (type == CellType.TEXT) {
-            return (String) value;
+            return AttributedStringHelper.toString((AttributedString) value);
         }
         throw new IllegalStateException("Cannot get text value from cell of type " + type.name() + ".");
     }
 
     @Override
     public String getAsText() {
-        return String.valueOf(value);
+        switch (getCellType()) {
+            case BLANK:
+                return "";
+            case TEXT:
+                return AttributedStringHelper.toString((AttributedString) value);
+            default:
+                return String.valueOf(value);
+        }
     }
 
     @Override
@@ -112,7 +125,7 @@ class GenericCell implements Cell {
 
     @Override
     public int getRowNumber() {
-        return rowNumber;
+        return row.getRowNumber();
     }
 
     @Override
@@ -127,7 +140,11 @@ class GenericCell implements Cell {
 
     @Override
     public AttributedString getAttributedString() {
-        return new AttributedString(getAsText());
+        if (getCellType()==CellType.TEXT) {
+            return (AttributedString) value;
+        } else {
+            return new AttributedString(getAsText());
+        }
     }
 
     @Override
@@ -145,7 +162,7 @@ class GenericCell implements Cell {
     @Override
     public void set(String arg) {
         this.type = CellType.TEXT;
-        this.value = arg;
+        this.value = new AttributedString(arg);
     }
 
     @Override
@@ -156,7 +173,7 @@ class GenericCell implements Cell {
 
     @Override
     public Row getRow() {
-        return Row;
+        return row;
     }
 
     @Override
@@ -167,7 +184,29 @@ class GenericCell implements Cell {
 
     @Override
     public void setCellStyle(CellStyle cellStyle) {
-        this.cellStyle = cellStyle;
+        this.cellStyle = (GenericCellStyle) cellStyle;
+    }
+
+    @Override
+    public CellType getResultType() {
+        return getCellType();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return type == CellType.BLANK
+                || type == CellType.TEXT && AttributedStringHelper.isEmpty((AttributedString) value);
+    }
+
+    @Override
+    public void setCellStyle(String cellStyleName) {
+        this.cellStyle = getSheet().getWorkbook().getCellStyle(cellStyleName);
+    }
+
+    @Override
+    public void setFormula(String value) {
+        this.type = CellType.FORMULA;
+        this.value = value;
     }
 
 }

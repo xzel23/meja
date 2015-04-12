@@ -53,7 +53,7 @@ public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     protected abstract org.apache.poi.ss.usermodel.Font getPoiFont();
 
     @Override
-    public double getSizeInPoints() {
+    public float getSizeInPoints() {
         return getPoiFont().getFontHeightInPoints();
     }
 
