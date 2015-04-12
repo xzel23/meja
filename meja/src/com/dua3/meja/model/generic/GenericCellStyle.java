@@ -40,6 +40,7 @@ public class GenericCellStyle implements CellStyle {
     private VAlign vAlign;
     private final BorderStyle[] borderStyle = new BorderStyle[Direction.values().length];
     private boolean wrap;
+    private String dataFormat;
 
     public GenericCellStyle() {
         this.font = new GenericFont();
@@ -49,6 +50,7 @@ public class GenericCellStyle implements CellStyle {
         this.hAlign = HAlign.ALIGN_AUTOMATIC;
         this.vAlign = VAlign.ALIGN_MIDDLE;
         this.wrap = false;
+        this.dataFormat = "#";
 
         for (Direction d : Direction.values()) {
             borderStyle[d.ordinal()] = defaultBorderStyle;
@@ -133,6 +135,16 @@ public class GenericCellStyle implements CellStyle {
     @Override
     public void setBorderStyle(Direction d, BorderStyle borderStyle) {
         this.borderStyle[d.ordinal()] = borderStyle;
+    }
+
+    @Override
+    public String getDataFormat() {
+        return dataFormat;
+    }
+
+    @Override
+    public void setDataFormat(String format) {
+        this.dataFormat = format;
     }
 
 }

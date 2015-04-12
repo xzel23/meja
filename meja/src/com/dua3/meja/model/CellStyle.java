@@ -31,6 +31,7 @@ public interface  CellStyle {
     VAlign getVAlign();
     BorderStyle getBorderStyle(Direction d);
     boolean isWrap();
+    String getDataFormat();
 
     void setFont(Font font);
     void setFillBgColor(Color color);
@@ -40,5 +41,6 @@ public interface  CellStyle {
     void setVAlign(VAlign vAlign);
     void setBorderStyle(Direction d, BorderStyle borderStyle);
     void setWrap(boolean wrap);
-    
+    void setDataFormat(String format);
+
 }

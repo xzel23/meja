@@ -226,6 +226,18 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
         poiCellStyle.setWrapText(wrap);
     }
 
+    @Override
+    public void setDataFormat(String format) {
+        poiCellStyle.setDataFormat(getWorkbook().poiWorkbook.createDataFormat().getFormat(format));
+    }
+
+    @Override
+    public String getDataFormat() {
+        return poiCellStyle.getDataFormatString();
+    }
+
+    protected abstract PoiWorkbook<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getWorkbook();
+
     static class PoiHssfCellStyle
             extends
             PoiCellStyle<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
@@ -238,6 +250,11 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
             super(poiCellStyle);
             this.workbook = workbook;
             this.font = null;
+        }
+
+        @Override
+        public PoiHssfWorkbook getWorkbook() {
+            return workbook;
         }
 
         @Override
@@ -346,6 +363,11 @@ public abstract class PoiCellStyle<WORKBOOK extends org.apache.poi.ss.usermodel.
             super(poiCellStyle);
             this.workbook = workbook;
             this.font = null;
+        }
+
+        @Override
+        public PoiXssfWorkbook getWorkbook() {
+            return workbook;
         }
 
         @Override
