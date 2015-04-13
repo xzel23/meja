@@ -30,6 +30,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
@@ -390,6 +391,9 @@ public class SheetView extends JPanel implements Scrollable {
      * @param sheet the sheet to display
      */
     public SheetView(Sheet sheet) {
+        // explicitly set a null layout since that is needed for absolute
+        // positioning of the in-place cell editor
+        super((LayoutManager)null);
         init();
         setSheet(sheet);
     }
