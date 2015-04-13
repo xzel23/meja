@@ -262,7 +262,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
-    public void set(Boolean arg) {
+    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> set(Boolean arg) {
         if (arg == null) {
             clear();
         } else {
@@ -270,10 +270,11 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             poiCell.setCellValue(arg);
         }
         attributedString.clear();
+        return this;
     }
 
     @Override
-    public void set(Date arg) {
+    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> set(Date arg) {
         if (arg == null) {
             clear();
         } else {
@@ -281,10 +282,11 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             poiCell.setCellValue(arg);
             attributedString.clear();
         }
+        return this;
     }
 
     @Override
-    public void set(Number arg) {
+    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> set(Number arg) {
         if (arg == null) {
             clear();
         } else {
@@ -292,10 +294,11 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             poiCell.setCellValue(arg.doubleValue());
             attributedString.clear();
         }
+        return this;
     }
 
     @Override
-    public void set(String arg) {
+    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> set(String arg) {
         if (arg == null) {
             clear();
         } else {
@@ -303,10 +306,11 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             poiCell.setCellValue(arg);
             attributedString.clear();
         }
+        return this;
     }
 
     @Override
-    public void setFormula(String arg) {
+    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> setFormula(String arg) {
         if (arg == null) {
             clear();
         } else {
@@ -314,6 +318,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             poiCell.setCellValue(arg);
             attributedString.clear();
         }
+        return this;
     }
 
     @SuppressWarnings("rawtypes")

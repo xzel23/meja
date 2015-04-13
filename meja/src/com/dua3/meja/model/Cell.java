@@ -170,29 +170,33 @@ public interface Cell {
      * Set cell value to date.
      *
      * @param arg date
+     * @return this cell
      */
-    void set(Date arg);
+    Cell set(Date arg);
 
     /**
      * Set cell value to number.
      *
      * @param arg number
+     * @return this cell
      */
-    void set(Number arg);
+    Cell set(Number arg);
 
     /**
      * Set cell value to string.
      *
      * @param s string
+     * @return this cell
      */
-    void set(String s);
+    Cell set(String s);
 
     /**
      * Set cell value to boolean value.
      *
      * @param b boolean value
+     * @return this cell
      */
-    void set(Boolean b);
+    Cell set(Boolean b);
 
     /**
      * Get the row this cell belongs to.
@@ -220,6 +224,11 @@ public interface Cell {
      */
     void setCellStyle(String cellStyleName);
 
-    public void setFormula(String value);
+    /**
+     * Set formula
+     * @param value the formula as a string
+     * @return this cell
+     */
+    public Cell setFormula(String value);
 
 }
