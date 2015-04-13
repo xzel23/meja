@@ -24,6 +24,7 @@ import com.dua3.meja.model.poi.PoiFont.PoiHssfFont;
 import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -158,7 +160,8 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         return poiWorkbook.hashCode();
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> copyCellStyle(String styleName, CellStyle style) {
         PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> cellStyle = getCellStyle(styleName);
         cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);

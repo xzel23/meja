@@ -183,10 +183,20 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     }
 
     @Override
-    public void freeze(int i, int j) {
+    public void splitAt(int i, int j) {
         poiSheet.createFreezePane(i+1, j+1);
     }
 
+    @Override
+    public int getSplitRow() {
+        return poiSheet.getPaneInformation().getHorizontalSplitTopRow();
+    }
+    
+    @Override
+    public int getSplitColumn() {
+        return poiSheet.getPaneInformation().getVerticalSplitLeftColumn();
+    }
+    
     @Override
     public abstract PoiRow<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getRow(int i);
 
@@ -201,7 +211,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     }
 
     @Override
-    public void setAutofilter(int rowNumber) {
+    public void setAutofilterRow(int rowNumber) {
         org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNumber);
 		short col1 = poiRow.getFirstCellNum();
         short coln = poiRow.getLastCellNum();

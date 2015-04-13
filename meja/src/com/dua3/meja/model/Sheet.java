@@ -60,16 +60,28 @@ public interface Sheet extends Iterable<Row> {
     Cell getCell(int i, int j);
 
     /**
-     * Freeze view.
+     * Split (freeze) view.
      *
-     * Freezes the sheet so, that rows <em>above</em> i and columns
+     * Splits the sheet so that rows <em>above</em> i and columns
      * <em>to the left</em> of j remain in view when scrolling.
      *
      * @param i row number
      * @param j column number
      */
-    void freeze(int i, int j);
+    void splitAt(int i, int j);
 
+    /**
+     * Get the split row.
+     * @return the number of the first row that will not remain at a fixed position when scrolling 
+     */
+    int getSplitRow();
+    
+    /**
+     * Get the frozen column.
+     * @return the number of the first column that will not remain at a fixed position when scrolling 
+     */
+    int getSplitColumn();
+    
     /**
      * Adjusts the size of the column to its contents (optional operation).
      *
@@ -82,5 +94,5 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param i the row number
      */
-    void setAutofilter(int i);
+    void setAutofilterRow(int i);
 }
