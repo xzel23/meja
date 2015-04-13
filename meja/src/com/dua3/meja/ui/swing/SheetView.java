@@ -63,7 +63,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     private static final long serialVersionUID = 1L;
     private final CellRenderer renderer = new DefaultCellRenderer();
-    private final CellEditor editor = new DefaultCellEditor();
+    private final CellEditor editor = new DefaultCellEditor(this);
 
     Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
         @Override
@@ -317,6 +317,10 @@ public class SheetView extends JPanel implements Scrollable {
      */
     private void stopEditing(boolean commit) {
         editor.stopEditing(commit);
+    }
+
+    float getScale() {
+        return scale;
     }
 
     /**

@@ -18,8 +18,26 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.AttributedStringHelper;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import javax.swing.JComponent;
-import javax.swing.JTextPane;
+import javax.swing.JEditorPane;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.BoxView;
+import javax.swing.text.ComponentView;
+import javax.swing.text.Element;
+import javax.swing.text.IconView;
+import javax.swing.text.LabelView;
+import javax.swing.text.ParagraphView;
+import javax.swing.text.Position;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
+import javax.swing.text.html.HTMLEditorKit;
 
 /**
  *
@@ -27,13 +45,14 @@ import javax.swing.JTextPane;
  */
 public class DefaultCellEditor implements CellEditor {
 
-    private final JTextPane component;
+    private final JEditorPane component;
     private Cell cell;
+    private final SheetView sheetView;
 
-    public DefaultCellEditor() {
-        component = new JTextPane();
-        component.setContentType("text/html");
-        component.setOpaque(false);
+    public DefaultCellEditor(SheetView sheetView) {
+        this.sheetView = sheetView;
+        component = new JEditorPane();
+        component.setOpaque(true);
         component.setBackground(Color.WHITE);
         cell = null;
     }
@@ -49,6 +68,7 @@ public class DefaultCellEditor implements CellEditor {
             throw new IllegalStateException("Already editing.");
         }
         this.cell = cell;
+        component.setEditorKit(new CellEditorKit());
         component.setText(AttributedStringHelper.toHtml(cell.getAttributedString(), true));
         return component;
     }
@@ -58,38 +78,113 @@ public class DefaultCellEditor implements CellEditor {
         if (commit) {
             // TODO
         }
-        this.cell=null;
+        this.cell = null;
         component.setText("");
         component.setVisible(false);
     }
 
-    /*
-     public void render(Graphics2D g, Cell cell, Rectangle cr, Rectangle clipRect, float scale) {
-     component.setBounds(clipRect);
-     component.setText(AttributedStringHelper.toHtml(cell.getAttributedString(), true));
+    private class CellView extends BoxView {
 
-     CellStyle style = cell.getCellStyle();
-     final int x;
-     final int w;
-     if (style.isWrap()||style.getHAlign().isWrap()||style.getVAlign().isWrap()) {
-     x = cr.x;
-     w = cr.width;
-     } else {
-     switch (style.getHAlign()) {
-     default:
-     x = cr.x;
-     w = Math.max(cr.width, clipRect.x+clipRect.width-cr.x);
-     break;
-     case ALIGN_CENTER:
-     x = cr.x;
-     w = cr.width;
-     break;
-     }
-     }
+        public CellView(Element elem, int axis) {
+            super(elem, axis);
+        }
 
-     final Graphics2D g_ = (Graphics2D) g.create(x, cr.y, w, cr.height);
-     g_.scale(scale, scale);
-     component.paint(g_);
-     }
-     */
+        @Override
+        public void paint(Graphics g, Shape allocation) {
+            Graphics2D g2d = (Graphics2D) g;
+            System.out.println("r = "+g.getClipBounds());
+            float scale = getScale();
+            AffineTransform originalTransform = g2d.getTransform();
+            g2d.scale(scale, scale);
+            super.paint(g2d, allocation);
+            g2d.setTransform(originalTransform);
+        }
+
+        protected float getScale() {
+            return sheetView.getScale();
+        }
+
+        @Override
+        public float getMinimumSpan(int axis) {
+            return getScale() * super.getMinimumSpan(axis);
+        }
+
+        @Override
+        public float getMaximumSpan(int axis) {
+            return getScale() * super.getMaximumSpan(axis);
+        }
+
+        @Override
+        public float getPreferredSpan(int axis) {
+            return getScale() * super.getPreferredSpan(axis);
+        }
+
+        @Override
+        protected void layout(int width, int height) {
+            final float scale = getScale();
+            super.layout(Math.round(width / scale), Math.round(height / scale));
+        }
+
+        @Override
+        public Shape modelToView(int pos, Shape a, Position.Bias b) throws BadLocationException {
+            Rectangle alloc = a.getBounds();
+            Shape s = super.modelToView(pos, alloc, b);
+            float scale = getScale();
+            alloc = s.getBounds();
+            alloc.x *= scale;
+            alloc.y *= scale;
+            alloc.width *= scale;
+            alloc.height *= scale;
+
+            return alloc;
+        }
+
+        @Override
+        public int viewToModel(float x, float y, Shape a,
+                Position.Bias[] bias) {
+            float scale = getScale();
+            Rectangle alloc = a.getBounds();
+            alloc.x /= scale;
+            alloc.y /= scale;
+            alloc.width /= scale;
+            alloc.height /= scale;
+
+            return super.viewToModel(x/scale, y/scale, alloc, bias);
+        }
+    }
+
+    @SuppressWarnings("serial")
+    class CellEditorKit extends HTMLEditorKit {
+
+        @Override
+        public ViewFactory getViewFactory() {
+            return new CellViewFactory();
+        }
+
+        class CellViewFactory implements ViewFactory {
+
+            @Override
+            public View create(Element elem) {
+                String kind = elem.getName();
+                if (kind != null) {
+                    switch (kind) {
+                        case AbstractDocument.SectionElementName:
+                            return new CellView(elem, View.Y_AXIS);
+                        case AbstractDocument.ContentElementName:
+                            return new LabelView(elem);
+                        case AbstractDocument.ParagraphElementName:
+                            return new ParagraphView(elem);
+                        case StyleConstants.ComponentElementName:
+                            return new ComponentView(elem);
+                        case StyleConstants.IconElementName:
+                            return new IconView(elem);
+                    }
+                }
+
+                // default to text display
+                return new LabelView(elem);
+            }
+
+        }
+    }
 }
