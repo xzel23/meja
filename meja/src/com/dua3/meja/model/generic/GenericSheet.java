@@ -119,21 +119,35 @@ public class GenericSheet implements Sheet {
     }
 
     @Override
-    public void freeze(int i, int j) {
+    public void splitAt(int i, int j) {
         freezeRow=i;
         freezeColumn=j;
     }
 
+    @Override
+    public int getSplitRow() {
+		return freezeRow;
+	}
+    
+    @Override
+    public int getSplitColumn() {
+		return freezeColumn;
+	}
+    
     @Override
     public void autoSizeColumn(int j) {
         // TODO
     }
 
     @Override
-    public void setAutofilter(int i) {
+    public void setAutofilterRow(int i) {
         autoFilterRow=i;
     }
 
+    public int getAutoFilterRow() {
+		return autoFilterRow;
+	}
+    
     @Override
     public Iterator<Row> iterator() {
         return MejaHelper.createRowIterator(this);

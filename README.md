@@ -11,6 +11,9 @@ Méja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
  
 Required libraries (currently that's just Apache POI) should be automatically downloaded by Ant (provided I got the Ivy part right).
 
+## Documentation
+More information is available on the project`s [github pages](http://xzel23.github.io/meja/) where you will also find the [API docs](http://xzel23.github.io/meja/javadoc/index.html).
+
 ## License
 Méja is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 

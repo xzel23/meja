@@ -148,27 +148,31 @@ class GenericCell implements Cell {
     }
 
     @Override
-    public void set(Date arg) {
+    public GenericCell set(Date arg) {
         this.type = CellType.NUMERIC;
         this.value = arg;
+        return this;
     }
 
     @Override
-    public void set(Number arg) {
+    public GenericCell set(Number arg) {
         this.type = CellType.NUMERIC;
         this.value = arg;
+        return this;
     }
 
     @Override
-    public void set(String arg) {
+    public GenericCell set(String arg) {
         this.type = CellType.TEXT;
         this.value = new AttributedString(arg);
+        return this;
     }
 
     @Override
-    public void set(Boolean arg) {
+    public GenericCell set(Boolean arg) {
         this.type = CellType.BOOLEAN;
         this.value = arg;
+        return this;
     }
 
     @Override
@@ -204,9 +208,10 @@ class GenericCell implements Cell {
     }
 
     @Override
-    public void setFormula(String value) {
+    public GenericCell setFormula(String value) {
         this.type = CellType.FORMULA;
         this.value = value;
+        return this;
     }
 
 }

@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import java.util.Iterator;
+
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -31,8 +32,10 @@ public class MejaHelper {
 
     public static String getColumnName(int j) {
         StringBuilder sb = new StringBuilder();
-        do {
-            sb.append((char) ('A' + j % 26));
+    	sb.append((char) ('A' + j % 26));
+        j /= 26;
+        while (j>0) {
+        	sb.insert(0, (char) ('A' + j % 26 -1));
             j /= 26;
         } while (j > 0);
         return sb.toString();
@@ -131,4 +134,22 @@ public class MejaHelper {
             }
         };
     }
+
+    /**
+     * Translate column name into column number.
+     * @param colName the name of the column, ie. "A", "B",... , "AA", "AB",...
+     * @return the column number
+     * @throws IllegalArgumentException if {@code colName} is not a valid column name
+     */
+	public static int getColumnNumber(String colName) {
+	    int col = 0;
+	    for (char c: colName.toLowerCase().toCharArray()) {
+	      if (c < 'a' || 'z' < c) {
+	        throw new IllegalArgumentException("'" + colName + "' ist no valid column name.");
+	      }
+
+	      col = col * ('z' - 'a' + 1) + (c - 'a' + 1);
+	    }
+	    return col-1;
+	}
 }
