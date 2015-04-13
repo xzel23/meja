@@ -32,8 +32,10 @@ public class MejaHelper {
 
     public static String getColumnName(int j) {
         StringBuilder sb = new StringBuilder();
-        do {
-            sb.append((char) ('A' + j % 26));
+    	sb.append((char) ('A' + j % 26));
+        j /= 26;
+        while (j>0) {
+        	sb.insert(0, (char) ('A' + j % 26 -1));
             j /= 26;
         } while (j > 0);
         return sb.toString();
