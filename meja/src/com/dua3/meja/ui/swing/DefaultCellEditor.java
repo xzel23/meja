@@ -24,6 +24,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -31,6 +33,7 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
 import javax.swing.text.ComponentView;
+import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.IconView;
 import javax.swing.text.LabelView;
@@ -90,7 +93,13 @@ public class DefaultCellEditor implements CellEditor {
     @Override
     public void stopEditing(boolean commit) {
         if (commit) {
-            // TODO
+            Document doc = component.getDocument();
+            try {
+                cell.set(doc.getText(0, doc.getLength()));
+            } catch (BadLocationException ex) {
+                Logger.getLogger(DefaultCellEditor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            sheetView.repaint(sheetView.getCellRect(cell));
         }
         this.cell = null;
         component.setText("");
@@ -106,7 +115,6 @@ public class DefaultCellEditor implements CellEditor {
         @Override
         public void paint(Graphics g, Shape allocation) {
             Graphics2D g2d = (Graphics2D) g;
-            System.out.println("r = "+g.getClipBounds());
             float scale = getScale();
             AffineTransform originalTransform = g2d.getTransform();
             g2d.scale(scale, scale);

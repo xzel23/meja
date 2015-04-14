@@ -160,6 +160,24 @@ public class SheetView extends JPanel implements Scrollable {
     private final Rectangle clipBounds = new Rectangle();
 
     /**
+     * Read-only mode.
+     */
+    private boolean readonly = true;
+
+    /**
+     * Editing state.
+     */
+    private boolean editing = false;
+
+    public boolean isReadonly() {
+        return readonly;
+    }
+
+    public void setReadonly(boolean readonly) {
+        this.readonly = readonly;
+    }
+
+    /**
      * Move the selection rectangle to an adjacent cell.
      *
      * @param d direction
@@ -465,11 +483,17 @@ public class SheetView extends JPanel implements Scrollable {
         requestFocusInWindow();
 
         if (!currentCellChanged) {
-        // if it already was the current cell, start cell editing
-            startEditing();
+            // if it already was the current cell, start cell editing
+            if (!readonly) {
+                startEditing();
+                editing=true;
+            }
         } else {
-        // otherwise stop cell editing
-            stopEditing(false);
+            // otherwise stop cell editing
+            if (editing) {
+                stopEditing(true);
+                editing=false;
+            }
         }
     }
 
