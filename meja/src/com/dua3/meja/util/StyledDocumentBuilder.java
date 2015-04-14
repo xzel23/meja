@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.util;
 
+import java.awt.Color;
+import java.awt.font.TextAttribute;
 import java.text.AttributedCharacterIterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -22,6 +24,7 @@ import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 /**
@@ -48,6 +51,19 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 continue;
             }
 
+            if (key.equals(java.awt.font.TextAttribute.FAMILY)) {
+                StyleConstants.setFontFamily(as, value.toString());
+            } else if (key.equals(java.awt.font.TextAttribute.SIZE)) {
+                StyleConstants.setFontSize(as, ((Number)value).intValue());
+            } else if (key.equals(java.awt.font.TextAttribute.FOREGROUND)) {
+                StyleConstants.setForeground(as, (Color) value);
+            } else if (key.equals(java.awt.font.TextAttribute.BACKGROUND)) {
+                StyleConstants.setBackground(as, (Color) value);
+            } else if (key.equals(java.awt.font.TextAttribute.WEIGHT)) {
+                StyleConstants.setBold(as, ((Number) value).floatValue()>TextAttribute.WEIGHT_MEDIUM);
+            } else if (key.equals(java.awt.font.TextAttribute.POSTURE)) {
+                StyleConstants.setItalic(as, value.equals(java.awt.font.TextAttribute.POSTURE_OBLIQUE));
+            }
             as.addAttribute(key, value);
         }
 

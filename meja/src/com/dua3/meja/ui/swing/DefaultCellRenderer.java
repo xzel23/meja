@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class DefaultCellRenderer implements CellRenderer {
 
-    private final Cache<Font, java.awt.Font> fontCache = new Cache<Font, java.awt.Font>() {
+    static final Cache<Font, java.awt.Font> fontCache = new Cache<Font, java.awt.Font>() {
         @Override
         protected java.awt.Font create(Font font) {
             int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
@@ -49,7 +49,7 @@ public class DefaultCellRenderer implements CellRenderer {
         }
     };
 
-    protected java.awt.Font getAwtFont(Font font) {
+    static java.awt.Font getAwtFont(Font font) {
         return fontCache.get(font);
     }
 

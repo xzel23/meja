@@ -16,13 +16,15 @@
 package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Font;
 import com.dua3.meja.util.AttributedStringHelper;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.text.AbstractDocument;
@@ -54,8 +56,7 @@ public class DefaultCellEditor implements CellEditor {
         this.sheetView = sheetView;
         component = new JEditorPane();
         component.setOpaque(true);
-        component.setBackground(Color.WHITE);
-        component.setForeground(Color.BLACK);
+        component.setBorder(BorderFactory.createEmptyBorder());
         component.setEditorKit(new CellEditorKit());
         cell = null;
     }
@@ -71,10 +72,18 @@ public class DefaultCellEditor implements CellEditor {
             throw new IllegalStateException("Already editing.");
         }
         this.cell = cell;
+
+        final CellStyle cellStyle = cell.getCellStyle();
+        final Font font = cellStyle.getFont();
+        component.setFont(DefaultCellRenderer.getAwtFont(font));
+        component.setBackground(cellStyle.getFillBgColor());
+        component.setForeground(font.getColor());
+
         StyledDocument doc=AttributedStringHelper.toStyledDocument(cell.getAttributedString());
         component.setDocument(doc);
         component.revalidate();
-                    System.out.println("text = '"+component.getText()+"'");
+        component.requestFocusInWindow();
+
         return component;
     }
 
