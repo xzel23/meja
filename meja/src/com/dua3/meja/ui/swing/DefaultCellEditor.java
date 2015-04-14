@@ -55,6 +55,7 @@ public class DefaultCellEditor implements CellEditor {
         component = new JEditorPane();
         component.setOpaque(true);
         component.setBackground(Color.WHITE);
+        component.setForeground(Color.BLACK);
         component.setEditorKit(new CellEditorKit());
         cell = null;
     }
@@ -72,6 +73,8 @@ public class DefaultCellEditor implements CellEditor {
         this.cell = cell;
         StyledDocument doc=AttributedStringHelper.toStyledDocument(cell.getAttributedString());
         component.setDocument(doc);
+        component.revalidate();
+                    System.out.println("text = '"+component.getText()+"'");
         return component;
     }
 

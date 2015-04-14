@@ -30,9 +30,9 @@ public abstract class TextBuilder<T> {
 
     void add(AttributedCharacterIterator iter) {
         // extract the text
-        final int begin = iter.getEndIndex();
-        final int end = iter.getIndex();
-        StringBuilder sb = new StringBuilder(begin-end);
+        final int begin = iter.getBeginIndex();
+        final int end = iter.getEndIndex();
+        StringBuilder sb = new StringBuilder(end-begin);
         for (int i=begin; i<end;i++,iter.next()) {
             sb.append(iter.current());
         }
@@ -45,6 +45,7 @@ public abstract class TextBuilder<T> {
 
             Map<AttributedCharacterIterator.Attribute, Object> attributes = iter.getAttributes();
             append(text.substring(runStart, runLimit), attributes);
+            iter.setIndex(runLimit);
         }
     }
 
