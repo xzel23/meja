@@ -35,9 +35,10 @@ import javax.swing.text.LabelView;
 import javax.swing.text.ParagraphView;
 import javax.swing.text.Position;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.StyledEditorKit;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
-import javax.swing.text.html.HTMLEditorKit;
 
 /**
  *
@@ -54,6 +55,7 @@ public class DefaultCellEditor implements CellEditor {
         component = new JEditorPane();
         component.setOpaque(true);
         component.setBackground(Color.WHITE);
+        component.setEditorKit(new CellEditorKit());
         cell = null;
     }
 
@@ -68,8 +70,8 @@ public class DefaultCellEditor implements CellEditor {
             throw new IllegalStateException("Already editing.");
         }
         this.cell = cell;
-        component.setEditorKit(new CellEditorKit());
-        component.setText(AttributedStringHelper.toHtml(cell.getAttributedString(), true));
+        StyledDocument doc=AttributedStringHelper.toStyledDocument(cell.getAttributedString());
+        component.setDocument(doc);
         return component;
     }
 
@@ -154,7 +156,7 @@ public class DefaultCellEditor implements CellEditor {
     }
 
     @SuppressWarnings("serial")
-    class CellEditorKit extends HTMLEditorKit {
+    class CellEditorKit extends StyledEditorKit {
 
         @Override
         public ViewFactory getViewFactory() {

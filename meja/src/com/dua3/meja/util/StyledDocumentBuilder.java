@@ -1,0 +1,61 @@
+/*
+ * Copyright 2015 Axel Howind <axel@dua3.com>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.dua3.meja.util;
+
+import java.text.AttributedCharacterIterator;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyledDocument;
+
+/**
+ *
+ * @author Axel Howind <axel@dua3.com>
+ */
+public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
+
+    private final StyledDocument doc = new DefaultStyledDocument();
+
+    @Override
+    protected StyledDocument get() {
+        return doc;
+    }
+
+    @Override
+    protected void append(String text, Map<AttributedCharacterIterator.Attribute, Object> attributes) {
+        SimpleAttributeSet as = new SimpleAttributeSet();
+        for (Map.Entry<AttributedCharacterIterator.Attribute, Object> entry: attributes.entrySet()) {
+            AttributedCharacterIterator.Attribute key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (value == null) {
+                continue;
+            }
+
+            as.addAttribute(key, value);
+        }
+
+        try {
+            doc.insertString(doc.getLength(), text, as);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(StyledDocumentBuilder.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+}

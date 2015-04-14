@@ -15,10 +15,9 @@
  */
 package com.dua3.meja.util;
 
-import java.awt.Color;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
-import java.util.Map;
+import javax.swing.text.StyledDocument;
 
 /**
  *
@@ -48,109 +47,16 @@ public class AttributedStringHelper {
     private AttributedStringHelper() {
     }
 
-    static class HtmlBuilder {
-
-        private final StringBuilder buffer = new StringBuilder();
-
-        public HtmlBuilder() {
-        }
-
-        void add(AttributedCharacterIterator iter) {
-            while (iter.getIndex() != iter.getEndIndex()) {
-                int runStart = iter.getRunStart();
-                int runLimit = iter.getRunLimit();
-
-                Map<AttributedCharacterIterator.Attribute, Object> attributes = iter.getAttributes();
-                String endTag = setAttributes(attributes, true);
-                for (int i = runStart; i < runLimit; i++, iter.next()) {
-                    appendChar(iter.current());
-                }
-                buffer.append(endTag);
-            }
-        }
-
-        private String setAttributes(Map<AttributedCharacterIterator.Attribute, Object> attributes, boolean b) {
-            String separator = "<span style=\"";
-            String closing = "";
-            String endTag = "";
-            for (Map.Entry<AttributedCharacterIterator.Attribute, Object> entry : attributes.entrySet()) {
-                AttributedCharacterIterator.Attribute key = entry.getKey();
-                Object value = entry.getValue();
-
-                if (value==null) {
-                    continue;
-                }
-
-                if (key.equals(java.awt.font.TextAttribute.FAMILY)) {
-                    buffer.append(separator).append("font-family:").append(value);
-                } else if (key.equals(java.awt.font.TextAttribute.SIZE)) {
-                    buffer.append(separator).append("font-size:").append(value).append("pt");
-                } else if (key.equals(java.awt.font.TextAttribute.FOREGROUND)) {
-                    buffer.append(separator).append("color:#").append(getColorValue((Color)value));
-                } else if (key.equals(java.awt.font.TextAttribute.BACKGROUND)) {
-                    buffer.append(separator).append("background-color:#").append(getColorValue((Color)value));
-                } else if (key.equals(java.awt.font.TextAttribute.WEIGHT)) {
-                    buffer.append(separator).append("font-weight:").append((int)(400*(Float)value));
-                } else if (key.equals(java.awt.font.TextAttribute.POSTURE)) {
-                    buffer.append(separator).append("font-style:");
-                    if (value.equals(java.awt.font.TextAttribute.POSTURE_OBLIQUE)) {
-                        buffer.append("oblique");
-                    } else {
-                        buffer.append("normal");
-                    }
-                } else {
-                    continue;
-                }
-                separator="; ";
-                closing="\">";
-                endTag="</span>";
-            }
-            buffer.append(closing);
-            return endTag;
-        }
-
-        private static String getColorValue(Color color) {
-            return Integer.toHexString(color.getRGB()).substring(2);
-        }
-
-        @Override
-        public String toString() {
-            return buffer.toString();
-        }
-
-        private void appendChar(char c) {
-            // escape characters as suggested by OWASP.org
-            switch(c) {
-                case '<':
-                    buffer.append("&lt;");
-                    break;
-                case '>':
-                    buffer.append("&gt;");
-                    break;
-                case '&':
-                    buffer.append("&amp;");
-                    break;
-                case '"':
-                    buffer.append("&quot;");
-                    break;
-                case '\'':
-                    buffer.append("&#x27;");
-                    break;
-                case '/':
-                    buffer.append("&#x2F;");
-                    break;
-                default:
-                    buffer.append(c);
-                    break;
-            }
-        }
-
-    }
-
     public static String toHtml(AttributedString text, boolean addHtmlTag) {
         HtmlBuilder builder = new HtmlBuilder();
         builder.add(text.getIterator());
         final String htmlText = builder.toString();
         return addHtmlTag ? wrap(htmlText, "html") : htmlText;
+    }
+
+    public static StyledDocument toStyledDocument(AttributedString text) {
+        StyledDocumentBuilder builder = new StyledDocumentBuilder();
+        builder.add(text.getIterator());
+        return builder.get();
     }
 }
