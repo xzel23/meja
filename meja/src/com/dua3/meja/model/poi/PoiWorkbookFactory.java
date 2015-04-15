@@ -23,9 +23,8 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Locale;
 
-import org.apache.poi.ss.usermodel.Workbook;
-
 import com.dua3.meja.io.FileFormatException;
+import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
@@ -46,10 +45,10 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 	}
 
 	@Override
-	public PoiWorkbook<?, ?, ?, ?, ?, ?> open(File file) throws IOException {
+	public Workbook open(File file) throws IOException {
 		try {
 			Locale locale = Locale.getDefault();
-			final Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
+			final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
 					.create(file);
 			return createWorkbook(poiWorkbook, locale);
 		} catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException ex) {
@@ -57,15 +56,15 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 		}
 	}
 
-	public PoiWorkbook<?, ?, ?, ?, ?, ?> open(InputStream in)
+	public Workbook open(InputStream in)
 			throws IOException {
 		return open(in, Locale.getDefault());
 	}
 
-	public PoiWorkbook<?, ?, ?, ?, ?, ?> open(InputStream in, Locale locale)
+	public Workbook open(InputStream in, Locale locale)
 			throws IOException {
 		try {
-			final Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
+			final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
 					.create(in);
 			return createWorkbook(poiWorkbook, locale);
 		} catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException ex) {
@@ -73,20 +72,20 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 		}
 	}
 
-	public PoiWorkbook<?, ?, ?, ?, ?, ?> open(URI uri) throws IOException {
+	public Workbook open(URI uri) throws IOException {
 		return open(uri, Locale.getDefault());
 	}
 
-	public PoiWorkbook<?, ?, ?, ?, ?, ?> open(URI uri, Locale locale)
+	public Workbook open(URI uri, Locale locale)
 			throws IOException {
 		return open(uri.toURL(), locale);
 	}
 
-	public PoiWorkbook<?, ?, ?, ?, ?, ?> open(URL url) throws IOException {
+	public Workbook open(URL url) throws IOException {
 		return open(url, Locale.getDefault());
 	}
 
-	public PoiWorkbook<?, ?, ?, ?, ?, ?> open(URL url, Locale locale)
+	public Workbook open(URL url, Locale locale)
 			throws IOException {
 		try (InputStream in = new BufferedInputStream(url.openStream())) {
 			return open(in, locale);
@@ -94,30 +93,30 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 	}
 
 	@Override
-	public PoiWorkbook<?, ?, ?, ?, ?, ?> create() {
+	public Workbook create() {
 		return createXls(Locale.getDefault());
 	}
 
-	public PoiHssfWorkbook createXls() {
+	public Workbook createXls() {
 		return createXls(Locale.getDefault());
 	}
 
-	public PoiHssfWorkbook createXls(Locale locale) {
+	public Workbook createXls(Locale locale) {
 		return new PoiHssfWorkbook(
 				new org.apache.poi.hssf.usermodel.HSSFWorkbook(), locale);
 	}
 
-	public PoiXssfWorkbook createXlsx() {
+	public Workbook createXlsx() {
 		return createXlsx(Locale.getDefault());
 	}
 
-	public PoiXssfWorkbook createXlsx(Locale locale) {
+	public Workbook createXlsx(Locale locale) {
 		return new PoiXssfWorkbook(
 				new org.apache.poi.xssf.usermodel.XSSFWorkbook(), locale);
 	}
 
-	private PoiWorkbook<?, ?, ?, ?, ?, ?> createWorkbook(
-			final Workbook poiWorkbook, Locale locale) {
+	private Workbook createWorkbook(
+			final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale) {
 		if (poiWorkbook instanceof org.apache.poi.hssf.usermodel.HSSFWorkbook) {
 			return new PoiHssfWorkbook(
 					(org.apache.poi.hssf.usermodel.HSSFWorkbook) poiWorkbook,
