@@ -143,31 +143,35 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
     @Override
     public boolean getBoolean() {
-        return poiCell.getBooleanCellValue();
+        return isEmpty() ? null : poiCell.getBooleanCellValue();
     }
 
     @Override
     public String getFormula() {
-        return poiCell.getCellFormula();
+        return isEmpty() ? null : poiCell.getCellFormula();
     }
 
     @Override
     public Date getDate() {
-        return poiCell.getDateCellValue();
+        return isEmpty() ? null : poiCell.getDateCellValue();
     }
 
     @Override
     public Number getNumber() {
-        return poiCell.getNumericCellValue();
+        return isEmpty() ? null : poiCell.getNumericCellValue();
     }
 
     @Override
     public String getText() {
-        return poiCell.getStringCellValue();
+        return isEmpty() ? "" : poiCell.getStringCellValue();
     }
 
     @Override
     public String getAsText() {
+        if (isEmpty()) {
+            return "";
+        }
+        
         DataFormatter dataFormatter = getWorkbook().getDataFormatter();
         try {
             FormulaEvaluator evaluator = getWorkbook().evaluator;
@@ -215,6 +219,10 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
     @Override
     public AttributedString getAttributedString() {
+        if (isEmpty()) {
+            return new AttributedString("");
+        }
+                
         final CellType cellType = getCellType();
         if (cellType == CellType.FORMULA) {
             return new AttributedString(getAsText());
