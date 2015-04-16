@@ -20,8 +20,9 @@ import java.text.AttributedCharacterIterator;
 import java.util.Map;
 
 /**
- *
- * @author Axel Howind <axel@dua3.com>
+ * A {@link TextBuilder} implementation for translating {@code AttributedString}
+ * to HTML.
+ * @author Axel Howind (axel@dua3.com)
  */
 public class HtmlBuilder extends TextBuilder<String> {
 

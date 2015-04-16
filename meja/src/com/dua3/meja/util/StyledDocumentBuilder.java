@@ -28,8 +28,9 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 /**
- *
- * @author Axel Howind <axel@dua3.com>
+ * A {@link TextBuilder} implementation for translating {@code AttributedString}
+ * to {@code StyledDocument}.
+ * @author Axel Howind (axel@dua3.com)
  */
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 

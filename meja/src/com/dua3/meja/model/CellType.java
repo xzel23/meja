@@ -20,10 +20,28 @@ package com.dua3.meja.model;
  * @author axel
  */
 public enum CellType {
+    /**
+     * Type for blank (empty) cells.
+     */
     BLANK,
+    /**
+     * Type for boolean ({@code true}|{@code false}) cells.
+     */
     BOOLEAN,
+    /**
+     * Type for error cells.
+     */
     ERROR,
+    /**
+     * Type for formula cells.
+     */
     FORMULA,
+    /**
+     * Type for numeric cells.
+     */
     NUMERIC,
+    /**
+     * Type for text cells.
+     */
     TEXT;
 }

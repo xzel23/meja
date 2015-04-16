@@ -23,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 /**
+ * Swing component for displaying instances of class {@link Workbook}.
  *
  * @author axel
  */

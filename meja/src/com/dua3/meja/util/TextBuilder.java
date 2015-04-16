@@ -19,15 +19,25 @@ import java.text.AttributedCharacterIterator;
 import java.util.Map;
 
 /**
- *
+ * Base class for text builders.
+ * This class is intended a s a common base class for creating builders
+ * that transform text represented as {@code AttributedString} into other
+ * formats.
  * @author Axel Howind <axel@dua3.com>
  * @param <T> class matching produced document type
  */
 public abstract class TextBuilder<T> {
 
-    public TextBuilder() {
+    /**
+     * Constructor.
+     */
+    protected TextBuilder() {
     }
 
+    /**
+     * Add text.
+     * @param iter character iterator
+     */
     void add(AttributedCharacterIterator iter) {
         // extract the text
         final int begin = iter.getBeginIndex();
@@ -49,8 +59,19 @@ public abstract class TextBuilder<T> {
         }
     }
 
+    /**
+     * Add text to document.
+     * Implementations must override this method to append {@code text} which
+     * is attributed with {@code attributes} to the result document.
+     * @param text the text to append
+     * @param attributes the attributes to use
+     */
     protected abstract void append(String text, Map<AttributedCharacterIterator.Attribute, Object> attributes);
 
+    /**
+     * Get document.
+     * @return the document after transformation.
+     */
     protected abstract T get();
 
 }

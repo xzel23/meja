@@ -37,26 +37,75 @@ public interface Sheet extends Iterable<Row> {
      */
     String getSheetName();
 
+    /**
+     * Get number of first used column.
+     * @return the first used column number
+     */
     int getFirstColNum();
 
+    /**
+     * Get number of first used row.
+     * @return the first used column number
+     */
     int getFirstRowNum();
 
+    /**
+     * Get number of last used column.
+     * @return the last used column number
+     */
     int getLastColNum();
 
+    /**
+     * Get number of last used row.
+     * @return the last used row number
+     */
     int getLastRowNum();
 
+    /**
+     * Get number of columns.
+     * @return number of columns in this sheet
+     */
     int getNumberOfColumns();
 
+    /**
+     * Get number of rows.
+     * @return number of rows in this sheet
+     */
     int getNumberOfRows();
 
-    float getColumnWidth(int colNum);
+    /**
+     * Get column width.
+     * @param j the column number
+     * @return width of the column with number {@code j} in points
+     */
+    float getColumnWidth(int j);
 
-    float getRowHeight(int rowNum);
+    /**
+     * Get row heigt.
+     * @param i the row number
+     * @return height of the row with number {@code i} in points
+     */
+    float getRowHeight(int i);
 
-    Row getRow(int row);
+    /**
+     * Get row.
+     * @param i the row number
+     * @return the row with row number {@code i}
+     */
+    Row getRow(int i);
 
+    /**
+     * Get workbook.
+     * @return the workbook this sheet belongs to
+     */
     Workbook getWorkbook();
 
+    /**
+     * Get cell.
+     * @param i the row number
+     * @param j the column number
+     * @return the cell at row {@code i} and column {@code j}
+     */
     Cell getCell(int i, int j);
 
     /**

@@ -55,7 +55,7 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 /**
- * Swing component for displaying sheets.
+ * Swing component for displaying instances of class {@link Sheet}.
  *
  * @author axel
  */

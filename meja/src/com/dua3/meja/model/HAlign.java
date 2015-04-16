@@ -20,12 +20,28 @@ package com.dua3.meja.model;
  * @author axel
  */
 public enum HAlign {
+    /**
+     * Align text to the left.
+     */
     ALIGN_LEFT(false),
+    /**
+     * Align text centered.
+     */
     ALIGN_CENTER(false),
+    /**
+     * Align text to the right.
+     */
     ALIGN_RIGHT(false),
+    /**
+     * Align text justified.
+     */
     ALIGN_JUSTIFY(true),
+    /**
+     * Use automatic alignment depending on cell content.
+     */
     ALIGN_AUTOMATIC(false);
 
+    // whether text is wrapped regardless of text wrap setting in cell style
     private final boolean wrap;
 
     private HAlign(boolean wrap) {
@@ -33,6 +49,13 @@ public enum HAlign {
 
     }
 
+    /**
+     * Get automatic wrapping for this alignment.
+     * 
+     * When laying out text justified, the text is automatically wrapped
+     * regardless of the cell style setting.
+     * @return true if text should be wrapped regardless of cell style
+     */
     public boolean isWrap() {
         return wrap;
     }

@@ -20,9 +20,21 @@ package com.dua3.meja.model;
  * @author axel
  */
 public enum VAlign {
+    /**
+     * Align text to the top.
+     */
     ALIGN_TOP(false),
+    /**
+     * Align text vertically centered.
+     */
     ALIGN_MIDDLE(false),
+    /**
+     * Align text to the bottom.
+     */
     ALIGN_BOTTOM(false),
+    /**
+     * Align text lines equally spaced.
+     */
     ALIGN_JUSTIFY(false);
 
     private final boolean wrap;
@@ -32,6 +44,13 @@ public enum VAlign {
 
     }
 
+    /**
+     * Get automatic wrapping for this alignment.
+     * 
+     * When laying out text justified horizontally, the text is automatically
+     * wrapped regardless of the cell style setting.
+     * @return true if text should be wrapped regardless of cell style
+     */
     public boolean isWrap() {
         return wrap;
     }

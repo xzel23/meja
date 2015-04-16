@@ -20,15 +20,29 @@ import java.text.AttributedString;
 import javax.swing.text.StyledDocument;
 
 /**
- *
+ * A utility class for handling instances of class {@code AttributedString}.
  * @author Axel Howind (axel@dua3.com)
  */
 public class AttributedStringHelper {
 
+    private AttributedStringHelper() {
+    }
+
+    /**
+     * Wrap text in HTML tag.
+     * @param text
+     * @param tag
+     * @return {@code <tag>text</tag>} 
+     */
     private static String wrap(String text, String tag) {
         return "<"+tag+">"+text+"</"+tag+">";
     }
 
+    /**
+     * Extract non-attributed text.
+     * @param text instance of {@code AttributedString}
+     * @return the content of {@code text} as a plain {@code java.lang.String}
+     */
     public static String toString(AttributedString text) {
         AttributedCharacterIterator iter = text.getIterator();
         final int endIndex = iter.getEndIndex();
@@ -40,13 +54,22 @@ public class AttributedStringHelper {
         return sb.toString();
     }
 
+    /**
+     * Test for empty text.
+     * @param text instance of {@code AttributedString}
+     * @return true if {@code text} is of zero length
+     */
     public static boolean isEmpty(AttributedString text) {
         return text.getIterator().getEndIndex()==0;
     }
 
-    private AttributedStringHelper() {
-    }
-
+    /**
+     * Convert {@code AttributedString} to HTML conserving text attributes.
+     * @param text an instance of {@code AttributedString}
+     * @param addHtmlTag true if the resulting string should be enclosed in 
+     * &lt;html&gt;-tags
+     * @return HTML-representation of {@code text}
+     */
     public static String toHtml(AttributedString text, boolean addHtmlTag) {
         HtmlBuilder builder = new HtmlBuilder();
         builder.add(text.getIterator());
@@ -54,6 +77,11 @@ public class AttributedStringHelper {
         return addHtmlTag ? wrap(htmlText, "html") : htmlText;
     }
 
+    /**
+     * Convert {@code AttributedString} to {@code StyledDocument} conserving text attributes.
+     * @param text an instance of {@code AttributedString}
+     * @return instance of {@code StyledDocument} wih {@text} as its content
+     */
     public static StyledDocument toStyledDocument(AttributedString text) {
         StyledDocumentBuilder builder = new StyledDocumentBuilder();
         builder.add(text.getIterator());

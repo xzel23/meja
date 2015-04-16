@@ -30,6 +30,11 @@ public class MejaHelper {
     private MejaHelper() {
     }
 
+    /**
+     * Translate column number to column name.
+     * @param j the column number
+     * @return the column name
+     */
     public static String getColumnName(int j) {
         StringBuilder sb = new StringBuilder();
     	sb.append((char) ('A' + j % 26));
@@ -37,7 +42,7 @@ public class MejaHelper {
         while (j>0) {
         	sb.insert(0, (char) ('A' + j % 26 -1));
             j /= 26;
-        } while (j > 0);
+        }
         return sb.toString();
     }
 
@@ -91,6 +96,11 @@ public class MejaHelper {
 
     }
 
+    /**
+     * Create row iterator.
+     * @param sheet the sheet for which to create a row iterator
+     * @return row iterator for {@code sheet}
+     */
     public static Iterator<Row> createRowIterator(final Sheet sheet) {
         return new Iterator<Row>() {
 
@@ -113,6 +123,11 @@ public class MejaHelper {
         };
     }
 
+    /**
+     * Create cell iterator.
+     * @param row the row for which to create a cell iterator
+     * @return cell iterator for {@code row}
+     */
     public static Iterator<Cell> createCellIterator(final Row row) {
         return new Iterator<Cell>() {
 
@@ -136,7 +151,7 @@ public class MejaHelper {
     }
 
     /**
-     * Translate column name into column number.
+     * Translate column name to column number.
      * @param colName the name of the column, ie. "A", "B",... , "AA", "AB",...
      * @return the column number
      * @throws IllegalArgumentException if {@code colName} is not a valid column name

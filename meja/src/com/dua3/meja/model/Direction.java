@@ -20,8 +20,21 @@ package com.dua3.meja.model;
  * @author axel
  */
 public enum Direction {
+    /**
+     * North (top) direction.
+     */
     NORTH,
+    /**
+     * East (right) direction.
+     */
     EAST,
+    /**
+     * South (bottom) direction.
+     */
     SOUTH,
+
+    /**
+     * West (left) direction.
+     */
     WEST;
 }

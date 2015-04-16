@@ -23,11 +23,45 @@ import java.awt.Color;
  */
 public interface Font {
 
+    /**
+     * Get text color.
+     * @return the text color.
+     */
     Color getColor();
+    
+    /**
+     * Get font size.
+     * @return the font size in points.
+     */
     float getSizeInPoints();
+    
+    /**
+     * Get font family.
+     * @return the font family as {@code String}.
+     */
     String getFamily();
+    
+    /**
+     * Get bold property.
+     * @return true if font is bold.
+     */
     boolean isBold();
+
+    /**
+     * Get italic property.
+     * @return true if font is italic.
+     */
     boolean isItalic();
+    
+    /**
+     * Get underlined property.
+     * @return true if font is underlined.
+     */
     boolean isUnderlined();
+    
+    /**
+     * Get strike-through property.
+     * @return true if font is strike-through.
+     */
     boolean isStrikeThrough();
 }
