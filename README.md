@@ -31,6 +31,6 @@ Méja is released under the [Apache License 2.0](http://www.apache.org/licenses/
 
 *Why a custom component instead of a just a table model to be used together with JTable?* Because of JTable limitations. In fact, I started with JTable and abandoned that path when I tried to render merged cells correctly.
 
-*But my table still doesn't look the same as in Excel!* Just grab the code, I am looking forward for your contribution.
+*But my table still doesn't look the same as in Excel!* Just grab the code, I am looking forward to your contribution.
 
 *And what about the name?* This library is about tables, and it's about working with tables in Java. So I called it after the javanese word for the furniture. (Normally, it is written without accent, but found it to look more interesting like this...)
