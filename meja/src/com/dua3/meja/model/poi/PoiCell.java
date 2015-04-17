@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Axel Howind <axel@dua3.com>.
+ * Copyright 2015 Axel Howind (axel@dua3.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,12 +54,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  *
  * @author axel
- * @param <WORKBOOK>
- * @param <SHEET>
- * @param <ROW>
- * @param <CELL>
- * @param <CELLSTYLE>
- * @param <COLOR>
+ * @param <WORKBOOK> POI workbook class
+ * @param <SHEET> POI sheet class
+ * @param <ROW> POI row class
+ * @param <CELL> POI cell class
+ * @param <CELLSTYLE> POI cell style class
+ * @param <COLOR> POI color class
  */
 public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workbook, SHEET extends org.apache.poi.ss.usermodel.Sheet, ROW extends org.apache.poi.ss.usermodel.Row, CELL extends org.apache.poi.ss.usermodel.Cell, CELLSTYLE extends org.apache.poi.ss.usermodel.CellStyle, COLOR extends org.apache.poi.ss.usermodel.Color>
         implements Cell {
@@ -73,7 +73,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
     protected PoiCell(CELL cell, PoiRow<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> row) {
         this.poiCell = cell;
-        this.mergedRegion = row.getSheet().getMergedRegion(cell.getRowIndex(), cell.getColumnIndex());
+        this.mergedRegion = row.getMergedRegion(cell.getColumnIndex());
 
         if (mergedRegion == null) {
             // cell is not merged
@@ -171,7 +171,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         if (isEmpty()) {
             return "";
         }
-        
+
         DataFormatter dataFormatter = getWorkbook().getDataFormatter();
         try {
             FormulaEvaluator evaluator = getWorkbook().evaluator;
@@ -222,7 +222,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         if (isEmpty()) {
             return new AttributedString("");
         }
-                
+
         final CellType cellType = getCellType();
         if (cellType == CellType.FORMULA) {
             return new AttributedString(getAsText());

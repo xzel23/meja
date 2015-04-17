@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Axel Howind <axel@dua3.com>.
+ * Copyright 2015 Axel Howind (axel@dua3.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class AttributedStringHelper {
      * Wrap text in HTML tag.
      * @param text
      * @param tag
-     * @return {@code <tag>text</tag>} 
+     * @return {@code <tag>text</tag>}
      */
     private static String wrap(String text, String tag) {
         return "<"+tag+">"+text+"</"+tag+">";
@@ -66,7 +66,7 @@ public class AttributedStringHelper {
     /**
      * Convert {@code AttributedString} to HTML conserving text attributes.
      * @param text an instance of {@code AttributedString}
-     * @param addHtmlTag true if the resulting string should be enclosed in 
+     * @param addHtmlTag true if the resulting string should be enclosed in
      * &lt;html&gt;-tags
      * @return HTML-representation of {@code text}
      */
@@ -80,7 +80,7 @@ public class AttributedStringHelper {
     /**
      * Convert {@code AttributedString} to {@code StyledDocument} conserving text attributes.
      * @param text an instance of {@code AttributedString}
-     * @return instance of {@code StyledDocument} wih {@text} as its content
+     * @return instance of {@code StyledDocument} with {@code text} as its content
      */
     public static StyledDocument toStyledDocument(AttributedString text) {
         StyledDocumentBuilder builder = new StyledDocumentBuilder();

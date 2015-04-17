@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Axel Howind <axel@dua3.com>.
+ * Copyright 2015 Axel Howind (axel@dua3.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.Map;
  * This class is intended a s a common base class for creating builders
  * that transform text represented as {@code AttributedString} into other
  * formats.
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind (axel@dua3.com)
  * @param <T> class matching produced document type
  */
 public abstract class TextBuilder<T> {

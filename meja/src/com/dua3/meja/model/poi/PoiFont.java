@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Axel Howind <axel@dua3.com>.
+ * Copyright 2015 Axel Howind (axel@dua3.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  *
  * @author axel
- * @param <WORKBOOK>
- * @param <SHEET>
- * @param <ROW>
- * @param <CELL>
- * @param <CELLSTYLE>
- * @param <COLOR>
+ * @param <WORKBOOK> POI workbook class
+ * @param <SHEET> POI sheet class
+ * @param <ROW> POI row class
+ * @param <CELL> POI cell class
+ * @param <CELLSTYLE> POI cell style class
+ * @param <COLOR> POI color class
  */
 public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workbook, SHEET extends org.apache.poi.ss.usermodel.Sheet, ROW extends org.apache.poi.ss.usermodel.Row, CELL extends org.apache.poi.ss.usermodel.Cell, CELLSTYLE extends org.apache.poi.ss.usermodel.CellStyle, COLOR extends org.apache.poi.ss.usermodel.Color>
         implements Font {

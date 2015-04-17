@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Axel Howind <axel@dua3.com>.
+ * Copyright 2015 Axel Howind (axel@dua3.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package com.dua3.meja.model;
 
 import java.util.Iterator;
-
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -49,8 +48,8 @@ public class MejaHelper {
     /**
      * Create a TableModel to be used with JTable.
      *
-     * @param sheet
-     * @return table model
+     * @param sheet the sheet to create a model for
+     * @return table model instance of {@code JTableModel} for the sheet
      */
     @SuppressWarnings("serial")
     public static TableModel getTableModel(final Sheet sheet) {

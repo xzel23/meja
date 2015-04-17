@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Axel Howind <axel@dua3.com>.
+ * Copyright 2015 Axel Howind (axel@dua3.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -237,8 +237,8 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Calculate the rectangle the cell occupies on screen.
      *
-     * @param cell
-     * @return rectangle
+     * @param cell the cell whose area is requested
+     * @return rectangle the rectangle the cell takes up in screen coordinates
      */
     public Rectangle getCellRect(Cell cell) {
         final int i = cell.getRowNumber();
@@ -500,7 +500,7 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Set the grid color.
      *
-     * @param gridColor
+     * @param gridColor the color for th grid
      */
     public void setGridColor(Color gridColor) {
         this.gridColor = gridColor;
@@ -727,7 +727,7 @@ public class SheetView extends JPanel implements Scrollable {
         if (sheet==null) {
             return;
         }
-        
+
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Axel Howind <axel@dua3.com>.
+ * Copyright 2015 Axel Howind (axel@dua3.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,21 @@ import java.util.WeakHashMap;
 /**
  *
  * @author axel
- * @param <KEY>
- * @param <VALUE>
+ * @param <KEY> key class
+ * @param <VALUE> value class
  */
 public abstract class Cache<KEY, VALUE> {
 
     public static enum Type {
         STRONG_KEYS, WEAK_KEYS;
     }
-    
+
     private final Map<KEY, SoftReference<VALUE>> items;
 
     protected Cache() {
         this(Type.STRONG_KEYS);
     }
-    
+
     protected Cache(Type type) {
         switch (type) {
             case STRONG_KEYS:
@@ -50,7 +50,7 @@ public abstract class Cache<KEY, VALUE> {
                 throw new IllegalArgumentException();
         }
     }
-    
+
     public VALUE get(KEY key) {
         if (key == null) {
             return null;
