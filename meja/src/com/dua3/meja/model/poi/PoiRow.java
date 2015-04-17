@@ -26,7 +26,9 @@ import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.RectangularRegion;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -56,10 +58,20 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
 
     protected final ROW poiRow;
     protected final int rowNumber;
+    protected final List<RectangularRegion> mergedRegions = new ArrayList<>();
 
     public PoiRow(ROW row) {
         this.poiRow = row;
         this.rowNumber = poiRow.getRowNum();
+    }
+
+    protected void update() {
+        this.mergedRegions.clear();
+        for (RectangularRegion r: getSheet().getMergedRegions()) {
+            if (r.getFirstRow()<=rowNumber&&rowNumber<=r.getLastRow()) {
+                this.mergedRegions.add(r);
+            }
+        }
     }
 
     @SuppressWarnings("rawtypes")
@@ -104,7 +116,12 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
     }
 
     RectangularRegion getMergedRegion(int columnIndex) {
-        return getSheet().getMergedRegion(rowNumber, columnIndex);
+        for (RectangularRegion r: mergedRegions) {
+            if (r.getFirstColumn()<=columnIndex&&columnIndex<=r.getLastColumn()) {
+                return r;
+            }
+        }
+        return null;
     }
 
     static class PoiXssfRow extends PoiRow<
@@ -117,6 +134,7 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
             super(row);
             this.workbook = sheet.getWorkbook();
             this.sheet = sheet;
+            update();
         }
 
         @Override
@@ -157,6 +175,7 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
             super(row);
             this.workbook = sheet.getWorkbook();
             this.sheet = sheet;
+            update();
         }
 
         @Override
