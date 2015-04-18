@@ -432,6 +432,10 @@ public class SheetView extends JPanel implements Scrollable {
         update();
     }
 
+    public Sheet getSheet() {
+        return sheet;
+    }
+
     /**
      * Initialization method.
      *

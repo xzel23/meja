@@ -274,10 +274,10 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         if (arg == null) {
             clear();
         } else {
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN);
             poiCell.setCellValue(arg);
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN);
+            attributedString.clear();
         }
-        attributedString.clear();
         return this;
     }
 
@@ -286,8 +286,8 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         if (arg == null) {
             clear();
         } else {
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
             poiCell.setCellValue(arg);
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
             attributedString.clear();
         }
         return this;
@@ -298,8 +298,8 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         if (arg == null) {
             clear();
         } else {
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
             poiCell.setCellValue(arg.doubleValue());
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
             attributedString.clear();
         }
         return this;
@@ -310,8 +310,8 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         if (arg == null) {
             clear();
         } else {
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
             poiCell.setCellValue(arg);
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
             attributedString.clear();
         }
         return this;
@@ -322,8 +322,8 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         if (arg == null) {
             clear();
         } else {
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
             poiCell.setCellValue(arg);
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
             attributedString.clear();
         }
         return this;

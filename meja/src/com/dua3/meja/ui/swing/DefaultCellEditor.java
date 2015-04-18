@@ -18,7 +18,9 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Font;
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.AttributedStringHelper;
+import com.dua3.meja.util.CellValueHelper;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -82,7 +84,7 @@ public class DefaultCellEditor implements CellEditor {
         component.setBackground(cellStyle.getFillBgColor());
         component.setForeground(font.getColor());
 
-        StyledDocument doc=AttributedStringHelper.toStyledDocument(cell.getAttributedString());
+        StyledDocument doc = AttributedStringHelper.toStyledDocument(cell.getAttributedString());
         component.setDocument(doc);
         component.revalidate();
         component.requestFocusInWindow();
@@ -93,17 +95,26 @@ public class DefaultCellEditor implements CellEditor {
     @Override
     public void stopEditing(boolean commit) {
         if (commit) {
-            Document doc = component.getDocument();
-            try {
-                cell.set(doc.getText(0, doc.getLength()));
-            } catch (BadLocationException ex) {
-                Logger.getLogger(DefaultCellEditor.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            updateCellContent();
             sheetView.repaint(sheetView.getCellRect(cell));
         }
         this.cell = null;
         component.setText("");
         component.setVisible(false);
+    }
+
+    protected void updateCellContent() {
+        String text;
+        try {
+            Document doc = component.getDocument();
+            text = doc.getText(0, doc.getLength());
+        } catch (BadLocationException ex) {
+            text = "#ERROR";
+            Logger.getLogger(DefaultCellEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Sheet sheet = sheetView.getSheet();
+        CellValueHelper helper = new CellValueHelper(sheet.getNumberFormat(), sheet.getDateFormat());
+        helper.setCellValue(cell, text);
     }
 
     private class CellView extends BoxView {
@@ -171,7 +182,7 @@ public class DefaultCellEditor implements CellEditor {
             alloc.width /= scale;
             alloc.height /= scale;
 
-            return super.viewToModel(x/scale, y/scale, alloc, bias);
+            return super.viewToModel(x / scale, y / scale, alloc, bias);
         }
     }
 

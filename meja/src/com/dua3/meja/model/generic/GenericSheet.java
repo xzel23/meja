@@ -19,9 +19,12 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.table.TableModel;
 
 /**
@@ -32,15 +35,17 @@ public class GenericSheet implements Sheet {
 
     private final GenericWorkbook workbook;
     private String sheetName;
+    private final Locale locale;
     private final List<GenericRow> rows = new ArrayList<>();
     private int freezeRow;
     private int freezeColumn;
     private int autoFilterRow;
     private int numberOfColumns;
 
-    public GenericSheet(GenericWorkbook workbook, String sheetName) {
+    public GenericSheet(GenericWorkbook workbook, String sheetName, Locale locale) {
         this.workbook = workbook;
         this.sheetName = sheetName;
+        this.locale = locale;
         this.numberOfColumns=0;
     }
 
@@ -128,12 +133,12 @@ public class GenericSheet implements Sheet {
     public int getSplitRow() {
 		return freezeRow;
 	}
-    
+
     @Override
     public int getSplitColumn() {
 		return freezeColumn;
 	}
-    
+
     @Override
     public void autoSizeColumn(int j) {
         // TODO
@@ -147,7 +152,7 @@ public class GenericSheet implements Sheet {
     public int getAutoFilterRow() {
 		return autoFilterRow;
 	}
-    
+
     @Override
     public Iterator<Row> iterator() {
         return MejaHelper.createRowIterator(this);
@@ -155,6 +160,16 @@ public class GenericSheet implements Sheet {
 
     void reserveColumn(int col) {
         numberOfColumns=Math.max(col+1, numberOfColumns);
+    }
+
+    @Override
+    public NumberFormat getNumberFormat() {
+        return NumberFormat.getInstance(locale);
+    }
+
+    @Override
+    public DateFormat getDateFormat() {
+        return DateFormat.getDateInstance(DateFormat.SHORT, locale);
     }
 
 }

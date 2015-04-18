@@ -18,6 +18,8 @@ package com.dua3.meja.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 
 /**
  * Workbook class.
@@ -89,4 +91,21 @@ public interface Workbook extends AutoCloseable {
      */
     CellStyle copyCellStyle(String styleName, CellStyle style);
 
+    /**
+     * Get number format for this workbook.
+     * <p>
+     * The number format is used when parsing user input.
+     * </p>
+     * @return the number format for this workbook
+     */
+    NumberFormat getNumberFormat();
+
+    /**
+     * Get date format for this workbook.
+     * <p>
+     * The date format is used when parsing user input.
+     * </p>
+     * @return the date format for this workbook
+     */
+    DateFormat getDateFormat();
 }

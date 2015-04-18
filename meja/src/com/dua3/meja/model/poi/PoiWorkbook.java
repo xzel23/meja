@@ -24,19 +24,19 @@ import com.dua3.meja.model.poi.PoiFont.PoiHssfFont;
 import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
 import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
 import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
-
 import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -181,6 +181,16 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             poiCellStyle = (CELLSTYLE) poiWorkbook.getCellStyleAt(index);
         }
         return getPoiCellStyle(poiCellStyle);
+    }
+
+    @Override
+    public NumberFormat getNumberFormat() {
+        return NumberFormat.getInstance(Locale.getDefault());
+    }
+
+    @Override
+    public DateFormat getDateFormat() {
+        return DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
     }
 
     static class PoiHssfWorkbook

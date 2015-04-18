@@ -23,6 +23,8 @@ import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.RectangularRegion;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -242,6 +244,16 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
 
     List<RectangularRegion> getMergedRegions() {
         return mergedRegions;
+    }
+
+    @Override
+    public NumberFormat getNumberFormat() {
+        return getWorkbook().getNumberFormat();
+    }
+
+    @Override
+    public DateFormat getDateFormat() {
+        return getWorkbook().getDateFormat();
     }
 
     static class PoiHssfSheet extends PoiSheet<

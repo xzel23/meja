@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.model;
 
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import javax.swing.table.TableModel;
 
 /**
@@ -121,16 +123,16 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Get the split row.
-     * @return the number of the first row that will not remain at a fixed position when scrolling 
+     * @return the number of the first row that will not remain at a fixed position when scrolling
      */
     int getSplitRow();
-    
+
     /**
      * Get the frozen column.
-     * @return the number of the first column that will not remain at a fixed position when scrolling 
+     * @return the number of the first column that will not remain at a fixed position when scrolling
      */
     int getSplitColumn();
-    
+
     /**
      * Adjusts the size of the column to its contents (optional operation).
      *
@@ -144,4 +146,22 @@ public interface Sheet extends Iterable<Row> {
      * @param i the row number
      */
     void setAutofilterRow(int i);
+
+    /**
+     * Get number format for this sheet.
+     * <p>
+     * The number format is used when parsing user input.
+     * </p>
+     * @return the number format for this sheet
+     */
+    NumberFormat getNumberFormat();
+
+    /**
+     * Get date format for this sheet.
+     * <p>
+     * The date format is used when parsing user input.
+     * </p>
+     * @return the date format for this sheet
+     */
+    DateFormat getDateFormat();
 }

@@ -39,8 +39,9 @@ public class GenericWorkbookFactory extends WorkbookFactory {
 
     @Override
     public GenericWorkbook open(File file) throws IOException {
-        GenericWorkbook workbook = new GenericWorkbook();
-        GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(file.getName()), Locale.FRENCH);
+        Locale locale = Locale.getDefault();
+        GenericWorkbook workbook = new GenericWorkbook(locale);
+        GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(file.getName()), locale);
         try (CsvReader reader = CsvReader.createReader(builder, file)) {
             reader.readAll();
         } catch (DataException ex) {
@@ -51,7 +52,8 @@ public class GenericWorkbookFactory extends WorkbookFactory {
 
     @Override
     public GenericWorkbook create() {
-        return new GenericWorkbook();
+        Locale locale = Locale.getDefault();
+        return new GenericWorkbook(locale);
     }
 
 }

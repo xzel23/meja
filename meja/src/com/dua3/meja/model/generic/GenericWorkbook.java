@@ -20,9 +20,12 @@ import com.dua3.meja.model.Workbook;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -33,9 +36,11 @@ public class GenericWorkbook implements Workbook {
 
     final List<GenericSheet> sheets = new ArrayList<>();
     final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
+    final Locale locale;
     private GenericCellStyle defaultCellStyle = new GenericCellStyle();
 
-    public GenericWorkbook() {
+    public GenericWorkbook(Locale locale) {
+        this.locale = locale;
     }
 
     @Override
@@ -70,7 +75,7 @@ public class GenericWorkbook implements Workbook {
 
     @Override
     public GenericSheet createSheet(String sheetName) {
-        final GenericSheet sheet = new GenericSheet(this, sheetName);
+        final GenericSheet sheet = new GenericSheet(this, sheetName, locale);
         sheets.add(sheet);
         return sheet;
     }
@@ -93,6 +98,16 @@ public class GenericWorkbook implements Workbook {
     @Override
     public void close() throws Exception {
         // nop
+    }
+
+    @Override
+    public NumberFormat getNumberFormat() {
+        return NumberFormat.getInstance(locale);
+    }
+
+    @Override
+    public DateFormat getDateFormat() {
+        return DateFormat.getDateInstance(DateFormat.SHORT, locale);
     }
 
 }
