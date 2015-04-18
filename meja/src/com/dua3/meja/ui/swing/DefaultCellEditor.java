@@ -37,6 +37,7 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
@@ -123,7 +124,14 @@ public class DefaultCellEditor implements CellEditor {
         StyledDocument doc = AttributedStringHelper.toStyledDocument(cell.getAttributedString());
         component.setDocument(doc);
         component.revalidate();
-        component.requestFocusInWindow();
+        component.setCaretPosition(component.getDocument().getLength());
+        component.selectAll();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                component.requestFocusInWindow();
+            }
+        });
 
         return component;
     }
@@ -133,7 +141,7 @@ public class DefaultCellEditor implements CellEditor {
         if (!isEditing()) {
             return;
         }
-        
+
         if (commit) {
             updateCellContent();
             sheetView.repaint(sheetView.getCellRect(cell));
