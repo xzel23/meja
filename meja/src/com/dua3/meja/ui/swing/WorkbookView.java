@@ -18,6 +18,7 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import java.awt.CardLayout;
+import java.awt.Component;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -29,9 +30,9 @@ import javax.swing.JTabbedPane;
  */
 public class WorkbookView extends JComponent {
 
-	private static final long serialVersionUID = 1L;
-	
-	private Workbook workbook;
+    private static final long serialVersionUID = 1L;
+
+    private Workbook workbook;
     private JTabbedPane content = null;
 
     public WorkbookView() {
@@ -65,6 +66,20 @@ public class WorkbookView extends JComponent {
 
     public Workbook getWorkbook() {
         return workbook;
+    }
+
+    public void setEditable(boolean editable) {
+        for (int idx = 0; idx < content.getTabCount(); idx++) {
+            Component component = content.getTabComponentAt(idx);
+            if (component != null) {
+                assert component instanceof JScrollPane;
+                for (Component c : ((JScrollPane) component).getComponents()) {
+                    if (c instanceof SheetView) {
+                        ((SheetView) c).setEditable(editable);
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -162,19 +162,19 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Read-only mode.
      */
-    private boolean readonly = true;
+    private boolean editable = true;
 
     /**
      * Editing state.
      */
     private boolean editing = false;
 
-    public boolean isReadonly() {
-        return readonly;
+    public boolean isEditable() {
+        return editable;
     }
 
-    public void setReadonly(boolean readonly) {
-        this.readonly = readonly;
+    public void setEditable(boolean editable) {
+        this.editable = editable;
     }
 
     /**
@@ -484,7 +484,7 @@ public class SheetView extends JPanel implements Scrollable {
 
         if (!currentCellChanged) {
             // if it already was the current cell, start cell editing
-            if (!readonly) {
+            if (isEditable()) {
                 startEditing();
                 editing=true;
             }
