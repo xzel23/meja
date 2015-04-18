@@ -295,6 +295,7 @@ public class ApplicationWindow extends JFrame {
     public void setWorkbook(Workbook workbook) {
         this.workbook = workbook;
         workbookView.setWorkbook(workbook);
+        workbookView.setEditable(true);
     }
 
 }
