@@ -25,12 +25,18 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
+import javax.swing.KeyStroke;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
@@ -57,12 +63,42 @@ public class DefaultCellEditor implements CellEditor {
     private Cell cell;
     private final SheetView sheetView;
 
+    /**
+     * Actions for key bindings.
+     */
+    static enum Actions {
+
+        COMMIT {
+                    @SuppressWarnings("serial")
+                    @Override
+                    public Action getAction(final DefaultCellEditor editor) {
+                        return new AbstractAction("COMMIT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                editor.stopEditing(true);
+                            }
+                        };
+                    }
+                };
+
+        abstract Action getAction(DefaultCellEditor editor);
+    }
+
     public DefaultCellEditor(SheetView sheetView) {
         this.sheetView = sheetView;
         component = new JEditorPane();
         component.setOpaque(true);
         component.setBorder(BorderFactory.createEmptyBorder());
         component.setEditorKit(new CellEditorKit());
+
+        // setup input map for keyboard navigation
+        final InputMap inputMap = component.getInputMap(JComponent.WHEN_FOCUSED);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, 0), DefaultCellEditor.Actions.COMMIT);
+
+        final ActionMap actionMap = component.getActionMap();
+        for (DefaultCellEditor.Actions action : DefaultCellEditor.Actions.values()) {
+            actionMap.put(action, action.getAction(this));
+        }
         cell = null;
     }
 
@@ -94,6 +130,10 @@ public class DefaultCellEditor implements CellEditor {
 
     @Override
     public void stopEditing(boolean commit) {
+        if (!isEditing()) {
+            return;
+        }
+        
         if (commit) {
             updateCellContent();
             sheetView.repaint(sheetView.getCellRect(cell));
@@ -101,6 +141,7 @@ public class DefaultCellEditor implements CellEditor {
         this.cell = null;
         component.setText("");
         component.setVisible(false);
+        component.transferFocusBackward();
     }
 
     protected void updateCellContent() {
