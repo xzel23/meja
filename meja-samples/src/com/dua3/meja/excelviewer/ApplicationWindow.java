@@ -317,11 +317,14 @@ public class ApplicationWindow extends JFrame {
     /**
      * Set the current workbook.
      *
-     * @param workbook
+     * @param workbook the workbook
+     * @param file the workbook file (used for saving)
      */
     public void setWorkbook(Workbook workbook, File file) {
         try {
-            this.workbook.close();
+            if (this.workbook != null) {
+                this.workbook.close();
+            }
         } catch (Exception ex) {
             Logger.getLogger(ApplicationWindow.class.getName()).log(Level.SEVERE, "IOException when closing workbook.", ex);
         }
