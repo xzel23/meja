@@ -20,6 +20,8 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.ui.swing.WorkbookView;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -41,6 +43,8 @@ import javax.swing.filechooser.FileFilter;
  */
 public class ApplicationWindow extends JFrame {
 
+    public static final String PROPERTY_FILE_CHANGED = "file changed";
+
     /**
      * The application name to show in title bar.
      */
@@ -55,6 +59,8 @@ public class ApplicationWindow extends JFrame {
      * The currently opened workbook.
      */
     private Workbook workbook = null;
+
+    private File workbookFile = null;
 
     /**
      * The current directory.
@@ -114,6 +120,27 @@ public class ApplicationWindow extends JFrame {
                 showOpenDialog();
             }
         });
+        mnFile.add(new AbstractAction("Save") {
+
+            {
+                // enable when workbook is loaded
+                PropertyChangeListener listener = new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if (PROPERTY_FILE_CHANGED.equals(evt.getPropertyName())) {
+                            setEnabled(evt.getNewValue() != null);
+                        }
+                    }
+                };
+                ApplicationWindow.this.addPropertyChangeListener(PROPERTY_FILE_CHANGED, listener);
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveWorkbook();
+            }
+
+        });
         mnFile.addSeparator();
         mnFile.add(new AbstractAction("Exit") {
 
@@ -159,7 +186,7 @@ public class ApplicationWindow extends JFrame {
         mnHelp.add(new AbstractAction("About ...") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String title = "About "+ExcelViewer.getApplicationName();
+                String title = "About " + ExcelViewer.getApplicationName();
                 String msg = ExcelViewer.getLicenseText();
                 JOptionPane.showMessageDialog(ApplicationWindow.this, msg, title, JOptionPane.INFORMATION_MESSAGE, null);
                 setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -244,7 +271,7 @@ public class ApplicationWindow extends JFrame {
      * @throws IOException
      */
     private void doOpenFile(File file, WorkbookFactory factory) throws IOException {
-        setWorkbook(factory.open(file));
+        setWorkbook(factory.open(file), file);
         Logger.getLogger(ApplicationWindow.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", file);
         setTitle(APPLICATION_NAME + " - " + file.getName());
         currentDir = file.getParentFile();
@@ -292,10 +319,39 @@ public class ApplicationWindow extends JFrame {
      *
      * @param workbook
      */
-    public void setWorkbook(Workbook workbook) {
+    public void setWorkbook(Workbook workbook, File file) {
+        try {
+            this.workbook.close();
+        } catch (Exception ex) {
+            Logger.getLogger(ApplicationWindow.class.getName()).log(Level.SEVERE, "IOException when closing workbook.", ex);
+        }
+
+        File oldFile = workbookFile;
         this.workbook = workbook;
+        this.workbookFile = file;
         workbookView.setWorkbook(workbook);
         workbookView.setEditable(true);
+        firePropertyChange(PROPERTY_FILE_CHANGED, oldFile, this.workbookFile);
     }
 
+    public void saveWorkbook() {
+        if (workbook == null || workbookFile == null) {
+            return;
+        }
+
+        try {
+            workbook.write(workbookFile, true);
+            Logger.getLogger(ApplicationWindow.class.getName()).log(
+                    Level.INFO,
+                    "Workbook saved to {0}.",
+                    workbookFile.getAbsolutePath());
+        } catch (IOException ex) {
+            Logger.getLogger(ApplicationWindow.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "IO-Error saving workbook to " + workbookFile.getAbsolutePath() + ".",
+                    "Workbook could not be saved.",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }
