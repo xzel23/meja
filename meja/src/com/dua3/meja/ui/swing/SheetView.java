@@ -51,6 +51,7 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
@@ -445,7 +446,7 @@ public class SheetView extends JPanel implements Scrollable {
      */
     private void init() {
         setOpaque(true);
-        
+
         // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
@@ -472,7 +473,12 @@ public class SheetView extends JPanel implements Scrollable {
 
         // make focusable
         setFocusable(true);
-        requestFocusInWindow();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                requestFocusInWindow();
+            }
+        });
     }
 
     @Override
@@ -1049,7 +1055,7 @@ public class SheetView extends JPanel implements Scrollable {
      * @return name of row
      */
     public String getRowName(int i) {
-        return Integer.toString(i);
+        return Integer.toString(i+1);
     }
 
     /**
