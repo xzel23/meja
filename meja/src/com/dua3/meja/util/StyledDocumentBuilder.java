@@ -33,7 +33,6 @@ import javax.swing.text.StyledDocument;
  * @author Axel Howind (axel@dua3.com)
  */
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
-
     public StyledDocumentBuilder(float scale) {
         this.scale = scale;
     }
@@ -70,13 +69,13 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
             } else if (key.equals(java.awt.font.TextAttribute.POSTURE)) {
                 StyleConstants.setItalic(as, value.equals(java.awt.font.TextAttribute.POSTURE_OBLIQUE));
             }
-            as.addAttribute(key, value);
+            //as.addAttribute(key, value);
         }
 
         try {
             doc.insertString(doc.getLength(), text, as);
         } catch (BadLocationException ex) {
-            Logger.getLogger(StyledDocumentBuilder.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StyledDocumentBuilder.class.getName()).log(Level.SEVERE, "Exception in StyledDocumentBuilder.append()", ex);
         }
     }
 

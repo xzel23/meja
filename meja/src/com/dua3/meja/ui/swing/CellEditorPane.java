@@ -17,20 +17,25 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Font;
 import com.dua3.meja.util.AttributedStringHelper;
 import com.dua3.meja.util.Cache;
-import javax.swing.JEditorPane;
+import javax.swing.JTextPane;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 /**
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class CellEditorPane extends JEditorPane {
+public class CellEditorPane extends JTextPane {
+
     private static final long serialVersionUID = 1L;
 
     static class ScaledFont {
+
         final Font font;
         final float scale;
 
@@ -43,14 +48,14 @@ public class CellEditorPane extends JEditorPane {
         public boolean equals(Object obj) {
             if (obj instanceof ScaledFont) {
                 ScaledFont other = (ScaledFont) obj;
-                return scale==other.scale && font.equals(other.font);
+                return scale == other.scale && font.equals(other.font);
             }
             return false;
         }
 
         @Override
         public int hashCode() {
-            return Float.floatToRawIntBits(scale)^font.hashCode();
+            return Float.floatToRawIntBits(scale) ^ font.hashCode();
         }
     }
 
@@ -60,7 +65,7 @@ public class CellEditorPane extends JEditorPane {
             Font font = sf.font;
             float scale = sf.scale;
             int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-            return new java.awt.Font(font.getFamily(), style, Math.round(scale*font.getSizeInPoints()));
+            return new java.awt.Font(font.getFamily(), style, Math.round(scale * font.getSizeInPoints()));
         }
     };
 
@@ -74,8 +79,36 @@ public class CellEditorPane extends JEditorPane {
         setFont(getAwtFont(font, scale));
         setBackground(cellStyle.getFillBgColor());
         setForeground(font.getColor());
-        StyledDocument doc = AttributedStringHelper.toStyledDocument(cell.getAttributedString(), scale);
+
+        SimpleAttributeSet dfltAttr = new SimpleAttributeSet();
+        switch (cellStyle.getHAlign()) {
+            case ALIGN_LEFT:
+                StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_LEFT);
+                break;
+            case ALIGN_CENTER:
+                StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_CENTER);
+                break;
+            case ALIGN_RIGHT:
+                StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_RIGHT);
+                break;
+            case ALIGN_JUSTIFY:
+                StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_JUSTIFIED);
+                break;
+            case ALIGN_AUTOMATIC:
+                if (cell.getCellType() == CellType.TEXT) {
+                    StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_LEFT);
+                } else {
+                    StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_RIGHT);
+                }
+                break;
+            default:
+                throw new IllegalStateException();
+        }
+        StyledDocument doc = AttributedStringHelper.toStyledDocument(cell.getAttributedString(), dfltAttr, scale);
+
         setDocument(doc);
+
+        revalidate();
     }
 
 }
