@@ -17,13 +17,14 @@ package com.dua3.meja.model;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.util.concurrent.locks.ReadWriteLock;
 import javax.swing.table.TableModel;
 
 /**
  *
  * @author axel
  */
-public interface Sheet extends Iterable<Row> {
+public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
      * Get table model suitable for displaying sheet data in a JTable.
@@ -164,4 +165,5 @@ public interface Sheet extends Iterable<Row> {
      * @return the date format for this sheet
      */
     DateFormat getDateFormat();
+        
 }

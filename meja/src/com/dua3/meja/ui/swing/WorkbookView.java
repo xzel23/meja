@@ -82,4 +82,16 @@ public class WorkbookView extends JComponent {
         }
     }
 
+    public SheetView getViewForSheet(String sheetName) {
+        for (int i=0;i<content.getTabCount();i++) {
+            Component component = content.getTabComponentAt(i);
+            if (component instanceof SheetView) {
+                SheetView sheetView = (SheetView) component;
+                if (sheetView.getSheet().getSheetName().equals(sheetName)) {
+                    return sheetView;
+                }
+            }
+        }
+        return null;
+    }
 }

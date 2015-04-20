@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.TableModel;
 
 /**
@@ -172,4 +174,15 @@ public class GenericSheet implements Sheet {
         return DateFormat.getDateInstance(DateFormat.SHORT, locale);
     }
 
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    
+    @Override
+    public Lock readLock() {
+        return lock.readLock();
+    }
+
+    @Override
+    public Lock writeLock() {
+        return lock.writeLock();
+    }
 }

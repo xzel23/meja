@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.TableModel;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -256,6 +258,18 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         return getWorkbook().getDateFormat();
     }
 
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    
+    @Override
+    public Lock readLock() {
+        return lock.readLock();
+    }
+
+    @Override
+    public Lock writeLock() {
+        return lock.writeLock();
+    }
+    
     static class PoiHssfSheet extends PoiSheet<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 

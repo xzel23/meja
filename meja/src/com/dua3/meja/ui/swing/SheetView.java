@@ -38,6 +38,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.locks.Lock;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -332,6 +333,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * End edit mode for the current cell.
+     *
      * @param commit true if the content of the edited cell is to be updated
      */
     private void stopEditing(boolean commit) {
@@ -416,7 +418,7 @@ public class SheetView extends JPanel implements Scrollable {
     public SheetView(Sheet sheet) {
         // explicitly set a null layout since that is needed for absolute
         // positioning of the in-place cell editor
-        super((LayoutManager)null);
+        super((LayoutManager) null);
         init();
         setSheet(sheet);
     }
@@ -497,13 +499,13 @@ public class SheetView extends JPanel implements Scrollable {
             // if it already was the current cell, start cell editing
             if (isEditable()) {
                 startEditing();
-                editing=true;
+                editing = true;
             }
         } else {
             // otherwise stop cell editing
             if (editing) {
                 stopEditing(true);
-                editing=false;
+                editing = false;
             }
         }
     }
@@ -540,8 +542,14 @@ public class SheetView extends JPanel implements Scrollable {
             sheetHeight = 0;
             rowPos = new int[]{0};
             columnPos = new int[]{0};
+            // revalidate the layout
+            revalidate();
             return;
-        } else {
+        }
+
+        Lock readLock = sheet.readLock();
+        readLock.lock();
+        try {
             sheetHeight = 0;
             rowPos = new int[2 + sheet.getLastRowNum()];
             rowPos[0] = 0;
@@ -557,32 +565,35 @@ public class SheetView extends JPanel implements Scrollable {
                 sheetWidth += Math.round(sheet.getColumnWidth(j - 1) * scale);
                 columnPos[j] = sheetWidth;
             }
+
+            // set headers
+            addHeadersAsNeeded();
+
+            // listen to Ancestorevents to add headers when view is added to a JScrollPane
+            addAncestorListener(new AncestorListener() {
+
+                @Override
+                public void ancestorAdded(AncestorEvent event) {
+                    addHeadersAsNeeded();
+                }
+
+                @Override
+                public void ancestorRemoved(AncestorEvent event) {
+                    // nop
+                }
+
+                @Override
+                public void ancestorMoved(AncestorEvent event) {
+                    // nop
+                }
+            });
+
+            // revalidate the layout
+            revalidate();
+        } finally {
+            readLock.unlock();
         }
 
-        // set headers
-        addHeadersAsNeeded();
-
-        // listen to Ancestorevents to add headers when view is added to a JScrollPane
-        addAncestorListener(new AncestorListener() {
-
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
-                addHeadersAsNeeded();
-            }
-
-            @Override
-            public void ancestorRemoved(AncestorEvent event) {
-                // nop
-            }
-
-            @Override
-            public void ancestorMoved(AncestorEvent event) {
-                // nop
-            }
-        });
-
-        // revalidate the layout
-        revalidate();
     }
 
     /**
@@ -735,25 +746,31 @@ public class SheetView extends JPanel implements Scrollable {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (sheet==null) {
+        if (sheet == null) {
             return;
         }
 
-        Graphics2D g2d = (Graphics2D) g;
+        Lock readLock = sheet.readLock();
+        readLock.lock();
+        try {
+            Graphics2D g2d = (Graphics2D) g;
 
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-        g2d.getClipBounds(clipBounds);
+            g2d.getClipBounds(clipBounds);
 
-        g2d.setBackground(sheet.getWorkbook().getDefaultCellStyle().getFillBgColor());
-        g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
+            g2d.setBackground(sheet.getWorkbook().getDefaultCellStyle().getFillBgColor());
+            g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
 
-        drawGrid(g2d);
-        drawCells(g2d, CellDrawMode.DRAW_CELL_BACKGROUND);
-        drawCells(g2d, CellDrawMode.DRAW_CELL_BORDER);
-        drawCells(g2d, CellDrawMode.DRAW_CELL_FOREGROUND);
-        drawSelection(g2d);
+            drawGrid(g2d);
+            drawCells(g2d, CellDrawMode.DRAW_CELL_BACKGROUND);
+            drawCells(g2d, CellDrawMode.DRAW_CELL_BORDER);
+            drawCells(g2d, CellDrawMode.DRAW_CELL_FOREGROUND);
+            drawSelection(g2d);
+        } finally {
+            readLock.unlock();
+        }
     }
 
     /**
@@ -1055,7 +1072,7 @@ public class SheetView extends JPanel implements Scrollable {
      * @return name of row
      */
     public String getRowName(int i) {
-        return Integer.toString(i+1);
+        return Integer.toString(i + 1);
     }
 
     /**
@@ -1172,6 +1189,15 @@ public class SheetView extends JPanel implements Scrollable {
                 painter.paint(g.create(0, y, w, h));
             }
         }
+    }
 
+    public void updateContent() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                update();
+                repaint();
+            }
+        });
     }
 }
