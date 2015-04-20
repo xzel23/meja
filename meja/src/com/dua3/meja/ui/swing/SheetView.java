@@ -164,7 +164,7 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * Read-only mode.
      */
-    private boolean editable = true;
+    private boolean editable = false;
 
     /**
      * Editing state.
@@ -322,6 +322,10 @@ public class SheetView extends JPanel implements Scrollable {
      * Enter edit mode for the current cell.
      */
     private void startEditing() {
+        if (!isEditable()) {
+            return;
+        }
+        
         Cell cell = getCurrentCell();
         final JComponent editorComp = editor.startEditing(cell);
         editorComp.setBounds(getCellRect(cell));
@@ -329,6 +333,7 @@ public class SheetView extends JPanel implements Scrollable {
         editorComp.validate();
         editorComp.setVisible(true);
         editorComp.repaint();
+        editing = true;
     }
 
     /**
@@ -338,6 +343,7 @@ public class SheetView extends JPanel implements Scrollable {
      */
     private void stopEditing(boolean commit) {
         editor.stopEditing(commit);
+        editing = false;
     }
 
     float getScale() {

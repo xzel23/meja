@@ -22,6 +22,7 @@ import java.awt.Component;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JViewport;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
@@ -69,13 +70,18 @@ public class WorkbookView extends JComponent {
     }
 
     public void setEditable(boolean editable) {
-        for (int idx = 0; idx < content.getTabCount(); idx++) {
-            Component component = content.getTabComponentAt(idx);
-            if (component != null) {
-                assert component instanceof JScrollPane;
-                for (Component c : ((JScrollPane) component).getComponents()) {
-                    if (c instanceof SheetView) {
-                        ((SheetView) c).setEditable(editable);
+        for (int i = 0; i < content.getTabCount(); i++) {
+            Component scrollPane = content.getComponentAt(i);
+            if (scrollPane != null) {
+                assert scrollPane instanceof JScrollPane;
+                for (Component viewPort : ((JScrollPane) scrollPane).getComponents()) {
+                    if (viewPort == null || !(viewPort instanceof JViewport)) {
+                        continue;
+                    }
+                    for (Component c : ((JViewport) viewPort).getComponents()) {
+                        if (c instanceof SheetView) {
+                            ((SheetView) c).setEditable(editable);
+                        }
                     }
                 }
             }
@@ -83,12 +89,22 @@ public class WorkbookView extends JComponent {
     }
 
     public SheetView getViewForSheet(String sheetName) {
-        for (int i=0;i<content.getTabCount();i++) {
-            Component component = content.getTabComponentAt(i);
-            if (component instanceof SheetView) {
-                SheetView sheetView = (SheetView) component;
-                if (sheetView.getSheet().getSheetName().equals(sheetName)) {
-                    return sheetView;
+        for (int i = 0; i < content.getTabCount(); i++) {
+            Component scrollPane = content.getComponentAt(i);
+            if (scrollPane != null) {
+                assert scrollPane instanceof JScrollPane;
+                for (Component viewPort : ((JScrollPane) scrollPane).getComponents()) {
+                    if (viewPort == null || !(viewPort instanceof JViewport)) {
+                        continue;
+                    }
+                    for (Component c : ((JViewport) viewPort).getComponents()) {
+                        if (c instanceof SheetView) {
+                            SheetView sheetView = (SheetView) c;
+                            if (sheetView.getSheet().getSheetName().equals(sheetName)) {
+                                return sheetView;
+                            }
+                        }
+                    }
                 }
             }
         }
