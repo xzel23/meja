@@ -33,6 +33,7 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -191,6 +192,28 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     @Override
     public DateFormat getDateFormat() {
         return DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
+    }
+
+    @Override
+    public Iterator<Sheet> iterator() {
+        return new Iterator<Sheet>() {
+            Iterator<PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR>> iter = sheets.iterator();
+            
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public Sheet next() {
+                return iter.next();
+            }
+
+            @Override
+            public void remove() {
+                iter.remove();
+            }
+        };
     }
 
     static class PoiHssfWorkbook

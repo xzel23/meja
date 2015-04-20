@@ -29,7 +29,7 @@ import java.text.NumberFormat;
  *
  * @author axel
  */
-public interface Workbook extends AutoCloseable {
+public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Returns number of sheets in this workbook.

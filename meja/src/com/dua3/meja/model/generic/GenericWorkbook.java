@@ -16,7 +16,9 @@
 package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.poi.PoiSheet;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,6 +26,7 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -108,6 +111,28 @@ public class GenericWorkbook implements Workbook {
     @Override
     public DateFormat getDateFormat() {
         return DateFormat.getDateInstance(DateFormat.SHORT, locale);
+    }
+
+    @Override
+    public Iterator<Sheet> iterator() {
+        return new Iterator<Sheet>() {
+            Iterator<GenericSheet> iter = sheets.iterator();
+            
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public Sheet next() {
+                return iter.next();
+            }
+
+            @Override
+            public void remove() {
+                iter.remove();
+            }
+        };
     }
 
 }
