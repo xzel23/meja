@@ -82,8 +82,8 @@ public class AttributedStringHelper {
      * @param text an instance of {@code AttributedString}
      * @return instance of {@code StyledDocument} with {@code text} as its content
      */
-    public static StyledDocument toStyledDocument(AttributedString text) {
-        StyledDocumentBuilder builder = new StyledDocumentBuilder();
+    public static StyledDocument toStyledDocument(AttributedString text, float scale) {
+        StyledDocumentBuilder builder = new StyledDocumentBuilder(scale);
         builder.add(text.getIterator());
         return builder.get();
     }

@@ -34,7 +34,12 @@ import javax.swing.text.StyledDocument;
  */
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
+    public StyledDocumentBuilder(float scale) {
+        this.scale = scale;
+    }
+
     private final StyledDocument doc = new DefaultStyledDocument();
+    private final float scale;
 
     @Override
     protected StyledDocument get() {
@@ -55,7 +60,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
             if (key.equals(java.awt.font.TextAttribute.FAMILY)) {
                 StyleConstants.setFontFamily(as, value.toString());
             } else if (key.equals(java.awt.font.TextAttribute.SIZE)) {
-                StyleConstants.setFontSize(as, ((Number)value).intValue());
+                StyleConstants.setFontSize(as, Math.round(scale*((Number)value).intValue()));
             } else if (key.equals(java.awt.font.TextAttribute.FOREGROUND)) {
                 StyleConstants.setForeground(as, (Color) value);
             } else if (key.equals(java.awt.font.TextAttribute.BACKGROUND)) {

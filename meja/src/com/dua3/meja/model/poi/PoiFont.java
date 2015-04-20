@@ -119,7 +119,6 @@ public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     static class PoiHssfFont extends PoiFont<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
         private final PoiHssfWorkbook workbook;
-
         private final HSSFFont poiFont;
 
         PoiHssfFont(PoiHssfWorkbook workbook, HSSFFont poiFont) {
@@ -136,6 +135,7 @@ public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         public Color getColor() {
             return workbook.getColor(poiFont.getHSSFColor(workbook.getPoiWorkbook()), Color.BLACK);
         }
+
     }
 
     static class PoiXssfFont extends PoiFont<XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
