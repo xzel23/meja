@@ -49,7 +49,7 @@ public class CellValueHelper {
 
         // formula
         if (value.startsWith("=")) {
-            cell.setFormula(value);
+            cell.setFormula(value.substring(1));
             return true;
         }
 
