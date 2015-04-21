@@ -92,7 +92,7 @@ public class DefaultCellEditor implements CellEditor {
         }
         this.cell = cell;
 
-        component.setContent(cell, sheetView.getScale());
+        component.setContent(cell, sheetView.getScale(), false);
 
         component.revalidate();
         component.setCaretPosition(component.getDocument().getLength());

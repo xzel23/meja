@@ -23,10 +23,15 @@ import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import com.dua3.meja.util.AttributedStringHelper;
 import com.dua3.meja.util.Cache;
+import java.text.AttributedString;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTextPane;
 import javax.swing.text.AbstractDocument;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
 import javax.swing.text.ComponentView;
+import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Element;
 import javax.swing.text.IconView;
 import javax.swing.text.LabelView;
@@ -98,7 +103,7 @@ public class CellEditorPane extends JTextPane {
      * @param cell the cell to display
      * @param scale the scale to apply
      */
-    public void setContent(Cell cell, float scale) {
+    public void setContent(Cell cell, float scale, boolean eval) {
         final CellStyle cellStyle = cell.getCellStyle();
         final Font font = cellStyle.getFont();
         setFont(getAwtFont(font, scale));
@@ -124,7 +129,19 @@ public class CellEditorPane extends JTextPane {
                 throw new IllegalStateException();
         }
 
-        StyledDocument doc = AttributedStringHelper.toStyledDocument(cell.getAttributedString(), dfltAttr, scale);
+        final StyledDocument doc;
+        final AttributedString text;
+        if (cell.getCellType()==CellType.FORMULA && !eval) {
+            doc = new DefaultStyledDocument();
+            try {
+                doc.insertString(0, "=", dfltAttr);
+                doc.insertString(1, cell.getFormula(), dfltAttr);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(CellEditorPane.class.getName()).log(Level.SEVERE, "Exception", ex);
+            }
+        } else {
+            doc = AttributedStringHelper.toStyledDocument(cell.getAttributedString(), dfltAttr, scale);
+        }
         setDocument(doc);
 
         this.vAlign=cellStyle.getVAlign();

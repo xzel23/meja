@@ -70,7 +70,7 @@ public class DefaultCellRenderer implements CellRenderer {
         }
 
         component.setBounds(bounds);
-        component.setContent(cell, scale);
+        component.setContent(cell, scale, true);
 
         // setup a graphics context for painting
         clip = canvas.intersection(clip).intersection(g.getClipBounds());

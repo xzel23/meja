@@ -540,6 +540,7 @@ public class SheetView extends JPanel implements Scrollable {
             if (editing) {
                 stopEditing(true);
                 editing = false;
+                repaint(getSelectionRect());
             }
         }
     }
