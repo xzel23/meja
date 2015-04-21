@@ -68,8 +68,11 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 StyleConstants.setBold(as, ((Number) value).floatValue()>TextAttribute.WEIGHT_MEDIUM);
             } else if (key.equals(java.awt.font.TextAttribute.POSTURE)) {
                 StyleConstants.setItalic(as, value.equals(java.awt.font.TextAttribute.POSTURE_OBLIQUE));
+            } else if (key.equals(java.awt.font.TextAttribute.UNDERLINE)) {
+                StyleConstants.setUnderline(as, true);
+            } else if (key.equals(java.awt.font.TextAttribute.STRIKETHROUGH)) {
+                StyleConstants.setStrikeThrough(as, true);
             }
-            //as.addAttribute(key, value);
         }
 
         try {
