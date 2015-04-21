@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextPane;
 import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
 import javax.swing.text.ComponentView;
@@ -100,16 +101,42 @@ public class CellEditorPane extends JTextPane {
 
     /**
      * Set the editor content to the content of given cell.
+     *
      * @param cell the cell to display
      * @param scale the scale to apply
      */
     public void setContent(Cell cell, float scale, boolean eval) {
-        final CellStyle cellStyle = cell.getCellStyle();
+        CellStyle cellStyle = cell.getCellStyle();
         final Font font = cellStyle.getFont();
         setFont(getAwtFont(font, scale));
         setBackground(cellStyle.getFillBgColor());
         setForeground(font.getColor());
 
+        final StyledDocument doc;
+        if (cell.getCellType() == CellType.FORMULA && !eval) {
+            AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
+            doc = new DefaultStyledDocument();
+            try {
+                doc.insertString(0, "=", dfltAttr);
+                doc.insertString(1, cell.getFormula(), dfltAttr);
+            } catch (BadLocationException ex) {
+                Logger.getLogger(CellEditorPane.class.getName()).log(Level.SEVERE, "Exception", ex);
+            }
+        } else {
+            // get attributed text first because this will update the
+            // result type for formulas which is required for HAlign.ALIGN_AUTOMATIC
+            final AttributedString text = cell.getAttributedString();
+            AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
+            doc = AttributedStringHelper.toStyledDocument(text, dfltAttr, scale);
+        }
+        setDocument(doc);
+
+        this.vAlign = cellStyle.getVAlign();
+
+        revalidate();
+    }
+
+    public SimpleAttributeSet getCellAttributes(final CellStyle cellStyle, Cell cell) throws IllegalStateException {
         SimpleAttributeSet dfltAttr = new SimpleAttributeSet();
         switch (getHAlign(cellStyle.getHAlign(), cell.getResultType())) {
             case ALIGN_LEFT:
@@ -128,25 +155,7 @@ public class CellEditorPane extends JTextPane {
             default:
                 throw new IllegalStateException();
         }
-
-        final StyledDocument doc;
-        final AttributedString text;
-        if (cell.getCellType()==CellType.FORMULA && !eval) {
-            doc = new DefaultStyledDocument();
-            try {
-                doc.insertString(0, "=", dfltAttr);
-                doc.insertString(1, cell.getFormula(), dfltAttr);
-            } catch (BadLocationException ex) {
-                Logger.getLogger(CellEditorPane.class.getName()).log(Level.SEVERE, "Exception", ex);
-            }
-        } else {
-            doc = AttributedStringHelper.toStyledDocument(cell.getAttributedString(), dfltAttr, scale);
-        }
-        setDocument(doc);
-
-        this.vAlign=cellStyle.getVAlign();
-
-        revalidate();
+        return dfltAttr;
     }
 
     /**

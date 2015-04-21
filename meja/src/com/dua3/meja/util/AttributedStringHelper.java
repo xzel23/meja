@@ -17,7 +17,7 @@ package com.dua3.meja.util;
 
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
-import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.StyledDocument;
 
 /**
@@ -85,7 +85,7 @@ public class AttributedStringHelper {
      * @param scale
      * @return instance of {@code StyledDocument} with {@code text} as its content
      */
-    public static StyledDocument toStyledDocument(AttributedString text, SimpleAttributeSet dfltAttr, float scale) {
+    public static StyledDocument toStyledDocument(AttributedString text, AttributeSet dfltAttr, float scale) {
         StyledDocumentBuilder builder = new StyledDocumentBuilder(scale);
         builder.add(text.getIterator());
         final StyledDocument doc = builder.get();

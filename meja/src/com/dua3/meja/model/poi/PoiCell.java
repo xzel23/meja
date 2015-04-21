@@ -325,7 +325,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
             poiCell.setCellFormula(arg);
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
             attributedString.clear();
-            getWorkbook().evaluator.clearAllCachedResultValues();
+            getWorkbook().evaluator.evaluateFormulaCell(poiCell);
         }
         return this;
     }
