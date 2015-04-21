@@ -51,6 +51,9 @@ public class CellEditorPane extends JTextPane {
         setEditorKit(new CellEditorKit());
     }
 
+    /**
+     * A font scaled by a given factor.
+     */
     static class ScaledFont {
 
         final Font font;
@@ -90,6 +93,11 @@ public class CellEditorPane extends JTextPane {
         return fontCache.get(new ScaledFont(font, scale));
     }
 
+    /**
+     * Set the editor content to the content of given cell.
+     * @param cell the cell to display
+     * @param scale the scale to apply
+     */
     public void setContent(Cell cell, float scale) {
         final CellStyle cellStyle = cell.getCellStyle();
         final Font font = cellStyle.getFont();
@@ -155,6 +163,9 @@ public class CellEditorPane extends JTextPane {
         }
     }
 
+    /**
+     * A custom EditorKit to allow vertical alignment of text.
+     */
     class CellEditorKit extends StyledEditorKit {
 
         private static final long serialVersionUID = 1L;
@@ -165,6 +176,9 @@ public class CellEditorPane extends JTextPane {
         }
     }
 
+    /**
+     * A ViewFactory for the custom EditorKit.
+     */
     class CellEditorViewFactory implements ViewFactory {
 
         @Override
@@ -190,6 +204,9 @@ public class CellEditorPane extends JTextPane {
 
     }
 
+    /**
+     * A subclass of BoxView that enables alignment options.
+     */
     class AlignedBoxView extends BoxView {
 
         public AlignedBoxView(Element elem, int axis) {
