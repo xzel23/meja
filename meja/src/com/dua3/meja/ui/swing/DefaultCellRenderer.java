@@ -16,6 +16,8 @@
 package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import javax.swing.BorderFactory;
@@ -26,6 +28,8 @@ import javax.swing.BorderFactory;
  */
 public class DefaultCellRenderer implements CellRenderer {
 
+    public final int MAX_WIDTH=800;
+
     private final CellEditorPane component;
 
     public DefaultCellRenderer() {
@@ -35,14 +39,44 @@ public class DefaultCellRenderer implements CellRenderer {
     }
 
     @Override
-    public void render(Graphics2D g, Cell cell, Rectangle cellRect, Rectangle clipRect, float scale) {
+    public void render(Graphics2D g, Cell cell, Rectangle cr, Rectangle clip, float scale) {
         if (cell.isEmpty()) {
             return;
         }
 
-        component.setBounds(cellRect);
+        CellStyle style = cell.getCellStyle();
+        boolean wrap = style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
+        Rectangle bounds = new Rectangle(wrap ? cr.width : MAX_WIDTH, cr.height);
+        Rectangle canvas;
+        if (wrap) {
+            canvas = cr;
+        } else {
+            switch (CellEditorPane.getHAlign(style.getHAlign(), cell.getResultType())) {
+                case ALIGN_LEFT:
+                    canvas = new Rectangle(cr.x, cr.y, MAX_WIDTH, cr.height);
+                    break;
+                case ALIGN_RIGHT:
+                    canvas = new Rectangle(cr.x+cr.width-MAX_WIDTH, cr.y, MAX_WIDTH, cr.height);
+                    break;
+                case ALIGN_CENTER:
+                    canvas = new Rectangle(cr.x+(cr.width-MAX_WIDTH)/2, cr.y, MAX_WIDTH, cr.height);
+                    break;
+                case ALIGN_JUSTIFY:   // ALIGN_JUSTIFY implies wrap
+                case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be mapped to another value
+                default:
+                    throw new IllegalStateException();
+            }
+        }
+
+        component.setBounds(bounds);
         component.setContent(cell, scale);
-        component.paint(g.create(cellRect.x, cellRect.y, cellRect.width, cellRect.height));
+
+        clip = canvas.intersection(clip).intersection(g.getClipBounds());
+        clip.translate(-canvas.x, -canvas.y);
+        final Graphics gPaint = g.create(canvas.x, canvas.y, canvas.width, canvas.height);
+        gPaint.setClip(clip);
+
+        component.paint(gPaint);
     }
 
 }

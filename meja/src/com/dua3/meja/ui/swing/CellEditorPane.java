@@ -19,6 +19,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Font;
+import com.dua3.meja.model.HAlign;
 import com.dua3.meja.util.AttributedStringHelper;
 import com.dua3.meja.util.Cache;
 import javax.swing.JTextPane;
@@ -81,7 +82,7 @@ public class CellEditorPane extends JTextPane {
         setForeground(font.getColor());
 
         SimpleAttributeSet dfltAttr = new SimpleAttributeSet();
-        switch (cellStyle.getHAlign()) {
+        switch (getHAlign(cellStyle.getHAlign(), cell.getResultType())) {
             case ALIGN_LEFT:
                 StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_LEFT);
                 break;
@@ -94,13 +95,7 @@ public class CellEditorPane extends JTextPane {
             case ALIGN_JUSTIFY:
                 StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_JUSTIFIED);
                 break;
-            case ALIGN_AUTOMATIC:
-                if (cell.getCellType() == CellType.TEXT) {
-                    StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_LEFT);
-                } else {
-                    StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_RIGHT);
-                }
-                break;
+            case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be resolved
             default:
                 throw new IllegalStateException();
         }
@@ -111,4 +106,21 @@ public class CellEditorPane extends JTextPane {
         revalidate();
     }
 
+    public static HAlign getHAlign(HAlign hAlign, CellType type) {
+        if (hAlign!=HAlign.ALIGN_AUTOMATIC) {
+            return hAlign;
+        }
+
+        switch (type) {
+            case BLANK:
+            case BOOLEAN:
+            case ERROR:
+            return HAlign.ALIGN_RIGHT;
+            case TEXT:
+            case FORMULA:
+            return HAlign.ALIGN_LEFT;
+            default:
+                throw new IllegalStateException();
+        }
+    }
 }
