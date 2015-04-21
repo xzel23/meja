@@ -20,12 +20,23 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
+import com.dua3.meja.model.VAlign;
 import com.dua3.meja.util.AttributedStringHelper;
 import com.dua3.meja.util.Cache;
 import javax.swing.JTextPane;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.BoxView;
+import javax.swing.text.ComponentView;
+import javax.swing.text.Element;
+import javax.swing.text.IconView;
+import javax.swing.text.LabelView;
+import javax.swing.text.ParagraphView;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.StyledEditorKit;
+import javax.swing.text.View;
+import javax.swing.text.ViewFactory;
 
 /**
  *
@@ -34,6 +45,11 @@ import javax.swing.text.StyledDocument;
 public class CellEditorPane extends JTextPane {
 
     private static final long serialVersionUID = 1L;
+    private VAlign vAlign = VAlign.ALIGN_TOP;
+
+    public CellEditorPane() {
+        setEditorKit(new CellEditorKit());
+    }
 
     static class ScaledFont {
 
@@ -99,15 +115,30 @@ public class CellEditorPane extends JTextPane {
             default:
                 throw new IllegalStateException();
         }
-        StyledDocument doc = AttributedStringHelper.toStyledDocument(cell.getAttributedString(), dfltAttr, scale);
 
+        StyledDocument doc = AttributedStringHelper.toStyledDocument(cell.getAttributedString(), dfltAttr, scale);
         setDocument(doc);
+
+        this.vAlign=cellStyle.getVAlign();
 
         revalidate();
     }
 
+    /**
+     * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell
+     * type.
+     *
+     * @param hAlign the horizontal alignment
+     * @param type the cell type
+     * @return
+     * <ul>
+     * <li>{@code hAlign}, if {@code hAlign!=HAlign.ALIGN_AUTOMATIC}</li>
+     * <li>otherwise the horizontal alignment to apply to cells of the given
+     * type</li>
+     * </ul>
+     */
     public static HAlign getHAlign(HAlign hAlign, CellType type) {
-        if (hAlign!=HAlign.ALIGN_AUTOMATIC) {
+        if (hAlign != HAlign.ALIGN_AUTOMATIC) {
             return hAlign;
         }
 
@@ -115,12 +146,94 @@ public class CellEditorPane extends JTextPane {
             case BLANK:
             case BOOLEAN:
             case ERROR:
-            return HAlign.ALIGN_RIGHT;
+                return HAlign.ALIGN_RIGHT;
             case TEXT:
             case FORMULA:
-            return HAlign.ALIGN_LEFT;
+                return HAlign.ALIGN_LEFT;
             default:
                 throw new IllegalStateException();
+        }
+    }
+
+    class CellEditorKit extends StyledEditorKit {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public ViewFactory getViewFactory() {
+            return new CellEditorViewFactory();
+        }
+    }
+
+    class CellEditorViewFactory implements ViewFactory {
+
+        @Override
+        public View create(Element elem) {
+            String kind = elem.getName();
+            if (kind != null) {
+                switch (kind) {
+                    case AbstractDocument.ContentElementName:
+                        return new LabelView(elem);
+                    case AbstractDocument.ParagraphElementName:
+                        return new ParagraphView(elem);
+                    case AbstractDocument.SectionElementName:
+                        return new AlignedBoxView(elem, View.Y_AXIS);
+                    case StyleConstants.ComponentElementName:
+                        return new ComponentView(elem);
+                    case StyleConstants.IconElementName:
+                        return new IconView(elem);
+                }
+            }
+
+            return new LabelView(elem);
+        }
+
+    }
+
+    class AlignedBoxView extends BoxView {
+
+        public AlignedBoxView(Element elem, int axis) {
+            super(elem, axis);
+        }
+
+        @Override
+        protected void layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans) {
+
+            super.layoutMajorAxis(targetSpan, axis, offsets, spans);
+
+            int textBlockHeight = 0;
+            for (int i = 0; i < spans.length; i++) {
+                textBlockHeight = spans[i];
+            }
+
+            final int available = targetSpan - textBlockHeight;
+            float offset;
+            float increase;
+            switch (vAlign) {
+                case ALIGN_TOP:
+                    offset = 0;
+                    increase = 0;
+                    break;
+                case ALIGN_BOTTOM:
+                    offset = available;
+                    increase = 0;
+                    break;
+                case ALIGN_MIDDLE:
+                    offset = available / 2;
+                    increase = 0;
+                    break;
+                case ALIGN_JUSTIFY:
+                    offset = (float) available / spans.length;
+                    increase = offset;
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
+
+            for (int i = 0; i < offsets.length; i++) {
+                offsets[i] += Math.round(offset + i * increase);
+            }
+
         }
     }
 }
