@@ -44,6 +44,7 @@ public class DefaultCellRenderer implements CellRenderer {
             return;
         }
 
+        // if text is not wrapped, paint with a maximum width to allow overflowing text
         CellStyle style = cell.getCellStyle();
         boolean wrap = style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
         Rectangle bounds = new Rectangle(wrap ? cr.width : MAX_WIDTH, cr.height);
@@ -71,6 +72,7 @@ public class DefaultCellRenderer implements CellRenderer {
         component.setBounds(bounds);
         component.setContent(cell, scale);
 
+        // setup a graphics context for painting
         clip = canvas.intersection(clip).intersection(g.getClipBounds());
         clip.translate(-canvas.x, -canvas.y);
         final Graphics gPaint = g.create(canvas.x, canvas.y, canvas.width, canvas.height);
