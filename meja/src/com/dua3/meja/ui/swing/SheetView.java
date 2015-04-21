@@ -167,16 +167,32 @@ public class SheetView extends JPanel implements Scrollable {
     private boolean editable = false;
 
     /**
-     * Editing state.
+     * Check whether editing is enabled.
+     * @return true if this SheetView allows editing.
      */
-    private boolean editing = false;
-
     public boolean isEditable() {
         return editable;
     }
 
+    /**
+     * Enable/disable sheet editing.
+     * @param editable true to allow editing
+     */
     public void setEditable(boolean editable) {
         this.editable = editable;
+    }
+
+    /**
+     * Editing state.
+     */
+    private boolean editing = false;
+
+    /**
+     * Check editing state.
+     * @return true, if a cell is being edited.
+     */
+    public boolean isEditing() {
+        return editing;
     }
 
     /**
@@ -295,19 +311,18 @@ public class SheetView extends JPanel implements Scrollable {
      *
      * @param rowNum number of row to be set
      * @param colNum number of column to be set
-     * @return true if the current cell changed
+     * @return true if the current logical cell changed
      */
     public boolean setCurrent(int rowNum, int colNum) {
-        int oldRowNum = currentRowNum;
-        int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
-        int oldColNum = currentColNum;
-        int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
-        if (newRowNum != oldRowNum || newColNum != oldColNum) {
-            // get old selection for repainting
-            Rectangle oldRect = getSelectionRect();
-            // update current position
-            currentRowNum = newRowNum;
-            currentColNum = newColNum;
+        Cell oldCell = getCurrentCell().getLogicalCell();
+        Rectangle oldRect = getSelectionRect();
+
+        currentRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
+        currentColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
+
+        Cell newCell = getCurrentCell().getLogicalCell();
+        if (newCell.getRowNumber() != oldCell.getRowNumber()
+                || newCell.getColumnNumber() != oldCell.getColumnNumber()) {
             // get new selection for repainting
             Rectangle newRect = getSelectionRect();
             repaint(oldRect);
@@ -322,11 +337,11 @@ public class SheetView extends JPanel implements Scrollable {
      * Enter edit mode for the current cell.
      */
     private void startEditing() {
-        if (!isEditable()) {
+        if (!isEditable() || isEditing()) {
             return;
         }
-        
-        Cell cell = getCurrentCell();
+
+        Cell cell = getCurrentCell().getLogicalCell();
         final JComponent editorComp = editor.startEditing(cell);
         editorComp.setBounds(getCellRect(cell));
         add(editorComp);
