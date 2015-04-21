@@ -417,6 +417,18 @@ public class SheetView extends JPanel implements Scrollable {
                             }
                         };
                     }
+                },
+        START_EDITING {
+                    @SuppressWarnings("serial")
+                    @Override
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_RIGHT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.startEditing();
+                            }
+                        };
+                    }
                 };
 
         abstract Action getAction(SheetView view);
@@ -480,6 +492,7 @@ public class SheetView extends JPanel implements Scrollable {
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_LEFT, 0), Actions.MOVE_LEFT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
 
         final ActionMap actionMap = getActionMap();
         for (Actions action : Actions.values()) {
