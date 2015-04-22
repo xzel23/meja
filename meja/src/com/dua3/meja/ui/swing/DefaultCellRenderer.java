@@ -28,8 +28,6 @@ import javax.swing.BorderFactory;
  */
 public class DefaultCellRenderer implements CellRenderer {
 
-    public final int MAX_WIDTH=800;
-
     private final CellEditorPane component;
 
     public DefaultCellRenderer() {
@@ -44,23 +42,25 @@ public class DefaultCellRenderer implements CellRenderer {
             return;
         }
 
+        int maxWidthScaled = (int) (SheetView.MAX_WIDTH*scale);
+
         // if text is not wrapped, paint with a maximum width to allow overflowing text
         CellStyle style = cell.getCellStyle();
         boolean wrap = style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
-        Rectangle bounds = new Rectangle(wrap ? cr.width : MAX_WIDTH, cr.height);
+        Rectangle bounds = new Rectangle(wrap ? cr.width : maxWidthScaled, cr.height);
         Rectangle canvas;
         if (wrap) {
             canvas = cr;
         } else {
             switch (CellEditorPane.getHAlign(style.getHAlign(), cell.getResultType())) {
                 case ALIGN_LEFT:
-                    canvas = new Rectangle(cr.x, cr.y, MAX_WIDTH, cr.height);
+                    canvas = new Rectangle(cr.x, cr.y, maxWidthScaled, cr.height);
                     break;
                 case ALIGN_RIGHT:
-                    canvas = new Rectangle(cr.x+cr.width-MAX_WIDTH, cr.y, MAX_WIDTH, cr.height);
+                    canvas = new Rectangle(cr.x+cr.width-maxWidthScaled, cr.y, maxWidthScaled, cr.height);
                     break;
                 case ALIGN_CENTER:
-                    canvas = new Rectangle(cr.x+(cr.width-MAX_WIDTH)/2, cr.y, MAX_WIDTH, cr.height);
+                    canvas = new Rectangle(cr.x+(cr.width-maxWidthScaled)/2, cr.y, maxWidthScaled, cr.height);
                     break;
                 case ALIGN_JUSTIFY:   // ALIGN_JUSTIFY implies wrap
                 case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be mapped to another value

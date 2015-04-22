@@ -74,6 +74,8 @@ public class SheetView extends JPanel implements Scrollable {
         }
     };
 
+    static final int MAX_WIDTH = 800;
+
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
@@ -365,9 +367,9 @@ public class SheetView extends JPanel implements Scrollable {
      * method of {@link CellEditor} subclasses.
      */
     public void stoppedEditing() {
-        editing = false;        
+        editing = false;
     }
-    
+
     float getScale() {
         return sheet.getZoom()*scaleDpi;
     }
@@ -624,7 +626,7 @@ public class SheetView extends JPanel implements Scrollable {
             rowPos[0] = 0;
             for (int i = 1; i < rowPos.length; i++) {
                 sheetHeightInPoints += sheet.getRowHeight(i - 1);
-                rowPos[i] = getSheetHeight();
+                rowPos[i] = sheetHeightInPoints;
             }
 
             sheetWidthInPoints = 0;
@@ -632,7 +634,7 @@ public class SheetView extends JPanel implements Scrollable {
             columnPos[0] = 0;
             for (int j = 1; j < columnPos.length; j++) {
                 sheetWidthInPoints += sheet.getColumnWidth(j - 1);
-                columnPos[j] = getSheetWidth();
+                columnPos[j] = sheetWidthInPoints;
             }
 
             // set headers
@@ -858,7 +860,7 @@ public class SheetView extends JPanel implements Scrollable {
         // draw horizontal grid lines
         for (int i=0;i<rowPos.length;i++) {
             int gridY = getRowPos(i);
-            
+
             if (gridY < minY) {
                 // visible region not reached
                 continue;
@@ -907,6 +909,8 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
+        int maxWidthScaled = (int) (MAX_WIDTH * getScale());
+
         // determine visible rows and columns
         int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
         int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height));
@@ -925,12 +929,12 @@ public class SheetView extends JPanel implements Scrollable {
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
             int first = startColumn;
-            while (first > 0 && getColumnPos(first) + 800 > clipBounds.x && row.getCell(first).isEmpty()) {
+            while (first > 0 && getColumnPos(first) + maxWidthScaled > clipBounds.x && row.getCell(first).isEmpty()) {
                 first--;
             }
 
             int end = endColumn;
-            while (end < getNumberOfColumns() && getColumnPos(end) - 800 < clipBounds.x + clipBounds.width && row.getCell(end - 1).isEmpty()) {
+            while (end < getNumberOfColumns() && getColumnPos(end) - maxWidthScaled < clipBounds.x + clipBounds.width && row.getCell(end - 1).isEmpty()) {
                 end++;
             }
 
