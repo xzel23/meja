@@ -242,9 +242,6 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
 
                 as = new AttributedString(text);
 
-                // apply cell style font attributes first
-                getCellStyle().getFont().addAttributes(as, 0, text.length());
-
                 for (int i = 0; i < richText.numFormattingRuns(); i++) {
                     int start = richText.getIndexOfFormattingRun(i);
                     int end = i + 1 < richText.numFormattingRuns() ? richText.getIndexOfFormattingRun(i + 1) : richText.length();
