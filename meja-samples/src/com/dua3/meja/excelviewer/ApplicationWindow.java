@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.ui.swing.WorkbookView;
@@ -179,6 +180,17 @@ public class ApplicationWindow extends JFrame {
 
         mnOptions.add(mnLookAndFeel);
 
+        JMenu mnZoom = new JMenu("Zoom");
+        for (final int zoom : new int[]{25, 50, 75, 100, 125, 150, 200, 400}) {
+            mnZoom.add(new AbstractAction(zoom + "%") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setZoom(zoom / 100.0f);
+                }
+            });
+        }
+        mnOptions.add(mnZoom);
+
         menuBar.add(mnOptions);
 
         // Help menu
@@ -204,6 +216,13 @@ public class ApplicationWindow extends JFrame {
             Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
         }
         SwingUtilities.updateComponentTreeUI(this);
+    }
+
+    private void setZoom(float zoom) {
+        for (Sheet sheet: workbook) {
+            sheet.setZoom(zoom);
+            workbookView.getViewForSheet(sheet.getSheetName()).invalidate();
+        }
     }
 
     private void createContent() {
