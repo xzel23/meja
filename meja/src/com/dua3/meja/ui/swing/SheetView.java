@@ -503,6 +503,7 @@ public class SheetView extends JPanel implements Scrollable {
         this.currentRowNum = 0;
         this.currentColNum = 0;
         update();
+        revalidate();
     }
 
     public Sheet getSheet() {
@@ -1200,10 +1201,17 @@ public class SheetView extends JPanel implements Scrollable {
         private final JLabel painter;
 
         public ColumnHeader() {
-            painter = new JLabel("A");
+            painter = new JLabel();
             painter.setHorizontalAlignment(SwingConstants.CENTER);
             painter.setVerticalAlignment(SwingConstants.CENTER);
             painter.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, gridColor));
+
+            validate();
+        }
+
+        @Override
+        public void validate() {
+            painter.setText("A");
             setPreferredSize(new Dimension(SheetView.this.getPreferredSize().width, painter.getPreferredSize().height));
         }
 
@@ -1233,6 +1241,16 @@ public class SheetView extends JPanel implements Scrollable {
         private final JLabel painter;
 
         public RowHeader() {
+            painter = new JLabel();
+            painter.setHorizontalAlignment(SwingConstants.RIGHT);
+            painter.setVerticalAlignment(SwingConstants.CENTER);
+            painter.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, gridColor));
+
+            validate();
+        }
+
+        @Override
+        public void validate() {
             // create a string with the maximum number of digits needed to
             // represent the highest row number (use a string only consisting
             // of zeroes instead of the last row number because a proportional
@@ -1240,12 +1258,8 @@ public class SheetView extends JPanel implements Scrollable {
             StringBuilder sb = new StringBuilder();
             for (int i = 1; i <= getNumberOfRows(); i *= 10) {
                 sb.append('0');
-
             }
-            painter = new JLabel(sb.toString());
-            painter.setHorizontalAlignment(SwingConstants.RIGHT);
-            painter.setVerticalAlignment(SwingConstants.CENTER);
-            painter.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, gridColor));
+            painter.setText(sb.toString());
             setPreferredSize(new Dimension(painter.getPreferredSize().width, SheetView.this.getPreferredSize().height));
         }
 
