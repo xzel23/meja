@@ -63,6 +63,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
     private int firstColumn;
     private int lastColumn;
     private List<RectangularRegion> mergedRegions;
+    private float zoom = 1.0f;
 
     public PoiSheet(SHEET poiSheet) {
         this.poiSheet = poiSheet;
@@ -270,6 +271,24 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         return lock.writeLock();
     }
     
+    @Override
+    public float getZoom() {
+        // current POI version has no method for querying the zoom factor
+        return zoom;
+    }
+
+    @Override
+    public void setZoom(float zoom) {
+        if (zoom<=0) {
+            throw new IllegalArgumentException("Invalid zoom factor: "+zoom);
+        }
+        
+        this.zoom = zoom;
+        // translate zoom factor into fraction (using permille), should be at least 1
+        int pmZoom = Math.max(1, Math.round(zoom*1000));
+        poiSheet.setZoom(pmZoom, 1000);
+    }    
+
     static class PoiHssfSheet extends PoiSheet<
             HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
@@ -293,6 +312,7 @@ public abstract class PoiSheet<WORKBOOK extends org.apache.poi.ss.usermodel.Work
         public PoiHssfWorkbook getWorkbook() {
             return workbook;
         }
+            
     }
 
     static class PoiXssfSheet extends PoiSheet<

@@ -77,27 +77,27 @@ public class SheetView extends JPanel implements Scrollable {
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
-    float scale = 1;
+    private float scaleDpi = 1;
 
     /**
      * Array with column positions (x-axis) in pixels.
      */
-    int columnPos[];
+    private float columnPos[];
 
     /**
      * Array with column positions (y-axis) in pixels.
      */
-    int rowPos[];
+    private float rowPos[];
 
     /**
-     * Height of the sheet in pixels.
+     * Height of the sheet in points.
      */
-    int sheetWidth;
+    private float sheetWidthInPoints;
 
     /**
-     * Width of the sheet in pixels.
+     * Width of the sheet in points.
      */
-    int sheetHeight;
+    private float sheetHeightInPoints;
 
     /**
      * The column number of the selected cell.
@@ -262,10 +262,10 @@ public class SheetView extends JPanel implements Scrollable {
         final int i = cell.getRowNumber();
         final int j = cell.getColumnNumber();
 
-        final int y = rowPos[i];
-        final int h = rowPos[i + cell.getVerticalSpan()] - y + 1;
-        final int x = columnPos[j];
-        final int w = columnPos[cell.getColumnNumber() + cell.getHorizontalSpan()] - x + 1;
+        final int y = getRowPos(i);
+        final int h = getRowPos(i + cell.getVerticalSpan()) - y + 1;
+        final int x = getColumnPos(j);
+        final int w = getColumnPos(cell.getColumnNumber() + cell.getHorizontalSpan()) - x + 1;
 
         return new Rectangle(x, y, w, h);
     }
@@ -369,7 +369,35 @@ public class SheetView extends JPanel implements Scrollable {
     }
     
     float getScale() {
-        return scale;
+        return sheet.getZoom()*scaleDpi;
+    }
+
+    /**
+     * @return the columnPos
+     */
+    public int getColumnPos(int j) {
+        return Math.round(columnPos[j]*getScale());
+    }
+
+    /**
+     * @return the rowPos
+     */
+    public int getRowPos(int i) {
+        return Math.round(rowPos[i]*getScale());
+    }
+
+    /**
+     * @return the sheetWidth
+     */
+    public int getSheetWidth() {
+        return Math.round(sheetWidthInPoints*getScale());
+    }
+
+    /**
+     * @return the sheetHeight
+     */
+    public int getSheetHeight() {
+        return Math.round(sheetHeightInPoints*getScale());
     }
 
     /**
@@ -575,14 +603,14 @@ public class SheetView extends JPanel implements Scrollable {
     private void update() {
         // scale according to screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-        scale = dpi / 72f;
+        scaleDpi = dpi / 72f;
 
         // determine sheet dimensions
         if (sheet == null) {
-            sheetWidth = 0;
-            sheetHeight = 0;
-            rowPos = new int[]{0};
-            columnPos = new int[]{0};
+            sheetWidthInPoints = 0;
+            sheetHeightInPoints = 0;
+            rowPos = new float[]{0};
+            columnPos = new float[]{0};
             // revalidate the layout
             revalidate();
             return;
@@ -591,20 +619,20 @@ public class SheetView extends JPanel implements Scrollable {
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {
-            sheetHeight = 0;
-            rowPos = new int[2 + sheet.getLastRowNum()];
+            sheetHeightInPoints = 0;
+            rowPos = new float[2 + sheet.getLastRowNum()];
             rowPos[0] = 0;
             for (int i = 1; i < rowPos.length; i++) {
-                sheetHeight += Math.round(sheet.getRowHeight(i - 1) * scale);
-                rowPos[i] = sheetHeight;
+                sheetHeightInPoints += sheet.getRowHeight(i - 1);
+                rowPos[i] = getSheetHeight();
             }
 
-            sheetWidth = 0;
-            columnPos = new int[2 + sheet.getLastColNum()];
+            sheetWidthInPoints = 0;
+            columnPos = new float[2 + sheet.getLastColNum()];
             columnPos[0] = 0;
             for (int j = 1; j < columnPos.length; j++) {
-                sheetWidth += Math.round(sheet.getColumnWidth(j - 1) * scale);
-                columnPos[j] = sheetWidth;
+                sheetWidthInPoints += sheet.getColumnWidth(j - 1);
+                columnPos[j] = getSheetWidth();
             }
 
             // set headers
@@ -674,10 +702,10 @@ public class SheetView extends JPanel implements Scrollable {
                 final int y = visibleRect.y;
                 int yPrevious = 0;
                 for (int i = 0; i < rowPos.length; i++) {
-                    if (rowPos[i] >= y) {
+                    if (getRowPos(i) >= y) {
                         return y - yPrevious;
                     }
-                    yPrevious = rowPos[i];
+                    yPrevious = getRowPos(i);
                 }
                 // should never be reached
                 return 0;
@@ -685,8 +713,8 @@ public class SheetView extends JPanel implements Scrollable {
                 // scroll down
                 final int y = visibleRect.y + visibleRect.height;
                 for (int i = 0; i < rowPos.length; i++) {
-                    if (rowPos[i] > y) {
-                        return rowPos[i] - y;
+                    if (getRowPos(i) > y) {
+                        return getRowPos(i) - y;
                     }
                 }
                 // should never be reached
@@ -699,10 +727,10 @@ public class SheetView extends JPanel implements Scrollable {
                 final int x = visibleRect.x;
                 int xPrevious = 0;
                 for (int j = 0; j < columnPos.length; j++) {
-                    if (columnPos[j] >= x) {
+                    if (getColumnPos(j) >= x) {
                         return x - xPrevious;
                     }
-                    xPrevious = columnPos[j];
+                    xPrevious = getColumnPos(j);
                 }
                 // should never be reached
                 return 0;
@@ -710,8 +738,8 @@ public class SheetView extends JPanel implements Scrollable {
                 // scroll down
                 final int x = visibleRect.x + visibleRect.width;
                 for (int j = 0; j < columnPos.length; j++) {
-                    if (columnPos[j] > x) {
-                        return columnPos[j] - x;
+                    if (getColumnPos(j) > x) {
+                        return getColumnPos(j) - x;
                     }
                 }
                 // should never be reached
@@ -735,7 +763,7 @@ public class SheetView extends JPanel implements Scrollable {
      */
     public int getRowNumberFromY(int y) {
         int i = 0;
-        while (i < rowPos.length && rowPos[i] <= y) {
+        while (i < rowPos.length && getRowPos(i) <= y) {
             i++;
         }
         return i - 1;
@@ -757,7 +785,7 @@ public class SheetView extends JPanel implements Scrollable {
      */
     public int getColumnNumberFromX(int x) {
         int j = 0;
-        while (j < columnPos.length && columnPos[j] <= x) {
+        while (j < columnPos.length && getColumnPos(j) <= x) {
             j++;
         }
         return j - 1;
@@ -780,7 +808,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(sheetWidth + 1, sheetHeight + 1);
+        return new Dimension(getSheetWidth() + 1, getSheetHeight() + 1);
     }
 
     @Override
@@ -828,7 +856,9 @@ public class SheetView extends JPanel implements Scrollable {
         final int maxX = clipBounds.x + clipBounds.width;
 
         // draw horizontal grid lines
-        for (int gridY : rowPos) {
+        for (int i=0;i<rowPos.length;i++) {
+            int gridY = getRowPos(i);
+            
             if (gridY < minY) {
                 // visible region not reached
                 continue;
@@ -841,7 +871,9 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         // draw vertical grid lines
-        for (int gridX : columnPos) {
+        for (int j=0;j<columnPos.length;j++) {
+            int gridX = getColumnPos(j);
+
             if (gridX < minX) {
                 // visible region not reached
                 continue;
@@ -893,12 +925,12 @@ public class SheetView extends JPanel implements Scrollable {
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
             int first = startColumn;
-            while (first > 0 && columnPos[first] + 800 > clipBounds.x && row.getCell(first).isEmpty()) {
+            while (first > 0 && getColumnPos(first) + 800 > clipBounds.x && row.getCell(first).isEmpty()) {
                 first--;
             }
 
             int end = endColumn;
-            while (end < getNumberOfColumns() && columnPos[end] - 800 < clipBounds.x + clipBounds.width && row.getCell(end - 1).isEmpty()) {
+            while (end < getNumberOfColumns() && getColumnPos(end) - 800 < clipBounds.x + clipBounds.width && row.getCell(end - 1).isEmpty()) {
                 end++;
             }
 
@@ -1000,7 +1032,7 @@ public class SheetView extends JPanel implements Scrollable {
             }
 
             g.setColor(color);
-            g.setStroke(getStroke(b.getWidth() * scale));
+            g.setStroke(getStroke(b.getWidth() * getScale()));
             switch (d) {
                 case NORTH:
                     g.drawLine(cr.x, cr.y, cr.x + cr.width - 1, cr.y);
@@ -1048,19 +1080,19 @@ public class SheetView extends JPanel implements Scrollable {
                 if (!row.getCell(j).isEmpty()) {
                     break;
                 }
-                clipXMin = columnPos[j] + paddingX;
+                clipXMin = getColumnPos(j) + paddingX;
             }
             int clipXMax = cellRect.x + cellRect.width;
             for (int j = cell.getColumnNumber() + 1; j < getNumberOfColumns(); j++) {
                 if (!row.getCell(j).isEmpty()) {
                     break;
                 }
-                clipXMax = columnPos[j + 1] - paddingX;
+                clipXMax = getColumnPos(j + 1) - paddingX;
             }
             clipRect = new Rectangle(clipXMin, cellRect.y, clipXMax - clipXMin, cellRect.height);
         }
 
-        renderer.render(g, cell, cellRect, clipRect, scale);
+        renderer.render(g, cell, cellRect, clipRect, getScale());
     }
 
     /**
@@ -1143,10 +1175,10 @@ public class SheetView extends JPanel implements Scrollable {
         int spanX = logicalCell.getHorizontalSpan();
         int spanY = logicalCell.getVerticalSpan();
 
-        int x = columnPos[colNum];
-        int y = rowPos[rowNum];
-        int w = columnPos[colNum + spanX] - x;
-        int h = rowPos[rowNum + spanY] - y;
+        int x = getColumnPos(colNum);
+        int y = getRowPos(rowNum);
+        int w = getColumnPos(colNum + spanX) - x;
+        int h = getRowPos(rowNum + spanY) - y;
 
         g2d.setColor(selectionColor);
         g2d.setStroke(selectionStroke);
@@ -1179,8 +1211,8 @@ public class SheetView extends JPanel implements Scrollable {
             int startCol = Math.max(0, getColumnNumberFromX(clipBounds.x));
             int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x + clipBounds.width), getNumberOfColumns());
             for (int j = startCol; j < endCol; j++) {
-                int x = columnPos[j] + 1;
-                int w = columnPos[j + 1] - x;
+                int x = getColumnPos(j) + 1;
+                int w = getColumnPos(j + 1) - x;
                 String text = getColumnName(j);
 
                 painter.setBounds(0, 0, w, h);
@@ -1221,8 +1253,8 @@ public class SheetView extends JPanel implements Scrollable {
             int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
             int endRow = Math.min(1 + getRowNumberFromY(clipBounds.y + clipBounds.height), getNumberOfRows());
             for (int i = startRow; i < endRow; i++) {
-                int y = rowPos[i] + 1;
-                int h = rowPos[i + 1] - y;
+                int y = getRowPos(i) + 1;
+                int h = getRowPos(i + 1) - y;
                 String text = getRowName(i);
 
                 painter.setBounds(0, 0, w, h);

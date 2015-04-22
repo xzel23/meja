@@ -165,5 +165,16 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @return the date format for this sheet
      */
     DateFormat getDateFormat();
-        
+
+    /**
+     * Set the zoom factor for this sheet.
+     * @param zoom zoom factor, 1.0f=100%
+     */
+    void setZoom(float zoom);
+    
+    /**
+     * Get the zoom factor for this sheet.
+     * @return zoom factor, 1.0=100%
+     */
+    float getZoom();
 }

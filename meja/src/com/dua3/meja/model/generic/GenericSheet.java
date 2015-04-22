@@ -43,6 +43,7 @@ public class GenericSheet implements Sheet {
     private int freezeColumn;
     private int autoFilterRow;
     private int numberOfColumns;
+    private float zoom=1.0f;
 
     public GenericSheet(GenericWorkbook workbook, String sheetName, Locale locale) {
         this.workbook = workbook;
@@ -185,4 +186,19 @@ public class GenericSheet implements Sheet {
     public Lock writeLock() {
         return lock.writeLock();
     }
+
+    @Override
+    public float getZoom() {
+        return zoom;
+    }
+
+    @Override
+    public void setZoom(float zoom) {
+        if (zoom<=0) {
+            throw new IllegalArgumentException("Invalid zoom factor: "+zoom);
+        }
+
+        this.zoom=zoom;
+    }
+    
 }
