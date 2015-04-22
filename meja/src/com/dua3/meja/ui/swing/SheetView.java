@@ -53,8 +53,6 @@ import javax.swing.KeyStroke;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 
 /**
  * Swing component for displaying instances of class {@link Sheet}.
@@ -638,28 +636,6 @@ public class SheetView extends JPanel implements Scrollable {
                 columnPos[j] = sheetWidthInPoints;
             }
 
-            // set headers
-            addHeadersAsNeeded();
-
-            // listen to Ancestorevents to add headers when view is added to a JScrollPane
-            addAncestorListener(new AncestorListener() {
-
-                @Override
-                public void ancestorAdded(AncestorEvent event) {
-                    addHeadersAsNeeded();
-                }
-
-                @Override
-                public void ancestorRemoved(AncestorEvent event) {
-                    // nop
-                }
-
-                @Override
-                public void ancestorMoved(AncestorEvent event) {
-                    // nop
-                }
-            });
-
             // revalidate the layout
             revalidate();
         } finally {
@@ -668,10 +644,11 @@ public class SheetView extends JPanel implements Scrollable {
 
     }
 
-    /**
-     * Add custom headers to the JScrollPane the view is displayed in.
-     */
-    private void addHeadersAsNeeded() {
+    @Override
+    public void addNotify() {
+        super.addNotify();
+
+        // Add custom headers to the JScrollPane the view is displayed in.
         Container parent = getParent();
         if (parent instanceof JViewport) {
             parent = parent.getParent();
