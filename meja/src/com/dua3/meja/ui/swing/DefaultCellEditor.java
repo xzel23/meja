@@ -33,7 +33,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 /**
- *
+ * Default implemantation for cell editor.
  * @author Axel Howind (axel@dua3.com)
  */
 public class DefaultCellEditor implements CellEditor {
@@ -113,14 +113,27 @@ public class DefaultCellEditor implements CellEditor {
             return;
         }
 
+        // update the cell with the new value
         if (commit) {
             updateCellContent();
             sheetView.repaint(sheetView.getCellRect(cell));
         }
+        
+        // reset editor state
         this.cell = null;
         component.setText("");
         component.setVisible(false);
-        component.transferFocusBackward();
+        
+        // inform the sheetView
+        sheetView.stoppedEditing();
+        
+        // give focus back to sheetview
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                sheetView.requestFocusInWindow();
+            }
+        });
     }
 
     protected void updateCellContent() {

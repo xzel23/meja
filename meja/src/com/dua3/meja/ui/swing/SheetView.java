@@ -353,14 +353,21 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * End edit mode for the current cell.
-     *
      * @param commit true if the content of the edited cell is to be updated
      */
-    private void stopEditing(boolean commit) {
+    public void stopEditing(boolean commit) {
         editor.stopEditing(commit);
-        editing = false;
     }
 
+    /**
+     * Reset editing state when finished editing.
+     * This method should only be called from the {@link CellEditor.stopEditing}
+     * method of {@link CellEditor} subclasses.
+     */
+    public void stoppedEditing() {
+        editing = false;        
+    }
+    
     float getScale() {
         return scale;
     }
