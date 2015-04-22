@@ -18,6 +18,7 @@ package com.dua3.meja.excelviewer;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.meja.ui.swing.SheetView;
 import com.dua3.meja.ui.swing.WorkbookView;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -221,7 +222,8 @@ public class ApplicationWindow extends JFrame {
     private void setZoom(float zoom) {
         for (Sheet sheet: workbook) {
             sheet.setZoom(zoom);
-            workbookView.getViewForSheet(sheet.getSheetName()).invalidate();
+            final SheetView view = workbookView.getViewForSheet(sheet.getSheetName());
+            view.updateContent();
         }
     }
 
