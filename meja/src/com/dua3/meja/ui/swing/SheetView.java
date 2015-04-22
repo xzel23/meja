@@ -361,7 +361,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Reset editing state when finished editing.
-     * This method should only be called from the {@link CellEditor.stopEditing}
+     * This method should only be called from the {@link CellEditor#stopEditing}
      * method of {@link CellEditor} subclasses.
      */
     public void stoppedEditing() {
