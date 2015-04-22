@@ -118,9 +118,14 @@ public class CellEditorPane extends JTextPane {
             default:
                 throw new IllegalStateException();
         }
+
+        // these must be set despite already setting the component font
+        StyleConstants.setUnderline(dfltAttr, cellStyle.getFont().isUnderlined());
+        StyleConstants.setStrikeThrough(dfltAttr, cellStyle.getFont().isStrikeThrough());
+
         return dfltAttr;
     }
-    
+
     /**
      * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell
      * type.
