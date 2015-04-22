@@ -22,7 +22,6 @@ import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import com.dua3.meja.util.AttributedStringHelper;
-import com.dua3.meja.util.Cache;
 import java.text.AttributedString;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,46 +56,9 @@ public class CellEditorPane extends JTextPane {
         setEditorKit(new CellEditorKit());
     }
 
-    /**
-     * A font scaled by a given factor.
-     */
-    static class ScaledFont {
-
-        final Font font;
-        final float scale;
-
-        public ScaledFont(Font font, float scale) {
-            this.font = font;
-            this.scale = scale;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof ScaledFont) {
-                ScaledFont other = (ScaledFont) obj;
-                return scale == other.scale && font.equals(other.font);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return Float.floatToRawIntBits(scale) ^ font.hashCode();
-        }
-    }
-
-    static final Cache<ScaledFont, java.awt.Font> fontCache = new Cache<ScaledFont, java.awt.Font>() {
-        @Override
-        protected java.awt.Font create(ScaledFont sf) {
-            Font font = sf.font;
-            float scale = sf.scale;
-            int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-            return new java.awt.Font(font.getFamily(), style, Math.round(scale * font.getSizeInPoints()));
-        }
-    };
-
     static java.awt.Font getAwtFont(Font font, float scale) {
-        return fontCache.get(new ScaledFont(font, scale));
+        int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
+        return new java.awt.Font(font.getFamily(), style, Math.round(scale * font.getSizeInPoints()));
     }
 
     /**
@@ -104,6 +66,7 @@ public class CellEditorPane extends JTextPane {
      *
      * @param cell the cell to display
      * @param scale the scale to apply
+     * @param eval set to true to display formula results instead of the formula itself
      */
     public void setContent(Cell cell, float scale, boolean eval) {
         CellStyle cellStyle = cell.getCellStyle();
@@ -157,7 +120,7 @@ public class CellEditorPane extends JTextPane {
         }
         return dfltAttr;
     }
-
+    
     /**
      * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell
      * type.
