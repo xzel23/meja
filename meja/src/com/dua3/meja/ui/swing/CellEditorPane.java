@@ -215,7 +215,7 @@ public class CellEditorPane extends JTextPane {
 
             int textBlockHeight = 0;
             for (int i = 0; i < spans.length; i++) {
-                textBlockHeight = spans[i];
+                textBlockHeight += spans[i];
             }
 
             final int available = targetSpan - textBlockHeight;
