@@ -15,13 +15,26 @@
  */
 package com.dua3.meja.excelviewer;
 
-import com.dua3.meja.model.generic.GenericWorkbookFactory;
-import com.dua3.meja.model.poi.PoiWorkbookFactory;
+import com.dua3.meja.model.MejaHelper;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.ui.swing.SheetView;
+import com.dua3.meja.ui.swing.WorkbookView;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
@@ -30,7 +43,7 @@ import javax.swing.WindowConstants;
  *
  * @author axel
  */
-public class ExcelViewer {
+public class ExcelViewer extends JFrame {
 
     private static final String PROGRAM_NAME = ExcelViewer.class.getSimpleName();
     private static final int YEAR = 2015;
@@ -71,16 +84,18 @@ public class ExcelViewer {
 
         File file = args.length == 1 ? new File(args[0]) : null;
 
-        ExcelViewer instance = new ExcelViewer();
-
-        ApplicationWindow window = new ApplicationWindow(instance);
+        ExcelViewer window = new ExcelViewer();
         window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         window.setSize(600, 400);
         window.setVisible(true);
 
-        if (file!=null) {
+        if (file != null) {
             window.setCurrentDir(file.getParentFile());
-            window.openFile(file);
+            try {
+                window.setWorkbook(MejaHelper.openWorkbook(file));
+            } catch (IOException ex) {
+                Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, "Could not load workbook from " + file.getAbsolutePath(), ex);
+            }
         }
     }
 
@@ -96,19 +111,266 @@ public class ExcelViewer {
         System.out.format("%s%n%n%s%n", getApplicationName(), getLicenseText());
     }
 
-    private FilterDef[] filters = {
-        new FilterDef("Excel Files", OpenMode.READ_AND_WRITE, PoiWorkbookFactory.instance(), ".xls", ".xlsx", ".xlsm"),
-        new FilterDef("CSV Files", OpenMode.READ_AND_WRITE, GenericWorkbookFactory.instance(), ".csv", ".txt")
-    };
+    public static final String PROPERTY_FILE_CHANGED = "file changed";
 
-    public List<FilterDef> getFileFilters(OpenMode mode) {
-        List<FilterDef> list = new ArrayList<>();
-        for (final FilterDef filter : filters) {
-            if (filter.isAppplicable(mode)) {
-                list.add(filter);
-            }
-        }
-        return list;
+    /**
+     * The application name to show in title bar.
+     */
+    public final static String APPLICATION_NAME = "Méja ExcelViewer";
+
+    /**
+     * The currently opened workbook.
+     */
+    private Workbook workbook = null;
+
+    /**
+     * The current directory.
+     *
+     * This is the default directory selected in the Open and Save To dialogs.
+     */
+    private File currentDir = new File(".");
+    private WorkbookView workbookView = null;
+
+    /**
+     * Constructor.
+     */
+    public ExcelViewer() {
+        super(APPLICATION_NAME);
+        createMenu();
+        createContent();
+        pack();
     }
 
+    /**
+     * Sets the current directory for this window.
+     *
+     * @param currentDir directory to set as current directory
+     */
+    public void setCurrentDir(File currentDir) {
+        this.currentDir = currentDir;
+    }
+
+    /**
+     * Returns the current directory for this window.
+     *
+     * @return current directory
+     */
+    public File getCurrentDir() {
+        return currentDir;
+    }
+
+    /**
+     * Creates the application menu bar.
+     */
+    private void createMenu() {
+        JMenuBar menuBar = new JMenuBar();
+
+        // File menu
+        JMenu mnFile = new JMenu("File");
+        mnFile.add(new AbstractAction("Open") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showOpenDialog();
+            }
+        });
+        mnFile.add(new AbstractAction("Save") {
+
+            {
+                // enable when workbook is loaded
+                PropertyChangeListener listener = new PropertyChangeListener() {
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if (PROPERTY_FILE_CHANGED.equals(evt.getPropertyName())) {
+                            setEnabled(evt.getNewValue() != null);
+                        }
+                    }
+                };
+                ExcelViewer.this.addPropertyChangeListener(PROPERTY_FILE_CHANGED, listener);
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveWorkbook();
+            }
+
+        });
+        mnFile.addSeparator();
+        mnFile.add(new AbstractAction("Exit") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                closeApplication();
+            }
+        });
+        menuBar.add(mnFile);
+
+        // Options menu
+        JMenu mnOptions = new JMenu("Options");
+
+        JMenu mnLookAndFeel = new JMenu("Look & Feel");
+        mnLookAndFeel.add(new AbstractAction("System Default") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        });
+        mnLookAndFeel.add(new AbstractAction("Cross Platform") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+            }
+        });
+        mnLookAndFeel.addSeparator();
+        for (final UIManager.LookAndFeelInfo lAF : UIManager.getInstalledLookAndFeels()) {
+            mnLookAndFeel.add(new AbstractAction(lAF.getName()) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setLookAndFeel(lAF.getClassName());
+                }
+            });
+        }
+
+        mnOptions.add(mnLookAndFeel);
+
+        JMenu mnZoom = new JMenu("Zoom");
+        for (final int zoom : new int[]{25, 50, 75, 100, 125, 150, 200, 400}) {
+            mnZoom.add(new AbstractAction(zoom + "%") {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setZoom(zoom / 100.0f);
+                }
+            });
+        }
+        mnOptions.add(mnZoom);
+
+        menuBar.add(mnOptions);
+
+        // Help menu
+        JMenu mnHelp = new JMenu("Help");
+        mnHelp.add(new AbstractAction("About ...") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = "About " + ExcelViewer.getApplicationName();
+                String msg = ExcelViewer.getLicenseText();
+                JOptionPane.showMessageDialog(ExcelViewer.this, msg, title, JOptionPane.INFORMATION_MESSAGE, null);
+                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        });
+        menuBar.add(mnHelp);
+
+        setJMenuBar(menuBar);
+    }
+
+    private void setLookAndFeel(String lookAndFeelClassName) {
+        try {
+            UIManager.setLookAndFeel(lookAndFeelClassName);
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        SwingUtilities.updateComponentTreeUI(this);
+    }
+
+    private void setZoom(float zoom) {
+        for (Sheet sheet : workbook) {
+            sheet.setZoom(zoom);
+            final SheetView view = workbookView.getViewForSheet(sheet.getSheetName());
+            view.updateContent();
+        }
+    }
+
+    private void createContent() {
+        setLayout(new BorderLayout());
+        workbookView = new WorkbookView();
+        add(workbookView, BorderLayout.CENTER);
+    }
+
+    /**
+     * Close the application window.
+     */
+    private void closeApplication() {
+        Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Closing.");
+        dispose();
+    }
+
+    /**
+     * Show the Open dialog.
+     */
+    private void showOpenDialog() {
+        try {
+            final Workbook workbook = MejaHelper.showDialogAndOpenWorkbook(this, currentDir);
+            setWorkbook(workbook);
+            Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", workbook.getUri());
+        } catch (IOException ex) {
+            Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Set the current workbook.
+     *
+     * @param workbook the workbook
+     */
+    public void setWorkbook(Workbook workbook) {
+        final URI oldUri;
+        if (this.workbook != null) {
+            oldUri = this.workbook.getUri();
+            try {
+                this.workbook.close();
+            } catch (Exception ex) {
+                Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, "IOException when closing workbook.", ex);
+            }
+        } else {
+            oldUri = null;
+        }
+
+        this.workbook = workbook;
+        URI newUri = workbook != null ? workbook.getUri() : null;
+
+        if (newUri != null) {
+            setTitle(APPLICATION_NAME + " - " + newUri.getPath());
+            try {
+                currentDir = new File(newUri);
+            } catch (IllegalArgumentException e) {
+                //nop
+            }
+        } else {
+            setTitle(APPLICATION_NAME);
+        }
+
+        workbookView.setWorkbook(workbook);
+        workbookView.setEditable(true);
+        firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
+    }
+
+    public void saveWorkbook() {
+        if (workbook == null) {
+            return;
+        }
+
+        URI uri = workbook.getUri();
+        try {
+            if (uri == null) {
+                uri = MejaHelper.showDialogAndSaveWorkbook(this, workbook, currentDir);
+                if (uri == null) {
+                    // user cancelled the dialog
+                    return;
+                }
+            } else {
+                File file = new File(uri);
+                workbook.write(file, true);
+            }
+            Logger.getLogger(ExcelViewer.class.getName()).log(
+                    Level.INFO,
+                    "Workbook saved to {0}.",
+                    uri.getPath());
+        } catch (IOException ex) {
+            Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, "IO-Error saving workbook", ex);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "IO-Error saving workbook.",
+                    "Workbook could not be saved.",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

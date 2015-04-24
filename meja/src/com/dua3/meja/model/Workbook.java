@@ -18,6 +18,7 @@ package com.dua3.meja.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 
@@ -31,6 +32,24 @@ import java.text.NumberFormat;
  */
 public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
+    /**
+     * Get the URI for this workbook.
+     * 
+     * <p>
+     * When a workbook is opened, the URI is set so that it can be used to later
+     * save the file back to the same location.
+     * </p>
+     * @return the URI for this workbook, or {@code null} if none was set
+     */
+    URI getUri();
+
+    /**
+     * Set URI for this workbook.
+     * See {@link #getUri}.
+     * @param uri the URI to set.
+     */
+    void setUri(URI uri);
+    
     /**
      * Returns number of sheets in this workbook.
      * @return sheet
@@ -73,6 +92,10 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      */
     Sheet createSheet(String sheetName);
 
+    /**
+     * Get default cell style for this workbook.
+     * @return the default cell style
+     */
     CellStyle getDefaultCellStyle();
 
     /**

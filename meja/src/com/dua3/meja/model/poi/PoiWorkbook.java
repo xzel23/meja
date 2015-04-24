@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -73,11 +74,13 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     protected final List<PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR>> sheets = new ArrayList<>();
     protected final Map<String, Short> cellStyles = new HashMap<>();
     protected final org.apache.poi.ss.usermodel.DataFormatter dataFormatter;
+    protected URI uri;
 
-    protected PoiWorkbook(WORKBOOK poiWorkbook, Locale locale) {
+    protected PoiWorkbook(WORKBOOK poiWorkbook, Locale locale, URI uri) {
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
         this.dataFormatter = new org.apache.poi.ss.usermodel.DataFormatter(locale);
+        this.uri = uri;
     }
 
     protected abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> createSheet(SHEET poiSheet);
@@ -216,13 +219,23 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         };
     }
 
+    @Override
+    public URI getUri() {
+        return uri;
+    }
+
+    @Override
+    public void setUri(URI uri) {
+        this.uri = uri;
+    }
+            
     static class PoiHssfWorkbook
             extends PoiWorkbook<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 
         private final PoiHssfCellStyle defaultCellStyle;
 
-        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Locale locale) {
-            super(poiWorkbook, locale);
+        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Locale locale, URI uri) {
+            super(poiWorkbook, locale, uri);
             this.defaultCellStyle = new PoiHssfCellStyle(this, poiWorkbook.getCellStyleAt((short) 0));
             init();
         }
@@ -303,8 +316,8 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
 
         private final PoiXssfCellStyle defaultCellStyle;
 
-        public PoiXssfWorkbook(XSSFWorkbook poiWorkbook, Locale locale) {
-            super(poiWorkbook, locale);
+        public PoiXssfWorkbook(XSSFWorkbook poiWorkbook, Locale locale, URI uri) {
+            super(poiWorkbook, locale, uri);
             this.defaultCellStyle = new PoiXssfCellStyle(this, poiWorkbook.getCellStyleAt((short) 0));
             init();
         }
