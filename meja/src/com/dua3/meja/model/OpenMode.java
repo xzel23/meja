@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.excelviewer;
+package com.dua3.meja.model;
 
 /**
  *
  * @author axel
  */
-public enum OpenMode {
-    READ, WRITE, READ_AND_WRITE
 
-}

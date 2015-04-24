@@ -18,10 +18,10 @@ package com.dua3.meja.model.generic;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.poi.PoiSheet;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -41,9 +41,11 @@ public class GenericWorkbook implements Workbook {
     final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
     final Locale locale;
     private GenericCellStyle defaultCellStyle = new GenericCellStyle();
+    private URI uri;
 
-    public GenericWorkbook(Locale locale) {
+    public GenericWorkbook(Locale locale, URI uri) {
         this.locale = locale;
+        this.uri=uri;
     }
 
     @Override
@@ -135,4 +137,14 @@ public class GenericWorkbook implements Workbook {
         };
     }
 
+    @Override
+    public URI getUri() {
+        return uri;
+    }
+
+    @Override
+    public void setUri(URI uri) {
+        this.uri = uri;
+    }
+    
 }

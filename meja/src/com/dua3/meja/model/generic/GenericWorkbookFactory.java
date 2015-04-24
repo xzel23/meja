@@ -40,7 +40,7 @@ public class GenericWorkbookFactory extends WorkbookFactory {
     @Override
     public GenericWorkbook open(File file) throws IOException {
         Locale locale = Locale.getDefault();
-        GenericWorkbook workbook = new GenericWorkbook(locale);
+        GenericWorkbook workbook = new GenericWorkbook(locale, file.toURI());
         GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(file.getName()), locale);
         try (CsvReader reader = CsvReader.createReader(builder, file)) {
             reader.readAll();
@@ -53,7 +53,7 @@ public class GenericWorkbookFactory extends WorkbookFactory {
     @Override
     public GenericWorkbook create() {
         Locale locale = Locale.getDefault();
-        return new GenericWorkbook(locale);
+        return new GenericWorkbook(locale, null);
     }
 
 }

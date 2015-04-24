@@ -70,6 +70,10 @@ public class WorkbookView extends JComponent {
     }
 
     public void setEditable(boolean editable) {
+        if (content==null) {
+            return;
+        }
+        
         for (int i = 0; i < content.getTabCount(); i++) {
             Component scrollPane = content.getComponentAt(i);
             if (scrollPane != null) {

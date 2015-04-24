@@ -29,6 +29,9 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import java.io.FileInputStream;
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -50,21 +53,21 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
         // Do not use the create(File) method to avoid exception when trying to 
         // save the workbook again. 
         try (InputStream in = new FileInputStream(file)) {            
-            return open(in, Locale.getDefault());
+            return open(in, Locale.getDefault(), file.toURI());
         }
     }
 
-    public Workbook open(InputStream in)
+    public Workbook open(InputStream in, URI uri)
             throws IOException {
-        return open(in, Locale.getDefault());
+        return open(in, Locale.getDefault(), uri);
     }
 
-    public Workbook open(InputStream in, Locale locale)
+    public Workbook open(InputStream in, Locale locale, URI uri)
             throws IOException {
         try {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
                     .create(in);
-            return createWorkbook(poiWorkbook, locale);
+            return createWorkbook(poiWorkbook, locale, uri);
         } catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException ex) {
             throw new FileFormatException(ex.getMessage());
         }
@@ -86,7 +89,14 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
     public Workbook open(URL url, Locale locale)
             throws IOException {
         try (InputStream in = new BufferedInputStream(url.openStream())) {
-            return open(in, locale);
+            URI uri;
+            try {
+                uri = url.toURI();
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(PoiWorkbookFactory.class.getName()).log(Level.WARNING, "Could not get URI from URL.", ex);
+                uri = null;
+            }
+            return open(in, locale, uri);
         }
     }
 
@@ -101,7 +111,7 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 
     public Workbook createXls(Locale locale) {
         return new PoiHssfWorkbook(
-                new org.apache.poi.hssf.usermodel.HSSFWorkbook(), locale);
+                new org.apache.poi.hssf.usermodel.HSSFWorkbook(), locale, null);
     }
 
     public Workbook createXlsx() {
@@ -110,19 +120,19 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 
     public Workbook createXlsx(Locale locale) {
         return new PoiXssfWorkbook(
-                new org.apache.poi.xssf.usermodel.XSSFWorkbook(), locale);
+                new org.apache.poi.xssf.usermodel.XSSFWorkbook(), locale, null);
     }
 
     private Workbook createWorkbook(
-            final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale) {
+            final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
         if (poiWorkbook instanceof org.apache.poi.hssf.usermodel.HSSFWorkbook) {
             return new PoiHssfWorkbook(
                     (org.apache.poi.hssf.usermodel.HSSFWorkbook) poiWorkbook,
-                    locale);
+                    locale, uri);
         } else if (poiWorkbook instanceof org.apache.poi.xssf.usermodel.XSSFWorkbook) {
             return new PoiXssfWorkbook(
                     (org.apache.poi.xssf.usermodel.XSSFWorkbook) poiWorkbook,
-                    locale);
+                    locale, uri);
         } else {
             throw new IllegalStateException();
         }
