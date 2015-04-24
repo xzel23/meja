@@ -16,7 +16,8 @@
 package com.dua3.meja.io;
 
 /**
- *
+ * Exception class for reporting CSV format violations.
+ * 
  * @author Axel Howind (axel@dua3.com)
  */
 public class CsvFormatException extends FileFormatException {
@@ -25,12 +26,22 @@ public class CsvFormatException extends FileFormatException {
     private final String source;
     private final int line;
 
+    /**
+     * Construct a new CsvFormatException.
+     * @param message the message  to report
+     * @param source a text describing the source (preferably the filename)
+     * @param line the line number of the CSV file where the error occurred
+     */
     public CsvFormatException(String message, String source, int line) {
         super(message);
         this.source=source;
         this.line = line;
     }
 
+    /**
+     * Get exception message.
+     * @return the exception message
+     */
     @Override
     public String getMessage() {
         if (source!=null && !source.isEmpty()) {
