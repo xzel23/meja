@@ -168,6 +168,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Check whether editing is enabled.
+     *
      * @return true if this SheetView allows editing.
      */
     public boolean isEditable() {
@@ -176,6 +177,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Enable/disable sheet editing.
+     *
      * @param editable true to allow editing
      */
     public void setEditable(boolean editable) {
@@ -189,6 +191,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * Check editing state.
+     *
      * @return true, if a cell is being edited.
      */
     public boolean isEditing() {
@@ -353,6 +356,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     /**
      * End edit mode for the current cell.
+     *
      * @param commit true if the content of the edited cell is to be updated
      */
     public void stopEditing(boolean commit) {
@@ -360,44 +364,44 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     /**
-     * Reset editing state when finished editing.
-     * This method should only be called from the {@link CellEditor#stopEditing}
-     * method of {@link CellEditor} subclasses.
+     * Reset editing state when finished editing. This method should only be
+     * called from the {@link CellEditor#stopEditing} method of
+     * {@link CellEditor} subclasses.
      */
     public void stoppedEditing() {
         editing = false;
     }
 
     float getScale() {
-        return sheet.getZoom()*scaleDpi;
+        return sheet == null ? 1.0f : sheet.getZoom() * scaleDpi;
     }
 
     /**
      * @return the columnPos
      */
     public int getColumnPos(int j) {
-        return Math.round(columnPos[j]*getScale());
+        return Math.round(columnPos[j] * getScale());
     }
 
     /**
      * @return the rowPos
      */
     public int getRowPos(int i) {
-        return Math.round(rowPos[i]*getScale());
+        return Math.round(rowPos[i] * getScale());
     }
 
     /**
      * @return the sheetWidth
      */
     public int getSheetWidth() {
-        return Math.round(sheetWidthInPoints*getScale());
+        return Math.round(sheetWidthInPoints * getScale());
     }
 
     /**
      * @return the sheetHeight
      */
     public int getSheetHeight() {
-        return Math.round(sheetHeightInPoints*getScale());
+        return Math.round(sheetHeightInPoints * getScale());
     }
 
     /**
@@ -836,7 +840,7 @@ public class SheetView extends JPanel implements Scrollable {
         final int maxX = clipBounds.x + clipBounds.width;
 
         // draw horizontal grid lines
-        for (int i=0;i<rowPos.length;i++) {
+        for (int i = 0; i < rowPos.length; i++) {
             int gridY = getRowPos(i);
 
             if (gridY < minY) {
@@ -851,7 +855,7 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         // draw vertical grid lines
-        for (int j=0;j<columnPos.length;j++) {
+        for (int j = 0; j < columnPos.length; j++) {
             int gridX = getColumnPos(j);
 
             if (gridX < minX) {
