@@ -15,7 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.meja.model.MejaHelper;
+import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;

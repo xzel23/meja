@@ -16,7 +16,7 @@
 package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.MejaHelper;
+import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import java.text.DateFormat;

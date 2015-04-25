@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.model;
+package com.dua3.meja.util;
 
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.WorkbookFactory.FilterDef;
 import com.dua3.meja.model.WorkbookFactory.OpenMode;
 import java.awt.Component;
@@ -246,13 +251,13 @@ public class MejaHelper {
     /**
      * Show file selection dialog and save workbook.
      * <p>A file selection dialog is shown and the workbook is saved to the
-     * selected file. If the file already exists, a confirmation dialog is 
+     * selected file. If the file already exists, a confirmation dialog is
      * shown, asking the user whether to overwrite the file.</p>
      * @param parent the parent component for the dialog
      * @param workbook the workbook to save
      * @param file the file to set the default path in the dialog
-     * @return the URI the file was saved to or {@code null} if the user 
-     * cancelled the dialog
+     * @return the URI the file was saved to or {@code null} if the user
+     * canceled the dialog
      * @throws IOException if an exception occurs while saving
      */
     public static URI showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file) throws IOException {

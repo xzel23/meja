@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Abstract base class for workbook factories.
  *
  * @author axel
  */
@@ -77,7 +78,7 @@ public abstract class WorkbookFactory {
 
         /**
          * Construct a new FilterDef instance.
-         * 
+         *
          * @param description the description to show in file dialogs
          * @param mode the {@link OpenMode} supported by this filter
          * @param factory the {@link WorkbookFactory} used by this filter
@@ -102,7 +103,7 @@ public abstract class WorkbookFactory {
 
         /**
          * Check if the requested operation is supported ny this filter.
-         * 
+         *
          * @param modeRequested the {@link OpenMode}
          * @return true if operation is suppurted
          */

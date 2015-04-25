@@ -16,7 +16,8 @@
 package com.dua3.meja.model;
 
 /**
- *
+ * Horizontal alignment.
+ * 
  * @author axel
  */
 public enum HAlign {
@@ -51,7 +52,7 @@ public enum HAlign {
 
     /**
      * Get automatic wrapping for this alignment.
-     * 
+     *
      * When laying out text justified, the text is automatically wrapped
      * regardless of the cell style setting.
      * @return true if text should be wrapped regardless of cell style

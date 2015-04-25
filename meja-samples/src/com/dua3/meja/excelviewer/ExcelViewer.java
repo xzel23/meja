@@ -15,7 +15,7 @@
  */
 package com.dua3.meja.excelviewer;
 
-import com.dua3.meja.model.MejaHelper;
+import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.swing.SheetView;
@@ -40,7 +40,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 /**
- *
+ * A sample Swing application that uses the Meja library to load and display
+ * Excel sheets or CSv data.
+ * 
  * @author axel
  */
 public class ExcelViewer extends JFrame {

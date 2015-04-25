@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.meja.ui.swing.WorkbookView;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,17 +25,19 @@ import java.text.NumberFormat;
 
 /**
  * Workbook class.
- *
+ * <p>
  * A workbook consists of different sheets which can be accessed by number
- * or name.
- *
+ * or name. Use one of the concrete implementations of {@link WorkbookFactory}
+ * to read a workbook from disk. Workbooks can be displayed in Swing
+ * applications using the {@link WorkbookView} class.
+ * </p>
  * @author axel
  */
 public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Get the URI for this workbook.
-     * 
+     *
      * <p>
      * When a workbook is opened, the URI is set so that it can be used to later
      * save the file back to the same location.
@@ -49,7 +52,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param uri the URI to set.
      */
     void setUri(URI uri);
-    
+
     /**
      * Returns number of sheets in this workbook.
      * @return sheet
@@ -80,7 +83,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Writes the workbook to a file.
      * @param file file to write to
-     * @param overwriteIfExists set to true if an existing file should be overwritten
+     * @param overwriteIfExists set to true if an existing Anfile should be overwritten
      * @throws java.io.IOException
      */
     void write(File file, boolean overwriteIfExists) throws IOException;

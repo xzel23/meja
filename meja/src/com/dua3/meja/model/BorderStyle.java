@@ -18,7 +18,8 @@ package com.dua3.meja.model;
 import java.awt.Color;
 
 /**
- *
+ * Definition of  a cell border.
+ * 
  * @author axel
  */
 public class BorderStyle {

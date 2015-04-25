@@ -13,29 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.model;
 
 /**
- * Direction.
- * 
- * @author axel
+ * Helper and utility classes used by the Meja library.
  */
-public enum Direction {
-    /**
-     * North (top) direction.
-     */
-    NORTH,
-    /**
-     * East (right) direction.
-     */
-    EAST,
-    /**
-     * South (bottom) direction.
-     */
-    SOUTH,
-
-    /**
-     * West (left) direction.
-     */
-    WEST;
-}
+package com.dua3.meja.util;

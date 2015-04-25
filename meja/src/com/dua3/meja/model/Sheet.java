@@ -21,6 +21,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import javax.swing.table.TableModel;
 
 /**
+ * An interface representing a single sheet of a workbook.
  *
  * @author axel
  */
@@ -171,7 +172,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @param zoom zoom factor, 1.0f=100%
      */
     void setZoom(float zoom);
-    
+
     /**
      * Get the zoom factor for this sheet.
      * @return zoom factor, 1.0=100%

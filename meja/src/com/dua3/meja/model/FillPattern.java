@@ -16,7 +16,7 @@
 package com.dua3.meja.model;
 
 /**
- *
+ * Fill patterns for setting the background of cells.
  * @author axel
  */
 public enum FillPattern {

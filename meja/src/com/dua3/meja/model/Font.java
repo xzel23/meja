@@ -18,6 +18,7 @@ package com.dua3.meja.model;
 import java.awt.Color;
 
 /**
+ * Interface describing fonts used in workbooks.
  *
  * @author axel
  */
@@ -28,19 +29,19 @@ public interface Font {
      * @return the text color.
      */
     Color getColor();
-    
+
     /**
      * Get font size.
      * @return the font size in points.
      */
     float getSizeInPoints();
-    
+
     /**
      * Get font family.
      * @return the font family as {@code String}.
      */
     String getFamily();
-    
+
     /**
      * Get bold property.
      * @return true if font is bold.
@@ -52,13 +53,13 @@ public interface Font {
      * @return true if font is italic.
      */
     boolean isItalic();
-    
+
     /**
      * Get underlined property.
      * @return true if font is underlined.
      */
     boolean isUnderlined();
-    
+
     /**
      * Get strike-through property.
      * @return true if font is strike-through.

@@ -16,7 +16,8 @@
 package com.dua3.meja.model;
 
 /**
- *
+ * Definition of cell types.
+ * 
  * @author axel
  */
 public enum CellType {

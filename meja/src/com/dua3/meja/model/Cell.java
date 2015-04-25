@@ -20,7 +20,8 @@ import java.text.AttributedString;
 import java.util.Date;
 
 /**
- *
+ * A single cell of a sheet.
+ * 
  * @author axel
  */
 public interface Cell {
