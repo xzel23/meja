@@ -816,57 +816,12 @@ public class SheetView extends JPanel implements Scrollable {
             g2d.setBackground(sheet.getWorkbook().getDefaultCellStyle().getFillBgColor());
             g2d.clearRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
 
-            drawGrid(g2d);
             drawCells(g2d, CellDrawMode.DRAW_CELL_BACKGROUND);
             drawCells(g2d, CellDrawMode.DRAW_CELL_BORDER);
             drawCells(g2d, CellDrawMode.DRAW_CELL_FOREGROUND);
             drawSelection(g2d);
         } finally {
             readLock.unlock();
-        }
-    }
-
-    /**
-     * Draw the grid.
-     *
-     * @param g
-     */
-    private void drawGrid(Graphics2D g) {
-        g.setColor(gridColor);
-
-        final int minY = clipBounds.y;
-        final int maxY = clipBounds.y + clipBounds.height;
-        final int minX = clipBounds.x;
-        final int maxX = clipBounds.x + clipBounds.width;
-
-        // draw horizontal grid lines
-        for (int i = 0; i < rowPos.length; i++) {
-            int gridY = getRowPos(i);
-
-            if (gridY < minY) {
-                // visible region not reached
-                continue;
-            }
-            if (gridY > maxY) {
-                // out of visible region
-                break;
-            }
-            g.drawLine(minX, gridY, maxX, gridY);
-        }
-
-        // draw vertical grid lines
-        for (int j = 0; j < columnPos.length; j++) {
-            int gridX = getColumnPos(j);
-
-            if (gridX < minX) {
-                // visible region not reached
-                continue;
-            }
-            if (gridX > maxX) {
-                // out of visible region
-                break;
-            }
-            g.drawLine(gridX, minY, gridX, maxY);
         }
     }
 
@@ -969,14 +924,18 @@ public class SheetView extends JPanel implements Scrollable {
      * @param cell cell to draw
      */
     private void drawCellBackground(Graphics2D g, Cell cell) {
+        Rectangle cr = getCellRect(cell);
+
+        // draw grid lines
+        g.setColor(gridColor);
+        g.drawRect(cr.x, cr.y, cr.width-1, cr.height-1);
+
         CellStyle style = cell.getCellStyle();
         FillPattern pattern = style.getFillPattern();
 
         if (pattern == FillPattern.NONE) {
             return;
         }
-
-        Rectangle cr = getCellRect(cell);
 
         if (pattern != FillPattern.SOLID) {
             Color fillBgColor = style.getFillBgColor();
