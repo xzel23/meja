@@ -15,21 +15,20 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.util.Locale;
-
 import com.dua3.meja.io.FileFormatException;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,9 +49,9 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 
     @Override
     public Workbook open(File file) throws IOException {
-        // Do not use the create(File) method to avoid exception when trying to 
-        // save the workbook again. 
-        try (InputStream in = new FileInputStream(file)) {            
+        // Do not use the create(File) method to avoid exception when trying to
+        // save the workbook again.
+        try (InputStream in = new FileInputStream(file)) {
             return open(in, Locale.getDefault(), file.toURI());
         }
     }
@@ -68,8 +67,8 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
                     .create(in);
             return createWorkbook(poiWorkbook, locale, uri);
-        } catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException ex) {
-            throw new FileFormatException(ex.getMessage());
+        } catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException|org.apache.poi.util.RecordFormatException ex) {
+            throw new FileFormatException("Invalid file format or corrupted data", ex);
         }
     }
 
