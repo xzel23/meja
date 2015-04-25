@@ -33,7 +33,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 /**
- * Default implemantation for cell editor.
+ * Default implementation for cell editor.
  * @author Axel Howind (axel@dua3.com)
  */
 public class DefaultCellEditor implements CellEditor {
@@ -58,7 +58,20 @@ public class DefaultCellEditor implements CellEditor {
                             }
                         };
                     }
+                },
+        ABORT {
+                    @SuppressWarnings("serial")
+                    @Override
+                    public Action getAction(final DefaultCellEditor editor) {
+                        return new AbstractAction("ABORT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                editor.stopEditing(false);
+                            }
+                        };
+                    }
                 };
+
 
         abstract Action getAction(DefaultCellEditor editor);
     }
@@ -72,6 +85,7 @@ public class DefaultCellEditor implements CellEditor {
         // setup input map for keyboard navigation
         final InputMap inputMap = component.getInputMap(JComponent.WHEN_FOCUSED);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, 0), DefaultCellEditor.Actions.COMMIT);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), DefaultCellEditor.Actions.ABORT);
 
         final ActionMap actionMap = component.getActionMap();
         for (DefaultCellEditor.Actions action : DefaultCellEditor.Actions.values()) {
@@ -118,15 +132,15 @@ public class DefaultCellEditor implements CellEditor {
             updateCellContent();
             sheetView.repaint(sheetView.getCellRect(cell));
         }
-        
+
         // reset editor state
         this.cell = null;
         component.setText("");
         component.setVisible(false);
-        
+
         // inform the sheetView
         sheetView.stoppedEditing();
-        
+
         // give focus back to sheetview
         SwingUtilities.invokeLater(new Runnable() {
             @Override
