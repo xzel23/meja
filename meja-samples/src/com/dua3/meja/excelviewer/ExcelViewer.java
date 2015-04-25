@@ -299,10 +299,13 @@ public class ExcelViewer extends JFrame {
     private void showOpenDialog() {
         try {
             final Workbook workbook = MejaHelper.showDialogAndOpenWorkbook(this, currentDir);
-            setWorkbook(workbook);
-            Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", workbook.getUri());
+            if (workbook!=null) {
+                setWorkbook(workbook);
+                Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", workbook.getUri());
+            }
         } catch (IOException ex) {
-            Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
+            JOptionPane.showMessageDialog(this, "Error loading workbook: "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
