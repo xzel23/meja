@@ -23,6 +23,12 @@ package com.dua3.meja.model;
 public interface Row extends Iterable<Cell> {
 
     /**
+     * Get the workbook this row belongs to.
+     * @return the workbook
+     */
+    Workbook getWorkbook();
+    
+    /**
      * Get the sheet this row belongs to.
      * @return the sheet
      */

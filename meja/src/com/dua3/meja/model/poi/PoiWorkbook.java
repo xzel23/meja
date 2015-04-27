@@ -20,10 +20,6 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
-import com.dua3.meja.model.poi.PoiFont.PoiHssfFont;
-import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
-import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
-import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,56 +35,45 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
  * @author axel
- * @param <WORKBOOK>
- * @param <SHEET>
- * @param <ROW>
- * @param <CELL>
- * @param <CELLSTYLE>
- * @param <COLOR>
  */
-public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.Workbook, SHEET extends org.apache.poi.ss.usermodel.Sheet, ROW extends org.apache.poi.ss.usermodel.Row, CELL extends org.apache.poi.ss.usermodel.Cell, CELLSTYLE extends org.apache.poi.ss.usermodel.CellStyle, COLOR extends org.apache.poi.ss.usermodel.Color>
-        implements Workbook {
+public abstract class PoiWorkbook implements Workbook {
 
-    protected final WORKBOOK poiWorkbook;
+    protected final org.apache.poi.ss.usermodel.Workbook poiWorkbook;
     protected final FormulaEvaluator evaluator;
-    protected final List<PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR>> sheets = new ArrayList<>();
+    protected final List<PoiSheet> sheets = new ArrayList<>();
     protected final Map<String, Short> cellStyles = new HashMap<>();
     protected final org.apache.poi.ss.usermodel.DataFormatter dataFormatter;
+    protected Locale locale;
     protected URI uri;
 
-    protected PoiWorkbook(WORKBOOK poiWorkbook, Locale locale, URI uri) {
+    protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
+        this.locale = locale;
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
         this.dataFormatter = new org.apache.poi.ss.usermodel.DataFormatter(locale);
         this.uri = uri;
     }
 
-    protected abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> createSheet(SHEET poiSheet);
-
     @SuppressWarnings("unchecked")
     protected void init() {
         for (int i = 0; i < poiWorkbook.getNumberOfSheets(); i++) {
-            sheets.add(createSheet((SHEET) poiWorkbook.getSheetAt(i)));
+            sheets.add(createSheet(poiWorkbook.getSheetAt(i)));
         }
     }
 
@@ -96,7 +81,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         return dataFormatter;
     }
 
-    abstract Color getColor(COLOR poiColor, Color defaultColor);
+    abstract Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor);
 
     @Override
     public int getNumberOfSheets() {
@@ -105,13 +90,13 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     }
 
     @Override
-    public PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheetByNr(int sheetNr) {
+    public PoiSheet getSheetByNr(int sheetNr) {
         return sheets.get(sheetNr);
     }
 
     @Override
-    public PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheetByName(String sheetName) {
-        for (PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> sheet : sheets) {
+    public PoiSheet getSheetByName(String sheetName) {
+        for (PoiSheet sheet : sheets) {
             if (sheet.getSheetName().equals(sheetName)) {
                 return sheet;
             }
@@ -119,11 +104,12 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         throw new IllegalArgumentException("No sheet '" + sheetName + "'.");
     }
 
-    public abstract PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getPoiCellStyle(CELLSTYLE cellStyle);
+    public abstract PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle cellStyle);
 
-    public abstract PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getDefaultCellStyle();
+    @Override
+    public abstract PoiCellStyle getDefaultCellStyle();
 
-    WORKBOOK getPoiWorkbook() {
+    org.apache.poi.ss.usermodel.Workbook getPoiWorkbook() {
         return poiWorkbook;
     }
 
@@ -166,23 +152,23 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
 
     @SuppressWarnings("rawtypes")
 	@Override
-    public PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> copyCellStyle(String styleName, CellStyle style) {
-        PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> cellStyle = getCellStyle(styleName);
+    public PoiCellStyle copyCellStyle(String styleName, CellStyle style) {
+        PoiCellStyle cellStyle = getCellStyle(styleName);
         cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
         return cellStyle;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCellStyle(String name) {
+    public PoiCellStyle getCellStyle(String name) {
         Short index = cellStyles.get(name);
-        CELLSTYLE poiCellStyle;
+        org.apache.poi.ss.usermodel.CellStyle poiCellStyle;
         if (index == 0) {
-            poiCellStyle = (CELLSTYLE) poiWorkbook.createCellStyle();
+            poiCellStyle = poiWorkbook.createCellStyle();
             index = poiCellStyle.getIndex();
             cellStyles.put(name, index);
         } else {
-            poiCellStyle = (CELLSTYLE) poiWorkbook.getCellStyleAt(index);
+            poiCellStyle = poiWorkbook.getCellStyleAt(index);
         }
         return getPoiCellStyle(poiCellStyle);
     }
@@ -200,7 +186,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     @Override
     public Iterator<Sheet> iterator() {
         return new Iterator<Sheet>() {
-            Iterator<PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR>> iter = sheets.iterator();
+            Iterator<PoiSheet> iter = sheets.iterator();
             
             @Override
             public boolean hasNext() {
@@ -228,9 +214,26 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     public void setUri(URI uri) {
         this.uri = uri;
     }
-            
-    static class PoiHssfWorkbook
-            extends PoiWorkbook<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
+
+    public PoiFont getFont(org.apache.poi.ss.usermodel.Font poiFont) {
+        return new PoiFont(this, poiFont);
+    }
+
+    public abstract Color getColor(org.apache.poi.ss.usermodel.Font poiFont, Color dfltColor);
+
+    protected PoiSheet createSheet(org.apache.poi.ss.usermodel.Sheet poiSheet) {
+        return new PoiSheet(this, poiSheet);
+    }
+
+    @Override
+    public Sheet createSheet(String sheetName) {
+        org.apache.poi.ss.usermodel.Sheet poiSheet = poiWorkbook.createSheet(sheetName);
+        PoiSheet sheet = new PoiSheet(this, poiSheet);
+        sheets.add(sheet);
+        return sheet;
+    }
+
+    public static class PoiHssfWorkbook extends PoiWorkbook {
 
         private final PoiHssfCellStyle defaultCellStyle;
 
@@ -246,16 +249,16 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         }
 
         Color getColor(short idx) {
-            return getColor(poiWorkbook.getCustomPalette().getColor(idx), null);
+            return getColor(((HSSFWorkbook) poiWorkbook).getCustomPalette().getColor(idx), null);
         }
 
         @Override
-        Color getColor(org.apache.poi.hssf.util.HSSFColor poiColor, Color defaultColor) {
+        Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
             if (poiColor == null || poiColor == HSSFColor.AUTOMATIC.getInstance()) {
                 return defaultColor;
             }
 
-            short[] triplet = poiColor.getTriplet();
+            short[] triplet = ((HSSFColor)poiColor).getTriplet();
 
             if (triplet == null) {
                 return defaultColor;
@@ -269,71 +272,55 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
         }
 
         @Override
-        public PoiHssfSheet getSheetByNr(int sheetNr) {
-            return (PoiSheet.PoiHssfSheet) super.getSheetByNr(sheetNr);
+        public PoiHssfCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
+            return new PoiHssfCellStyle(this, (HSSFCellStyle) poiStyle);
         }
 
-        @Override
-        public PoiHssfSheet getSheetByName(String sheetName) {
-            return (PoiSheet.PoiHssfSheet) super.getSheetByName(sheetName);
+        public PoiFont getFont(short idx) {
+            return getFont(((HSSFWorkbook) poiWorkbook).getFontAt(idx));
         }
-
-        @Override
-        protected PoiHssfSheet createSheet(HSSFSheet poiSheet) {
-            return new PoiHssfSheet(this, poiSheet);
-        }
-
-        @Override
-        public PoiHssfCellStyle getPoiCellStyle(HSSFCellStyle poiStyle) {
-            return new PoiHssfCellStyle(PoiHssfWorkbook.this, poiStyle);
-        }
-
-        public PoiHssfFont getFont(HSSFFont poiFont) {
-            return new PoiHssfFont(PoiHssfWorkbook.this, poiFont);
-        }
-
-        public PoiHssfFont getFont(short idx) {
-            return getFont(poiWorkbook.getFontAt(idx));
-        }
-
-        @Override
-        public Sheet createSheet(String sheetName) {
-            HSSFSheet poiSheet = poiWorkbook.createSheet(sheetName);
-            PoiSheet<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> sheet = new PoiHssfSheet(this, poiSheet);
-            sheets.add(sheet);
-            return sheet;
-        }
-
+        
         public HSSFColor getPoiColor(Color color) {
-            HSSFPalette palette = poiWorkbook.getCustomPalette();
+            HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
             return palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
+        }
+
+        @Override
+        public Color getColor(Font poiFont, Color dfltColor) {
+            return getColor(((HSSFFont)poiFont).getHSSFColor(((HSSFWorkbook)getPoiWorkbook())), Color.BLACK);
         }
 
     }
 
-    static class PoiXssfWorkbook extends PoiWorkbook<
-            XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
+    public static class PoiXssfWorkbook
+    extends PoiWorkbook {
 
         private final PoiXssfCellStyle defaultCellStyle;
 
-        public PoiXssfWorkbook(XSSFWorkbook poiWorkbook, Locale locale, URI uri) {
+        public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
             super(poiWorkbook, locale, uri);
-            this.defaultCellStyle = new PoiXssfCellStyle(this, poiWorkbook.getCellStyleAt((short) 0));
+            assert (poiWorkbook instanceof XSSFWorkbook) || (poiWorkbook instanceof SXSSFWorkbook);
+            this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt((short) 0));
             init();
+        }
+
+        @Override
+        public PoiXssfCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
+            return new PoiXssfCellStyle(this, (XSSFCellStyle) poiStyle);
         }
 
         @Override
         public PoiXssfCellStyle getDefaultCellStyle() {
             return defaultCellStyle;
         }
-
+        
         @Override
-        Color getColor(org.apache.poi.xssf.usermodel.XSSFColor poiColor, Color defaultColor) {
-            if (poiColor == null || poiColor.isAuto()) {
+        Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
+            if (poiColor == null || ((org.apache.poi.xssf.usermodel.XSSFColor)poiColor).isAuto()) {
                 return defaultColor;
             }
 
-            byte[] rgb = poiColor.getARgb();
+            byte[] rgb = ((org.apache.poi.xssf.usermodel.XSSFColor)poiColor).getARgb();
 
             if (rgb == null) {
                 return defaultColor;
@@ -347,40 +334,13 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
             return new Color(r, g, b, a);
         }
 
-        @Override
-        public PoiXssfSheet getSheetByNr(int sheetNr) {
-            return (PoiXssfSheet) super.getSheetByNr(sheetNr);
-        }
-
-        @Override
-        public PoiXssfSheet getSheetByName(String sheetName) {
-            return (PoiXssfSheet) super.getSheetByName(sheetName);
-        }
-
-        @Override
-        protected PoiXssfSheet createSheet(XSSFSheet poiSheet) {
-            return new PoiXssfSheet(this, poiSheet);
-        }
-
-        @Override
-        public PoiXssfCellStyle getPoiCellStyle(XSSFCellStyle poiStyle) {
-            return new PoiXssfCellStyle(PoiXssfWorkbook.this, poiStyle);
-        }
-
-        public PoiXssfFont getFont(XSSFFont poiFont) {
-            return new PoiXssfFont(PoiXssfWorkbook.this, poiFont);
-        }
-
-        @Override
-        public Sheet createSheet(String sheetName) {
-            XSSFSheet poiSheet = poiWorkbook.createSheet(sheetName);
-            PoiSheet<XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> sheet = new PoiXssfSheet(this, poiSheet);
-            sheets.add(sheet);
-            return sheet;
-        }
-
         public XSSFColor getPoiColor(Color color) {
             return new XSSFColor(color);
+        }
+
+        @Override
+        public Color getColor(Font poiFont, Color dfltColor) {
+            return getColor(((XSSFFont)poiFont).getXSSFColor(), Color.BLACK);
         }
 
     }

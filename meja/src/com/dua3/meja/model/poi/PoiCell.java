@@ -18,60 +18,36 @@ package com.dua3.meja.model.poi;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
-import com.dua3.meja.model.poi.PoiFont.PoiHssfFont;
-import com.dua3.meja.model.poi.PoiFont.PoiXssfFont;
-import com.dua3.meja.model.poi.PoiRow.PoiHssfRow;
-import com.dua3.meja.model.poi.PoiRow.PoiXssfRow;
-import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
-import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
-import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.RectangularRegion;
 import java.lang.ref.SoftReference;
 import java.text.AttributedString;
 import java.util.Date;
 import java.util.Objects;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
  * @author axel
- * @param <WORKBOOK> POI workbook class
- * @param <SHEET> POI sheet class
- * @param <ROW> POI row class
- * @param <CELL> POI cell class
- * @param <CELLSTYLE> POI cell style class
- * @param <COLOR> POI color class
  */
-public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workbook, SHEET extends org.apache.poi.ss.usermodel.Sheet, ROW extends org.apache.poi.ss.usermodel.Row, CELL extends org.apache.poi.ss.usermodel.Cell, CELLSTYLE extends org.apache.poi.ss.usermodel.CellStyle, COLOR extends org.apache.poi.ss.usermodel.Color>
-        implements Cell {
+public class PoiCell implements Cell {
 
-    protected final CELL poiCell;
+    protected final PoiWorkbook workbook;
+    protected final PoiRow row;
+    protected final org.apache.poi.ss.usermodel.Cell poiCell;
     protected final RectangularRegion mergedRegion;
     protected final int spanX;
     protected final int spanY;
-    protected final Cell logicalCell;
+    protected final PoiCell logicalCell;
     protected SoftReference<AttributedString> attributedString = new SoftReference<>(null);
 
-    protected PoiCell(CELL cell, PoiRow<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> row) {
+    public PoiCell(PoiRow row, org.apache.poi.ss.usermodel.Cell cell) {
+        this.workbook = row.getWorkbook();
+        this.row = row;
         this.poiCell = cell;
         this.mergedRegion = row.getMergedRegion(cell.getColumnIndex());
 
@@ -103,10 +79,14 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         }
     }
 
-    public abstract PoiWorkbook<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getWorkbook();
+    public PoiWorkbook getWorkbook() {
+        return workbook;        
+    }
 
     @Override
-    public abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheet();
+    public PoiSheet getSheet() {
+        return row.getSheet();
+    }
 
     private CellType translateCellType(int poiType) {
         switch (poiType) {
@@ -127,6 +107,11 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         }
     }
 
+    @Override
+    public PoiRow getRow() {
+        return row;
+    }
+    
     @Override
     public CellType getCellType() {
         return translateCellType(poiCell.getCellType());
@@ -213,11 +198,6 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
-    public abstract PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCellStyle();
-
-    protected abstract PoiFont<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getFontForFormattingRun(RichTextString richText, int i);
-
-    @Override
     public AttributedString getAttributedString() {
         if (isEmpty()) {
             return new AttributedString("");
@@ -267,7 +247,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
-    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> set(Boolean arg) {
+    public PoiCell set(Boolean arg) {
         if (arg == null) {
             clear();
         } else {
@@ -279,7 +259,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
-    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> set(Date arg) {
+    public PoiCell set(Date arg) {
         if (arg == null) {
             clear();
         } else {
@@ -291,7 +271,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
-    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> set(Number arg) {
+    public PoiCell set(Number arg) {
         if (arg == null) {
             clear();
         } else {
@@ -303,7 +283,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
-    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> set(String arg) {
+    public PoiCell set(String arg) {
         if (arg == null) {
             clear();
         } else {
@@ -315,7 +295,7 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
     }
 
     @Override
-    public PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> setFormula(String arg) {
+    public PoiCell setFormula(String arg) {
         if (arg == null) {
             clear();
         } else {
@@ -370,89 +350,16 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         setCellStyle(getWorkbook().getCellStyle(cellStyleName));
     }
 
-    static class PoiHssfCell extends PoiCell<
-            HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
-
-        private final PoiHssfWorkbook workbook;
-        private final PoiHssfRow row;
-
-        PoiHssfCell(PoiHssfRow row, HSSFCell cell) {
-            super(cell, row);
-            this.workbook = row.getWorkbook();
-            this.row = row;
-        }
-
-        @Override
-        public final PoiHssfRow getRow() {
-            return row;
-        }
-
-        @Override
-        public final PoiHssfWorkbook getWorkbook() {
-            return workbook;
-        }
-
-        @Override
-        public PoiHssfSheet getSheet() {
-            return row.getSheet();
-        }
-
-        @Override
-        public PoiHssfCellStyle getCellStyle() {
-            return workbook.getPoiCellStyle(poiCell.getCellStyle());
-        }
-
-        @Override
-        protected PoiHssfFont getFontForFormattingRun(RichTextString richText, int i) {
-            return workbook.getFont(((HSSFRichTextString) richText).getFontOfFormattingRun(i));
-        }
-
-        @Override
-        public void setCellStyle(CellStyle cellStyle) {
-            if (cellStyle instanceof PoiHssfCellStyle) {
-                poiCell.setCellStyle(((PoiHssfCellStyle) cellStyle).poiCellStyle);
-                attributedString.clear();
-            } else {
-                throw new IllegalArgumentException("Incompatible implementation.");
-            }
-        }
-
+    @Override
+    public PoiCellStyle getCellStyle() {
+        return workbook.getPoiCellStyle(poiCell.getCellStyle());
     }
 
-    static class PoiXssfCell extends PoiCell<
-            XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
-
-        private final PoiXssfWorkbook workbook;
-        private final PoiXssfRow row;
-
-        PoiXssfCell(PoiXssfRow row, XSSFCell cell) {
-            super(cell, row);
-            this.workbook = row.getWorkbook();
-            this.row = row;
-        }
-
-        @Override
-        public final PoiXssfRow getRow() {
-            return row;
-        }
-
-        @Override
-        public final PoiXssfWorkbook getWorkbook() {
-            return workbook;
-        }
-
-        @Override
-        public PoiXssfSheet getSheet() {
-            return row.getSheet();
-        }
-
-        @Override
-        public PoiXssfCellStyle getCellStyle() {
-            return workbook.getPoiCellStyle(poiCell.getCellStyle());
-        }
-
-        @Override
-        protected PoiXssfFont getFontForFormattingRun(RichTextString richText, int i) {
+    private PoiFont getFontForFormattingRun(RichTextString richText, int i) {
+        if (richText instanceof HSSFRichTextString) {
+            HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
+            return ((PoiHssfWorkbook)workbook).getFont(hssfRichText.getFontOfFormattingRun(i));
+        } else {
             // Catch NPE as Workaround for Apache POI Bug 56511 (will be fixed in 3.12)
             // https://bz.apache.org/bugzilla/show_bug.cgi?id=56511
             try {
@@ -461,7 +368,6 @@ public abstract class PoiCell<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
                 return getCellStyle().getFont();
             }
         }
-
     }
-
+        
 }
