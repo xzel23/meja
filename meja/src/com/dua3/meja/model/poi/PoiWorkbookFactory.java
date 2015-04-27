@@ -31,6 +31,9 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -118,22 +121,19 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     public Workbook createXlsx(Locale locale) {
-        return new PoiXssfWorkbook(
-                new org.apache.poi.xssf.usermodel.XSSFWorkbook(), locale, null);
+        return new PoiXssfWorkbook(new XSSFWorkbook(), locale, null);
+    }
+
+    public Workbook createXlsxStreaming(Locale locale) {
+        return new PoiXssfWorkbook(new SXSSFWorkbook(), locale, null);
     }
 
     private Workbook createWorkbook(
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
-        if (poiWorkbook instanceof org.apache.poi.hssf.usermodel.HSSFWorkbook) {
-            return new PoiHssfWorkbook(
-                    (org.apache.poi.hssf.usermodel.HSSFWorkbook) poiWorkbook,
-                    locale, uri);
-        } else if (poiWorkbook instanceof org.apache.poi.xssf.usermodel.XSSFWorkbook) {
-            return new PoiXssfWorkbook(
-                    (org.apache.poi.xssf.usermodel.XSSFWorkbook) poiWorkbook,
-                    locale, uri);
+        if (poiWorkbook instanceof HSSFWorkbook) {
+            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, locale, uri);
         } else {
-            throw new IllegalStateException();
+            return new PoiXssfWorkbook(poiWorkbook, locale, uri);
         }
     }
 

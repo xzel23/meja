@@ -18,60 +18,48 @@ package com.dua3.meja.model.poi;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.model.Row;
-import com.dua3.meja.model.poi.PoiCell.PoiHssfCell;
-import com.dua3.meja.model.poi.PoiCell.PoiXssfCell;
-import com.dua3.meja.model.poi.PoiSheet.PoiHssfSheet;
-import com.dua3.meja.model.poi.PoiSheet.PoiXssfSheet;
-import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
-import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.RectangularRegion;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
  * @author axel
- * @param <WORKBOOK> POI workbook class
- * @param <SHEET> POI sheet class
- * @param <ROW> POI row class
- * @param <CELL> POI cell class
- * @param <CELLSTYLE> POI cell style class
- * @param <COLOR> POI color class
  */
-public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbook, SHEET extends org.apache.poi.ss.usermodel.Sheet, ROW extends org.apache.poi.ss.usermodel.Row, CELL extends org.apache.poi.ss.usermodel.Cell, CELLSTYLE extends org.apache.poi.ss.usermodel.CellStyle, COLOR extends org.apache.poi.ss.usermodel.Color>
-        implements Row {
+public class PoiRow implements Row {
 
-    protected final ROW poiRow;
+    protected final PoiSheet sheet;
+    protected final org.apache.poi.ss.usermodel.Row poiRow;
     protected final int rowNumber;
     protected final List<RectangularRegion> mergedRegions = new ArrayList<>();
 
-    public PoiRow(ROW row) {
+    public PoiRow(PoiSheet sheet, org.apache.poi.ss.usermodel.Row row) {
+        this.sheet = sheet;
         this.poiRow = row;
         this.rowNumber = poiRow.getRowNum();
+        update();
     }
 
-    protected void update() {
+    private void update() {
         this.mergedRegions.clear();
         for (RectangularRegion r: getSheet().getMergedRegions()) {
             if (r.getFirstRow()<=rowNumber&&rowNumber<=r.getLastRow()) {
                 this.mergedRegions.add(r);
             }
         }
+    }
+
+    @Override
+    public PoiSheet getSheet() {
+        return sheet;
+    }
+
+    @Override
+    public PoiWorkbook getWorkbook() {
+        return sheet.getWorkbook();
     }
 
     @SuppressWarnings("rawtypes")
@@ -93,12 +81,6 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
     public int getRowNumber() {
         return rowNumber;
     }
-
-    @Override
-    public abstract PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getSheet();
-
-    @Override
-    public abstract PoiCell<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> getCell(int col);
 
     @Override
     public Iterator<Cell> iterator() {
@@ -124,86 +106,21 @@ public abstract class PoiRow<WORKBOOK extends org.apache.poi.ss.usermodel.Workbo
         return null;
     }
 
-    static class PoiXssfRow extends PoiRow<
-            XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
-
-        private final PoiXssfWorkbook workbook;
-        private final PoiXssfSheet sheet;
-
-        public PoiXssfRow(PoiXssfSheet sheet, XSSFRow row) {
-            super(row);
-            this.workbook = sheet.getWorkbook();
-            this.sheet = sheet;
-            update();
-        }
-
+    private final Cache<org.apache.poi.ss.usermodel.Cell, PoiCell> cache = new Cache<org.apache.poi.ss.usermodel.Cell, PoiCell>(Cache.Type.WEAK_KEYS) {
         @Override
-        public PoiXssfSheet getSheet() {
-            return sheet;
+        protected PoiCell create(org.apache.poi.ss.usermodel.Cell poiCell) {
+            return new PoiCell(PoiRow.this, poiCell);
         }
+    };
+   
 
-        private final Cache<XSSFCell, PoiXssfCell> cache = new Cache<XSSFCell, PoiXssfCell>(Cache.Type.WEAK_KEYS) {
-
-            @Override
-            protected PoiXssfCell create(XSSFCell poiCell) {
-                return new PoiXssfCell(PoiXssfRow.this, poiCell);
-            }
-
-        };
-
-        @Override
-        public PoiXssfCell getCell(int col) {
-            XSSFCell poiCell = poiRow.getCell(col);
-            if (poiCell == null) {
-                poiCell = poiRow.createCell(col);
-            }
-            return cache.get(poiCell);
+    @Override
+    public PoiCell getCell(int col) {
+        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col);
+        if (poiCell == null) {
+            poiCell = poiRow.createCell(col);
         }
-
-        public PoiXssfWorkbook getWorkbook() {
-            return workbook;
-        }
-    }
-
-    static class PoiHssfRow extends PoiRow<
-            HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
-
-        private final PoiHssfWorkbook workbook;
-        private final PoiHssfSheet sheet;
-
-        public PoiHssfRow(PoiHssfSheet sheet, HSSFRow row) {
-            super(row);
-            this.workbook = sheet.getWorkbook();
-            this.sheet = sheet;
-            update();
-        }
-
-        @Override
-        public PoiHssfSheet getSheet() {
-            return sheet;
-        }
-
-        private final Cache<HSSFCell, PoiHssfCell> cache = new Cache<HSSFCell, PoiHssfCell>(Cache.Type.WEAK_KEYS) {
-
-            @Override
-            protected PoiHssfCell create(HSSFCell poiCell) {
-                return new PoiHssfCell(PoiHssfRow.this, poiCell);
-            }
-
-        };
-
-        @Override
-        public PoiHssfCell getCell(int col) {
-            HSSFCell poiCell = poiRow.getCell(col);
-            if (poiCell == null) {
-                poiCell = poiRow.createCell(col);
-            }
-            return cache.get(poiCell);
-        }
-
-        public PoiHssfWorkbook getWorkbook() {
-            return workbook;
-        }
+        return cache.get(poiCell);
     }
 
 }

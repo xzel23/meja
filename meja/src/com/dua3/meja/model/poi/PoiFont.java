@@ -16,41 +16,29 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.Font;
-import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
-import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import java.awt.Color;
 import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import java.util.Objects;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
  * @author axel
- * @param <WORKBOOK> POI workbook class
- * @param <SHEET> POI sheet class
- * @param <ROW> POI row class
- * @param <CELL> POI cell class
- * @param <CELLSTYLE> POI cell style class
- * @param <COLOR> POI color class
  */
-public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workbook, SHEET extends org.apache.poi.ss.usermodel.Sheet, ROW extends org.apache.poi.ss.usermodel.Row, CELL extends org.apache.poi.ss.usermodel.Cell, CELLSTYLE extends org.apache.poi.ss.usermodel.CellStyle, COLOR extends org.apache.poi.ss.usermodel.Color>
-        implements Font {
+public class PoiFont implements Font {
 
-    protected abstract org.apache.poi.ss.usermodel.Font getPoiFont();
+    protected final PoiWorkbook workbook;
+    protected final org.apache.poi.ss.usermodel.Font poiFont;
+
+    public PoiFont(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Font poiFont) {
+        this.workbook = workbook;
+        this.poiFont = poiFont;
+    }
+    
+    protected org.apache.poi.ss.usermodel.Font getPoiFont() {
+        return poiFont;        
+    }
 
     @Override
     public float getSizeInPoints() {
@@ -116,48 +104,9 @@ public abstract class PoiFont<WORKBOOK extends org.apache.poi.ss.usermodel.Workb
         return getPoiFont().hashCode();
     }
 
-    static class PoiHssfFont extends PoiFont<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
-
-        private final PoiHssfWorkbook workbook;
-        private final HSSFFont poiFont;
-
-        PoiHssfFont(PoiHssfWorkbook workbook, HSSFFont poiFont) {
-            this.workbook = workbook;
-            this.poiFont = poiFont;
-        }
-
-        @Override
-        public HSSFFont getPoiFont() {
-            return poiFont;
-        }
-
-        @Override
-        public Color getColor() {
-            return workbook.getColor(poiFont.getHSSFColor(workbook.getPoiWorkbook()), Color.BLACK);
-        }
-
-    }
-
-    static class PoiXssfFont extends PoiFont<XSSFWorkbook, XSSFSheet, XSSFRow, XSSFCell, XSSFCellStyle, XSSFColor> {
-
-        private final PoiXssfWorkbook workbook;
-
-        private final XSSFFont poiFont;
-
-        @Override
-        public XSSFFont getPoiFont() {
-            return poiFont;
-        }
-
-        PoiXssfFont(PoiXssfWorkbook workbook, XSSFFont poiFont) {
-            this.workbook = workbook;
-            this.poiFont = poiFont;
-        }
-
-        @Override
-        public Color getColor() {
-            return workbook.getColor(poiFont.getXSSFColor(), Color.BLACK);
-        }
+    @Override
+    public Color getColor() {
+        return workbook.getColor(poiFont, Color.BLACK);
     }
 
 }

@@ -17,6 +17,7 @@ package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Workbook;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +38,11 @@ public class GenericRow implements Row {
         reserve(sheet.getNumberOfColumns()-1);
     }
 
+    @Override
+    public Workbook getWorkbook() {
+        return sheet.getWorkbook();
+    }
+    
     @Override
     public GenericSheet getSheet() {
         return sheet;

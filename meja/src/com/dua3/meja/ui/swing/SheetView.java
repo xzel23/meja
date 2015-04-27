@@ -887,8 +887,8 @@ public class SheetView extends JPanel implements Scrollable {
                 } else {
                     // otherwise calculate row and column numbers of the
                     // first visible cell of the merged region
-                    int iCell = Math.max(i, logicalCell.getRowNumber());
-                    int jCell = Math.max(j, logicalCell.getColumnNumber());
+                    int iCell = Math.max(startRow, logicalCell.getRowNumber());
+                    int jCell = Math.max(first, logicalCell.getColumnNumber());
                     visible = i == iCell && j == jCell;
                     // skip the other cells of this row that belong to the same merged region
                     j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
