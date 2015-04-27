@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.meja.io.FileType;
 import com.dua3.meja.ui.swing.WorkbookView;
 import java.io.File;
 import java.io.IOException;
@@ -75,18 +76,26 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Writes the workbook to a stream.
+     * @param fileType the file type to use
      * @param out output stream to write to
      * @throws java.io.IOException
      */
-    void write(OutputStream out) throws IOException;
+    void write(FileType fileType, OutputStream out) throws IOException;
 
     /**
      * Writes the workbook to a file.
-     * @param file file to write to
-     * @param overwriteIfExists set to true if an existing Anfile should be overwritten
+     *
+     * @param file the file to write to.
+     * <p>
+     * The file format to used is determined
+     * by the extension of {@code file} which must be one of the extensions
+     * defined in {@link FileType}.
+     * </p>
+     * @param overwriteIfExists set to true if an existing file should be overwritten
+     * @return true if workbook was written to file, otherwise false
      * @throws java.io.IOException
      */
-    void write(File file, boolean overwriteIfExists) throws IOException;
+    boolean write(File file, boolean overwriteIfExists) throws IOException;
 
     /**
      * Add a new sheet as last sheet of this workbook.

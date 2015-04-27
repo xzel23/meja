@@ -28,7 +28,7 @@ import java.io.Writer;
 public class CsvWriter implements AutoCloseable, Flushable {
 
   private PrintWriter out;
-  private String lineDelimiter = "\n";
+  private String lineDelimiter = "%n";
   private char separator = ';';
   private char delimiter = '"';
   private int fieldsInRow = 0;
@@ -60,7 +60,7 @@ public class CsvWriter implements AutoCloseable, Flushable {
   }
 
   public void nextRow() {
-    out.print(lineDelimiter);
+    out.printf(lineDelimiter);
     fieldsInRow = 0;
   }
 

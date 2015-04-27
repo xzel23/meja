@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.meja.io.FileType;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
@@ -128,19 +129,31 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     }
 
     @Override
-    public void write(OutputStream out) throws IOException {
-        poiWorkbook.write(out);
+    public void write(FileType type, OutputStream out) throws IOException {
+        if ((type == FileType.XLSX && poiWorkbook instanceof PoiXssfWorkbook)
+                || (type == FileType.XLSX && poiWorkbook instanceof PoiHssfWorkbook)) {
+            // if Workbook is PoiWorkbook it should be written directly so that
+            // features not yet supported by Meja don't get lost in the process
+            poiWorkbook.write(out);
+        } else {
+            type.getWriter().write(this, out);
+        }
     }
 
     @Override
-    public void write(File file, boolean overwriteIfExists) throws IOException {
+    public boolean write(File file, boolean overwriteIfExists) throws IOException {
         boolean exists = file.createNewFile();
         if (!exists || overwriteIfExists) {
-            try (FileOutputStream out = new FileOutputStream(file)) {
-                poiWorkbook.write(out);
+            FileType type = FileType.getForFile(file);
+            if (type == null) {
+                throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
             }
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                write(type, out);
+            }
+            return true;
         } else {
-            throw new IOException("File '" + file.getAbsolutePath() + "' already present and overwriteIfExists is false.");
+            return false;
         }
     }
 
@@ -165,7 +178,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     }
 
     @SuppressWarnings("rawtypes")
-	@Override
+    @Override
     public PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> copyCellStyle(String styleName, CellStyle style) {
         PoiCellStyle<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR> cellStyle = getCellStyle(styleName);
         cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
@@ -201,7 +214,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     public Iterator<Sheet> iterator() {
         return new Iterator<Sheet>() {
             Iterator<PoiSheet<WORKBOOK, SHEET, ROW, CELL, CELLSTYLE, COLOR>> iter = sheets.iterator();
-            
+
             @Override
             public boolean hasNext() {
                 return iter.hasNext();
@@ -228,7 +241,7 @@ public abstract class PoiWorkbook<WORKBOOK extends org.apache.poi.ss.usermodel.W
     public void setUri(URI uri) {
         this.uri = uri;
     }
-            
+
     static class PoiHssfWorkbook
             extends PoiWorkbook<HSSFWorkbook, HSSFSheet, HSSFRow, HSSFCell, HSSFCellStyle, HSSFColor> {
 

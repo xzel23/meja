@@ -193,7 +193,7 @@ public class MejaHelper {
      *
      * @param parent the parent component to use for the dialog
      * @param file the directory to set in the open dialog or the default file
-     * @return the workbook the user chose or null if dialog was cancelled
+     * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException if a workbook was selected but could not be loaded
      */
     public static Workbook showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
@@ -250,9 +250,11 @@ public class MejaHelper {
 
     /**
      * Show file selection dialog and save workbook.
-     * <p>A file selection dialog is shown and the workbook is saved to the
+     * <p>
+     * A file selection dialog is shown and the workbook is saved to the
      * selected file. If the file already exists, a confirmation dialog is
      * shown, asking the user whether to overwrite the file.</p>
+     *
      * @param parent the parent component for the dialog
      * @param workbook the workbook to save
      * @param file the file to set the default path in the dialog
@@ -288,4 +290,12 @@ public class MejaHelper {
         return uri;
     }
 
+    public static String getFileExtension(File file) {
+        String name = file.getName();
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return "";
+        }
+        return name.substring(lastIndexOf);
+    }
 }

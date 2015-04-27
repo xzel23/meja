@@ -15,10 +15,12 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.meja.io.FileType;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -45,7 +47,7 @@ public class GenericWorkbook implements Workbook {
 
     public GenericWorkbook(Locale locale, URI uri) {
         this.locale = locale;
-        this.uri=uri;
+        this.uri = uri;
     }
 
     @Override
@@ -60,7 +62,7 @@ public class GenericWorkbook implements Workbook {
 
     @Override
     public GenericSheet getSheetByName(String sheetName) {
-        for (GenericSheet sheet: sheets) {
+        for (GenericSheet sheet : sheets) {
             if (sheet.getSheetName().equals(sheetName)) {
                 return sheet;
             }
@@ -69,13 +71,25 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public void write(OutputStream out) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void write(FileType type, OutputStream out) throws IOException {
+        type.getWriter().write(this, out);
     }
 
     @Override
-    public void write(File file, boolean overwriteIfExists) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean write(File file, boolean overwriteIfExists) throws IOException {
+        boolean exists = file.createNewFile();
+        if (!exists || overwriteIfExists) {
+            FileType type = FileType.getForFile(file);
+            if (type == null) {
+                throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
+            }
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                write(type, out);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -119,7 +133,7 @@ public class GenericWorkbook implements Workbook {
     public Iterator<Sheet> iterator() {
         return new Iterator<Sheet>() {
             Iterator<GenericSheet> iter = sheets.iterator();
-            
+
             @Override
             public boolean hasNext() {
                 return iter.hasNext();
@@ -146,5 +160,5 @@ public class GenericWorkbook implements Workbook {
     public void setUri(URI uri) {
         this.uri = uri;
     }
-    
+
 }
