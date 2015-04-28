@@ -16,8 +16,11 @@
 package com.dua3.meja.io;
 
 import com.dua3.meja.model.Workbook;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.util.Locale;
 
 /**
  *
@@ -25,7 +28,19 @@ import java.io.InputStream;
  */
 public abstract class WorkbookReader {
 
+    public <WORKBOOK extends Workbook>
+    WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, File file) throws IOException {
+        return read(clazz, locale, file.toURI());
+    }
+
+    public <WORKBOOK extends Workbook>
+    WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, URI uri) throws IOException {
+        try (InputStream in = uri.toURL().openStream()) {
+            return read(clazz, locale, in, uri);
+        }
+    }
+
     public abstract  <WORKBOOK extends Workbook>
-    WORKBOOK read(InputStream in, Class<WORKBOOK> clazz) throws IOException;
+    WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, InputStream in, URI uri) throws IOException;
 
 }

@@ -214,4 +214,12 @@ class GenericCell implements Cell {
         return this;
     }
 
+    @Override
+    public String toString() {
+        if (type==CellType.BLANK) {
+            return "";
+        } else {
+            return getAsText();
+        }
+    }
 }

@@ -143,4 +143,8 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @return the date format for this workbook
      */
     DateFormat getDateFormat();
+
+    @Override
+    public void close() throws IOException;
+        
 }

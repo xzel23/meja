@@ -16,8 +16,12 @@
 package com.dua3.meja.io;
 
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.generic.GenericRowBuilder;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.util.Locale;
 
 /**
  *
@@ -35,8 +39,20 @@ class CsvWorkbookReader extends WorkbookReader {
     }
 
     @Override
-    public <WORKBOOK extends Workbook> WORKBOOK read(InputStream in, Class<WORKBOOK> clazz) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, InputStream in, URI uri) throws IOException {
+        try {
+            WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
+            workbook.setUri(uri);
+            GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), locale);
+            try (CsvReader reader = CsvReader.createReader(builder, in)) {
+                reader.readAll();
+            }
+            return workbook;
+        } catch (DataException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException
+                | NoSuchMethodException | SecurityException ex) {
+            throw new IOException("Error reading workbook: "+ex.getMessage(), ex);
+        }
     }
 
 }

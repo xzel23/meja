@@ -115,7 +115,7 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         // nop
     }
 

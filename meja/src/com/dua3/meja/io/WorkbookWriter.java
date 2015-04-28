@@ -16,14 +16,33 @@
 package com.dua3.meja.io;
 
 import com.dua3.meja.model.Workbook;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URLConnection;
 
 /**
  *
  * @author Axel Howind (axel@dua3.com)
  */
 public abstract class WorkbookWriter {
+
+    public void write(Workbook workbook, File file) throws IOException {
+        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+            write(workbook, out);
+        }
+    }
+
+    public void write(Workbook workbook, URI uri) throws IOException {
+        URLConnection connection = uri.toURL().openConnection();
+        connection.connect();
+        try (OutputStream out = new BufferedOutputStream(connection.getOutputStream())) {
+            write(workbook, out);
+        }
+    }
 
     public abstract void write(Workbook workbook, OutputStream out) throws IOException;
 

@@ -15,6 +15,9 @@
  */
 package com.dua3.meja.io;
 
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,7 +39,17 @@ class CsvWorkbookWriter extends WorkbookWriter {
 
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (CsvWriter writer = new CsvWriter(out)) {
+            for (Sheet sheet: workbook) {
+                for (Row row:sheet) {
+                    for (Cell cell: row) {
+                        writer.addField(cell.toString());
+                    }
+                    writer.nextRow();
+                }
+                writer.nextRow();
+            }
+        }
     }
 
 }

@@ -146,6 +146,9 @@ public abstract class PoiWorkbook implements Workbook {
     @Override
     public void close() throws IOException {
         poiWorkbook.close();
+        if (poiWorkbook instanceof SXSSFWorkbook) {
+            ((SXSSFWorkbook) poiWorkbook).dispose();
+        }
     }
 
     @SuppressWarnings("rawtypes")

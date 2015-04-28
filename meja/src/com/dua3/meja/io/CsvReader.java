@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +49,12 @@ public class CsvReader implements DataReader, AutoCloseable {
 
     public static CsvReader createReader(RowBuilder builder, File file) throws FileNotFoundException {
         return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, new FileReader(file), file.getName());
+    }
+
+    public static CsvReader createReader(RowBuilder builder, InputStream in) throws IOException {
+        try (Reader reader = new InputStreamReader(in)) {
+            return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, reader, "[stream]");
+        }
     }
 
     public CsvReader(char separator, char delimiter, RowBuilder rowBuilder, Reader reader, String source) {
@@ -162,7 +170,7 @@ public class CsvReader implements DataReader, AutoCloseable {
         int columnNr = 0;
         Matcher matcher = patternField.matcher(line);
         while (matcher.lookingAt()) {
-      // group 1 refers to a quoted field, group 2 to an unquoted field
+            // group 1 refers to a quoted field, group 2 to an unquoted field
             // since we have a match, either group 1 or group 2 matches and
             // contains the field's value.
             String field = matcher.group(1);
