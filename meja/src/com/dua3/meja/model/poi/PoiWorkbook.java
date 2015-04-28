@@ -69,6 +69,11 @@ public abstract class PoiWorkbook implements Workbook {
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
         this.dataFormatter = new org.apache.poi.ss.usermodel.DataFormatter(locale);
         this.uri = uri;
+
+        // init cell style map
+        for (short i=0;i<poiWorkbook.getNumCellStyles();i++) {
+            cellStyles.put("style#"+i, i);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -166,15 +171,13 @@ public abstract class PoiWorkbook implements Workbook {
         return poiWorkbook.hashCode();
     }
 
-    @SuppressWarnings("rawtypes")
-	@Override
+    @Override
     public PoiCellStyle copyCellStyle(String styleName, CellStyle style) {
         PoiCellStyle cellStyle = getCellStyle(styleName);
         cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
         return cellStyle;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public PoiCellStyle getCellStyle(String name) {
         Short index = cellStyles.get(name);
@@ -249,6 +252,21 @@ public abstract class PoiWorkbook implements Workbook {
         return sheet;
     }
 
+    @Override
+    public List<String> getCellStyleNames() {
+        return new ArrayList<>(cellStyles.keySet());
+    }
+
+    String getCellStyleName(PoiCellStyle cellStyle) {
+        final short styleIndex = cellStyle.poiCellStyle.getIndex();
+        for (Map.Entry<String, Short> entry: cellStyles.entrySet()) {
+            if (entry.getValue()==styleIndex) {
+                return entry.getKey();
+            }
+        }
+        throw new IllegalArgumentException("CellStyle is not from this workbook.");
+    }
+
     public static class PoiHssfWorkbook extends PoiWorkbook {
 
 
@@ -257,6 +275,7 @@ public abstract class PoiWorkbook implements Workbook {
         public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Locale locale, URI uri) {
             super(poiWorkbook, locale, uri);
             this.defaultCellStyle = new PoiHssfCellStyle(this, poiWorkbook.getCellStyleAt((short) 0));
+            cellStyles.put("", (short) 0);
             init();
         }
 

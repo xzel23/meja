@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.util.List;
 
 /**
  * Workbook class.
@@ -144,7 +145,17 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      */
     DateFormat getDateFormat();
 
+    /**
+     * Close workbook.
+     * @throws IOException
+     */
     @Override
     public void close() throws IOException;
-        
+
+    /**
+     * Get names of all cell styles.
+     * @return list of cell style names
+     */
+    public List<String> getCellStyleNames();
+
 }

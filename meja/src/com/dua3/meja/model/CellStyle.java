@@ -19,7 +19,7 @@ import java.awt.Color;
 
 /**
  * Definition of a cell style.
- * 
+ *
  * @author axel
  */
 public interface  CellStyle {
@@ -134,5 +134,11 @@ public interface  CellStyle {
      * @param format the data format to set
      */
     void setDataFormat(String format);
+
+    /**
+     * Get name of cell style.
+     * @return the name of this cell style
+     */
+    public String getName();
 
 }

@@ -32,6 +32,8 @@ public class GenericCellStyle implements CellStyle {
 
     private static final BorderStyle defaultBorderStyle = new BorderStyle(0.0f, Color.BLACK);
 
+    private final GenericWorkbook workbook;
+
     private Font font;
     private Color fillBgColor;
     private Color fillFgColor;
@@ -42,7 +44,8 @@ public class GenericCellStyle implements CellStyle {
     private boolean wrap;
     private String dataFormat;
 
-    public GenericCellStyle() {
+    public GenericCellStyle(GenericWorkbook workbook) {
+        this.workbook=workbook;
         this.font = new GenericFont();
         this.fillPattern = FillPattern.NONE;
         this.fillBgColor = Color.WHITE;
@@ -55,6 +58,11 @@ public class GenericCellStyle implements CellStyle {
         for (Direction d : Direction.values()) {
             borderStyle[d.ordinal()] = defaultBorderStyle;
         }
+    }
+
+    @Override
+    public String getName() {
+        return workbook.getCellStyleName(this);
     }
 
     @Override

@@ -25,8 +25,6 @@ import com.dua3.meja.model.VAlign;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import java.awt.Color;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -46,99 +44,34 @@ public abstract class PoiCellStyle implements CellStyle {
         this.font = font;
         this.poiCellStyle = poiCellStyle;
     }
-    
+
+    @Override
+    public String getName() {
+        return workbook.getCellStyleName(this);
+    }
+
     public PoiWorkbook getWorkbook() {
         return workbook;
     }
 
     @Override
     public HAlign getHAlign() {
-        final short alignment = poiCellStyle.getAlignment();
-        switch (alignment) {
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_LEFT:
-                return HAlign.ALIGN_LEFT;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_CENTER:
-                return HAlign.ALIGN_CENTER;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_RIGHT:
-                return HAlign.ALIGN_RIGHT;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_CENTER_SELECTION:
-                return HAlign.ALIGN_CENTER;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_GENERAL:
-                return HAlign.ALIGN_AUTOMATIC;
-            default:
-                return HAlign.ALIGN_JUSTIFY;
-        }
+        return PoiHelper.poiToHAlign(poiCellStyle.getAlignment());
     }
 
     @Override
     public void setHAlign(HAlign hAlign) {
-        switch (hAlign) {
-            case ALIGN_LEFT:
-                poiCellStyle
-                        .setAlignment(org.apache.poi.ss.usermodel.CellStyle.ALIGN_LEFT);
-                break;
-            case ALIGN_RIGHT:
-                poiCellStyle
-                        .setAlignment(org.apache.poi.ss.usermodel.CellStyle.ALIGN_RIGHT);
-                break;
-            case ALIGN_CENTER:
-                poiCellStyle
-                        .setAlignment(org.apache.poi.ss.usermodel.CellStyle.ALIGN_CENTER);
-                break;
-            case ALIGN_JUSTIFY:
-                poiCellStyle
-                        .setAlignment(org.apache.poi.ss.usermodel.CellStyle.ALIGN_JUSTIFY);
-                break;
-            case ALIGN_AUTOMATIC:
-                poiCellStyle
-                        .setAlignment(org.apache.poi.ss.usermodel.CellStyle.ALIGN_GENERAL);
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        poiCellStyle.setAlignment(PoiHelper.hAlignToPoi(hAlign));
     }
 
     @Override
     public VAlign getVAlign() {
-        final short alignment = poiCellStyle.getVerticalAlignment();
-        switch (alignment) {
-            case org.apache.poi.ss.usermodel.CellStyle.VERTICAL_TOP:
-                return VAlign.ALIGN_TOP;
-            case org.apache.poi.ss.usermodel.CellStyle.VERTICAL_CENTER:
-                return VAlign.ALIGN_MIDDLE;
-            case org.apache.poi.ss.usermodel.CellStyle.VERTICAL_BOTTOM:
-                return VAlign.ALIGN_BOTTOM;
-            case org.apache.poi.ss.usermodel.CellStyle.VERTICAL_JUSTIFY:
-                return VAlign.ALIGN_JUSTIFY;
-            default:
-                Logger.getLogger(PoiCellStyle.class.getName()).log(Level.WARNING,
-                        "Unknown value for vertical algnment: {0}", alignment);
-                return VAlign.ALIGN_MIDDLE;
-        }
+        return PoiHelper.poiToVAlign(poiCellStyle.getVerticalAlignment());
     }
 
     @Override
     public void setVAlign(VAlign vAlign) {
-        switch (vAlign) {
-            case ALIGN_TOP:
-                poiCellStyle
-                        .setVerticalAlignment(org.apache.poi.ss.usermodel.CellStyle.VERTICAL_TOP);
-                break;
-            case ALIGN_MIDDLE:
-                poiCellStyle
-                        .setVerticalAlignment(org.apache.poi.ss.usermodel.CellStyle.VERTICAL_CENTER);
-                break;
-            case ALIGN_BOTTOM:
-                poiCellStyle
-                        .setVerticalAlignment(org.apache.poi.ss.usermodel.CellStyle.VERTICAL_BOTTOM);
-                break;
-            case ALIGN_JUSTIFY:
-                poiCellStyle
-                        .setVerticalAlignment(org.apache.poi.ss.usermodel.CellStyle.VERTICAL_JUSTIFY);
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        poiCellStyle.setVerticalAlignment(PoiHelper.vAlignToPoi(vAlign));
     }
 
     protected float getBorderWidth(short poiBorder) {
@@ -227,7 +160,7 @@ public abstract class PoiCellStyle implements CellStyle {
     public PoiFont getFont() {
         return font;
     }
-    
+
     @Override
     public void setFont(Font font) {
         if (font instanceof PoiFont) {
@@ -236,9 +169,9 @@ public abstract class PoiCellStyle implements CellStyle {
             throw new IllegalArgumentException("Incompatible implementation class.");
         }
     }
-        
+
     static class PoiHssfCellStyle
-    extends PoiCellStyle {
+            extends PoiCellStyle {
 
 
         public PoiHssfCellStyle(PoiHssfWorkbook workbook,
@@ -254,7 +187,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setFillBgColor(Color color) {
-            poiCellStyle.setFillBackgroundColor(((PoiHssfWorkbook)workbook).getPoiColor(color).getIndex());
+            poiCellStyle.setFillBackgroundColor(((PoiHssfWorkbook) workbook).getPoiColor(color).getIndex());
         }
 
         @Override
@@ -265,7 +198,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setFillFgColor(Color color) {
-            poiCellStyle.setFillForegroundColor(((PoiHssfWorkbook)workbook).getPoiColor(color).getIndex());
+            poiCellStyle.setFillForegroundColor(((PoiHssfWorkbook) workbook).getPoiColor(color).getIndex());
         }
 
         @Override
@@ -274,19 +207,19 @@ public abstract class PoiCellStyle implements CellStyle {
             final float width;
             switch (d) {
                 case NORTH:
-                    color = ((PoiHssfWorkbook)workbook).getColor(poiCellStyle.getTopBorderColor());
+                    color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getTopBorderColor());
                     width = getBorderWidth(poiCellStyle.getBorderTop());
                     break;
                 case EAST:
-                    color = ((PoiHssfWorkbook)workbook).getColor(poiCellStyle.getRightBorderColor());
+                    color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getRightBorderColor());
                     width = getBorderWidth(poiCellStyle.getBorderRight());
                     break;
                 case SOUTH:
-                    color = ((PoiHssfWorkbook)workbook).getColor(poiCellStyle.getBottomBorderColor());
+                    color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getBottomBorderColor());
                     width = getBorderWidth(poiCellStyle.getBorderBottom());
                     break;
                 case WEST:
-                    color = ((PoiHssfWorkbook)workbook).getColor(poiCellStyle.getLeftBorderColor());
+                    color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getLeftBorderColor());
                     width = getBorderWidth(poiCellStyle.getBorderLeft());
                     break;
                 default:
@@ -298,7 +231,7 @@ public abstract class PoiCellStyle implements CellStyle {
         @Override
         public void setBorderStyle(Direction d, BorderStyle borderStyle) {
             short poiBorder = getPoiBorder(borderStyle);
-            short poiColor = ((PoiHssfWorkbook)workbook).getPoiColor(borderStyle.getColor()).getIndex();
+            short poiColor = ((PoiHssfWorkbook) workbook).getPoiColor(borderStyle.getColor()).getIndex();
             switch (d) {
                 case NORTH:
                     poiCellStyle.setTopBorderColor(poiColor);
@@ -324,12 +257,11 @@ public abstract class PoiCellStyle implements CellStyle {
     }
 
     static class PoiXssfCellStyle
-    extends PoiCellStyle {
+            extends PoiCellStyle {
     public PoiXssfCellStyle(PoiXssfWorkbook workbook,
                 XSSFCellStyle poiCellStyle) {
             super(workbook, new PoiFont(workbook, poiCellStyle.getFont()), poiCellStyle);
         }
-
 
         @Override
         public Color getFillBgColor() {
@@ -339,7 +271,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setFillBgColor(Color color) {
-            ((XSSFCellStyle)poiCellStyle).setFillBackgroundColor(((PoiXssfWorkbook)workbook).getPoiColor(color));
+            ((XSSFCellStyle) poiCellStyle).setFillBackgroundColor(((PoiXssfWorkbook) workbook).getPoiColor(color));
         }
 
         @Override
@@ -350,7 +282,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setFillFgColor(Color color) {
-            ((XSSFCellStyle)poiCellStyle).setFillForegroundColor(((PoiXssfWorkbook)workbook).getPoiColor(color));
+            ((XSSFCellStyle) poiCellStyle).setFillForegroundColor(((PoiXssfWorkbook) workbook).getPoiColor(color));
         }
 
         @Override
@@ -359,23 +291,23 @@ public abstract class PoiCellStyle implements CellStyle {
             final float width;
             switch (d) {
                 case NORTH:
-                    color = workbook.getColor(((XSSFCellStyle)poiCellStyle).getTopBorderXSSFColor(),
+                    color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getTopBorderXSSFColor(),
                             Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderTop());
                     break;
                 case EAST:
                     color = workbook.getColor(
-                            ((XSSFCellStyle)poiCellStyle).getRightBorderXSSFColor(), Color.BLACK);
+                            ((XSSFCellStyle) poiCellStyle).getRightBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderRight());
                     break;
                 case SOUTH:
                     color = workbook.getColor(
-                            ((XSSFCellStyle)poiCellStyle).getBottomBorderXSSFColor(), Color.BLACK);
+                            ((XSSFCellStyle) poiCellStyle).getBottomBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderBottom());
                     break;
                 case WEST:
                     color = workbook.getColor(
-                            ((XSSFCellStyle)poiCellStyle).getLeftBorderXSSFColor(), Color.BLACK);
+                            ((XSSFCellStyle) poiCellStyle).getLeftBorderXSSFColor(), Color.BLACK);
                     width = getBorderWidth(poiCellStyle.getBorderLeft());
                     break;
                 default:
@@ -387,22 +319,22 @@ public abstract class PoiCellStyle implements CellStyle {
         @Override
         public void setBorderStyle(Direction d, BorderStyle borderStyle) {
             short poiBorder = getPoiBorder(borderStyle);
-            XSSFColor poiColor = ((PoiXssfWorkbook)workbook).getPoiColor(borderStyle.getColor());
+            XSSFColor poiColor = ((PoiXssfWorkbook) workbook).getPoiColor(borderStyle.getColor());
             switch (d) {
                 case NORTH:
-                    ((XSSFCellStyle)poiCellStyle).setTopBorderColor(poiColor);
+                    ((XSSFCellStyle) poiCellStyle).setTopBorderColor(poiColor);
                     poiCellStyle.setBorderTop(poiBorder);
                     break;
                 case EAST:
-                    ((XSSFCellStyle)poiCellStyle).setRightBorderColor(poiColor);
+                    ((XSSFCellStyle) poiCellStyle).setRightBorderColor(poiColor);
                     poiCellStyle.setBorderRight(poiBorder);
                     break;
                 case SOUTH:
-                    ((XSSFCellStyle)poiCellStyle).setBottomBorderColor(poiColor);
+                    ((XSSFCellStyle) poiCellStyle).setBottomBorderColor(poiColor);
                     poiCellStyle.setBorderBottom(poiBorder);
                     break;
                 case WEST:
-                    ((XSSFCellStyle)poiCellStyle).setLeftBorderColor(poiColor);
+                    ((XSSFCellStyle) poiCellStyle).setLeftBorderColor(poiColor);
                     poiCellStyle.setBorderLeft(poiBorder);
                     break;
                 default:

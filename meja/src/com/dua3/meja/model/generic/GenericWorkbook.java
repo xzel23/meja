@@ -42,12 +42,14 @@ public class GenericWorkbook implements Workbook {
     final List<GenericSheet> sheets = new ArrayList<>();
     final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
     final Locale locale;
-    private GenericCellStyle defaultCellStyle = new GenericCellStyle();
+    private final GenericCellStyle defaultCellStyle;
     private URI uri;
 
     public GenericWorkbook(Locale locale, URI uri) {
         this.locale = locale;
         this.uri = uri;
+        this.defaultCellStyle = new GenericCellStyle(this);
+        this.cellStyles.put("", defaultCellStyle);
     }
 
     @Override
@@ -106,7 +108,12 @@ public class GenericWorkbook implements Workbook {
 
     @Override
     public GenericCellStyle getCellStyle(String name) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GenericCellStyle cellStyle = cellStyles.get(name);
+        if (cellStyle==null) {
+            cellStyle=new GenericCellStyle(this);
+            cellStyles.put(name, cellStyle);
+        }
+        return cellStyle;
     }
 
     @Override
@@ -159,6 +166,20 @@ public class GenericWorkbook implements Workbook {
     @Override
     public void setUri(URI uri) {
         this.uri = uri;
+    }
+
+    @Override
+    public List<String> getCellStyleNames() {
+        return new ArrayList<>(cellStyles.keySet());
+    }
+
+    String getCellStyleName(GenericCellStyle cellStyle) {
+        for (Map.Entry<String, GenericCellStyle> entry: cellStyles.entrySet()) {
+            if (entry.getValue()==cellStyle) {
+                return entry.getKey();
+            }
+        }
+        throw new IllegalArgumentException("CellStyle is not from this workbook.");
     }
 
 }

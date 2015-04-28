@@ -23,7 +23,7 @@ import java.io.File;
  * @author Axel Howind (axel@dua3.com)
  */
 public enum FileType {
-    CSV("CSV-Data", CsvWorkbookReader.instance(),CsvWorkbookWriter.instance(),".csv", ".txt"),
+    CSV("CSV-Data", CsvWorkbookReader.instance(), CsvWorkbookWriter.instance(),".csv", ".txt"),
     XLS("Excel 97-2003", XlsWorkbookReader.instance(), XlsWorkbookWriter.instance(), ".xls"),
     XLSX("Excel 2007", XlsxWorkbookReader.instance(), XlsxWorkbookWriter.instance(), ".xlsx", ".xlsm");
 
