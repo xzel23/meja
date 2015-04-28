@@ -73,6 +73,7 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
                 styles.put(styleName, poiCellStyle.getIndex());
                 poiCellStyle.setAlignment(PoiHelper.hAlignToPoi(cellStyle.getHAlign()));
                 poiCellStyle.setVerticalAlignment(PoiHelper.vAlignToPoi(cellStyle.getVAlign()));
+                // TODO font etc.
             }
 
             // copy sheets

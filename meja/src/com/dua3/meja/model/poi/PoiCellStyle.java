@@ -170,9 +170,7 @@ public abstract class PoiCellStyle implements CellStyle {
         }
     }
 
-    static class PoiHssfCellStyle
-            extends PoiCellStyle {
-
+    static class PoiHssfCellStyle extends PoiCellStyle {
 
         public PoiHssfCellStyle(PoiHssfWorkbook workbook,
                 HSSFCellStyle poiCellStyle) {
@@ -258,7 +256,8 @@ public abstract class PoiCellStyle implements CellStyle {
 
     static class PoiXssfCellStyle
             extends PoiCellStyle {
-    public PoiXssfCellStyle(PoiXssfWorkbook workbook,
+
+        public PoiXssfCellStyle(PoiXssfWorkbook workbook,
                 XSSFCellStyle poiCellStyle) {
             super(workbook, new PoiFont(workbook, poiCellStyle.getFont()), poiCellStyle);
         }
