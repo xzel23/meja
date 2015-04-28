@@ -15,7 +15,10 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.meja.io.CsvWriter;
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import java.io.File;
@@ -70,7 +73,17 @@ public class GenericWorkbook implements Workbook {
 
     @Override
     public void write(OutputStream out) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (CsvWriter writer = new CsvWriter(out)) {
+            for (Sheet sheet: sheets) {
+                for (Row row:sheet) {
+                    for (Cell cell: row) {
+                        writer.addField(cell.toString());
+                    }
+                    writer.nextRow();
+                }
+                writer.nextRow();
+            }
+        }
     }
 
     @Override
