@@ -15,11 +15,11 @@
  */
 package com.dua3.meja.excelviewer;
 
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.swing.SheetView;
 import com.dua3.meja.ui.swing.WorkbookView;
+import com.dua3.meja.util.MejaHelper;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -42,7 +42,7 @@ import javax.swing.WindowConstants;
 /**
  * A sample Swing application that uses the Meja library to load and display
  * Excel sheets or CSv data.
- * 
+ *
  * @author axel
  */
 public class ExcelViewer extends JFrame {
@@ -300,10 +300,10 @@ public class ExcelViewer extends JFrame {
      */
     private void showOpenDialog() {
         try {
-            final Workbook workbook = MejaHelper.showDialogAndOpenWorkbook(this, currentDir);
-            if (workbook!=null) {
-                setWorkbook(workbook);
-                Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", workbook.getUri());
+            final Workbook newWorkbook = MejaHelper.showDialogAndOpenWorkbook(this, currentDir);
+            if (newWorkbook!=null) {
+                setWorkbook(newWorkbook);
+                Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", newWorkbook.getUri());
             }
         } catch (IOException ex) {
             Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
