@@ -961,11 +961,18 @@ public class SheetView extends JPanel implements Scrollable {
      * @param cell cell to draw
      */
     private void drawCellBorder(Graphics2D g, Cell cell) {
-        CellStyle style = cell.getCellStyle();
+        CellStyle styleTopLeft = cell.getCellStyle();
+
+        Cell cellBottomRight = sheet.getRow(cell.getRowNumber()+cell.getVerticalSpan()-1).getCell(cell.getColumnNumber()+cell.getHorizontalSpan()-1);        
+        CellStyle styleBottomRight = cellBottomRight.getCellStyle();
+        
         Rectangle cr = getCellRect(cell);
 
         // draw border
         for (Direction d : Direction.values()) {
+            boolean isTopLeft = d==Direction.NORTH || d==Direction.WEST;
+            CellStyle style = isTopLeft ? styleTopLeft : styleBottomRight;
+            
             BorderStyle b = style.getBorderStyle(d);
             if (b.getWidth() == 0) {
                 continue;
