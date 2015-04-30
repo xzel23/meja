@@ -102,7 +102,7 @@ public class PoiSheet implements Sheet {
 
     @Override
     public int getNumberOfColumns() {
-        return lastColumn - firstColumn;
+        return lastColumn - firstColumn+1;
     }
 
     @Override

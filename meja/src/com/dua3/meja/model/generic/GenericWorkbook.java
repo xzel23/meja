@@ -53,6 +53,11 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
+    public Locale getLocale() {
+        return locale;
+    }
+    
+    @Override
     public int getNumberOfSheets() {
         return sheets.size();
     }

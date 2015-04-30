@@ -94,7 +94,7 @@ public class PoiRow implements Row {
 
     @Override
     public int getLastCellNum() {
-        return poiRow.getLastCellNum();
+        return poiRow.getLastCellNum()-1;
     }
 
     RectangularRegion getMergedRegion(int columnIndex) {

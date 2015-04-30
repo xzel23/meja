@@ -24,6 +24,7 @@ import java.net.URI;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Workbook class.
@@ -158,4 +159,10 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      */
     public List<String> getCellStyleNames();
 
+    /**
+     * Get the locale for this workbook.
+     * @return the workbook`s locale
+     */
+    public Locale getLocale();
+    
 }

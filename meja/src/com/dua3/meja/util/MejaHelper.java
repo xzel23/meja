@@ -153,7 +153,7 @@ public class MejaHelper {
 
             @Override
             public boolean hasNext() {
-                return colNum < row.getLastCellNum();
+                return colNum <= row.getLastCellNum();
             }
 
             @Override

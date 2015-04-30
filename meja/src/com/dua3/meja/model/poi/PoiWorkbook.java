@@ -76,6 +76,11 @@ public abstract class PoiWorkbook implements Workbook {
         }
     }
 
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+    
     @SuppressWarnings("unchecked")
     protected void init() {
         for (int i = 0; i < poiWorkbook.getNumberOfSheets(); i++) {
