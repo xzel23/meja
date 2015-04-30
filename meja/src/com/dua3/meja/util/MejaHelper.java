@@ -290,6 +290,20 @@ public class MejaHelper {
         return uri;
     }
 
+    /**
+     * Extract file extension.
+     * <p>
+     * The file extension is the part of the filename from the last dot to
+     * the end (including the dot). The extension of the file 
+     * {@literal /foo/bar/file.txt} is ".txt".
+     * </p>
+     * <p>
+     * If the filename doesn't contain a dot, the extension is the empty
+     * string ("").
+     * </p>
+     * @param file the file
+     * @return the file extension including the dot.
+     */
     public static String getFileExtension(File file) {
         String name = file.getName();
         int lastIndexOf = name.lastIndexOf(".");
@@ -297,5 +311,15 @@ public class MejaHelper {
             return "";
         }
         return name.substring(lastIndexOf);
+    }
+    
+    /**
+     * Get cell position.
+     * 
+     * @param cell
+     * @return the cell in Excel conventions, ie "A1" for the first cell.
+     */
+    public static String getCellPosition(Cell cell) {
+        return getColumnName(cell.getColumnNumber())+(cell.getRowNumber()+1);
     }
 }
