@@ -23,8 +23,10 @@
     <target name="download-ivy" unless="offline">
         <mkdir dir="${ivy.jar.dir}"/>
         <!-- download Ivy from web site so that it can be used even without any special installation -->
+        <!--
         <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
              dest="${ivy.jar.file}" usetimestamp="true"/>
+        -->
     </target>
 
     <target name="init-ivy" depends="download-ivy">
@@ -114,7 +116,7 @@
     
     -->
     
-    <target name="-post-jar" depends="package-with-dependencies, package-sources, package-doc" />
+    <target name="-post-jar" depends="package-with-dependencies, package-dependencies, package-sources, package-doc" />
     
     <!-- include sources in Jar -->
     <target description="bundle sources in a jar" name="package-sources">
@@ -148,6 +150,24 @@
         </zip>
 
         <delete file="dist/${ant.project.name}-full-tmp.jar"/>
+
+    </target>
+    
+    <!-- Create a Jar containing just the dependencies -->
+    <target description="bundle only dependencies" name="package-dependencies">
+
+        <echo message="Packaging ${application.title} dependencies into a single JAR"/>
+
+        <jar destfile="dist/${ant.project.name}-dependencies-tmp.jar" filesetmanifest="skip">
+            <zipgroupfileset dir="dist/lib" includes="*.jar"/>
+        </jar>
+
+        <zip destfile="dist/${ant.project.name}-dependencies.jar">
+            <zipfileset src="dist/${ant.project.name}-dependencies-tmp.jar"
+                        excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA "/>
+        </zip>
+
+        <delete file="dist/${ant.project.name}-dependencies-tmp.jar"/>
 
     </target>
     
