@@ -16,9 +16,9 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.util.Cache;
+import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -112,7 +112,7 @@ public class PoiRow implements Row {
             return new PoiCell(PoiRow.this, poiCell);
         }
     };
-   
+
 
     @Override
     public PoiCell getCell(int col) {
@@ -121,6 +121,13 @@ public class PoiRow implements Row {
             poiCell = poiRow.createCell(col);
         }
         return cache.get(poiCell);
+    }
+
+    @Override
+    public void copy(Row other) {
+        for (Cell cell: other) {
+            getCell(cell.getColumnNumber()).copy(cell);
+        }
     }
 
 }

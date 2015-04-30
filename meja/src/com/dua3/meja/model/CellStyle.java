@@ -139,6 +139,17 @@ public interface  CellStyle {
      * Get name of cell style.
      * @return the name of this cell style
      */
-    public String getName();
+    String getName();
 
+    /**
+     * Copy style from another cell style.
+     * @param other cell style
+     */
+    void copyStyle(CellStyle other);
+
+    /**
+     * Get workbook this cell style belongs to.
+     * @return the workbook
+     */
+    Workbook getWorkbook();
 }

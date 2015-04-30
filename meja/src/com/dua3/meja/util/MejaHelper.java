@@ -15,7 +15,9 @@
  */
 package com.dua3.meja.util;
 
+import com.dua3.meja.io.FileType;
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
@@ -25,8 +27,10 @@ import com.dua3.meja.model.WorkbookFactory.OpenMode;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -283,13 +287,33 @@ public class MejaHelper {
                 }
             }
 
-            workbook.write(file, true);
+            FileType type = FileType.getForFile(file);
+            if (type != null) {
+                type.getWriter().write(workbook, file);
+            } else {
+                workbook.write(file, true);
+            }
             uri = file.toURI();
 
         }
         return uri;
     }
 
+    /**
+     * Extract file extension.
+     * <p>
+     * The file extension is the part of the filename from the last dot to the
+     * end (including the dot). The extension of the file
+     * {@literal /foo/bar/file.txt} is ".txt".
+     * </p>
+     * <p>
+     * If the filename doesn't contain a dot, the extension is the empty string
+     * ("").
+     * </p>
+     *
+     * @param file the file
+     * @return the file extension including the dot.
+     */
     public static String getFileExtension(File file) {
         String name = file.getName();
         int lastIndexOf = name.lastIndexOf(".");
@@ -297,5 +321,40 @@ public class MejaHelper {
             return "";
         }
         return name.substring(lastIndexOf);
+    }
+
+    /**
+     * Get cell position.
+     *
+     * @param cell
+     * @return the cell in Excel conventions, ie "A1" for the first cell.
+     */
+    public static String getCellPosition(Cell cell) {
+        return getColumnName(cell.getColumnNumber()) + (cell.getRowNumber() + 1);
+    }
+
+    public static <WORKBOOK extends Workbook>
+            WORKBOOK cloneWorkbookAs(Class<WORKBOOK> clazz, Workbook workbook) {
+        try {
+            WORKBOOK newWorkbook = clazz.getConstructor(Locale.class).newInstance(workbook.getLocale());
+            newWorkbook.setUri(workbook.getUri());
+
+            // copy styles
+            for (String styleName : workbook.getCellStyleNames()) {
+                CellStyle cellStyle = workbook.getCellStyle(styleName);
+                CellStyle newCellStyle = newWorkbook.getCellStyle(styleName);
+                newCellStyle.copyStyle(cellStyle);
+            }
+
+            // copy sheets
+            for (int sheetNr = 0; sheetNr < workbook.getNumberOfSheets(); sheetNr++) {
+                Sheet sheet = workbook.getSheetByNr(sheetNr);
+                Sheet newSheet = newWorkbook.createSheet(sheet.getSheetName());
+                newSheet.copy(sheet);
+            }
+            return newWorkbook;
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+            throw new RuntimeException("Error cloning workbook: " + ex.getMessage(), ex);
+        }
     }
 }

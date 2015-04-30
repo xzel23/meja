@@ -21,7 +21,7 @@ import java.util.Date;
 
 /**
  * A single cell of a sheet.
- * 
+ *
  * @author axel
  */
 public interface Cell {
@@ -233,4 +233,15 @@ public interface Cell {
      */
     public Cell setFormula(String value);
 
+    /**
+     * Copy cell data.
+     * @param other cell to copy data from
+     */
+    void copy(Cell other);
+
+    /**
+     * Get the workbook this cell belongs to.
+     * @return the workbook
+     */
+    Workbook getWorkbook();
 }

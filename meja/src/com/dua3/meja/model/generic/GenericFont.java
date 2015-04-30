@@ -41,7 +41,17 @@ public class GenericFont implements Font {
         this.underline = false;
         this.strikeThrough = false;
     }
-    
+
+    public GenericFont(Font other) {
+        this.color = other.getColor();
+        this.size = other.getSizeInPoints();
+        this.family = other.getFamily();
+        this.bold = other.isBold();
+        this.italic = other.isItalic();
+        this.underline = other.isUnderlined();
+        this.strikeThrough = other.isStrikeThrough();
+    }
+
     @Override
     public Color getColor() {
         return color;

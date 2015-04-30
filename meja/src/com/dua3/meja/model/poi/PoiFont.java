@@ -21,6 +21,7 @@ import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 
 /**
  *
@@ -35,9 +36,21 @@ public class PoiFont implements Font {
         this.workbook = workbook;
         this.poiFont = poiFont;
     }
-    
+
+    public PoiFont(PoiWorkbook workbook, Font other) {
+        this.workbook = workbook;
+        this.poiFont = workbook.getPoiWorkbook().createFont();
+        this.poiFont.setFontHeightInPoints((short)Math.round(other.getSizeInPoints()));
+        this.poiFont.setFontName(other.getFamily());
+        // FIXME this.poiFont.setColor(...);
+        this.poiFont.setBold(other.isBold());
+        this.poiFont.setItalic(other.isItalic());
+        this.poiFont.setStrikeout(other.isStrikeThrough());
+        this.poiFont.setUnderline(other.isUnderlined()? XSSFFont.U_SINGLE: XSSFFont.U_NONE);
+    }
+
     protected org.apache.poi.ss.usermodel.Font getPoiFont() {
-        return poiFont;        
+        return poiFont;
     }
 
     @Override

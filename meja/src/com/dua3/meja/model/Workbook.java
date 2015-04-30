@@ -151,18 +151,23 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @throws IOException
      */
     @Override
-    public void close() throws IOException;
+    void close() throws IOException;
 
     /**
      * Get names of all cell styles.
      * @return list of cell style names
      */
-    public List<String> getCellStyleNames();
+    List<String> getCellStyleNames();
 
     /**
      * Get the locale for this workbook.
      * @return the workbook`s locale
      */
-    public Locale getLocale();
-    
+    Locale getLocale();
+
+    /**
+     * Copy workbook data from another workbook.
+     * @param other workbook to copy
+     */
+    void copy(Workbook other);
 }

@@ -8,14 +8,10 @@
     </configurations>
 
     <dependencies>
-        <!-- compile dependencies -->
-        <dependency org="org.apache.poi" name="poi-excelant" rev="3.11" conf="compile->default"/>
-
-        <!-- runtime dependencies -->
-        <dependency org="org.apache.poi" name="poi-excelant" rev="3.11" conf="runtime->default"/>
-
-        <!-- test dependencies -->
-        <dependency org="org.apache.poi" name="poi-excelant" rev="3.11" conf="test->default"/>
+        <dependency org="org.apache.poi" 
+                    name="poi-excelant" 
+                    rev="3.11" 
+                    conf="compile->default;runtime->default;test->default"/>
     </dependencies>
 
 </ivy-module>

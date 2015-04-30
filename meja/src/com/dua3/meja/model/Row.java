@@ -27,7 +27,7 @@ public interface Row extends Iterable<Cell> {
      * @return the workbook
      */
     Workbook getWorkbook();
-    
+
     /**
      * Get the sheet this row belongs to.
      * @return the sheet
@@ -58,7 +58,7 @@ public interface Row extends Iterable<Cell> {
      * a full sweep of all rows).
      * @return number of first cell that potentially contains a value.
      */
-    public int getFirstCellNum();
+    int getFirstCellNum();
 
     /**
      * Get column number of last cell.
@@ -72,6 +72,12 @@ public interface Row extends Iterable<Cell> {
      * a full sweep of all rows).
      * @return number of last cell that potentially contains a value.
      */
-    public int getLastCellNum();
+    int getLastCellNum();
+
+    /**
+     * Copy row data.
+     * @param other row to copy data from
+     */
+    void copy(Row other);
 
 }

@@ -188,6 +188,9 @@ class GenericCell implements Cell {
 
     @Override
     public void setCellStyle(CellStyle cellStyle) {
+        if (cellStyle.getWorkbook()!=getWorkbook()) {
+            throw new IllegalArgumentException("Cell style does not belong to this workbook.");
+        }
         this.cellStyle = (GenericCellStyle) cellStyle;
     }
 
@@ -222,4 +225,37 @@ class GenericCell implements Cell {
             return getAsText();
         }
     }
+
+    @Override
+    public void copy(Cell other) {
+        setCellStyle(other.getCellStyle().getName());
+        switch (other.getCellType()) {
+            case BLANK:
+                clear();
+                break;
+            case BOOLEAN:
+                set(other.getBoolean());
+                break;
+            case ERROR:
+                set(Double.NaN);
+                break;
+            case FORMULA:
+                set(other.getFormula());
+                break;
+            case NUMERIC:
+                set(other.getNumber());
+                break;
+            case TEXT:
+                set(other.getText());
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public GenericWorkbook getWorkbook() {
+        return row.getWorkbook();
+    }
+
 }

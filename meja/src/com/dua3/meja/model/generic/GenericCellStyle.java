@@ -45,7 +45,7 @@ public class GenericCellStyle implements CellStyle {
     private String dataFormat;
 
     public GenericCellStyle(GenericWorkbook workbook) {
-        this.workbook=workbook;
+        this.workbook = workbook;
         this.font = new GenericFont();
         this.fillPattern = FillPattern.NONE;
         this.fillBgColor = Color.WHITE;
@@ -153,6 +153,27 @@ public class GenericCellStyle implements CellStyle {
     @Override
     public void setDataFormat(String format) {
         this.dataFormat = format;
+    }
+
+    @Override
+    public void copyStyle(CellStyle other) {
+        setHAlign(other.getHAlign());
+        setVAlign(other.getVAlign());
+        for (Direction d : Direction.values()) {
+            setBorderStyle(d, other.getBorderStyle(d));
+        }
+        setDataFormat(other.getDataFormat());
+        setFillBgColor(other.getFillBgColor());
+        setFillFgColor(other.getFillFgColor());
+        setFillPattern(other.getFillPattern());
+        setFont(other.getFont());
+        setWrap(other.isWrap());
+        setFont(new GenericFont(other.getFont()));
+    }
+
+    @Override
+    public GenericWorkbook getWorkbook() {
+        return workbook;
     }
 
 }

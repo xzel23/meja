@@ -15,17 +15,11 @@
  */
 package com.dua3.meja.io;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.poi.PoiHelper;
+import com.dua3.meja.model.poi.PoiWorkbook;
+import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 /**
  *
@@ -44,90 +38,18 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
 
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
-        try (ExcelWriterImp writer = new ExcelWriterImp(workbook)) {
-            writer.write(out);
+        if (workbook instanceof PoiWorkbook.PoiXssfWorkbook) {
+            workbook.write(FileType.XLSX, out);
+        } else {
+            Workbook xlsxWorkbook = PoiWorkbookFactory.instance().createXlsxStreaming(workbook.getLocale());
+            try {
+                xlsxWorkbook.copy(workbook);
+                xlsxWorkbook.write(FileType.XLSX, out);
+            } finally {
+                out.flush();
+                xlsxWorkbook.close();
+            }
         }
     }
 
-    private static class ExcelWriterImp implements AutoCloseable {
-
-        private final Workbook workbook;
-        private final SXSSFWorkbook poiWorkbook;
-        private final Map<String, Short> styles = new HashMap<>();
-
-        public ExcelWriterImp(Workbook workbook) {
-            this.workbook = workbook;
-            this.poiWorkbook = new SXSSFWorkbook();
-        }
-
-        public void write(OutputStream out) throws IOException {
-            buildPoiWorkbook();
-            poiWorkbook.write(out);
-        }
-
-        private void buildPoiWorkbook() {
-            // copy styles
-            for (String styleName : workbook.getCellStyleNames()) {
-                CellStyle cellStyle = workbook.getCellStyle(styleName);
-                org.apache.poi.ss.usermodel.CellStyle poiCellStyle = poiWorkbook.createCellStyle();
-                styles.put(styleName, poiCellStyle.getIndex());
-                poiCellStyle.setAlignment(PoiHelper.hAlignToPoi(cellStyle.getHAlign()));
-                poiCellStyle.setVerticalAlignment(PoiHelper.vAlignToPoi(cellStyle.getVAlign()));
-                // TODO font etc.
-            }
-
-            // copy sheets
-            for (Sheet sheet : workbook) {
-                org.apache.poi.ss.usermodel.Sheet poiSheet = poiWorkbook.createSheet(sheet.getSheetName());
-                // copy rows
-                for (Row row : sheet) {
-                    org.apache.poi.ss.usermodel.Row poiRow = poiSheet.createRow(row.getRowNumber());
-                    // copy cells
-                    for (Cell cell : row) {
-                        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.createCell(cell.getColumnNumber());
-                        copyCellData(poiCell, cell);
-                    }
-                }
-            }
-        }
-
-        private void copyCellData(org.apache.poi.ss.usermodel.Cell poiCell, Cell cell) {
-            // copy value and type
-            switch (cell.getCellType()) {
-                case BLANK:
-                    poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
-                    break;
-                case BOOLEAN:
-                    poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN);
-                    poiCell.setCellValue(cell.getBoolean());
-                    break;
-                case ERROR:
-                    poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR);
-                    break;
-                case FORMULA:
-                    poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
-                    poiCell.setCellValue(cell.getFormula());
-                    break;
-                case NUMERIC:
-                    poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
-                    poiCell.setCellValue(cell.getNumber().doubleValue());
-                    break;
-                case TEXT:
-                    poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
-                    poiCell.setCellValue(cell.getAsText()); // FIXME use RichTextString
-                    break;
-                default:
-                    throw new IllegalArgumentException();
-            }
-
-            // copy style
-            poiCell.setCellStyle(poiWorkbook.getCellStyleAt(styles.get(cell.getCellStyle().getName())));
-        }
-
-        @Override
-        public void close() throws IOException {
-            poiWorkbook.dispose();
-        }
-
-    }
 }

@@ -16,9 +16,9 @@
 package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.MejaHelper;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -176,7 +176,7 @@ public class GenericSheet implements Sheet {
     }
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    
+
     @Override
     public Lock readLock() {
         return lock.readLock();
@@ -200,5 +200,12 @@ public class GenericSheet implements Sheet {
 
         this.zoom=zoom;
     }
-    
+
+    @Override
+    public void copy(Sheet other) {
+        for (Row row: other) {
+            getRow(row.getRowNumber()).copy(row);
+        }
+    }
+
 }

@@ -80,7 +80,7 @@ public class PoiCell implements Cell {
     }
 
     public PoiWorkbook getWorkbook() {
-        return workbook;        
+        return workbook;
     }
 
     @Override
@@ -111,7 +111,7 @@ public class PoiCell implements Cell {
     public PoiRow getRow() {
         return row;
     }
-    
+
     @Override
     public CellType getCellType() {
         return translateCellType(poiCell.getCellType());
@@ -368,6 +368,11 @@ public class PoiCell implements Cell {
                 return getCellStyle().getFont();
             }
         }
+    }
+
+    @Override
+    public void copy(Cell other) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
         
 }

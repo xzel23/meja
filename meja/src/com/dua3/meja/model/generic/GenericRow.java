@@ -17,7 +17,6 @@ package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Workbook;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +38,10 @@ public class GenericRow implements Row {
     }
 
     @Override
-    public Workbook getWorkbook() {
+    public GenericWorkbook getWorkbook() {
         return sheet.getWorkbook();
     }
-    
+
     @Override
     public GenericSheet getSheet() {
         return sheet;
@@ -82,6 +81,13 @@ public class GenericRow implements Row {
     @Override
     public int getLastCellNum() {
         return cells.size();
+    }
+
+    @Override
+    public void copy(Row other) {
+        for (Cell cell: other) {
+            getCell(cell.getColumnNumber()).copy(cell);
+        }
     }
 
 }

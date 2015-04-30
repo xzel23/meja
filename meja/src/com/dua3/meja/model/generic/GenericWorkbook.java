@@ -56,7 +56,7 @@ public class GenericWorkbook implements Workbook {
     public Locale getLocale() {
         return locale;
     }
-    
+
     @Override
     public int getNumberOfSheets() {
         return sheets.size();
@@ -114,8 +114,8 @@ public class GenericWorkbook implements Workbook {
     @Override
     public GenericCellStyle getCellStyle(String name) {
         GenericCellStyle cellStyle = cellStyles.get(name);
-        if (cellStyle==null) {
-            cellStyle=new GenericCellStyle(this);
+        if (cellStyle == null) {
+            cellStyle = new GenericCellStyle(this);
             cellStyles.put(name, cellStyle);
         }
         return cellStyle;
@@ -179,12 +179,29 @@ public class GenericWorkbook implements Workbook {
     }
 
     String getCellStyleName(GenericCellStyle cellStyle) {
-        for (Map.Entry<String, GenericCellStyle> entry: cellStyles.entrySet()) {
-            if (entry.getValue()==cellStyle) {
+        for (Map.Entry<String, GenericCellStyle> entry : cellStyles.entrySet()) {
+            if (entry.getValue() == cellStyle) {
                 return entry.getKey();
             }
         }
         throw new IllegalArgumentException("CellStyle is not from this workbook.");
+    }
+
+    @Override
+    public void copy(Workbook other) {
+        // copy styles
+        for (String styleName : other.getCellStyleNames()) {
+            CellStyle cellStyle = other.getCellStyle(styleName);
+            CellStyle newCellStyle = getCellStyle(styleName);
+            newCellStyle.copyStyle(cellStyle);
+        }
+
+        // copy sheets
+        for (int sheetNr = 0; sheetNr < other.getNumberOfSheets(); sheetNr++) {
+            Sheet sheet = other.getSheetByNr(sheetNr);
+            Sheet newSheet = createSheet(sheet.getSheetName());
+            newSheet.copy(sheet);
+        }
     }
 
 }

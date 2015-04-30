@@ -65,4 +65,5 @@ public interface Font {
      * @return true if font is strike-through.
      */
     boolean isStrikeThrough();
+
 }

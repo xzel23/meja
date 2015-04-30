@@ -15,9 +15,9 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -35,7 +35,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * @author axel
  */
 public class PoiSheet implements Sheet {
-    
+
     protected  final PoiWorkbook workbook;
     protected final org.apache.poi.ss.usermodel.Sheet poiSheet;
     private int firstColumn;
@@ -57,7 +57,7 @@ public class PoiSheet implements Sheet {
     public PoiWorkbook getWorkbook() {
         return workbook;
     }
-        
+
     public RectangularRegion getMergedRegion(int rowNum, int colNum) {
         for (RectangularRegion rr : mergedRegions) {
             if (rr.contains(rowNum, colNum)) {
@@ -238,7 +238,7 @@ public class PoiSheet implements Sheet {
     }
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    
+
     @Override
     public Lock readLock() {
         return lock.readLock();
@@ -248,7 +248,7 @@ public class PoiSheet implements Sheet {
     public Lock writeLock() {
         return lock.writeLock();
     }
-    
+
     @Override
     public float getZoom() {
         // current POI version has no method for querying the zoom factor
@@ -260,12 +260,12 @@ public class PoiSheet implements Sheet {
         if (zoom<=0) {
             throw new IllegalArgumentException("Invalid zoom factor: "+zoom);
         }
-        
+
         this.zoom = zoom;
         // translate zoom factor into fraction (using permille), should be at least 1
         int pmZoom = Math.max(1, Math.round(zoom*1000));
         poiSheet.setZoom(pmZoom, 1000);
-    }    
+    }
 
     @Override
     public PoiRow getRow(int row) {
@@ -276,4 +276,11 @@ public class PoiSheet implements Sheet {
         return new PoiRow(this, poiRow);
     }
 
+    @Override
+    public void copy(Sheet other) {
+        for (Row row: other) {
+            getRow(row.getRowNumber()).copy(row);
+        }
+    }
+    
 }

@@ -178,4 +178,10 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @return zoom factor, 1.0=100%
      */
     float getZoom();
+
+    /**
+     * Copy sheet data from another sheet.
+     * @param other sheet to copy data from
+     */
+    void copy(Sheet other);
 }
