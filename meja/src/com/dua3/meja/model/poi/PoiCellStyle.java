@@ -50,6 +50,7 @@ public abstract class PoiCellStyle implements CellStyle {
         return workbook.getCellStyleName(this);
     }
 
+    @Override
     public PoiWorkbook getWorkbook() {
         return workbook;
     }
@@ -286,7 +287,8 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setFillBgColor(Color color) {
-            ((XSSFCellStyle) poiCellStyle).setFillBackgroundColor(((PoiXssfWorkbook) workbook).getPoiColor(color));
+            final XSSFColor poiColor = color==null?null:((PoiXssfWorkbook) workbook).getPoiColor(color);
+            ((XSSFCellStyle) poiCellStyle).setFillBackgroundColor(poiColor);
         }
 
         @Override
@@ -297,7 +299,8 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setFillFgColor(Color color) {
-            ((XSSFCellStyle) poiCellStyle).setFillForegroundColor(((PoiXssfWorkbook) workbook).getPoiColor(color));
+            final XSSFColor poiColor = color==null?null:((PoiXssfWorkbook) workbook).getPoiColor(color);
+            ((XSSFCellStyle) poiCellStyle).setFillForegroundColor(poiColor);
         }
 
         @Override
@@ -334,7 +337,8 @@ public abstract class PoiCellStyle implements CellStyle {
         @Override
         public void setBorderStyle(Direction d, BorderStyle borderStyle) {
             short poiBorder = getPoiBorder(borderStyle);
-            XSSFColor poiColor = ((PoiXssfWorkbook) workbook).getPoiColor(borderStyle.getColor());
+            final Color color = borderStyle.getColor();
+            XSSFColor poiColor = color==null?null:((PoiXssfWorkbook) workbook).getPoiColor(color);
             switch (d) {
                 case NORTH:
                     ((XSSFCellStyle) poiCellStyle).setTopBorderColor(poiColor);
