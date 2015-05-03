@@ -127,7 +127,7 @@ public abstract class PoiWorkbook implements Workbook {
     @Override
     public void write(FileType type, OutputStream out) throws IOException {
         if ((type == FileType.XLSX && ((poiWorkbook instanceof XSSFWorkbook)||(poiWorkbook instanceof SXSSFWorkbook)))
-                || (type == FileType.XLSX && poiWorkbook instanceof HSSFWorkbook)) {
+                || (type == FileType.XLS && poiWorkbook instanceof HSSFWorkbook)) {
             // if Workbook is PoiWorkbook it should be written directly so that
             // features not yet supported by Meja don't get lost in the process
             poiWorkbook.write(out);
