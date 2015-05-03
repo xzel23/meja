@@ -169,7 +169,7 @@ public class ExcelViewer extends JFrame {
 
         // File menu
         JMenu mnFile = new JMenu("File");
-        mnFile.add(new AbstractAction("Open") {
+        mnFile.add(new AbstractAction("Open...") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -196,6 +196,13 @@ public class ExcelViewer extends JFrame {
                 saveWorkbook();
             }
 
+        });
+        mnFile.add(new AbstractAction("Save as...") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showSaveAsDialog();
+            }
         });
         mnFile.addSeparator();
         mnFile.add(new AbstractAction("Exit") {
@@ -312,6 +319,23 @@ public class ExcelViewer extends JFrame {
     }
 
     /**
+     * Show the "Save as" dialog.
+     */
+    private void showSaveAsDialog() {
+        try {
+            final URI uri = MejaHelper.showDialogAndSaveWorkbook(this, workbook, currentDir);
+            if (uri!=null) {
+                workbook.setUri(uri);
+                updateTitle(uri);
+                Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Successfully saved ''{0}''.", uri);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, "Exception saving workbook.", ex);
+            JOptionPane.showMessageDialog(this, "Error saving workbook: "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
      * Set the current workbook.
      *
      * @param workbook the workbook
@@ -330,22 +354,26 @@ public class ExcelViewer extends JFrame {
         }
 
         this.workbook = workbook;
-        URI newUri = workbook != null ? workbook.getUri() : null;
 
-        if (newUri != null) {
-            setTitle(APPLICATION_NAME + " - " + newUri.getPath());
+        workbookView.setWorkbook(workbook);
+        workbookView.setEditable(true);
+
+        URI newUri = workbook != null ? workbook.getUri() : null;
+        updateTitle(newUri);
+        firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
+    }
+
+    public void updateTitle(URI uri) {
+        if (uri != null) {
+            setTitle(APPLICATION_NAME + " - " + uri.getPath());
             try {
-                currentDir = new File(newUri);
+                currentDir = new File(uri);
             } catch (IllegalArgumentException e) {
                 //nop
             }
         } else {
             setTitle(APPLICATION_NAME);
         }
-
-        workbookView.setWorkbook(workbook);
-        workbookView.setEditable(true);
-        firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
     }
 
     public void saveWorkbook() {
