@@ -372,7 +372,26 @@ public class PoiCell implements Cell {
 
     @Override
     public void copy(Cell other) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch (other.getCellType()) {
+            case BLANK:
+                clear();
+                break;
+            case BOOLEAN:
+                set(other.getBoolean());
+                break;
+            case ERROR:
+                // FIXME
+                setFormula("1/0");
+                break;
+            case NUMERIC:
+                set(other.getNumber());
+                break;
+            case TEXT:
+                // FIXME AttributedString
+                set(other.getText());
+                break;
+        }
+        setCellStyle(other.getCellStyle().getName());
     }
-        
+
 }

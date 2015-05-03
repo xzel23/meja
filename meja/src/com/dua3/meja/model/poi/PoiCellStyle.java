@@ -164,10 +164,11 @@ public abstract class PoiCellStyle implements CellStyle {
 
     @Override
     public void setFont(Font font) {
-        if (font instanceof PoiFont) {
+        if (font instanceof PoiFont && ((PoiFont)font).workbook==this.workbook) {
             poiCellStyle.setFont(((PoiFont) font).getPoiFont());
         } else {
-            throw new IllegalArgumentException("Incompatible implementation class.");
+            PoiFont poiFont = new PoiFont(workbook, font);
+            poiCellStyle.setFont(poiFont.getPoiFont());
         }
     }
 
@@ -179,8 +180,8 @@ public abstract class PoiCellStyle implements CellStyle {
             setBorderStyle(d, other.getBorderStyle(d));
         }
         setDataFormat(other.getDataFormat());
-        setFillBgColor(other.getFillBgColor());
         setFillFgColor(other.getFillFgColor());
+        setFillBgColor(other.getFillBgColor());
         setFillPattern(other.getFillPattern());
         setFont(other.getFont());
         setWrap(other.isWrap());
@@ -293,8 +294,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public Color getFillFgColor() {
-            return workbook.getColor(
-                    poiCellStyle.getFillForegroundColorColor(), null);
+            return workbook.getColor(poiCellStyle.getFillForegroundColorColor(), null);
         }
 
         @Override

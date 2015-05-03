@@ -127,7 +127,7 @@ public abstract class PoiWorkbook implements Workbook {
     @Override
     public void write(FileType type, OutputStream out) throws IOException {
         if ((type == FileType.XLSX && ((poiWorkbook instanceof XSSFWorkbook) || (poiWorkbook instanceof SXSSFWorkbook)))
-                || (type == FileType.XLSX && poiWorkbook instanceof HSSFWorkbook)) {
+                || (type == FileType.XLS && poiWorkbook instanceof HSSFWorkbook)) {
             // if Workbook is PoiWorkbook it should be written directly so that
             // features not yet supported by Meja don't get lost in the process
             poiWorkbook.write(out);
@@ -289,6 +289,8 @@ public abstract class PoiWorkbook implements Workbook {
         }
     }
 
+    public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
+
     public static class PoiHssfWorkbook extends PoiWorkbook {
 
         private final PoiHssfCellStyle defaultCellStyle;
@@ -337,6 +339,7 @@ public abstract class PoiWorkbook implements Workbook {
             return getFont(((HSSFWorkbook) poiWorkbook).getFontAt(idx));
         }
 
+        @Override
         public HSSFColor getPoiColor(Color color) {
             HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
             return palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
@@ -391,6 +394,7 @@ public abstract class PoiWorkbook implements Workbook {
             return new Color(r, g, b, a);
         }
 
+        @Override
         public XSSFColor getPoiColor(Color color) {
             return new XSSFColor(color);
         }

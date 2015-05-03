@@ -21,6 +21,8 @@ import java.awt.font.TextAttribute;
 import java.text.AttributedString;
 import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
 /**
@@ -42,7 +44,18 @@ public class PoiFont implements Font {
         this.poiFont = workbook.getPoiWorkbook().createFont();
         this.poiFont.setFontHeightInPoints((short)Math.round(other.getSizeInPoints()));
         this.poiFont.setFontName(other.getFamily());
-        // FIXME this.poiFont.setColor(...);
+
+        final org.apache.poi.ss.usermodel.Color poiTextColor = workbook.getPoiColor(other.getColor());
+        if (poiTextColor instanceof HSSFColor) {
+            this.poiFont.setColor(((HSSFColor)poiTextColor).getIndex());
+        } else if (poiFont instanceof XSSFFont) {
+            ((XSSFFont)this.poiFont).setColor((XSSFColor) poiTextColor);
+        } else {
+            // it should both either be XSSF _or_ HSSF implementations so this
+            // line should never be reached.
+            throw new IllegalStateException();
+        }
+
         this.poiFont.setBold(other.isBold());
         this.poiFont.setItalic(other.isItalic());
         this.poiFont.setStrikeout(other.isStrikeThrough());
