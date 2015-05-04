@@ -129,7 +129,7 @@ public class MejaHelper {
 
             @Override
             public boolean hasNext() {
-                return rowNum < sheet.getLastRowNum();
+                return rowNum <= sheet.getLastRowNum();
             }
 
             @Override

@@ -202,25 +202,7 @@ public class PoiSheet implements Sheet {
 
     @Override
     public Iterator<Row> iterator() {
-        return new Iterator<Row>() {
-
-            private int rowNum = PoiSheet.this.poiSheet.getFirstRowNum();
-
-            @Override
-            public boolean hasNext() {
-                return rowNum < PoiSheet.this.poiSheet.getLastRowNum();
-            }
-
-            @Override
-            public Row next() {
-                return getRow(rowNum++);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Removing of rows is not supported.");
-            }
-        };
+        return MejaHelper.createRowIterator(this);
     }
 
     List<RectangularRegion> getMergedRegions() {
@@ -282,5 +264,5 @@ public class PoiSheet implements Sheet {
             getRow(row.getRowNumber()).copy(row);
         }
     }
-    
+
 }

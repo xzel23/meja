@@ -19,15 +19,26 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
+import com.dua3.meja.util.AttributedStringHelper;
 import com.dua3.meja.util.RectangularRegion;
+import java.awt.Color;
+import java.awt.font.TextAttribute;
 import java.lang.ref.SoftReference;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
@@ -195,6 +206,50 @@ public class PoiCell implements Cell {
     @Override
     public Cell getLogicalCell() {
         return logicalCell;
+    }
+
+    @Override
+    public Cell set(AttributedString s) {
+        RichTextString richText = workbook.createRichTextString(AttributedStringHelper.toString(s));
+        AttributedCharacterIterator iter = s.getIterator();
+        int endIndex = iter.getEndIndex();
+        while (iter.getIndex()!=iter.getEndIndex()) {
+            int runStart = iter.getRunStart();
+            int runLimit = iter.getRunLimit();
+
+            final Font defaultFont = workbook.getDefaultCellStyle().getFont().poiFont;
+            org.apache.poi.ss.usermodel.Font font = workbook.getPoiWorkbook().createFont();
+            for (Map.Entry<Attribute, Object> entry: iter.getAttributes().entrySet()) {
+                Attribute attribute = entry.getKey();
+                Object value = entry.getValue();
+                if (attribute==TextAttribute.FAMILY) {
+                    font.setFontName(value!=null?value.toString():defaultFont.getFontName());
+                } else if (attribute==TextAttribute.SIZE) {
+                    font.setFontHeightInPoints(value!=null?((Number)value).shortValue():defaultFont.getFontHeightInPoints());
+                } else if (attribute==TextAttribute.FOREGROUND) {
+                    org.apache.poi.ss.usermodel.Color poiColor = workbook.getPoiColor((Color)value);
+                    if (font instanceof XSSFFont && poiColor instanceof XSSFColor) {
+                        ((XSSFFont)font).setColor((XSSFColor)poiColor);
+                    } if (font instanceof HSSFFont && poiColor instanceof HSSFColor) {
+                        font.setColor(((HSSFColor)poiColor).getIndex());
+                    } else {
+                        // this should never happen because font and color
+                        // should always both be either XSSF or HSSF instances
+                        throw new IllegalStateException();
+                    }
+                } else if (attribute==TextAttribute.WEIGHT) {
+                    font.setBoldweight(((Number)value).shortValue());
+                } else if (attribute==TextAttribute.UNDERLINE) {
+                    font.setUnderline(TextAttribute.UNDERLINE_ON.equals(value)?Font.U_SINGLE:Font.U_NONE);
+                } else if (attribute==TextAttribute.STRIKETHROUGH) {
+                    font.setStrikeout(TextAttribute.STRIKETHROUGH_ON.equals(value));
+                }
+
+            }
+            richText.applyFont(runStart, runLimit, font);
+        }
+        poiCell.setCellValue(richText);
+        return this;
     }
 
     @Override

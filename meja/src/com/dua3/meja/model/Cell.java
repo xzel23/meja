@@ -193,6 +193,14 @@ public interface Cell {
     Cell set(String s);
 
     /**
+     * Set cell value to string with markup.
+     *
+     * @param s attributed string
+     * @return this cell
+     */
+    Cell set(AttributedString s);
+
+    /**
      * Set cell value to boolean value.
      *
      * @param b boolean value

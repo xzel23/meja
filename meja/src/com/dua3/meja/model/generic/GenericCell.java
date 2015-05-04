@@ -169,6 +169,13 @@ class GenericCell implements Cell {
     }
 
     @Override
+    public GenericCell set(AttributedString arg) {
+        this.type = CellType.TEXT;
+        this.value = arg;
+        return this;
+    }
+
+    @Override
     public GenericCell set(Boolean arg) {
         this.type = CellType.BOOLEAN;
         this.value = arg;

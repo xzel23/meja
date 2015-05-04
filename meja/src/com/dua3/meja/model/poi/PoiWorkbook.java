@@ -39,14 +39,17 @@ import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -291,6 +294,8 @@ public abstract class PoiWorkbook implements Workbook {
 
     public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
 
+    public abstract RichTextString createRichTextString(String s);
+
     public static class PoiHssfWorkbook extends PoiWorkbook {
 
         private final PoiHssfCellStyle defaultCellStyle;
@@ -350,6 +355,11 @@ public abstract class PoiWorkbook implements Workbook {
             return getColor(((HSSFFont) poiFont).getHSSFColor(((HSSFWorkbook) getPoiWorkbook())), Color.BLACK);
         }
 
+        @Override
+        public HSSFRichTextString createRichTextString(String s) {
+            return new HSSFRichTextString(s);
+        }
+
     }
 
     public static class PoiXssfWorkbook
@@ -404,6 +414,11 @@ public abstract class PoiWorkbook implements Workbook {
             return getColor(((XSSFFont) poiFont).getXSSFColor(), Color.BLACK);
         }
 
+
+        @Override
+        public XSSFRichTextString createRichTextString(String s) {
+            return new XSSFRichTextString(s);
+        }
     }
 
 }
