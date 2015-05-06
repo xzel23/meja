@@ -213,7 +213,7 @@ public class PoiCell implements Cell {
         RichTextString richText = workbook.createRichTextString(AttributedStringHelper.toString(s));
         AttributedCharacterIterator iter = s.getIterator();
         int endIndex = iter.getEndIndex();
-        while (iter.getIndex()!=iter.getEndIndex()) {
+        while (iter.getIndex()!=endIndex) {
             int runStart = iter.getRunStart();
             int runLimit = iter.getRunLimit();
 
@@ -230,7 +230,7 @@ public class PoiCell implements Cell {
                     org.apache.poi.ss.usermodel.Color poiColor = workbook.getPoiColor((Color)value);
                     if (font instanceof XSSFFont && poiColor instanceof XSSFColor) {
                         ((XSSFFont)font).setColor((XSSFColor)poiColor);
-                    } if (font instanceof HSSFFont && poiColor instanceof HSSFColor) {
+                    } else if (font instanceof HSSFFont && poiColor instanceof HSSFColor) {
                         font.setColor(((HSSFColor)poiColor).getIndex());
                     } else {
                         // this should never happen because font and color
@@ -244,9 +244,9 @@ public class PoiCell implements Cell {
                 } else if (attribute==TextAttribute.STRIKETHROUGH) {
                     font.setStrikeout(TextAttribute.STRIKETHROUGH_ON.equals(value));
                 }
-
             }
             richText.applyFont(runStart, runLimit, font);
+            iter.setIndex(runLimit);
         }
         poiCell.setCellValue(richText);
         return this;
@@ -442,8 +442,7 @@ public class PoiCell implements Cell {
                 set(other.getNumber());
                 break;
             case TEXT:
-                // FIXME AttributedString
-                set(other.getText());
+                set(other.getAttributedString());
                 break;
         }
         setCellStyle(other.getCellStyle().getName());
