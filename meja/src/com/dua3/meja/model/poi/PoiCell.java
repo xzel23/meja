@@ -23,7 +23,6 @@ import com.dua3.meja.util.AttributedStringHelper;
 import com.dua3.meja.util.RectangularRegion;
 import java.awt.Color;
 import java.awt.font.TextAttribute;
-import java.lang.ref.SoftReference;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
@@ -54,7 +53,6 @@ public class PoiCell implements Cell {
     protected final int spanX;
     protected final int spanY;
     protected final PoiCell logicalCell;
-    protected SoftReference<AttributedString> attributedString = new SoftReference<>(null);
 
     public PoiCell(PoiRow row, org.apache.poi.ss.usermodel.Cell cell) {
         this.workbook = row.getWorkbook();
@@ -213,35 +211,35 @@ public class PoiCell implements Cell {
         RichTextString richText = workbook.createRichTextString(AttributedStringHelper.toString(s));
         AttributedCharacterIterator iter = s.getIterator();
         int endIndex = iter.getEndIndex();
-        while (iter.getIndex()!=endIndex) {
+        while (iter.getIndex() != endIndex) {
             int runStart = iter.getRunStart();
             int runLimit = iter.getRunLimit();
 
             final Font defaultFont = workbook.getDefaultCellStyle().getFont().poiFont;
             org.apache.poi.ss.usermodel.Font font = workbook.getPoiWorkbook().createFont();
-            for (Map.Entry<Attribute, Object> entry: iter.getAttributes().entrySet()) {
+            for (Map.Entry<Attribute, Object> entry : iter.getAttributes().entrySet()) {
                 Attribute attribute = entry.getKey();
                 Object value = entry.getValue();
-                if (attribute==TextAttribute.FAMILY) {
-                    font.setFontName(value!=null?value.toString():defaultFont.getFontName());
-                } else if (attribute==TextAttribute.SIZE) {
-                    font.setFontHeightInPoints(value!=null?((Number)value).shortValue():defaultFont.getFontHeightInPoints());
-                } else if (attribute==TextAttribute.FOREGROUND) {
-                    org.apache.poi.ss.usermodel.Color poiColor = workbook.getPoiColor((Color)value);
+                if (attribute == TextAttribute.FAMILY) {
+                    font.setFontName(value != null ? value.toString() : defaultFont.getFontName());
+                } else if (attribute == TextAttribute.SIZE) {
+                    font.setFontHeightInPoints(value != null ? ((Number) value).shortValue() : defaultFont.getFontHeightInPoints());
+                } else if (attribute == TextAttribute.FOREGROUND) {
+                    org.apache.poi.ss.usermodel.Color poiColor = workbook.getPoiColor((Color) value);
                     if (font instanceof XSSFFont && poiColor instanceof XSSFColor) {
-                        ((XSSFFont)font).setColor((XSSFColor)poiColor);
+                        ((XSSFFont) font).setColor((XSSFColor) poiColor);
                     } else if (font instanceof HSSFFont && poiColor instanceof HSSFColor) {
-                        font.setColor(((HSSFColor)poiColor).getIndex());
+                        font.setColor(((HSSFColor) poiColor).getIndex());
                     } else {
                         // this should never happen because font and color
                         // should always both be either XSSF or HSSF instances
                         throw new IllegalStateException();
                     }
-                } else if (attribute==TextAttribute.WEIGHT) {
-                    font.setBoldweight(((Number)value).shortValue());
-                } else if (attribute==TextAttribute.UNDERLINE) {
-                    font.setUnderline(TextAttribute.UNDERLINE_ON.equals(value)?Font.U_SINGLE:Font.U_NONE);
-                } else if (attribute==TextAttribute.STRIKETHROUGH) {
+                } else if (attribute == TextAttribute.WEIGHT) {
+                    font.setBoldweight(((Number) value).shortValue());
+                } else if (attribute == TextAttribute.UNDERLINE) {
+                    font.setUnderline(TextAttribute.UNDERLINE_ON.equals(value) ? Font.U_SINGLE : Font.U_NONE);
+                } else if (attribute == TextAttribute.STRIKETHROUGH) {
                     font.setStrikeout(TextAttribute.STRIKETHROUGH_ON.equals(value));
                 }
             }
@@ -254,51 +252,38 @@ public class PoiCell implements Cell {
 
     @Override
     public AttributedString getAttributedString() {
-        if (isEmpty()) {
-            return new AttributedString("");
-        }
-
-        final CellType cellType = getCellType();
-        if (cellType == CellType.FORMULA) {
+        if (getCellType() != CellType.TEXT) {
             return new AttributedString(getAsText());
         }
 
-        AttributedString as = attributedString.get();
-        if (as == null) {
-            if (cellType != CellType.TEXT) {
-                as = new AttributedString(getAsText());
-            } else {
-                RichTextString richText = poiCell.getRichStringCellValue();
+        RichTextString richText = poiCell.getRichStringCellValue();
 
-                String text = richText.getString();
-                //TODO: properly process tabs
-                text = text.replace('\t', ' '); // tab
-                text = text.replace((char) 160, ' '); // non-breaking space
+        String text = richText.getString();
+        //TODO: properly process tabs
+        text = text.replace('\t', ' '); // tab
+        text = text.replace((char) 160, ' '); // non-breaking space
 
-                as = new AttributedString(text);
+        AttributedString as = new AttributedString(text);
 
-                for (int i = 0; i < richText.numFormattingRuns(); i++) {
-                    int start = richText.getIndexOfFormattingRun(i);
-                    int end = i + 1 < richText.numFormattingRuns() ? richText.getIndexOfFormattingRun(i + 1) : richText.length();
+        for (int i = 0; i < richText.numFormattingRuns(); i++) {
+            int start = richText.getIndexOfFormattingRun(i);
+            int end = i + 1 < richText.numFormattingRuns() ? richText.getIndexOfFormattingRun(i + 1) : richText.length();
 
-                    if (start == end) {
-                        // skip empty
-                        continue;
-                    }
-
-                    // apply font attributes for formatting run
-                    getFontForFormattingRun(richText, i).addAttributes(as, start, end);
-                }
+            if (start == end) {
+                // skip empty
+                continue;
             }
-            attributedString = new SoftReference<>(as);
+
+            // apply font attributes for formatting run
+            getFontForFormattingRun(richText, i).addAttributes(as, start, end);
         }
+
         return as;
     }
 
     @Override
     public void clear() {
         poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
-        attributedString.clear();
     }
 
     @Override
@@ -308,7 +293,6 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg);
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN);
-            attributedString.clear();
         }
         return this;
     }
@@ -320,7 +304,6 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg);
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
-            attributedString.clear();
         }
         return this;
     }
@@ -332,7 +315,6 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg.doubleValue());
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
-            attributedString.clear();
         }
         return this;
     }
@@ -344,7 +326,6 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg);
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
-            attributedString.clear();
         }
         return this;
     }
@@ -356,7 +337,6 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellFormula(arg);
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
-            attributedString.clear();
             getWorkbook().evaluator.evaluateFormulaCell(poiCell);
         }
         return this;
@@ -394,7 +374,6 @@ public class PoiCell implements Cell {
     public void setCellStyle(CellStyle cellStyle) {
         if (cellStyle instanceof PoiCellStyle) {
             poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
-            attributedString.clear();
         } else {
             throw new IllegalArgumentException("Incompatible implementation.");
         }
@@ -413,7 +392,7 @@ public class PoiCell implements Cell {
     private PoiFont getFontForFormattingRun(RichTextString richText, int i) {
         if (richText instanceof HSSFRichTextString) {
             HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
-            return ((PoiHssfWorkbook)workbook).getFont(hssfRichText.getFontOfFormattingRun(i));
+            return ((PoiHssfWorkbook) workbook).getFont(hssfRichText.getFontOfFormattingRun(i));
         } else {
             // Catch NPE as Workaround for Apache POI Bug 56511 (will be fixed in 3.12)
             // https://bz.apache.org/bugzilla/show_bug.cgi?id=56511
@@ -427,6 +406,8 @@ public class PoiCell implements Cell {
 
     @Override
     public void copy(Cell other) {
+        setCellStyle(other.getCellStyle().getName());
+
         switch (other.getCellType()) {
             case BLANK:
                 clear();
@@ -445,7 +426,6 @@ public class PoiCell implements Cell {
                 set(other.getAttributedString());
                 break;
         }
-        setCellStyle(other.getCellStyle().getName());
     }
 
 }
