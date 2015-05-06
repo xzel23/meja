@@ -292,7 +292,6 @@ public class PoiCell implements Cell {
             clear();
         } else {
             poiCell.setCellValue(arg);
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN);
         }
         return this;
     }
@@ -303,7 +302,6 @@ public class PoiCell implements Cell {
             clear();
         } else {
             poiCell.setCellValue(arg);
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
         }
         return this;
     }
@@ -314,19 +312,13 @@ public class PoiCell implements Cell {
             clear();
         } else {
             poiCell.setCellValue(arg.doubleValue());
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC);
         }
         return this;
     }
 
     @Override
     public PoiCell set(String arg) {
-        if (arg == null) {
-            clear();
-        } else {
-            poiCell.setCellValue(arg);
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING);
-        }
+        poiCell.setCellValue(arg);
         return this;
     }
 
