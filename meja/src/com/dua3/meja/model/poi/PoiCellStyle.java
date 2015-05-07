@@ -214,7 +214,9 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setFillFgColor(Color color) {
-            poiCellStyle.setFillForegroundColor(((PoiHssfWorkbook) workbook).getPoiColor(color).getIndex());
+            if (color!=null) {
+                poiCellStyle.setFillForegroundColor(((PoiHssfWorkbook) workbook).getPoiColor(color).getIndex());
+            }
         }
 
         @Override

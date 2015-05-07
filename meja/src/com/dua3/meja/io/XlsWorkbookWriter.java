@@ -16,6 +16,8 @@
 package com.dua3.meja.io;
 
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.poi.PoiWorkbook;
+import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -36,7 +38,18 @@ public class XlsWorkbookWriter extends WorkbookWriter {
 
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (workbook instanceof PoiWorkbook.PoiHssfWorkbook) {
+            workbook.write(FileType.XLS, out);
+        } else {
+            Workbook xlsWorkbook = PoiWorkbookFactory.instance().createXls(workbook.getLocale());
+            try {
+                xlsWorkbook.copy(workbook);
+                xlsWorkbook.write(FileType.XLS, out);
+            } finally {
+                out.flush();
+                xlsWorkbook.close();
+            }
+        }
     }
-    
+
 }

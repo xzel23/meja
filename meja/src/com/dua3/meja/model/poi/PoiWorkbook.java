@@ -297,7 +297,7 @@ public abstract class PoiWorkbook implements Workbook {
     public abstract RichTextString createRichTextString(String s);
 
     public abstract PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough);
-    
+
     public static class PoiHssfWorkbook extends PoiWorkbook {
 
         private final PoiHssfCellStyle defaultCellStyle;
@@ -348,6 +348,9 @@ public abstract class PoiWorkbook implements Workbook {
 
         @Override
         public HSSFColor getPoiColor(Color color) {
+            if (color==null) {
+                return null;
+            }
             HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
             return palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
         }
@@ -434,7 +437,7 @@ public abstract class PoiWorkbook implements Workbook {
         public XSSFRichTextString createRichTextString(String s) {
             return new XSSFRichTextString(s);
         }
-        
+
         @Override
         public PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough) {
             XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();
