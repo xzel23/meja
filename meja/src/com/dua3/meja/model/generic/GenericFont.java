@@ -25,12 +25,12 @@ import java.awt.Color;
 public class GenericFont implements Font {
 
     private final Color color;
-    private final float size;
+    private final Float size;
     private final String family;
-    private final boolean bold;
-    private final boolean italic;
-    private final boolean underline;
-    private final boolean strikeThrough;
+    private final Boolean bold;
+    private final Boolean italic;
+    private final Boolean underline;
+    private final Boolean strikeThrough;
 
     public GenericFont() {
         this.color = Color.BLACK;
@@ -50,6 +50,16 @@ public class GenericFont implements Font {
         this.italic = other.isItalic();
         this.underline = other.isUnderlined();
         this.strikeThrough = other.isStrikeThrough();
+    }
+
+    public GenericFont(String family, float size, Color color, boolean bold, boolean italic, boolean underlined, boolean strikeThrough) {
+        this.color = color;
+        this.size = size;
+        this.family = family;
+        this.bold = bold;
+        this.italic = italic;
+        this.underline = underlined;
+        this.strikeThrough = strikeThrough;
     }
 
     @Override
@@ -87,4 +97,17 @@ public class GenericFont implements Font {
         return strikeThrough;
     }
 
+    @Override
+    public GenericFont deriveFont(FontDef fd) {        
+        String fontFamily = fd.getFamily() != null ?fd.getFamily(): this.getFamily();
+        float fontSize = fd.getSize()!=null?fd.getSize():this.getSizeInPoints();
+        Color fontColor = fd.getColor()!=null?fd.getColor():this.getColor(); 
+        boolean fontBold = fd.getBold()!=null?fd.getBold():this.isBold();
+        boolean fontItalic = fd.getItalic()!=null?fd.getItalic():this.isItalic(); 
+        boolean fontUnderlined = fd.getUnderline()!=null?fd.getUnderline():this.isUnderlined(); 
+        boolean fontStrikeThrough = fd.getStrikeThrough()!=null?fd.getStrikeThrough():this.isStrikeThrough();
+        
+        return new GenericFont(fontFamily, fontSize, fontColor, fontBold, fontItalic, fontUnderlined, fontStrikeThrough);
+    }
+    
 }

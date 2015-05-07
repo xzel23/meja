@@ -25,6 +25,118 @@ import java.awt.Color;
 public interface Font {
 
     /**
+     * A mutable class holding font attributes to help creating imutable font 
+     * instances.
+     */
+    public static class FontDef {
+        private Color color;
+        private Float size;
+        private String family;
+        private Boolean bold;
+        private Boolean italic;
+        private Boolean underline;
+        private Boolean strikeThrough;    
+
+        /**
+         * @return the color
+         */
+        public Color getColor() {
+            return color;
+        }
+
+        /**
+         * @param color the color to set
+         */
+        public void setColor(Color color) {
+            this.color = color;
+        }
+
+        /**
+         * @return the size
+         */
+        public Float getSize() {
+            return size;
+        }
+
+        /**
+         * @param size the size to set
+         */
+        public void setSize(Float size) {
+            this.size = size;
+        }
+
+        /**
+         * @return the family
+         */
+        public String getFamily() {
+            return family;
+        }
+
+        /**
+         * @param family the family to set
+         */
+        public void setFamily(String family) {
+            this.family = family;
+        }
+
+        /**
+         * @return the bold
+         */
+        public Boolean getBold() {
+            return bold;
+        }
+
+        /**
+         * @param bold the bold to set
+         */
+        public void setBold(Boolean bold) {
+            this.bold = bold;
+        }
+
+        /**
+         * @return the italic
+         */
+        public Boolean getItalic() {
+            return italic;
+        }
+
+        /**
+         * @param italic the italic to set
+         */
+        public void setItalic(Boolean italic) {
+            this.italic = italic;
+        }
+
+        /**
+         * @return the underline
+         */
+        public Boolean getUnderline() {
+            return underline;
+        }
+
+        /**
+         * @param underline the underline to set
+         */
+        public void setUnderline(Boolean underline) {
+            this.underline = underline;
+        }
+
+        /**
+         * @return the strikeThrough
+         */
+        public Boolean getStrikeThrough() {
+            return strikeThrough;
+        }
+
+        /**
+         * @param strikeThrough the strikeThrough to set
+         */
+        public void setStrikeThrough(Boolean strikeThrough) {
+            this.strikeThrough = strikeThrough;
+        }
+    }
+    
+    /**
      * Get text color.
      * @return the text color.
      */
@@ -66,4 +178,6 @@ public interface Font {
      */
     boolean isStrikeThrough();
 
+    Font deriveFont(FontDef fd);
+    
 }

@@ -46,9 +46,9 @@ public class PoiFont implements Font {
         this.poiFont.setFontName(other.getFamily());
 
         final org.apache.poi.ss.usermodel.Color poiTextColor = workbook.getPoiColor(other.getColor());
-        if (poiTextColor instanceof HSSFColor) {
+        if (poiFont instanceof HSSFFont && poiTextColor instanceof HSSFColor) {
             this.poiFont.setColor(((HSSFColor)poiTextColor).getIndex());
-        } else if (poiFont instanceof XSSFFont) {
+        } else if (poiFont instanceof XSSFFont && poiTextColor instanceof XSSFColor) {
             ((XSSFFont)this.poiFont).setColor((XSSFColor) poiTextColor);
         } else {
             // it should both either be XSSF _or_ HSSF implementations so this
@@ -135,4 +135,16 @@ public class PoiFont implements Font {
         return workbook.getColor(poiFont, Color.BLACK);
     }
 
+    @Override
+    public PoiFont deriveFont(FontDef fd) {        
+        String fontFamily = fd.getFamily() != null ?fd.getFamily(): this.getFamily();
+        float fontSize = fd.getSize()!=null?fd.getSize():this.getSizeInPoints();
+        Color fontColor = fd.getColor()!=null?fd.getColor():this.getColor(); 
+        boolean fontBold = fd.getBold()!=null?fd.getBold():this.isBold();
+        boolean fontItalic = fd.getItalic()!=null?fd.getItalic():this.isItalic(); 
+        boolean fontUnderlined = fd.getUnderline()!=null?fd.getUnderline():this.isUnderlined(); 
+        boolean fontStrikeThrough = fd.getStrikeThrough()!=null?fd.getStrikeThrough():this.isStrikeThrough();
+        
+        return workbook.createFont(fontFamily, fontSize, fontColor, fontBold, fontItalic, fontUnderlined, fontStrikeThrough);
+    }
 }

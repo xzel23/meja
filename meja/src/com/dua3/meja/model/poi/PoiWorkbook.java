@@ -296,6 +296,8 @@ public abstract class PoiWorkbook implements Workbook {
 
     public abstract RichTextString createRichTextString(String s);
 
+    public abstract PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough);
+    
     public static class PoiHssfWorkbook extends PoiWorkbook {
 
         private final PoiHssfCellStyle defaultCellStyle;
@@ -360,6 +362,19 @@ public abstract class PoiWorkbook implements Workbook {
             return new HSSFRichTextString(s);
         }
 
+        @Override
+        public PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough) {
+            Font poiFont = poiWorkbook.createFont();
+            poiFont.setFontName(fontFamily);
+            poiFont.setFontHeightInPoints((short) Math.round(fontSize));
+            poiFont.setColor(getPoiColor(fontColor).getIndex());
+            poiFont.setBold(fontBold);
+            poiFont.setItalic(fontItalic);
+            poiFont.setUnderline(fontUnderlined?org.apache.poi.ss.usermodel.Font.U_SINGLE:org.apache.poi.ss.usermodel.Font.U_NONE);
+            poiFont.setStrikeout(fontStrikeThrough);
+            return new PoiFont(this, poiFont);
+        }
+
     }
 
     public static class PoiXssfWorkbook
@@ -418,6 +433,19 @@ public abstract class PoiWorkbook implements Workbook {
         @Override
         public XSSFRichTextString createRichTextString(String s) {
             return new XSSFRichTextString(s);
+        }
+        
+        @Override
+        public PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough) {
+            XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();
+            poiFont.setFontName(fontFamily);
+            poiFont.setFontHeightInPoints((short) Math.round(fontSize));
+            poiFont.setColor(getPoiColor(fontColor));
+            poiFont.setBold(fontBold);
+            poiFont.setItalic(fontItalic);
+            poiFont.setUnderline(fontUnderlined?org.apache.poi.ss.usermodel.Font.U_SINGLE:org.apache.poi.ss.usermodel.Font.U_NONE);
+            poiFont.setStrikeout(fontStrikeThrough);
+            return new PoiFont(this, poiFont);
         }
     }
 
