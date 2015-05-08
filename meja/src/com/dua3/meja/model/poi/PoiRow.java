@@ -130,4 +130,12 @@ public class PoiRow implements Row {
         }
     }
 
+    /**
+     * Update first and last column numbers.
+     * @param columnNumber 
+     */
+    void setColumnUsed(int columnNumber) {
+        sheet.setColumnUsed(columnNumber);
+    }
+
 }

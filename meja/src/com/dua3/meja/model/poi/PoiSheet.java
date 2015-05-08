@@ -265,4 +265,13 @@ public class PoiSheet implements Sheet {
         }
     }
 
+    /**
+     * Update first and last column numbers.
+     * @param columnNumber 
+     */
+    void setColumnUsed(int columnNumber) {
+        firstColumn = Math.min(firstColumn, columnNumber);
+        lastColumn = Math.max(lastColumn, columnNumber);
+    }
+
 }

@@ -247,6 +247,9 @@ public class PoiCell implements Cell {
             iter.setIndex(runLimit);
         }
         poiCell.setCellValue(richText);
+        
+        updateRow();
+        
         return this;
     }
 
@@ -284,6 +287,7 @@ public class PoiCell implements Cell {
     @Override
     public void clear() {
         poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+        updateRow();        
     }
 
     @Override
@@ -293,6 +297,7 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg);
         }
+        updateRow();        
         return this;
     }
 
@@ -303,6 +308,7 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg);
         }
+        updateRow();        
         return this;
     }
 
@@ -313,12 +319,14 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg.doubleValue());
         }
+        updateRow();        
         return this;
     }
 
     @Override
     public PoiCell set(String arg) {
         poiCell.setCellValue(arg);
+        updateRow();
         return this;
     }
 
@@ -331,6 +339,7 @@ public class PoiCell implements Cell {
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
             getWorkbook().evaluator.evaluateFormulaCell(poiCell);
         }
+        updateRow();        
         return this;
     }
 
@@ -417,6 +426,15 @@ public class PoiCell implements Cell {
             case TEXT:
                 set(other.getAttributedString());
                 break;
+        }
+    }
+
+    /**
+     * Update sheet data, ie. first and last cell numbers.
+     */
+    private void updateRow() {
+        if (getCellType()!=CellType.BLANK) {
+            getRow().setColumnUsed(getColumnNumber());
         }
     }
 
