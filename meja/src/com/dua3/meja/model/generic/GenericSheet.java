@@ -40,7 +40,11 @@ public class GenericSheet implements Sheet {
     private String sheetName;
     private final Locale locale;
     private final List<GenericRow> rows = new ArrayList<>();
-    private List<RectangularRegion> mergedRegions=new ArrayList<>();
+    private final List<RectangularRegion> mergedRegions=new ArrayList<>();
+    private final float defaultColumnWidth = 80f;
+    private final ArrayList<Float> columnWidth = new ArrayList<>();
+    private final float defaultRowHeight = 12f;
+    private final ArrayList<Float> rowHeight = new ArrayList<>();
     private int freezeRow;
     private int freezeColumn;
     private int autoFilterRow;
@@ -95,15 +99,41 @@ public class GenericSheet implements Sheet {
     }
 
     @Override
-    public float getColumnWidth(int colNum) {
-        // TODO
-        return 80f;
+    public float getColumnWidth(int j) {
+        Float width = j<columnWidth.size() ? columnWidth.get(j) : null;
+        return width != null ? width : defaultColumnWidth;
     }
 
     @Override
-    public float getRowHeight(int rowNum) {
-        // TODO
-        return 12f;
+    public void setColumnWidth(int j, float width) {
+        if (j<columnWidth.size()) {
+            columnWidth.set(j, width);
+        } else {
+            columnWidth.ensureCapacity(j+1);
+            while (columnWidth.size()<j) {
+                columnWidth.add(null); // use default width
+            }
+            columnWidth.add(width);
+        }
+    }
+
+    @Override
+    public float getRowHeight(int i) {
+        Float height = i<rowHeight.size() ? rowHeight.get(i) : null;
+        return height != null ? height : defaultRowHeight;
+    }
+
+    @Override
+    public void setRowHeight(int i, float height) {
+        if (i<rowHeight.size()) {
+            rowHeight.set(i, height);
+        } else {
+            rowHeight.ensureCapacity(i+1);
+            while (rowHeight.size()<i) {
+                rowHeight.add(null); // use default width
+            }
+            rowHeight.add(height);
+        }
     }
 
     @Override

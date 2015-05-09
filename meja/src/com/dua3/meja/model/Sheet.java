@@ -87,11 +87,25 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     float getColumnWidth(int j);
 
     /**
-     * Get row heigt.
+     * Set column width.
+     * @param j the column number
+     * @param width the width of the column in points
+     */
+    void setColumnWidth(int j, float width);
+
+    /**
+     * Get row height.
      * @param i the row number
      * @return height of the row with number {@code i} in points
      */
     float getRowHeight(int i);
+
+    /**
+     * Set row height.
+     * @param i the row number
+     * @param height the height of the row in points
+     */
+    void setRowHeight(int i, float height);
 
     /**
      * Get row.

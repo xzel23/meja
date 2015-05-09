@@ -136,16 +136,39 @@ public class PoiSheet implements Sheet {
         return poiSheet.getSheetName();
     }
 
+    private float poiColumnWidthToPoints(int poiWidth) {
+        float fontSize = getWorkbook().getDefaultCellStyle().getFont().getSizeInPoints();
+        return poiWidth * fontSize * 0.6175f / 256;
+    }
+
+    private int pointsToPoiColumnWidth(float width) {
+        float fontSize = getWorkbook().getDefaultCellStyle().getFont().getSizeInPoints();
+        return Math.round(width / (fontSize * 0.6175f / 256));
+    }
+
     @Override
     public float getColumnWidth(int col) {
-        float fontSize = getWorkbook().getDefaultCellStyle().getFont().getSizeInPoints();
-        return poiSheet.getColumnWidth(col) * fontSize * 0.6175f / 256;
+        return poiColumnWidthToPoints(poiSheet.getColumnWidth(col));
+    }
+
+    @Override
+    public void setColumnWidth(int j, float width) {
+        poiSheet.setColumnWidth(j, pointsToPoiColumnWidth(width));
     }
 
     @Override
     public float getRowHeight(int rowNum) {
         final org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNum);
         return poiRow == null ? poiSheet.getDefaultRowHeightInPoints() : poiRow.getHeightInPoints();
+    }
+
+    @Override
+    public void setRowHeight(int i, float height) {
+        org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
+        if (poiRow==null) {
+            poiRow = poiSheet.createRow(i);
+        }
+        poiRow.setHeightInPoints(height);
     }
 
     @SuppressWarnings("rawtypes")
@@ -280,9 +303,17 @@ public class PoiSheet implements Sheet {
 
     @Override
     public void copy(Sheet other) {
-        for (Row row: other) {
-            getRow(row.getRowNumber()).copy(row);
+        // copy column widths
+        for (int j=other.getFirstColNum(); j<=other.getLastColNum(); j++) {
+            setColumnWidth(j, other.getColumnWidth(j));
         }
+        // copy row data
+        for (Row row: other) {
+            final int i = row.getRowNumber();
+            getRow(i).copy(row);
+            setRowHeight(i, other.getRowHeight(i));
+        }
+        // copy merged regions
         for (RectangularRegion rr:other.getMergedRegions()) {
             addMergedRegion(rr);
         }
