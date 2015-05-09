@@ -17,6 +17,7 @@ package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
+import com.dua3.meja.util.IteratorAdapter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
 public class GenericRow implements Row {
 
     private final GenericSheet sheet;
-    private final List<Cell> cells = new ArrayList<>();
+    private final List<GenericCell> cells = new ArrayList<>();
     private final int rowNumber;
 
     public GenericRow(GenericSheet sheet, int rowNumber) {
@@ -48,7 +49,7 @@ public class GenericRow implements Row {
     }
 
     @Override
-    public Cell getCell(int col) {
+    public GenericCell getCell(int col) {
         reserve(col);
         return cells.get(col);
     }
@@ -65,7 +66,7 @@ public class GenericRow implements Row {
 
     @Override
     public Iterator<Cell> iterator() {
-        return cells.iterator();
+        return new IteratorAdapter<>(cells.iterator());
     }
 
     @Override

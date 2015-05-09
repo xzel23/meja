@@ -15,8 +15,10 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.meja.util.RectangularRegion;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import javax.swing.table.TableModel;
 
@@ -184,4 +186,9 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @param other sheet to copy data from
      */
     void copy(Sheet other);
+
+    List<RectangularRegion> getMergedRegions();
+
+    void addMergedRegion(RectangularRegion cells);
+
 }

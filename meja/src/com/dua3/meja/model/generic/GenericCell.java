@@ -27,7 +27,7 @@ import java.util.Date;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-class GenericCell implements Cell {
+public class GenericCell implements Cell {
 
     private final GenericRow row;
     private CellType type;
@@ -263,6 +263,23 @@ class GenericCell implements Cell {
     @Override
     public GenericWorkbook getWorkbook() {
         return row.getWorkbook();
+    }
+
+    void addedToMergedRegion(GenericCell logicalCell, int spanX, int spanY) {
+      if (this.spanX!=1 || this.spanY!=1) {
+          throw new IllegalStateException("Cell is already merged.");
+      }
+
+      if (this==logicalCell) {
+          this.logicalCell = logicalCell;
+          this.spanX =spanX;
+          this.spanY=spanY;
+      } else {
+          clear();
+          this.logicalCell = logicalCell;
+          this.spanX=0;
+          this.spanY=0;
+      }
     }
 
 }

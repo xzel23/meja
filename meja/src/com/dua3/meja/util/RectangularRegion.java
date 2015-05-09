@@ -52,4 +52,9 @@ public class RectangularRegion {
     public int getLastRow() {
         return rowMax;
     }
+
+    public boolean intersects(RectangularRegion other) {
+        return Math.min(rowMax, other.rowMax)-Math.max(rowMin, other.rowMin)>=0
+            && Math.min(colMax, other.colMax)-Math.max(colMin, other.colMin)>=0;
+    }
 }

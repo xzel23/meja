@@ -50,9 +50,9 @@ public class PoiCell implements Cell {
     protected final PoiRow row;
     protected final org.apache.poi.ss.usermodel.Cell poiCell;
     protected final RectangularRegion mergedRegion;
-    protected final int spanX;
-    protected final int spanY;
-    protected final PoiCell logicalCell;
+    protected int spanX;
+    protected int spanY;
+    protected PoiCell logicalCell;
 
     public PoiCell(PoiRow row, org.apache.poi.ss.usermodel.Cell cell) {
         this.workbook = row.getWorkbook();
@@ -65,27 +65,24 @@ public class PoiCell implements Cell {
             this.spanX = 1;
             this.spanY = 1;
             this.logicalCell = this;
-        } else if (getRowNumber() == mergedRegion.getFirstRow()) {
-            // cell part of the top row of a merged region
-            if (getColumnNumber() == mergedRegion.getFirstColumn()) {
-                // cell is the top left cell of the merged region
-                this.spanX = 1 + mergedRegion.getLastColumn() - mergedRegion.getFirstColumn();
-                this.spanY = 1 + mergedRegion.getLastRow() - mergedRegion.getFirstRow();
-                this.logicalCell = this;
-            } else {
-                // cell is in top row of merged region, but not the leftmost cell
-                this.spanX = 0;
-                this.spanY = 0;
-                this.logicalCell = row.getCell(mergedRegion.getFirstColumn());
-            }
         } else {
-            // cell is merged, but not top row of merged region
-            this.spanX = 0;
-            this.spanY = 0;
-            this.logicalCell = row.getSheet()
-                    .getRow(mergedRegion.getFirstRow())
-                    .getCell(mergedRegion.getFirstColumn());
+            boolean isTopLeft = getColumnNumber() == mergedRegion.getFirstColumn()
+                    && getRowNumber() == mergedRegion.getFirstRow();
+            PoiCell topLeftCell;
+            if (isTopLeft) {
+                topLeftCell = this;
+            } else {
+                topLeftCell = row.getSheet()
+                        .getRow(mergedRegion.getFirstRow())
+                        .getCell(mergedRegion.getFirstColumn());
+            }
+
+            int spanX = 1 + mergedRegion.getLastColumn() - mergedRegion.getFirstColumn();
+            int spanY = 1 + mergedRegion.getLastRow() - mergedRegion.getFirstRow();
+
+            addedToMergedRegion(topLeftCell, spanX, spanY);
         }
+
     }
 
     public PoiWorkbook getWorkbook() {
@@ -247,9 +244,9 @@ public class PoiCell implements Cell {
             iter.setIndex(runLimit);
         }
         poiCell.setCellValue(richText);
-        
+
         updateRow();
-        
+
         return this;
     }
 
@@ -287,7 +284,7 @@ public class PoiCell implements Cell {
     @Override
     public void clear() {
         poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
-        updateRow();        
+        updateRow();
     }
 
     @Override
@@ -297,7 +294,7 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg);
         }
-        updateRow();        
+        updateRow();
         return this;
     }
 
@@ -308,7 +305,7 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg);
         }
-        updateRow();        
+        updateRow();
         return this;
     }
 
@@ -319,7 +316,7 @@ public class PoiCell implements Cell {
         } else {
             poiCell.setCellValue(arg.doubleValue());
         }
-        updateRow();        
+        updateRow();
         return this;
     }
 
@@ -339,7 +336,7 @@ public class PoiCell implements Cell {
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
             getWorkbook().evaluator.evaluateFormulaCell(poiCell);
         }
-        updateRow();        
+        updateRow();
         return this;
     }
 
@@ -433,8 +430,22 @@ public class PoiCell implements Cell {
      * Update sheet data, ie. first and last cell numbers.
      */
     private void updateRow() {
-        if (getCellType()!=CellType.BLANK) {
+        if (getCellType() != CellType.BLANK) {
             getRow().setColumnUsed(getColumnNumber());
+        }
+    }
+
+    void addedToMergedRegion(PoiCell topLeftCell, int spanX, int spanY) {
+        if (    this.getRowNumber() == topLeftCell.getRowNumber()
+             && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
+            this.logicalCell = topLeftCell;
+            this.spanX = spanX;
+            this.spanY = spanY;
+        } else {
+            clear();
+            this.logicalCell = topLeftCell;
+            this.spanX = 0;
+            this.spanY = 0;
         }
     }
 

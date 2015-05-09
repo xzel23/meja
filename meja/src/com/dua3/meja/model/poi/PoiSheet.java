@@ -22,6 +22,7 @@ import com.dua3.meja.util.RectangularRegion;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -205,8 +206,27 @@ public class PoiSheet implements Sheet {
         return MejaHelper.createRowIterator(this);
     }
 
-    List<RectangularRegion> getMergedRegions() {
-        return mergedRegions;
+    @Override
+    public List<RectangularRegion> getMergedRegions() {
+        return Collections.unmodifiableList(mergedRegions);
+    }
+
+    @Override
+    public void addMergedRegion(RectangularRegion cells) {
+        CellRangeAddress cra = new CellRangeAddress(cells.getFirstRow(), cells.getLastRow(), cells.getFirstColumn(), cells.getLastColumn());
+        poiSheet.addMergedRegion(cra);
+        mergedRegions.add(cells);
+
+        // update cell data
+        int spanX = cells.getLastColumn()-cells.getFirstColumn()+1;
+        int spanY = cells.getLastRow()-cells.getFirstRow()+1;
+        PoiCell topLeftCell = getCell(cells.getFirstRow(), cells.getFirstColumn());
+        for (int i=0; i<spanY; i++) {
+            for (int j=0; j<spanX; j++) {
+                PoiCell cell = getCell(cells.getFirstRow()+i, cells.getFirstColumn()+j);
+                cell.addedToMergedRegion(topLeftCell,spanX,spanY);
+            }
+        }
     }
 
     @Override
@@ -263,11 +283,14 @@ public class PoiSheet implements Sheet {
         for (Row row: other) {
             getRow(row.getRowNumber()).copy(row);
         }
+        for (RectangularRegion rr:other.getMergedRegions()) {
+            addMergedRegion(rr);
+        }
     }
 
     /**
      * Update first and last column numbers.
-     * @param columnNumber 
+     * @param columnNumber
      */
     void setColumnUsed(int columnNumber) {
         firstColumn = Math.min(firstColumn, columnNumber);

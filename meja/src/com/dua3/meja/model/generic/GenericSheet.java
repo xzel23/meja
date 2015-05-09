@@ -15,13 +15,14 @@
  */
 package com.dua3.meja.model.generic;
 
-import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.meja.util.RectangularRegion;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +40,7 @@ public class GenericSheet implements Sheet {
     private String sheetName;
     private final Locale locale;
     private final List<GenericRow> rows = new ArrayList<>();
+    private List<RectangularRegion> mergedRegions=new ArrayList<>();
     private int freezeRow;
     private int freezeColumn;
     private int autoFilterRow;
@@ -105,7 +107,7 @@ public class GenericSheet implements Sheet {
     }
 
     @Override
-    public Row getRow(int row) {
+    public GenericRow getRow(int row) {
         reserve(row);
         return rows.get(row);
     }
@@ -122,7 +124,7 @@ public class GenericSheet implements Sheet {
     }
 
     @Override
-    public Cell getCell(int i, int j) {
+    public GenericCell getCell(int i, int j) {
         return getRow(i).getCell(j);
     }
 
@@ -205,6 +207,38 @@ public class GenericSheet implements Sheet {
     public void copy(Sheet other) {
         for (Row row: other) {
             getRow(row.getRowNumber()).copy(row);
+        }
+        for (RectangularRegion rr:other.getMergedRegions()) {
+            addMergedRegion(rr);
+        }
+    }
+
+    @Override
+    public List<RectangularRegion> getMergedRegions() {
+        return Collections.unmodifiableList(mergedRegions);
+    }
+
+    @Override
+    public void addMergedRegion(RectangularRegion cells) {
+        // check that all cells are unmerged
+        for (RectangularRegion rr: mergedRegions) {
+            if (rr.intersects(cells)) {
+                throw new IllegalStateException("New merged region overlaps with an existing one.");
+            }
+        }
+
+        // add to list
+        mergedRegions.add(cells);
+
+        // update cell data
+        int spanX = cells.getLastColumn()-cells.getFirstColumn()+1;
+        int spanY = cells.getLastRow()-cells.getFirstRow()+1;
+        GenericCell topLeftCell = getCell(cells.getFirstRow(), cells.getFirstColumn());
+        for (int i=0; i<spanY; i++) {
+            for (int j=0; j<spanX; j++) {
+                GenericCell cell = getCell(cells.getFirstRow()+i, cells.getFirstColumn()+j);
+                cell.addedToMergedRegion(topLeftCell,spanX,spanY);
+            }
         }
     }
 
