@@ -252,4 +252,11 @@ public interface Cell {
      * @return the workbook
      */
     Workbook getWorkbook();
+
+    /**
+     * Unmerge cell.
+     * @throws IllegalArgumentException if this cell is not the top left cell
+     * of a merged region
+     */
+    void unMerge();
 }

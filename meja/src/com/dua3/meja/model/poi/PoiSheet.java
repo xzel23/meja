@@ -328,4 +328,27 @@ public class PoiSheet implements Sheet {
         lastColumn = Math.max(lastColumn, columnNumber);
     }
 
+    void removeMergedRegion(int rowNumber, int columnNumber) {
+        for (int idx=0; idx<poiSheet.getNumMergedRegions();idx++) {
+            CellRangeAddress cra = poiSheet.getMergedRegion(idx);
+            if (cra.isInRange(rowNumber, columnNumber)) {
+                poiSheet.removeMergedRegion(idx);
+                for (int i=cra.getFirstRow();i<=cra.getLastRow();i++) {
+                    PoiRow row = getRow(i);
+                    for (int j=cra.getFirstColumn();j<=cra.getLastColumn();j++) {
+                        PoiCell cell = row.getCell(j);
+                        cell.removedFromMergedRegion();
+                    }
+                }
+            }
+        }
+        
+        for (int idx=0;idx<mergedRegions.size();idx++) {
+            RectangularRegion rr = mergedRegions.get(idx);
+            if (rr.getFirstRow()==rowNumber && rr.getFirstColumn()==columnNumber) {
+                mergedRegions.remove(idx);
+            }
+        }
+    }
+
 }

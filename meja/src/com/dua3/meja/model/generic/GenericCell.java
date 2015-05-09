@@ -140,7 +140,7 @@ public class GenericCell implements Cell {
 
     @Override
     public AttributedString getAttributedString() {
-        if (getCellType()==CellType.TEXT) {
+        if (getCellType() == CellType.TEXT) {
             return (AttributedString) value;
         } else {
             return new AttributedString(getAsText());
@@ -195,7 +195,7 @@ public class GenericCell implements Cell {
 
     @Override
     public void setCellStyle(CellStyle cellStyle) {
-        if (cellStyle.getWorkbook()!=getWorkbook()) {
+        if (cellStyle.getWorkbook() != getWorkbook()) {
             throw new IllegalArgumentException("Cell style does not belong to this workbook.");
         }
         this.cellStyle = (GenericCellStyle) cellStyle;
@@ -226,7 +226,7 @@ public class GenericCell implements Cell {
 
     @Override
     public String toString() {
-        if (type==CellType.BLANK) {
+        if (type == CellType.BLANK) {
             return "";
         } else {
             return getAsText();
@@ -266,20 +266,44 @@ public class GenericCell implements Cell {
     }
 
     void addedToMergedRegion(GenericCell logicalCell, int spanX, int spanY) {
-      if (this.spanX!=1 || this.spanY!=1) {
-          throw new IllegalStateException("Cell is already merged.");
-      }
+        if (this.spanX != 1 || this.spanY != 1) {
+            throw new IllegalStateException("Cell is already merged.");
+        }
 
-      if (this==logicalCell) {
-          this.logicalCell = logicalCell;
-          this.spanX =spanX;
-          this.spanY=spanY;
-      } else {
-          clear();
-          this.logicalCell = logicalCell;
-          this.spanX=0;
-          this.spanY=0;
-      }
+        if (this == logicalCell) {
+            this.logicalCell = logicalCell;
+            this.spanX = spanX;
+            this.spanY = spanY;
+        } else {
+            clear();
+            this.logicalCell = logicalCell;
+            this.spanX = 0;
+            this.spanY = 0;
+        }
     }
 
+    void removedFromMergedRegion() {
+        this.logicalCell = this;
+        this.spanX = 1;
+        this.spanY = 1;
+    }
+
+    @Override
+    public void unMerge() {
+        if (logicalCell != this) {
+            // this should never happen because we checked for this cell being
+            // the top left cell of the merged region
+            throw new IllegalArgumentException("Cell is not top left cell of a merged region");
+        }
+
+        getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
+        int originalSpanX = spanX;
+        int originalSpanY = spanY;
+        for (int i = getRowNumber(); i < getRowNumber() + originalSpanY; i++) {
+            for (int j = getColumnNumber(); j < getColumnNumber() + originalSpanX; j++) {
+                GenericCell cell = row.getCell(j);
+                cell.removedFromMergedRegion();
+            }
+        }
+    }
 }

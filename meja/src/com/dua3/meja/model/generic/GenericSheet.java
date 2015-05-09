@@ -40,7 +40,7 @@ public class GenericSheet implements Sheet {
     private String sheetName;
     private final Locale locale;
     private final List<GenericRow> rows = new ArrayList<>();
-    private final List<RectangularRegion> mergedRegions=new ArrayList<>();
+    private final List<RectangularRegion> mergedRegions = new ArrayList<>();
     private final float defaultColumnWidth = 80f;
     private final ArrayList<Float> columnWidth = new ArrayList<>();
     private final float defaultRowHeight = 12f;
@@ -49,13 +49,13 @@ public class GenericSheet implements Sheet {
     private int freezeColumn;
     private int autoFilterRow;
     private int numberOfColumns;
-    private float zoom=1.0f;
+    private float zoom = 1.0f;
 
     public GenericSheet(GenericWorkbook workbook, String sheetName, Locale locale) {
         this.workbook = workbook;
         this.sheetName = sheetName;
         this.locale = locale;
-        this.numberOfColumns=0;
+        this.numberOfColumns = 0;
     }
 
     @Override
@@ -80,12 +80,12 @@ public class GenericSheet implements Sheet {
 
     @Override
     public int getLastColNum() {
-        return getNumberOfColumns()-1;
+        return getNumberOfColumns() - 1;
     }
 
     @Override
     public int getLastRowNum() {
-        return getNumberOfRows()-1;
+        return getNumberOfRows() - 1;
     }
 
     @Override
@@ -100,17 +100,17 @@ public class GenericSheet implements Sheet {
 
     @Override
     public float getColumnWidth(int j) {
-        Float width = j<columnWidth.size() ? columnWidth.get(j) : null;
+        Float width = j < columnWidth.size() ? columnWidth.get(j) : null;
         return width != null ? width : defaultColumnWidth;
     }
 
     @Override
     public void setColumnWidth(int j, float width) {
-        if (j<columnWidth.size()) {
+        if (j < columnWidth.size()) {
             columnWidth.set(j, width);
         } else {
-            columnWidth.ensureCapacity(j+1);
-            while (columnWidth.size()<j) {
+            columnWidth.ensureCapacity(j + 1);
+            while (columnWidth.size() < j) {
                 columnWidth.add(null); // use default width
             }
             columnWidth.add(width);
@@ -119,17 +119,17 @@ public class GenericSheet implements Sheet {
 
     @Override
     public float getRowHeight(int i) {
-        Float height = i<rowHeight.size() ? rowHeight.get(i) : null;
+        Float height = i < rowHeight.size() ? rowHeight.get(i) : null;
         return height != null ? height : defaultRowHeight;
     }
 
     @Override
     public void setRowHeight(int i, float height) {
-        if (i<rowHeight.size()) {
+        if (i < rowHeight.size()) {
             rowHeight.set(i, height);
         } else {
-            rowHeight.ensureCapacity(i+1);
-            while (rowHeight.size()<i) {
+            rowHeight.ensureCapacity(i + 1);
+            while (rowHeight.size() < i) {
                 rowHeight.add(null); // use default width
             }
             rowHeight.add(height);
@@ -143,7 +143,7 @@ public class GenericSheet implements Sheet {
     }
 
     private void reserve(int row) {
-        for (int rowNum=rows.size(); rowNum<=row; rowNum++) {
+        for (int rowNum = rows.size(); rowNum <= row; rowNum++) {
             rows.add(new GenericRow(this, rowNum));
         }
     }
@@ -160,19 +160,19 @@ public class GenericSheet implements Sheet {
 
     @Override
     public void splitAt(int i, int j) {
-        freezeRow=i;
-        freezeColumn=j;
+        freezeRow = i;
+        freezeColumn = j;
     }
 
     @Override
     public int getSplitRow() {
-		return freezeRow;
-	}
+        return freezeRow;
+    }
 
     @Override
     public int getSplitColumn() {
-		return freezeColumn;
-	}
+        return freezeColumn;
+    }
 
     @Override
     public void autoSizeColumn(int j) {
@@ -181,12 +181,12 @@ public class GenericSheet implements Sheet {
 
     @Override
     public void setAutofilterRow(int i) {
-        autoFilterRow=i;
+        autoFilterRow = i;
     }
 
     public int getAutoFilterRow() {
-		return autoFilterRow;
-	}
+        return autoFilterRow;
+    }
 
     @Override
     public Iterator<Row> iterator() {
@@ -194,7 +194,7 @@ public class GenericSheet implements Sheet {
     }
 
     void reserveColumn(int col) {
-        numberOfColumns=Math.max(col+1, numberOfColumns);
+        numberOfColumns = Math.max(col + 1, numberOfColumns);
     }
 
     @Override
@@ -226,19 +226,19 @@ public class GenericSheet implements Sheet {
 
     @Override
     public void setZoom(float zoom) {
-        if (zoom<=0) {
-            throw new IllegalArgumentException("Invalid zoom factor: "+zoom);
+        if (zoom <= 0) {
+            throw new IllegalArgumentException("Invalid zoom factor: " + zoom);
         }
 
-        this.zoom=zoom;
+        this.zoom = zoom;
     }
 
     @Override
     public void copy(Sheet other) {
-        for (Row row: other) {
+        for (Row row : other) {
             getRow(row.getRowNumber()).copy(row);
         }
-        for (RectangularRegion rr:other.getMergedRegions()) {
+        for (RectangularRegion rr : other.getMergedRegions()) {
             addMergedRegion(rr);
         }
     }
@@ -251,7 +251,7 @@ public class GenericSheet implements Sheet {
     @Override
     public void addMergedRegion(RectangularRegion cells) {
         // check that all cells are unmerged
-        for (RectangularRegion rr: mergedRegions) {
+        for (RectangularRegion rr : mergedRegions) {
             if (rr.intersects(cells)) {
                 throw new IllegalStateException("New merged region overlaps with an existing one.");
             }
@@ -261,13 +261,29 @@ public class GenericSheet implements Sheet {
         mergedRegions.add(cells);
 
         // update cell data
-        int spanX = cells.getLastColumn()-cells.getFirstColumn()+1;
-        int spanY = cells.getLastRow()-cells.getFirstRow()+1;
+        int spanX = cells.getLastColumn() - cells.getFirstColumn() + 1;
+        int spanY = cells.getLastRow() - cells.getFirstRow() + 1;
         GenericCell topLeftCell = getCell(cells.getFirstRow(), cells.getFirstColumn());
-        for (int i=0; i<spanY; i++) {
-            for (int j=0; j<spanX; j++) {
-                GenericCell cell = getCell(cells.getFirstRow()+i, cells.getFirstColumn()+j);
-                cell.addedToMergedRegion(topLeftCell,spanX,spanY);
+        for (int i = 0; i < spanY; i++) {
+            for (int j = 0; j < spanX; j++) {
+                GenericCell cell = getCell(cells.getFirstRow() + i, cells.getFirstColumn() + j);
+                cell.addedToMergedRegion(topLeftCell, spanX, spanY);
+            }
+        }
+    }
+
+    void removeMergedRegion(int rowNumber, int columnNumber) {
+        for (int idx = 0; idx < mergedRegions.size(); idx++) {
+            RectangularRegion rr = mergedRegions.get(idx);
+            if (rr.getFirstRow() == rowNumber && rr.getFirstColumn() == columnNumber) {
+                mergedRegions.remove(idx);
+                for (int i = rr.getFirstRow(); i <= rr.getLastRow(); i++) {
+                    GenericRow row = getRow(i);
+                    for (int j = rr.getFirstColumn(); j <= rr.getLastColumn(); j++) {
+                        GenericCell cell = row.getCell(j);
+                        cell.removedFromMergedRegion();
+                    }
+                }
             }
         }
     }

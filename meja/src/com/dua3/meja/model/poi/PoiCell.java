@@ -49,7 +49,6 @@ public class PoiCell implements Cell {
     protected final PoiWorkbook workbook;
     protected final PoiRow row;
     protected final org.apache.poi.ss.usermodel.Cell poiCell;
-    protected final RectangularRegion mergedRegion;
     protected int spanX;
     protected int spanY;
     protected PoiCell logicalCell;
@@ -58,7 +57,8 @@ public class PoiCell implements Cell {
         this.workbook = row.getWorkbook();
         this.row = row;
         this.poiCell = cell;
-        this.mergedRegion = row.getMergedRegion(cell.getColumnIndex());
+
+        RectangularRegion mergedRegion = row.getMergedRegion(cell.getColumnIndex());
 
         if (mergedRegion == null) {
             // cell is not merged
@@ -447,6 +447,23 @@ public class PoiCell implements Cell {
             this.spanX = 0;
             this.spanY = 0;
         }
+    }
+
+    void removedFromMergedRegion() {
+            this.logicalCell = this;
+            this.spanX = 1;
+            this.spanY = 1;
+    }
+
+    @Override
+    public void unMerge() {
+        if (logicalCell!=this) {
+            // this should never happen because we checked for this cell being
+            // the top left cell of the merged region
+            throw new IllegalArgumentException("Cell is not top left cell of a merged region");
+        }
+
+        getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
     }
 
 }
