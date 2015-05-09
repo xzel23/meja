@@ -19,7 +19,7 @@ import java.awt.Color;
 
 /**
  * Definition of  a cell border.
- * 
+ *
  * @author axel
  */
 public class BorderStyle {
@@ -32,10 +32,18 @@ public class BorderStyle {
         this.color = color;
     }
 
+    /**
+     * Get border width.
+     * @return the border width
+     */
     public float getWidth() {
         return width;
     }
 
+    /**
+     * Get border color.
+     * @return the border color
+     */
     public Color getColor() {
         return color;
     }

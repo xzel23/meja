@@ -187,8 +187,17 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     void copy(Sheet other);
 
+    /**
+     * Get the list of merged regions for this sheet.
+     * @return list of merged regions
+     */
     List<RectangularRegion> getMergedRegions();
 
+    /**
+     * Add new merged region.
+     * @param cells the region of cells to be merged
+     * @throws IllegalStateException if the region already contains merged cells
+     */
     void addMergedRegion(RectangularRegion cells);
 
 }

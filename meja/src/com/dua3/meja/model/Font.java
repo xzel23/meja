@@ -25,7 +25,7 @@ import java.awt.Color;
 public interface Font {
 
     /**
-     * A mutable class holding font attributes to help creating imutable font 
+     * A mutable class holding font attributes to help creating immutable font
      * instances.
      */
     public static class FontDef {
@@ -35,7 +35,7 @@ public interface Font {
         private Boolean bold;
         private Boolean italic;
         private Boolean underline;
-        private Boolean strikeThrough;    
+        private Boolean strikeThrough;
 
         /**
          * @return the color
@@ -135,7 +135,7 @@ public interface Font {
             this.strikeThrough = strikeThrough;
         }
     }
-    
+
     /**
      * Get text color.
      * @return the text color.
@@ -178,6 +178,17 @@ public interface Font {
      */
     boolean isStrikeThrough();
 
+    /**
+     * Derive font.
+     * <p>
+     * A new font based on this font is returned.
+     * The attributes defined {@code fd} are applied to the new font. If
+     * an attribute in {@code fd} is not set, the attribute is copied from this
+     * font.
+     * </p>
+     * @param fd the {@link FontDef} describing the attributes to set
+     * @return new {@link Font} instance
+     */
     Font deriveFont(FontDef fd);
-    
+
 }

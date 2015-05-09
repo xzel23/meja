@@ -333,6 +333,13 @@ public class MejaHelper {
         return getColumnName(cell.getColumnNumber()) + (cell.getRowNumber() + 1);
     }
 
+    /**
+     * Return copy of workbook in a different implementation.
+     * @param <WORKBOOK> the workbook class of the target
+     * @param clazz {@code Class} instance for the workbook class of the target
+     * @param workbook the source workbook
+     * @return workbook instance of type {@code WORKBOOK} with the contents of {@code workbook}
+     */
     public static <WORKBOOK extends Workbook>
             WORKBOOK cloneWorkbookAs(Class<WORKBOOK> clazz, Workbook workbook) {
         try {

@@ -33,26 +33,54 @@ public class RectangularRegion {
         this.colMax = colMax;
     }
 
+    /**
+     * Test if cell is contained in region.
+     * @param i the row number
+     * @param j the column number
+     * @return true if the cell at row {@code i} and column {@code j} is
+     * contained in this region
+     */
     public boolean contains(int i, int j) {
         return rowMin <= i && i <= rowMax && colMin <= j && j <= colMax;
     }
 
+    /**
+     * Get first row number.
+     * @return number of first row
+     */
     public int getFirstRow() {
         return rowMin;
     }
 
+    /**
+     * Get first column number.
+     * @return number of first column
+     */
     public int getFirstColumn() {
         return colMin;
     }
 
+    /**
+     * Get last column number.
+     * @return number of last column (inclusive)
+     */
     public int getLastColumn() {
         return colMax;
     }
 
+    /**
+     * Get last row number.
+     * @return number of last row (inclusive)
+     */
     public int getLastRow() {
         return rowMax;
     }
 
+    /**
+     * Test for intersection of two regions.
+     * @param other the region to test against
+     * @return true if both regions intersect
+     */
     public boolean intersects(RectangularRegion other) {
         return Math.min(rowMax, other.rowMax)-Math.max(rowMin, other.rowMin)>=0
             && Math.min(colMax, other.colMax)-Math.max(colMin, other.colMin)>=0;

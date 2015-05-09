@@ -18,15 +18,19 @@ package com.dua3.meja.util;
 import java.util.Iterator;
 
 /**
- *
+ * A helper class to convert iterators of derived classes to iterators of base classes.
  * @author Axel Howind (axel@dua3.com)
- * @param <T>
- * @param <D>
+ * @param <T> the base class
+ * @param <D> the derived class
  */
 public class IteratorAdapter<T, D extends T>
 implements Iterator<T> {
     private final Iterator<D> iter;
 
+    /**
+     * Create {@code Iterator<T>} from {@code Iterator<D>}.
+     * @param iter iterator for derived class
+     */
     public IteratorAdapter(Iterator<D> iter) {
     this.iter=iter;
     }
