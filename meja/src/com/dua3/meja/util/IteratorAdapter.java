@@ -45,4 +45,9 @@ implements Iterator<T> {
         return iter.next();
     }
 
+    @Override
+    public void remove() {
+        iter.remove();
+    }
+
 }
