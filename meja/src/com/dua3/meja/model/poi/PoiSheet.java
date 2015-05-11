@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.TableModel;
+import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -37,7 +38,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 public class PoiSheet implements Sheet {
 
-    protected  final PoiWorkbook workbook;
+    protected final PoiWorkbook workbook;
     protected final org.apache.poi.ss.usermodel.Sheet poiSheet;
     private int firstColumn;
     private int lastColumn;
@@ -45,7 +46,7 @@ public class PoiSheet implements Sheet {
     private float zoom = 1.0f;
 
     protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
-        this.workbook=workbook;
+        this.workbook = workbook;
         this.poiSheet = poiSheet;
         update();
     }
@@ -103,7 +104,7 @@ public class PoiSheet implements Sheet {
 
     @Override
     public int getNumberOfColumns() {
-        return lastColumn - firstColumn+1;
+        return lastColumn - firstColumn + 1;
     }
 
     @Override
@@ -165,7 +166,7 @@ public class PoiSheet implements Sheet {
     @Override
     public void setRowHeight(int i, float height) {
         org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
-        if (poiRow==null) {
+        if (poiRow == null) {
             poiRow = poiSheet.createRow(i);
         }
         poiRow.setHeightInPoints(height);
@@ -198,12 +199,14 @@ public class PoiSheet implements Sheet {
 
     @Override
     public int getSplitRow() {
-        return poiSheet.getPaneInformation().getHorizontalSplitTopRow();
+        final PaneInformation pi = poiSheet.getPaneInformation();
+        return pi == null ? 0 : pi.getHorizontalSplitTopRow();
     }
 
     @Override
     public int getSplitColumn() {
-        return poiSheet.getPaneInformation().getVerticalSplitLeftColumn();
+        final PaneInformation pi = poiSheet.getPaneInformation();
+        return pi == null ? 0 : pi.getVerticalSplitLeftColumn();
     }
 
     @Override
@@ -241,13 +244,13 @@ public class PoiSheet implements Sheet {
         mergedRegions.add(cells);
 
         // update cell data
-        int spanX = cells.getLastColumn()-cells.getFirstColumn()+1;
-        int spanY = cells.getLastRow()-cells.getFirstRow()+1;
+        int spanX = cells.getLastColumn() - cells.getFirstColumn() + 1;
+        int spanY = cells.getLastRow() - cells.getFirstRow() + 1;
         PoiCell topLeftCell = getCell(cells.getFirstRow(), cells.getFirstColumn());
-        for (int i=0; i<spanY; i++) {
-            for (int j=0; j<spanX; j++) {
-                PoiCell cell = getCell(cells.getFirstRow()+i, cells.getFirstColumn()+j);
-                cell.addedToMergedRegion(topLeftCell,spanX,spanY);
+        for (int i = 0; i < spanY; i++) {
+            for (int j = 0; j < spanX; j++) {
+                PoiCell cell = getCell(cells.getFirstRow() + i, cells.getFirstColumn() + j);
+                cell.addedToMergedRegion(topLeftCell, spanX, spanY);
             }
         }
     }
@@ -282,13 +285,13 @@ public class PoiSheet implements Sheet {
 
     @Override
     public void setZoom(float zoom) {
-        if (zoom<=0) {
-            throw new IllegalArgumentException("Invalid zoom factor: "+zoom);
+        if (zoom <= 0) {
+            throw new IllegalArgumentException("Invalid zoom factor: " + zoom);
         }
 
         this.zoom = zoom;
         // translate zoom factor into fraction (using permille), should be at least 1
-        int pmZoom = Math.max(1, Math.round(zoom*1000));
+        int pmZoom = Math.max(1, Math.round(zoom * 1000));
         poiSheet.setZoom(pmZoom, 1000);
     }
 
@@ -304,23 +307,24 @@ public class PoiSheet implements Sheet {
     @Override
     public void copy(Sheet other) {
         // copy column widths
-        for (int j=other.getFirstColNum(); j<=other.getLastColNum(); j++) {
+        for (int j = other.getFirstColNum(); j <= other.getLastColNum(); j++) {
             setColumnWidth(j, other.getColumnWidth(j));
         }
         // copy row data
-        for (Row row: other) {
+        for (Row row : other) {
             final int i = row.getRowNumber();
             getRow(i).copy(row);
             setRowHeight(i, other.getRowHeight(i));
         }
         // copy merged regions
-        for (RectangularRegion rr:other.getMergedRegions()) {
+        for (RectangularRegion rr : other.getMergedRegions()) {
             addMergedRegion(rr);
         }
     }
 
     /**
      * Update first and last column numbers.
+     *
      * @param columnNumber
      */
     void setColumnUsed(int columnNumber) {
@@ -329,23 +333,23 @@ public class PoiSheet implements Sheet {
     }
 
     void removeMergedRegion(int rowNumber, int columnNumber) {
-        for (int idx=0; idx<poiSheet.getNumMergedRegions();idx++) {
+        for (int idx = 0; idx < poiSheet.getNumMergedRegions(); idx++) {
             CellRangeAddress cra = poiSheet.getMergedRegion(idx);
             if (cra.isInRange(rowNumber, columnNumber)) {
                 poiSheet.removeMergedRegion(idx);
-                for (int i=cra.getFirstRow();i<=cra.getLastRow();i++) {
+                for (int i = cra.getFirstRow(); i <= cra.getLastRow(); i++) {
                     PoiRow row = getRow(i);
-                    for (int j=cra.getFirstColumn();j<=cra.getLastColumn();j++) {
+                    for (int j = cra.getFirstColumn(); j <= cra.getLastColumn(); j++) {
                         PoiCell cell = row.getCell(j);
                         cell.removedFromMergedRegion();
                     }
                 }
             }
         }
-        
-        for (int idx=0;idx<mergedRegions.size();idx++) {
+
+        for (int idx = 0; idx < mergedRegions.size(); idx++) {
             RectangularRegion rr = mergedRegions.get(idx);
-            if (rr.getFirstRow()==rowNumber && rr.getFirstColumn()==columnNumber) {
+            if (rr.getFirstRow() == rowNumber && rr.getFirstColumn() == columnNumber) {
                 mergedRegions.remove(idx);
             }
         }
