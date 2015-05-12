@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.swing.SheetView;
@@ -253,6 +254,15 @@ public class ExcelViewer extends JFrame {
         }
         mnOptions.add(mnZoom);
 
+        mnOptions.addSeparator();
+
+        mnOptions.add(new AbstractAction("Freeze") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                freezeAtCurrentCell();
+            }
+        });
+
         menuBar.add(mnOptions);
 
         // Help menu
@@ -288,6 +298,17 @@ public class ExcelViewer extends JFrame {
         }
     }
 
+    private void freezeAtCurrentCell() {
+        SheetView view = workbookView.getCurrentView();
+        if (view != null) {
+            Cell cell = view.getCurrentCell();
+            if (cell != null) {
+                view.getSheet().splitAt(cell.getRowNumber(), cell.getColumnNumber());
+                view.updateContent();
+            }
+        }
+    }
+
     private void createContent() {
         setLayout(new BorderLayout());
         workbookView = new WorkbookView();
@@ -308,13 +329,13 @@ public class ExcelViewer extends JFrame {
     private void showOpenDialog() {
         try {
             final Workbook newWorkbook = MejaHelper.showDialogAndOpenWorkbook(this, currentDir);
-            if (newWorkbook!=null) {
+            if (newWorkbook != null) {
                 setWorkbook(newWorkbook);
                 Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Successfully loaded ''{0}''.", newWorkbook.getUri());
             }
         } catch (IOException ex) {
             Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
-            JOptionPane.showMessageDialog(this, "Error loading workbook: "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -324,14 +345,14 @@ public class ExcelViewer extends JFrame {
     private void showSaveAsDialog() {
         try {
             final URI uri = MejaHelper.showDialogAndSaveWorkbook(this, workbook, currentDir);
-            if (uri!=null) {
+            if (uri != null) {
                 workbook.setUri(uri);
                 updateTitle(uri);
                 Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Successfully saved ''{0}''.", uri);
             }
         } catch (IOException ex) {
             Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, "Exception saving workbook.", ex);
-            JOptionPane.showMessageDialog(this, "Error saving workbook: "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
