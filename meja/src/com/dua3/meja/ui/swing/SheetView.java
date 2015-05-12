@@ -685,7 +685,7 @@ public class SheetView extends JPanel implements Scrollable {
                 //scroll up
                 final int y = visibleRect.y;
                 int yPrevious = 0;
-                for (int i = 0; i < rowPos.length; i++) {
+                for (int i = sheet.getSplitRow(); i < rowPos.length; i++) {
                     if (getRowPos(i) >= y) {
                         return y - yPrevious;
                     }
@@ -730,6 +730,15 @@ public class SheetView extends JPanel implements Scrollable {
                 return 0;
             }
         }
+    }
+
+    /**
+     * Get y-coordinate of split.
+     *
+     * @return y coordinate of split
+     */
+    int getSplitY() {
+        return getRowPos(sheet.getSplitRow());
     }
 
     /**
@@ -792,6 +801,10 @@ public class SheetView extends JPanel implements Scrollable {
 
     @Override
     public Dimension getPreferredSize() {
+        return new Dimension(getSheetWidth() + 1, getSheetHeight() - getSplitY() + 1);
+    }
+
+    public Dimension getSheetSize() {
         return new Dimension(getSheetWidth() + 1, getSheetHeight() + 1);
     }
 
@@ -808,7 +821,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     private void drawSheet(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        
+
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {
@@ -932,7 +945,7 @@ public class SheetView extends JPanel implements Scrollable {
 
         // draw grid lines
         g.setColor(gridColor);
-        g.drawRect(cr.x, cr.y, cr.width-1, cr.height-1);
+        g.drawRect(cr.x, cr.y, cr.width - 1, cr.height - 1);
 
         CellStyle style = cell.getCellStyle();
         FillPattern pattern = style.getFillPattern();
@@ -967,16 +980,16 @@ public class SheetView extends JPanel implements Scrollable {
     private void drawCellBorder(Graphics2D g, Cell cell) {
         CellStyle styleTopLeft = cell.getCellStyle();
 
-        Cell cellBottomRight = sheet.getRow(cell.getRowNumber()+cell.getVerticalSpan()-1).getCell(cell.getColumnNumber()+cell.getHorizontalSpan()-1);        
+        Cell cellBottomRight = sheet.getRow(cell.getRowNumber() + cell.getVerticalSpan() - 1).getCell(cell.getColumnNumber() + cell.getHorizontalSpan() - 1);
         CellStyle styleBottomRight = cellBottomRight.getCellStyle();
-        
+
         Rectangle cr = getCellRect(cell);
 
         // draw border
         for (Direction d : Direction.values()) {
-            boolean isTopLeft = d==Direction.NORTH || d==Direction.WEST;
+            boolean isTopLeft = d == Direction.NORTH || d == Direction.WEST;
             CellStyle style = isTopLeft ? styleTopLeft : styleBottomRight;
-            
+
             BorderStyle b = style.getBorderStyle(d);
             if (b.getWidth() == 0) {
                 continue;
@@ -1164,21 +1177,21 @@ public class SheetView extends JPanel implements Scrollable {
         @Override
         public void validate() {
             // determine height of labels (assuming noe letter is higher than 'A')
-            painter.setText("A");            
+            painter.setText("A");
             labelHeight = painter.getPreferredSize().height;
-            
+
             // width is the width of the worksheet in pixels
             int width = SheetView.this.getPreferredSize().width;
-            
+
             // the height is the height for the labels showing column names ...
             int height = labelHeight;
-            
+
             // ... plus the height of the rows above the split line ...
             height += getRowPos(sheet.getSplitRow());
-            
+
             // ... plus 1 pixel for drawing a line below the lines above the split.
             height += 1;
-            
+
             setPreferredSize(new Dimension(width, height));
         }
 
@@ -1197,9 +1210,9 @@ public class SheetView extends JPanel implements Scrollable {
                 painter.setText(text);
                 painter.paint(g.create(x, 0, w, labelHeight));
             }
-            
+
             // draw rows above split
-            drawSheet(g.create(0, labelHeight, getWidth(), getHeight()-labelHeight));
+            drawSheet(g.create(0, labelHeight, getWidth(), getHeight() - labelHeight));
         }
 
     }
