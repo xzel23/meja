@@ -20,10 +20,10 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
+import com.dua3.meja.util.MejaHelper;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
@@ -330,12 +330,12 @@ public class SheetView extends JPanel implements Scrollable {
                 || newCell.getColumnNumber() != oldCell.getColumnNumber()) {
             // get new selection for repainting
             Rectangle newRect = getSelectionRect();
-            
+
             oldRect.translate(0, -getSplitY());
             repaint(oldRect);
             newRect.translate(0, -getSplitY());
             repaint(newRect);
-            
+
             return true;
         } else {
             return false;
@@ -1133,7 +1133,7 @@ public class SheetView extends JPanel implements Scrollable {
      *
      * @return current cell
      */
-    private Cell getCurrentCell() {
+    public Cell getCurrentCell() {
         return sheet.getRow(currentRowNum).getCell(currentColNum);
     }
 
@@ -1224,6 +1224,10 @@ public class SheetView extends JPanel implements Scrollable {
 
             // draw rows above split
             drawSheet(g.create(0, labelHeight, getWidth(), getHeight() - labelHeight));
+
+            // draw line
+            g.setColor(Color.BLACK);
+            g.drawLine(0, getHeight()-1, getWidth()-1, getHeight()-1);
         }
 
     }

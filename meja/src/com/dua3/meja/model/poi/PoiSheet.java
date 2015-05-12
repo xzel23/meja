@@ -194,7 +194,7 @@ public class PoiSheet implements Sheet {
 
     @Override
     public void splitAt(int i, int j) {
-        poiSheet.createFreezePane(i + 1, j + 1);
+        poiSheet.createFreezePane(i, j);
     }
 
     @Override
