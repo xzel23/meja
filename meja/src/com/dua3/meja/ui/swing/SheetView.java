@@ -589,6 +589,8 @@ public class SheetView extends JPanel implements Scrollable {
                 stopEditing(true);
                 editing = false;
             }
+            // scroll the selected cell into view
+            scrollToCurrentCell();
         }
     }
 
