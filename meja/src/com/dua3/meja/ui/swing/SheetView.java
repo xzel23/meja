@@ -352,7 +352,9 @@ public class SheetView extends JPanel implements Scrollable {
 
         Cell cell = getCurrentCell().getLogicalCell();
         final JComponent editorComp = editor.startEditing(cell);
-        editorComp.setBounds(getCellRect(cell));
+        final Rectangle cellRect = getCellRect(cell);
+        cellRect.translate(0, -getSplitY());
+        editorComp.setBounds(cellRect);
         add(editorComp);
         editorComp.validate();
         editorComp.setVisible(true);
