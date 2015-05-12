@@ -77,14 +77,15 @@ public class PoiCell implements Cell {
                         .getCell(mergedRegion.getFirstColumn());
             }
 
-            int spanX = 1 + mergedRegion.getLastColumn() - mergedRegion.getFirstColumn();
-            int spanY = 1 + mergedRegion.getLastRow() - mergedRegion.getFirstRow();
+            int spanX_ = 1 + mergedRegion.getLastColumn() - mergedRegion.getFirstColumn();
+            int spanY_ = 1 + mergedRegion.getLastRow() - mergedRegion.getFirstRow();
 
-            addedToMergedRegion(topLeftCell, spanX, spanY);
+            addedToMergedRegion(topLeftCell, spanX_, spanY_);
         }
 
     }
 
+    @Override
     public PoiWorkbook getWorkbook() {
         return workbook;
     }
@@ -435,7 +436,7 @@ public class PoiCell implements Cell {
         }
     }
 
-    void addedToMergedRegion(PoiCell topLeftCell, int spanX, int spanY) {
+    final void addedToMergedRegion(PoiCell topLeftCell, int spanX, int spanY) {
         if (    this.getRowNumber() == topLeftCell.getRowNumber()
              && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
             this.logicalCell = topLeftCell;
