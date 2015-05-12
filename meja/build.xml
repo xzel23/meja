@@ -23,10 +23,8 @@
     <target name="download-ivy" unless="offline">
         <mkdir dir="${ivy.jar.dir}"/>
         <!-- download Ivy from web site so that it can be used even without any special installation -->
-        <!--
         <get src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
              dest="${ivy.jar.file}" usetimestamp="true"/>
-        -->
     </target>
 
     <target name="init-ivy" depends="download-ivy">
@@ -110,13 +108,8 @@
 
     -->
 
-    <!-- 
-
-    automatically create jar with sources and javadocs
-    
-    -->
-    
-    <target name="-post-jar" depends="package-with-dependencies, package-dependencies, package-sources, package-doc" />
+    <!-- target "dist-files" to create meja-sources.jar and meja-javadoc.jar -->    
+    <target name="dist-files" depends="package-sources, package-doc" />
     
     <!-- include sources in Jar -->
     <target description="bundle sources in a jar" name="package-sources">
