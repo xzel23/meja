@@ -816,7 +816,8 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
-        drawSheet(g);
+        Dimension sheetSize = getSheetSize();
+        drawSheet(g.create(0, -getSplitY(), sheetSize.width, sheetSize.height));
     }
 
     private void drawSheet(Graphics g) {
