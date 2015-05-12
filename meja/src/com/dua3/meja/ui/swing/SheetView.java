@@ -803,11 +803,15 @@ public class SheetView extends JPanel implements Scrollable {
             return;
         }
 
+        drawSheet(g);
+    }
+
+    private void drawSheet(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {
-            Graphics2D g2d = (Graphics2D) g;
-
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
             g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
@@ -1146,6 +1150,7 @@ public class SheetView extends JPanel implements Scrollable {
     private class ColumnHeader extends JComponent {
 
         private final JLabel painter;
+        private int labelHeight = 0;
 
         public ColumnHeader() {
             painter = new JLabel();
@@ -1158,14 +1163,28 @@ public class SheetView extends JPanel implements Scrollable {
 
         @Override
         public void validate() {
-            painter.setText("A");
-            setPreferredSize(new Dimension(SheetView.this.getPreferredSize().width, painter.getPreferredSize().height));
+            // determine height of labels (assuming noe letter is higher than 'A')
+            painter.setText("A");            
+            labelHeight = painter.getPreferredSize().height;
+            
+            // width is the width of the worksheet in pixels
+            int width = SheetView.this.getPreferredSize().width;
+            
+            // the height is the height for the labels showing column names ...
+            int height = labelHeight;
+            
+            // ... plus the height of the rows above the split line ...
+            height += getRowPos(sheet.getSplitRow());
+            
+            // ... plus 1 pixel for drawing a line below the lines above the split.
+            height += 1;
+            
+            setPreferredSize(new Dimension(width, height));
         }
 
         @Override
         protected void paintComponent(Graphics g) {
-            int h = getHeight();
-
+            // draw column labels
             Rectangle clipBounds = g.getClipBounds();
             int startCol = Math.max(0, getColumnNumberFromX(clipBounds.x));
             int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x + clipBounds.width), getNumberOfColumns());
@@ -1174,10 +1193,13 @@ public class SheetView extends JPanel implements Scrollable {
                 int w = getColumnPos(j + 1) - x;
                 String text = getColumnName(j);
 
-                painter.setBounds(0, 0, w, h);
+                painter.setBounds(0, 0, w, labelHeight);
                 painter.setText(text);
-                painter.paint(g.create(x, 0, w, h));
+                painter.paint(g.create(x, 0, w, labelHeight));
             }
+            
+            // draw rows above split
+            drawSheet(g.create(0, labelHeight, getWidth(), getHeight()-labelHeight));
         }
 
     }
