@@ -568,7 +568,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     void onMousePressed(int x, int y) {
         // make the cell under pointer the current cell
-        int row = getRowNumberFromY(y);
+        int row = getRowNumberFromY(y+getSplitY());
         int col = getColumnNumberFromX(x);
         boolean currentCellChanged = setCurrent(row, col);
         requestFocusInWindow();
