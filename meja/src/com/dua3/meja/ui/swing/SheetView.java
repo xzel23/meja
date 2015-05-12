@@ -328,8 +328,12 @@ public class SheetView extends JPanel implements Scrollable {
                 || newCell.getColumnNumber() != oldCell.getColumnNumber()) {
             // get new selection for repainting
             Rectangle newRect = getSelectionRect();
+            
+            oldRect.translate(0, -getSplitY());
             repaint(oldRect);
+            newRect.translate(0, -getSplitY());
             repaint(newRect);
+            
             return true;
         } else {
             return false;
