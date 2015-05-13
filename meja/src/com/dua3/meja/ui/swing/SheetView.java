@@ -260,6 +260,8 @@ public class SheetView extends JPanel implements Scrollable {
         boolean aboveSplit = getSplitY()>=cellRect.getMaxY()-1;
         boolean toLeftOfSplit = getSplitX()>=cellRect.getMaxX()-1;
 
+        cellRect.translate(toLeftOfSplit?0:-getSplitX(), aboveSplit?0:-getSplitY());            
+
         if (aboveSplit && toLeftOfSplit) {
             // nop: cell is always visible!
         } else if (aboveSplit) {
@@ -273,7 +275,6 @@ public class SheetView extends JPanel implements Scrollable {
             cellRect.width = 1;
             scrollRectToVisible(cellRect);
         } else {
-            cellRect.translate(0, -getSplitY());
             scrollRectToVisible(cellRect);
         }
     }
