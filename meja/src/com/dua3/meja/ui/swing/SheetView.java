@@ -66,7 +66,7 @@ public class SheetView extends JPanel implements Scrollable {
     private final CellEditor editor = new DefaultCellEditor(this);
     private ColumnHeader columnHeader = null;
     private RowHeader rowHeader = null;
-    
+
     Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
         @Override
         protected java.awt.Stroke create(Float width) {
@@ -338,10 +338,10 @@ public class SheetView extends JPanel implements Scrollable {
             newRect.translate(0, -getSplitY());
             repaint(newRect);
 
-            if (rowHeader!=null) {
+            if (rowHeader != null) {
                 rowHeader.repaint();
             }
-            if (columnHeader!=null) {
+            if (columnHeader != null) {
                 columnHeader.repaint();
             }
             return true;
@@ -559,7 +559,7 @@ public class SheetView extends JPanel implements Scrollable {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                onMousePressed(e.getX(), e.getY());
+                onMousePressed(e.getX(), e.getY() + getSplitY());
             }
         });
 
@@ -580,7 +580,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     void onMousePressed(int x, int y) {
         // make the cell under pointer the current cell
-        int row = getRowNumberFromY(y+getSplitY());
+        int row = getRowNumberFromY(y);
         int col = getColumnNumberFromX(x);
         boolean currentCellChanged = setCurrent(row, col);
         requestFocusInWindow();
@@ -676,9 +676,9 @@ public class SheetView extends JPanel implements Scrollable {
             parent = parent.getParent();
             if (parent instanceof JScrollPane) {
                 JScrollPane jsp = (JScrollPane) parent;
-                columnHeader = showColumnHeader ?new ColumnHeader():null;
+                columnHeader = showColumnHeader ? new ColumnHeader() : null;
                 jsp.setColumnHeaderView(columnHeader);
-                rowHeader = showRowHeader ?new RowHeader():null;
+                rowHeader = showRowHeader ? new RowHeader() : null;
                 jsp.setRowHeaderView(rowHeader);
             }
         }
@@ -1184,6 +1184,14 @@ public class SheetView extends JPanel implements Scrollable {
             painter.setVerticalAlignment(SwingConstants.CENTER);
             painter.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, gridColor));
 
+            // listen to mouse events
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    onMousePressed(e.getX(), e.getY()-labelHeight);
+                }
+            });
+
             validate();
         }
 
@@ -1229,7 +1237,7 @@ public class SheetView extends JPanel implements Scrollable {
 
             // draw line
             g.setColor(Color.BLACK);
-            g.drawLine(0, getHeight()-1, getWidth()-1, getHeight()-1);
+            g.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
         }
 
     }
