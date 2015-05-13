@@ -50,6 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -66,6 +67,7 @@ public class SheetView extends JPanel implements Scrollable {
     private final CellEditor editor = new DefaultCellEditor(this);
     private ColumnHeader columnHeader = null;
     private RowHeader rowHeader = null;
+    private CornerHeader cornerHeader = null;
 
     Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
         @Override
@@ -256,11 +258,19 @@ public class SheetView extends JPanel implements Scrollable {
     public void ensureCellIsVisibile(Cell cell) {
         final Rectangle cellRect = getCellRect(cell);
         boolean aboveSplit = getSplitY()>=cellRect.getMaxY()-1;
+        boolean toLeftOfSplit = getSplitX()>=cellRect.getMaxX()-1;
 
-        if (aboveSplit) {
+        if (aboveSplit && toLeftOfSplit) {
+            // nop: cell is always visible!
+        } else if (aboveSplit) {
             // only scroll x
             cellRect.y = -getY();
             cellRect.height = 1;
+            scrollRectToVisible(cellRect);
+        } else if (toLeftOfSplit) {
+            // only scroll y
+            cellRect.x = -getX();
+            cellRect.width = 1;
             scrollRectToVisible(cellRect);
         } else {
             cellRect.translate(0, -getSplitY());
@@ -342,9 +352,9 @@ public class SheetView extends JPanel implements Scrollable {
             // get new selection for repainting
             Rectangle newRect = getSelectionRect();
 
-            oldRect.translate(0, -getSplitY());
+            oldRect.translate(-getSplitX(), -getSplitY());
             repaint(oldRect);
-            newRect.translate(0, -getSplitY());
+            newRect.translate(-getSplitX(), -getSplitY());
             repaint(newRect);
 
             if (rowHeader != null) {
@@ -371,23 +381,35 @@ public class SheetView extends JPanel implements Scrollable {
         
         final JComponent editorComp = editor.startEditing(cell);
         final Rectangle cellRect = getCellRect(cell);
-        
-        if (cellRect.y>=getSplitY()) {
-            // if cell is below split...
-            // ... correct the y-coordinate
-            cellRect.translate(0, -getSplitY());            
-            editorComp.setBounds(cellRect);
-            // and add editor component to this component
-            add(editorComp);
+
+        int dx;
+        int dy;
+        JComponent editorParent;
+        final boolean aboveSplit = cellRect.y<getSplitY();
+        final boolean toLeftOfSplit = cellRect.x<getSplitX();
+        if (aboveSplit) {
+            dy = columnHeader.labelHeight;
+            if (toLeftOfSplit) {
+                dx = rowHeader.labelWidth;
+                editorParent = cornerHeader;
+            } else {
+                dx = -getSplitX();
+                editorParent = columnHeader;
+            }
         } else {
-            // cell is above split ...
-            // ... correct the y-coordinate
-            cellRect.translate(0, columnHeader.labelHeight);            
-            editorComp.setBounds(cellRect);
-            // and add editor component to column header
-            columnHeader.add(editorComp);
+            dy = -getSplitY();
+            if (toLeftOfSplit) {
+                dx = rowHeader.labelWidth;
+                editorParent = rowHeader;                
+            } else {
+                dx = -getSplitX();
+                editorParent = this;                                
+            }            
         }
-        
+
+        cellRect.translate(dx, dy);            
+        editorComp.setBounds(cellRect);
+        editorParent.add(editorComp);
         editorComp.validate();
         editorComp.setVisible(true);
         editorComp.repaint();
@@ -583,7 +605,7 @@ public class SheetView extends JPanel implements Scrollable {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                onMousePressed(e.getX(), e.getY() + getSplitY());
+                onMousePressed(e.getX() + getSplitX(), e.getY() + getSplitY());
             }
         });
 
@@ -704,6 +726,8 @@ public class SheetView extends JPanel implements Scrollable {
                 jsp.setColumnHeaderView(columnHeader);
                 rowHeader = showRowHeader ? new RowHeader() : null;
                 jsp.setRowHeaderView(rowHeader);
+                cornerHeader = showRowHeader&&showColumnHeader ? new CornerHeader() : null;
+                jsp.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, cornerHeader);
             }
         }
     }
@@ -732,7 +756,7 @@ public class SheetView extends JPanel implements Scrollable {
             } else {
                 // scroll down
                 final int y = visibleRect.y + visibleRect.height;
-                for (int i = 0; i < rowPos.length; i++) {
+                for (int i = sheet.getSplitRow(); i < rowPos.length; i++) {
                     if (getRowPos(i) > y) {
                         return getRowPos(i) - y;
                     }
@@ -746,7 +770,7 @@ public class SheetView extends JPanel implements Scrollable {
                 //scroll left
                 final int x = visibleRect.x;
                 int xPrevious = 0;
-                for (int j = 0; j < columnPos.length; j++) {
+                for (int j = sheet.getSplitColumn(); j < columnPos.length; j++) {
                     if (getColumnPos(j) >= x) {
                         return x - xPrevious;
                     }
@@ -755,9 +779,9 @@ public class SheetView extends JPanel implements Scrollable {
                 // should never be reached
                 return 0;
             } else {
-                // scroll down
+                // scroll right
                 final int x = visibleRect.x + visibleRect.width;
-                for (int j = 0; j < columnPos.length; j++) {
+                for (int j = sheet.getSplitColumn(); j < columnPos.length; j++) {
                     if (getColumnPos(j) > x) {
                         return getColumnPos(j) - x;
                     }
@@ -775,6 +799,15 @@ public class SheetView extends JPanel implements Scrollable {
      */
     int getSplitY() {
         return getRowPos(sheet.getSplitRow());
+    }
+
+    /**
+     * Get x-coordinate of split.
+     *
+     * @return x coordinate of split
+     */
+    int getSplitX() {
+        return getColumnPos(sheet.getSplitColumn());
     }
 
     /**
@@ -837,7 +870,7 @@ public class SheetView extends JPanel implements Scrollable {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(getSheetWidth() + 1, getSheetHeight() - getSplitY() + 1);
+        return new Dimension(getSheetWidth() - getSplitX() + 1, getSheetHeight() - getSplitY() + 1);
     }
 
     public Dimension getSheetSize() {
@@ -853,7 +886,7 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         Dimension sheetSize = getSheetSize();
-        drawSheet(g.create(0, -getSplitY(), sheetSize.width, sheetSize.height));
+        drawSheet(g.create(-getSplitX(), -getSplitY(), sheetSize.width, sheetSize.height));
     }
 
     private void drawSheet(Graphics g) {
@@ -1244,10 +1277,10 @@ public class SheetView extends JPanel implements Scrollable {
         protected void paintComponent(Graphics g) {
             // draw column labels
             Rectangle clipBounds = g.getClipBounds();
-            int startCol = Math.max(0, getColumnNumberFromX(clipBounds.x));
-            int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x + clipBounds.width), getNumberOfColumns());
+            int startCol = Math.max(sheet.getSplitColumn(), getColumnNumberFromX(clipBounds.x+getSplitX()));
+            int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x+getSplitX() + clipBounds.width), getNumberOfColumns());
             for (int j = startCol; j < endCol; j++) {
-                int x = getColumnPos(j) + 1;
+                int x = getColumnPos(j) + 1-getSplitX();
                 int w = getColumnPos(j + 1) - x;
                 String text = getColumnName(j);
 
@@ -1270,12 +1303,21 @@ public class SheetView extends JPanel implements Scrollable {
     private class RowHeader extends JComponent {
 
         private final JLabel painter;
+        private int labelWidth = 0;
 
         public RowHeader() {
             painter = new JLabel();
             painter.setHorizontalAlignment(SwingConstants.RIGHT);
             painter.setVerticalAlignment(SwingConstants.CENTER);
             painter.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, gridColor));
+
+            // listen to mouse events
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    onMousePressed(e.getX()-labelWidth, e.getY());
+                }
+            });
 
             validate();
         }
@@ -1291,13 +1333,26 @@ public class SheetView extends JPanel implements Scrollable {
                 sb.append('0');
             }
             painter.setText(sb.toString());
-            setPreferredSize(new Dimension(painter.getPreferredSize().width, SheetView.this.getPreferredSize().height));
+            labelWidth = painter.getPreferredSize().width;
+            
+            // height is the height of the worksheet in pixels
+            int height = SheetView.this.getPreferredSize().height;
+
+            // the width is the width for the labels showing row names ...
+            int width = labelWidth;
+
+            // ... plus the width of the columns to the left of the split line ...
+            width += getColumnPos(sheet.getSplitColumn());
+
+            // ... plus 1 pixel for drawing a line below the lines above the split.
+            width += 1;
+
+            setPreferredSize(new Dimension(width, height));
         }
 
         @Override
         protected void paintComponent(Graphics g) {
-            int w = getWidth();
-
+            // draw row labels
             Rectangle clipBounds = g.getClipBounds();
             int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
             int endRow = Math.min(1 + getRowNumberFromY(clipBounds.y + clipBounds.height), getNumberOfRows());
@@ -1306,10 +1361,17 @@ public class SheetView extends JPanel implements Scrollable {
                 int h = getRowPos(i + 1) - y;
                 String text = getRowName(i);
 
-                painter.setBounds(0, 0, w, h);
+                painter.setBounds(0, 0, labelWidth, h);
                 painter.setText(text);
-                painter.paint(g.create(0, y, w, h));
+                painter.paint(g.create(0, y, labelWidth, h));
             }
+
+            // draw columns to the left of split
+            drawSheet(g.create(labelWidth, 0, getWidth()-labelWidth, getHeight()));
+
+            // draw line
+            g.setColor(Color.BLACK);
+            g.drawLine(getWidth()-1, 0, getWidth() - 1, getHeight() - 1);
         }
     }
 
@@ -1322,4 +1384,103 @@ public class SheetView extends JPanel implements Scrollable {
             }
         });
     }
+
+    @SuppressWarnings("serial")
+    private class CornerHeader extends JComponent {
+
+        private final JLabel painter;
+        private int labelHeight = 0;
+        private int labelWidth = 0;
+
+        public CornerHeader() {
+            painter = new JLabel();
+            painter.setHorizontalAlignment(SwingConstants.CENTER);
+            painter.setVerticalAlignment(SwingConstants.CENTER);
+            painter.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, gridColor));
+
+            // listen to mouse events
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    onMousePressed(e.getX(), e.getY()-labelHeight);
+                }
+            });
+
+            validate();
+        }
+
+        @Override
+        public void validate() {
+            // create a string with the maximum number of digits needed to
+            // represent the highest row number (use a string only consisting
+            // of zeroes instead of the last row number because a proportional
+            // font might be used)
+            StringBuilder sb = new StringBuilder();
+            for (int i = 1; i <= getNumberOfRows(); i *= 10) {
+                sb.append('0');
+            }
+            painter.setText(sb.toString());
+            labelWidth = painter.getPreferredSize().width;
+            labelHeight = painter.getPreferredSize().height;
+
+            // the width is the width for the labels showing row names ...
+            int width = labelWidth;
+
+            // ... plus the width of the columns to the left of the split line ...
+            width += getColumnPos(sheet.getSplitColumn());
+
+            // ... plus 1 pixel for drawing a line below the lines above the split.
+            width += 1;
+
+            // the height is the height for the labels showing column names ...
+            int height = labelHeight;
+
+            // ... plus the height of the rows above the split line ...
+            height += getRowPos(sheet.getSplitRow());
+
+            // ... plus 1 pixel for drawing a line below the lines above the split.
+            height += 1;
+
+            setPreferredSize(new Dimension(width, height));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            // draw column labels
+            Rectangle clipBounds = g.getClipBounds();
+            int startCol = Math.max(0, getColumnNumberFromX(clipBounds.x));
+            int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x + clipBounds.width), getNumberOfColumns());
+            for (int j = startCol; j < endCol; j++) {
+                int x = getColumnPos(j) + 1;
+                int w = getColumnPos(j + 1) - x;
+                String text = getColumnName(j);
+
+                painter.setBounds(0, 0, w, labelHeight);
+                painter.setText(text);
+                painter.paint(g.create(x, 0, w, labelHeight));
+            }
+
+            int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
+            int endRow = Math.min(1 + getRowNumberFromY(clipBounds.y + clipBounds.height), getNumberOfRows());
+            for (int i = startRow; i < endRow; i++) {
+                int y = getRowPos(i) + 1;
+                int h = getRowPos(i + 1) - y;
+                String text = getRowName(i);
+
+                painter.setBounds(0, 0, labelWidth, h);
+                painter.setText(text);
+                painter.paint(g.create(0, y, labelWidth, h));
+            }
+            
+            // draw rows above and left of split
+            drawSheet(g.create(labelWidth, labelHeight, getWidth()-labelWidth, getHeight()-labelHeight));
+
+            // draw lines
+            g.setColor(Color.BLACK);
+            g.drawLine(0, getHeight() - 1, getWidth() - 1, getHeight() - 1);
+            g.drawLine(getWidth()-1, 0, getWidth() - 1, getHeight() - 1);
+        }
+
+    }
+
 }
