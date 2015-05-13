@@ -255,8 +255,17 @@ public class SheetView extends JPanel implements Scrollable {
      */
     public void ensureCellIsVisibile(Cell cell) {
         final Rectangle cellRect = getCellRect(cell);
-        cellRect.translate(0, -getSplitY());
-        scrollRectToVisible(cellRect);
+        boolean aboveSplit = getSplitY()>=cellRect.getMaxY()-1;
+
+        if (aboveSplit) {
+            // only scroll x
+            cellRect.y = -getY();
+            cellRect.height = 1;
+            scrollRectToVisible(cellRect);
+        } else {
+            cellRect.translate(0, -getSplitY());
+            scrollRectToVisible(cellRect);
+        }
     }
 
     /**
