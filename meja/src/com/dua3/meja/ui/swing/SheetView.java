@@ -363,6 +363,9 @@ public class SheetView extends JPanel implements Scrollable {
             if (columnHeader != null) {
                 columnHeader.repaint();
             }
+            if (cornerHeader != null) {
+                cornerHeader.repaint();
+            }
             return true;
         } else {
             return false;
@@ -1280,17 +1283,17 @@ public class SheetView extends JPanel implements Scrollable {
             int startCol = Math.max(sheet.getSplitColumn(), getColumnNumberFromX(clipBounds.x+getSplitX()));
             int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x+getSplitX() + clipBounds.width), getNumberOfColumns());
             for (int j = startCol; j < endCol; j++) {
-                int x = getColumnPos(j) + 1-getSplitX();
+                int x = getColumnPos(j) + 1;
                 int w = getColumnPos(j + 1) - x;
                 String text = getColumnName(j);
 
                 painter.setBounds(0, 0, w, labelHeight);
                 painter.setText(text);
-                painter.paint(g.create(x, 0, w, labelHeight));
+                painter.paint(g.create(x-getSplitX(), 0, w, labelHeight));
             }
 
             // draw rows above split
-            drawSheet(g.create(0, labelHeight, getWidth(), getHeight() - labelHeight));
+            drawSheet(g.create(-getSplitX(), labelHeight, getSheetWidth(), getHeight() - labelHeight));
 
             // draw line
             g.setColor(Color.BLACK);
@@ -1354,8 +1357,8 @@ public class SheetView extends JPanel implements Scrollable {
         protected void paintComponent(Graphics g) {
             // draw row labels
             Rectangle clipBounds = g.getClipBounds();
-            int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
-            int endRow = Math.min(1 + getRowNumberFromY(clipBounds.y + clipBounds.height), getNumberOfRows());
+            int startRow = Math.max(sheet.getSplitRow(), getRowNumberFromY(clipBounds.y+getSplitY()));
+            int endRow = Math.min(1 + getRowNumberFromY(clipBounds.y+getSplitY() + clipBounds.height), getNumberOfRows());
             for (int i = startRow; i < endRow; i++) {
                 int y = getRowPos(i) + 1;
                 int h = getRowPos(i + 1) - y;
@@ -1363,11 +1366,11 @@ public class SheetView extends JPanel implements Scrollable {
 
                 painter.setBounds(0, 0, labelWidth, h);
                 painter.setText(text);
-                painter.paint(g.create(0, y, labelWidth, h));
+                painter.paint(g.create(0, y-getSplitY(), labelWidth, h));
             }
 
             // draw columns to the left of split
-            drawSheet(g.create(labelWidth, 0, getWidth()-labelWidth, getHeight()));
+            drawSheet(g.create(labelWidth, -getSplitY(), getWidth()-labelWidth, getSheetHeight()));
 
             // draw line
             g.setColor(Color.BLACK);
