@@ -1460,7 +1460,7 @@ public class SheetView extends JPanel implements Scrollable {
 
                 painter.setBounds(0, 0, w, labelHeight);
                 painter.setText(text);
-                painter.paint(g.create(x, 0, w, labelHeight));
+                painter.paint(g.create(labelWidth+x, 0, w, labelHeight));
             }
 
             int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
@@ -1472,7 +1472,7 @@ public class SheetView extends JPanel implements Scrollable {
 
                 painter.setBounds(0, 0, labelWidth, h);
                 painter.setText(text);
-                painter.paint(g.create(0, y, labelWidth, h));
+                painter.paint(g.create(0, labelHeight+y, labelWidth, h));
             }
             
             // draw rows above and left of split
