@@ -359,11 +359,26 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         Cell cell = getCurrentCell().getLogicalCell();
+        
         final JComponent editorComp = editor.startEditing(cell);
         final Rectangle cellRect = getCellRect(cell);
-        cellRect.translate(0, -getSplitY());
-        editorComp.setBounds(cellRect);
-        add(editorComp);
+        
+        if (cellRect.y>=getSplitY()) {
+            // if cell is below split...
+            // ... correct the y-coordinate
+            cellRect.translate(0, -getSplitY());            
+            editorComp.setBounds(cellRect);
+            // and add editor component to this component
+            add(editorComp);
+        } else {
+            // cell is above split ...
+            // ... correct the y-coordinate
+            cellRect.translate(0, columnHeader.labelHeight);            
+            editorComp.setBounds(cellRect);
+            // and add editor component to column header
+            columnHeader.add(editorComp);
+        }
+        
         editorComp.validate();
         editorComp.setVisible(true);
         editorComp.repaint();
