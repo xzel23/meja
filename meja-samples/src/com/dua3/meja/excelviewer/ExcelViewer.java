@@ -299,13 +299,12 @@ public class ExcelViewer extends JFrame {
     }
 
     private void freezeAtCurrentCell() {
-        SheetView view = workbookView.getCurrentView();
+        final SheetView view = workbookView.getCurrentView();
         if (view != null) {
-            Cell cell = view.getCurrentCell();
-            if (cell != null) {
-                view.getSheet().splitAt(cell.getRowNumber(), cell.getColumnNumber());
-                view.updateContent();
-            }
+            final int i = view.getCurrentRowNum();
+            final int j = view.getCurrentColNum();
+            view.getSheet().splitAt(i, j);
+            view.updateContent();
         }
     }
 

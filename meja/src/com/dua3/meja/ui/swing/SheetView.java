@@ -707,13 +707,14 @@ public class SheetView extends JPanel implements Scrollable {
                 sheetWidthInPoints += sheet.getColumnWidth(j - 1);
                 columnPos[j] = sheetWidthInPoints;
             }
-
-            // revalidate the layout
-            revalidate();
+            
+            // trigger addNotify to force update of headers
+            addNotify();
         } finally {
             readLock.unlock();
         }
-
+        // revalidate the layout
+        revalidate();
     }
 
     @Override
