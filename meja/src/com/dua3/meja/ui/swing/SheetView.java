@@ -1249,7 +1249,7 @@ public class SheetView extends JPanel implements Scrollable {
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    onMousePressed(e.getX(), e.getY()-labelHeight);
+                    onMousePressed(e.getX()+getSplitX(), e.getY()-labelHeight);
                 }
             });
 
@@ -1319,7 +1319,7 @@ public class SheetView extends JPanel implements Scrollable {
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    onMousePressed(e.getX()-labelWidth, e.getY());
+                    onMousePressed(e.getX()-labelWidth, e.getY()+getSplitY());
                 }
             });
 
