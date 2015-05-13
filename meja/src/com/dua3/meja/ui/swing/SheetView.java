@@ -64,7 +64,9 @@ public class SheetView extends JPanel implements Scrollable {
     private static final long serialVersionUID = 1L;
     private final CellRenderer renderer = new DefaultCellRenderer();
     private final CellEditor editor = new DefaultCellEditor(this);
-
+    private ColumnHeader columnHeader = null;
+    private RowHeader rowHeader = null;
+    
     Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
         @Override
         protected java.awt.Stroke create(Float width) {
@@ -336,6 +338,12 @@ public class SheetView extends JPanel implements Scrollable {
             newRect.translate(0, -getSplitY());
             repaint(newRect);
 
+            if (rowHeader!=null) {
+                rowHeader.repaint();
+            }
+            if (columnHeader!=null) {
+                columnHeader.repaint();
+            }
             return true;
         } else {
             return false;
@@ -668,16 +676,10 @@ public class SheetView extends JPanel implements Scrollable {
             parent = parent.getParent();
             if (parent instanceof JScrollPane) {
                 JScrollPane jsp = (JScrollPane) parent;
-                if (showColumnHeader) {
-                    jsp.setColumnHeaderView(new ColumnHeader());
-                } else {
-                    jsp.setColumnHeaderView(null);
-                }
-                if (showRowHeader) {
-                    jsp.setRowHeaderView(new RowHeader());
-                } else {
-                    jsp.setRowHeaderView(null);
-                }
+                columnHeader = showColumnHeader ?new ColumnHeader():null;
+                jsp.setColumnHeaderView(columnHeader);
+                rowHeader = showRowHeader ?new RowHeader():null;
+                jsp.setRowHeaderView(rowHeader);
             }
         }
     }
