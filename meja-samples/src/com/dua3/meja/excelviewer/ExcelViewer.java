@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.excelviewer;
 
-import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.swing.SheetView;
