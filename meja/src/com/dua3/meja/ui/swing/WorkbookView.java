@@ -73,7 +73,7 @@ public class WorkbookView extends JComponent {
         if (content==null) {
             return;
         }
-        
+
         for (int i = 0; i < content.getTabCount(); i++) {
             Component scrollPane = content.getComponentAt(i);
             if (scrollPane != null) {
@@ -113,5 +113,13 @@ public class WorkbookView extends JComponent {
             }
         }
         return null;
+    }
+
+    public SheetView getCurrentView() {
+        Component component = content.getSelectedComponent();
+        if (component instanceof JScrollPane) {
+            component = ((JScrollPane)component).getViewport().getView();
+        }
+        return component instanceof SheetView ? (SheetView) component : null;
     }
 }
