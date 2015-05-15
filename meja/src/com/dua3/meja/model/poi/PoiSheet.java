@@ -200,13 +200,13 @@ public class PoiSheet implements Sheet {
     @Override
     public int getSplitRow() {
         final PaneInformation pi = poiSheet.getPaneInformation();
-        return pi == null ? 0 : pi.getHorizontalSplitTopRow();
+        return pi == null ? 0 : pi.getHorizontalSplitPosition();
     }
 
     @Override
     public int getSplitColumn() {
         final PaneInformation pi = poiSheet.getPaneInformation();
-        return pi == null ? 0 : pi.getVerticalSplitLeftColumn();
+        return pi == null ? 0 : pi.getVerticalSplitPosition();
     }
 
     @Override
