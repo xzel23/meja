@@ -27,6 +27,7 @@ import com.dua3.meja.model.WorkbookFactory.OpenMode;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
@@ -364,4 +365,13 @@ public class MejaHelper {
             throw new RuntimeException("Error cloning workbook: " + ex.getMessage(), ex);
         }
     }
+    
+    public static Writer createWriter(Appendable app) {
+        if (app instanceof Writer) {
+            return (Writer) app;
+        } else {
+            return new AppendableWriter(app);
+        }
+    }
+    
 }
