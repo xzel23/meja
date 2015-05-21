@@ -27,7 +27,7 @@ import java.util.Locale;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-class CsvWorkbookReader extends WorkbookReader {
+public class CsvWorkbookReader extends WorkbookReader {
 
     private static final CsvWorkbookReader INSTANCE = new CsvWorkbookReader();
 

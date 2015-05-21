@@ -33,6 +33,7 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -121,7 +122,12 @@ public class PoiCell implements Cell {
 
     @Override
     public CellType getCellType() {
-        return translateCellType(poiCell.getCellType());
+        CellType type = translateCellType(poiCell.getCellType());
+        // test if a date!
+        if (type == CellType.NUMERIC && DateUtil.isCellDateFormatted(poiCell)) {
+            type = CellType.DATE;
+        }
+        return type;
     }
 
     @Override
@@ -421,6 +427,9 @@ public class PoiCell implements Cell {
             case NUMERIC:
                 set(other.getNumber());
                 break;
+            case DATE:
+                set(other.getDate());
+                break;
             case TEXT:
                 set(other.getAttributedString());
                 break;
@@ -437,8 +446,8 @@ public class PoiCell implements Cell {
     }
 
     final void addedToMergedRegion(PoiCell topLeftCell, int spanX, int spanY) {
-        if (    this.getRowNumber() == topLeftCell.getRowNumber()
-             && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
+        if (this.getRowNumber() == topLeftCell.getRowNumber()
+                && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
             this.logicalCell = topLeftCell;
             this.spanX = spanX;
             this.spanY = spanY;
@@ -451,14 +460,14 @@ public class PoiCell implements Cell {
     }
 
     void removedFromMergedRegion() {
-            this.logicalCell = this;
-            this.spanX = 1;
-            this.spanY = 1;
+        this.logicalCell = this;
+        this.spanX = 1;
+        this.spanY = 1;
     }
 
     @Override
     public void unMerge() {
-        if (logicalCell!=this) {
+        if (logicalCell != this) {
             // this should never happen because we checked for this cell being
             // the top left cell of the merged region
             throw new IllegalArgumentException("Cell is not top left cell of a merged region");

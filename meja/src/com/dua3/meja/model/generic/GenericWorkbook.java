@@ -123,7 +123,9 @@ public class GenericWorkbook implements Workbook {
 
     @Override
     public GenericCellStyle copyCellStyle(String styleName, CellStyle style) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GenericCellStyle cellStyle = getCellStyle(styleName);
+        cellStyle.copyStyle(style);
+        return cellStyle;
     }
 
     @Override

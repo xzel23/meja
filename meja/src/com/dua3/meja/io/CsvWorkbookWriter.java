@@ -27,7 +27,7 @@ import java.io.OutputStream;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-class CsvWorkbookWriter extends WorkbookWriter {
+public class CsvWorkbookWriter extends WorkbookWriter {
 
     private static final CsvWorkbookWriter INSTANCE = new CsvWorkbookWriter();
 

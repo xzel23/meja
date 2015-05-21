@@ -72,7 +72,10 @@ public class GenericCell implements Cell {
 
     @Override
     public Date getDate() {
-        throw new IllegalStateException("Cannot get boolean value from cell of type " + type.name() + ".");
+        if (type == CellType.DATE) {
+            return (Date) value;
+        }
+        throw new IllegalStateException("Cannot get date value from cell of type " + type.name() + ".");
     }
 
     @Override
@@ -149,7 +152,7 @@ public class GenericCell implements Cell {
 
     @Override
     public GenericCell set(Date arg) {
-        this.type = CellType.NUMERIC;
+        this.type = CellType.DATE;
         this.value = arg;
         return this;
     }
@@ -251,6 +254,9 @@ public class GenericCell implements Cell {
                 break;
             case NUMERIC:
                 set(other.getNumber());
+                break;
+            case DATE:
+                set(other.getDate());
                 break;
             case TEXT:
                 set(other.getText());

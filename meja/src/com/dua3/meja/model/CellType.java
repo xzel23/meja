@@ -44,5 +44,9 @@ public enum CellType {
     /**
      * Type for text cells.
      */
-    TEXT;
+    TEXT,
+    /**
+     * Type for date cells.
+     */
+    DATE;
 }
