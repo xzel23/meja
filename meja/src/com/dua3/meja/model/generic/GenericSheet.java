@@ -235,12 +235,7 @@ public class GenericSheet implements Sheet {
 
     @Override
     public void copy(Sheet other) {
-        for (Row row : other) {
-            getRow(row.getRowNumber()).copy(row);
-        }
-        for (RectangularRegion rr : other.getMergedRegions()) {
-            addMergedRegion(rr);
-        }
+        MejaHelper.copySheetData(this, other);
     }
 
     @Override

@@ -306,20 +306,7 @@ public class PoiSheet implements Sheet {
 
     @Override
     public void copy(Sheet other) {
-        // copy column widths
-        for (int j = other.getFirstColNum(); j <= other.getLastColNum(); j++) {
-            setColumnWidth(j, other.getColumnWidth(j));
-        }
-        // copy row data
-        for (Row row : other) {
-            final int i = row.getRowNumber();
-            getRow(i).copy(row);
-            setRowHeight(i, other.getRowHeight(i));
-        }
-        // copy merged regions
-        for (RectangularRegion rr : other.getMergedRegions()) {
-            addMergedRegion(rr);
-        }
+        MejaHelper.copySheetData(this, other);
     }
 
     /**

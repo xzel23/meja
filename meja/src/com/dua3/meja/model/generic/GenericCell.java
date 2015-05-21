@@ -89,7 +89,13 @@ public class GenericCell implements Cell {
     @Override
     public String getText() {
         if (type == CellType.TEXT) {
-            return AttributedStringHelper.toString((AttributedString) value);
+            if (value instanceof AttributedString) {
+                return AttributedStringHelper.toString((AttributedString) value);
+            } else if (value instanceof String) {
+                return (String) value;
+            } else {
+                throw new IllegalStateException();            
+            }
         }
         throw new IllegalStateException("Cannot get text value from cell of type " + type.name() + ".");
     }
@@ -100,7 +106,7 @@ public class GenericCell implements Cell {
             case BLANK:
                 return "";
             case TEXT:
-                return AttributedStringHelper.toString((AttributedString) value);
+                return getText();
             default:
                 return String.valueOf(value);
         }
@@ -144,7 +150,16 @@ public class GenericCell implements Cell {
     @Override
     public AttributedString getAttributedString() {
         if (getCellType() == CellType.TEXT) {
-            return (AttributedString) value;
+            if (value instanceof AttributedString) {
+                return (AttributedString) value;
+            } else if (value instanceof String) {
+                // convert to AttributedString on first access
+                final AttributedString as = new AttributedString((String)value);
+                value = as;
+                return as;
+            } else {
+                throw new IllegalStateException();
+            }
         } else {
             return new AttributedString(getAsText());
         }
@@ -167,7 +182,7 @@ public class GenericCell implements Cell {
     @Override
     public GenericCell set(String arg) {
         this.type = CellType.TEXT;
-        this.value = new AttributedString(arg);
+        this.value = arg;
         return this;
     }
 

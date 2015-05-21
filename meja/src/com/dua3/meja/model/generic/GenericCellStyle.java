@@ -53,7 +53,7 @@ public class GenericCellStyle implements CellStyle {
         this.hAlign = HAlign.ALIGN_AUTOMATIC;
         this.vAlign = VAlign.ALIGN_MIDDLE;
         this.wrap = false;
-        this.dataFormat = "#";
+        this.dataFormat = "";
 
         for (Direction d : Direction.values()) {
             borderStyle[d.ordinal()] = defaultBorderStyle;
