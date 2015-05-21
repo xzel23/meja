@@ -29,12 +29,13 @@ import java.util.List;
 public class GenericRow implements Row {
 
     private final GenericSheet sheet;
-    private final List<GenericCell> cells = new ArrayList<>();
+    private final List<GenericCell> cells;
     private final int rowNumber;
 
     public GenericRow(GenericSheet sheet, int rowNumber) {
         this.sheet = sheet;
         this.rowNumber = rowNumber;
+        this.cells = new ArrayList<>(sheet.getNumberOfColumns()-1);
         reserve(sheet.getNumberOfColumns()-1);
     }
 

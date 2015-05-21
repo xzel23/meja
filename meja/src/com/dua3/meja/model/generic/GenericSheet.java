@@ -39,12 +39,12 @@ public class GenericSheet implements Sheet {
     private final GenericWorkbook workbook;
     private String sheetName;
     private final Locale locale;
-    private final List<GenericRow> rows = new ArrayList<>();
+    private final List<GenericRow> rows = new ArrayList<>(4000);
     private final List<RectangularRegion> mergedRegions = new ArrayList<>();
     private final float defaultColumnWidth = 80f;
-    private final ArrayList<Float> columnWidth = new ArrayList<>();
+    private final ArrayList<Float> columnWidth = new ArrayList<>(200);
     private final float defaultRowHeight = 12f;
-    private final ArrayList<Float> rowHeight = new ArrayList<>();
+    private final ArrayList<Float> rowHeight = new ArrayList<>(4000);
     private int freezeRow;
     private int freezeColumn;
     private int autoFilterRow;
