@@ -29,6 +29,7 @@ import java.text.AttributedString;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Logger;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -311,6 +312,11 @@ public class PoiCell implements Cell {
             clear();
         } else {
             poiCell.setCellValue(arg);
+            if (!DateUtil.isCellDateFormatted(poiCell)) {
+                // Excel does not have a cell type for dates!
+                // Warn if cell is not date formatted
+                Logger.getLogger(PoiCell.class.getName()).warning("Cell is not date formatted!");
+            }
         }
         updateRow();
         return this;
@@ -322,6 +328,11 @@ public class PoiCell implements Cell {
             clear();
         } else {
             poiCell.setCellValue(arg.doubleValue());
+            if (DateUtil.isCellDateFormatted(poiCell)) {
+                // Excel does not have a cell type for dates!
+                // Warn if cell is date formatted, but a plain number is stored
+                Logger.getLogger(PoiCell.class.getName()).warning("Cell is date formatted, but plain number written!");
+            }
         }
         updateRow();
         return this;
