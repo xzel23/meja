@@ -18,9 +18,9 @@ More information is available on the project`s [github pages](http://xzel23.gith
 Méja is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 ## What already works
-- Reading and writing Excel files in both .xls and .xlsx format. 
-- Reading CSV files.
-- Rendering a workbook or single sheets (currently .xls seems to give better results).
+- Reading and writing CSV and Excel files (.xls and .xlsx) format.
+- Reading workbook in Excel format and writing as CSV and vice cersa.
+- Rendering a workbook or single sheets (supported features: merged cells, freeze panes, fonts and colors)
 - Formula Evaluation in Excel files.
 - Basic editing support.
 
