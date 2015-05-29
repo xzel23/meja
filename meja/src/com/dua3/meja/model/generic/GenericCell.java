@@ -94,7 +94,7 @@ public class GenericCell implements Cell {
             } else if (value instanceof String) {
                 return (String) value;
             } else {
-                throw new IllegalStateException();            
+                throw new IllegalStateException();
             }
         }
         throw new IllegalStateException("Cannot get text value from cell of type " + type.name() + ".");
@@ -158,7 +158,7 @@ public class GenericCell implements Cell {
                 return (AttributedString) value;
             } else if (value instanceof String) {
                 // convert to AttributedString on first access
-                final AttributedString as = new AttributedString((String)value);
+                final AttributedString as = new AttributedString((String) value);
                 value = as;
                 return as;
             } else {
@@ -171,36 +171,56 @@ public class GenericCell implements Cell {
 
     @Override
     public GenericCell set(Date arg) {
-        this.type = CellType.DATE;
-        this.value = arg;
+        if (arg == null) {
+            clear();
+        } else {
+            this.type = CellType.DATE;
+            this.value = arg;
+        }
         return this;
     }
 
     @Override
     public GenericCell set(Number arg) {
-        this.type = CellType.NUMERIC;
-        this.value = arg;
+        if (arg == null) {
+            clear();
+        } else {
+            this.type = CellType.NUMERIC;
+            this.value = arg;
+        }
         return this;
     }
 
     @Override
     public GenericCell set(String arg) {
-        this.type = CellType.TEXT;
-        this.value = arg;
+        if (arg == null) {
+            clear();
+        } else {
+            this.type = CellType.TEXT;
+            this.value = arg;
+        }
         return this;
     }
 
     @Override
     public GenericCell set(AttributedString arg) {
-        this.type = CellType.TEXT;
-        this.value = arg;
+        if (arg == null) {
+            clear();
+        } else {
+            this.type = CellType.TEXT;
+            this.value = arg;
+        }
         return this;
     }
 
     @Override
     public GenericCell set(Boolean arg) {
-        this.type = CellType.BOOLEAN;
-        this.value = arg;
+        if (arg == null) {
+            clear();
+        } else {
+            this.type = CellType.BOOLEAN;
+            this.value = arg;
+        }
         return this;
     }
 
