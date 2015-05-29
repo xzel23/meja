@@ -205,7 +205,8 @@ public class GenericCellStyle implements CellStyle {
     public String format(Number n) {
         if (numberFormatter==null) {
             try {
-                numberFormatter = new DecimalFormat(dataFormat);
+                String fmt = dataFormat==null||dataFormat.isEmpty() ? "0.##########": dataFormat;
+                numberFormatter = new DecimalFormat(fmt);
             } catch (Exception e) {
                 Logger.getLogger(GenericCellStyle.class.getName()).log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
                 numberFormatter = DecimalFormat.getInstance(workbook.getLocale());
