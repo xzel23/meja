@@ -61,7 +61,7 @@ public class CsvWorkbookWriter extends WorkbookWriter {
         for (Sheet sheet: workbook) {
             for (Row row:sheet) {
                 for (Cell cell: row) {
-                    writer.addField(cell.toString());
+                    writer.addField(cell.getAsText());
                 }
                 writer.nextRow();
             }

@@ -23,6 +23,13 @@ import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import java.awt.Color;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -43,6 +50,10 @@ public class GenericCellStyle implements CellStyle {
     private final BorderStyle[] borderStyle = new BorderStyle[Direction.values().length];
     private boolean wrap;
     private String dataFormat;
+
+    // formatting helper
+    transient private DateFormat dateFormatter = null;
+    transient private NumberFormat numberFormatter = null;
 
     public GenericCellStyle(GenericWorkbook workbook) {
         this.workbook = workbook;
@@ -153,6 +164,8 @@ public class GenericCellStyle implements CellStyle {
     @Override
     public void setDataFormat(String format) {
         this.dataFormat = format;
+        this.dateFormatter = null;
+        this.numberFormatter = null;
     }
 
     @Override
@@ -174,6 +187,33 @@ public class GenericCellStyle implements CellStyle {
     @Override
     public GenericWorkbook getWorkbook() {
         return workbook;
+    }
+
+    public String format(Date date) {
+        if (dateFormatter==null) {
+            try {
+                dateFormatter = new SimpleDateFormat(dataFormat, workbook.getLocale());
+            } catch (Exception e) {
+                Logger.getLogger(GenericCellStyle.class.getName()).log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
+                dateFormatter = SimpleDateFormat.getDateInstance();
+            }
+        }
+        
+        return dateFormatter.format(date);
+    }
+
+    public String format(Number n) {
+        if (numberFormatter==null) {
+            try {
+                numberFormatter = new DecimalFormat(dataFormat);
+            } catch (Exception e) {
+                Logger.getLogger(GenericCellStyle.class.getName()).log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
+                numberFormatter = DecimalFormat.getInstance(workbook.getLocale());
+                numberFormatter.setGroupingUsed(false);
+            }
+        }
+        
+        return numberFormatter.format(n);
     }
 
 }

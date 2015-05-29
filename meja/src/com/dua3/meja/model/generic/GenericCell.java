@@ -107,13 +107,17 @@ public class GenericCell implements Cell {
                 return "";
             case TEXT:
                 return getText();
+            case NUMERIC:
+                return getCellStyle().format(getNumber());
+            case DATE:
+                return getCellStyle().format(getDate());
             default:
                 return String.valueOf(value);
         }
     }
 
     @Override
-    public CellStyle getCellStyle() {
+    public GenericCellStyle getCellStyle() {
         return cellStyle;
     }
 
