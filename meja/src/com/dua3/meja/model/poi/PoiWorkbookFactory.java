@@ -103,8 +103,23 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
+    public Workbook create(Locale locale) {
+        return createXlsx(locale);
+    }
+
+    @Override
+    public Workbook createStreaming(Locale locale) {
+        return createXlsxStreaming(locale);
+    }
+
+    @Override
     public Workbook create() {
-        return createXls(Locale.getDefault());
+        return create(Locale.getDefault());
+    }
+
+    @Override
+    public Workbook createStreaming() {
+        return createStreaming(Locale.getDefault());
     }
 
     public Workbook createXls() {

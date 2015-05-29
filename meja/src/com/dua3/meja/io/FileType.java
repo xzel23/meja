@@ -15,6 +15,9 @@
  */
 package com.dua3.meja.io;
 
+import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.meja.model.generic.GenericWorkbookFactory;
+import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
 import java.io.File;
 
@@ -23,17 +26,19 @@ import java.io.File;
  * @author Axel Howind (axel@dua3.com)
  */
 public enum FileType {
-    CSV("CSV-Data", CsvWorkbookReader.instance(), CsvWorkbookWriter.instance(),".csv", ".txt"),
-    XLS("Excel 97-2003", XlsWorkbookReader.instance(), XlsWorkbookWriter.instance(), ".xls"),
-    XLSX("Excel 2007", XlsxWorkbookReader.instance(), XlsxWorkbookWriter.instance(), ".xlsx", ".xlsm");
+    CSV("CSV-Data", GenericWorkbookFactory.instance(), CsvWorkbookReader.instance(), CsvWorkbookWriter.instance(),".csv", ".txt"),
+    XLS("Excel 97-2003", GenericWorkbookFactory.instance(), XlsWorkbookReader.instance(), XlsWorkbookWriter.instance(), ".xls"),
+    XLSX("Excel 2007", PoiWorkbookFactory.instance(), XlsxWorkbookReader.instance(), XlsxWorkbookWriter.instance(), ".xlsx", ".xlsm");
 
     private final String name;
+    private final WorkbookFactory factory;
     private final WorkbookWriter writer;
     private final WorkbookReader reader;
     private final String[] extensions;
 
-    private FileType(String name, WorkbookReader reader, WorkbookWriter writer, String... extensions) {
+    private FileType(String name, WorkbookFactory factory, WorkbookReader reader, WorkbookWriter writer, String... extensions) {
         this.name = name;
+        this.factory = factory;
         this.writer = writer;
         this.reader = reader;
         this.extensions = extensions;
@@ -48,6 +53,10 @@ public enum FileType {
         return extensions[0];
     }
 
+    public WorkbookFactory getFactory() {
+        return factory;
+    }
+    
     public WorkbookWriter getWriter() {
         return writer;
     }

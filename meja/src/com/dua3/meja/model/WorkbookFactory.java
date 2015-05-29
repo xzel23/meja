@@ -22,6 +22,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Abstract base class for workbook factories.
@@ -31,11 +32,34 @@ import java.util.List;
 public abstract class WorkbookFactory {
 
     /**
+     * Create a new Workbook instance with the given locale.
+     *
+     * @param locale the locale to use
+     * @return workbook
+     */
+    public abstract Workbook create(Locale locale);
+
+    /**
+     * Create a new Workbook instance with the given locale, use streaming if available.
+     *
+     * @param locale the locale to use
+     * @return workbook
+     */
+    public abstract Workbook createStreaming(Locale locale);
+    
+    /**
      * Create a new Workbook instance.
      *
      * @return workbook
      */
     public abstract Workbook create();
+
+    /**
+     * Create a new Workbook instance, use streaming if available.
+     *
+     * @return workbook
+     */
+    public abstract Workbook createStreaming();
 
     /**
      * Load workbook from file.

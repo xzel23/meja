@@ -51,9 +51,23 @@ public class GenericWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public GenericWorkbook create() {
-        Locale locale = Locale.getDefault();
+    public GenericWorkbook create(Locale locale) {
         return new GenericWorkbook(locale, null);
+    }
+
+    @Override
+    public GenericWorkbook createStreaming(Locale locale) {
+        return create(locale);
+    }
+
+    @Override
+    public GenericWorkbook create() {
+        return create(Locale.getDefault());
+    }
+
+    @Override
+    public GenericWorkbook createStreaming() {
+        return create();
     }
 
 }
