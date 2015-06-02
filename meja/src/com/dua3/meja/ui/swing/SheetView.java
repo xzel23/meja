@@ -895,6 +895,10 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     private void drawSheet(Graphics g) {
+        if (sheet == null) {
+            return;
+        }
+
         Graphics2D g2d = (Graphics2D) g;
 
         Lock readLock = sheet.readLock();
@@ -1259,6 +1263,10 @@ public class SheetView extends JPanel implements Scrollable {
 
         @Override
         public void validate() {
+            if (sheet==null) {
+                return;
+            }
+            
             // determine height of labels (assuming noe letter is higher than 'A')
             painter.setText("A");
             labelHeight = painter.getPreferredSize().height;
@@ -1333,6 +1341,10 @@ public class SheetView extends JPanel implements Scrollable {
 
         @Override
         public void validate() {
+            if (sheet==null) {
+                return;
+            }
+
             // create a string with the maximum number of digits needed to
             // represent the highest row number (use a string only consisting
             // of zeroes instead of the last row number because a proportional
@@ -1424,6 +1436,10 @@ public class SheetView extends JPanel implements Scrollable {
 
         @Override
         public void validate() {
+            if (sheet==null) {
+                return;
+            }
+
             // create a string with the maximum number of digits needed to
             // represent the highest row number (use a string only consisting
             // of zeroes instead of the last row number because a proportional
@@ -1463,6 +1479,10 @@ public class SheetView extends JPanel implements Scrollable {
 
         @Override
         protected void paintComponent(Graphics g) {
+            if (sheet==null) {
+                return;
+            }
+            
             // draw column labels
             Rectangle clipBounds = g.getClipBounds();
             int startCol = Math.max(0, getColumnNumberFromX(clipBounds.x));

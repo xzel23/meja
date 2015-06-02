@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
@@ -176,7 +177,15 @@ public class GenericSheet implements Sheet {
 
     @Override
     public void autoSizeColumn(int j) {
-        // TODO
+        float colWidth = 0;
+        for (Row row: this) {
+            Cell cell = row.getCell(j);
+            float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
+            float aspect = 0.52f;            
+            int chars = cell.getAsText().length();
+            colWidth = Math.max(colWidth, fontSize*chars*aspect);
+        }
+        setColumnWidth(j, colWidth);
     }
 
     @Override
