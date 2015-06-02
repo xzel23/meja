@@ -68,10 +68,27 @@ public class CsvWriter implements AutoCloseable, Flushable {
     if (fieldsInRow > 0) {
       out.print(separator);
     }
-    out.print(quote(text));
+    out.print(quoteIfNeeded(text));
     fieldsInRow++;
   }
 
+  private String quoteIfNeeded(String text) {
+    return isQuoteNeeded(text) ? quote(text) : text;
+  }
+
+  private static final String allowedChars = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
+  
+  private boolean isQuoteNeeded(String text) {
+    for(char c:text.toCharArray()) {
+        if (c==separator || c==delimiter) {
+          return true;
+        } else if (!Character.isLetterOrDigit(c) && allowedChars.indexOf(c)==-1) {
+            return true;
+        }
+    }    
+    return false;
+  }
+  
   private String quote(String text) {
     return delimiter+text.replaceAll("\"", "\"\"")+delimiter;
   }
