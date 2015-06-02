@@ -193,7 +193,7 @@ public class GenericCell implements Cell {
 
     @Override
     public GenericCell set(String arg) {
-        if (arg == null) {
+        if (arg == null || arg.isEmpty()) {
             clear();
         } else {
             this.type = CellType.TEXT;
@@ -204,7 +204,7 @@ public class GenericCell implements Cell {
 
     @Override
     public GenericCell set(AttributedString arg) {
-        if (arg == null) {
+        if (arg == null || AttributedStringHelper.isEmpty(arg)) {
             clear();
         } else {
             this.type = CellType.TEXT;
@@ -250,8 +250,7 @@ public class GenericCell implements Cell {
 
     @Override
     public boolean isEmpty() {
-        return type == CellType.BLANK
-                || type == CellType.TEXT && AttributedStringHelper.isEmpty((AttributedString) value);
+        return type == CellType.BLANK;
     }
 
     @Override
