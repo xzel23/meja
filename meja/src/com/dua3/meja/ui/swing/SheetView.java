@@ -40,6 +40,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -690,6 +691,19 @@ public class SheetView extends JPanel implements Scrollable {
             // Enter starts search
             SwingUtilities.getRootPane(submitButton).setDefaultButton(submitButton);
             
+            
+            // Escape closes dialog
+            final AbstractAction escapeAction = new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent ae) {
+                    setVisible(false);
+                }
+            };
+
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ESCAPE_KEY");
+            rootPane.getActionMap().put("ESCAPE_KEY", escapeAction);
+            
             // pack layout
             pack();            
         }
@@ -722,8 +736,15 @@ public class SheetView extends JPanel implements Scrollable {
                 jtfText.selectAll();
             }
         }
-                
+        
     }
+
+    @Override
+    public void removeNotify() {
+        searchDialog.dispose();
+        super.removeNotify();
+    }
+        
     /**
      * Initialization method.
      *
