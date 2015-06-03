@@ -32,6 +32,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -40,6 +42,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -49,6 +52,7 @@ import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -73,7 +77,7 @@ public class SheetView extends JPanel implements Scrollable {
     private static final long serialVersionUID = 1L;
     private final CellRenderer renderer = new DefaultCellRenderer();
     private final CellEditor editor = new DefaultCellEditor(this);
-    private JDialog searchDialog = null;
+    private SearchDialog searchDialog = null;
     private ColumnHeader columnHeader = null;
     private RowHeader rowHeader = null;
     private CornerHeader cornerHeader = null;
@@ -608,20 +612,60 @@ public class SheetView extends JPanel implements Scrollable {
 
     private class SearchDialog extends JDialog {
         private final JTextField jtfText;
+        private final JCheckBox jcbIgnoreCase;
+        private final JCheckBox jcbMatchCompleteText;
         
         SearchDialog() {
             setTitle("Search");
             setModal(true);
-            setLayout(new FlowLayout());
+            setResizable(false);
             
-            // Label
-            add(new JLabel("Text:"));
+            setLayout(new GridBagLayout());
+            GridBagConstraints c = new GridBagConstraints();
+            
+            getRootPane().setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
+
+            // text label
+            c.gridx=1;
+            c.gridy=1;
+            c.gridwidth = 1;
+            c.gridheight =1;
+            add(new JLabel("Text:"), c);
             
             // text input
+            c.gridx=2;
+            c.gridy=1;
+            c.gridwidth = 4;
+            c.gridheight =1;
             jtfText = new JTextField(40);
-            add(jtfText);
+            add(jtfText, c);
+            
+            // options
+            c.gridx=1;
+            c.gridy=2;
+            c.gridwidth = 1;
+            c.gridheight =1;
+            add(new JLabel("Options:"), c);
+
+            c.gridx=2;
+            c.gridy=2;
+            c.gridwidth = 1;
+            c.gridheight =1;
+            jcbIgnoreCase = new JCheckBox("ignore case", true);
+            add(jcbIgnoreCase,c);
+            
+            c.gridx=3;
+            c.gridy=2;
+            c.gridwidth = 1;
+            c.gridheight =1;
+            jcbMatchCompleteText = new JCheckBox("match complete text", false);
+            add(jcbMatchCompleteText,c);
             
             // submit button
+            c.gridx=4;
+            c.gridy=2;
+            c.gridwidth = 1;
+            c.gridheight =1;
             final JButton submitButton = new JButton(new AbstractAction("Search") {            
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -629,15 +673,19 @@ public class SheetView extends JPanel implements Scrollable {
                 }
                 
             });
-            add(submitButton);
+            add(submitButton,c);
             
             // close button
+            c.gridx=5;
+            c.gridy=2;
+            c.gridwidth = 1;
+            c.gridheight =1;
             add(new JButton(new AbstractAction("Close") {            
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     setVisible(false);
                 }
-            }));
+            }), c);
 
             // Enter starts search
             SwingUtilities.getRootPane(submitButton).setDefaultButton(submitButton);
@@ -651,7 +699,15 @@ public class SheetView extends JPanel implements Scrollable {
         }
 
         void doSearch() {
-            boolean found = searchAndMakeCurrent(getText());
+            List<SearchOptions> options = new ArrayList<>();
+            if (jcbIgnoreCase.isSelected()) {
+                options.add(SearchOptions.IGNORE_CASE);
+            }
+            if (jcbMatchCompleteText.isSelected()) {
+                options.add(SearchOptions.MATCH_COMPLETE_TEXT);
+            }
+            
+            boolean found = searchAndMakeCurrent(getText(), options);
             if (!found) {
                 JOptionPane.showMessageDialog(this, "Text was not found.");
             }
@@ -784,11 +840,10 @@ public class SheetView extends JPanel implements Scrollable {
      * The search starts in the cell following the current cell.
      * </p>
      * @param text the text to search
-     * @param searchOptions the search options
+     * @param options the search options
      * @return true if text was found and current cell updated
      */
-    public boolean searchAndMakeCurrent(String text, SearchOptions... searchOptions) {
-        List<SearchOptions> options = Arrays.asList(searchOptions);
+    public boolean searchAndMakeCurrent(String text, List<SearchOptions> options) {
         boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
         boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
         
@@ -834,7 +889,20 @@ public class SheetView extends JPanel implements Scrollable {
         } finally {
             readLock.unlock();
         }
-        return false;
+        return false;        
+    }
+    
+    /**
+     * Search from current position and move to cell.
+     * <p>
+     * The search starts in the cell following the current cell.
+     * </p>
+     * @param text the text to search
+     * @param options the search options
+     * @return true if text was found and current cell updated
+     */
+    public boolean searchAndMakeCurrent(String text, SearchOptions... options) {
+        return searchAndMakeCurrent(text, Arrays.asList(options));
     }
     
     /**
