@@ -82,7 +82,7 @@ public class GenericRow implements Row {
 
     @Override
     public int getLastCellNum() {
-        return cells.size();
+        return cells.size()-1;
     }
 
     @Override
