@@ -27,7 +27,9 @@ import com.dua3.meja.util.MejaHelper;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LayoutManager;
@@ -38,16 +40,22 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
@@ -65,6 +73,7 @@ public class SheetView extends JPanel implements Scrollable {
     private static final long serialVersionUID = 1L;
     private final CellRenderer renderer = new DefaultCellRenderer();
     private final CellEditor editor = new DefaultCellEditor(this);
+    private JDialog searchDialog = null;
     private ColumnHeader columnHeader = null;
     private RowHeader rowHeader = null;
     private CornerHeader cornerHeader = null;
@@ -374,6 +383,13 @@ public class SheetView extends JPanel implements Scrollable {
     }
 
     /**
+     * Show the search dialog.
+     */
+    private void showSearchDialog() {
+        searchDialog.setVisible(true);
+    }
+    
+    /**
      * Enter edit mode for the current cell.
      */
     private void startEditing() {
@@ -534,6 +550,18 @@ public class SheetView extends JPanel implements Scrollable {
                             }
                         };
                     }
+                },
+        SHOW_SEARCH_DIALOG {
+                    @SuppressWarnings("serial")
+                    @Override
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_RIGHT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.showSearchDialog();
+                            }
+                        };
+                    }
                 };
 
         abstract Action getAction(SheetView view);
@@ -578,6 +606,68 @@ public class SheetView extends JPanel implements Scrollable {
         return sheet;
     }
 
+    private class SearchDialog extends JDialog {
+        private final JTextField jtfText;
+        
+        SearchDialog() {
+            setTitle("Search");
+            setModal(true);
+            setLayout(new FlowLayout());
+            
+            // Label
+            add(new JLabel("Text:"));
+            
+            // text input
+            jtfText = new JTextField(40);
+            add(jtfText);
+            
+            // submit button
+            final JButton submitButton = new JButton(new AbstractAction("Search") {            
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    doSearch();
+                }
+                
+            });
+            add(submitButton);
+            
+            // close button
+            add(new JButton(new AbstractAction("Close") {            
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    setVisible(false);
+                }
+            }));
+
+            // Enter starts search
+            SwingUtilities.getRootPane(submitButton).setDefaultButton(submitButton);
+            
+            // pack layout
+            pack();            
+        }
+        
+        String getText() {
+            return jtfText.getText();
+        }
+
+        void doSearch() {
+            boolean found = searchAndMakeCurrent(getText());
+            if (!found) {
+                JOptionPane.showMessageDialog(this, "Text was not found.");
+            }
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            super.setVisible(visible);
+            
+            if (visible) {
+                jtfText.requestFocusInWindow();
+                jtfText.selectAll();
+            }
+        }
+                
+    }
     /**
      * Initialization method.
      *
@@ -588,6 +678,9 @@ public class SheetView extends JPanel implements Scrollable {
     private void init() {
         setOpaque(true);
 
+        // create the search dialog
+        searchDialog = new SearchDialog();
+        
         // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
@@ -599,6 +692,7 @@ public class SheetView extends JPanel implements Scrollable {
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
+        inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK ), Actions.SHOW_SEARCH_DIALOG);
 
         final ActionMap actionMap = getActionMap();
         for (Actions action : Actions.values()) {
@@ -670,6 +764,79 @@ public class SheetView extends JPanel implements Scrollable {
         return gridColor;
     }
 
+    /**
+     * Search options.
+     */
+    public static enum SearchOptions {
+        /**
+         * Ignore case when searching.
+         */
+        IGNORE_CASE,
+        /**
+         * Match the complete cell text.
+         */
+        MATCH_COMPLETE_TEXT
+    }
+    
+    /**
+     * Search from current position and move to cell.
+     * <p>
+     * The search starts in the cell following the current cell.
+     * </p>
+     * @param text the text to search
+     * @param searchOptions the search options
+     * @return true if text was found and current cell updated
+     */
+    public boolean searchAndMakeCurrent(String text, SearchOptions... searchOptions) {
+        List<SearchOptions> options = Arrays.asList(searchOptions);
+        boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
+        boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
+        
+        if (ignoreCase) {
+            text = text.toLowerCase();
+        }
+        
+        Lock readLock = sheet.readLock();
+        try {
+            readLock.lock();
+            int iStart=getCurrentRowNum();
+            int jStart = getCurrentColNum();
+            int i = iStart;
+            int j=jStart;
+            do {
+                // move to next cell
+                if (j<sheet.getRow(i).getLastCellNum()) {
+                    j++;
+                } else {
+                    j=0;
+                    if (i<sheet.getLastRowNum()) {
+                        i++;
+                    } else {
+                        i=0;
+                    }
+                }
+                
+                // check cell content
+                String cellText = sheet.getCell(i, j).getAsText();
+                
+                if (ignoreCase) {
+                    cellText = cellText.toLowerCase();
+                }
+                
+                if (     matchComplete && cellText.equals(text) 
+                     || !matchComplete && cellText.contains(text)) {
+                    // found!
+                    setCurrent(i,j);
+                    scrollToCurrentCell();
+                    return true;
+                }
+            } while (i!=iStart || j!=jStart);
+        } finally {
+            readLock.unlock();
+        }
+        return false;
+    }
+    
     /**
      * Update sheet layout data.
      */
@@ -1290,6 +1457,10 @@ public class SheetView extends JPanel implements Scrollable {
 
         @Override
         protected void paintComponent(Graphics g) {
+            if (sheet==null) {
+                return;
+            }
+
             // draw column labels
             Rectangle clipBounds = g.getClipBounds();
             int startCol = Math.max(sheet.getSplitColumn(), getColumnNumberFromX(clipBounds.x + getSplitX()));
@@ -1375,6 +1546,10 @@ public class SheetView extends JPanel implements Scrollable {
 
         @Override
         protected void paintComponent(Graphics g) {
+            if (sheet==null) {
+                return;
+            }
+
             // draw row labels
             Rectangle clipBounds = g.getClipBounds();
             int startRow = Math.max(sheet.getSplitRow(), getRowNumberFromY(clipBounds.y + getSplitY()));
