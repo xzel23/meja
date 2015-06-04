@@ -20,9 +20,7 @@ import com.dua3.meja.model.Workbook;
 import java.awt.CardLayout;
 import java.awt.Component;
 import javax.swing.JComponent;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JViewport;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
@@ -54,10 +52,7 @@ public class WorkbookView extends JComponent {
             for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
                 Sheet sheet = workbook.getSheetByNr(i);
                 final SheetView sheetView = new SheetView(sheet);
-                final JScrollPane scrollPane = new JScrollPane(sheetView,
-                        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                content.addTab(sheet.getSheetName(), scrollPane);
+                content.addTab(sheet.getSheetName(), sheetView);
             }
             content.setSelectedIndex(0);
             add(content);
@@ -70,45 +65,27 @@ public class WorkbookView extends JComponent {
     }
 
     public void setEditable(boolean editable) {
-        if (content==null) {
+        if (content == null) {
             return;
         }
 
         for (int i = 0; i < content.getTabCount(); i++) {
-            Component scrollPane = content.getComponentAt(i);
-            if (scrollPane != null) {
-                assert scrollPane instanceof JScrollPane;
-                for (Component viewPort : ((JScrollPane) scrollPane).getComponents()) {
-                    if (viewPort == null || !(viewPort instanceof JViewport)) {
-                        continue;
-                    }
-                    for (Component c : ((JViewport) viewPort).getComponents()) {
-                        if (c instanceof SheetView) {
-                            ((SheetView) c).setEditable(editable);
-                        }
-                    }
-                }
+            Component view = content.getComponentAt(i);
+            if (view != null) {
+                assert view instanceof SheetView;
+                ((SheetView) view).setEditable(editable);
             }
         }
     }
 
     public SheetView getViewForSheet(String sheetName) {
         for (int i = 0; i < content.getTabCount(); i++) {
-            Component scrollPane = content.getComponentAt(i);
-            if (scrollPane != null) {
-                assert scrollPane instanceof JScrollPane;
-                for (Component viewPort : ((JScrollPane) scrollPane).getComponents()) {
-                    if (viewPort == null || !(viewPort instanceof JViewport)) {
-                        continue;
-                    }
-                    for (Component c : ((JViewport) viewPort).getComponents()) {
-                        if (c instanceof SheetView) {
-                            SheetView sheetView = (SheetView) c;
-                            if (sheetView.getSheet().getSheetName().equals(sheetName)) {
-                                return sheetView;
-                            }
-                        }
-                    }
+            Component view = content.getComponentAt(i);
+            if (view != null) {
+                assert view instanceof SheetView;
+                SheetView sheetView = (SheetView) view;
+                if (sheetView.getSheet().getSheetName().equals(sheetName)) {
+                    return sheetView;
                 }
             }
         }
@@ -117,9 +94,6 @@ public class WorkbookView extends JComponent {
 
     public SheetView getCurrentView() {
         Component component = content.getSelectedComponent();
-        if (component instanceof JScrollPane) {
-            component = ((JScrollPane)component).getViewport().getView();
-        }
         return component instanceof SheetView ? (SheetView) component : null;
     }
 }
