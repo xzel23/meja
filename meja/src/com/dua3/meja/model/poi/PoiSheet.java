@@ -17,6 +17,7 @@ package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 import java.text.DateFormat;
@@ -44,6 +45,13 @@ public class PoiSheet implements Sheet {
     private int lastColumn;
     private List<RectangularRegion> mergedRegions;
     private float zoom = 1.0f;
+
+    private final Cache<org.apache.poi.ss.usermodel.Row, PoiRow> cache = new Cache<org.apache.poi.ss.usermodel.Row, PoiRow>(Cache.Type.WEAK_KEYS) {
+        @Override
+        protected PoiRow create(org.apache.poi.ss.usermodel.Row poiRow) {
+            return new PoiRow(PoiSheet.this, poiRow);
+        }
+    };
 
     protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
         this.workbook = workbook;
@@ -308,7 +316,7 @@ public class PoiSheet implements Sheet {
         if (poiRow == null) {
             poiRow = poiSheet.createRow(row);
         }
-        return new PoiRow(this, poiRow);
+        return cache.get(poiRow);
     }
 
     @Override
