@@ -17,7 +17,6 @@ package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
-import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 import java.util.ArrayList;
@@ -34,20 +33,39 @@ public class PoiRow implements Row {
     protected final PoiSheet sheet;
     protected final org.apache.poi.ss.usermodel.Row poiRow;
     protected final int rowNumber;
-    protected final List<RectangularRegion> mergedRegions = new ArrayList<>();
+    protected final List<RectangularRegion> mergedRegions;
+    protected final List<PoiCell> cells;
 
     public PoiRow(PoiSheet sheet, org.apache.poi.ss.usermodel.Row row) {
         this.sheet = sheet;
         this.poiRow = row;
         this.rowNumber = poiRow.getRowNum();
-        update();
-    }
-
-    private void update() {
-        this.mergedRegions.clear();
+        this.mergedRegions = new ArrayList<>();
+        this.cells = new ArrayList<>(Math.max(10,poiRow.getLastCellNum()));
+        
+        // init list of merged regions
         for (RectangularRegion r: getSheet().getMergedRegions()) {
             if (r.getFirstRow()<=rowNumber&&rowNumber<=r.getLastRow()) {
                 this.mergedRegions.add(r);
+            }
+        }
+
+        // create cells
+        for (int idx=poiRow.getFirstCellNum(); idx<poiRow.getLastCellNum(); idx++) {
+            org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(idx);
+            if (poiCell!=null) {
+                int j = poiCell.getColumnIndex();
+                reserve(j);
+                cells.set(j, new PoiCell(this, poiCell));
+                sheet.setColumnUsed(j);
+            }
+        }
+    }
+    
+    private void reserve(int col) {
+        if (col >= cells.size()) {
+            for (int colNum = cells.size(); colNum <= col; colNum++) {
+                cells.add(null);
             }
         }
     }
@@ -106,24 +124,23 @@ public class PoiRow implements Row {
         return null;
     }
 
-    private final Cache<org.apache.poi.ss.usermodel.Cell, PoiCell> cache = new Cache<org.apache.poi.ss.usermodel.Cell, PoiCell>(Cache.Type.WEAK_KEYS) {
-        @Override
-        protected PoiCell create(org.apache.poi.ss.usermodel.Cell poiCell) {
-            return new PoiCell(PoiRow.this, poiCell);
-        }
-    };
-
-
     @Override
     public PoiCell getCell(int col) {
-        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col, org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK);
-        return cache.get(poiCell);
+        reserve(col);
+        
+        PoiCell cell = cells.get(col);
+        if (cell==null) {
+            cell = new PoiCell(this, poiRow.createCell(col));
+            cells.set(col, cell);
+            sheet.setColumnUsed(col);
+        }
+        
+        return cell;
     }
 
     @Override
     public PoiCell getCellIfExists(int col) {
-        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col);
-        return poiCell==null ? null : cache.get(poiCell);
+        return col<cells.size() ? cells.get(col) : null;
     }
 
     @Override
