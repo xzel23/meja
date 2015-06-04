@@ -833,7 +833,7 @@ public class SheetView extends JPanel {
      * @return y coordinate of split
      */
     int getSplitY() {
-        return getRowPos(sheet.getSplitRow());
+        return sheet==null ? 0 : getRowPos(sheet.getSplitRow());
     }
 
     /**
@@ -842,7 +842,7 @@ public class SheetView extends JPanel {
      * @return x coordinate of split
      */
     int getSplitX() {
-        return getColumnPos(sheet.getSplitColumn());
+        return sheet==null ? 0 : getColumnPos(sheet.getSplitColumn());
     }
 
     /**
@@ -1140,6 +1140,7 @@ public class SheetView extends JPanel {
                 super(null, false);
 
                 setOpaque(true);
+                setDoubleBuffered(false);
 
                 // listen to mouse events
                 addMouseListener(new MouseAdapter() {
