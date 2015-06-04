@@ -55,6 +55,11 @@ public class GenericRow implements Row {
         return cells.get(col);
     }
 
+    @Override
+    public GenericCell getCellIfExists(int col) {
+        return col < cells.size() ? cells.get(col) : null;
+    }
+    
     private void reserve(int col) {
         if (col >= cells.size()) {
             GenericCellStyle cellStyle = getSheet().getWorkbook().getDefaultCellStyle();

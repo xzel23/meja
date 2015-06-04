@@ -89,10 +89,10 @@ public class GenericCell implements Cell {
     @Override
     public String getText() {
         if (type == CellType.TEXT) {
-            if (value instanceof AttributedString) {
-                return AttributedStringHelper.toString((AttributedString) value);
-            } else if (value instanceof String) {
+            if (value instanceof String) {
                 return (String) value;
+            } else if (value instanceof AttributedString) {
+                return AttributedStringHelper.toString((AttributedString) value);
             } else {
                 throw new IllegalStateException();
             }
@@ -108,9 +108,9 @@ public class GenericCell implements Cell {
             case TEXT:
                 return getText();
             case NUMERIC:
-                return getCellStyle().format(getNumber());
+                return getCellStyle().format((Number)value);
             case DATE:
-                return getCellStyle().format(getDate());
+                return getCellStyle().format((Date) value);
             default:
                 return String.valueOf(value);
         }
@@ -345,8 +345,10 @@ public class GenericCell implements Cell {
         int originalSpanY = spanY;
         for (int i = getRowNumber(); i < getRowNumber() + originalSpanY; i++) {
             for (int j = getColumnNumber(); j < getColumnNumber() + originalSpanX; j++) {
-                GenericCell cell = row.getCell(j);
-                cell.removedFromMergedRegion();
+                GenericCell cell = row.getCellIfExists(j);
+                if (cell!=null) {
+                    cell.removedFromMergedRegion();
+                }
             }
         }
     }

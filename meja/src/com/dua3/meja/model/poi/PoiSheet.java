@@ -220,6 +220,13 @@ public class PoiSheet implements Sheet {
     }
 
     @Override
+    public void autoSizeColumns() {
+        for (int j=0;j<getNumberOfColumns();j++) {
+            poiSheet.autoSizeColumn(j);
+        }
+    }
+
+    @Override
     public void setAutofilterRow(int rowNumber) {
         org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNumber);
         short col1 = poiRow.getFirstCellNum();
@@ -327,8 +334,10 @@ public class PoiSheet implements Sheet {
                 for (int i = cra.getFirstRow(); i <= cra.getLastRow(); i++) {
                     PoiRow row = getRow(i);
                     for (int j = cra.getFirstColumn(); j <= cra.getLastColumn(); j++) {
-                        PoiCell cell = row.getCell(j);
-                        cell.removedFromMergedRegion();
+                        PoiCell cell = row.getCellIfExists(j);
+                        if (cell!=null) {
+                            cell.removedFromMergedRegion();
+                        }
                     }
                 }
             }

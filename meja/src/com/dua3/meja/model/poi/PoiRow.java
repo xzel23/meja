@@ -116,11 +116,14 @@ public class PoiRow implements Row {
 
     @Override
     public PoiCell getCell(int col) {
-        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col);
-        if (poiCell == null) {
-            poiCell = poiRow.createCell(col);
-        }
+        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col, org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK);
         return cache.get(poiCell);
+    }
+
+    @Override
+    public PoiCell getCellIfExists(int col) {
+        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col);
+        return poiCell==null ? null : cache.get(poiCell);
     }
 
     @Override

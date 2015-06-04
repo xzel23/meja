@@ -16,6 +16,7 @@
 package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
@@ -23,6 +24,7 @@ import com.dua3.meja.util.RectangularRegion;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -179,13 +181,39 @@ public class GenericSheet implements Sheet {
     public void autoSizeColumn(int j) {
         float colWidth = 0;
         for (Row row: this) {
-            Cell cell = row.getCell(j);
-            float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
-            float aspect = 0.52f;            
-            int chars = cell.getAsText().length();
-            colWidth = Math.max(colWidth, fontSize*chars*aspect);
+            Cell cell = row.getCellIfExists(j);
+            if (cell!=null && cell.getCellType()!=CellType.BLANK) {
+                float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
+                float aspect = 0.52f;            
+                int chars = cell.getAsText().length();
+                colWidth = Math.max(colWidth, fontSize*chars*aspect);
+            }
         }
         setColumnWidth(j, colWidth);
+    }
+
+    @Override
+    public void autoSizeColumns() {
+        final int n = getNumberOfColumns();
+        
+        float[] colWidth = new float[n];
+        Arrays.fill(colWidth, 0f);
+        
+        for (Row row: this) {
+            for (int j=0;j<n;j++) {
+                Cell cell = row.getCellIfExists(j);
+                if (cell!=null && cell.getCellType()!=CellType.BLANK) {
+                    float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
+                    float aspect = 0.52f;            
+                    int chars = cell.getAsText().length();
+                    colWidth[j] = Math.max(colWidth[j], fontSize*chars*aspect);
+                }
+            }
+        }
+        
+        for (int j=0;j<n;j++) {
+            setColumnWidth(j, colWidth[j]);
+        }
     }
 
     @Override
@@ -284,8 +312,10 @@ public class GenericSheet implements Sheet {
                 for (int i = rr.getFirstRow(); i <= rr.getLastRow(); i++) {
                     GenericRow row = getRow(i);
                     for (int j = rr.getFirstColumn(); j <= rr.getLastColumn(); j++) {
-                        GenericCell cell = row.getCell(j);
-                        cell.removedFromMergedRegion();
+                        GenericCell cell = row.getCellIfExists(j);
+                        if (cell!=null) {
+                            cell.removedFromMergedRegion();
+                        }
                     }
                 }
             }

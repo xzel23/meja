@@ -152,11 +152,16 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     int getSplitColumn();
 
     /**
-     * Adjusts the size of the column to its contents (optional operation).
+     * Adjusts the size of the column to its contents.
      *
      * @param j the column to resize
      */
     void autoSizeColumn(int j);
+
+    /**
+     * Adjusts the size of all columns.
+     */
+    void autoSizeColumns();
 
     /**
      * Sets an automatic filter on the given row (optional operation).
