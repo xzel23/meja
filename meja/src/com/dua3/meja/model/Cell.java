@@ -101,6 +101,12 @@ public interface Cell {
     boolean isEmpty();
 
     /**
+     * Test if text is attributed.
+     * @return true if cell is has type TEXT and the stored text is attributed.
+     */
+    boolean isRichText();
+    
+    /**
      * Return the cell style.
      *
      * @return cell style

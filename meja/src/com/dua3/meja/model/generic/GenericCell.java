@@ -297,7 +297,11 @@ public class GenericCell implements Cell {
                 set(other.getDate());
                 break;
             case TEXT:
-                set(other.getText());
+                if (other.isRichText()) {
+                    set(other.getAttributedString());
+                } else {
+                    set(other.getText());                    
+                }
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -351,5 +355,11 @@ public class GenericCell implements Cell {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isRichText() {
+        // no need to check the cell type!
+        return value instanceof AttributedString;
     }
 }

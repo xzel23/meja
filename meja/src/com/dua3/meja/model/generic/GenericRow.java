@@ -20,7 +20,6 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.util.IteratorAdapter;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  *
@@ -29,7 +28,7 @@ import java.util.List;
 public class GenericRow implements Row {
 
     private final GenericSheet sheet;
-    private final List<GenericCell> cells;
+    private final ArrayList<GenericCell> cells;
     private final int rowNumber;
 
     public GenericRow(GenericSheet sheet, int rowNumber) {
@@ -63,6 +62,7 @@ public class GenericRow implements Row {
     private void reserve(int col) {
         if (col >= cells.size()) {
             GenericCellStyle cellStyle = getSheet().getWorkbook().getDefaultCellStyle();
+            cells.ensureCapacity(col+1);
             for (int colNum = cells.size(); colNum <= col; colNum++) {
                 cells.add(new GenericCell(this, colNum, cellStyle));
             }

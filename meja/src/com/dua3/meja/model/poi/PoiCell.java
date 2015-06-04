@@ -442,7 +442,11 @@ public class PoiCell implements Cell {
                 set(other.getDate());
                 break;
             case TEXT:
-                set(other.getAttributedString());
+                if (other.isRichText()) {
+                    set(other.getAttributedString());
+                } else {
+                    set(other.getText());                    
+                }
                 break;
         }
     }
@@ -485,6 +489,11 @@ public class PoiCell implements Cell {
         }
 
         getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
+    }
+
+    @Override
+    public boolean isRichText() {
+        return getResultType()==CellType.TEXT && poiCell.getRichStringCellValue().numFormattingRuns()!=0;
     }
 
 }

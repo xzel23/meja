@@ -34,16 +34,15 @@ public class PoiRow implements Row {
     protected final org.apache.poi.ss.usermodel.Row poiRow;
     protected final int rowNumber;
     protected final List<RectangularRegion> mergedRegions;
-    protected final List<PoiCell> cells;
+    protected final ArrayList<PoiCell> cells;
 
     public PoiRow(PoiSheet sheet, org.apache.poi.ss.usermodel.Row row) {
         this.sheet = sheet;
         this.poiRow = row;
         this.rowNumber = poiRow.getRowNum();
-        this.mergedRegions = new ArrayList<>();
-        this.cells = new ArrayList<>(Math.max(10,poiRow.getLastCellNum()));
         
         // init list of merged regions
+        this.mergedRegions = new ArrayList<>();
         for (RectangularRegion r: getSheet().getMergedRegions()) {
             if (r.getFirstRow()<=rowNumber&&rowNumber<=r.getLastRow()) {
                 this.mergedRegions.add(r);
@@ -51,19 +50,24 @@ public class PoiRow implements Row {
         }
 
         // create cells
-        for (int idx=poiRow.getFirstCellNum(); idx<poiRow.getLastCellNum(); idx++) {
-            org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(idx);
-            if (poiCell!=null) {
-                int j = poiCell.getColumnIndex();
-                reserve(j);
-                cells.set(j, new PoiCell(this, poiCell));
-                sheet.setColumnUsed(j);
+        final short nCol = poiRow.getLastCellNum();
+        this.cells = new ArrayList<>(Math.max(10, nCol));
+        for (int j=0; j<nCol; j++) {
+            org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(j);
+            PoiCell cell;
+            if (poiCell == null) {
+                cell = null;
+            } else {
+                cell = new PoiCell(this, poiCell);
+                setColumnUsed(j);
             }
+            cells.set(j, cell);
         }
     }
     
     private void reserve(int col) {
         if (col >= cells.size()) {
+            cells.ensureCapacity(col+1);
             for (int colNum = cells.size(); colNum <= col; colNum++) {
                 cells.add(null);
             }
@@ -71,7 +75,7 @@ public class PoiRow implements Row {
     }
 
     @Override
-    public PoiSheet getSheet() {
+    public final PoiSheet getSheet() {
         return sheet;
     }
 
@@ -154,7 +158,7 @@ public class PoiRow implements Row {
      * Update first and last column numbers.
      * @param columnNumber 
      */
-    void setColumnUsed(int columnNumber) {
+    final void setColumnUsed(int columnNumber) {
         sheet.setColumnUsed(columnNumber);
     }
 
