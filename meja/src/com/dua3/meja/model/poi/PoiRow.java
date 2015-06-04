@@ -40,7 +40,7 @@ public class PoiRow implements Row {
         this.sheet = sheet;
         this.poiRow = row;
         this.rowNumber = poiRow.getRowNum();
-        
+
         // init list of merged regions
         this.mergedRegions = new ArrayList<>();
         for (RectangularRegion r: getSheet().getMergedRegions()) {
@@ -61,10 +61,10 @@ public class PoiRow implements Row {
                 cell = new PoiCell(this, poiCell);
                 setColumnUsed(j);
             }
-            cells.set(j, cell);
+            cells.add(cell);
         }
     }
-    
+
     private void reserve(int col) {
         if (col >= cells.size()) {
             cells.ensureCapacity(col+1);
@@ -131,14 +131,14 @@ public class PoiRow implements Row {
     @Override
     public PoiCell getCell(int col) {
         reserve(col);
-        
+
         PoiCell cell = cells.get(col);
         if (cell==null) {
             cell = new PoiCell(this, poiRow.createCell(col));
             cells.set(col, cell);
             sheet.setColumnUsed(col);
         }
-        
+
         return cell;
     }
 
@@ -156,7 +156,7 @@ public class PoiRow implements Row {
 
     /**
      * Update first and last column numbers.
-     * @param columnNumber 
+     * @param columnNumber
      */
     final void setColumnUsed(int columnNumber) {
         sheet.setColumnUsed(columnNumber);

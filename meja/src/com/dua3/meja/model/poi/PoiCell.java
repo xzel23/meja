@@ -68,15 +68,14 @@ public class PoiCell implements Cell {
             this.spanY = 1;
             this.logicalCell = this;
         } else {
-            boolean isTopLeft = getColumnNumber() == mergedRegion.getFirstColumn()
-                    && getRowNumber() == mergedRegion.getFirstRow();
+            boolean isTop = getRowNumber() == mergedRegion.getFirstRow();
+            boolean isTopLeft = isTop && getColumnNumber() == mergedRegion.getFirstColumn();
             PoiCell topLeftCell;
             if (isTopLeft) {
                 topLeftCell = this;
             } else {
-                topLeftCell = row.getSheet()
-                        .getRow(mergedRegion.getFirstRow())
-                        .getCell(mergedRegion.getFirstColumn());
+                PoiRow topRow = isTop ? row : row.getSheet().getRow(mergedRegion.getFirstRow());
+                topLeftCell = topRow.getCell(mergedRegion.getFirstColumn());
             }
 
             int spanX_ = 1 + mergedRegion.getLastColumn() - mergedRegion.getFirstColumn();
@@ -445,7 +444,7 @@ public class PoiCell implements Cell {
                 if (other.isRichText()) {
                     set(other.getAttributedString());
                 } else {
-                    set(other.getText());                    
+                    set(other.getText());
                 }
                 break;
         }
