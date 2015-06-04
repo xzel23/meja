@@ -754,7 +754,8 @@ public class SheetView extends JPanel implements Scrollable {
      */
     private void init() {
         setOpaque(true);
-
+        setDoubleBuffered(false);
+        
         // create the search dialog
         searchDialog = new SearchDialog();
         
@@ -1501,7 +1502,11 @@ public class SheetView extends JPanel implements Scrollable {
         private int labelHeight = 0;
 
         public ColumnHeader() {
+            setOpaque(true);
+            setDoubleBuffered(false);
+            
             painter = new JLabel();
+            painter.setOpaque(true);
             painter.setHorizontalAlignment(SwingConstants.CENTER);
             painter.setVerticalAlignment(SwingConstants.CENTER);
             painter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, gridColor));
@@ -1517,6 +1522,11 @@ public class SheetView extends JPanel implements Scrollable {
             validate();
         }
 
+        @Override
+        public boolean isOptimizedDrawingEnabled() {
+            return true;
+        }
+        
         @Override
         public void validate() {
             if (sheet==null) {
@@ -1583,7 +1593,11 @@ public class SheetView extends JPanel implements Scrollable {
         private int labelWidth = 0;
 
         public RowHeader() {
+            setOpaque(true);
+            setDoubleBuffered(false);
+            
             painter = new JLabel();
+            painter.setOpaque(true);
             painter.setHorizontalAlignment(SwingConstants.RIGHT);
             painter.setVerticalAlignment(SwingConstants.CENTER);
             painter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, gridColor));
@@ -1597,6 +1611,11 @@ public class SheetView extends JPanel implements Scrollable {
             });
 
             validate();
+        }
+
+        @Override
+        public boolean isOptimizedDrawingEnabled() {
+            return true;
         }
 
         @Override
@@ -1682,7 +1701,11 @@ public class SheetView extends JPanel implements Scrollable {
         private int labelWidth = 0;
 
         public CornerHeader() {
+            setOpaque(true);
+            setDoubleBuffered(false);
+            
             painter = new JLabel();
+            painter.setOpaque(true);
             painter.setHorizontalAlignment(SwingConstants.CENTER);
             painter.setVerticalAlignment(SwingConstants.CENTER);
             painter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, gridColor));
@@ -1696,6 +1719,11 @@ public class SheetView extends JPanel implements Scrollable {
             });
 
             validate();
+        }
+
+        @Override
+        public boolean isOptimizedDrawingEnabled() {
+            return true;
         }
 
         @Override
