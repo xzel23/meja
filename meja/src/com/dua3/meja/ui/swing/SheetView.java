@@ -548,7 +548,7 @@ public class SheetView extends JPanel {
      *
      * @param sheet the sheet to display
      */
-    public void setSheet(Sheet sheet) {
+    public final void setSheet(Sheet sheet) {
         this.sheet = sheet;
         this.currentRowNum = 0;
         this.currentColNum = 0;
@@ -1198,38 +1198,44 @@ public class SheetView extends JPanel {
 
             @Override
             public void validate() {
-                // the width is the width for the labels showing row names ...
-                int width = hasRowHeaders() ? labelWidth : 1;
+                if (sheet!=null) {
+                    // the width is the width for the labels showing row names ...
+                    int width = hasRowHeaders() ? labelWidth : 1;
 
-                // ... plus the width of the columns displayed ...
-                width += getColumnPos(getLastColumn() + 1) - getColumnPos(getFirstColumn());
+                    // ... plus the width of the columns displayed ...
+                    width += getColumnPos(getLastColumn() + 1) - getColumnPos(getFirstColumn());
 
-                // ... plus 1 pixel for drawing a line at the split position.
-                if (hasVLine()) {
-                    width += 1;
+                    // ... plus 1 pixel for drawing a line at the split position.
+                    if (hasVLine()) {
+                        width += 1;
+                    }
+
+                    // the height is the height for the labels showing column names ...
+                    int height = hasColumnHeaders() ? labelHeight : 1;
+
+                    // ... plus the height of the rows displayed ...
+                    height += getRowPos(getLastRow() + 1) - getRowPos(getFirstRow());
+
+                    // ... plus 1 pixel for drawing a line below the lines above the split.
+                    if (hasHLine()) {
+                        height += 1;
+                    }
+
+                    final Dimension size = new Dimension(width, height);
+                    setSize(size);
+                    setPreferredSize(size);
                 }
-
-                // the height is the height for the labels showing column names ...
-                int height = hasColumnHeaders() ? labelHeight : 1;
-
-                // ... plus the height of the rows displayed ...
-                height += getRowPos(getLastRow() + 1) - getRowPos(getFirstRow());
-
-                // ... plus 1 pixel for drawing a line below the lines above the split.
-                if (hasHLine()) {
-                    height += 1;
-                }
-
-                final Dimension size = new Dimension(width, height);
-                setSize(size);
-                setPreferredSize(size);
-
+                
                 super.validate();
             }
 
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+                
+                if (sheet==null) {
+                    return;
+                }
 
                 Lock readLock = sheet.readLock();
                 readLock.lock();
