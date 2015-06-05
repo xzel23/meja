@@ -2,14 +2,6 @@
 /meja/nbproject/private/
 /meja/build/
 /meja/dist/
-/meja/lib/poi-ooxml-3.11.jar
-/meja/lib/ant-1.8.2.jar
-/meja/lib/poi-excelant-3.11.jar
-/meja/lib/poi-3.11.jar
-/meja/lib/xmlbeans-2.6.0.jar
-/meja/lib/poi-ooxml-schemas-3.11.jar
-/meja/lib/ant-launcher-1.8.2.jar
-/meja/lib/commons-codec-1.9.jar
-/meja/lib/stax-api-1.0.1.jar
+/meja/lib/*.jar
 /meja-samples/build/
 /meja-samples/dist/
