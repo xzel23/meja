@@ -325,13 +325,23 @@ public class MejaHelper {
     }
 
     /**
-     * Get cell position.
+     * Get cell position as string.
      *
      * @param cell
      * @return the cell in Excel conventions, ie "A1" for the first cell.
      */
     public static String getCellPosition(Cell cell) {
         return getColumnName(cell.getColumnNumber()) + (cell.getRowNumber() + 1);
+    }
+
+    /**
+     * Get cell position as string.
+     *
+     * @param cell
+     * @return the cell in Excel conventions, ie "sheet1!A1" for the first cell.
+     */
+    public static String getGlobalCellPosition(Cell cell) {
+        return cell.getSheet().getSheetName()+"!"+getCellPosition(cell);
     }
 
     /**

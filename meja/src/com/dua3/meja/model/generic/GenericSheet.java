@@ -39,6 +39,11 @@ import javax.swing.table.TableModel;
  */
 public class GenericSheet implements Sheet {
 
+    /**
+     * The aspect ratio to use when adjusting cell widths.
+     */
+    private static final float DEFAULT_FONT_ASPECT_RATIO = 0.52f;
+    
     private final GenericWorkbook workbook;
     private String sheetName;
     private final Locale locale;
@@ -184,7 +189,7 @@ public class GenericSheet implements Sheet {
             Cell cell = row.getCellIfExists(j);
             if (cell!=null && cell.getCellType()!=CellType.BLANK) {
                 float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
-                float aspect = 0.52f;            
+                float aspect = DEFAULT_FONT_ASPECT_RATIO;            
                 int chars = cell.getAsText().length();
                 colWidth = Math.max(colWidth, fontSize*chars*aspect);
             }
@@ -204,7 +209,7 @@ public class GenericSheet implements Sheet {
                 Cell cell = row.getCellIfExists(j);
                 if (cell!=null && cell.getCellType()!=CellType.BLANK) {
                     float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
-                    float aspect = 0.52f;            
+                    float aspect = DEFAULT_FONT_ASPECT_RATIO;            
                     int chars = cell.getAsText().length();
                     colWidth[j] = Math.max(colWidth[j], fontSize*chars*aspect);
                 }
