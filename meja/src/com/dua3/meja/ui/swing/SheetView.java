@@ -996,6 +996,7 @@ public class SheetView extends JPanel {
         }
 
         revalidate();
+        repaint();
     }
 
     private class SheetPane extends JScrollPane {
