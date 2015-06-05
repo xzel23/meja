@@ -409,13 +409,7 @@ public class PoiCell implements Cell {
             HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
             return ((PoiHssfWorkbook) workbook).getFont(hssfRichText.getFontOfFormattingRun(i));
         } else {
-            // Catch NPE as Workaround for Apache POI Bug 56511 (will be fixed in 3.12)
-            // https://bz.apache.org/bugzilla/show_bug.cgi?id=56511
-            try {
-                return workbook.getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
-            } catch (NullPointerException e) {
-                return getCellStyle().getFont();
-            }
+            return workbook.getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
         }
     }
 

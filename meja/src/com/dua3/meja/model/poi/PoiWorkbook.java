@@ -243,7 +243,7 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     public PoiFont getFont(org.apache.poi.ss.usermodel.Font poiFont) {
-        return new PoiFont(this, poiFont);
+        return poiFont == null ? getDefaultCellStyle().getFont() : new PoiFont(this, poiFont);
     }
 
     public abstract Color getColor(org.apache.poi.ss.usermodel.Font poiFont, Color dfltColor);
@@ -348,7 +348,7 @@ public abstract class PoiWorkbook implements Workbook {
 
         @Override
         public HSSFColor getPoiColor(Color color) {
-            if (color==null) {
+            if (color == null) {
                 return null;
             }
             HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
@@ -373,7 +373,7 @@ public abstract class PoiWorkbook implements Workbook {
             poiFont.setColor(getPoiColor(fontColor).getIndex());
             poiFont.setBold(fontBold);
             poiFont.setItalic(fontItalic);
-            poiFont.setUnderline(fontUnderlined?org.apache.poi.ss.usermodel.Font.U_SINGLE:org.apache.poi.ss.usermodel.Font.U_NONE);
+            poiFont.setUnderline(fontUnderlined ? org.apache.poi.ss.usermodel.Font.U_SINGLE : org.apache.poi.ss.usermodel.Font.U_NONE);
             poiFont.setStrikeout(fontStrikeThrough);
             return new PoiFont(this, poiFont);
         }
@@ -432,7 +432,6 @@ public abstract class PoiWorkbook implements Workbook {
             return getColor(((XSSFFont) poiFont).getXSSFColor(), Color.BLACK);
         }
 
-
         @Override
         public XSSFRichTextString createRichTextString(String s) {
             return new XSSFRichTextString(s);
@@ -446,7 +445,7 @@ public abstract class PoiWorkbook implements Workbook {
             poiFont.setColor(getPoiColor(fontColor));
             poiFont.setBold(fontBold);
             poiFont.setItalic(fontItalic);
-            poiFont.setUnderline(fontUnderlined?org.apache.poi.ss.usermodel.Font.U_SINGLE:org.apache.poi.ss.usermodel.Font.U_NONE);
+            poiFont.setUnderline(fontUnderlined ? org.apache.poi.ss.usermodel.Font.U_SINGLE : org.apache.poi.ss.usermodel.Font.U_NONE);
             poiFont.setStrikeout(fontStrikeThrough);
             return new PoiFont(this, poiFont);
         }
