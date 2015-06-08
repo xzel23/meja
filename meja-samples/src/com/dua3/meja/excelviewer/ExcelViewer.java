@@ -214,6 +214,17 @@ public class ExcelViewer extends JFrame {
         });
         menuBar.add(mnFile);
 
+        // Edit menu
+        JMenu mnEdit = new JMenu("Edit");
+        mnEdit.add(new AbstractAction("Adjust all column widths") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                adjustColumns();
+            }
+        });
+        menuBar.add(mnEdit);
+        
         // Options menu
         JMenu mnOptions = new JMenu("Options");
 
@@ -319,6 +330,17 @@ public class ExcelViewer extends JFrame {
     private void closeApplication() {
         Logger.getLogger(ExcelViewer.class.getName()).log(Level.INFO, "Closing.");
         dispose();
+    }
+
+    /**
+     * Adjust alll column sizes.
+     */
+    private void adjustColumns() {
+        final SheetView view = workbookView.getCurrentView();
+        if (view != null) {
+            view.getSheet().autoSizeColumns();
+            view.updateContent();
+        }
     }
 
     /**
