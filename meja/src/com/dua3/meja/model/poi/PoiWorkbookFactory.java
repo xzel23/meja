@@ -16,6 +16,8 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.meja.io.FileFormatException;
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
@@ -52,11 +54,27 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
 
     @Override
     public Workbook open(File file) throws IOException {
-        // Do not use the create(File) method to avoid exception when trying to
-        // save the workbook again.
-        try (InputStream in = new FileInputStream(file)) {
-            return open(in, Locale.getDefault(), file.toURI());
+        Locale locale = Locale.getDefault();
+        
+        FileType type = FileType.forFile(file);
+        
+        if (type==FileType.XLS||type==FileType.XLSX) {
+            // Read Excel files directly using POI methods
+            // Do not use the create(File) method to avoid exception when trying to
+            // save the workbook again to the same file.
+            try (InputStream in = new FileInputStream(file)) {
+                return open(in, Locale.getDefault(), file.toURI());
+            }            
+        } else if (type==null) {
+            // if type could not be determined, try to open as CSV
+            type = FileType.CSV;
         }
+        
+        if (!type.isSupported(OpenMode.READ)) {
+            throw new IllegalArgumentException("Reading is not supported for files of type '"+type.getDescription()+"'.");
+        }
+        
+        return type.getReader().read(PoiXssfWorkbook.class, locale, file);
     }
 
     public Workbook open(InputStream in, URI uri)

@@ -143,7 +143,7 @@ public abstract class PoiWorkbook implements Workbook {
     public boolean write(File file, boolean overwriteIfExists) throws IOException {
         boolean exists = file.createNewFile();
         if (!exists || overwriteIfExists) {
-            FileType type = FileType.getForFile(file);
+            FileType type = FileType.forFile(file);
             if (type == null) {
                 throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
             }

@@ -17,6 +17,8 @@ package com.dua3.meja.model.generic;
 
 import com.dua3.meja.io.CsvReader;
 import com.dua3.meja.io.DataException;
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.WorkbookFactory;
 import java.io.File;
 import java.io.IOException;
@@ -40,14 +42,19 @@ public class GenericWorkbookFactory extends WorkbookFactory {
     @Override
     public GenericWorkbook open(File file) throws IOException {
         Locale locale = Locale.getDefault();
-        GenericWorkbook workbook = new GenericWorkbook(locale, file.toURI());
-        GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(file.getName()), locale);
-        try (CsvReader reader = CsvReader.createReader(builder, file)) {
-            reader.readAll();
-        } catch (DataException ex) {
-            throw new IOException(ex);
+        
+        FileType type = FileType.forFile(file);
+        
+        if (type==null) {
+            // if type could not be determined, try to open as CSV
+            type = FileType.CSV;
         }
-        return workbook;
+        
+        if (!type.isSupported(OpenMode.READ)) {
+            throw new IllegalArgumentException("Reading is not supported for files of type '"+type.getDescription()+"'.");
+        }
+        
+        return type.getReader().read(GenericWorkbook.class, locale, file);
     }
 
     @Override

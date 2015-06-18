@@ -16,14 +16,13 @@
 package com.dua3.meja.util;
 
 import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.meja.model.WorkbookFactory.FilterDef;
-import com.dua3.meja.model.WorkbookFactory.OpenMode;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -202,10 +201,10 @@ public class MejaHelper {
      * @throws IOException if a workbook was selected but could not be loaded
      */
     public static Workbook showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
-        JFileChooser jfc = new JFileChooser(file.isDirectory() ? file : file.getParentFile());
+        JFileChooser jfc = new JFileChooser(file==null || file.isDirectory() ? file : file.getParentFile());
 
-        for (FilterDef filterDef : WorkbookFactory.getFileFilters(WorkbookFactory.OpenMode.READ)) {
-            jfc.addChoosableFileFilter(filterDef);
+        for (FileFilter filter: FileType.getFileFilters(OpenMode.READ)) {
+            jfc.addChoosableFileFilter(filter);
         }
 
         int rc = jfc.showOpenDialog(parent);
@@ -215,9 +214,9 @@ public class MejaHelper {
             file = jfc.getSelectedFile();
             FileFilter filter = jfc.getFileFilter();
 
-            if (filter instanceof WorkbookFactory.FilterDef) {
+            if (filter instanceof FileType.FileFilter) {
                 // load workbook using the factory from the used filter definition
-                final WorkbookFactory factory = ((WorkbookFactory.FilterDef) filter).getFactory();
+                final WorkbookFactory factory = ((FileType.FileFilter) filter).getFactory();
                 workbook = factory.open(file);
             } else {
                 // another filter was used (ie. "all files")
@@ -240,17 +239,22 @@ public class MejaHelper {
      * @throws IOException if workbook could not be loaded
      */
     public static Workbook openWorkbook(File file) throws IOException {
-        for (FilterDef filterDef : WorkbookFactory.getFileFilters(OpenMode.READ)) {
-            try {
-                final WorkbookFactory factory = filterDef.getFactory();
-                if (filterDef.accept(file)) {
-                    return factory.open(file);
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(MejaHelper.class.getName()).log(Level.WARNING, null, ex);
-            }
+        FileType fileType = FileType.forFile(file);
+        
+        if (fileType==null) {
+            throw new IllegalArgumentException("Could not determine type of file '"+file.getPath()+".");
         }
-        throw new IOException("Could not load '" + file.getPath() + "' with any of the available filters.");
+        
+        if (!fileType.isSupported(OpenMode.READ)) {
+            throw new IllegalArgumentException("Reading is not supported for files of type '"+fileType.getDescription()+".");
+        }
+        
+        try {
+            return fileType.getFactory().open(file);
+        } catch (IOException ex) {
+            Logger.getLogger(MejaHelper.class.getName()).log(Level.WARNING, null, ex);
+            throw new IOException("Could not load '" + file.getPath() + "'.", ex);
+        }
     }
 
     /**
@@ -268,7 +272,7 @@ public class MejaHelper {
      * @throws IOException if an exception occurs while saving
      */
     public static URI showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file) throws IOException {
-        JFileChooser jfc = new JFileChooser(file.isDirectory() ? file : file.getParentFile());
+        JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         int rc = jfc.showSaveDialog(parent);
 
@@ -288,7 +292,7 @@ public class MejaHelper {
                 }
             }
 
-            FileType type = FileType.getForFile(file);
+            FileType type = FileType.forFile(file);
             if (type != null) {
                 type.getWriter().write(workbook, file);
             } else {
