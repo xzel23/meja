@@ -31,14 +31,31 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
  */
 public class PoiFont implements Font {
 
+    /**
+     *
+     */
     protected final PoiWorkbook workbook;
+
+    /**
+     *
+     */
     protected final org.apache.poi.ss.usermodel.Font poiFont;
 
+    /**
+     *
+     * @param workbook
+     * @param poiFont
+     */
     public PoiFont(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Font poiFont) {
         this.workbook = workbook;
         this.poiFont = poiFont;
     }
 
+    /**
+     *
+     * @param workbook
+     * @param other
+     */
     public PoiFont(PoiWorkbook workbook, Font other) {
         this.workbook = workbook;
         this.poiFont = workbook.getPoiWorkbook().createFont();
@@ -62,6 +79,10 @@ public class PoiFont implements Font {
         this.poiFont.setUnderline(other.isUnderlined()? XSSFFont.U_SINGLE: XSSFFont.U_NONE);
     }
 
+    /**
+     *
+     * @return
+     */
     protected org.apache.poi.ss.usermodel.Font getPoiFont() {
         return poiFont;
     }
@@ -96,6 +117,12 @@ public class PoiFont implements Font {
         return getPoiFont().getStrikeout();
     }
 
+    /**
+     *
+     * @param at
+     * @param start
+     * @param end
+     */
     public void addAttributes(AttributedString at, int start, int end) {
         at.addAttribute(TextAttribute.FAMILY, getFamily(), start, end);
         at.addAttribute(TextAttribute.SIZE, getSizeInPoints(), start, end);

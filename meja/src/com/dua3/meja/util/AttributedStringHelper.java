@@ -26,9 +26,6 @@ import javax.swing.text.StyledDocument;
  */
 public class AttributedStringHelper {
 
-    private AttributedStringHelper() {
-    }
-
     /**
      * Wrap text in HTML tag.
      * @param text
@@ -92,4 +89,8 @@ public class AttributedStringHelper {
         doc.setParagraphAttributes(0, doc.getLength(), dfltAttr, false);
         return doc;
     }
+
+    private AttributedStringHelper() {
+    }
+    
 }

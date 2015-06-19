@@ -34,8 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- *
- * @author Axel Howind (axel@dua3.com)
+ * Generic implementation of {@link Workbook}.
  */
 public class GenericWorkbook implements Workbook {
 
@@ -45,6 +44,11 @@ public class GenericWorkbook implements Workbook {
     private final GenericCellStyle defaultCellStyle;
     private URI uri;
 
+    /**
+     * Construct a new {@code GenericWorkbook}.
+     * @param locale the locale to use
+     * @param uri the URI to set
+     */
     public GenericWorkbook(Locale locale, URI uri) {
         this.locale = locale;
         this.uri = uri;

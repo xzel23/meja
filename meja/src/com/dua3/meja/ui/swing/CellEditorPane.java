@@ -50,15 +50,48 @@ import javax.swing.text.ViewFactory;
 public class CellEditorPane extends JTextPane {
 
     private static final long serialVersionUID = 1L;
-    private VAlign vAlign = VAlign.ALIGN_TOP;
-
-    public CellEditorPane() {
-        setEditorKit(new CellEditorKit());
-    }
 
     static java.awt.Font getAwtFont(Font font, float scale) {
         int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
         return new java.awt.Font(font.getFamily(), style, Math.round(scale * font.getSizeInPoints()));
+    }
+
+    /**
+     * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell
+     * type.
+     *
+     * @param hAlign the horizontal alignment
+     * @param type the cell type
+     * @return
+     * <ul>
+     * <li>{@code hAlign}, if {@code hAlign!=HAlign.ALIGN_AUTOMATIC}</li>
+     * <li>otherwise the horizontal alignment to apply to cells of the given
+     * type</li>
+     * </ul>
+     */
+    public static HAlign getHAlign(HAlign hAlign, CellType type) {
+        if (hAlign != HAlign.ALIGN_AUTOMATIC) {
+            return hAlign;
+        }
+        
+        switch (type) {
+            case BLANK:
+            case BOOLEAN:
+            case ERROR:
+            case NUMERIC:
+            case DATE:
+                return HAlign.ALIGN_RIGHT;
+            case TEXT:
+            case FORMULA:
+                return HAlign.ALIGN_LEFT;
+            default:
+                throw new IllegalStateException();
+        }
+    }
+    private VAlign vAlign = VAlign.ALIGN_TOP;
+
+    public CellEditorPane() {
+        setEditorKit(new CellEditorKit());
     }
 
     /**
@@ -126,38 +159,6 @@ public class CellEditorPane extends JTextPane {
         return dfltAttr;
     }
 
-    /**
-     * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell
-     * type.
-     *
-     * @param hAlign the horizontal alignment
-     * @param type the cell type
-     * @return
-     * <ul>
-     * <li>{@code hAlign}, if {@code hAlign!=HAlign.ALIGN_AUTOMATIC}</li>
-     * <li>otherwise the horizontal alignment to apply to cells of the given
-     * type</li>
-     * </ul>
-     */
-    public static HAlign getHAlign(HAlign hAlign, CellType type) {
-        if (hAlign != HAlign.ALIGN_AUTOMATIC) {
-            return hAlign;
-        }
-
-        switch (type) {
-            case BLANK:
-            case BOOLEAN:
-            case ERROR:
-            case NUMERIC:
-            case DATE:
-                return HAlign.ALIGN_RIGHT;
-            case TEXT:
-            case FORMULA:
-                return HAlign.ALIGN_LEFT;
-            default:
-                throw new IllegalStateException();
-        }
-    }
 
     /**
      * A custom EditorKit to allow vertical alignment of text.
@@ -205,7 +206,7 @@ public class CellEditorPane extends JTextPane {
      */
     class AlignedBoxView extends BoxView {
 
-        public AlignedBoxView(Element elem, int axis) {
+        AlignedBoxView(Element elem, int axis) {
             super(elem, axis);
         }
 

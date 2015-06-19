@@ -55,6 +55,10 @@ public class GenericCellStyle implements CellStyle {
     transient private DateFormat dateFormatter = null;
     transient private NumberFormat numberFormatter = null;
 
+    /**
+     * Construct a new {@code GenericCellStyle}.
+     * @param workbook the workbook the style is defined in
+     */
     public GenericCellStyle(GenericWorkbook workbook) {
         this.workbook = workbook;
         this.font = new GenericFont();
@@ -189,6 +193,11 @@ public class GenericCellStyle implements CellStyle {
         return workbook;
     }
 
+    /**
+     * Format date for oputput.
+     * @param date the date to format
+     * @return text representation of {@code date}
+     */
     public String format(Date date) {
         if (dateFormatter==null) {
             try {
@@ -202,6 +211,11 @@ public class GenericCellStyle implements CellStyle {
         return dateFormatter.format(date);
     }
 
+    /**
+     * Format number for oputput.
+     * @param n the number to format
+     * @return text representation of {@code n}
+     */
     public String format(Number n) {
         if (numberFormatter==null) {
             try {

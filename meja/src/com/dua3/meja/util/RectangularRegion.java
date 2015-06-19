@@ -26,6 +26,13 @@ public class RectangularRegion {
     private final int colMin;
     private final int colMax;
 
+    /**
+     * Construct instance of {@code RectangularRegion}.
+     * @param rowMin first row
+     * @param rowMax last row {inclusive}
+     * @param colMin first column
+     * @param colMax last column (inclusive)
+     */
     public RectangularRegion(int rowMin, int rowMax, int colMin, int colMax) {
         this.rowMin = rowMin;
         this.rowMax = rowMax;

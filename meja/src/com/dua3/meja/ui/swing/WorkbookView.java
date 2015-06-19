@@ -34,10 +34,17 @@ public class WorkbookView extends JComponent {
     private Workbook workbook;
     private JTabbedPane content = null;
 
+    /**
+     * Construct a new {@code WorkbookView}.
+     */
     public WorkbookView() {
         setLayout(new CardLayout());
     }
 
+    /**
+     * Set the workbook.
+     * @param workbook the workbook to display
+     */
     public void setWorkbook(Workbook workbook) {
         if (content != null) {
             remove(content);
@@ -60,10 +67,18 @@ public class WorkbookView extends JComponent {
         }
     }
 
+    /**
+     * Get Workbook.
+     * @return the workbook displayed
+     */
     public Workbook getWorkbook() {
         return workbook;
     }
 
+    /**
+     * Set editable state.
+     * @param editable set to {@code true} to allow editing of the displayed workbook
+     */
     public void setEditable(boolean editable) {
         if (content == null) {
             return;
@@ -78,6 +93,11 @@ public class WorkbookView extends JComponent {
         }
     }
 
+    /**
+     *
+     * @param sheetName
+     * @return
+     */
     public SheetView getViewForSheet(String sheetName) {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
@@ -92,6 +112,10 @@ public class WorkbookView extends JComponent {
         return null;
     }
 
+    /**
+     * Get the {@link SheetView} that is currently visible.
+     * @return the {@link SheetView} displayed on the visible tab of this view
+     */
     public SheetView getCurrentView() {
         Component component = content.getSelectedComponent();
         return component instanceof SheetView ? (SheetView) component : null;

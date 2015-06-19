@@ -46,9 +46,6 @@ import javax.swing.table.TableModel;
  */
 public class MejaHelper {
 
-    private MejaHelper() {
-    }
-
     /**
      * Translate column number to column name.
      *
@@ -321,7 +318,7 @@ public class MejaHelper {
      */
     public static String getFileExtension(File file) {
         String name = file.getName();
-        int lastIndexOf = name.lastIndexOf(".");
+        int lastIndexOf = name.lastIndexOf('.');
         if (lastIndexOf == -1) {
             return "";
         }
@@ -355,8 +352,7 @@ public class MejaHelper {
      * @param workbook the source workbook
      * @return workbook instance of type {@code WORKBOOK} with the contents of {@code workbook}
      */
-    public static <WORKBOOK extends Workbook>
-            WORKBOOK cloneWorkbookAs(Class<WORKBOOK> clazz, Workbook workbook) {
+    public static <WORKBOOK extends Workbook> WORKBOOK cloneWorkbookAs(Class<WORKBOOK> clazz, Workbook workbook) {
         try {
             WORKBOOK newWorkbook = clazz.getConstructor(Locale.class).newInstance(workbook.getLocale());
             newWorkbook.setUri(workbook.getUri());
@@ -380,23 +376,24 @@ public class MejaHelper {
         }
     }
     
-    public static Writer createWriter(Appendable app) {
-        if (app instanceof Writer) {
-            return (Writer) app;
-        } else {
-            return new AppendableWriter(app);
-        }
-    }
-    
-    public static void copySheetData(Sheet dst, Sheet src) {
-        // copy split
-        dst.splitAt(src.getSplitRow(), src.getSplitColumn());
-        // copy column widths
-        for (int j = src.getFirstColNum(); j <= src.getLastColNum(); j++) {
-            dst.setColumnWidth(j, src.getColumnWidth(j));
-        }
-        // copy row data
-        for (Row row : src) {
+    public static
+                    Writer createWriter(Appendable app) {
+                        if (app instanceof Writer) {
+                            return (Writer) app;
+                        } else {
+                            return new AppendableWriter(app);
+                        }
+                    }
+                    
+                    public static void copySheetData(Sheet dst, Sheet src) {
+                        // copy split
+                        dst.splitAt(src.getSplitRow(), src.getSplitColumn());
+                        // copy column widths
+                        for (int j = src.getFirstColNum(); j <= src.getLastColNum(); j++) {
+                            dst.setColumnWidth(j, src.getColumnWidth(j));
+                        }
+                        // copy row data
+                        for (Row row : src) {
             final int i = row.getRowNumber();
             dst.getRow(i).copy(row);
             dst.setRowHeight(i, src.getRowHeight(i));
@@ -405,6 +402,9 @@ public class MejaHelper {
         for (RectangularRegion rr : src.getMergedRegions()) {
             dst.addMergedRegion(rr);
         }
+    }
+    
+    private MejaHelper() {
     }
 
 }

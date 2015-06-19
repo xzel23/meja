@@ -25,10 +25,19 @@ public class FileFormatException extends IOException {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Construct instance with message.
+     * @param message the message to use
+     */
     public FileFormatException(String message) {
         super(message);
     }
 
+    /**
+     * Construct instance with message and cause.
+     * @param message the message to use
+     * @param cause the throwable that caused the exception
+     */
     public FileFormatException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -15,8 +15,6 @@
  */
 package com.dua3.meja.model.generic;
 
-import com.dua3.meja.io.CsvReader;
-import com.dua3.meja.io.DataException;
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.WorkbookFactory;
@@ -25,8 +23,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 /**
- *
- * @author Axel Howind (axel@dua3.com)
+ * A Factory for creating instances of {@link GenericWorkbook}.
  */
 public class GenericWorkbookFactory extends WorkbookFactory {
 

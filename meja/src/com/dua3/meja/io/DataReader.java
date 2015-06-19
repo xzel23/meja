@@ -37,8 +37,9 @@ public interface DataReader {
     /**
      * Read rows till end of input is reached.
      *
-     * @throws IOException
      * @return the number of rows read.
+     * @throws IOException
+     * @throws com.dua3.meja.io.DataException
      */
     public int readAll() throws IOException, DataException;
 

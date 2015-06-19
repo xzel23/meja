@@ -30,6 +30,9 @@ public class DefaultCellRenderer implements CellRenderer {
 
     private final CellEditorPane component;
 
+    /**
+     * Creae a new {@code DefaultCellRenderer}.
+     */
     public DefaultCellRenderer() {
         component = new CellEditorPane();
         component.setOpaque(false);

@@ -41,10 +41,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author axel
  */
-public final class PoiWorkbookFactory extends WorkbookFactory {
+public class PoiWorkbookFactory extends WorkbookFactory {
 
     private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
 
+    /**
+     *
+     * @return
+     */
     public static PoiWorkbookFactory instance() {
         return INSTANCE;
     }
@@ -77,11 +81,26 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
         return type.getReader().read(PoiXssfWorkbook.class, locale, file);
     }
 
+    /**
+     *
+     * @param in
+     * @param uri
+     * @return
+     * @throws IOException
+     */
     public Workbook open(InputStream in, URI uri)
             throws IOException {
         return open(in, Locale.getDefault(), uri);
     }
 
+    /**
+     *
+     * @param in
+     * @param locale
+     * @param uri
+     * @return
+     * @throws IOException
+     */
     public Workbook open(InputStream in, Locale locale, URI uri)
             throws IOException {
         try {
@@ -93,19 +112,45 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
         }
     }
 
+    /**
+     *
+     * @param uri
+     * @return
+     * @throws IOException
+     */
     public Workbook open(URI uri) throws IOException {
         return open(uri, Locale.getDefault());
     }
 
+    /**
+     *
+     * @param uri
+     * @param locale
+     * @return
+     * @throws IOException
+     */
     public Workbook open(URI uri, Locale locale)
             throws IOException {
         return open(uri.toURL(), locale);
     }
 
+    /**
+     *
+     * @param url
+     * @return
+     * @throws IOException
+     */
     public Workbook open(URL url) throws IOException {
         return open(url, Locale.getDefault());
     }
 
+    /**
+     *
+     * @param url
+     * @param locale
+     * @return
+     * @throws IOException
+     */
     public Workbook open(URL url, Locale locale)
             throws IOException {
         try (InputStream in = new BufferedInputStream(url.openStream())) {
@@ -140,23 +185,46 @@ public final class PoiWorkbookFactory extends WorkbookFactory {
         return createStreaming(Locale.getDefault());
     }
 
+    /**
+     *
+     * @return
+     */
     public Workbook createXls() {
         return createXls(Locale.getDefault());
     }
 
+    /**
+     *
+     * @param locale
+     * @return
+     */
     public Workbook createXls(Locale locale) {
         return new PoiHssfWorkbook(
                 new org.apache.poi.hssf.usermodel.HSSFWorkbook(), locale, null);
     }
 
+    /**
+     *
+     * @return
+     */
     public Workbook createXlsx() {
         return createXlsx(Locale.getDefault());
     }
 
+    /**
+     *
+     * @param locale
+     * @return
+     */
     public Workbook createXlsx(Locale locale) {
         return new PoiXssfWorkbook(new XSSFWorkbook(), locale, null);
     }
 
+    /**
+     *
+     * @param locale
+     * @return
+     */
     public Workbook createXlsxStreaming(Locale locale) {
         return new PoiXssfWorkbook(new SXSSFWorkbook(), locale, null);
     }

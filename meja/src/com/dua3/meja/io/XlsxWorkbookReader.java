@@ -22,13 +22,17 @@ import java.net.URI;
 import java.util.Locale;
 
 /**
- *
- * @author Axel Howind (axel@dua3.com)
+ * Implementation of {@link WorkbookReader} for Excel files in the new 
+ * ".xlsx"-format.
  */
 public class XlsxWorkbookReader extends WorkbookReader {
 
     private static final XlsxWorkbookReader INSTANCE = new XlsxWorkbookReader();
 
+    /**
+     * Get the singleton instance.
+     * @return the singleton instance of {@code XlsxWorkbookReader}
+     */
     public static XlsxWorkbookReader instance() {
         return INSTANCE;
     }

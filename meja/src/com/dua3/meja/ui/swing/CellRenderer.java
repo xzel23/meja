@@ -20,11 +20,18 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 /**
- *
- * @author Axel Howind (axel@dua3.com)
+ * Interface for cell renderers.
  */
 public interface CellRenderer {
 
+    /**
+     * Render cell content.
+     * @param g the {@link Graphics2D} to use for rendering
+     * @param cell the cell whose content shall be rendered
+     * @param cellRect the rectangle taken up by the cell
+     * @param clipRect the clipping rectangle
+     * @param scale the scla to apply when rendering
+     */
     void render(Graphics2D g, Cell cell, Rectangle cellRect, Rectangle clipRect, float scale);
 
 }

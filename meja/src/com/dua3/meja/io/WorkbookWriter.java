@@ -25,17 +25,28 @@ import java.net.URI;
 import java.net.URLConnection;
 
 /**
- *
- * @author Axel Howind (axel@dua3.com)
+ * Abstract base class for writing workbook data.
  */
 public abstract class WorkbookWriter {
 
+    /**
+     * Write workbook to file.
+     * @param workbook the workbook to write
+     * @param file the file to write to
+     * @throws IOException if an error occurs when writing out the workbook
+     */
     public void write(Workbook workbook, File file) throws IOException {
         try (OutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
             write(workbook, out);
         }
     }
 
+    /**
+     * Write workbook to URI.
+     * @param workbook the workbook to write
+     * @param uri the URI to write to
+     * @throws IOException if an error occurs when writing out the workbook
+     */
     public void write(Workbook workbook, URI uri) throws IOException {
         URLConnection connection = uri.toURL().openConnection();
         connection.connect();
@@ -44,6 +55,12 @@ public abstract class WorkbookWriter {
         }
     }
 
+    /**
+     * Write workbook to a stream.
+     * @param workbook the workbook to write
+     * @param out the stream to write to
+     * @throws IOException if an error occurs when writing out the workbook
+     */
     public abstract void write(Workbook workbook, OutputStream out) throws IOException;
 
 }

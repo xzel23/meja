@@ -23,16 +23,33 @@ import java.net.URI;
 import java.util.Locale;
 
 /**
- *
- * @author Axel Howind (axel@dua3.com)
+ * Abstract base class for reading workbook data.
  */
 public abstract class WorkbookReader {
 
+    /**
+     * Read workbook from file.
+     * @param <WORKBOOK> workbook class
+     * @param clazz the {@Code Class} instance of the workbook class to instantiate
+     * @param locale the locale to use when creating the workbook
+     * @param file the file to read from
+     * @return the workbook read
+     * @throws IOException if the workbook could not be read
+     */
     public <WORKBOOK extends Workbook>
     WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, File file) throws IOException {
         return read(clazz, locale, file.toURI());
     }
 
+    /**
+     * Read workbook from URI.
+     * @param <WORKBOOK> workbook class
+     * @param clazz the {@Code Class} instance of the workbook class to instantiate
+     * @param locale the locale to use when creating the workbook
+     * @param uri the uri to set in the workbook
+     * @return the workbook read
+     * @throws IOException if the workbook could not be read
+     */
     public <WORKBOOK extends Workbook>
     WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, URI uri) throws IOException {
         try (InputStream in = uri.toURL().openStream()) {
@@ -40,6 +57,16 @@ public abstract class WorkbookReader {
         }
     }
 
+    /**
+     * Read workbook from stream.
+     * @param <WORKBOOK> workbook class
+     * @param clazz the {@Code Class} instance of the workbook class to instantiate
+     * @param locale the locale to use when creating the workbook
+     * @param in the stream to read from
+     * @param uri the uri to set in the workbook
+     * @return the workbook read
+     * @throws IOException if the workbook could not be read
+     */
     public abstract  <WORKBOOK extends Workbook>
     WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, InputStream in, URI uri) throws IOException;
 

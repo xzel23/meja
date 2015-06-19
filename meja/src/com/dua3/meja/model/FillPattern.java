@@ -21,6 +21,13 @@ package com.dua3.meja.model;
  */
 public enum FillPattern {
 
+    /**
+     * No pattern.
+     */
     NONE,
+
+    /**
+     * Solid pattern.
+     */
     SOLID;
 }

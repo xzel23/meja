@@ -35,10 +35,27 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
  */
 public abstract class PoiCellStyle implements CellStyle {
 
+    /**
+     *
+     */
     protected final PoiWorkbook workbook;
+
+    /**
+     *
+     */
     protected final PoiFont font;
+
+    /**
+     *
+     */
     protected final org.apache.poi.ss.usermodel.CellStyle poiCellStyle;
 
+    /**
+     *
+     * @param workbook
+     * @param font
+     * @param poiCellStyle
+     */
     protected PoiCellStyle(PoiWorkbook workbook, PoiFont font, org.apache.poi.ss.usermodel.CellStyle poiCellStyle) {
         this.workbook = workbook;
         this.font = font;
@@ -75,6 +92,11 @@ public abstract class PoiCellStyle implements CellStyle {
         poiCellStyle.setVerticalAlignment(PoiHelper.vAlignToPoi(vAlign));
     }
 
+    /**
+     *
+     * @param poiBorder
+     * @return
+     */
     protected float getBorderWidth(short poiBorder) {
         switch (poiBorder) {
             case org.apache.poi.ss.usermodel.CellStyle.BORDER_NONE:
@@ -100,6 +122,11 @@ public abstract class PoiCellStyle implements CellStyle {
         }
     }
 
+    /**
+     *
+     * @param borderStyle
+     * @return
+     */
     protected short getPoiBorder(BorderStyle borderStyle) {
         float width = borderStyle.getWidth();
         if (width == 0) {
@@ -190,7 +217,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
     static class PoiHssfCellStyle extends PoiCellStyle {
 
-        public PoiHssfCellStyle(PoiHssfWorkbook workbook,
+        PoiHssfCellStyle(PoiHssfWorkbook workbook,
                 HSSFCellStyle poiCellStyle) {
             super(workbook, workbook.getFont(poiCellStyle.getFont(workbook.poiWorkbook)), poiCellStyle);
         }
@@ -277,7 +304,7 @@ public abstract class PoiCellStyle implements CellStyle {
     static class PoiXssfCellStyle
             extends PoiCellStyle {
 
-        public PoiXssfCellStyle(PoiXssfWorkbook workbook,
+        PoiXssfCellStyle(PoiXssfWorkbook workbook,
                 XSSFCellStyle poiCellStyle) {
             super(workbook, new PoiFont(workbook, poiCellStyle.getFont()), poiCellStyle);
         }

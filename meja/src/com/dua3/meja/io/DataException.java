@@ -22,14 +22,27 @@ package com.dua3.meja.io;
 public class DataException extends Exception {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Construct instance with message.
+     * @param message the message to use
+     */
     public DataException(String message) {
         super(message);
     }
 
+    /**
+     * Construct instance with message and cause.
+     * @param message the message to use
+     * @param cause the throwable that caused the exception
+     */
     public DataException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Construct instance with a cause.
+     * @param cause the throwable that caused the exception
+     */
     public DataException(Throwable cause) {
         super(cause);
     }

@@ -30,12 +30,36 @@ import java.util.Objects;
  */
 public class PoiRow implements Row {
 
+    /**
+     *
+     */
     protected final PoiSheet sheet;
+
+    /**
+     *
+     */
     protected final org.apache.poi.ss.usermodel.Row poiRow;
+
+    /**
+     *
+     */
     protected final int rowNumber;
+
+    /**
+     *
+     */
     protected final List<RectangularRegion> mergedRegions;
+
+    /**
+     *
+     */
     protected final ArrayList<PoiCell> cells;
 
+    /**
+     *
+     * @param sheet
+     * @param row
+     */
     public PoiRow(PoiSheet sheet, org.apache.poi.ss.usermodel.Row row) {
         this.sheet = sheet;
         this.poiRow = row;
@@ -75,7 +99,7 @@ public class PoiRow implements Row {
     }
 
     @Override
-    public final PoiSheet getSheet() {
+    public PoiSheet getSheet() {
         return sheet;
     }
 
@@ -158,7 +182,7 @@ public class PoiRow implements Row {
      * Update first and last column numbers.
      * @param columnNumber
      */
-    final void setColumnUsed(int columnNumber) {
+    void setColumnUsed(int columnNumber) {
         sheet.setColumnUsed(columnNumber);
     }
 

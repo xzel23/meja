@@ -24,8 +24,8 @@ import com.dua3.meja.util.CellValueHelper;
 import java.util.Locale;
 
 /**
- *
- * @author Axel Howind (axel@dua3.com)
+ * Implementation of the {@link RowBuilder} interface that builds instances
+ * of {@link GenericRow}.
  */
 public class GenericRowBuilder implements RowBuilder {
 
@@ -34,6 +34,11 @@ public class GenericRowBuilder implements RowBuilder {
     private Row currentRow;
     private int colNr;
 
+    /**
+     * Construct a new {@code GenericRowBuilder}.
+     * @param sheet the sheet to build rows for
+     * @param locale the locale to use
+     */
     public GenericRowBuilder(Sheet sheet, Locale locale) {
         this.sheet = sheet;
         this.helper = new CellValueHelper(locale);
