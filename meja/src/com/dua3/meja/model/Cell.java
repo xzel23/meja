@@ -26,6 +26,9 @@ import java.util.Date;
  */
 public interface Cell {
 
+    /**
+     * The text to show in error cells.
+     */
     public final String ERROR_TEXT = "#ERROR";
 
     /**

@@ -32,6 +32,9 @@ public class GenericFont implements Font {
     private final Boolean underline;
     private final Boolean strikeThrough;
 
+    /**
+     * Construct a new {@code GenericFont}.
+     */
     public GenericFont() {
         this.color = Color.BLACK;
         this.size = 10f;
@@ -42,6 +45,14 @@ public class GenericFont implements Font {
         this.strikeThrough = false;
     }
 
+    /**
+     * Construct a new {@code GenericFont} as copy of another font.
+     * <p>
+     * The runtime-type of {@code other} is allowed to be from another
+     * implementaion.
+     * </p>
+     * @param other the font to copy
+     */
     public GenericFont(Font other) {
         this.color = other.getColor();
         this.size = other.getSizeInPoints();
@@ -52,6 +63,16 @@ public class GenericFont implements Font {
         this.strikeThrough = other.isStrikeThrough();
     }
 
+    /**
+     * Construct a new {@code GenerivFont}.
+     * @param family the font family
+     * @param size the font size in points
+     * @param color the color to use for text
+     * @param bold if text should be displayed in bold lettters
+     * @param italic if text should be displayed in italics
+     * @param underlined if text should be displayed underlined
+     * @param strikeThrough if text should be displayed strike-through
+     */
     public GenericFont(String family, float size, Color color, boolean bold, boolean italic, boolean underlined, boolean strikeThrough) {
         this.color = color;
         this.size = size;

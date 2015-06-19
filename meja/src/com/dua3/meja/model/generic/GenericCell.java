@@ -38,6 +38,12 @@ public class GenericCell implements Cell {
     private GenericCell logicalCell;
     private final int columnNumber;
 
+    /**
+     * Construct a new {@code GenericCell}.
+     * @param row the row this cell belongs to
+     * @param colNumber the column number
+     * @param cellStyle the cell style to use
+     */
     public GenericCell(GenericRow row, int colNumber, GenericCellStyle cellStyle) {
         this.row = row;
         this.logicalCell = this;

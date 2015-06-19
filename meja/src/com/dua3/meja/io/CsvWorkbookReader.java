@@ -31,6 +31,10 @@ public class CsvWorkbookReader extends WorkbookReader {
 
     private static final CsvWorkbookReader INSTANCE = new CsvWorkbookReader();
 
+    /**
+     * Get instance of {@code CsvWorkbookReader}.
+     * @return the singleton instance of {@code CsvWorkbookReader}.
+     */
     public static CsvWorkbookReader instance() {
         return INSTANCE;
     }

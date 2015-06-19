@@ -21,16 +21,14 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- *
- * @author axel
+ * A simple cache implementation.
+ * <p>
+ * This class is not intended as a replacement for {@code JCache} (JSR 107).
+ * </p>
  * @param <KEY> key class
  * @param <VALUE> value class
  */
 public abstract class Cache<KEY, VALUE> {
-
-    public static enum Type {
-        STRONG_KEYS, WEAK_KEYS;
-    }
 
     private final Map<KEY, SoftReference<VALUE>> items;
 
@@ -68,4 +66,39 @@ public abstract class Cache<KEY, VALUE> {
     }
 
     protected abstract VALUE create(KEY key);
+
+    /**
+     * Type controlling how keys should be treated in a cache. 
+     * <p>
+     * Values are held as instances of {@link SoftReference}. That means
+     * values can be garbage collected at any time. When a value is requested
+     * via the {@link Cache#get(java.lang.Object)} method, it will be created
+     * on-the-fly if no entry for the key exists or the corresponding
+     * value has been garbage collected.
+     * </p>
+     * <p>
+     * There are two modes of operation:
+     * <ul>
+     * <li>When using <em>strong keys</em>, the keys are normal references.</li>
+     * <li>When using <em>weak keys</em>, keys are also held using soft
+     * references. This is necessary if the value itself holds a reference to
+     * the key in which case entries could never be garbage collected when using
+     * strong keys. This can be used for some sort of reverse mapping when
+     * there is need to store additional data for instances of classes
+     * that both cannot easily be extended to hold the additional data, and
+     * when there is no direct control over the lifetime of these instances.
+     * </ul>
+     */
+    public static enum Type {
+
+        /**
+         * Use strong keys.
+         */
+        STRONG_KEYS, 
+
+        /**
+         * Use weak keys.
+         */
+        WEAK_KEYS
+    }
 }

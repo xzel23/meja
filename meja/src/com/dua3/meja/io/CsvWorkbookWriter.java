@@ -31,6 +31,10 @@ public class CsvWorkbookWriter extends WorkbookWriter {
 
     private static final CsvWorkbookWriter INSTANCE = new CsvWorkbookWriter();
 
+    /**
+     * The singleton instance.
+     * @return the singleton instance of {@code CsvWorkbookWriter}
+     */
     public static CsvWorkbookWriter instance() {
         return INSTANCE;
     }

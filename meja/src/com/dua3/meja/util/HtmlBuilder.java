@@ -26,6 +26,10 @@ import java.util.Map;
  */
 public class HtmlBuilder extends TextBuilder<String> {
 
+    private static String getColorValue(Color color) {
+        return Integer.toHexString(color.getRGB()).substring(2);
+    }
+
     private final StringBuilder buffer = new StringBuilder();
 
     @Override
@@ -77,10 +81,6 @@ public class HtmlBuilder extends TextBuilder<String> {
         buffer.append(endTag);
     }
 
-    private static String getColorValue(Color color) {
-        return Integer.toHexString(color.getRGB()).substring(2);
-    }
-
     private void appendChar(char c) {
         // escape characters as suggested by OWASP.org
         switch (c) {
@@ -112,5 +112,6 @@ public class HtmlBuilder extends TextBuilder<String> {
     protected String get() {
         return buffer.toString();
     }
+
 
 }

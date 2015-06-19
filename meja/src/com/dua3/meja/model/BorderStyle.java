@@ -19,14 +19,17 @@ import java.awt.Color;
 
 /**
  * Definition of  a cell border.
- *
- * @author axel
  */
 public class BorderStyle {
 
     private final float width;
     private final Color color;
 
+    /**
+     * Construct a new {@code BorderStyle}.
+     * @param width the border width to use in points
+     * @param color the border color to use
+     */
     public BorderStyle(float width, Color color) {
         this.width = width;
         this.color = color;

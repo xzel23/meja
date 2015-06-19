@@ -36,6 +36,16 @@ import java.util.regex.Pattern;
  */
 public class CsvReader implements DataReader, AutoCloseable {
 
+    public static CsvReader createReader(RowBuilder builder, File file) throws FileNotFoundException {
+        return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, new FileReader(file), file.getName());
+    }
+
+    public static CsvReader createReader(RowBuilder builder, InputStream in) throws IOException {
+        try (Reader reader = new InputStreamReader(in)) {
+            return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, reader, "[stream]");
+        }
+    }
+
     private RowBuilder rowBuilder;
     private int rowNumber;
     private int rowsRead;
@@ -46,16 +56,6 @@ public class CsvReader implements DataReader, AutoCloseable {
     private boolean ignoreExcessFields;
     private boolean ignoreMissingFields;
     private final String source;
-
-    public static CsvReader createReader(RowBuilder builder, File file) throws FileNotFoundException {
-        return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, new FileReader(file), file.getName());
-    }
-
-    public static CsvReader createReader(RowBuilder builder, InputStream in) throws IOException {
-        try (Reader reader = new InputStreamReader(in)) {
-            return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, reader, "[stream]");
-        }
-    }
 
     public CsvReader(char separator, char delimiter, RowBuilder rowBuilder, Reader reader, String source) {
         this(separator, delimiter, rowBuilder, new BufferedReader(reader), source);
@@ -301,4 +301,5 @@ public class CsvReader implements DataReader, AutoCloseable {
     public void close() throws IOException {
         reader.close();
     }
+
 }

@@ -29,8 +29,19 @@ import java.util.List;
  */
 public enum FileType {
 
+    /**
+     * File type for CSV files.
+     */
     CSV("CSV-Data", GenericWorkbookFactory.instance(), CsvWorkbookReader.instance(), CsvWorkbookWriter.instance(), ".csv", ".txt"),
+
+    /**
+     * File type for the old Excel format that uses the '.xls' extension.
+     */
     XLS("Excel 97-2003", PoiWorkbookFactory.instance(), XlsWorkbookReader.instance(), XlsWorkbookWriter.instance(), ".xls"),
+
+    /**
+     * File type for the new XML-based Excel format that uses the '.xlsx' extension.
+     */
     XLSX("Excel 2007", PoiWorkbookFactory.instance(), XlsxWorkbookReader.instance(), XlsxWorkbookWriter.instance(), ".xlsx", ".xlsm");
 
     private final String description;
@@ -50,29 +61,48 @@ public enum FileType {
         assert extensions.length > 0;
     }
 
+    /**
+     * Get this format's description
+     * @return text description for this format
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Get this format's default extension.
+     * @return this format's default extension
+     */
     public String getExtension() {
         return extensions[0];
     }
 
+    /**
+     * Get instance of {@link WorkbookFactory} that matches this format.
+     * @return instance of {@link WorkbookFactory}
+     */
     public WorkbookFactory getFactory() {
         return factory;
     }
 
+    /**
+     * Get instance of {@link WorkbookWriter} that matches this format.
+     * @return instance of {@link WorkbookWriter}
+     */
     public WorkbookWriter getWriter() {
         return writer;
     }
 
+    /**
+     * Get instance of {@link WorkbookReader} that matches this format.
+     * @return instance of {@link WorkbookReader}
+     */
     public WorkbookReader getReader() {
         return reader;
     }
 
     /**
      * Get filter for this type.
-     *
      * @return the file filter
      */
     public FileFilter getFileFilter() {

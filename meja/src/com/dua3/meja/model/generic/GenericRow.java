@@ -31,6 +31,11 @@ public class GenericRow implements Row {
     private final ArrayList<GenericCell> cells;
     private final int rowNumber;
 
+    /**
+     * Construct a new {@code GenericRow}.
+     * @param sheet the sheet the row belongs to
+     * @param rowNumber the row number
+     */
     public GenericRow(GenericSheet sheet, int rowNumber) {
         this.sheet = sheet;
         this.rowNumber = rowNumber;

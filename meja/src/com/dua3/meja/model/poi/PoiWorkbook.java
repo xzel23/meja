@@ -58,14 +58,47 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public abstract class PoiWorkbook implements Workbook {
 
+    /**
+     *
+     */
     protected final org.apache.poi.ss.usermodel.Workbook poiWorkbook;
+
+    /**
+     *
+     */
     protected final FormulaEvaluator evaluator;
+
+    /**
+     *
+     */
     protected final List<PoiSheet> sheets = new ArrayList<>();
+
+    /**
+     *
+     */
     protected final Map<String, Short> cellStyles = new HashMap<>();
+
+    /**
+     *
+     */
     protected final org.apache.poi.ss.usermodel.DataFormatter dataFormatter;
+
+    /**
+     *
+     */
     protected Locale locale;
+
+    /**
+     *
+     */
     protected URI uri;
 
+    /**
+     *
+     * @param poiWorkbook
+     * @param locale
+     * @param uri
+     */
     protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
         this.locale = locale;
         this.poiWorkbook = poiWorkbook;
@@ -84,6 +117,9 @@ public abstract class PoiWorkbook implements Workbook {
         return locale;
     }
 
+    /**
+     *
+     */
     @SuppressWarnings("unchecked")
     protected void init() {
         for (int i = 0; i < poiWorkbook.getNumberOfSheets(); i++) {
@@ -118,6 +154,11 @@ public abstract class PoiWorkbook implements Workbook {
         throw new IllegalArgumentException("No sheet '" + sheetName + "'.");
     }
 
+    /**
+     * Get {@link PoiCellStyle} from {@link org.apache.poi.ss.usermodel.CellStyle}.
+     * @param cellStyle POI cell style
+     * @return instance of {@link PoiCellStyle}
+     */
     public abstract PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle cellStyle);
 
     @Override
@@ -242,12 +283,28 @@ public abstract class PoiWorkbook implements Workbook {
         this.uri = uri;
     }
 
+    /**
+     *
+     * @param poiFont
+     * @return
+     */
     public PoiFont getFont(org.apache.poi.ss.usermodel.Font poiFont) {
         return poiFont == null ? getDefaultCellStyle().getFont() : new PoiFont(this, poiFont);
     }
 
+    /**
+     *
+     * @param poiFont
+     * @param dfltColor
+     * @return
+     */
     public abstract Color getColor(org.apache.poi.ss.usermodel.Font poiFont, Color dfltColor);
 
+    /**
+     *
+     * @param poiSheet
+     * @return
+     */
     protected PoiSheet createSheet(org.apache.poi.ss.usermodel.Sheet poiSheet) {
         return new PoiSheet(this, poiSheet);
     }
@@ -292,16 +349,46 @@ public abstract class PoiWorkbook implements Workbook {
         }
     }
 
+    /**
+     *
+     * @param color
+     * @return
+     */
     public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
 
+    /**
+     *
+     * @param s
+     * @return
+     */
     public abstract RichTextString createRichTextString(String s);
 
+    /**
+     *
+     * @param fontFamily
+     * @param fontSize
+     * @param fontColor
+     * @param fontBold
+     * @param fontItalic
+     * @param fontUnderlined
+     * @param fontStrikeThrough
+     * @return
+     */
     public abstract PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough);
 
+    /**
+     *
+     */
     public static class PoiHssfWorkbook extends PoiWorkbook {
 
         private final PoiHssfCellStyle defaultCellStyle;
 
+        /**
+         *
+         * @param poiWorkbook
+         * @param locale
+         * @param uri
+         */
         public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Locale locale, URI uri) {
             super(poiWorkbook, locale, uri);
             this.defaultCellStyle = new PoiHssfCellStyle(this, poiWorkbook.getCellStyleAt((short) 0));
@@ -337,15 +424,30 @@ public abstract class PoiWorkbook implements Workbook {
             return new Color(r, g, b, a);
         }
 
+        /**
+         *
+         * @param poiStyle
+         * @return
+         */
         @Override
         public PoiHssfCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
             return new PoiHssfCellStyle(this, (HSSFCellStyle) poiStyle);
         }
 
+        /**
+         *
+         * @param idx
+         * @return
+         */
         public PoiFont getFont(short idx) {
             return getFont(((HSSFWorkbook) poiWorkbook).getFontAt(idx));
         }
 
+        /**
+         *
+         * @param color
+         * @return
+         */
         @Override
         public HSSFColor getPoiColor(Color color) {
             if (color == null) {
@@ -355,16 +457,38 @@ public abstract class PoiWorkbook implements Workbook {
             return palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
         }
 
+        /**
+         *
+         * @param poiFont
+         * @param dfltColor
+         * @return
+         */
         @Override
         public Color getColor(Font poiFont, Color dfltColor) {
             return getColor(((HSSFFont) poiFont).getHSSFColor(((HSSFWorkbook) getPoiWorkbook())), Color.BLACK);
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         */
         @Override
         public HSSFRichTextString createRichTextString(String s) {
             return new HSSFRichTextString(s);
         }
 
+        /**
+         *
+         * @param fontFamily
+         * @param fontSize
+         * @param fontColor
+         * @param fontBold
+         * @param fontItalic
+         * @param fontUnderlined
+         * @param fontStrikeThrough
+         * @return
+         */
         @Override
         public PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough) {
             Font poiFont = poiWorkbook.createFont();
@@ -380,11 +504,20 @@ public abstract class PoiWorkbook implements Workbook {
 
     }
 
+    /**
+     *
+     */
     public static class PoiXssfWorkbook
             extends PoiWorkbook {
 
         private final PoiXssfCellStyle defaultCellStyle;
 
+        /**
+         *
+         * @param poiWorkbook
+         * @param locale
+         * @param uri
+         */
         public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
             super(poiWorkbook, locale, uri);
             assert (poiWorkbook instanceof XSSFWorkbook) || (poiWorkbook instanceof SXSSFWorkbook);
@@ -392,6 +525,11 @@ public abstract class PoiWorkbook implements Workbook {
             init();
         }
 
+        /**
+         *
+         * @param poiStyle
+         * @return
+         */
         @Override
         public PoiXssfCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
             return new PoiXssfCellStyle(this, (XSSFCellStyle) poiStyle);
@@ -422,21 +560,48 @@ public abstract class PoiWorkbook implements Workbook {
             return new Color(r, g, b, a);
         }
 
+        /**
+         *
+         * @param color
+         * @return
+         */
         @Override
         public XSSFColor getPoiColor(Color color) {
             return new XSSFColor(color);
         }
 
+        /**
+         *
+         * @param poiFont
+         * @param dfltColor
+         * @return
+         */
         @Override
         public Color getColor(Font poiFont, Color dfltColor) {
             return getColor(((XSSFFont) poiFont).getXSSFColor(), Color.BLACK);
         }
 
+        /**
+         *
+         * @param s
+         * @return
+         */
         @Override
         public XSSFRichTextString createRichTextString(String s) {
             return new XSSFRichTextString(s);
         }
 
+        /**
+         *
+         * @param fontFamily
+         * @param fontSize
+         * @param fontColor
+         * @param fontBold
+         * @param fontItalic
+         * @param fontUnderlined
+         * @param fontStrikeThrough
+         * @return
+         */
         @Override
         public PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough) {
             XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();

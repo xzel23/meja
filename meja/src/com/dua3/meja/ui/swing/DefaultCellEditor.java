@@ -34,7 +34,6 @@ import javax.swing.text.Document;
 
 /**
  * Default implementation for cell editor.
- * @author Axel Howind (axel@dua3.com)
  */
 public class DefaultCellEditor implements CellEditor {
 
@@ -42,39 +41,6 @@ public class DefaultCellEditor implements CellEditor {
     private Cell cell;
     private final SheetView sheetView;
 
-    /**
-     * Actions for key bindings.
-     */
-    static enum Actions {
-
-        COMMIT {
-                    @SuppressWarnings("serial")
-                    @Override
-                    public Action getAction(final DefaultCellEditor editor) {
-                        return new AbstractAction("COMMIT") {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                editor.stopEditing(true);
-                            }
-                        };
-                    }
-                },
-        ABORT {
-                    @SuppressWarnings("serial")
-                    @Override
-                    public Action getAction(final DefaultCellEditor editor) {
-                        return new AbstractAction("ABORT") {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                editor.stopEditing(false);
-                            }
-                        };
-                    }
-                };
-
-
-        abstract Action getAction(DefaultCellEditor editor);
-    }
 
     public DefaultCellEditor(SheetView sheetView) {
         this.sheetView = sheetView;
@@ -164,4 +130,36 @@ public class DefaultCellEditor implements CellEditor {
         helper.setCellValue(cell, text);
     }
 
+    /**
+     * Actions for key bindings.
+     */
+    static enum Actions {
+
+        COMMIT {
+            @SuppressWarnings("serial")
+            @Override
+            public Action getAction(final DefaultCellEditor editor) {
+                return new AbstractAction("COMMIT") {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        editor.stopEditing(true);
+                    }
+                };
+            }
+        }, ABORT {
+                    @SuppressWarnings("serial")
+                    @Override
+                    public Action getAction(final DefaultCellEditor editor) {
+                        return new AbstractAction("ABORT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                editor.stopEditing(false);
+                            }
+                        };
+                    }
+        };
+        
+        abstract Action getAction(DefaultCellEditor editor);
+    }
+    
 }

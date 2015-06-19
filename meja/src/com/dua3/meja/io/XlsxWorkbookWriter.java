@@ -22,13 +22,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- *
- * @author Axel Howind (axel@dua3.com)
+ * Implementation of {@link WorkbookWriter} for Excel files in the new 
+ * ".xlsx"-format.
  */
 public class XlsxWorkbookWriter extends WorkbookWriter {
 
     private static final XlsxWorkbookWriter INSTANCE = new XlsxWorkbookWriter();
 
+    /**
+     * Get the singleton instance.
+     * @return the singleton instance of {@code XlsxWorkbookWriter}
+     */
     public static XlsxWorkbookWriter instance() {
         return INSTANCE;
     }

@@ -34,8 +34,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.TableModel;
 
 /**
- *
- * @author Axel Howind (axel@dua3.com)
+ * A generic implementation of {@link Sheet}.
  */
 public class GenericSheet implements Sheet {
 
@@ -45,19 +44,20 @@ public class GenericSheet implements Sheet {
     private static final float DEFAULT_FONT_ASPECT_RATIO = 0.52f;
     
     private final GenericWorkbook workbook;
-    private String sheetName;
+    private final String sheetName;
     private final Locale locale;
-    private final List<GenericRow> rows = new ArrayList<>(4000);
+    private final List<GenericRow> rows = new ArrayList<>(4_000);
     private final List<RectangularRegion> mergedRegions = new ArrayList<>();
     private final float defaultColumnWidth = 80f;
     private final ArrayList<Float> columnWidth = new ArrayList<>(200);
     private final float defaultRowHeight = 12f;
-    private final ArrayList<Float> rowHeight = new ArrayList<>(4000);
+    private final ArrayList<Float> rowHeight = new ArrayList<>(4_000);
     private int freezeRow;
     private int freezeColumn;
     private int autoFilterRow;
     private int numberOfColumns;
     private float zoom = 1.0f;
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     public GenericSheet(GenericWorkbook workbook, String sheetName, Locale locale) {
         this.workbook = workbook;
@@ -249,7 +249,6 @@ public class GenericSheet implements Sheet {
         return DateFormat.getDateInstance(DateFormat.SHORT, locale);
     }
 
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Override
     public Lock readLock() {

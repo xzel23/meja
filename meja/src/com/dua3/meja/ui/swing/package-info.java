@@ -15,6 +15,6 @@
  */
 
 /**
- * Swing components to display workbook and sheets in Swing applications.
+ * Swing components to display workbooks and sheets in Swing applications.
  */
 package com.dua3.meja.ui.swing;

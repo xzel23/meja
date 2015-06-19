@@ -26,10 +26,6 @@ import java.util.logging.Logger;
  */
 public class PoiHelper {
 
-    private PoiHelper() {
-        // no instantiation
-    }
-
     public static HAlign poiToHAlign(final short alignment) {
         switch (alignment) {
             case org.apache.poi.ss.usermodel.CellStyle.ALIGN_LEFT:
@@ -94,5 +90,9 @@ public class PoiHelper {
             default:
                 throw new IllegalArgumentException();
         }
+    }
+
+    private PoiHelper() {
+        // no instantiation
     }
 }

@@ -46,7 +46,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  *
  * @author axel
  */
-public class PoiCell implements Cell {
+public final class PoiCell implements Cell {
 
     protected final PoiWorkbook workbook;
     protected final PoiRow row;
@@ -55,6 +55,11 @@ public class PoiCell implements Cell {
     protected int spanY;
     protected PoiCell logicalCell;
 
+    /**
+     *
+     * @param row
+     * @param cell
+     */
     public PoiCell(PoiRow row, org.apache.poi.ss.usermodel.Cell cell) {
         this.workbook = row.getWorkbook();
         this.row = row;
@@ -186,12 +191,12 @@ public class PoiCell implements Cell {
     }
 
     @Override
-    public final int getRowNumber() {
+    public int getRowNumber() {
         return poiCell.getRowIndex();
     }
 
     @Override
-    public final int getColumnNumber() {
+    public int getColumnNumber() {
         return poiCell.getColumnIndex();
     }
 
@@ -453,7 +458,7 @@ public class PoiCell implements Cell {
         }
     }
 
-    final void addedToMergedRegion(PoiCell topLeftCell, int spanX, int spanY) {
+    void addedToMergedRegion(PoiCell topLeftCell, int spanX, int spanY) {
         if (this.getRowNumber() == topLeftCell.getRowNumber()
                 && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
             this.logicalCell = topLeftCell;

@@ -33,12 +33,13 @@ import javax.swing.text.StyledDocument;
  * @author Axel Howind (axel@dua3.com)
  */
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
-    public StyledDocumentBuilder(float scale) {
-        this.scale = scale;
-    }
 
     private final StyledDocument doc = new DefaultStyledDocument();
     private final float scale;
+
+    public StyledDocumentBuilder(float scale) {
+        this.scale = scale;
+    }
 
     @Override
     protected StyledDocument get() {

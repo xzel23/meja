@@ -22,4 +22,7 @@ package com.dua3.meja.io;
 public class Csv {
   final static char DEFAULT_SEPARATOR = ';';
   final static char DEFAULT_DELIMITER = '"';
+
+    private Csv() {
+    }
 }

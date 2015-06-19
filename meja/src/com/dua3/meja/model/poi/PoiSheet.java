@@ -52,6 +52,7 @@ public class PoiSheet implements Sheet {
             return new PoiRow(PoiSheet.this, poiRow);
         }
     };
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
         this.workbook = workbook;
@@ -280,7 +281,6 @@ public class PoiSheet implements Sheet {
         return getWorkbook().getDateFormat();
     }
 
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Override
     public Lock readLock() {

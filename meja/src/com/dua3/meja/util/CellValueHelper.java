@@ -31,54 +31,74 @@ public class CellValueHelper {
     private final NumberFormat numberFormat;
     private final DateFormat dateFormat;
 
+    /**
+     * Construct an instance of {@code CellValueHelper} for a specific locale.
+     * @param locale the locale to use
+     */
     public CellValueHelper(Locale locale) {
         this(NumberFormat.getInstance(locale), DateFormat.getDateInstance(DateFormat.SHORT, locale));
     }
 
+    /**
+     * Construct an instance of {@code CellValueHelper} with specific data formats.
+     * @param numberFormat the {@link NumberFormat} to use
+     * @param dateFormat the {@code DateFormat} to use
+     */
     public CellValueHelper(NumberFormat numberFormat, DateFormat dateFormat) {
         this.numberFormat = numberFormat;
         this.dateFormat = dateFormat;
     }
 
-    public boolean setCellValue(Cell cell, String value) {
+    /**
+     * Set cell value from {@link String} with automatic conversion.
+     * @param cell the cell whose value is to be set
+     * @param value the value to set
+     */
+    public void setCellValue(Cell cell, String value) {
         // blank
         if (value.isEmpty()) {
             cell.clear();
-            return true;
+            return;
         }
 
         // formula
         if (value.startsWith("=")) {
             cell.setFormula(value.substring(1));
-            return true;
+            return;
         }
 
         // boolean
         Boolean b = parseBoolean(value);
         if (b != null) {
             cell.set(b);
-            return true;
+            return;
         }
 
         // number
         Number number = parseNumber(value);
         if (number != null) {
             cell.set(number);
-            return true;
+            return;
         }
 
         // date
         Date date = parseDate(value);
         if (date != null) {
             cell.set(date);
-            return true;
+            return;
         }
 
         // text
         cell.set(value);
-        return true;
     }
 
+    /**
+     * Parse a boolean value.
+     * @param value string representation of a boolean value
+     * @return {code Boolean.TRUE} or {Boolean.FALSE} respectively,
+     * if{@code value} is equal to either "true" or "false" (ignoring case).
+     * {@code null} otherwise.
+     */
     protected Boolean parseBoolean(String value) {
         if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
             return Boolean.FALSE;
@@ -89,12 +109,24 @@ public class CellValueHelper {
         return null;
     }
 
+    /**
+     * Parse a numeric value.
+     * @param text string representaion of a numeric
+     * @return instance of {@link Number} representing {@code value} or
+     * {@code null}, if {@code value} could not be fully parsed
+     */
     protected Number parseNumber(String text) {
         ParsePosition pos = new ParsePosition(0);
         Number number = numberFormat.parse(text, pos);
         return pos.getIndex() == text.length() ? number : null;
     }
 
+    /**
+     * Parse a date value.
+     * @param text string representaion of a date
+     * @return instance of {@link Date} representing {@code value} or
+     * {@code null}, if {@code value} could not be fully parsed
+     */
     protected Date parseDate(String text) {
         ParsePosition pos = new ParsePosition(0);
         Date date = dateFormat.parse(text, pos);

@@ -19,14 +19,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Interface used in {@link WorkbookReader} implementations to create rows of
+ * data.
+ */
 public interface RowBuilder {
 
+    /**
+     * Start a new row.
+     */
     public void startRow();
 
+    /**
+     * Add a value.
+     * @param value the value to add
+     * @throws DataException if {@value} could not be added
+     */
     public void add(String value) throws DataException;
 
+    /**
+     * End the current row.
+     */
     public void endRow();
 
+    /**
+     * Create a row as {@code List<String>}.
+     */
     public class ListRowBuilder implements RowBuilder {
 
         private List<String> row;
@@ -45,6 +63,10 @@ public interface RowBuilder {
         public void endRow() {
         }
 
+        /**
+         * Return the constructed row as {@code List<String>}.
+         * @return the row as {@code List<String>}
+         */
         public List<String> getRow() {
             return Collections.unmodifiableList(row);
         }
