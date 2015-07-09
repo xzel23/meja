@@ -219,4 +219,23 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     void addMergedRegion(RectangularRegion cells);
 
+    /**
+     * Get the current cell.
+     * @return the current cell
+     */
+    Cell getCurrentCell();
+    
+    /**
+     * Set the current cell.
+     * @param cell the cell to set  as current
+     */
+    void setCurrentCell(Cell cell);
+    
+    /**
+     * Set the current cell.
+     * @param i the row of the cell to set
+     * @param j the column of the cell to set
+     */ 
+    void setCurrentCell(int i, int j);
+    
 }

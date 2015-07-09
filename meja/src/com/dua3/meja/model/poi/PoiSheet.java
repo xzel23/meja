@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
@@ -30,8 +31,11 @@ import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import javax.swing.table.TableModel;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  *
@@ -44,6 +48,8 @@ public class PoiSheet implements Sheet {
     private int firstColumn;
     private int lastColumn;
     private List<RectangularRegion> mergedRegions;
+    private int currentRow = 0;
+    private int currentColumn = 0;
     private float zoom = 1.0f;
 
     private final Cache<org.apache.poi.ss.usermodel.Row, PoiRow> cache = new Cache<org.apache.poi.ss.usermodel.Row, PoiRow>(Cache.Type.WEAK_KEYS) {
@@ -108,6 +114,17 @@ public class PoiSheet implements Sheet {
             CellRangeAddress r = poiSheet.getMergedRegion(i);
             final RectangularRegion rr = new RectangularRegion(r.getFirstRow(), r.getLastRow(), r.getFirstColumn(), r.getLastColumn());
             mergedRegions.add(rr);
+        }
+        
+        // set current row and column
+        if (poiSheet instanceof XSSFSheet) {
+            String sCellRef = ((XSSFSheet) poiSheet).getActiveCell();
+            CellReference cellRef = new CellReference(sCellRef);
+            this.currentRow = cellRef.getRow();
+            this.currentColumn = cellRef.getCol();
+        } else if (poiSheet instanceof HSSFSheet) {
+            this.currentRow = poiSheet.getTopRow();
+            this.currentColumn = poiSheet.getLeftCol();            
         }
     }
 
@@ -357,6 +374,26 @@ public class PoiSheet implements Sheet {
                 mergedRegions.remove(idx);
             }
         }
+    }
+
+    @Override
+    public PoiCell getCurrentCell() {
+        return getCell(currentRow, currentColumn);
+    }
+
+    @Override
+    public void setCurrentCell(Cell cell) {
+        if (cell.getSheet()!=this) {
+            throw new IllegalArgumentException("Cannot set cell from another sheet as current cell.");
+        }
+        setCurrentCell(cell.getRowNumber(), cell.getColumnNumber());
+    }
+
+    @Override
+    public void setCurrentCell(int i, int j) {
+        this.currentRow = i;
+        this.currentColumn = j;
+        getCell(i, j).poiCell.setAsActiveCell();
     }
 
 }

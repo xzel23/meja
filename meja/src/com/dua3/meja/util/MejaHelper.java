@@ -19,7 +19,9 @@ import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
+import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
@@ -29,8 +31,13 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -198,9 +205,9 @@ public class MejaHelper {
      * @throws IOException if a workbook was selected but could not be loaded
      */
     public static Workbook showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
-        JFileChooser jfc = new JFileChooser(file==null || file.isDirectory() ? file : file.getParentFile());
+        JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
-        for (FileFilter filter: FileType.getFileFilters(OpenMode.READ)) {
+        for (FileFilter filter : FileType.getFileFilters(OpenMode.READ)) {
             jfc.addChoosableFileFilter(filter);
         }
 
@@ -237,15 +244,15 @@ public class MejaHelper {
      */
     public static Workbook openWorkbook(File file) throws IOException {
         FileType fileType = FileType.forFile(file);
-        
-        if (fileType==null) {
-            throw new IllegalArgumentException("Could not determine type of file '"+file.getPath()+".");
+
+        if (fileType == null) {
+            throw new IllegalArgumentException("Could not determine type of file '" + file.getPath() + ".");
         }
-        
+
         if (!fileType.isSupported(OpenMode.READ)) {
-            throw new IllegalArgumentException("Reading is not supported for files of type '"+fileType.getDescription()+".");
+            throw new IllegalArgumentException("Reading is not supported for files of type '" + fileType.getDescription() + ".");
         }
-        
+
         try {
             return fileType.getFactory().open(file);
         } catch (IOException ex) {
@@ -342,15 +349,17 @@ public class MejaHelper {
      * @return the cell in Excel conventions, ie "sheet1!A1" for the first cell.
      */
     public static String getGlobalCellPosition(Cell cell) {
-        return cell.getSheet().getSheetName()+"!"+getCellPosition(cell);
+        return cell.getSheet().getSheetName() + "!" + getCellPosition(cell);
     }
 
     /**
      * Return copy of workbook in a different implementation.
+     *
      * @param <WORKBOOK> the workbook class of the target
      * @param clazz {@code Class} instance for the workbook class of the target
      * @param workbook the source workbook
-     * @return workbook instance of type {@code WORKBOOK} with the contents of {@code workbook}
+     * @return workbook instance of type {@code WORKBOOK} with the contents of
+     * {@code workbook}
      */
     public static <WORKBOOK extends Workbook> WORKBOOK cloneWorkbookAs(Class<WORKBOOK> clazz, Workbook workbook) {
         try {
@@ -375,25 +384,34 @@ public class MejaHelper {
             throw new RuntimeException("Error cloning workbook: " + ex.getMessage(), ex);
         }
     }
-    
+
     public static
-                    Writer createWriter(Appendable app) {
-                        if (app instanceof Writer) {
-                            return (Writer) app;
-                        } else {
-                            return new AppendableWriter(app);
-                        }
-                    }
-                    
-                    public static void copySheetData(Sheet dst, Sheet src) {
-                        // copy split
-                        dst.splitAt(src.getSplitRow(), src.getSplitColumn());
-                        // copy column widths
-                        for (int j = src.getFirstColNum(); j <= src.getLastColNum(); j++) {
-                            dst.setColumnWidth(j, src.getColumnWidth(j));
-                        }
-                        // copy row data
-                        for (Row row : src) {
+            Writer createWriter(Appendable app) {
+        if (app instanceof Writer) {
+            return (Writer) app;
+        } else {
+            return new AppendableWriter(app);
+        }
+    }
+
+    /**
+     * Copy sheet data.
+     * <p>
+     * Copies all data from one sheet to another. Sheets may be instances
+     * of different implementation classes.
+     * </p>
+     * @param dst the destination sheet
+     * @param src the source sheet
+     */
+    public static void copySheetData(Sheet dst, Sheet src) {
+        // copy split
+        dst.splitAt(src.getSplitRow(), src.getSplitColumn());
+        // copy column widths
+        for (int j = src.getFirstColNum(); j <= src.getLastColNum(); j++) {
+            dst.setColumnWidth(j, src.getColumnWidth(j));
+        }
+        // copy row data
+        for (Row row : src) {
             final int i = row.getRowNumber();
             dst.getRow(i).copy(row);
             dst.setRowHeight(i, src.getRowHeight(i));
@@ -403,7 +421,150 @@ public class MejaHelper {
             dst.addMergedRegion(rr);
         }
     }
-    
+
+    /**
+     * Find cell containing text in sheet.
+     * @param sheet the sheet
+     * @param text the text to searcg for
+     * @param options the {@link SearchOptions} to use
+     * @return the cell found or {@code null} if nothing found
+     */
+    public static Cell find(Sheet sheet, String text, SearchOptions... options) {
+        // EnumSet.of throws IllegalArgumentException if options is empty, so
+        // use a standard HashSet instead.
+        return find(sheet, text, new HashSet<>(Arrays.asList(options)));
+    }
+
+    /**
+     * Find cell containing text in sheet.
+     * @param sheet the sheet
+     * @param text the text to searcg for
+     * @param options the {@link SearchOptions} to use
+     * @return the cell found or {@code null} if nothing found
+     */
+    public static Cell find(Sheet sheet, String text, Set<SearchOptions> options) {
+        boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
+        boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
+        boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
+        boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
+        boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMLUA_TEXT);
+
+        if (ignoreCase) {
+            text = text.toLowerCase();
+        }
+
+        Cell cell = searchFromCurrent ? sheet.getCurrentCell() : null;
+        int iStart = cell != null ? cell.getRowNumber() : sheet.getLastRowNum();
+        int jStart = cell != null ? cell.getColumnNumber() : sheet.getLastColNum();
+        int i = iStart;
+        int j = jStart;
+        do {
+            // move to next cell
+            if (j < sheet.getRow(i).getLastCellNum()) {
+                j++;
+            } else {
+                j = 0;
+                if (i < sheet.getLastRowNum()) {
+                    i++;
+                } else {
+                    i = 0;
+                }
+            }
+
+            cell = sheet.getCell(i, j);
+
+            // check cell content
+            String cellText;
+            if (searchFormula && cell.getCellType() == CellType.FORMULA) {
+                cellText = cell.getFormula();
+            } else {
+                cellText = cell.getAsText();
+            }
+
+            if (ignoreCase) {
+                cellText = cellText.toLowerCase();
+            }
+
+            if (matchComplete && cellText.equals(text)
+                    || !matchComplete && cellText.contains(text)) {
+                // found!
+                if (updateCurrent) {
+                    sheet.setCurrentCell(cell);
+                }
+                return cell;
+            }
+        } while (i != iStart || j != jStart);
+        return null;
+    }
+
+    /**
+     * Find cell containing text in row.
+     * @param row the row
+     * @param text the text to searcg for
+     * @param options the {@link SearchOptions} to use
+     * @return the cell found or {@code null} if nothing found
+     */
+    public static Cell find(Row row, String text, SearchOptions... options) {
+        // EnumSet.of throws IllegalArgumentException if options is empty, so
+        // use a standard HashSet instead.
+        return find(row, text, new HashSet<>(Arrays.asList(options)));
+    }
+
+    /**
+     * Find cell containing text in row.
+     * @param row the row
+     * @param text the text to searcg for
+     * @param options the {@link SearchOptions} to use
+     * @return the cell found or {@code null} if nothing found
+     */
+    public static Cell find(Row row, String text, Set<SearchOptions> options) {
+        boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
+        boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
+        boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
+        boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
+        boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMLUA_TEXT);
+
+        if (ignoreCase) {
+            text = text.toLowerCase();
+        }
+
+        int jStart = searchFromCurrent ? row.getSheet().getCurrentCell().getColumnNumber() : row.getLastCellNum();
+        int j = jStart;
+        do {
+            // move to next cell
+            if (j < row.getLastCellNum()) {
+                j++;
+            } else {
+                j = 0;
+            }
+
+            Cell cell = row.getCell(j);
+
+            // check cell content
+            String cellText;
+            if (searchFormula && cell.getCellType() == CellType.FORMULA) {
+                cellText = cell.getFormula();
+            } else {
+                cellText = cell.getAsText();
+            }
+
+            if (ignoreCase) {
+                cellText = cellText.toLowerCase();
+            }
+
+            if (matchComplete && cellText.equals(text)
+                    || !matchComplete && cellText.contains(text)) {
+                // found!
+                if (updateCurrent) {
+                    row.getSheet().setCurrentCell(cell);
+                }
+                return cell;
+            }
+        } while (j != jStart);
+
+        return null;
+    }
+
     private MejaHelper() {
     }
 

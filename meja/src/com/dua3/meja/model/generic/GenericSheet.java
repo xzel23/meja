@@ -56,6 +56,8 @@ public class GenericSheet implements Sheet {
     private int freezeColumn;
     private int autoFilterRow;
     private int numberOfColumns;
+    private int currentRow = 0;
+    private int currentColumn = 0;
     private float zoom = 1.0f;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -324,6 +326,26 @@ public class GenericSheet implements Sheet {
                 }
             }
         }
+    }
+
+    @Override
+    public GenericCell getCurrentCell() {
+        return getCell(currentRow, currentColumn);
+    }
+
+    @Override
+    public void setCurrentCell(Cell cell) {
+        if (cell.getSheet()!=this) {
+            throw new IllegalArgumentException("Cannot set cell from another sheet as current cell.");
+        }
+        this.currentRow = cell.getRowNumber();
+        this.currentColumn = cell.getColumnNumber();
+    }
+
+    @Override
+    public void setCurrentCell(int i, int j) {
+        this.currentRow = i;
+        this.currentColumn = j;
     }
 
 }

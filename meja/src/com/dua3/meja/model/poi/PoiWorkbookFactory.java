@@ -221,9 +221,9 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     /**
-     *
-     * @param locale
-     * @return
+     * Create a workbook using the SXSSF backend (write only).
+     * @param locale the {@link Locale} to use
+     * @return the new workbook
      */
     public Workbook createXlsxStreaming(Locale locale) {
         return new PoiXssfWorkbook(new SXSSFWorkbook(), locale, null);

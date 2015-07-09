@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.ui.swing;
 
+import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
@@ -44,6 +45,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import javax.swing.AbstractAction;
@@ -71,6 +73,7 @@ import javax.swing.SwingUtilities;
  * Swing component for displaying instances of {@link Sheet}.
  */
 public class SheetView extends JPanel {
+
     static final int MAX_WIDTH = 800;
 
     /**
@@ -96,7 +99,6 @@ public class SheetView extends JPanel {
         }
     };
 
-
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
@@ -121,16 +123,6 @@ public class SheetView extends JPanel {
      * Width of the sheet in points.
      */
     private float sheetHeightInPoints;
-
-    /**
-     * The column number of the selected cell.
-     */
-    int currentColNum;
-
-    /**
-     * The row number of the selected cell.
-     */
-    int currentRowNum;
 
     /**
      * The sheet displayed.
@@ -172,7 +164,6 @@ public class SheetView extends JPanel {
      */
     private boolean editable = false;
 
-
     /**
      * Editing state.
      */
@@ -194,14 +185,14 @@ public class SheetView extends JPanel {
      */
     public SheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
-        
+
         renderer = new DefaultCellRenderer();
         editor = new DefaultCellEditor(this);
         sheetPane = new SheetPane();
         searchDialog = new SearchDialog();
-        
+
         add(sheetPane);
-        
+
         // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
@@ -213,13 +204,13 @@ public class SheetView extends JPanel {
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
-        inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK ), Actions.SHOW_SEARCH_DIALOG);
-        
+        inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
+
         final ActionMap actionMap = getActionMap();
         for (Actions action : Actions.values()) {
             actionMap.put(action, action.getAction(this));
         }
-        
+
         // listen to mouse events
         addMouseListener(new MouseAdapter() {
             @Override
@@ -227,7 +218,7 @@ public class SheetView extends JPanel {
                 onMousePressed(e.getX() + getSplitX(), e.getY() + getSplitY());
             }
         });
-        
+
         // make focusable
         setFocusable(true);
         SwingUtilities.invokeLater(new Runnable() {
@@ -236,7 +227,7 @@ public class SheetView extends JPanel {
                 requestFocusInWindow();
             }
         });
-        
+
         setSheet(sheet);
     }
 
@@ -339,7 +330,7 @@ public class SheetView extends JPanel {
      * @return row number of the selected cell
      */
     public int getCurrentRowNum() {
-        return currentRowNum;
+        return sheet.getCurrentCell().getRowNumber();
     }
 
     /**
@@ -348,7 +339,7 @@ public class SheetView extends JPanel {
      * @param rowNum number of row to be set
      */
     public void setCurrentRowNum(int rowNum) {
-        setCurrentCell(rowNum, currentColNum);
+        setCurrentCell(rowNum, getCurrentColNum());
     }
 
     /**
@@ -357,7 +348,7 @@ public class SheetView extends JPanel {
      * @return column number of the selected cell
      */
     public int getCurrentColNum() {
-        return currentColNum;
+        return sheet.getCurrentCell().getColumnNumber();
     }
 
     /**
@@ -366,7 +357,7 @@ public class SheetView extends JPanel {
      * @param colNum number of column to be set
      */
     public void setCurrentColNum(int colNum) {
-        setCurrentCell(currentRowNum, colNum);
+        setCurrentCell(getCurrentRowNum(), colNum);
     }
 
     /**
@@ -380,8 +371,9 @@ public class SheetView extends JPanel {
         Cell oldCell = getCurrentCell().getLogicalCell();
         Rectangle oldRect = getSelectionRect();
 
-        currentRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
-        currentColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
+        int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
+        int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
+        sheet.setCurrentCell(newRowNum, newColNum);
 
         Cell newCell = getCurrentCell().getLogicalCell();
         if (newCell.getRowNumber() != oldCell.getRowNumber()
@@ -426,6 +418,7 @@ public class SheetView extends JPanel {
 
     /**
      * End edit mode for the current cell.
+     *
      * @param commit true if the content of the edited cell is to be updated
      */
     public void stopEditing(boolean commit) {
@@ -445,7 +438,7 @@ public class SheetView extends JPanel {
     float getScale() {
         return sheet == null ? 1.0f : sheet.getZoom() * scaleDpi;
     }
-    
+
     /**
      * @param j the column number
      * @return the columnPos
@@ -476,7 +469,6 @@ public class SheetView extends JPanel {
         return Math.round(sheetHeightInPoints * getScale());
     }
 
-    
     /**
      * Set sheet to display.
      *
@@ -484,15 +476,12 @@ public class SheetView extends JPanel {
      */
     public void setSheet(Sheet sheet) {
         this.sheet = sheet;
-        this.currentRowNum = 0;
-        this.currentColNum = 0;
         updateContent();
     }
 
     public Sheet getSheet() {
         return sheet;
     }
-
 
     @Override
     public void removeNotify() {
@@ -505,77 +494,6 @@ public class SheetView extends JPanel {
      */
     private void showSearchDialog() {
         searchDialog.setVisible(true);
-    }
-
-    /**
-     * Search from current position and move to cell.
-     * <p>
-     * The search starts in the cell following the current cell.
-     * </p>
-     * @param text the text to search
-     * @param options the search options
-     * @return true if text was found and current cell updated
-     */
-    public boolean searchAndMakeCurrent(String text, List<SearchOptions> options) {
-        boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
-        boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
-
-        if (ignoreCase) {
-            text = text.toLowerCase();
-        }
-
-        Lock readLock = sheet.readLock();
-        try {
-            readLock.lock();
-            int iStart=getCurrentRowNum();
-            int jStart = getCurrentColNum();
-            int i = iStart;
-            int j=jStart;
-            do {
-                // move to next cell
-                if (j<sheet.getRow(i).getLastCellNum()) {
-                    j++;
-                } else {
-                    j=0;
-                    if (i<sheet.getLastRowNum()) {
-                        i++;
-                    } else {
-                        i=0;
-                    }
-                }
-
-                // check cell content
-                String cellText = sheet.getCell(i, j).getAsText();
-
-                if (ignoreCase) {
-                    cellText = cellText.toLowerCase();
-                }
-
-                if (     matchComplete && cellText.equals(text)
-                        || !matchComplete && cellText.contains(text)) {
-                    // found!
-                    setCurrentCell(i,j);
-                    scrollToCurrentCell();
-                    return true;
-                }
-            } while (i!=iStart || j!=jStart);
-        } finally {
-            readLock.unlock();
-        }
-        return false;
-    }
-
-    /**
-     * Search from current position and move to cell.
-     * <p>
-     * The search starts in the cell following the current cell.
-     * </p>
-     * @param text the text to search
-     * @param options the search options
-     * @return true if text was found and current cell updated
-     */
-    public boolean searchAndMakeCurrent(String text, SearchOptions... options) {
-        return searchAndMakeCurrent(text, Arrays.asList(options));
     }
 
     void onMousePressed(int x, int y) {
@@ -626,7 +544,7 @@ public class SheetView extends JPanel {
      * @return y coordinate of split
      */
     int getSplitY() {
-        return sheet==null ? 0 : getRowPos(sheet.getSplitRow());
+        return sheet == null ? 0 : getRowPos(sheet.getSplitRow());
     }
 
     /**
@@ -635,7 +553,7 @@ public class SheetView extends JPanel {
      * @return x coordinate of split
      */
     int getSplitX() {
-        return sheet==null ? 0 : getColumnPos(sheet.getSplitColumn());
+        return sheet == null ? 0 : getColumnPos(sheet.getSplitColumn());
     }
 
     /**
@@ -726,14 +644,14 @@ public class SheetView extends JPanel {
     public String getRowName(int i) {
         return Integer.toString(i + 1);
     }
-    
+
     /**
      * Return the current cell.
      *
      * @return current cell
      */
     public Cell getCurrentCell() {
-        return sheet.getRow(currentRowNum).getCell(currentColNum);
+        return sheet.getCurrentCell();
     }
 
     public void updateContent() {
@@ -775,61 +693,61 @@ public class SheetView extends JPanel {
         revalidate();
         repaint();
     }
-    
+
     /**
      * Actions for key bindings.
      */
     static enum Actions {
-        
+
         MOVE_UP {
-            @Override
-            public Action getAction(final SheetView view) {
-                return new AbstractAction("MOVE_UP") {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.NORTH);
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_UP") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.move(Direction.NORTH);
+                            }
+                        };
                     }
-                };
-            }
-        }, MOVE_DOWN {
-            @Override
-            public Action getAction(final SheetView view) {
-                return new AbstractAction("MOVE_DOWN") {
+                }, MOVE_DOWN {
+                    @Override
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_DOWN") {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.move(Direction.SOUTH);
                             }
-                };
-            }
-        }, MOVE_LEFT {
-            @Override
-            public Action getAction(final SheetView view) {
-                return new AbstractAction("MOVE_LEFT") {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.WEST);
+                        };
                     }
-                };
-            }
-        }, MOVE_RIGHT {
-            @Override
-            public Action getAction(final SheetView view) {
-                return new AbstractAction("MOVE_RIGHT") {
+                }, MOVE_LEFT {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.EAST);
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_LEFT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.move(Direction.WEST);
                             }
-                };
-            }
-        }, START_EDITING {
-            @Override
-            public Action getAction(final SheetView view) {
-                return new AbstractAction("MOVE_RIGHT") {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.startEditing();
+                        };
                     }
-                };
+                }, MOVE_RIGHT {
+                    @Override
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_RIGHT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.move(Direction.EAST);
+                            }
+                        };
+                    }
+                }, START_EDITING {
+                    @Override
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_RIGHT") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.startEditing();
+                            }
+                        };
                     }
                 }, SHOW_SEARCH_DIALOG {
                     @Override
@@ -842,22 +760,8 @@ public class SheetView extends JPanel {
                         };
                     }
                 };
-                
-                abstract Action getAction(SheetView view);
-    }
 
-    /**
-     * Search options.
-     */
-    public static enum SearchOptions {
-
-        /**
-         * Ignore case when searching.
-         */
-        IGNORE_CASE, /**
-         * Match the complete cell text.
-         */
-        MATCH_COMPLETE_TEXT
+        abstract Action getAction(SheetView view);
     }
 
     protected static enum CellDrawMode {
@@ -865,13 +769,11 @@ public class SheetView extends JPanel {
         /**
          *
          */
-        DRAW_CELL_BACKGROUND, 
-
+        DRAW_CELL_BACKGROUND,
         /**
          *
          */
-        DRAW_CELL_BORDER, 
-
+        DRAW_CELL_BORDER,
         /**
          *
          */
@@ -879,87 +781,86 @@ public class SheetView extends JPanel {
     }
 
     private class SearchDialog extends JDialog {
+
         private final JTextField jtfText;
         private final JCheckBox jcbIgnoreCase;
         private final JCheckBox jcbMatchCompleteText;
-
 
         SearchDialog() {
             setTitle("Search");
             setModal(true);
             setResizable(false);
-            
+
             setLayout(new GridBagLayout());
             GridBagConstraints c = new GridBagConstraints();
-            
+
             getRootPane().setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
-            
+
             // text label
-            c.gridx=1;
-            c.gridy=1;
+            c.gridx = 1;
+            c.gridy = 1;
             c.gridwidth = 1;
-            c.gridheight =1;
+            c.gridheight = 1;
             add(new JLabel("Text:"), c);
-            
+
             // text input
-            c.gridx=2;
-            c.gridy=1;
+            c.gridx = 2;
+            c.gridy = 1;
             c.gridwidth = 4;
-            c.gridheight =1;
+            c.gridheight = 1;
             jtfText = new JTextField(40);
             add(jtfText, c);
-            
+
             // options
-            c.gridx=1;
-            c.gridy=2;
+            c.gridx = 1;
+            c.gridy = 2;
             c.gridwidth = 1;
-            c.gridheight =1;
+            c.gridheight = 1;
             add(new JLabel("Options:"), c);
-            
-            c.gridx=2;
-            c.gridy=2;
+
+            c.gridx = 2;
+            c.gridy = 2;
             c.gridwidth = 1;
-            c.gridheight =1;
+            c.gridheight = 1;
             jcbIgnoreCase = new JCheckBox("ignore case", true);
-            add(jcbIgnoreCase,c);
-            
-            c.gridx=3;
-            c.gridy=2;
+            add(jcbIgnoreCase, c);
+
+            c.gridx = 3;
+            c.gridy = 2;
             c.gridwidth = 1;
-            c.gridheight =1;
+            c.gridheight = 1;
             jcbMatchCompleteText = new JCheckBox("match complete text", false);
-            add(jcbMatchCompleteText,c);
-            
+            add(jcbMatchCompleteText, c);
+
             // submit button
-            c.gridx=4;
-            c.gridy=2;
+            c.gridx = 4;
+            c.gridy = 2;
             c.gridwidth = 1;
-            c.gridheight =1;
+            c.gridheight = 1;
             final JButton submitButton = new JButton(new AbstractAction("Search") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     doSearch();
                 }
-                
+
             });
-            add(submitButton,c);
-            
+            add(submitButton, c);
+
             // close button
-            c.gridx=5;
-            c.gridy=2;
+            c.gridx = 5;
+            c.gridy = 2;
             c.gridwidth = 1;
-            c.gridheight =1;
+            c.gridheight = 1;
             add(new JButton(new AbstractAction("Close") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     setVisible(false);
                 }
             }), c);
-            
+
             // Enter starts search
             SwingUtilities.getRootPane(submitButton).setDefaultButton(submitButton);
-            
-            
+
             // Escape closes dialog
             final AbstractAction escapeAction = new AbstractAction() {
                 @Override
@@ -967,31 +868,46 @@ public class SheetView extends JPanel {
                     setVisible(false);
                 }
             };
-            
+
             rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                     .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ESCAPE_KEY");
             rootPane.getActionMap().put("ESCAPE_KEY", escapeAction);
-            
+
             // pack layout
             pack();
         }
+
         String getText() {
             return jtfText.getText();
         }
+
         void doSearch() {
-            List<SearchOptions> options = new ArrayList<>();
+            EnumSet<SearchOptions> options = EnumSet.of(SearchOptions.SEARCH_FROM_CURRENT);
+
             if (jcbIgnoreCase.isSelected()) {
                 options.add(SearchOptions.IGNORE_CASE);
             }
+
             if (jcbMatchCompleteText.isSelected()) {
                 options.add(SearchOptions.MATCH_COMPLETE_TEXT);
             }
-            
-            boolean found = searchAndMakeCurrent(getText(), options);
-            if (!found) {
+
+            Lock readLock = sheet.readLock();
+            Cell cell = null;
+            try {
+                readLock.lock();
+                cell = MejaHelper.find(sheet, getText(), options);
+            } finally {
+                readLock.unlock();
+            }
+
+            if (cell == null) {
                 JOptionPane.showMessageDialog(this, "Text was not found.");
+            } else {
+                setCurrentCell(cell.getRowNumber(), cell.getColumnNumber());
             }
         }
+
         @Override
         public void setVisible(boolean visible) {
             super.setVisible(visible);
@@ -1001,11 +917,11 @@ public class SheetView extends JPanel {
                 jtfText.selectAll();
             }
         }
-        
+
     }
-    
+
     private class SheetPane extends JScrollPane {
-        
+
         private final JLabel painter;
         private int labelHeight = 0;
         private int labelWidth = 0;
@@ -1013,7 +929,7 @@ public class SheetView extends JPanel {
         private final TopRightQuadrant topRightQuadrant = new TopRightQuadrant();
         private final BottomLeftQuadrant bottomLeftQuadrant = new BottomLeftQuadrant();
         private final BottomRightQuadrant bottomRightQuadrant = new BottomRightQuadrant();
-        
+
         SheetPane() {
             setDoubleBuffered(false);
 
@@ -1102,8 +1018,8 @@ public class SheetView extends JPanel {
         }
 
         private Rectangle getCellRectInViewCoordinates(Cell cell) {
-            boolean isTop = cell.getRowNumber()<sheet.getSplitRow();
-            boolean isLeft = cell.getColumnNumber()<sheet.getSplitColumn();
+            boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
+            boolean isLeft = cell.getColumnNumber() < sheet.getSplitColumn();
 
             final QuadrantPainter quadrant;
             if (isTop) {
@@ -1112,10 +1028,10 @@ public class SheetView extends JPanel {
                 quadrant = isLeft ? bottomLeftQuadrant : bottomRightQuadrant;
             }
 
-            boolean insideViewPort = !(isLeft&&isTop);
+            boolean insideViewPort = !(isLeft && isTop);
 
             final Container parent = quadrant.getParent();
-            Point pos = insideViewPort ? ((JViewport)parent).getViewPosition() : new Point();
+            Point pos = insideViewPort ? ((JViewport) parent).getViewPosition() : new Point();
 
             int i = cell.getRowNumber();
             int j = cell.getColumnNumber();
@@ -1140,7 +1056,7 @@ public class SheetView extends JPanel {
         }
 
         private abstract class QuadrantPainter extends JPanel implements Scrollable {
-            
+
             QuadrantPainter() {
                 super(null, false);
 
@@ -1203,7 +1119,7 @@ public class SheetView extends JPanel {
 
             @Override
             public void validate() {
-                if (sheet!=null) {
+                if (sheet != null) {
                     // the width is the width for the labels showing row names ...
                     int width = hasRowHeaders() ? labelWidth : 1;
 
@@ -1230,15 +1146,15 @@ public class SheetView extends JPanel {
                     setSize(size);
                     setPreferredSize(size);
                 }
-                
+
                 super.validate();
             }
 
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                
-                if (sheet==null) {
+
+                if (sheet == null) {
                     return;
                 }
 
@@ -1654,43 +1570,43 @@ public class SheetView extends JPanel {
         }
 
         private class TopRightQuadrant extends QuadrantPainter {
-            
+
             @Override
-                            int getXMinInViewCoordinates() {
-                                return getColumnPos(getFirstColumn());
-                            }
-                            
-                            @Override
-                                    int getYMinInViewCoordinates() {
-                                        return -getLabelHeight();
-                                    }
-                                    
-                                    @Override
-                                    int getFirstColumn() {
-                                        return sheet.getSplitColumn();
-                                    }
-                                    
-                                    @Override
-                    int getLastColumn() {
-                        return sheet.getLastColNum();
-                    }
-                    
-                    @Override
-                    int getFirstRow() {
-                        return 0;
-                    }
-                    
-                    @Override
-                            int getLastRow() {
-                                return sheet.getSplitRow() - 1;
-                            }
+            int getXMinInViewCoordinates() {
+                return getColumnPos(getFirstColumn());
+            }
+
+            @Override
+            int getYMinInViewCoordinates() {
+                return -getLabelHeight();
+            }
+
+            @Override
+            int getFirstColumn() {
+                return sheet.getSplitColumn();
+            }
+
+            @Override
+            int getLastColumn() {
+                return sheet.getLastColNum();
+            }
+
+            @Override
+            int getFirstRow() {
+                return 0;
+            }
+
+            @Override
+            int getLastRow() {
+                return sheet.getSplitRow() - 1;
+            }
         }
-        
+
         private class BottomRightQuadrant extends QuadrantPainter {
-            
+
             @Override
-                    int getXMinInViewCoordinates() {
-                        return getColumnPos(getFirstColumn());
+            int getXMinInViewCoordinates() {
+                return getColumnPos(getFirstColumn());
             }
 
             @Override

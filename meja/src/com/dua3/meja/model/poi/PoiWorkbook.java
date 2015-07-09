@@ -284,26 +284,26 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     /**
-     *
-     * @param poiFont
-     * @return
+     * Get instance of {@link PoiFont}.
+     * @param poiFont the POI font instance
+     * @return instance of {@link PoiFont} for the given font
      */
     public PoiFont getFont(org.apache.poi.ss.usermodel.Font poiFont) {
         return poiFont == null ? getDefaultCellStyle().getFont() : new PoiFont(this, poiFont);
     }
 
     /**
-     *
-     * @param poiFont
-     * @param dfltColor
-     * @return
+     * Get font color.
+     * @param poiFont instance of POI font
+     * @param dfltColor color return if none is set
+     * @return the color for the given font
      */
     public abstract Color getColor(org.apache.poi.ss.usermodel.Font poiFont, Color dfltColor);
 
     /**
-     *
-     * @param poiSheet
-     * @return
+     * Create instance of {@link PoiSheet} for  the given POI sheet.
+     * @param poiSheet the POI sheet
+     * @return instance of {@link PoiSheet}
      */
     protected PoiSheet createSheet(org.apache.poi.ss.usermodel.Sheet poiSheet) {
         return new PoiSheet(this, poiSheet);
@@ -350,34 +350,35 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     /**
-     *
-     * @param color
-     * @return
+     * Get POI color.
+     * @param color the color
+     * @return POI color
      */
     public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
 
     /**
-     *
-     * @param s
-     * @return
+     * Convert {@link String} to {@link RichTextString}.
+     * @param s the {@link String} to convert
+     * @return {@link RichTextString} with the same text as {@code s}
      */
     public abstract RichTextString createRichTextString(String s);
 
     /**
-     *
-     * @param fontFamily
-     * @param fontSize
-     * @param fontColor
-     * @param fontBold
-     * @param fontItalic
-     * @param fontUnderlined
-     * @param fontStrikeThrough
-     * @return
+     * Create a new font.
+     * @param fontFamily the font family
+     * @param fontSize the font size in points
+     * @param fontColor the font color
+     * @param fontBold whether font should be bold
+     * @param fontItalic whether font should be italic
+     * @param fontUnderlined whether font should be underlined
+     * @param fontStrikeThrough whether font should be strikethrough
+     * @return an instance of {@link PoiFont}
      */
     public abstract PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough);
 
     /**
-     *
+     * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks
+     * (the old Excel format).
      */
     public static class PoiHssfWorkbook extends PoiWorkbook {
 
