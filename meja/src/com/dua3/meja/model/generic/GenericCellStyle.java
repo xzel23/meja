@@ -49,7 +49,7 @@ public class GenericCellStyle implements CellStyle {
     private VAlign vAlign;
     private final BorderStyle[] borderStyle = new BorderStyle[Direction.values().length];
     private boolean wrap;
-    private String dataFormat;
+    private String dataFormat = "";
 
     // formatting helper
     transient private DateFormat dateFormatter = null;
@@ -201,7 +201,11 @@ public class GenericCellStyle implements CellStyle {
     public String format(Date date) {
         if (dateFormatter==null) {
             try {
-                dateFormatter = new SimpleDateFormat(dataFormat, workbook.getLocale());
+                if (dataFormat==null || dataFormat.isEmpty()) {
+                    dateFormatter = DateFormat.getDateInstance(DateFormat.DEFAULT, workbook.getLocale());
+                } else {
+                    dateFormatter = new SimpleDateFormat(dataFormat, workbook.getLocale());
+                }
             } catch (Exception e) {
                 Logger.getLogger(GenericCellStyle.class.getName()).log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
                 dateFormatter = SimpleDateFormat.getDateInstance();
