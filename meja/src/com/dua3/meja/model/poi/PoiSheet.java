@@ -119,9 +119,14 @@ public class PoiSheet implements Sheet {
         // set current row and column
         if (poiSheet instanceof XSSFSheet) {
             String sCellRef = ((XSSFSheet) poiSheet).getActiveCell();
-            CellReference cellRef = new CellReference(sCellRef);
-            this.currentRow = cellRef.getRow();
-            this.currentColumn = cellRef.getCol();
+            if (sCellRef!=null) {
+                CellReference cellRef = new CellReference(sCellRef);
+                this.currentRow = cellRef.getRow();
+                this.currentColumn = cellRef.getCol();
+            } else {
+                this.currentRow = poiSheet.getTopRow();
+                this.currentColumn = poiSheet.getLeftCol();            
+            }
         } else if (poiSheet instanceof HSSFSheet) {
             this.currentRow = poiSheet.getTopRow();
             this.currentColumn = poiSheet.getLeftCol();            
