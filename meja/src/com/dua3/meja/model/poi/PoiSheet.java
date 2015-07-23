@@ -121,8 +121,8 @@ public class PoiSheet implements Sheet {
             String sCellRef = ((XSSFSheet) poiSheet).getActiveCell();
             if (sCellRef!=null) {
                 CellReference cellRef = new CellReference(sCellRef);
-                this.currentRow = cellRef.getRow();
-                this.currentColumn = cellRef.getCol();
+                this.currentRow = Math.max(getFirstRowNum(), Math.min(getLastRowNum(), cellRef.getRow()));
+                this.currentColumn = Math.max(getFirstColNum(), Math.min(getLastColNum(), cellRef.getCol()));
             } else {
                 this.currentRow = poiSheet.getTopRow();
                 this.currentColumn = poiSheet.getLeftCol();            
