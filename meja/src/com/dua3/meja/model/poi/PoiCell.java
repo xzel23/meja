@@ -316,7 +316,7 @@ public final class PoiCell implements Cell {
             clear();
         } else {
             poiCell.setCellValue(arg);
-            if (!DateUtil.isCellDateFormatted(poiCell)) {
+            if (!isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is not date formatted
                 Logger.getLogger(PoiCell.class.getName()).warning("Cell is not date formatted!");
@@ -326,13 +326,27 @@ public final class PoiCell implements Cell {
         return this;
     }
 
+    private boolean isCellDateFormatted() {
+        /*
+         * DateUtil.isCellDateFormatted() throws IllegalStateException
+         * when cell is an error cell, so we have to work around this.
+         * TODO create SCCSE and report bug against POI
+         */
+        switch (getCellType()) {
+        case ERROR:
+            return false;
+        default:
+            return DateUtil.isCellDateFormatted(poiCell);
+        }
+    }
+
     @Override
     public PoiCell set(Number arg) {
         if (arg == null) {
             clear();
         } else {
             poiCell.setCellValue(arg.doubleValue());
-            if (DateUtil.isCellDateFormatted(poiCell)) {
+            if (isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is date formatted, but a plain number is stored
                 Logger.getLogger(PoiCell.class.getName()).warning("Cell is date formatted, but plain number written!");
