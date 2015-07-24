@@ -410,15 +410,15 @@ public class MejaHelper {
         for (int j = src.getFirstColNum(); j <= src.getLastColNum(); j++) {
             dst.setColumnWidth(j, src.getColumnWidth(j));
         }
+        // copy merged regions
+        for (RectangularRegion rr : src.getMergedRegions()) {
+            dst.addMergedRegion(rr);
+        }
         // copy row data
         for (Row row : src) {
             final int i = row.getRowNumber();
             dst.getRow(i).copy(row);
             dst.setRowHeight(i, src.getRowHeight(i));
-        }
-        // copy merged regions
-        for (RectangularRegion rr : src.getMergedRegions()) {
-            dst.addMergedRegion(rr);
         }
     }
 
