@@ -15,13 +15,13 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
+import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.MejaHelper;
@@ -43,10 +43,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.concurrent.locks.Lock;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -73,6 +70,8 @@ import javax.swing.SwingUtilities;
  * Swing component for displaying instances of {@link Sheet}.
  */
 public class SheetView extends JPanel {
+
+    private static final long serialVersionUID = 1L;
 
     static final int MAX_WIDTH = 800;
 
@@ -183,6 +182,7 @@ public class SheetView extends JPanel {
      *
      * @param sheet the sheet to display
      */
+    @SuppressWarnings("LeakingThisInConstructor")
     public SheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
 
@@ -203,6 +203,8 @@ public class SheetView extends JPanel {
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_LEFT, 0), Actions.MOVE_LEFT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
         inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
 
@@ -281,6 +283,31 @@ public class SheetView extends JPanel {
                 break;
         }
 
+        scrollToCurrentCell();
+    }
+
+    /**
+     * Move the selection rectangle to an adjacent cell.
+     *
+     * @param d direction
+     */
+    private void movePage(Direction d) {
+        Cell cell = getCurrentCell().getLogicalCell();
+        Rectangle cellRect = getCellRect(cell);
+        int x = cellRect.x;
+        int y = cellRect.y;
+        switch (d) {
+            case NORTH:
+                y = Math.max(0, y-getVisibleRect().height);
+                break;
+            case SOUTH:
+                y = Math.min(getSheetHeight()-1, y+getVisibleRect().height);
+                break;
+        }
+
+        int row = getRowNumberFromY(y);
+        int col = getColumnNumberFromX(x);
+        setCurrentCell(row, col);
         scrollToCurrentCell();
     }
 
@@ -474,7 +501,7 @@ public class SheetView extends JPanel {
      *
      * @param sheet the sheet to display
      */
-    public void setSheet(Sheet sheet) {
+    public final void setSheet(Sheet sheet) {
         this.sheet = sheet;
         updateContent();
     }
@@ -739,6 +766,26 @@ public class SheetView extends JPanel {
                             }
                         };
                     }
+                }, PAGE_UP {
+                    @Override
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("PAGE_UP") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.movePage(Direction.NORTH);
+                            }
+                        };
+                    }
+                }, PAGE_DOWN {
+                    @Override
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("PAGE_DOWN") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.movePage(Direction.SOUTH);
+                            }
+                        };
+                    }
                 }, START_EDITING {
                     @Override
                     public Action getAction(final SheetView view) {
@@ -781,6 +828,7 @@ public class SheetView extends JPanel {
     }
 
     private class SearchDialog extends JDialog {
+        private static final long serialVersionUID = 1L;
 
         private final JTextField jtfText;
         private final JCheckBox jcbIgnoreCase;
