@@ -746,12 +746,12 @@ public class SheetView extends JPanel {
     /**
      * Actions for key bindings.
      */
+    @SuppressWarnings("serial")
     static enum Actions {
-
         MOVE_UP {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("MOVE_UP") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.move(Direction.NORTH);
@@ -761,7 +761,7 @@ public class SheetView extends JPanel {
                 }, MOVE_DOWN {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("MOVE_DOWN") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.move(Direction.SOUTH);
@@ -771,7 +771,7 @@ public class SheetView extends JPanel {
                 }, MOVE_LEFT {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("MOVE_LEFT") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.move(Direction.WEST);
@@ -781,7 +781,7 @@ public class SheetView extends JPanel {
                 }, MOVE_RIGHT {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("MOVE_RIGHT") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.move(Direction.EAST);
@@ -791,7 +791,7 @@ public class SheetView extends JPanel {
                 }, PAGE_UP {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("PAGE_UP") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.movePage(Direction.NORTH);
@@ -801,7 +801,7 @@ public class SheetView extends JPanel {
                 }, PAGE_DOWN {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("PAGE_DOWN") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.movePage(Direction.SOUTH);
@@ -811,7 +811,7 @@ public class SheetView extends JPanel {
                 }, MOVE_HOME {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("MOVE_HOME") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.moveHome();
@@ -821,7 +821,7 @@ public class SheetView extends JPanel {
                 }, MOVE_END {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("MOVE_END") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.moveEnd();
@@ -831,7 +831,7 @@ public class SheetView extends JPanel {
                 }, START_EDITING {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("START_EDITING") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.startEditing();
@@ -841,7 +841,7 @@ public class SheetView extends JPanel {
                 }, SHOW_SEARCH_DIALOG {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("SHOW_SEARCH_DIALOG") {
+                        return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.showSearchDialog();
