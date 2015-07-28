@@ -401,6 +401,7 @@ public class SheetView extends JPanel {
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
         int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
         sheet.setCurrentCell(newRowNum, newColNum);
+        scrollToCurrentCell();
 
         Cell newCell = getCurrentCell().getLogicalCell();
         if (newCell.getRowNumber() != oldCell.getRowNumber()
