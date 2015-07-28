@@ -207,6 +207,7 @@ public class SheetView extends JPanel {
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK ), Actions.MOVE_HOME);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK ), Actions.MOVE_END);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
         inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
 
@@ -319,6 +320,15 @@ public class SheetView extends JPanel {
     private void moveHome() {
         int row = sheet.getFirstRowNum();
         int col = sheet.getFirstColNum();
+        setCurrentCell(row, col);
+    }
+
+    /**
+     * Move the selection rectangle to the bottom right cell.
+     */
+    private void moveEnd() {
+        int row = sheet.getLastRowNum();
+        int col = sheet.getLastColNum();
         setCurrentCell(row, col);
     }
 
@@ -805,6 +815,16 @@ public class SheetView extends JPanel {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.moveHome();
+                            }
+                        };
+                    }
+                }, MOVE_END {
+                    @Override
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_END") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.moveEnd();
                             }
                         };
                     }
