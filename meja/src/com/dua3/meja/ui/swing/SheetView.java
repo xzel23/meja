@@ -40,6 +40,7 @@ import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -205,6 +206,7 @@ public class SheetView extends JPanel {
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK ), Actions.MOVE_HOME);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
         inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
 
@@ -309,6 +311,15 @@ public class SheetView extends JPanel {
         int col = getColumnNumberFromX(x);
         setCurrentCell(row, col);
         scrollToCurrentCell();
+    }
+
+    /**
+     * Move the selection rectangle to the top left cell.
+     */
+    private void moveHome() {
+        int row = sheet.getFirstRowNum();
+        int col = sheet.getFirstColNum();
+        setCurrentCell(row, col);
     }
 
     /**
@@ -787,10 +798,20 @@ public class SheetView extends JPanel {
                             }
                         };
                     }
+                }, MOVE_HOME {
+                    @Override
+                    public Action getAction(final SheetView view) {
+                        return new AbstractAction("MOVE_HOME") {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                view.moveHome();
+                            }
+                        };
+                    }
                 }, START_EDITING {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("MOVE_RIGHT") {
+                        return new AbstractAction("START_EDITING") {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.startEditing();
@@ -800,7 +821,7 @@ public class SheetView extends JPanel {
                 }, SHOW_SEARCH_DIALOG {
                     @Override
                     public Action getAction(final SheetView view) {
-                        return new AbstractAction("MOVE_RIGHT") {
+                        return new AbstractAction("SHOW_SEARCH_DIALOG") {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 view.showSearchDialog();
