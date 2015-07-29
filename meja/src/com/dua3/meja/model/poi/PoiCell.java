@@ -128,8 +128,9 @@ public final class PoiCell implements Cell {
     @Override
     public CellType getCellType() {
         CellType type = translateCellType(poiCell.getCellType());
-        // test if a date!
-        if (type == CellType.NUMERIC && DateUtil.isCellDateFormatted(poiCell)) {
+        // since formulas returning dates should return CellType.FORMULA
+        // rather than CellType.DATE, only test for dates if cell is numeric.
+        if (type == CellType.NUMERIC && isCellDateFormatted()) {
             type = CellType.DATE;
         }
         return type;
@@ -141,7 +142,11 @@ public final class PoiCell implements Cell {
         if (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
             poiType = poiCell.getCachedFormulaResultType();
         }
-        return translateCellType(poiType);
+        CellType type = translateCellType(poiType);
+        if (type == CellType.NUMERIC && isCellDateFormatted()) {
+            type = CellType.DATE;
+        }
+        return type;
     }
 
     @Override
@@ -329,15 +334,15 @@ public final class PoiCell implements Cell {
     private boolean isCellDateFormatted() {
         /*
          * DateUtil.isCellDateFormatted() throws IllegalStateException
-         * when cell is an error cell, so we have to work around this.
+         * when cell is not numeric, so we have to work around this.
          * TODO create SCCSE and report bug against POI
          */
-        switch (getCellType()) {
-        case ERROR:
-            return false;
-        default:
-            return DateUtil.isCellDateFormatted(poiCell);
+        int poiType = poiCell.getCellType();
+        if (poiType==org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
+            poiType = poiCell.getCachedFormulaResultType();
         }
+        return (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) 
+                && DateUtil.isCellDateFormatted(poiCell);
     }
 
     @Override

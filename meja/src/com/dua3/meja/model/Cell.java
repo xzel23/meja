@@ -45,6 +45,12 @@ public interface Cell {
      * {@link #getCellType()}. For formula cells, the result type of the last
      * evaluation is returned.
      *
+     * <p>
+     * <em>Note: Since excel doesn't know about dates internally and date cells
+     * are determined by looking at both cell type and format, the cell style
+     * has to be set before calling this method to make sure
+     * {@code CellType.DATE} is returned for formulas that return a date.</em>
+     * </p>
      * @return cell type
      */
     CellType getResultType();
