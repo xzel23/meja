@@ -274,4 +274,17 @@ public interface Cell {
      * of a merged region
      */
     void unMerge();
+    
+    /**
+     * Get cell reference (ie. "A1" for the top left cell).
+     * @return cell reference as String
+     */
+    String getCellRef();
+
+    /**
+     * Get cell reference (ie. "Sheet!A1" for the top left cell).
+     * @param includeSheet true, if the sheet name should be included
+     * @return cell reference as String
+     */
+    String getCellRef(boolean includeSheet);
 }

@@ -333,23 +333,16 @@ public class MejaHelper {
     }
 
     /**
-     * Get cell position as string.
+     * Get cell reference as string.
      *
      * @param cell
+     * @param includeSheet true, if the sheet name should be part of the cell reference
      * @return the cell in Excel conventions, ie "A1" for the first cell.
      */
-    public static String getCellPosition(Cell cell) {
-        return getColumnName(cell.getColumnNumber()) + (cell.getRowNumber() + 1);
-    }
-
-    /**
-     * Get cell position as string.
-     *
-     * @param cell
-     * @return the cell in Excel conventions, ie "sheet1!A1" for the first cell.
-     */
-    public static String getGlobalCellPosition(Cell cell) {
-        return cell.getSheet().getSheetName() + "!" + getCellPosition(cell);
+    public static String getCellRef(Cell cell, boolean includeSheet) {
+        String ref = includeSheet ? cell.getSheet().getSheetName()+"!" : "";
+        ref += getColumnName(cell.getColumnNumber()) + (cell.getRowNumber() + 1);
+        return ref;
     }
 
     /**

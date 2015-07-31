@@ -20,6 +20,7 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.util.AttributedStringHelper;
+import com.dua3.meja.util.MejaHelper;
 import java.text.AttributedString;
 import java.util.Date;
 
@@ -367,5 +368,15 @@ public class GenericCell implements Cell {
     public boolean isRichText() {
         // no need to check the cell type!
         return value instanceof AttributedString;
+    }
+
+    @Override
+    public String getCellRef() {
+        return MejaHelper.getCellRef(this, false);
+    }
+
+    @Override
+    public String getCellRef(boolean includeSheet) {
+        return MejaHelper.getCellRef(this, includeSheet);
     }
 }

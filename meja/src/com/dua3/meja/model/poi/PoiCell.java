@@ -20,6 +20,7 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.util.AttributedStringHelper;
+import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 import java.awt.Color;
 import java.awt.font.TextAttribute;
@@ -513,4 +514,13 @@ public final class PoiCell implements Cell {
         return getResultType()==CellType.TEXT && poiCell.getRichStringCellValue().numFormattingRuns()!=0;
     }
 
+    @Override
+    public String getCellRef() {
+        return MejaHelper.getCellRef(this, false);
+    }
+
+    @Override
+    public String getCellRef(boolean includeSheet) {
+        return MejaHelper.getCellRef(this, includeSheet);
+    }
 }
