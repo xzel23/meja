@@ -150,29 +150,53 @@ public final class PoiCell implements Cell {
         return type;
     }
 
+    private IllegalStateException newIllegalStateException(Exception e) {
+        return new IllegalStateException("["+getCellRef(true)+"]: "+e.getMessage());
+    }
+
     @Override
     public boolean getBoolean() {
-        return isEmpty() ? null : poiCell.getBooleanCellValue();
+        try {
+            return isEmpty() ? null : poiCell.getBooleanCellValue();
+        } catch (Exception e) {
+            throw newIllegalStateException(e);
+        }
     }
 
     @Override
     public String getFormula() {
-        return isEmpty() ? null : poiCell.getCellFormula();
+        try {
+            return isEmpty() ? null : poiCell.getCellFormula();
+        } catch (Exception e) {
+            throw newIllegalStateException(e);
+        }
     }
 
     @Override
     public Date getDate() {
-        return isEmpty() ? null : poiCell.getDateCellValue();
+        try {
+            return isEmpty() ? null : poiCell.getDateCellValue();
+        } catch (Exception e) {
+            throw newIllegalStateException(e);
+        }
     }
 
     @Override
     public Number getNumber() {
-        return isEmpty() ? null : poiCell.getNumericCellValue();
+        try {
+            return isEmpty() ? null : poiCell.getNumericCellValue();
+        } catch (Exception e) {
+            throw newIllegalStateException(e);
+        }
     }
 
     @Override
     public String getText() {
-        return isEmpty() ? "" : poiCell.getStringCellValue();
+        try {
+            return isEmpty() ? "" : poiCell.getStringCellValue();
+        } catch (Exception e) {
+            throw newIllegalStateException(e);
+        }
     }
 
     @Override
