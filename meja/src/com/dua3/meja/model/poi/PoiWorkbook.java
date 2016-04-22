@@ -151,7 +151,7 @@ public abstract class PoiWorkbook implements Workbook {
                 return sheet;
             }
         }
-        throw new IllegalArgumentException("No sheet '" + sheetName + "'.");
+        return null;
     }
 
     /**

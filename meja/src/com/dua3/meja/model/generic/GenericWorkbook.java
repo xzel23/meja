@@ -78,7 +78,7 @@ public class GenericWorkbook implements Workbook {
                 return sheet;
             }
         }
-        throw new IllegalArgumentException("No sheet '" + sheetName + "'.");
+        return null;
     }
 
     @Override
