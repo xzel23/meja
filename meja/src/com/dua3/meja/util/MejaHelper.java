@@ -25,13 +25,16 @@ import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.meja.model.poi.PoiCell;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.text.AttributedString;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -556,6 +559,22 @@ public class MejaHelper {
         } while (j != jStart);
 
         return null;
+    }
+
+    public static void set(Cell cell, Object arg) {
+        if (arg==null) {
+            cell.clear();
+        } else if (arg instanceof Number) {
+            cell.set((Number) arg);
+        } else if (arg instanceof Boolean) {
+            cell.set((Boolean) arg);
+        } else if (arg instanceof Date) {
+            cell.set((Date) arg);
+        } else if (arg instanceof AttributedString) {
+            cell.set((AttributedString) arg);            
+        } else {
+            cell.set(String.valueOf(arg));
+        }
     }
 
     private MejaHelper() {

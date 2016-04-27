@@ -356,6 +356,12 @@ public final class PoiCell implements Cell {
         return this;
     }
 
+    @Override
+    public PoiCell set(Object arg) {
+        MejaHelper.set(this, arg);
+        return this;
+    }
+
     private boolean isCellDateFormatted() {
         /*
          * DateUtil.isCellDateFormatted() throws IllegalStateException

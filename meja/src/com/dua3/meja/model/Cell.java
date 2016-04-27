@@ -224,6 +224,14 @@ public interface Cell {
     Cell set(Boolean b);
 
     /**
+     * Set cell value.
+     *
+     * @param b value
+     * @return this cell
+     */
+    Cell set(Object b);
+
+    /**
      * Get the row this cell belongs to.
      *
      * @return the row for this cell

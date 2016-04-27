@@ -232,6 +232,12 @@ public class GenericCell implements Cell {
     }
 
     @Override
+    public GenericCell set(Object arg) {
+        MejaHelper.set(this, arg);
+        return this;
+    }
+
+    @Override
     public Row getRow() {
         return row;
     }
