@@ -41,9 +41,7 @@ public class CsvReader implements DataReader, AutoCloseable {
     }
 
     public static CsvReader createReader(RowBuilder builder, InputStream in) throws IOException {
-        try (Reader reader = new InputStreamReader(in)) {
-            return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, reader, "[stream]");
-        }
+        return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, new InputStreamReader(in), "[stream]");
     }
 
     private RowBuilder rowBuilder;

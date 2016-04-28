@@ -43,7 +43,13 @@ public class GenericWorkbook implements Workbook {
     final Locale locale;
     private final GenericCellStyle defaultCellStyle;
     private URI uri;
+    
+    private static final URI DEFAULT_URI = URI.create("");
 
+    public GenericWorkbook(Locale locale) {
+        this(locale, DEFAULT_URI);
+    }
+    
     /**
      * Construct a new {@code GenericWorkbook}.
      * @param locale the locale to use
