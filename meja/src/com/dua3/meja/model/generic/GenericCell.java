@@ -31,71 +31,130 @@ import java.util.Date;
 public class GenericCell implements Cell {
 
     private final GenericRow row;
-    private CellType type;
     private Object value;
     private GenericCellStyle cellStyle;
-    private int spanX;
-    private int spanY;
     private GenericCell logicalCell;
-    private final int columnNumber;
+
+    /**
+     * A single long storing meta information.
+     *
+     * CCXXYYYT
+     *
+     * C - column number (2 bytes) X - horizontal span (2 bytes) Y - vertical
+     * span (3 bytes) T - cell type (1 byte)
+     */
+    private long data;
+
+    public static final int MAX_HORIZONTAL_SPAN = 0xefff;
+    public static final int MAX_VERTICAL_SPAN = 0xefffff;
+    public static final int MAX_COLUMN_NUMBER = 0xefffff;
+
+    private void setCellType(CellType type) {
+        data = (data & 0xffffffffffffff00L) | type.ordinal();
+    }
+
+    @Override
+    public CellType getCellType() {
+        return CellType.values()[(int) (data & 0xffL)];
+    }
+
+    private void setVerticalSpan(int spanY) {
+        if (spanY < 0 || spanY > MAX_VERTICAL_SPAN) {
+            throw new IllegalArgumentException();
+        }
+
+        data = (data & 0xffffffff000000ffL) | (((long) spanY) << 8);
+    }
+
+    @Override
+    public int getVerticalSpan() {
+        return (int) ((data & 0x00000000ffffff00L) >> 8);
+    }
+
+    private void setHorizontalSpan(int spanX) {
+        if (spanX < 0 || spanX > MAX_HORIZONTAL_SPAN) {
+            throw new IllegalArgumentException();
+        }
+
+        data = (data & 0xffff0000ffffffffL) | (((long) spanX) << 32);
+    }
+
+    @Override
+    public int getHorizontalSpan() {
+        return (int) ((data & 0x0000ffff00000000L) >> 32);
+    }
+
+    private void setColumnNr(int colNr) {
+        if (colNr < 0 || colNr > MAX_COLUMN_NUMBER) {
+            throw new IllegalArgumentException();
+        }
+
+        data = (data & 0x0000ffffffffffffL) | (((long) colNr) << 48);
+    }
+
+    @Override
+    public int getColumnNumber() {
+        return (int) ((data & 0xffff000000000000L) >> 48);
+    }
 
     /**
      * Construct a new {@code GenericCell}.
+     *
      * @param row the row this cell belongs to
      * @param colNumber the column number
      * @param cellStyle the cell style to use
      */
     public GenericCell(GenericRow row, int colNumber, GenericCellStyle cellStyle) {
+        if (colNumber > Short.MAX_VALUE) {
+            throw new IllegalArgumentException("Maximum column number is " + Short.MAX_VALUE + ".");
+        }
+
         this.row = row;
         this.logicalCell = this;
         this.cellStyle = cellStyle;
-        this.columnNumber = colNumber;
-        this.spanX = 1;
-        this.spanY = 1;
-        this.type = CellType.BLANK;
         this.value = null;
-    }
 
-    @Override
-    public CellType getCellType() {
-        return type;
+        setColumnNr(colNumber);
+        setHorizontalSpan(1);
+        setVerticalSpan(1);
+        setCellType(CellType.BLANK);
     }
 
     @Override
     public boolean getBoolean() {
-        if (type == CellType.BOOLEAN) {
+        if (getCellType() == CellType.BOOLEAN) {
             return (boolean) value;
         }
-        throw new IllegalStateException("Cannot get boolean value from cell of type " + type.name() + ".");
+        throw new IllegalStateException("Cannot get boolean value from cell of type " + getCellType().name() + ".");
     }
 
     @Override
     public String getFormula() {
-        if (type == CellType.FORMULA) {
+        if (getCellType() == CellType.FORMULA) {
             return (String) value;
         }
-        throw new IllegalStateException("Cannot get formula from cell of type " + type.name() + ".");
+        throw new IllegalStateException("Cannot get formula from cell of type " + getCellType().name() + ".");
     }
 
     @Override
     public Date getDate() {
-        if (type == CellType.DATE) {
+        if (getCellType() == CellType.DATE) {
             return (Date) value;
         }
-        throw new IllegalStateException("Cannot get date value from cell of type " + type.name() + ".");
+        throw new IllegalStateException("Cannot get date value from cell of type " + getCellType().name() + ".");
     }
 
     @Override
     public Number getNumber() {
-        if (type == CellType.NUMERIC) {
+        if (getCellType() == CellType.NUMERIC) {
             return (Number) value;
         }
-        throw new IllegalStateException("Cannot get numeric value from cell of type " + type.name() + ".");
+        throw new IllegalStateException("Cannot get numeric value from cell of type " + getCellType().name() + ".");
     }
 
     @Override
     public String getText() {
-        if (type == CellType.TEXT) {
+        if (getCellType() == CellType.TEXT) {
             if (value instanceof String) {
                 return (String) value;
             } else if (value instanceof AttributedString) {
@@ -104,7 +163,7 @@ public class GenericCell implements Cell {
                 throw new IllegalStateException();
             }
         }
-        throw new IllegalStateException("Cannot get text value from cell of type " + type.name() + ".");
+        throw new IllegalStateException("Cannot get text value from cell of type " + getCellType().name() + ".");
     }
 
     @Override
@@ -115,7 +174,7 @@ public class GenericCell implements Cell {
             case TEXT:
                 return getText();
             case NUMERIC:
-                return getCellStyle().format((Number)value);
+                return getCellStyle().format((Number) value);
             case DATE:
                 return getCellStyle().format((Date) value);
             default:
@@ -129,16 +188,6 @@ public class GenericCell implements Cell {
     }
 
     @Override
-    public int getHorizontalSpan() {
-        return spanX;
-    }
-
-    @Override
-    public int getVerticalSpan() {
-        return spanY;
-    }
-
-    @Override
     public Cell getLogicalCell() {
         return logicalCell;
     }
@@ -146,11 +195,6 @@ public class GenericCell implements Cell {
     @Override
     public int getRowNumber() {
         return row.getRowNumber();
-    }
-
-    @Override
-    public int getColumnNumber() {
-        return columnNumber;
     }
 
     @Override
@@ -181,7 +225,7 @@ public class GenericCell implements Cell {
         if (arg == null) {
             clear();
         } else {
-            this.type = CellType.DATE;
+            setCellType(CellType.DATE);
             this.value = arg;
         }
         return this;
@@ -192,7 +236,7 @@ public class GenericCell implements Cell {
         if (arg == null) {
             clear();
         } else {
-            this.type = CellType.NUMERIC;
+            setCellType(CellType.NUMERIC);
             this.value = arg;
         }
         return this;
@@ -203,7 +247,7 @@ public class GenericCell implements Cell {
         if (arg == null || arg.isEmpty()) {
             clear();
         } else {
-            this.type = CellType.TEXT;
+            setCellType(CellType.TEXT);
             this.value = arg;
         }
         return this;
@@ -214,7 +258,7 @@ public class GenericCell implements Cell {
         if (arg == null || AttributedStringHelper.isEmpty(arg)) {
             clear();
         } else {
-            this.type = CellType.TEXT;
+            setCellType(CellType.TEXT);
             this.value = arg;
         }
         return this;
@@ -225,7 +269,7 @@ public class GenericCell implements Cell {
         if (arg == null) {
             clear();
         } else {
-            this.type = CellType.BOOLEAN;
+            setCellType(CellType.BOOLEAN);
             this.value = arg;
         }
         return this;
@@ -244,7 +288,7 @@ public class GenericCell implements Cell {
 
     @Override
     public void clear() {
-        this.type = CellType.BLANK;
+        setCellType(CellType.BLANK);
         this.value = null;
     }
 
@@ -263,7 +307,7 @@ public class GenericCell implements Cell {
 
     @Override
     public boolean isEmpty() {
-        return type == CellType.BLANK;
+        return getCellType() == CellType.BLANK;
     }
 
     @Override
@@ -273,14 +317,14 @@ public class GenericCell implements Cell {
 
     @Override
     public GenericCell setFormula(String value) {
-        this.type = CellType.FORMULA;
+        setCellType(CellType.FORMULA);
         this.value = value;
         return this;
     }
 
     @Override
     public String toString() {
-        if (type == CellType.BLANK) {
+        if (isEmpty()) {
             return "";
         } else {
             return getAsText();
@@ -313,7 +357,7 @@ public class GenericCell implements Cell {
                 if (other.isRichText()) {
                     set(other.getAttributedString());
                 } else {
-                    set(other.getText());                    
+                    set(other.getText());
                 }
                 break;
             default:
@@ -327,26 +371,30 @@ public class GenericCell implements Cell {
     }
 
     void addedToMergedRegion(GenericCell logicalCell, int spanX, int spanY) {
-        if (this.spanX != 1 || this.spanY != 1) {
+        if (getHorizontalSpan() != 1 || getVerticalSpan() != 1) {
             throw new IllegalStateException("Cell is already merged.");
+        }
+
+        if (spanX > Short.MAX_VALUE) {
+            throw new IllegalArgumentException("Maximum horizontal span number is " + Short.MAX_VALUE + ".");
         }
 
         if (this == logicalCell) {
             this.logicalCell = logicalCell;
-            this.spanX = spanX;
-            this.spanY = spanY;
+            setHorizontalSpan(spanX);
+            setVerticalSpan(spanY);
         } else {
             clear();
             this.logicalCell = logicalCell;
-            this.spanX = 0;
-            this.spanY = 0;
+            setHorizontalSpan(0);
+            setVerticalSpan(0);
         }
     }
 
     void removedFromMergedRegion() {
         this.logicalCell = this;
-        this.spanX = 1;
-        this.spanY = 1;
+        setHorizontalSpan(1);
+        setVerticalSpan(1);
     }
 
     @Override
@@ -358,12 +406,12 @@ public class GenericCell implements Cell {
         }
 
         getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
-        int originalSpanX = spanX;
-        int originalSpanY = spanY;
+        int originalSpanX = getHorizontalSpan();
+        int originalSpanY = getVerticalSpan();
         for (int i = getRowNumber(); i < getRowNumber() + originalSpanY; i++) {
             for (int j = getColumnNumber(); j < getColumnNumber() + originalSpanX; j++) {
                 GenericCell cell = row.getCellIfExists(j);
-                if (cell!=null) {
+                if (cell != null) {
                     cell.removedFromMergedRegion();
                 }
             }
