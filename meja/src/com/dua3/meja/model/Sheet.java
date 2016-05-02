@@ -238,4 +238,8 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */ 
     void setCurrentCell(int i, int j);
     
+    /**
+     * Remove all content from sheet.
+     */
+    void clear();
 }

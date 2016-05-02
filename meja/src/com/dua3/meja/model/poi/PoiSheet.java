@@ -18,6 +18,7 @@ package com.dua3.meja.model.poi;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.generic.GenericSheet;
 import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
@@ -44,7 +45,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 public class PoiSheet implements Sheet {
 
     protected final PoiWorkbook workbook;
-    protected final org.apache.poi.ss.usermodel.Sheet poiSheet;
+    protected org.apache.poi.ss.usermodel.Sheet poiSheet;
     private int firstColumn;
     private int lastColumn;
     private List<RectangularRegion> mergedRegions;
@@ -401,4 +402,23 @@ public class PoiSheet implements Sheet {
         getCell(i, j).poiCell.setAsActiveCell();
     }
 
+    @Override
+    public void clear() {
+        // determine sheet number
+        int sheetNr = workbook.poiWorkbook.getSheetIndex(poiSheet);        
+        if (sheetNr>=workbook.getNumberOfSheets()) {
+            /*
+             * This should never happen as this sheet is part of the workbook.
+             */
+            throw new IllegalStateException();
+        }
+        
+        //
+        String sheetName = getSheetName();
+        workbook.poiWorkbook.removeSheetAt(sheetNr);
+        poiSheet = workbook.poiWorkbook.createSheet(sheetName);
+        workbook.poiWorkbook.setSheetOrder(sheetName, sheetNr);        
+        cache.clear();
+        update();
+    }
 }

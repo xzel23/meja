@@ -68,6 +68,13 @@ public abstract class Cache<KEY, VALUE> {
     protected abstract VALUE create(KEY key);
 
     /**
+     * Clear contents.
+     */
+    public void clear() {
+        items.clear();
+    }
+
+    /**
      * Type controlling how keys should be treated in a cache. 
      * <p>
      * Values are held as instances of {@link SoftReference}. That means

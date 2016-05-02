@@ -63,7 +63,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     int getNumberOfSheets();
 
     /**
-     * Get sheet by number,
+     * Get sheet by number.
      * @param sheetNr number of sheet
      * @return sheet or {@code null}
      */
@@ -75,6 +75,19 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @return sheet or {@code null}
      */
     Sheet getSheetByName(String sheetName);
+
+    /**
+     * Remove sheet by number.
+     * @param sheetNr number of sheet
+     */
+    void removeSheetByNr(int sheetNr);
+
+    /**
+     * Remove sheet by name.
+     * @param sheetName name of sheet
+     * @return true, if sheet with that name was found and removed
+     */
+    boolean removeSheetByName(String sheetName);
 
     /**
      * Writes the workbook to a stream.

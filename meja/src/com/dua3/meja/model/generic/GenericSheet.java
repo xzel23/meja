@@ -348,4 +348,9 @@ public class GenericSheet implements Sheet {
         this.currentColumn = j;
     }
 
+    @Override
+    public void clear() {
+        copy(new GenericSheet(workbook, sheetName, locale));
+    }
+
 }

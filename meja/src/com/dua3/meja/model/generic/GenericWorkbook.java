@@ -88,6 +88,23 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
+    public void removeSheetByNr(int sheetNr) {
+        sheets.remove(sheetNr);
+    }
+
+    @Override
+    public boolean removeSheetByName(String sheetName) {
+        Iterator<GenericSheet> iter = sheets.iterator();
+        while (iter.hasNext()) {
+            if (iter.next().getSheetName().equals(sheetName)) {
+                iter.remove();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void write(FileType type, OutputStream out) throws IOException {
         type.getWriter().write(this, out);
     }

@@ -123,7 +123,7 @@ public abstract class PoiWorkbook implements Workbook {
     @SuppressWarnings("unchecked")
     protected void init() {
         for (int i = 0; i < poiWorkbook.getNumberOfSheets(); i++) {
-            sheets.add(createSheet(poiWorkbook.getSheetAt(i)));
+            createSheet(poiWorkbook.getSheetAt(i));
         }
     }
 
@@ -152,6 +152,24 @@ public abstract class PoiWorkbook implements Workbook {
             }
         }
         return null;
+    }
+
+    @Override
+    public void removeSheetByNr(int sheetNr) {
+        poiWorkbook.removeSheetAt(sheetNr);
+        sheets.remove(sheetNr);
+    }
+
+    @Override
+    public boolean removeSheetByName(String sheetName) {
+        for ( int i=0; i<sheets.size(); i++) {
+            if (sheets.get(i).getSheetName().equals(sheetName)) {
+                poiWorkbook.removeSheetAt(i);
+                sheets.remove(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -306,7 +324,9 @@ public abstract class PoiWorkbook implements Workbook {
      * @return instance of {@link PoiSheet}
      */
     protected PoiSheet createSheet(org.apache.poi.ss.usermodel.Sheet poiSheet) {
-        return new PoiSheet(this, poiSheet);
+        PoiSheet sheet = new PoiSheet(this, poiSheet);
+        sheets.add(sheet);
+        return sheet;
     }
 
     @Override
