@@ -171,6 +171,12 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     void setAutofilterRow(int i);
 
     /**
+     * Get auto filter row number.
+     * @return row number for auto filter or -1 if not set
+     */
+    int getAutoFilterRow();
+    
+    /**
      * Get number format for this sheet.
      * <p>
      * The number format is used when parsing user input.
@@ -242,4 +248,5 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * Remove all content from sheet.
      */
     void clear();
+
 }

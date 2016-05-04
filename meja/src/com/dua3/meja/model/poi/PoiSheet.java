@@ -52,6 +52,7 @@ public class PoiSheet implements Sheet {
     private int currentRow = 0;
     private int currentColumn = 0;
     private float zoom = 1.0f;
+    private int autoFilterRow = -1;
 
     private final Cache<org.apache.poi.ss.usermodel.Row, PoiRow> cache = new Cache<org.apache.poi.ss.usermodel.Row, PoiRow>(Cache.Type.WEAK_KEYS) {
         @Override
@@ -260,12 +261,27 @@ public class PoiSheet implements Sheet {
 
     @Override
     public void setAutofilterRow(int rowNumber) {
-        org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNumber);
-        short col1 = poiRow.getFirstCellNum();
-        short coln = poiRow.getLastCellNum();
-        poiSheet.setAutoFilter(new CellRangeAddress(rowNumber, rowNumber, col1, coln));
+        if (rowNumber >= 0) {
+            org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNumber);
+            setAutoFilterForPoiRow(poiRow);
+        }
+        autoFilterRow = rowNumber;
     }
 
+    private void setAutoFilterForPoiRow(org.apache.poi.ss.usermodel.Row poiRow) {
+        if (poiRow!=null) {
+            int rowNumber = poiRow.getRowNum();
+            short col1 = poiRow.getFirstCellNum();
+            short coln = poiRow.getLastCellNum();
+            poiSheet.setAutoFilter(new CellRangeAddress(rowNumber, rowNumber, col1, coln));
+        }
+    }
+
+    @Override
+    public int getAutoFilterRow() {
+        return autoFilterRow;
+    }
+    
     @Override
     public Iterator<Row> iterator() {
         return MejaHelper.createRowIterator(this);
@@ -338,6 +354,10 @@ public class PoiSheet implements Sheet {
         org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(row);
         if (poiRow == null) {
             poiRow = poiSheet.createRow(row);
+            // if autofilter was set to this row, apply it here
+            if (row==autoFilterRow) {
+                setAutoFilterForPoiRow(poiRow);
+            }
         }
         return cache.get(poiRow);
     }

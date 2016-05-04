@@ -54,7 +54,7 @@ public class GenericSheet implements Sheet {
     private final ArrayList<Float> rowHeight = new ArrayList<>(4_000);
     private int freezeRow;
     private int freezeColumn;
-    private int autoFilterRow;
+    private int autoFilterRow = -1;
     private int numberOfColumns;
     private int currentRow = 0;
     private int currentColumn = 0;
@@ -224,10 +224,11 @@ public class GenericSheet implements Sheet {
     }
 
     @Override
-    public void setAutofilterRow(int i) {
+    public void setAutofilterRow(int i) {        
         autoFilterRow = i;
     }
 
+    @Override
     public int getAutoFilterRow() {
         return autoFilterRow;
     }
