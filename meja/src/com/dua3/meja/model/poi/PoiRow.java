@@ -28,32 +28,32 @@ import java.util.Objects;
  *
  * @author axel
  */
-public class PoiRow implements Row {
+public final class PoiRow implements Row {
 
     /**
      *
      */
-    protected final PoiSheet sheet;
+    final PoiSheet sheet;
 
     /**
      *
      */
-    protected final org.apache.poi.ss.usermodel.Row poiRow;
+    final org.apache.poi.ss.usermodel.Row poiRow;
 
     /**
      *
      */
-    protected final int rowNumber;
+    final int rowNumber;
 
     /**
      *
      */
-    protected final List<RectangularRegion> mergedRegions;
+    final List<RectangularRegion> mergedRegions;
 
     /**
      *
      */
-    protected final ArrayList<PoiCell> cells;
+    final ArrayList<PoiCell> cells;
 
     /**
      *

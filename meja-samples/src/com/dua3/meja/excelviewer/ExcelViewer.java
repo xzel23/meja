@@ -389,7 +389,7 @@ public class ExcelViewer extends JFrame {
             oldUri = this.workbook.getUri();
             try {
                 this.workbook.close();
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(ExcelViewer.class.getName()).log(Level.SEVERE, "IOException when closing workbook.", ex);
             }
         } else {

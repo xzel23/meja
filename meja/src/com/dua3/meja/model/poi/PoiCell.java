@@ -49,12 +49,12 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  */
 public final class PoiCell implements Cell {
 
-    protected final PoiWorkbook workbook;
-    protected final PoiRow row;
-    protected final org.apache.poi.ss.usermodel.Cell poiCell;
-    protected int spanX;
-    protected int spanY;
-    protected PoiCell logicalCell;
+    final PoiWorkbook workbook;
+    final PoiRow row;
+    final org.apache.poi.ss.usermodel.Cell poiCell;
+    int spanX;
+    int spanY;
+    PoiCell logicalCell;
 
     /**
      *
