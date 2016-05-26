@@ -20,8 +20,9 @@ package com.dua3.meja.io;
  * @author axel
  */
 public class Csv {
-  final static char DEFAULT_SEPARATOR = ';';
-  final static char DEFAULT_DELIMITER = '"';
+
+    public final static char DEFAULT_SEPARATOR = ';';
+    public final static char DEFAULT_DELIMITER = '"';
 
     private Csv() {
     }
