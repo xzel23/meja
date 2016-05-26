@@ -39,10 +39,10 @@ public class DefaultCellEditor implements CellEditor {
 
     private final CellEditorPane component;
     private Cell cell;
-    private final SheetView sheetView;
+    private final SwingSheetView sheetView;
 
 
-    public DefaultCellEditor(SheetView sheetView) {
+    public DefaultCellEditor(SwingSheetView sheetView) {
         this.sheetView = sheetView;
         component = new CellEditorPane();
         component.setOpaque(true);

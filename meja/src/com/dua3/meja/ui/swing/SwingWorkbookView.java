@@ -27,7 +27,7 @@ import javax.swing.JTabbedPane;
  *
  * @author axel
  */
-public class WorkbookView extends JComponent {
+public class SwingWorkbookView extends JComponent implements com.dua3.meja.ui.WorkbookView {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,7 +37,7 @@ public class WorkbookView extends JComponent {
     /**
      * Construct a new {@code WorkbookView}.
      */
-    public WorkbookView() {
+    public SwingWorkbookView() {
         setLayout(new CardLayout());
     }
 
@@ -45,6 +45,7 @@ public class WorkbookView extends JComponent {
      * Set the workbook.
      * @param workbook the workbook to display
      */
+    @Override
     public void setWorkbook(Workbook workbook) {
         if (content != null) {
             remove(content);
@@ -58,7 +59,7 @@ public class WorkbookView extends JComponent {
             content = new JTabbedPane(JTabbedPane.BOTTOM);
             for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
                 Sheet sheet = workbook.getSheetByNr(i);
-                final SheetView sheetView = new SheetView(sheet);
+                final SwingSheetView sheetView = new SwingSheetView(sheet);
                 content.addTab(sheet.getSheetName(), sheetView);
             }
             content.setSelectedIndex(0);
@@ -71,6 +72,7 @@ public class WorkbookView extends JComponent {
      * Get Workbook.
      * @return the workbook displayed
      */
+    @Override
     public Workbook getWorkbook() {
         return workbook;
     }
@@ -79,6 +81,7 @@ public class WorkbookView extends JComponent {
      * Set editable state.
      * @param editable set to {@code true} to allow editing of the displayed workbook
      */
+    @Override
     public void setEditable(boolean editable) {
         if (content == null) {
             return;
@@ -87,8 +90,8 @@ public class WorkbookView extends JComponent {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
             if (view != null) {
-                assert view instanceof SheetView;
-                ((SheetView) view).setEditable(editable);
+                assert view instanceof SwingSheetView;
+                ((SwingSheetView) view).setEditable(editable);
             }
         }
     }
@@ -98,12 +101,13 @@ public class WorkbookView extends JComponent {
      * @param sheetName name of the sheet
      * @return the view for the requested sheet or {@code null} if not found
      */
-    public SheetView getViewForSheet(String sheetName) {
+    @Override
+    public SwingSheetView getViewForSheet(String sheetName) {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
             if (view != null) {
-                assert view instanceof SheetView;
-                SheetView sheetView = (SheetView) view;
+                assert view instanceof SwingSheetView;
+                SwingSheetView sheetView = (SwingSheetView) view;
                 if (sheetView.getSheet().getSheetName().equals(sheetName)) {
                     return sheetView;
                 }
@@ -113,11 +117,12 @@ public class WorkbookView extends JComponent {
     }
 
     /**
-     * Get the {@link SheetView} that is currently visible.
-     * @return the {@link SheetView} displayed on the visible tab of this view
+     * Get the {@link SwingSheetView} that is currently visible.
+     * @return the {@link SwingSheetView} displayed on the visible tab of this view
      */
-    public SheetView getCurrentView() {
+    @Override
+    public SwingSheetView getCurrentView() {
         Component component = content.getSelectedComponent();
-        return component instanceof SheetView ? (SheetView) component : null;
+        return component instanceof SwingSheetView ? (SwingSheetView) component : null;
     }
 }

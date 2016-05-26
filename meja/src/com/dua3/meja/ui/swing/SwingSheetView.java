@@ -70,7 +70,7 @@ import javax.swing.SwingUtilities;
 /**
  * Swing component for displaying instances of {@link Sheet}.
  */
-public class SheetView extends JPanel {
+public class SwingSheetView extends JPanel implements com.dua3.meja.ui.SheetView {
 
     private static final long serialVersionUID = 1L;
 
@@ -174,7 +174,7 @@ public class SheetView extends JPanel {
      *
      * No sheet is set.
      */
-    public SheetView() {
+    public SwingSheetView() {
         this(null);
     }
 
@@ -184,7 +184,7 @@ public class SheetView extends JPanel {
      * @param sheet the sheet to display
      */
     @SuppressWarnings("LeakingThisInConstructor")
-    public SheetView(Sheet sheet) {
+    public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
 
         renderer = new DefaultCellRenderer();
@@ -239,8 +239,9 @@ public class SheetView extends JPanel {
     /**
      * Check whether editing is enabled.
      *
-     * @return true if this SheetView allows editing.
+     * @return true if this SwingSheetView allows editing.
      */
+    @Override
     public boolean isEditable() {
         return editable;
     }
@@ -250,6 +251,7 @@ public class SheetView extends JPanel {
      *
      * @param editable true to allow editing
      */
+    @Override
     public void setEditable(boolean editable) {
         this.editable = editable;
     }
@@ -259,6 +261,7 @@ public class SheetView extends JPanel {
      *
      * @return true, if a cell is being edited.
      */
+    @Override
     public boolean isEditing() {
         return editing;
     }
@@ -350,6 +353,7 @@ public class SheetView extends JPanel {
     /**
      * Scroll the currently selected cell into view.
      */
+    @Override
     public void scrollToCurrentCell() {
         sheetPane.ensureCellIsVisibile(getCurrentCell().getLogicalCell());
     }
@@ -415,6 +419,7 @@ public class SheetView extends JPanel {
      * @param colNum number of column to be set
      * @return true if the current logical cell changed
      */
+    @Override
     public boolean setCurrentCell(int rowNum, int colNum) {
         Cell oldCell = getCurrentCell().getLogicalCell();
         Rectangle oldRect = getSelectionRect();
@@ -470,6 +475,7 @@ public class SheetView extends JPanel {
      *
      * @param commit true if the content of the edited cell is to be updated
      */
+    @Override
     public void stopEditing(boolean commit) {
         editor.stopEditing(commit);
     }
@@ -523,11 +529,13 @@ public class SheetView extends JPanel {
      *
      * @param sheet the sheet to display
      */
+    @Override
     public final void setSheet(Sheet sheet) {
         this.sheet = sheet;
         updateContent();
     }
 
+    @Override
     public Sheet getSheet() {
         return sheet;
     }
@@ -574,6 +582,7 @@ public class SheetView extends JPanel {
      *
      * @param gridColor the color for th grid
      */
+    @Override
     public void setGridColor(Color gridColor) {
         this.gridColor = gridColor;
     }
@@ -583,6 +592,7 @@ public class SheetView extends JPanel {
      *
      * @return color of grid
      */
+    @Override
     public Color getGridColor() {
         return gridColor;
     }
@@ -699,10 +709,12 @@ public class SheetView extends JPanel {
      *
      * @return current cell
      */
+    @Override
     public Cell getCurrentCell() {
         return sheet.getCurrentCell();
     }
 
+    @Override
     public void updateContent() {
         // scale according to screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
@@ -750,7 +762,7 @@ public class SheetView extends JPanel {
     static enum Actions {
         MOVE_UP {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -760,7 +772,7 @@ public class SheetView extends JPanel {
                     }
                 }, MOVE_DOWN {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -770,7 +782,7 @@ public class SheetView extends JPanel {
                     }
                 }, MOVE_LEFT {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -780,7 +792,7 @@ public class SheetView extends JPanel {
                     }
                 }, MOVE_RIGHT {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -790,7 +802,7 @@ public class SheetView extends JPanel {
                     }
                 }, PAGE_UP {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -800,7 +812,7 @@ public class SheetView extends JPanel {
                     }
                 }, PAGE_DOWN {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -810,7 +822,7 @@ public class SheetView extends JPanel {
                     }
                 }, MOVE_HOME {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -820,7 +832,7 @@ public class SheetView extends JPanel {
                     }
                 }, MOVE_END {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -830,7 +842,7 @@ public class SheetView extends JPanel {
                     }
                 }, START_EDITING {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -840,7 +852,7 @@ public class SheetView extends JPanel {
                     }
                 }, SHOW_SEARCH_DIALOG {
                     @Override
-                    public Action getAction(final SheetView view) {
+                    public Action getAction(final SwingSheetView view) {
                         return new AbstractAction(name()) {
                             @Override
                             public void actionPerformed(ActionEvent e) {
@@ -850,7 +862,7 @@ public class SheetView extends JPanel {
                     }
                 };
 
-        abstract Action getAction(SheetView view);
+        abstract Action getAction(SwingSheetView view);
     }
 
     protected static enum CellDrawMode {

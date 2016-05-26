@@ -16,7 +16,6 @@
 package com.dua3.meja.model;
 
 import com.dua3.meja.io.FileType;
-import com.dua3.meja.ui.swing.WorkbookView;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,7 +31,7 @@ import java.util.Locale;
  * A workbook consists of different sheets which can be accessed by number
  * or name. Use one of the concrete implementations of {@link WorkbookFactory}
  * to read a workbook from disk. Workbooks can be displayed in Swing
- * applications using the {@link WorkbookView} class.
+ * applications using the {@link SwingWorkbookView} class.
  * </p>
  * @author axel
  */
@@ -183,5 +182,5 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param other workbook to copy
      */
     void copy(Workbook other);
-    
+
 }
