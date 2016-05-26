@@ -15,10 +15,12 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.ui.swing.SheetView;
-import com.dua3.meja.ui.swing.WorkbookView;
+import com.dua3.meja.ui.SheetView;
+import com.dua3.meja.ui.WorkbookView;
+import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.meja.util.MejaHelper;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -224,7 +226,7 @@ public class ExcelViewer extends JFrame {
             }
         });
         menuBar.add(mnEdit);
-        
+
         // Options menu
         JMenu mnOptions = new JMenu("Options");
 
@@ -311,17 +313,17 @@ public class ExcelViewer extends JFrame {
     private void freezeAtCurrentCell() {
         final SheetView view = workbookView.getCurrentView();
         if (view != null) {
-            final int i = view.getCurrentRowNum();
-            final int j = view.getCurrentColNum();
-            view.getSheet().splitAt(i, j);
+            Cell cell = view.getCurrentCell();
+            view.getSheet().splitAt(cell.getRowNumber(), cell.getColumnNumber());
             view.updateContent();
         }
     }
 
     private void createContent() {
         setLayout(new BorderLayout());
-        workbookView = new WorkbookView();
-        add(workbookView, BorderLayout.CENTER);
+        SwingWorkbookView view = new SwingWorkbookView();
+        add(view, BorderLayout.CENTER);
+        this.workbookView = view;
     }
 
     /**
