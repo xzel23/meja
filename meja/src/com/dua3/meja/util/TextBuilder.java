@@ -49,7 +49,7 @@ public abstract class TextBuilder<T> {
         String text = new String(sb);
 
         iter.setIndex(begin);
-        while (iter.getIndex() != iter.getEndIndex()) {
+        while (iter.getIndex() != end) {
             int runStart = iter.getRunStart();
             int runLimit = iter.getRunLimit();
 

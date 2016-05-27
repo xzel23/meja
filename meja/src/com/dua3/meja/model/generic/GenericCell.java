@@ -34,6 +34,7 @@ public class GenericCell implements Cell {
     private Object value;
     private GenericCellStyle cellStyle;
     private GenericCell logicalCell;
+    private AttributedString text;
 
     /**
      * A single long storing meta information.
@@ -51,6 +52,7 @@ public class GenericCell implements Cell {
 
     private void setCellType(CellType type) {
         data = (data & 0xffffffffffffff00L) | type.ordinal();
+        text = null;
     }
 
     @Override
@@ -113,6 +115,7 @@ public class GenericCell implements Cell {
         this.logicalCell = this;
         this.cellStyle = cellStyle;
         this.value = null;
+        this.text = null;
 
         setColumnNr(colNumber);
         setHorizontalSpan(1);
@@ -204,20 +207,20 @@ public class GenericCell implements Cell {
 
     @Override
     public AttributedString getAttributedString() {
-        if (getCellType() == CellType.TEXT) {
-            if (value instanceof AttributedString) {
-                return (AttributedString) value;
-            } else if (value instanceof String) {
-                // convert to AttributedString on first access
-                final AttributedString as = new AttributedString((String) value);
-                value = as;
-                return as;
+        if (text==null) {
+            if (getCellType() == CellType.TEXT) {
+                if (value instanceof AttributedString) {
+                    text = (AttributedString) value;
+                } else if (value instanceof String) {
+                    text = new AttributedString((String) value);
+                } else {
+                    throw new IllegalStateException();
+                }
             } else {
-                throw new IllegalStateException();
+                text = new AttributedString(getAsText());
             }
-        } else {
-            return new AttributedString(getAsText());
         }
+        return text;
     }
 
     @Override
@@ -227,6 +230,7 @@ public class GenericCell implements Cell {
         } else {
             setCellType(CellType.DATE);
             this.value = arg;
+            this.text = null;
         }
         return this;
     }
@@ -238,6 +242,7 @@ public class GenericCell implements Cell {
         } else {
             setCellType(CellType.NUMERIC);
             this.value = arg;
+            this.text = null;
         }
         return this;
     }
@@ -249,6 +254,7 @@ public class GenericCell implements Cell {
         } else {
             setCellType(CellType.TEXT);
             this.value = arg;
+            this.text = null;
         }
         return this;
     }
@@ -260,6 +266,7 @@ public class GenericCell implements Cell {
         } else {
             setCellType(CellType.TEXT);
             this.value = arg;
+            this.text = arg;
         }
         return this;
     }
@@ -271,6 +278,7 @@ public class GenericCell implements Cell {
         } else {
             setCellType(CellType.BOOLEAN);
             this.value = arg;
+            this.text = null;
         }
         return this;
     }
@@ -290,6 +298,7 @@ public class GenericCell implements Cell {
     public void clear() {
         setCellType(CellType.BLANK);
         this.value = null;
+        this.text = null;
     }
 
     @Override
@@ -298,6 +307,7 @@ public class GenericCell implements Cell {
             throw new IllegalArgumentException("Cell style does not belong to this workbook.");
         }
         this.cellStyle = (GenericCellStyle) cellStyle;
+        this.text = null;
     }
 
     @Override
@@ -313,12 +323,14 @@ public class GenericCell implements Cell {
     @Override
     public void setCellStyle(String cellStyleName) {
         this.cellStyle = getSheet().getWorkbook().getCellStyle(cellStyleName);
+        this.text = null;
     }
 
     @Override
     public GenericCell setFormula(String value) {
         setCellType(CellType.FORMULA);
         this.value = value;
+        this.text = null;
         return this;
     }
 
