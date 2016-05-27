@@ -125,4 +125,18 @@ public class SwingWorkbookView extends JComponent implements com.dua3.meja.ui.Wo
         Component component = content.getSelectedComponent();
         return component instanceof SwingSheetView ? (SwingSheetView) component : null;
     }
+
+    public SwingSheetView getViewForSheet(Sheet sheet) {
+        for (int i = 0; i < content.getTabCount(); i++) {
+            Component view = content.getComponentAt(i);
+            if (view != null) {
+                assert view instanceof SwingSheetView;
+                SwingSheetView sheetView = (SwingSheetView) view;
+                if (sheet==sheetView.getSheet()) {
+                    return sheetView;
+                }
+            }
+        }
+        return null;
+    }
 }
