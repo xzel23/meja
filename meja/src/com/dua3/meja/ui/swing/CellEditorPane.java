@@ -31,14 +31,12 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.BoxView;
 import javax.swing.text.ComponentView;
-import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Element;
 import javax.swing.text.IconView;
 import javax.swing.text.LabelView;
 import javax.swing.text.ParagraphView;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
@@ -101,34 +99,27 @@ public class CellEditorPane extends JTextPane {
      * @param scale the scale to apply
      * @param eval set to true to display formula results instead of the formula itself
      */
-    public void setContent(Cell cell, float scale, boolean eval) {
+    public void setContent(Cell cell, float scale, boolean eval) {        
         CellStyle cellStyle = cell.getCellStyle();
         final Font font = cellStyle.getFont();
         setFont(getAwtFont(font, scale));
         setBackground(cellStyle.getFillBgColor());
         setForeground(font.getColor());
 
-        final StyledDocument doc;
+        final AttributedString text;
         if (!eval && cell.getCellType() == CellType.FORMULA) {
-            AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
-            doc = new DefaultStyledDocument();
-            try {
-                doc.insertString(0, "="+cell.getFormula(), dfltAttr);
-            } catch (BadLocationException ex) {
-                Logger.getLogger(CellEditorPane.class.getName()).log(Level.SEVERE, "Exception", ex);
-            }
+            text = new AttributedString("="+cell.getFormula());
         } else {
-            // get attributed text first because this will update the
-            // result type for formulas which is required for HAlign.ALIGN_AUTOMATIC
-            final AttributedString text = cell.getAttributedString();
-            AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
-            doc = AttributedStringHelper.toStyledDocument(text, dfltAttr, scale);
+            text = cell.getAttributedString();
         }
-        setDocument(doc);
+        
+        AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
+        setDocument(AttributedStringHelper.toStyledDocument(text, dfltAttr, scale));
 
         this.vAlign = cellStyle.getVAlign();
 
         revalidate();
+        repaint();
     }
 
     public SimpleAttributeSet getCellAttributes(final CellStyle cellStyle, Cell cell) throws IllegalStateException {
