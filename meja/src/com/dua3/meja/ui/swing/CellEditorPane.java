@@ -109,12 +109,11 @@ public class CellEditorPane extends JTextPane {
         setForeground(font.getColor());
 
         final StyledDocument doc;
-        if (cell.getCellType() == CellType.FORMULA && !eval) {
+        if (!eval && cell.getCellType() == CellType.FORMULA) {
             AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
             doc = new DefaultStyledDocument();
             try {
-                doc.insertString(0, "=", dfltAttr);
-                doc.insertString(1, cell.getFormula(), dfltAttr);
+                doc.insertString(0, "="+cell.getFormula(), dfltAttr);
             } catch (BadLocationException ex) {
                 Logger.getLogger(CellEditorPane.class.getName()).log(Level.SEVERE, "Exception", ex);
             }
