@@ -1105,7 +1105,7 @@ public class SwingSheetView extends JPanel implements com.dua3.meja.ui.SheetView
                 for (int i = 1; i <= getNumberOfRows(); i *= 10) {
                     sb.append('0');
                 }
-                painter.setText(sb.toString());
+                painter.setText(new String(sb));
                 final Dimension labelSize = painter.getPreferredSize();
                 labelWidth = labelSize.width;
                 labelHeight = labelSize.height;
@@ -1263,7 +1263,6 @@ public class SwingSheetView extends JPanel implements com.dua3.meja.ui.SheetView
                 Lock readLock = sheet.readLock();
                 readLock.lock();
                 try {
-
                     Graphics2D g2d = (Graphics2D) g;
 
                     final int x = getXMinInViewCoordinates();

@@ -67,7 +67,7 @@ public class MejaHelper {
             sb.insert(0, (char) ('A' + j % 26 - 1));
             j /= 26;
         }
-        return sb.toString();
+        return new String(sb);
     }
 
     /**

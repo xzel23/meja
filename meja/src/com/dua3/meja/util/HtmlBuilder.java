@@ -110,7 +110,7 @@ public class HtmlBuilder extends TextBuilder<String> {
 
     @Override
     protected String get() {
-        return buffer.toString();
+        return new String(buffer);
     }
 
 

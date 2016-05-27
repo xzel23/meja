@@ -46,7 +46,7 @@ public abstract class TextBuilder<T> {
         for (int i=begin; i<end;i++,iter.next()) {
             sb.append(iter.current());
         }
-        String text = sb.toString();
+        String text = new String(sb);
 
         iter.setIndex(begin);
         while (iter.getIndex() != iter.getEndIndex()) {

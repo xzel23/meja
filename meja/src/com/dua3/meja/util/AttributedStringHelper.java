@@ -49,7 +49,7 @@ public class AttributedStringHelper {
             sb.append(iter.current());
             iter.next();
         }
-        return sb.toString();
+        return new String(sb);
     }
 
     /**
