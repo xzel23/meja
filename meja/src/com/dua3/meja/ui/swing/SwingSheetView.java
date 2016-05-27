@@ -102,7 +102,12 @@ public class SwingSheetView extends JPanel implements com.dua3.meja.ui.SheetView
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
-    private float scaleDpi = 1;
+    private float scaleDpi = 1f;
+
+    /**
+     * The scaling factor used to draw the sheet according to current zoom.
+     */
+    private float scale = 1f;
 
     /**
      * Array with column positions (x-axis) in pixels.
@@ -491,7 +496,7 @@ public class SwingSheetView extends JPanel implements com.dua3.meja.ui.SheetView
     }
 
     float getScale() {
-        return sheet == null ? 1.0f : sheet.getZoom() * scaleDpi;
+        return scale;
     }
 
     /**
@@ -726,12 +731,14 @@ public class SwingSheetView extends JPanel implements com.dua3.meja.ui.SheetView
             sheetHeightInPoints = 0;
             rowPos = new float[]{0};
             columnPos = new float[]{0};
+            scale = 1f;
             return;
         }
 
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {
+            scale = sheet.getZoom() * scaleDpi;
             sheetHeightInPoints = 0;
             rowPos = new float[2 + sheet.getLastRowNum()];
             rowPos[0] = 0;
