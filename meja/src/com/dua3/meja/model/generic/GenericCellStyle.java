@@ -194,7 +194,7 @@ public class GenericCellStyle implements CellStyle {
     }
 
     /**
-     * Format date for oputput.
+     * Format date for output.
      * @param date the date to format
      * @return text representation of {@code date}
      */
@@ -211,12 +211,12 @@ public class GenericCellStyle implements CellStyle {
                 dateFormatter = SimpleDateFormat.getDateInstance();
             }
         }
-        
+
         return dateFormatter.format(date);
     }
 
     /**
-     * Format number for oputput.
+     * Format number for output.
      * @param n the number to format
      * @return text representation of {@code n}
      */
@@ -231,7 +231,7 @@ public class GenericCellStyle implements CellStyle {
                 numberFormatter.setGroupingUsed(false);
             }
         }
-        
+
         return numberFormatter.format(n);
     }
 
