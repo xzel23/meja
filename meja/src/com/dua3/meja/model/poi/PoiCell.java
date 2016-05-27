@@ -102,7 +102,7 @@ public final class PoiCell implements Cell {
         return row.getSheet();
     }
 
-    private CellType translateCellType(int poiType) {
+    private static CellType translateCellType(int poiType) {
         switch (poiType) {
             case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
                 return CellType.BLANK;
@@ -372,7 +372,7 @@ public final class PoiCell implements Cell {
         if (poiType==org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
             poiType = poiCell.getCachedFormulaResultType();
         }
-        return (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC) 
+        return (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC)
                 && DateUtil.isCellDateFormatted(poiCell);
     }
 
