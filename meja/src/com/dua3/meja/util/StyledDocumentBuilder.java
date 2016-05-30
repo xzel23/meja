@@ -30,9 +30,11 @@ import javax.swing.text.StyledDocument;
 /**
  * A {@link TextBuilder} implementation for translating {@code AttributedString}
  * to {@code StyledDocument}.
+ *
  * @author Axel Howind (axel@dua3.com)
  */
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
+    private static final Logger LOGGER = Logger.getLogger(StyledDocumentBuilder.class.getName());
 
     private final StyledDocument doc = new DefaultStyledDocument();
     private final float scale;
@@ -49,7 +51,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     @Override
     protected void append(String text, Map<AttributedCharacterIterator.Attribute, Object> attributes) {
         SimpleAttributeSet as = new SimpleAttributeSet();
-        for (Map.Entry<AttributedCharacterIterator.Attribute, Object> entry: attributes.entrySet()) {
+        for (Map.Entry<AttributedCharacterIterator.Attribute, Object> entry : attributes.entrySet()) {
             AttributedCharacterIterator.Attribute key = entry.getKey();
             Object value = entry.getValue();
 
@@ -60,13 +62,13 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
             if (key.equals(java.awt.font.TextAttribute.FAMILY)) {
                 StyleConstants.setFontFamily(as, value.toString());
             } else if (key.equals(java.awt.font.TextAttribute.SIZE)) {
-                StyleConstants.setFontSize(as, Math.round(scale*((Number)value).intValue()));
+                StyleConstants.setFontSize(as, Math.round(scale * ((Number) value).intValue()));
             } else if (key.equals(java.awt.font.TextAttribute.FOREGROUND)) {
                 StyleConstants.setForeground(as, (Color) value);
             } else if (key.equals(java.awt.font.TextAttribute.BACKGROUND)) {
                 StyleConstants.setBackground(as, (Color) value);
             } else if (key.equals(java.awt.font.TextAttribute.WEIGHT)) {
-                StyleConstants.setBold(as, ((Number) value).floatValue()>TextAttribute.WEIGHT_MEDIUM);
+                StyleConstants.setBold(as, ((Number) value).floatValue() > TextAttribute.WEIGHT_MEDIUM);
             } else if (key.equals(java.awt.font.TextAttribute.POSTURE)) {
                 StyleConstants.setItalic(as, value.equals(java.awt.font.TextAttribute.POSTURE_OBLIQUE));
             } else if (key.equals(java.awt.font.TextAttribute.UNDERLINE)) {
@@ -79,7 +81,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         try {
             doc.insertString(doc.getLength(), text, as);
         } catch (BadLocationException ex) {
-            Logger.getLogger(StyledDocumentBuilder.class.getName()).log(Level.SEVERE, "Exception in StyledDocumentBuilder.append()", ex);
+            LOGGER.log(Level.SEVERE, "Exception in StyledDocumentBuilder.append()", ex);
         }
     }
 

@@ -45,6 +45,8 @@ public class PoiWorkbookFactory extends WorkbookFactory {
 
     private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
 
+    private static final Logger LOGGER = Logger.getLogger(PoiWorkbookFactory.class.getName());
+
     /**
      *
      * @return
@@ -59,25 +61,25 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     @Override
     public Workbook open(File file) throws IOException {
         Locale locale = Locale.getDefault();
-        
+
         FileType type = FileType.forFile(file);
-        
+
         if (type==FileType.XLS||type==FileType.XLSX) {
             // Read Excel files directly using POI methods
             // Do not use the create(File) method to avoid exception when trying to
             // save the workbook again to the same file.
             try (InputStream in = new FileInputStream(file)) {
                 return open(in, Locale.getDefault(), file.toURI());
-            }            
+            }
         } else if (type==null) {
             // if type could not be determined, try to open as CSV
             type = FileType.CSV;
         }
-        
+
         if (!type.isSupported(OpenMode.READ)) {
             throw new IllegalArgumentException("Reading is not supported for files of type '"+type.getDescription()+"'.");
         }
-        
+
         return type.getReader().read(PoiXssfWorkbook.class, locale, file);
     }
 
@@ -158,7 +160,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
             try {
                 uri = url.toURI();
             } catch (URISyntaxException ex) {
-                Logger.getLogger(PoiWorkbookFactory.class.getName()).log(Level.WARNING, "Could not get URI from URL.", ex);
+                LOGGER.log(Level.WARNING, "Could not get URI from URL.", ex);
                 uri = null;
             }
             return open(in, locale, uri);

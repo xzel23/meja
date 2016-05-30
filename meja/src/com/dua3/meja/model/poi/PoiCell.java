@@ -48,6 +48,26 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  * @author axel
  */
 public final class PoiCell implements Cell {
+    private static final Logger LOGGER = Logger.getLogger(PoiCell.class.getName());
+
+    private static CellType translateCellType(int poiType) {
+        switch (poiType) {
+            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
+                return CellType.BLANK;
+            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN:
+                return CellType.BOOLEAN;
+            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR:
+                return CellType.ERROR;
+            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC:
+                return CellType.NUMERIC;
+            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
+                return CellType.TEXT;
+            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA:
+                return CellType.FORMULA;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
 
     final PoiWorkbook workbook;
     final PoiRow row;
@@ -102,24 +122,6 @@ public final class PoiCell implements Cell {
         return row.getSheet();
     }
 
-    private static CellType translateCellType(int poiType) {
-        switch (poiType) {
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
-                return CellType.BLANK;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN:
-                return CellType.BOOLEAN;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR:
-                return CellType.ERROR;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC:
-                return CellType.NUMERIC;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
-                return CellType.TEXT;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA:
-                return CellType.FORMULA;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
 
     @Override
     public PoiRow getRow() {
@@ -349,7 +351,7 @@ public final class PoiCell implements Cell {
             if (!isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is not date formatted
-                Logger.getLogger(PoiCell.class.getName()).warning("Cell is not date formatted!");
+                LOGGER.warning("Cell is not date formatted!");
             }
         }
         updateRow();
@@ -385,7 +387,7 @@ public final class PoiCell implements Cell {
             if (isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is date formatted, but a plain number is stored
-                Logger.getLogger(PoiCell.class.getName()).warning("Cell is date formatted, but plain number written!");
+                LOGGER.warning("Cell is date formatted, but plain number written!");
             }
         }
         updateRow();

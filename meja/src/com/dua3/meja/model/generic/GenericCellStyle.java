@@ -39,6 +39,8 @@ public class GenericCellStyle implements CellStyle {
 
     private static final BorderStyle defaultBorderStyle = new BorderStyle(0.0f, Color.BLACK);
 
+    private static final Logger LOGGER = Logger.getLogger(GenericCellStyle.class.getName());
+
     private final GenericWorkbook workbook;
 
     private Font font;
@@ -207,7 +209,7 @@ public class GenericCellStyle implements CellStyle {
                     dateFormatter = new SimpleDateFormat(dataFormat, workbook.getLocale());
                 }
             } catch (Exception e) {
-                Logger.getLogger(GenericCellStyle.class.getName()).log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
+                LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
                 dateFormatter = SimpleDateFormat.getDateInstance();
             }
         }
@@ -226,7 +228,7 @@ public class GenericCellStyle implements CellStyle {
                 String fmt = dataFormat==null||dataFormat.isEmpty() ? "0.##########": dataFormat;
                 numberFormatter = new DecimalFormat(fmt);
             } catch (Exception e) {
-                Logger.getLogger(GenericCellStyle.class.getName()).log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
+                LOGGER.log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
                 numberFormatter = DecimalFormat.getInstance(workbook.getLocale());
                 numberFormatter.setGroupingUsed(false);
             }

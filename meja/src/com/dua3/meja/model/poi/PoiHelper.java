@@ -25,6 +25,7 @@ import java.util.logging.Logger;
  * @author Axel Howind (axel@dua3.com)
  */
 public class PoiHelper {
+    private static final Logger LOGGER = Logger.getLogger(PoiHelper.class.getName());
 
     public static HAlign poiToHAlign(final short alignment) {
         switch (alignment) {
@@ -71,7 +72,7 @@ public class PoiHelper {
             case org.apache.poi.ss.usermodel.CellStyle.VERTICAL_JUSTIFY:
                 return VAlign.ALIGN_JUSTIFY;
             default:
-                Logger.getLogger(PoiCellStyle.class.getName()).log(Level.WARNING,
+                LOGGER.log(Level.WARNING,
                         "Unknown value for vertical algnment: {0}", alignment);
                 return VAlign.ALIGN_MIDDLE;
         }
