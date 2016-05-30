@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import javax.swing.table.TableModel;
 
 /**
  * A generic implementation of {@link Sheet}.
@@ -42,7 +41,7 @@ public class GenericSheet implements Sheet {
      * The aspect ratio to use when adjusting cell widths.
      */
     private static final float DEFAULT_FONT_ASPECT_RATIO = 0.52f;
-    
+
     private final GenericWorkbook workbook;
     private final String sheetName;
     private final Locale locale;
@@ -66,11 +65,6 @@ public class GenericSheet implements Sheet {
         this.sheetName = sheetName;
         this.locale = locale;
         this.numberOfColumns = 0;
-    }
-
-    @Override
-    public TableModel getTableModel() {
-        return MejaHelper.getTableModel(this);
     }
 
     @Override
@@ -191,7 +185,7 @@ public class GenericSheet implements Sheet {
             Cell cell = row.getCellIfExists(j);
             if (cell!=null && cell.getCellType()!=CellType.BLANK) {
                 float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
-                float aspect = DEFAULT_FONT_ASPECT_RATIO;            
+                float aspect = DEFAULT_FONT_ASPECT_RATIO;
                 int chars = cell.getAsText().length();
                 colWidth = Math.max(colWidth, fontSize*chars*aspect);
             }
@@ -202,29 +196,29 @@ public class GenericSheet implements Sheet {
     @Override
     public void autoSizeColumns() {
         final int n = getNumberOfColumns();
-        
+
         float[] colWidth = new float[n];
         Arrays.fill(colWidth, 0f);
-        
+
         for (Row row: this) {
             for (int j=0;j<n;j++) {
                 Cell cell = row.getCellIfExists(j);
                 if (cell!=null && cell.getCellType()!=CellType.BLANK) {
                     float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
-                    float aspect = DEFAULT_FONT_ASPECT_RATIO;            
+                    float aspect = DEFAULT_FONT_ASPECT_RATIO;
                     int chars = cell.getAsText().length();
                     colWidth[j] = Math.max(colWidth[j], fontSize*chars*aspect);
                 }
             }
         }
-        
+
         for (int j=0;j<n;j++) {
             setColumnWidth(j, colWidth[j]);
         }
     }
 
     @Override
-    public void setAutofilterRow(int i) {        
+    public void setAutofilterRow(int i) {
         autoFilterRow = i;
     }
 

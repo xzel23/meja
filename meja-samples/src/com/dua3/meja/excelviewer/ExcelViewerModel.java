@@ -25,11 +25,6 @@ public class ExcelViewerModel {
     private final String appName;
     private final int year;
     private final String author;
-    private ExcelViewer viewer;
-
-    void setViewer(ExcelViewer viewer) {
-        this.viewer = viewer;
-    }
 
     void openWorkbook(File file) throws IOException {
         setWorkbook(MejaHelper.openWorkbook(file));
@@ -76,7 +71,6 @@ public class ExcelViewerModel {
         this.appName = appName;
         this.year = year;
         this.author = author;
-        this.viewer = null;
     }
 
     /**
@@ -112,13 +106,10 @@ public class ExcelViewerModel {
     protected void setZoom(float zoom) {
         for (Sheet sheet : workbook) {
             sheet.setZoom(zoom);
-            final SheetView view = viewer.getViewForSheet(sheet);
-            view.updateContent();
         }
     }
 
-    protected void freezeAtCurrentCell() {
-        final SheetView view = viewer.getCurrentView();
+    protected void freezeAtCurrentCell(SheetView view) {
         if (view != null) {
             Cell cell = view.getCurrentCell();
             view.getSheet().splitAt(cell.getRowNumber(), cell.getColumnNumber());
@@ -129,8 +120,7 @@ public class ExcelViewerModel {
     /**
      * Adjust all column sizes.
      */
-    protected void adjustColumns() {
-        final SheetView view = viewer.getCurrentView();
+    protected void adjustColumns(SheetView view) {
         if (view != null) {
             view.getSheet().autoSizeColumns();
             view.updateContent();
@@ -143,7 +133,6 @@ public class ExcelViewerModel {
      * @param workbook the workbook
      */
     public void setWorkbook(Workbook workbook) {
-        URI oldUri = getUri(this.workbook);
         if (this.workbook != null) {
             try {
                 this.workbook.close();
@@ -153,9 +142,6 @@ public class ExcelViewerModel {
         }
         this.workbook = workbook;
         LOGGER.log(Level.INFO, "Workbook changed to {0}.", getUri(this.workbook));
-
-        URI newUri = getUri(this.workbook);
-        viewer.workbookChanged(oldUri, newUri);
     }
 
     private URI getUri(Workbook workbook) {

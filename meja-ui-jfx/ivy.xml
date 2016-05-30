@@ -1,0 +1,14 @@
+<ivy-module version="2.0">
+    <info organisation="com.dua3" module="meja-ui-jfx"/>
+
+    <configurations>
+        <conf name="compile" description="Required to compile application"/>
+        <conf name="runtime" description="Additional run-time dependencies" extends="compile"/>
+        <conf name="test"    description="Required for test only" extends="runtime"/>
+    </configurations>
+
+    <dependencies>
+        <dependency org="org.controlsfx" name="controlsfx" rev="8.40.10"/>
+    </dependencies>
+
+</ivy-module>

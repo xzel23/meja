@@ -30,8 +30,7 @@ import java.util.Locale;
  * <p>
  * A workbook consists of different sheets which can be accessed by number
  * or name. Use one of the concrete implementations of {@link WorkbookFactory}
- * to read a workbook from disk. Workbooks can be displayed in Swing
- * applications using the {@link SwingWorkbookView} class.
+ * to read a workbook from disk.
  * </p>
  * @author axel
  */

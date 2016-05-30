@@ -18,8 +18,7 @@ package com.dua3.meja.excelviewer;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.ui.swing.SwingWorkbookView;
-import com.dua3.meja.util.MejaHelper;
+import com.dua3.meja.util.MejaSwingHelper;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -39,6 +38,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
+import swing.SwingWorkbookView;
 
 /**
  * A sample Swing application that uses the Meja library to load and display
@@ -67,7 +67,6 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
 
         ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME,YEAR, AUTHOR);
         SwingExcelViewer viewer = new SwingExcelViewer(model);
-        model.setViewer(viewer);
 
         if (args.length > 1) {
             model.showInfo();
@@ -106,6 +105,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
 
     /**
      * Constructor.
+     * @param model
      */
     public SwingExcelViewer(ExcelViewerModel model) {
         super(APPLICATION_NAME);
@@ -175,7 +175,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                model.adjustColumns();
+                model.adjustColumns(getCurrentView());
             }
         });
         menuBar.add(mnEdit);
@@ -213,7 +213,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
             mnZoom.add(new AbstractAction(zoom + "%") {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    model.setZoom(zoom / 100.0f);
+                    setZoom(zoom / 100.0f);
                 }
             });
         }
@@ -224,7 +224,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         mnOptions.add(new AbstractAction("Freeze") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                model.freezeAtCurrentCell();
+                model.freezeAtCurrentCell(getCurrentView());
             }
         });
 
@@ -277,7 +277,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
      */
     private void showOpenDialog() {
         try {
-            final Workbook newWorkbook = MejaHelper.showDialogAndOpenWorkbook(this, model.getCurrentDir());
+            final Workbook newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this, model.getCurrentDir());
             model.setWorkbook(newWorkbook);
         } catch (IOException ex) {
             Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
@@ -291,7 +291,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
     private void showSaveAsDialog() {
         try {
             Workbook workbook = model.getWorkbook();
-            final URI uri = MejaHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
+            final URI uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
             if (uri != null) {
                 workbook.setUri(uri);
                 updateTitle(uri);
@@ -333,7 +333,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         URI uri = workbook.getUri();
         try {
             if (uri == null) {
-                uri = MejaHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
+                uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
                 if (uri == null) {
                     // user cancelled the dialog
                     return;
@@ -365,6 +365,10 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
     @Override
     public SheetView getViewForSheet(Sheet sheet) {
         return workbookView.getViewForSheet(sheet);
+    }
+
+    private void setZoom(float f) {
+        model.setZoom(f);
     }
 
 }

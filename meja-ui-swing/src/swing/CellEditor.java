@@ -13,25 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.ui.swing;
+package swing;
 
 import com.dua3.meja.model.Cell;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import javax.swing.JComponent;
 
 /**
- * Interface for cell renderers.
+ *
+ * @author Axel Howind (axel@dua3.com)
  */
-public interface CellRenderer {
+public interface CellEditor {
 
     /**
-     * Render cell content.
-     * @param g the {@link Graphics2D} to use for rendering
-     * @param cell the cell whose content shall be rendered
-     * @param cellRect the rectangle taken up by the cell
-     * @param clipRect the clipping rectangle
-     * @param scale the scla to apply when rendering
+     * Check editing state.
+     * @return true if CellEditor is currently used to edit a cell
      */
-    void render(Graphics2D g, Cell cell, Rectangle cellRect, Rectangle clipRect, float scale);
+    boolean isEditing();
+
+    /**
+     * Start editing.
+     * @param cell the cell to be edited
+     * @return the component that is used for editing
+     */
+    JComponent startEditing(Cell cell);
+
+    /**
+     * Stop editing.
+     * @param commit if true, changes will be applied to the edited cell
+     */
+    void stopEditing(boolean commit);
 
 }

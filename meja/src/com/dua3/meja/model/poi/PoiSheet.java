@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import javax.swing.table.TableModel;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -116,7 +115,7 @@ public class PoiSheet implements Sheet {
             final RectangularRegion rr = new RectangularRegion(r.getFirstRow(), r.getLastRow(), r.getFirstColumn(), r.getLastColumn());
             mergedRegions.add(rr);
         }
-        
+
         // set current row and column
         if (poiSheet instanceof XSSFSheet) {
             String sCellRef = ((XSSFSheet) poiSheet).getActiveCell();
@@ -126,11 +125,11 @@ public class PoiSheet implements Sheet {
                 this.currentColumn = Math.max(getFirstColNum(), Math.min(getLastColNum(), cellRef.getCol()));
             } else {
                 this.currentRow = poiSheet.getTopRow();
-                this.currentColumn = poiSheet.getLeftCol();            
+                this.currentColumn = poiSheet.getLeftCol();
             }
         } else if (poiSheet instanceof HSSFSheet) {
             this.currentRow = poiSheet.getTopRow();
-            this.currentColumn = poiSheet.getLeftCol();            
+            this.currentColumn = poiSheet.getLeftCol();
         }
     }
 
@@ -220,11 +219,6 @@ public class PoiSheet implements Sheet {
     }
 
     @Override
-    public TableModel getTableModel() {
-        return MejaHelper.getTableModel(this);
-    }
-
-    @Override
     public void splitAt(int i, int j) {
         poiSheet.createFreezePane(j, i);
     }
@@ -280,7 +274,7 @@ public class PoiSheet implements Sheet {
     public int getAutoFilterRow() {
         return autoFilterRow;
     }
-    
+
     @Override
     public Iterator<Row> iterator() {
         return MejaHelper.createRowIterator(this);
@@ -424,19 +418,19 @@ public class PoiSheet implements Sheet {
     @Override
     public void clear() {
         // determine sheet number
-        int sheetNr = workbook.poiWorkbook.getSheetIndex(poiSheet);        
+        int sheetNr = workbook.poiWorkbook.getSheetIndex(poiSheet);
         if (sheetNr>=workbook.getNumberOfSheets()) {
             /*
              * This should never happen as this sheet is part of the workbook.
              */
             throw new IllegalStateException();
         }
-        
+
         //
         String sheetName = getSheetName();
         workbook.poiWorkbook.removeSheetAt(sheetNr);
         poiSheet = workbook.poiWorkbook.createSheet(sheetName);
-        workbook.poiWorkbook.setSheetOrder(sheetName, sheetNr);        
+        workbook.poiWorkbook.setSheetOrder(sheetName, sheetNr);
         cache.clear();
         update();
     }

@@ -20,7 +20,6 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
-import javax.swing.table.TableModel;
 
 /**
  * An interface representing a single sheet of a workbook.
@@ -28,13 +27,6 @@ import javax.swing.table.TableModel;
  * @author axel
  */
 public interface Sheet extends Iterable<Row>, ReadWriteLock {
-
-    /**
-     * Get table model suitable for displaying sheet data in a JTable.
-     *
-     * @return table model
-     */
-    TableModel getTableModel();
 
     /**
      * Get name of sheet.
@@ -175,7 +167,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @return row number for auto filter or -1 if not set
      */
     int getAutoFilterRow();
-    
+
     /**
      * Get number format for this sheet.
      * <p>
@@ -230,20 +222,20 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @return the current cell
      */
     Cell getCurrentCell();
-    
+
     /**
      * Set the current cell.
      * @param cell the cell to set  as current
      */
     void setCurrentCell(Cell cell);
-    
+
     /**
      * Set the current cell.
      * @param i the row of the cell to set
      * @param j the column of the cell to set
-     */ 
+     */
     void setCurrentCell(int i, int j);
-    
+
     /**
      * Remove all content from sheet.
      */

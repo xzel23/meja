@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.ui.swing;
+package swing;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
