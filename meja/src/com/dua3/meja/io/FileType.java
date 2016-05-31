@@ -77,6 +77,10 @@ public enum FileType {
         return extensions[0];
     }
 
+    public String[] getExtensions() {
+        return extensions;
+    }
+
     /**
      * Get instance of {@link WorkbookFactory} that matches this format.
      * @return instance of {@link WorkbookFactory}
@@ -232,5 +236,6 @@ public enum FileType {
         public WorkbookFactory getFactory() {
             return fileType.factory;
         }
+
     }
 }
