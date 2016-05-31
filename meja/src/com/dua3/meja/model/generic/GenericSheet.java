@@ -21,6 +21,8 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -41,6 +43,8 @@ public class GenericSheet implements Sheet {
      * The aspect ratio to use when adjusting cell widths.
      */
     private static final float DEFAULT_FONT_ASPECT_RATIO = 0.52f;
+
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private final GenericWorkbook workbook;
     private final String sheetName;
@@ -119,6 +123,7 @@ public class GenericSheet implements Sheet {
             }
             columnWidth.add(width);
         }
+        pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
     }
 
     @Override
@@ -138,6 +143,7 @@ public class GenericSheet implements Sheet {
             }
             rowHeight.add(height);
         }
+        pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
     }
 
     @Override
@@ -166,6 +172,7 @@ public class GenericSheet implements Sheet {
     public void splitAt(int i, int j) {
         freezeRow = i;
         freezeColumn = j;
+        pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
     }
 
     @Override
@@ -268,7 +275,11 @@ public class GenericSheet implements Sheet {
             throw new IllegalArgumentException("Invalid zoom factor: " + zoom);
         }
 
-        this.zoom = zoom;
+        if (zoom != this.zoom) {
+            float oldZoom = zoom;
+            this.zoom = zoom;
+            pcs.firePropertyChange(PROPERTY_ZOOM, oldZoom, zoom);
+        }
     }
 
     @Override
@@ -346,6 +357,22 @@ public class GenericSheet implements Sheet {
     @Override
     public void clear() {
         copy(new GenericSheet(workbook, sheetName, locale));
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(propertyName, listener);
     }
 
 }

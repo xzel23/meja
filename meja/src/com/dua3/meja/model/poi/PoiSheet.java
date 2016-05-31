@@ -21,6 +21,8 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -41,6 +43,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
  * @author axel
  */
 public class PoiSheet implements Sheet {
+
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     protected final PoiWorkbook workbook;
     protected org.apache.poi.ss.usermodel.Sheet poiSheet;
@@ -186,6 +190,7 @@ public class PoiSheet implements Sheet {
     @Override
     public void setColumnWidth(int j, float width) {
         poiSheet.setColumnWidth(j, pointsToPoiColumnWidth(width));
+        pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
     }
 
     @Override
@@ -201,6 +206,7 @@ public class PoiSheet implements Sheet {
             poiRow = poiSheet.createRow(i);
         }
         poiRow.setHeightInPoints(height);
+        pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
     }
 
     @SuppressWarnings("rawtypes")
@@ -243,6 +249,7 @@ public class PoiSheet implements Sheet {
     @Override
     public void autoSizeColumn(int j) {
         poiSheet.autoSizeColumn(j);
+        pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
     }
 
     @Override
@@ -250,6 +257,7 @@ public class PoiSheet implements Sheet {
         for (int j=0;j<getNumberOfColumns();j++) {
             poiSheet.autoSizeColumn(j);
         }
+        pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
     }
 
     @Override
@@ -336,10 +344,14 @@ public class PoiSheet implements Sheet {
             throw new IllegalArgumentException("Invalid zoom factor: " + zoom);
         }
 
-        this.zoom = zoom;
-        // translate zoom factor into fraction (using permille), should be at least 1
-        int pmZoom = Math.max(1, Math.round(zoom * 1000));
-        poiSheet.setZoom(pmZoom, 1000);
+        if (zoom != this.zoom) {
+            float oldZoom = this.zoom;
+            this.zoom = zoom;
+            // translate zoom factor into fraction (using permille), should be at least 1
+            int pmZoom = Math.max(1, Math.round(zoom * 1000));
+            poiSheet.setZoom(pmZoom, 1000);
+            pcs.firePropertyChange(Sheet.PROPERTY_ZOOM, oldZoom, zoom);
+        }
     }
 
     @Override
@@ -434,4 +446,21 @@ public class PoiSheet implements Sheet {
         cache.clear();
         update();
     }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(propertyName, listener);
+    }
+
 }

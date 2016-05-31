@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import com.dua3.meja.util.RectangularRegion;
+import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -27,6 +28,9 @@ import java.util.concurrent.locks.ReadWriteLock;
  * @author axel
  */
 public interface Sheet extends Iterable<Row>, ReadWriteLock {
+
+    static final String PROPERTY_ZOOM = "zoom";
+    static final String PROPERTY_LAYOUT = "layout";
 
     /**
      * Get name of sheet.
@@ -240,5 +244,13 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * Remove all content from sheet.
      */
     void clear();
+
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+    public void removePropertyChangeListener(PropertyChangeListener listener);
+
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
 }
