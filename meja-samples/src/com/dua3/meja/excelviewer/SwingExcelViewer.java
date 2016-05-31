@@ -277,8 +277,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
      */
     private void showOpenDialog() {
         try {
+            final URI oldUri = model.getUri();
             final Workbook newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this, model.getCurrentDir());
             model.setWorkbook(newWorkbook);
+            final URI newUri = model.getUri();
+            workbookChanged(oldUri, newUri);
         } catch (IOException ex) {
             Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -333,13 +336,13 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         URI uri = workbook.getUri();
         try {
             if (uri == null) {
-                uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
-                if (uri == null) {
+                final URI newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
+                if (newUri == null) {
                     // user cancelled the dialog
                     return;
                 }
+                workbookChanged(uri, newUri);
             } else {
-                File file = new File(uri);
                 model.saveWorkbook(uri);
             }
         } catch (IOException ex) {

@@ -30,6 +30,10 @@ public class ExcelViewerModel {
         setWorkbook(MejaHelper.openWorkbook(file));
     }
 
+    URI getUri() {
+        return workbook==null ? null : workbook.getUri();
+    }
+
     enum MessageType {
         ERROR,
         INFO;
