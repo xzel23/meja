@@ -23,6 +23,7 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.MejaHelper;
 import java.awt.BasicStroke;
@@ -44,6 +45,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.EnumSet;
 import java.util.concurrent.locks.Lock;
 import javax.swing.AbstractAction;
@@ -70,7 +73,7 @@ import javax.swing.SwingUtilities;
 /**
  * Swing component for displaying instances of {@link Sheet}.
  */
-public class SwingSheetView extends JPanel implements com.dua3.meja.ui.SheetView {
+public class SwingSheetView extends JPanel implements SheetView, PropertyChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -536,7 +539,13 @@ public class SwingSheetView extends JPanel implements com.dua3.meja.ui.SheetView
      */
     @Override
     public final void setSheet(Sheet sheet) {
+        if (this.sheet!=null) {
+            this.sheet.removePropertyChangeListener(this);
+        }
+
         this.sheet = sheet;
+
+        sheet.addPropertyChangeListener(Sheet.PROPERTY_ZOOM, this);
         updateContent();
     }
 
@@ -760,6 +769,19 @@ public class SwingSheetView extends JPanel implements com.dua3.meja.ui.SheetView
 
         revalidate();
         repaint();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        switch (evt.getPropertyName()) {
+            case Sheet.PROPERTY_ZOOM:
+            case Sheet.PROPERTY_LAYOUT:
+                updateContent();
+                break;
+            default:
+                // nop
+                break;
+        }
     }
 
     /**
