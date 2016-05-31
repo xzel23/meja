@@ -23,6 +23,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javax.swing.JOptionPane;
 
 /**
@@ -52,7 +53,7 @@ public class JfxExcelViewer extends Application {
         final Menu mFile = new Menu("File");
 
         final MenuItem miOpen = new MenuItem("Open...");
-        miOpen.setOnAction((e) -> showOpenDialog());
+        miOpen.setOnAction((e) -> showOpenDialog(primaryStage));
 
         final MenuItem miSave = new MenuItem("Save");
         miSave.setOnAction((e) -> saveWorkbook());
@@ -116,8 +117,17 @@ public class JfxExcelViewer extends Application {
         Platform.exit();
     }
 
-    private void showOpenDialog() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void showOpenDialog(Window parent) {
+        try {
+            final URI oldUri = model.getUri();
+            final Workbook newWorkbook = MejaJfxHelper.showDialogAndOpenWorkbook(parent, model.getCurrentDir());
+            model.setWorkbook(newWorkbook);
+            final URI newUri = model.getUri();
+            workbookChanged(oldUri, newUri);
+        } catch (IOException ex) {
+            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
+            new Alert(AlertType.ERROR, "Error loading workbook: " + ex.getMessage()).showAndWait();
+        }
     }
 
      private void saveWorkbook() {
@@ -157,7 +167,7 @@ public class JfxExcelViewer extends Application {
     }
 
     private void setZoom(float f) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        model.setZoom(f);
     }
 
     private void showAboutDialog() {
@@ -167,5 +177,9 @@ public class JfxExcelViewer extends Application {
         alert.setContentText(model.getLicenseText());
         alert.setResizable(true);
         alert.show();
+    }
+
+    private void workbookChanged(URI oldUri, URI newUri) {
+        // TODO
     }
 }

@@ -27,11 +27,14 @@ import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -100,23 +103,28 @@ public class MejaJfxHelper {
      * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException if a workbook was selected but could not be loaded
      */
-    public static Workbook showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
-        JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
+    public static Workbook showDialogAndOpenWorkbook(Window parent, File file) throws IOException {
+        FileChooser fc = new FileChooser();
+        fc.setInitialDirectory(file == null || file.isDirectory() ? file : file.getParentFile());
 
-        for (FileFilter filter : FileType.getFileFilters(OpenMode.READ)) {
-            jfc.addChoosableFileFilter(filter);
-        }
+        fc.getExtensionFilters().addAll(
+                Arrays.stream(FileType.values())
+                .filter(ft -> ft.isSupported(OpenMode.READ))
+                .map(ft -> new FileChooser.ExtensionFilter(ft.getDescription(), ft.getExtensions()))
+                .toArray((size) -> new FileChooser.ExtensionFilter[size]));
 
-        int rc = jfc.showOpenDialog(parent);
+        file = fc.showOpenDialog(parent);
 
         Workbook workbook = null;
-        if (rc == JFileChooser.APPROVE_OPTION) {
-            file = jfc.getSelectedFile();
-            FileFilter filter = jfc.getFileFilter();
+        if (file != null) {
+            FileChooser.ExtensionFilter ef = fc.getSelectedExtensionFilter();
+            Optional<FileType> type = Arrays.stream(FileType.values())
+                    .filter((ft)->ft.getDescription().equals(ef.getDescription()) && Arrays.asList(ft.getExtensions()).equals(ef.getExtensions()))
+                    .findFirst();
 
-            if (filter instanceof FileType.FileFilter) {
+            if (type.isPresent()) {
                 // load workbook using the factory from the used filter definition
-                final WorkbookFactory factory = ((FileType.FileFilter) filter).getFactory();
+                final WorkbookFactory factory = type.get().getFactory();
                 workbook = factory.open(file);
             } else {
                 // another filter was used (ie. "all files")
