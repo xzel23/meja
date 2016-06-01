@@ -44,6 +44,7 @@ import java.util.logging.Logger;
  * @author Axel Howind (axel@dua3.com)
  */
 public class MejaHelper {
+    private static final Logger LOGGER = Logger.getLogger(MejaHelper.class.getName());
 
     /**
      * Translate column number to column name.
@@ -168,7 +169,6 @@ public class MejaHelper {
             throw new IOException("Could not load '" + file.getPath() + "'.", ex);
         }
     }
-    private static final Logger LOGGER = Logger.getLogger(MejaHelper.class.getName());
 
     /**
      * Extract file extension.

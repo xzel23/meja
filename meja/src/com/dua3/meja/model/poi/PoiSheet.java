@@ -122,7 +122,7 @@ public class PoiSheet implements Sheet {
 
         // set current row and column
         if (poiSheet instanceof XSSFSheet) {
-            CellAddress cellRef = ((XSSFSheet) poiSheet).getActiveCell();
+            CellAddress cellRef = poiSheet.getActiveCell();
             if (cellRef!=null) {
                 this.currentRow = Math.max(getFirstRowNum(), Math.min(getLastRowNum(), cellRef.getRow()));
                 this.currentColumn = Math.max(getFirstColNum(), Math.min(getLastColNum(), cellRef.getColumn()));
@@ -446,18 +446,22 @@ public class PoiSheet implements Sheet {
         update();
     }
 
+    @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(listener);
     }
 
+    @Override
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.addPropertyChangeListener(propertyName, listener);
     }
 
+    @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
     }
 
+    @Override
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(propertyName, listener);
     }

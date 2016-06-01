@@ -29,6 +29,9 @@ import java.util.Date;
  * @author Axel Howind (axel@dua3.com)
  */
 public class GenericCell implements Cell {
+    public static final int MAX_HORIZONTAL_SPAN = 0xefff;
+    public static final int MAX_VERTICAL_SPAN = 0xefffff;
+    public static final int MAX_COLUMN_NUMBER = 0xefffff;
 
     private final GenericRow row;
     private Object value;
@@ -45,9 +48,28 @@ public class GenericCell implements Cell {
      */
     private long data;
 
-    public static final int MAX_HORIZONTAL_SPAN = 0xefff;
-    public static final int MAX_VERTICAL_SPAN = 0xefffff;
-    public static final int MAX_COLUMN_NUMBER = 0xefffff;
+    /**
+     * Construct a new {@code GenericCell}.
+     *
+     * @param row the row this cell belongs to
+     * @param colNumber the column number
+     * @param cellStyle the cell style to use
+     */
+    public GenericCell(GenericRow row, int colNumber, GenericCellStyle cellStyle) {
+        if (colNumber > Short.MAX_VALUE) {
+            throw new IllegalArgumentException("Maximum column number is " + Short.MAX_VALUE + ".");
+        }
+        
+        this.row = row;
+        this.logicalCell = this;
+        this.cellStyle = cellStyle;
+        this.value = null;
+        
+        setColumnNr(colNumber);
+        setHorizontalSpan(1);
+        setVerticalSpan(1);
+        setCellType(CellType.BLANK);
+    }
 
     private void setCellType(CellType type) {
         data = (data & 0xffffffffffffff00L) | type.ordinal();
@@ -97,28 +119,6 @@ public class GenericCell implements Cell {
         return (int) ((data & 0xffff000000000000L) >> 48);
     }
 
-    /**
-     * Construct a new {@code GenericCell}.
-     *
-     * @param row the row this cell belongs to
-     * @param colNumber the column number
-     * @param cellStyle the cell style to use
-     */
-    public GenericCell(GenericRow row, int colNumber, GenericCellStyle cellStyle) {
-        if (colNumber > Short.MAX_VALUE) {
-            throw new IllegalArgumentException("Maximum column number is " + Short.MAX_VALUE + ".");
-        }
-
-        this.row = row;
-        this.logicalCell = this;
-        this.cellStyle = cellStyle;
-        this.value = null;
-
-        setColumnNr(colNumber);
-        setHorizontalSpan(1);
-        setVerticalSpan(1);
-        setCellType(CellType.BLANK);
-    }
 
     @Override
     public boolean getBoolean() {

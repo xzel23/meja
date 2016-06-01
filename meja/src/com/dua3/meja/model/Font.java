@@ -29,6 +29,36 @@ public interface Font {
      * instances.
      */
     public static class FontDef {
+        /**
+         * Create FontDef instance with only the color attribute set.
+         * @param col the color
+         * @return new FontDef instance
+         */
+        public static FontDef color(Color col) {
+            FontDef fd = new FontDef();
+            fd.setColor(col);
+            return fd;
+        }
+        /**
+         * Create FontDef instance with only the font family attribute set.
+         * @param family the font family
+         * @return new FontDef instance
+         */
+        public static FontDef family(String family) {
+            FontDef fd = new FontDef();
+            fd.setFamily(family);
+            return fd;
+        }
+        /**
+         * Create FontDef instance with only the font size set.
+         * @param size the font size in points
+         * @return new FontDef instance
+         */
+        public static FontDef size(Float size) {
+            FontDef fd = new FontDef();
+            fd.setSize(size);
+            return fd;
+        }
         private Color color;
         private Float size;
         private String family;
@@ -40,38 +70,6 @@ public interface Font {
         public FontDef() {
         }
 
-        /**
-         * Create FontDef instance with only the color attribute set.
-         * @param col the color
-         * @return new FontDef instance
-         */
-        public static FontDef color(Color col) {
-            FontDef fd = new FontDef();
-            fd.setColor(col);
-            return fd;
-        }
-        
-        /**
-         * Create FontDef instance with only the font family attribute set.
-         * @param family the font family
-         * @return new FontDef instance
-         */
-        public static FontDef family(String family) {
-            FontDef fd = new FontDef();
-            fd.setFamily(family);
-            return fd;
-        }
-        
-        /**
-         * Create FontDef instance with only the font size set.
-         * @param size the font size in points
-         * @return new FontDef instance
-         */
-        public static FontDef size(Float size) {
-            FontDef fd = new FontDef();
-            fd.setSize(size);
-            return fd;
-        }
         
         /**
          * @return the color

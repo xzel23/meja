@@ -461,7 +461,7 @@ public abstract class PoiWorkbook implements Workbook {
          * @return
          */
         public PoiFont getFont(short idx) {
-            return getFont(((HSSFWorkbook) poiWorkbook).getFontAt(idx));
+            return getFont(poiWorkbook.getFontAt(idx));
         }
 
         /**

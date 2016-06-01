@@ -37,6 +37,7 @@ import java.util.Map;
  * Generic implementation of {@link Workbook}.
  */
 public class GenericWorkbook implements Workbook {
+    private static final URI DEFAULT_URI = URI.create("");
 
     final List<GenericSheet> sheets = new ArrayList<>();
     final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
@@ -44,7 +45,6 @@ public class GenericWorkbook implements Workbook {
     private final GenericCellStyle defaultCellStyle;
     private URI uri;
     
-    private static final URI DEFAULT_URI = URI.create("");
 
     public GenericWorkbook(Locale locale) {
         this(locale, DEFAULT_URI);
