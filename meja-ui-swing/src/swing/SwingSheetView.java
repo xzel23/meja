@@ -545,7 +545,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         this.sheet = sheet;
 
-        sheet.addPropertyChangeListener(Sheet.PROPERTY_ZOOM, this);
+        if (this.sheet!=null) {
+            sheet.addPropertyChangeListener(Sheet.PROPERTY_ZOOM, this);
+        }
+        
         updateContent();
     }
 
