@@ -107,7 +107,7 @@ public class MejaJfxHelper {
     public static Workbook showDialogAndOpenWorkbook(Window parent, File file) throws IOException {
         FileChooser fc = new FileChooser();
         fc.setInitialDirectory(file == null || file.isDirectory() ? file : file.getParentFile());
-
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("All files", "*.*"));
         fc.getExtensionFilters().addAll(getExtensionFilters(OpenMode.READ));
 
         file = fc.showOpenDialog(parent);
