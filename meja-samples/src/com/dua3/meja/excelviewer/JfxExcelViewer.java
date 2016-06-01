@@ -5,7 +5,7 @@ package com.dua3.meja.excelviewer;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.util.MejaJfxHelper;
+import com.dua3.meja.ui.javafx.MejaJfxHelper;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;

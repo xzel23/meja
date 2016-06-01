@@ -18,7 +18,7 @@ package com.dua3.meja.excelviewer;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.util.MejaSwingHelper;
+import com.dua3.meja.ui.swing.MejaSwingHelper;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -38,7 +38,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
-import swing.SwingWorkbookView;
+import com.dua3.meja.ui.swing.SwingWorkbookView;
 
 /**
  * A sample Swing application that uses the Meja library to load and display

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.dua3.meja.util;
+package com.dua3.meja.ui.javafx;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -23,6 +23,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.meja.util.MejaHelper;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
