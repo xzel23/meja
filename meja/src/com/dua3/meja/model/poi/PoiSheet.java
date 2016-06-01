@@ -34,8 +34,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
@@ -122,11 +122,10 @@ public class PoiSheet implements Sheet {
 
         // set current row and column
         if (poiSheet instanceof XSSFSheet) {
-            String sCellRef = ((XSSFSheet) poiSheet).getActiveCell();
-            if (sCellRef!=null) {
-                CellReference cellRef = new CellReference(sCellRef);
+            CellAddress cellRef = ((XSSFSheet) poiSheet).getActiveCell();
+            if (cellRef!=null) {
                 this.currentRow = Math.max(getFirstRowNum(), Math.min(getLastRowNum(), cellRef.getRow()));
-                this.currentColumn = Math.max(getFirstColNum(), Math.min(getLastColNum(), cellRef.getCol()));
+                this.currentColumn = Math.max(getFirstColNum(), Math.min(getLastColNum(), cellRef.getColumn()));
             } else {
                 this.currentRow = poiSheet.getTopRow();
                 this.currentColumn = poiSheet.getLeftCol();

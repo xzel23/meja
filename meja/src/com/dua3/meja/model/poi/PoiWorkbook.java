@@ -567,7 +567,7 @@ public abstract class PoiWorkbook implements Workbook {
                 return defaultColor;
             }
 
-            byte[] rgb = ((org.apache.poi.xssf.usermodel.XSSFColor) poiColor).getARgb();
+            byte[] rgb = ((org.apache.poi.xssf.usermodel.XSSFColor) poiColor).getARGB();
 
             if (rgb == null) {
                 return defaultColor;
