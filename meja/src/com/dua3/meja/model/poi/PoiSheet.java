@@ -346,9 +346,9 @@ public class PoiSheet implements Sheet {
         if (zoom != this.zoom) {
             float oldZoom = this.zoom;
             this.zoom = zoom;
-            // translate zoom factor into fraction (using permille), should be at least 1
-            int pmZoom = Math.max(1, Math.round(zoom * 1000));
-            poiSheet.setZoom(pmZoom, 1000);
+            // translate zoom factor into percent
+            int pmZoom = Math.max(1, Math.round(zoom * 100));
+            poiSheet.setZoom(pmZoom);
             pcs.firePropertyChange(Sheet.PROPERTY_ZOOM, oldZoom, zoom);
         }
     }
