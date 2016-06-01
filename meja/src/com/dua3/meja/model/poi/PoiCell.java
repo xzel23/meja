@@ -76,11 +76,6 @@ public final class PoiCell implements Cell {
     int spanY;
     PoiCell logicalCell;
 
-    /**
-     *
-     * @param row
-     * @param cell
-     */
     public PoiCell(PoiRow row, org.apache.poi.ss.usermodel.Cell cell) {
         this.workbook = row.getWorkbook();
         this.row = row;

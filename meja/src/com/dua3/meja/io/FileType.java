@@ -182,7 +182,6 @@ public enum FileType {
     /**
      * A FileFilter class to be used as a drop-in file filter for dialogs.
      *
-     * <p>
      * This class can be used in all cases where one of the three standard Java
      * file filter implementations is required, namely:
      * <ul>
@@ -190,7 +189,6 @@ public enum FileType {
      * <li>{@link java.io.FilenameFilter java.io.FilenameFilter}</li>
      * <li>{@link javax.swing.filechooser.FileFilter javax.swing.filechooser.FileFilter}</li>
      * </ul>
-     * </p>
      */
     public static class FileFilter extends javax.swing.filechooser.FileFilter
             implements java.io.FileFilter, java.io.FilenameFilter {
