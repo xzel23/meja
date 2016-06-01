@@ -18,8 +18,6 @@ package com.dua3.meja.ui.javafx;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
@@ -28,16 +26,27 @@ import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableListBase;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
+import org.controlsfx.control.spreadsheet.Grid;
+import org.controlsfx.control.spreadsheet.GridChange;
+import org.controlsfx.control.spreadsheet.SpreadsheetCell;
+import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
 /**
  * Helper class.
@@ -52,48 +61,8 @@ public class MejaJfxHelper {
      * @param sheet the sheet to create a model for
      * @return table model instance of {@code JTableModel} for the sheet
      */
-    @SuppressWarnings("serial")
-    public static TableModel getTableModel(final Sheet sheet) {
-        return new AbstractTableModel() {
-
-            @Override
-            public int getRowCount() {
-                return sheet.getNumberOfRows();
-            }
-
-            @Override
-            public int getColumnCount() {
-                return sheet.getNumberOfColumns();
-            }
-
-            @Override
-            public String getColumnName(int columnIndex) {
-                return MejaHelper.getColumnName(columnIndex);
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return Cell.class;
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return false;
-            }
-
-            @Override
-            public Object getValueAt(int i, int j) {
-                Row row = sheet.getRow(i);
-                Cell cell = row == null ? null : row.getCell(j);
-                return cell;
-            }
-
-            @Override
-            public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        };
-
+    public static Grid getGrid(final Sheet sheet) {
+        return new GridImpl(sheet);
     }
 
     /**
@@ -186,6 +155,114 @@ public class MejaJfxHelper {
     }
 
     private MejaJfxHelper() {
+    }
+
+    private static class GridImpl implements Grid {
+
+        private final Sheet sheet;
+
+        private final Map<EventType<? extends GridChange>, List<EventHandler<? extends GridChange>>> eventHandlers = new HashMap<>();
+
+        private final ObservableList<String> rowHeaders = new ObservableListBase<String>() {
+            @Override
+            public String get(int index) {
+                return Integer.toString(index+1);
+            }
+
+            @Override
+            public int size() {
+                return sheet.getNumberOfRows();
+            }
+        };
+
+        private final ObservableList<String> columnHeaders = new ObservableListBase<String>() {
+            @Override
+            public String get(int index) {
+                return MejaHelper.getColumnName(index);
+            }
+
+            @Override
+            public int size() {
+                return sheet.getNumberOfColumns();
+            }
+        };
+
+        public GridImpl(Sheet sheet) {
+            this.sheet = sheet;
+        }
+
+        @Override
+        public int getRowCount() {
+            return sheet.getNumberOfRows();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return sheet.getNumberOfColumns();
+        }
+
+        @Override
+        public ObservableList<ObservableList<SpreadsheetCell>> getRows() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void setCellValue(int row, int column, Object value) {
+            sheet.getRow(row).getCell(column).set(value);
+        }
+
+        @Override
+        public SpreadsheetView.SpanType getSpanType(SpreadsheetView spv, int row, int column) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public double getRowHeight(int row) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public boolean isRowResizable(int row) {
+            return true;
+        }
+
+        @Override
+        public ObservableList<String> getRowHeaders() {
+            return rowHeaders;
+        }
+
+        @Override
+        public ObservableList<String> getColumnHeaders() {
+            return columnHeaders;
+        }
+
+        @Override
+        public void spanRow(int count, int rowIndex, int colIndex) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void spanColumn(int count, int rowIndex, int colIndex) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void setRows(Collection<ObservableList<SpreadsheetCell>> rows) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public <E extends GridChange> void addEventHandler(EventType<E> eventType, EventHandler<E> eventHandler) {
+            eventHandlers.getOrDefault(eventType, new ArrayList<>()).add(eventHandler);
+        }
+
+        @Override
+        public <E extends GridChange> void removeEventHandler(EventType<E> eventType, EventHandler<E> eventHandler) {
+            List<EventHandler<? extends GridChange>> handlers = eventHandlers.get(eventType);
+            if (handlers!=null) {
+                handlers.remove(eventHandler);
+            }
+        }
     }
 
 }
