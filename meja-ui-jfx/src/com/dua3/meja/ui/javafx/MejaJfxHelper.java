@@ -108,11 +108,7 @@ public class MejaJfxHelper {
         FileChooser fc = new FileChooser();
         fc.setInitialDirectory(file == null || file.isDirectory() ? file : file.getParentFile());
 
-        fc.getExtensionFilters().addAll(
-                Arrays.stream(FileType.values())
-                .filter(ft -> ft.isSupported(OpenMode.READ))
-                .map(ft -> new FileChooser.ExtensionFilter(ft.getDescription(), ft.getExtensions()))
-                .toArray((size) -> new FileChooser.ExtensionFilter[size]));
+        fc.getExtensionFilters().addAll(getExtensionFilters(OpenMode.READ));
 
         file = fc.showOpenDialog(parent);
 
@@ -133,6 +129,13 @@ public class MejaJfxHelper {
             }
         }
         return workbook;
+    }
+
+    public static FileChooser.ExtensionFilter[] getExtensionFilters(OpenMode mode) {
+        return Arrays.stream(FileType.values())
+                .filter(ft -> ft.isSupported(mode))
+                .map(ft -> new FileChooser.ExtensionFilter(ft.getDescription(), ft.getExtensions()))
+                .toArray((size) -> new FileChooser.ExtensionFilter[size]);
     }
 
     /**

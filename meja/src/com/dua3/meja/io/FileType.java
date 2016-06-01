@@ -18,7 +18,6 @@ package com.dua3.meja.io;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
-import com.dua3.meja.util.MejaHelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,21 +31,20 @@ public enum FileType {
     /**
      * File type for CSV files.
      */
-    CSV("CSV-Data", GenericWorkbookFactory.instance(), CsvWorkbookReader.instance(), CsvWorkbookWriter.instance(), ".csv", ".txt"),
+    CSV("CSV-Data", GenericWorkbookFactory.instance(), CsvWorkbookReader.instance(), CsvWorkbookWriter.instance(), "*.csv", "*.txt"),
 
     /**
      * File type for the old Excel format that uses the '.xls' extension.
      */
-    XLS("Excel 97-2003", PoiWorkbookFactory.instance(), XlsWorkbookReader.instance(), XlsWorkbookWriter.instance(), ".xls"),
+    XLS("Excel 97-2003", PoiWorkbookFactory.instance(), XlsWorkbookReader.instance(), XlsWorkbookWriter.instance(), "*.xls"),
 
     /**
      * File type for the new XML-based Excel format that uses the '.xlsx' extension.
      */
-    XLSX("Excel 2007", PoiWorkbookFactory.instance(), XlsxWorkbookReader.instance(), XlsxWorkbookWriter.instance(), ".xlsx", ".xlsm");
+    XLSX("Excel 2007", PoiWorkbookFactory.instance(), XlsxWorkbookReader.instance(), XlsxWorkbookWriter.instance(), "*.xlsx", "*.xlsm");
 
     private final String description;
     private final WorkbookFactory factory;
-    private final FileFilter filter;
     private final WorkbookWriter writer;
     private final WorkbookReader reader;
     private final String[] extensions;
@@ -54,7 +52,6 @@ public enum FileType {
     private FileType(String description, WorkbookFactory factory, WorkbookReader reader, WorkbookWriter writer, String... extensions) {
         this.description = description;
         this.factory = factory;
-        this.filter = new FileFilter(this);
         this.writer = writer;
         this.reader = reader;
         this.extensions = extensions;
@@ -73,7 +70,7 @@ public enum FileType {
      * Get this format's default extension.
      * @return this format's default extension
      */
-    public String getExtension() {
+    public String getDefaultExtension() {
         return extensions[0];
     }
 
@@ -106,14 +103,6 @@ public enum FileType {
     }
 
     /**
-     * Get filter for this type.
-     * @return the file filter
-     */
-    public FileFilter getFileFilter() {
-        return filter;
-    }
-
-    /**
      * Tries to determine the FileType instance matching the given file.
      *
      * @param file the file to determine the FileType for
@@ -121,10 +110,10 @@ public enum FileType {
      * found
      */
     public static FileType forFile(File file) {
-        String extension = MejaHelper.getFileExtension(file);
+        String fileNameLower = file.getName().toLowerCase();
         for (FileType type : values()) {
             for (String ext : type.extensions) {
-                if (extension.equalsIgnoreCase(ext)) {
+                if (fileNameLower.endsWith(ext.substring(1).toLowerCase())) {
                     return type;
                 }
             }
@@ -150,21 +139,21 @@ public enum FileType {
      * @param mode the {@link OpenMode}
      * @return list of filters that support {@code mode}
      */
-    public static List<FileFilter> getFileFilters(OpenMode mode) {
-        List<FileFilter> list = new ArrayList<>();
+    public static List<FileType> getFileTypes(OpenMode mode) {
+        List<FileType> list = new ArrayList<>();
         for (final FileType type : values()) {
             if (type.isSupported(mode)) {
-                list.add(type.getFileFilter());
+                list.add(type);
             }
         }
         return list;
     }
 
     /**
-     * Check if the requested operation is supported ny this filter.
+     * Check if the requested operation is supported by this filter.
      *
      * @param modeRequested the {@link OpenMode}
-     * @return true if operation is suppurted
+     * @return true if operation is supported
      */
     public boolean isSupported(OpenMode modeRequested) {
         OpenMode mode = getOpenMode();
@@ -179,61 +168,4 @@ public enum FileType {
         }
     }
 
-    /**
-     * A FileFilter class to be used as a drop-in file filter for dialogs.
-     *
-     * This class can be used in all cases where one of the three standard Java
-     * file filter implementations is required, namely:
-     * <ul>
-     * <li>{@link java.io.FileFilter java.io.FileFilter}</li>
-     * <li>{@link java.io.FilenameFilter java.io.FilenameFilter}</li>
-     * <li>{@link javax.swing.filechooser.FileFilter javax.swing.filechooser.FileFilter}</li>
-     * </ul>
-     */
-    public static class FileFilter extends javax.swing.filechooser.FileFilter
-            implements java.io.FileFilter, java.io.FilenameFilter {
-
-        private final FileType fileType;
-
-        private FileFilter(FileType fileType) {
-            this.fileType = fileType;
-        }
-
-        @Override
-        public boolean accept(File pathname) {
-            for (String ext : fileType.extensions) {
-                if (pathname.getName().toLowerCase().endsWith(ext.toLowerCase())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public boolean accept(File dir, String name) {
-            name = name.toLowerCase();
-            for (String ext : fileType.extensions) {
-                if (name.endsWith(ext.toLowerCase())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public String getDescription() {
-            return fileType.getDescription();
-        }
-
-        /**
-         * Get factory to use with this filter.
-         *
-         * @return an instance of {@link WorkbookFactory} to use this filter
-         * with
-         */
-        public WorkbookFactory getFactory() {
-            return fileType.factory;
-        }
-
-    }
 }

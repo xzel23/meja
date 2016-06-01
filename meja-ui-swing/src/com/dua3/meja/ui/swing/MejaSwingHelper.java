@@ -103,7 +103,7 @@ public class MejaSwingHelper {
     public static Workbook showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
-        for (FileFilter filter : FileType.getFileFilters(OpenMode.READ)) {
+        for (FileFilter filter : SwingFileFilter.getFilters(OpenMode.READ)) {
             jfc.addChoosableFileFilter(filter);
         }
 
@@ -114,9 +114,9 @@ public class MejaSwingHelper {
             file = jfc.getSelectedFile();
             FileFilter filter = jfc.getFileFilter();
 
-            if (filter instanceof FileType.FileFilter) {
+            if (filter instanceof SwingFileFilter) {
                 // load workbook using the factory from the used filter definition
-                final WorkbookFactory factory = ((FileType.FileFilter) filter).getFactory();
+                final WorkbookFactory factory = ((SwingFileFilter) filter).getFactory();
                 workbook = factory.open(file);
             } else {
                 // another filter was used (ie. "all files")
