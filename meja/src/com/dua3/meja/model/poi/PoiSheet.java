@@ -18,7 +18,6 @@ package com.dua3.meja.model.poi;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
-import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 import java.beans.PropertyChangeListener;
@@ -26,6 +25,7 @@ import java.beans.PropertyChangeSupport;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +36,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
@@ -56,13 +57,9 @@ public class PoiSheet implements Sheet {
     private float zoom = 1.0f;
     private int autoFilterRow = -1;
 
-    private final Cache<org.apache.poi.ss.usermodel.Row, PoiRow> cache = new Cache<org.apache.poi.ss.usermodel.Row, PoiRow>(Cache.Type.WEAK_KEYS) {
-        @Override
-        protected PoiRow create(org.apache.poi.ss.usermodel.Row poiRow) {
-            return new PoiRow(PoiSheet.this, poiRow);
-        }
-    };
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+    private PoiRow[] rows = new PoiRow[8000];
 
     protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
         this.workbook = workbook;
@@ -247,16 +244,42 @@ public class PoiSheet implements Sheet {
 
     @Override
     public void autoSizeColumn(int j) {
+        // for streaming implementation, only tracked columns can be autosized!
+        if (poiSheet instanceof SXSSFSheet) {
+            SXSSFSheet sxssfSheet = (SXSSFSheet) poiSheet;
+            if (!sxssfSheet.isColumnTrackedForAutoSizing(j)) {
+                return;
+            }
+        }
+        
         poiSheet.autoSizeColumn(j);
         pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
     }
 
     @Override
     public void autoSizeColumns() {
-        for (int j=0;j<getNumberOfColumns();j++) {
-            poiSheet.autoSizeColumn(j);
+        boolean layoutChanged = false;
+        
+        // for streaming implementation, only tracked columns can be autosized!
+        if (poiSheet instanceof SXSSFSheet) {
+            SXSSFSheet sxssfSheet = (SXSSFSheet) poiSheet;
+            for (int j=0;j<getNumberOfColumns();j++) {
+                if (sxssfSheet.isColumnTrackedForAutoSizing(j)) {
+                    poiSheet.autoSizeColumn(j);
+                    layoutChanged = true;
+                }
+            }
+        } else {
+            for (int j=0;j<getNumberOfColumns();j++) {
+                poiSheet.autoSizeColumn(j);
+                layoutChanged = true;
+            }            
         }
-        pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
+
+        // inform listeners
+        if (layoutChanged) {
+            pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
+        }
     }
 
     @Override
@@ -354,16 +377,23 @@ public class PoiSheet implements Sheet {
     }
 
     @Override
-    public PoiRow getRow(int row) {
-        org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(row);
-        if (poiRow == null) {
-            poiRow = poiSheet.createRow(row);
-            // if autofilter was set to this row, apply it here
-            if (row==autoFilterRow) {
-                setAutoFilterForPoiRow(poiRow);
-            }
+    public PoiRow getRow(int i) {
+        if (i>=rows.length) {
+            rows = Arrays.copyOf(rows, Math.max(2*rows.length, i+1));
         }
-        return cache.get(poiRow);
+        
+        PoiRow row = rows[i];
+        
+        if (row==null) {
+            org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
+            if (poiRow==null) {
+                poiRow = poiSheet.createRow(i);
+            }
+            row = new PoiRow(this, poiRow);
+            rows[i] = row;
+        }
+        
+        return row;
     }
 
     @Override
@@ -442,7 +472,7 @@ public class PoiSheet implements Sheet {
         workbook.poiWorkbook.removeSheetAt(sheetNr);
         poiSheet = workbook.poiWorkbook.createSheet(sheetName);
         workbook.poiWorkbook.setSheetOrder(sheetName, sheetNr);
-        cache.clear();
+
         update();
     }
 
