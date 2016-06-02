@@ -28,10 +28,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -62,7 +60,8 @@ public class PoiSheet implements Sheet {
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    private Map<Integer,WeakReference<PoiRow>> rows = new HashMap<>();
+    @SuppressWarnings("rawtypes")
+    private WeakReference[] rows = new WeakReference[8000];
 
     protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
         this.workbook = workbook;
@@ -381,7 +380,19 @@ public class PoiSheet implements Sheet {
 
     @Override
     public PoiRow getRow(int i) {
-        WeakReference<PoiRow> rowRef = rows.get(i);
+        if (i>=rows.length) {
+            // remove dead references
+            for (int idx=0; idx<rows.length; idx++) {
+                if (rows[idx]!=null && rows[idx].get()==null) {
+                    rows[idx] = null;
+                }
+            }
+            // ensure array size
+            rows = Arrays.copyOf(rows, Math.max(rows.length*2, i+1));
+        }
+        
+        @SuppressWarnings("unchecked")
+        WeakReference<PoiRow> rowRef = rows[i];
         PoiRow row = rowRef == null ? null : rowRef.get();
         
         if (row==null) {
@@ -390,7 +401,7 @@ public class PoiSheet implements Sheet {
                 poiRow = poiSheet.createRow(i);
             }
             row = new PoiRow(this, poiRow);
-            rows.put(i, new WeakReference<>(row));
+            rows[i] = new WeakReference<>(row);
         }
         
         return row;
