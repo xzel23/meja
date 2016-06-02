@@ -22,13 +22,16 @@ import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -59,7 +62,7 @@ public class PoiSheet implements Sheet {
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    private PoiRow[] rows = new PoiRow[8000];
+    private Map<Integer,WeakReference<PoiRow>> rows = new HashMap<>();
 
     protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
         this.workbook = workbook;
@@ -378,11 +381,8 @@ public class PoiSheet implements Sheet {
 
     @Override
     public PoiRow getRow(int i) {
-        if (i>=rows.length) {
-            rows = Arrays.copyOf(rows, Math.max(2*rows.length, i+1));
-        }
-        
-        PoiRow row = rows[i];
+        WeakReference<PoiRow> rowRef = rows.get(i);
+        PoiRow row = rowRef == null ? null : rowRef.get();
         
         if (row==null) {
             org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
@@ -390,7 +390,7 @@ public class PoiSheet implements Sheet {
                 poiRow = poiSheet.createRow(i);
             }
             row = new PoiRow(this, poiRow);
-            rows[i] = row;
+            rows.put(i, new WeakReference<>(row));
         }
         
         return row;
