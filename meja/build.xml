@@ -108,22 +108,22 @@
     -->
 
     <!-- target "dist-files" to create meja-sources.jar and meja-javadoc.jar -->    
-    <target name="dist-files" depends="package-sources, package-doc" />
+    <target name="dist-files" depends="default, package-sources, package-doc" />
     
     <!-- include sources in Jar -->
-    <target description="bundle sources in a jar" name="package-sources">
+    <target depends="default" description="bundle sources in a jar" name="package-sources">
         <echo message="Packaging source JAR"/>
         <jar basedir="src" destfile="dist/${ant.project.name}-sources.jar"/>
     </target>
 
     <!-- include javadoc in Jar -->
-    <target depends="-javadoc-build" description="bundle javadoc in a jar" name="package-doc">
+    <target depends="default, -javadoc-build" description="bundle javadoc in a jar" name="package-doc">
         <echo message="Packaging javadoc JAR"/>
         <jar basedir="dist/javadoc" destfile="dist/${ant.project.name}-javadoc.jar"/>
     </target>
 
     <!-- Create a Jar containing Meja and all dependencies -->
-    <target description="bundle with dependencies" name="package-with-dependencies">
+    <target depends="default" description="bundle with dependencies" name="package-with-dependencies">
 
         <echo message="Packaging ${application.title} into a single JAR with dependencies"/>
 
@@ -146,7 +146,7 @@
     </target>
     
     <!-- Create a Jar containing just the dependencies -->
-    <target description="bundle only dependencies" name="package-dependencies">
+    <target depends="default" description="bundle only dependencies" name="package-dependencies">
 
         <echo message="Packaging ${application.title} dependencies into a single JAR"/>
 
