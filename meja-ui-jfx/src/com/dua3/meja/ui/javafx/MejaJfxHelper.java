@@ -18,6 +18,7 @@ package com.dua3.meja.ui.javafx;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
@@ -213,12 +214,29 @@ public class MejaJfxHelper {
 
         @Override
         public SpreadsheetView.SpanType getSpanType(SpreadsheetView spv, int row, int column) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            Cell cell = sheet.getCell(row, column);
+            Cell logicalCell = cell.getLogicalCell();
+
+            if (cell==logicalCell) {
+                return cell.getVerticalSpan() == 1
+                        ? SpreadsheetView.SpanType.NORMAL_CELL
+                        : SpreadsheetView.SpanType.ROW_VISIBLE;
+            }
+
+            if (logicalCell.getRowNumber()==row) {
+                return SpreadsheetView.SpanType.COLUMN_SPAN_INVISIBLE;
+            }
+
+            if (logicalCell.getColumnNumber()==column) {
+                return SpreadsheetView.SpanType.ROW_SPAN_INVISIBLE;
+            }
+
+            return SpreadsheetView.SpanType.BOTH_INVISIBLE;
         }
 
         @Override
         public double getRowHeight(int row) {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return sheet.getRowHeight(row);
         }
 
         @Override

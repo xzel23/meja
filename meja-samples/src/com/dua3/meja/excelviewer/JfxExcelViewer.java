@@ -5,6 +5,7 @@ package com.dua3.meja.excelviewer;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
+import com.dua3.meja.ui.javafx.JfxWorkbookView;
 import com.dua3.meja.ui.javafx.MejaJfxHelper;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +44,7 @@ public class JfxExcelViewer extends Application {
     public static final int YEAR = 2015;
 
     private final ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME,YEAR, AUTHOR);
+    private final JfxWorkbookView view = new JfxWorkbookView();
 
     @Override
     public void start(Stage primaryStage) {
@@ -100,6 +102,11 @@ public class JfxExcelViewer extends Application {
         MenuBar mb = new MenuBar(mFile, mEdit, mOptions, mHelp);
 
         root.setTop(mb);
+
+        // create workbook view
+        view.setMaxWidth(Double.MAX_VALUE);
+        view.setMaxHeight(Double.MAX_VALUE);
+        root.setCenter(view);
 
         primaryStage.setTitle(APPLICATION_NAME);
         primaryStage.setScene(scene);
@@ -180,6 +187,6 @@ public class JfxExcelViewer extends Application {
     }
 
     private void workbookChanged(URI oldUri, URI newUri) {
-        // TODO
+        view.setWorkbook(model.getWorkbook());
     }
 }
