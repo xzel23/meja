@@ -7,17 +7,22 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
 import java.awt.Color;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.Pane;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
 /**
  *
  * @author axel
  */
-public class JfxSheetView extends Region implements SheetView {
+public class JfxSheetView extends Pane implements SheetView {
 
     private Sheet sheet = null;
-    private SpreadsheetView view = new SpreadsheetView();
+    private final SpreadsheetView view;
+
+    public JfxSheetView() {
+        super(new SpreadsheetView());
+        view = (SpreadsheetView) getChildren().get(0);
+    }
 
     @Override
     public Color getGridColor() {
@@ -77,5 +82,4 @@ public class JfxSheetView extends Region implements SheetView {
     public void updateContent() {
         // fixme
     }
-
 }
