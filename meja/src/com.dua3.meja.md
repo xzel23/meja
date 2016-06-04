@@ -15,9 +15,10 @@ méja is licensed under the [Apache License 2.0](http://www.apache.org/licenses/
 
 ## Requirements
 
-  * JDK 7 or later
+  * JDK 7 or later (JDK 8 is needed for JavaFX and samples)
   * Apache ANT
-  * Apache POI (will be downloaded automatically during build)
+  * [Apache POI](https://poi.apache.org/) (will be downloaded automatically during build)
+  * [ControlsFX](http://fxexperience.com/controlsfx) for JavaFX controls - will be downloaded automatically during build)
 
 ## Installation
 
@@ -34,5 +35,5 @@ méja is licensed under the [Apache License 2.0](http://www.apache.org/licenses/
   1. Add dependencies
 
 ## Reporting bugs and contributing
-Please contact me via github to report bugs and feature requests.
+Please contact me via [github](https://github.com/xzel23) to report bugs and feature requests.
 
