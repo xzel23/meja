@@ -108,7 +108,7 @@
     -->
 
     <!-- target "dist-files" to create meja-sources.jar and meja-javadoc.jar -->    
-    <target name="dist-files" depends="default, package-sources, package-doc" />
+    <target name="dist-files" depends="default, package-dependencies, package-sources, package-doc" />
     
     <!-- include sources in Jar -->
     <target depends="default" description="bundle sources in a jar" name="package-sources">
