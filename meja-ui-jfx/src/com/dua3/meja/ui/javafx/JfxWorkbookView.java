@@ -57,8 +57,9 @@ public class JfxWorkbookView extends Region implements com.dua3.meja.ui.Workbook
             content = new TabPane();
             for (int i = 0; i < workbook.getSheetCount(); i++) {
                 Sheet sheet = workbook.getSheet(i);
-                //final SwingSheetView sheetView = new SwingSheetView(sheet);
-                content.getTabs().add(new Tab(sheet.getSheetName()));
+                final JfxSheetView sheetView = new JfxSheetView();
+                sheetView.setSheet(sheet);
+                content.getTabs().add(new Tab(sheet.getSheetName(), sheetView));
             }
             this.getChildren().add(content);
         }

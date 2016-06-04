@@ -19,6 +19,7 @@ package com.dua3.meja.ui.javafx;
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
@@ -47,6 +48,8 @@ import javax.swing.JOptionPane;
 import org.controlsfx.control.spreadsheet.Grid;
 import org.controlsfx.control.spreadsheet.GridChange;
 import org.controlsfx.control.spreadsheet.SpreadsheetCell;
+import org.controlsfx.control.spreadsheet.SpreadsheetCellBase;
+import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
 /**
@@ -188,6 +191,30 @@ public class MejaJfxHelper {
             }
         };
 
+        private final ObservableListBase<ObservableList<SpreadsheetCell>> rows =
+                new ObservableListBase<ObservableList<SpreadsheetCell>>() {
+                @Override
+                public ObservableList<SpreadsheetCell> get(int i) {
+                    return new ObservableListBase<SpreadsheetCell>() {
+                        @Override
+                        public SpreadsheetCell get(int j) {
+                            Cell cell = sheet.getCell(j, j);
+                            return new SpreadsheetCellBase(j, j, cell.getVerticalSpan(), cell.getHorizontalSpan(), translateCellType(cell.getCellType()));
+                        }
+
+                        @Override
+                        public int size() {
+                            return sheet.getColumnCount();
+                        }
+                    };
+                }
+
+                @Override
+                public int size() {
+                    return sheet.getRowCount();
+                }
+            };
+
         public GridImpl(Sheet sheet) {
             this.sheet = sheet;
         }
@@ -204,7 +231,7 @@ public class MejaJfxHelper {
 
         @Override
         public ObservableList<ObservableList<SpreadsheetCell>> getRows() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return rows;
         }
 
         @Override
@@ -279,6 +306,13 @@ public class MejaJfxHelper {
             List<EventHandler<? extends GridChange>> handlers = eventHandlers.get(eventType);
             if (handlers!=null) {
                 handlers.remove(eventHandler);
+            }
+        }
+
+        public SpreadsheetCellType<?> translateCellType(CellType cellType) {
+            switch (cellType) {
+                default:
+                    return SpreadsheetCellType.OBJECT;
             }
         }
     }

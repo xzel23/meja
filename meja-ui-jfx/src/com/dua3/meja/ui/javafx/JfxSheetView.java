@@ -31,12 +31,12 @@ public class JfxSheetView extends Region implements SheetView {
 
     @Override
     public boolean isEditable() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return view.isEditable();
     }
 
     @Override
     public boolean isEditing() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return view.isEditable() && view.getEditingCell() != null;
     }
 
     @Override
@@ -48,32 +48,34 @@ public class JfxSheetView extends Region implements SheetView {
 
     @Override
     public boolean setCurrentCell(int rowNum, int colNum) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // FIXME
+        return false;
     }
 
     @Override
     public void setEditable(boolean editable) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        view.setEditable(editable);
     }
 
     @Override
     public void setGridColor(Color gridColor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // fixme
     }
 
     @Override
     public void setSheet(Sheet sheet) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.sheet = sheet;
+        view.setGrid(MejaJfxHelper.getGrid(sheet));
     }
 
     @Override
     public void stopEditing(boolean commit) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // fixme
     }
 
     @Override
     public void updateContent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // fixme
     }
 
 }
