@@ -46,7 +46,7 @@ public class GenericRowBuilder implements RowBuilder {
 
     @Override
     public void startRow() {
-        currentRow = sheet.getRow(sheet.getNumberOfRows());
+        currentRow = sheet.getRow(sheet.getRowCount());
         colNr = 0;
     }
 

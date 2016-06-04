@@ -57,8 +57,8 @@ public class SwingWorkbookView extends JComponent implements com.dua3.meja.ui.Wo
         if (workbook != null) {
             // Create a new JTabbedPane with one tab per sheet.
             content = new JTabbedPane(JTabbedPane.BOTTOM);
-            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-                Sheet sheet = workbook.getSheetByNr(i);
+            for (int i = 0; i < workbook.getSheetCount(); i++) {
+                Sheet sheet = workbook.getSheet(i);
                 final SwingSheetView sheetView = new SwingSheetView(sheet);
                 content.addTab(sheet.getSheetName(), sheetView);
             }

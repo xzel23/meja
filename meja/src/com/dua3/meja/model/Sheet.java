@@ -67,13 +67,13 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * Get number of columns.
      * @return number of columns in this sheet
      */
-    int getNumberOfColumns();
+    int getColumnCount();
 
     /**
      * Get number of rows.
      * @return number of rows in this sheet
      */
-    int getNumberOfRows();
+    int getRowCount();
 
     /**
      * Get column width.

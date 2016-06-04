@@ -88,21 +88,21 @@ public class GenericSheet implements Sheet {
 
     @Override
     public int getLastColNum() {
-        return getNumberOfColumns() - 1;
+        return getColumnCount() - 1;
     }
 
     @Override
     public int getLastRowNum() {
-        return getNumberOfRows() - 1;
+        return getRowCount() - 1;
     }
 
     @Override
-    public int getNumberOfColumns() {
+    public int getColumnCount() {
         return numberOfColumns;
     }
 
     @Override
-    public int getNumberOfRows() {
+    public int getRowCount() {
         return rows.size();
     }
 
@@ -202,7 +202,7 @@ public class GenericSheet implements Sheet {
 
     @Override
     public void autoSizeColumns() {
-        final int n = getNumberOfColumns();
+        final int n = getColumnCount();
 
         float[] colWidth = new float[n];
         Arrays.fill(colWidth, 0f);

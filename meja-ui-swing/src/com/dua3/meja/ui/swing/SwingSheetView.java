@@ -548,7 +548,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         if (this.sheet!=null) {
             sheet.addPropertyChangeListener(Sheet.PROPERTY_ZOOM, this);
         }
-        
+
         updateContent();
     }
 
@@ -721,13 +721,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         return Integer.toString(i + 1);
     }
 
-    /**
-     * Return the current cell.
-     *
-     * @return current cell
-     */
-    @Override
-    public Cell getCurrentCell() {
+    private Cell getCurrentCell() {
         return sheet.getCurrentCell();
     }
 

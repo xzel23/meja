@@ -26,6 +26,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javax.swing.JOptionPane;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
+import static javafx.application.Application.launch;
 
 /**
  *

@@ -136,7 +136,7 @@ public class PoiSheet implements Sheet {
     }
 
     @Override
-    public int getNumberOfColumns() {
+    public int getColumnCount() {
         return lastColumn - firstColumn + 1;
     }
 
@@ -161,7 +161,7 @@ public class PoiSheet implements Sheet {
     }
 
     @Override
-    public int getNumberOfRows() {
+    public int getRowCount() {
         return 1 + getLastRowNum() - getFirstRowNum();
     }
 
@@ -265,14 +265,14 @@ public class PoiSheet implements Sheet {
         // for streaming implementation, only tracked columns can be autosized!
         if (poiSheet instanceof SXSSFSheet) {
             SXSSFSheet sxssfSheet = (SXSSFSheet) poiSheet;
-            for (int j=0;j<getNumberOfColumns();j++) {
+            for (int j=0;j<getColumnCount();j++) {
                 if (sxssfSheet.isColumnTrackedForAutoSizing(j)) {
                     poiSheet.autoSizeColumn(j);
                     layoutChanged = true;
                 }
             }
         } else {
-            for (int j=0;j<getNumberOfColumns();j++) {
+            for (int j=0;j<getColumnCount();j++) {
                 poiSheet.autoSizeColumn(j);
                 layoutChanged = true;
             }            
@@ -471,7 +471,7 @@ public class PoiSheet implements Sheet {
     public void clear() {
         // determine sheet number
         int sheetNr = workbook.poiWorkbook.getSheetIndex(poiSheet);
-        if (sheetNr>=workbook.getNumberOfSheets()) {
+        if (sheetNr>=workbook.getSheetCount()) {
             /*
              * This should never happen as this sheet is part of the workbook.
              */

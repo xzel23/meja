@@ -134,13 +134,13 @@ public abstract class PoiWorkbook implements Workbook {
     abstract Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor);
 
     @Override
-    public int getNumberOfSheets() {
+    public int getSheetCount() {
         assert poiWorkbook.getNumberOfSheets() == sheets.size();
         return sheets.size();
     }
 
     @Override
-    public PoiSheet getSheetByNr(int sheetNr) {
+    public PoiSheet getSheet(int sheetNr) {
         return sheets.get(sheetNr);
     }
 
@@ -155,7 +155,7 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     @Override
-    public void removeSheetByNr(int sheetNr) {
+    public void removeSheet(int sheetNr) {
         poiWorkbook.removeSheetAt(sheetNr);
         sheets.remove(sheetNr);
     }
@@ -362,8 +362,8 @@ public abstract class PoiWorkbook implements Workbook {
         }
 
         // copy sheets
-        for (int sheetNr = 0; sheetNr < other.getNumberOfSheets(); sheetNr++) {
-            Sheet sheet = other.getSheetByNr(sheetNr);
+        for (int sheetNr = 0; sheetNr < other.getSheetCount(); sheetNr++) {
+            Sheet sheet = other.getSheet(sheetNr);
             Sheet newSheet = createSheet(sheet.getSheetName());
             newSheet.copy(sheet);
         }

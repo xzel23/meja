@@ -39,8 +39,8 @@ public class GenericRow implements Row {
     public GenericRow(GenericSheet sheet, int rowNumber) {
         this.sheet = sheet;
         this.rowNumber = rowNumber;
-        this.cells = new ArrayList<>(sheet.getNumberOfColumns());
-        reserve(sheet.getNumberOfColumns()-1);
+        this.cells = new ArrayList<>(sheet.getColumnCount());
+        reserve(sheet.getColumnCount()-1);
     }
 
     @Override

@@ -229,8 +229,8 @@ public class MejaHelper {
             }
 
             // copy sheets
-            for (int sheetNr = 0; sheetNr < workbook.getNumberOfSheets(); sheetNr++) {
-                Sheet sheet = workbook.getSheetByNr(sheetNr);
+            for (int sheetNr = 0; sheetNr < workbook.getSheetCount(); sheetNr++) {
+                Sheet sheet = workbook.getSheet(sheetNr);
                 Sheet newSheet = newWorkbook.createSheet(sheet.getSheetName());
                 newSheet.copy(sheet);
             }

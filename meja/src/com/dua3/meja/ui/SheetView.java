@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.ui;
 
-import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import java.awt.Color;
 
@@ -24,13 +23,6 @@ import java.awt.Color;
  * @author axel
  */
 public interface SheetView {
-
-    /**
-     * Return the current cell.
-     *
-     * @return current cell
-     */
-    Cell getCurrentCell();
 
     /**
      * Get the grid color.

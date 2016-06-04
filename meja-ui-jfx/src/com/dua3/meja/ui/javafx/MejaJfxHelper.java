@@ -172,7 +172,7 @@ public class MejaJfxHelper {
 
             @Override
             public int size() {
-                return sheet.getNumberOfRows();
+                return sheet.getRowCount();
             }
         };
 
@@ -184,7 +184,7 @@ public class MejaJfxHelper {
 
             @Override
             public int size() {
-                return sheet.getNumberOfColumns();
+                return sheet.getColumnCount();
             }
         };
 
@@ -194,12 +194,12 @@ public class MejaJfxHelper {
 
         @Override
         public int getRowCount() {
-            return sheet.getNumberOfRows();
+            return sheet.getRowCount();
         }
 
         @Override
         public int getColumnCount() {
-            return sheet.getNumberOfColumns();
+            return sheet.getColumnCount();
         }
 
         @Override

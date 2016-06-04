@@ -115,7 +115,7 @@ public class ExcelViewerModel {
 
     protected void freezeAtCurrentCell(SheetView view) {
         if (view != null) {
-            Cell cell = view.getCurrentCell();
+            Cell cell = view.getSheet().getCurrentCell();
             view.getSheet().splitAt(cell.getRowNumber(), cell.getColumnNumber());
             view.updateContent();
         }

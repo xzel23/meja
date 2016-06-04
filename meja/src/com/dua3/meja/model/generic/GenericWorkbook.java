@@ -68,12 +68,12 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public int getNumberOfSheets() {
+    public int getSheetCount() {
         return sheets.size();
     }
 
     @Override
-    public GenericSheet getSheetByNr(int sheetNr) {
+    public GenericSheet getSheet(int sheetNr) {
         return sheets.get(sheetNr);
     }
 
@@ -88,7 +88,7 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public void removeSheetByNr(int sheetNr) {
+    public void removeSheet(int sheetNr) {
         sheets.remove(sheetNr);
     }
 
@@ -226,8 +226,8 @@ public class GenericWorkbook implements Workbook {
         }
 
         // copy sheets
-        for (int sheetNr = 0; sheetNr < other.getNumberOfSheets(); sheetNr++) {
-            Sheet sheet = other.getSheetByNr(sheetNr);
+        for (int sheetNr = 0; sheetNr < other.getSheetCount(); sheetNr++) {
+            Sheet sheet = other.getSheet(sheetNr);
             Sheet newSheet = createSheet(sheet.getSheetName());
             newSheet.copy(sheet);
         }

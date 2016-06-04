@@ -58,14 +58,14 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * Returns number of sheets in this workbook.
      * @return sheet
      */
-    int getNumberOfSheets();
+    int getSheetCount();
 
     /**
      * Get sheet by number.
      * @param sheetNr number of sheet
      * @return sheet or {@code null}
      */
-    Sheet getSheetByNr(int sheetNr);
+    Sheet getSheet(int sheetNr);
 
     /**
      * Get sheet by name.
@@ -78,7 +78,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * Remove sheet by number.
      * @param sheetNr number of sheet
      */
-    void removeSheetByNr(int sheetNr);
+    void removeSheet(int sheetNr);
 
     /**
      * Remove sheet by name.
