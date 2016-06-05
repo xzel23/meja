@@ -21,14 +21,14 @@ import com.dua3.meja.ui.SheetView;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.BorderPane;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
  *
  * @author axel
  */
-public class JfxWorkbookView extends Region implements com.dua3.meja.ui.WorkbookView {
+public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.WorkbookView {
 
     private Workbook workbook;
     private TabPane content = null;
@@ -45,10 +45,8 @@ public class JfxWorkbookView extends Region implements com.dua3.meja.ui.Workbook
      */
     @Override
     public void setWorkbook(Workbook workbook) {
-        if (content != null) {
-            this.getChildren().remove(content);
-            content = null;
-        }
+        content = null;
+        this.setCenter(null);
 
         this.workbook = workbook;
 
@@ -61,10 +59,8 @@ public class JfxWorkbookView extends Region implements com.dua3.meja.ui.Workbook
                 sheetView.setSheet(sheet);
                 content.getTabs().add(new Tab(sheet.getSheetName(), sheetView));
             }
-            this.getChildren().add(content);
+            this.setCenter(content);
         }
-
-
     }
 
     /**

@@ -7,21 +7,21 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
 import java.awt.Color;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.BorderPane;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
 /**
  *
  * @author axel
  */
-public class JfxSheetView extends Pane implements SheetView {
+public class JfxSheetView extends BorderPane implements SheetView {
 
     private Sheet sheet = null;
     private final SpreadsheetView view;
 
     public JfxSheetView() {
-        super(new SpreadsheetView());
-        view = (SpreadsheetView) getChildren().get(0);
+        view = new SpreadsheetView();
+        setCenter(view);
     }
 
     @Override
@@ -82,4 +82,5 @@ public class JfxSheetView extends Pane implements SheetView {
     public void updateContent() {
         // fixme
     }
+
 }
