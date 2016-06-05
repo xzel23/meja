@@ -5,6 +5,7 @@
 /meja/lib/*.jar
 /meja-samples/build/
 /meja-samples/dist/
+/meja-ui-swing/nbproject/private/
 /meja-ui-swing/build/
 /meja-ui-swing/dist/
 /meja-ui-jfx/nbproject/private/
