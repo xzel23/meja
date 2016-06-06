@@ -25,11 +25,11 @@ import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     private final Cell cell;
-    
+
     public SpreadSheetCellImpl(Cell cell) {
         this.cell = cell;
     }
-    
+
     @Override
     public boolean match(SpreadsheetCell cell) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -124,22 +124,27 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public String getText() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return cell.getAsText();
     }
 
     @Override
     public SpreadsheetCellType getCellType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch (cell.getCellType()) {
+            case NUMERIC:
+                return SpreadsheetCellType.DOUBLE;
+            default:
+                return SpreadsheetCellType.OBJECT;
+        }
     }
 
     @Override
     public int getRow() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return cell.getRowNumber();
     }
 
     @Override
     public int getColumn() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return cell.getColumnNumber();
     }
 
     @Override
@@ -196,5 +201,5 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
     public void removeEventHandler(EventType<Event> eventType, EventHandler<Event> eventHandler) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }
