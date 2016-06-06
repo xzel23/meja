@@ -61,7 +61,7 @@ class GridImpl implements Grid {
                 @Override
                 public SpreadsheetCell get(int j) {
                     Cell cell = sheet.getCell(j, j);
-                    return new SpreadsheetCellBase(j, j, cell.getVerticalSpan(), cell.getHorizontalSpan(), translateCellType(cell.getCellType()));
+                    return new SpreadSheetCellImpl(cell);
                 }
 
                 @Override
