@@ -6,6 +6,7 @@
 package com.dua3.meja.ui.javafx;
 
 import com.dua3.meja.model.Cell;
+import com.sun.javafx.event.EventHandlerManager;
 import java.util.Optional;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
@@ -17,6 +18,7 @@ import javafx.beans.property.StringPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.event.Event;
+import javafx.event.EventDispatchChain;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
@@ -30,6 +32,8 @@ import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     private final Cell cell;
+    private final EventHandlerManager eventHandlerManager = new EventHandlerManager(this);
+
     private final ObjectProperty<Node> graphic = new SimpleObjectProperty<>();
 
     private final StringProperty STYLE_PROPERTY = new StringPropertyBase() {
@@ -134,7 +138,8 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public boolean isCornerActivated(CornerPosition position) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // FIXME
+        return false;
     }
 
     @Override
@@ -230,12 +235,12 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public void addEventHandler(EventType<Event> eventType, EventHandler<Event> eventHandler) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         eventHandlerManager.addEventHandler(eventType, eventHandler);
     }
 
     @Override
     public void removeEventHandler(EventType<Event> eventType, EventHandler<Event> eventHandler) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+         eventHandlerManager.removeEventHandler(eventType, eventHandler);
     }
 
 }
