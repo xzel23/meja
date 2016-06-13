@@ -19,7 +19,6 @@ import javafx.event.EventType;
 import org.controlsfx.control.spreadsheet.Grid;
 import org.controlsfx.control.spreadsheet.GridChange;
 import org.controlsfx.control.spreadsheet.SpreadsheetCell;
-import org.controlsfx.control.spreadsheet.SpreadsheetCellBase;
 import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 import org.controlsfx.control.spreadsheet.SpreadsheetView.SpanType;
@@ -60,7 +59,7 @@ class GridImpl implements Grid {
             return new ObservableListBase<SpreadsheetCell>() {
                 @Override
                 public SpreadsheetCell get(int j) {
-                    Cell cell = sheet.getCell(j, j);
+                    Cell cell = sheet.getCell(i, j);
                     return new SpreadSheetCellImpl(cell);
                 }
 

@@ -12,7 +12,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.ReadOnlyStringPropertyBase;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.StringPropertyBase;
 import javafx.collections.FXCollections;
@@ -189,7 +188,7 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public int getRowSpan() {
-        return cell.getHorizontalSpan();
+        return cell.getVerticalSpan();
     }
 
     @Override
@@ -199,7 +198,7 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public int getColumnSpan() {
-        return cell.getVerticalSpan();
+        return cell.getHorizontalSpan();
     }
 
     @Override
