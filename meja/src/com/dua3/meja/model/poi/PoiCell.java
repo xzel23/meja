@@ -450,7 +450,7 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public void setCellStyle(String cellStyleName) {
+    public void setStyle(String cellStyleName) {
         setCellStyle(getWorkbook().getCellStyle(cellStyleName));
     }
 
@@ -470,7 +470,7 @@ public final class PoiCell implements Cell {
 
     @Override
     public void copy(Cell other) {
-        setCellStyle(other.getCellStyle().getName());
+        setStyle(other.getCellStyle().getName());
 
         switch (other.getCellType()) {
             case BLANK:

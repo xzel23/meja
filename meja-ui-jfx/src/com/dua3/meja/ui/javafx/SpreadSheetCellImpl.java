@@ -9,7 +9,12 @@ import com.dua3.meja.model.Cell;
 import java.util.Optional;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.beans.property.ReadOnlyStringPropertyBase;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.StringPropertyBase;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -25,6 +30,36 @@ import org.controlsfx.control.spreadsheet.SpreadsheetCellType;
 public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     private final Cell cell;
+    private final ObjectProperty<Node> graphic = new SimpleObjectProperty<>();
+
+    private final StringProperty STYLE_PROPERTY = new StringPropertyBase() {
+        @Override
+        public Object getBean() {
+            return cell;
+        }
+
+        @Override
+        public String getName() {
+            return "style";
+        }
+    };
+
+    private final ReadOnlyStringProperty TEXT_PROPERTY = new ReadOnlyStringPropertyBase() {
+        @Override
+        public String get() {
+            return cell.getAsText();
+        }
+
+        @Override
+        public Object getBean() {
+            return cell;
+        }
+
+        @Override
+        public String getName() {
+            return "text";
+        }
+    };
 
     public SpreadSheetCellImpl(Cell cell) {
         this.cell = cell;
@@ -74,7 +109,7 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public void setStyle(String style) {
-        cell.setCellStyle(style);
+        cell.setStyle(style);
     }
 
     @Override
@@ -84,7 +119,7 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public StringProperty styleProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return STYLE_PROPERTY;
     }
 
     @Override
@@ -119,7 +154,7 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public ReadOnlyStringProperty textProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return TEXT_PROPERTY;
     }
 
     @Override
@@ -169,22 +204,23 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public ObservableSet<String> getStyleClass() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // FIXME
+        return FXCollections.emptyObservableSet();
     }
 
     @Override
     public ObjectProperty<Node> graphicProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return graphic;
     }
 
     @Override
     public void setGraphic(Node graphic) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.graphic.setValue(graphic);
     }
 
     @Override
     public Node getGraphic() {
-        return null; // FIXME
+        return graphic.getValue();
     }
 
     @Override

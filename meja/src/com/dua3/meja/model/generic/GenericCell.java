@@ -59,12 +59,12 @@ public class GenericCell implements Cell {
         if (colNumber > Short.MAX_VALUE) {
             throw new IllegalArgumentException("Maximum column number is " + Short.MAX_VALUE + ".");
         }
-        
+
         this.row = row;
         this.logicalCell = this;
         this.cellStyle = cellStyle;
         this.value = null;
-        
+
         setColumnNr(colNumber);
         setHorizontalSpan(1);
         setVerticalSpan(1);
@@ -220,59 +220,51 @@ public class GenericCell implements Cell {
         }
     }
 
+    private  GenericCell set(Object arg, CellType type) {
+        if (arg!=value || type!=getCellType()) {
+            Object old = value;
+            if (arg == null) {
+                clear();
+            } else {
+                setCellType(type);
+                value = arg;
+            }
+       }
+        return this;
+    }
+
     @Override
     public GenericCell set(Date arg) {
-        if (arg == null) {
-            clear();
-        } else {
-            setCellType(CellType.DATE);
-            this.value = arg;
-        }
-        return this;
+        return set(arg, CellType.DATE);
     }
 
     @Override
     public GenericCell set(Number arg) {
-        if (arg == null) {
-            clear();
-        } else {
-            setCellType(CellType.NUMERIC);
-            this.value = arg;
-        }
-        return this;
+        return set(arg, CellType.NUMERIC);
     }
 
     @Override
     public GenericCell set(String arg) {
-        if (arg == null || arg.isEmpty()) {
+        if (arg==null || arg.isEmpty()) {
             clear();
-        } else {
-            setCellType(CellType.TEXT);
-            this.value = arg;
+            return this;
         }
-        return this;
+        return set(arg, CellType.TEXT);
     }
 
     @Override
     public GenericCell set(AttributedString arg) {
         if (arg == null || AttributedStringHelper.isEmpty(arg)) {
             clear();
+            return this;
         } else {
-            setCellType(CellType.TEXT);
-            this.value = arg;
+            return set(arg, CellType.TEXT);
         }
-        return this;
     }
 
     @Override
     public GenericCell set(Boolean arg) {
-        if (arg == null) {
-            clear();
-        } else {
-            setCellType(CellType.BOOLEAN);
-            this.value = arg;
-        }
-        return this;
+        return set(arg, CellType.BOOLEAN);
     }
 
     @Override
@@ -297,7 +289,10 @@ public class GenericCell implements Cell {
         if (cellStyle.getWorkbook() != getWorkbook()) {
             throw new IllegalArgumentException("Cell style does not belong to this workbook.");
         }
-        this.cellStyle = (GenericCellStyle) cellStyle;
+        if (cellStyle!=this.cellStyle) {
+            GenericCellStyle oldCellStyle = this.cellStyle;
+            this.cellStyle = (GenericCellStyle) cellStyle;
+        }
     }
 
     @Override
@@ -311,7 +306,7 @@ public class GenericCell implements Cell {
     }
 
     @Override
-    public void setCellStyle(String cellStyleName) {
+    public void setStyle(String cellStyleName) {
         this.cellStyle = getSheet().getWorkbook().getCellStyle(cellStyleName);
     }
 
@@ -333,7 +328,7 @@ public class GenericCell implements Cell {
 
     @Override
     public void copy(Cell other) {
-        setCellStyle(other.getCellStyle().getName());
+        setStyle(other.getCellStyle().getName());
         switch (other.getCellType()) {
             case BLANK:
                 clear();

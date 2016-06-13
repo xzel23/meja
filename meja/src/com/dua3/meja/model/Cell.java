@@ -114,7 +114,7 @@ public interface Cell {
      * @return true if cell is has type TEXT and the stored text is attributed.
      */
     boolean isRichText();
-    
+
     /**
      * Return the cell style.
      *
@@ -255,7 +255,7 @@ public interface Cell {
      *
      * @param cellStyleName cell style name
      */
-    void setCellStyle(String cellStyleName);
+    void setStyle(String cellStyleName);
 
     /**
      * Set formula
@@ -282,7 +282,7 @@ public interface Cell {
      * of a merged region
      */
     void unMerge();
-    
+
     /**
      * Get cell reference (ie. "A1" for the top left cell).
      * @return cell reference as String
