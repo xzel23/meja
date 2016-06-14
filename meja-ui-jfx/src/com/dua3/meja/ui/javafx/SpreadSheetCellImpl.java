@@ -17,7 +17,6 @@ import javafx.beans.property.StringPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.event.Event;
-import javafx.event.EventDispatchChain;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
@@ -80,8 +79,7 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public Object getItem() {
-        // FIXME
-        return cell.getAsText();
+        return cell.get();
     }
 
     @Override

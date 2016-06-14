@@ -152,6 +152,32 @@ public final class PoiCell implements Cell {
     }
 
     @Override
+    public Object get() {
+        if (isEmpty()) {
+            return null;
+        }
+        
+        switch (getCellType()) {
+            case BLANK:
+                return null;
+            case DATE:
+                return poiCell.getDateCellValue();
+            case NUMERIC:
+                return poiCell.getNumericCellValue();
+            case FORMULA:
+                return poiCell.getCellFormula();
+            case BOOLEAN:
+                return poiCell.getBooleanCellValue();
+            case TEXT:
+                return isRichText() ? getAttributedString() : poiCell.getStringCellValue();
+            case ERROR:
+                return ERROR_TEXT;
+            default:
+                throw new IllegalStateException();
+        }
+    }
+
+    @Override
     public boolean getBoolean() {
         try {
             return isEmpty() ? null : poiCell.getBooleanCellValue();

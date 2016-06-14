@@ -119,6 +119,10 @@ public class GenericCell implements Cell {
         return (int) ((data & 0xffff000000000000L) >> 48);
     }
 
+    @Override
+    public Object get() {
+        return value;
+    }
 
     @Override
     public boolean getBoolean() {

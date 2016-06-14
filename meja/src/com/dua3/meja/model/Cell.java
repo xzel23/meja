@@ -56,6 +56,13 @@ public interface Cell {
     CellType getResultType();
 
     /**
+     * Return raw cell value.
+     *
+     * @return cell value
+     */
+    Object get();
+
+    /**
      * Return boolean cell value.
      *
      * @return boolean cell value
