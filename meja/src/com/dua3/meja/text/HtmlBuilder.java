@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.util;
+package com.dua3.meja.text;
 
 import java.awt.Color;
-import java.text.AttributedCharacterIterator;
 import java.util.Map;
 
 /**
- * A {@link TextBuilder} implementation for translating {@code AttributedString}
+ * A {@link TextBuilder} implementation for translating {@code RichText}
  * to HTML.
  * @author Axel Howind (axel@dua3.com)
  */
@@ -33,39 +32,15 @@ public class HtmlBuilder extends TextBuilder<String> {
     private final StringBuilder buffer = new StringBuilder();
 
     @Override
-    protected void append(String text, Map<AttributedCharacterIterator.Attribute, Object> attributes) {
+    protected void append(Run run) {
         // handle attributes
+        Style style = run.getStyle();
         String separator = "<span style=\"";
         String closing = "";
         String endTag = "";
-        for (Map.Entry<AttributedCharacterIterator.Attribute, Object> entry : attributes.entrySet()) {
-            AttributedCharacterIterator.Attribute key = entry.getKey();
-            Object value = entry.getValue();
+        for (Map.Entry<String, String> e: style.properties().entrySet()) {
+            buffer.append(separator).append(e.getKey()).append(":").append(e.getValue());
 
-            if (value == null) {
-                continue;
-            }
-
-            if (key.equals(java.awt.font.TextAttribute.FAMILY)) {
-                buffer.append(separator).append("font-family:").append(value);
-            } else if (key.equals(java.awt.font.TextAttribute.SIZE)) {
-                buffer.append(separator).append("font-size:").append(value).append("pt");
-            } else if (key.equals(java.awt.font.TextAttribute.FOREGROUND)) {
-                buffer.append(separator).append("color:#").append(getColorValue((Color) value));
-            } else if (key.equals(java.awt.font.TextAttribute.BACKGROUND)) {
-                buffer.append(separator).append("background-color:#").append(getColorValue((Color) value));
-            } else if (key.equals(java.awt.font.TextAttribute.WEIGHT)) {
-                buffer.append(separator).append("font-weight:").append((int) (400 * (Float) value));
-            } else if (key.equals(java.awt.font.TextAttribute.POSTURE)) {
-                buffer.append(separator).append("font-style:");
-                if (value.equals(java.awt.font.TextAttribute.POSTURE_OBLIQUE)) {
-                    buffer.append("oblique");
-                } else {
-                    buffer.append("normal");
-                }
-            } else {
-                continue;
-            }
             separator = "; ";
             closing = "\">";
             endTag = "</span>";
@@ -73,8 +48,8 @@ public class HtmlBuilder extends TextBuilder<String> {
         buffer.append(closing);
 
         // append text (need to do characterwise because of escaping)
-        for (char c : text.toCharArray()) {
-            appendChar(c);
+        for (int idx=0; idx<run.length(); idx++) {
+            appendChar(run.charAt(idx));
         }
 
         // add end tag;
@@ -112,6 +87,5 @@ public class HtmlBuilder extends TextBuilder<String> {
     protected String get() {
         return new String(buffer);
     }
-
 
 }

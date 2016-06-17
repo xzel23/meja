@@ -19,9 +19,8 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
-import com.dua3.meja.util.AttributedStringHelper;
+import com.dua3.meja.text.RichText;
 import com.dua3.meja.util.MejaHelper;
-import java.text.AttributedString;
 import java.util.Date;
 
 /**
@@ -157,32 +156,26 @@ public class GenericCell implements Cell {
     }
 
     @Override
-    public String getText() {
-        if (getCellType() == CellType.TEXT) {
-            if (value instanceof String) {
-                return (String) value;
-            } else if (value instanceof AttributedString) {
-                return AttributedStringHelper.toString((AttributedString) value);
-            } else {
-                throw new IllegalStateException();
-            }
+    public RichText getText() {
+        if (getCellType() != CellType.TEXT) {
+            throw new IllegalStateException("Cannot get text value from cell of type " + getCellType().name() + ".");
         }
-        throw new IllegalStateException("Cannot get text value from cell of type " + getCellType().name() + ".");
+        return (RichText) value;
     }
 
     @Override
-    public String getAsText() {
+    public RichText getAsText() {
         switch (getCellType()) {
             case BLANK:
-                return "";
+                return RichText.emptyText();
             case TEXT:
                 return getText();
             case NUMERIC:
-                return getCellStyle().format((Number) value);
+                return RichText.valueOf(getCellStyle().format((Number) value));
             case DATE:
-                return getCellStyle().format((Date) value);
+                return RichText.valueOf(getCellStyle().format((Date) value));
             default:
-                return String.valueOf(value);
+                return RichText.valueOf(value);
         }
     }
 
@@ -204,24 +197,6 @@ public class GenericCell implements Cell {
     @Override
     public GenericSheet getSheet() {
         return row.getSheet();
-    }
-
-    @Override
-    public AttributedString getAttributedString() {
-        if (getCellType() == CellType.TEXT) {
-            if (value instanceof AttributedString) {
-                return (AttributedString) value;
-            } else if (value instanceof String) {
-                // convert to AttributedString on first access
-                final AttributedString as = new AttributedString((String) value);
-                value = as;
-                return as;
-            } else {
-                throw new IllegalStateException();
-            }
-        } else {
-            return new AttributedString(getAsText());
-        }
     }
 
     private  GenericCell set(Object arg, CellType type) {
@@ -257,8 +232,8 @@ public class GenericCell implements Cell {
     }
 
     @Override
-    public GenericCell set(AttributedString arg) {
-        if (arg == null || AttributedStringHelper.isEmpty(arg)) {
+    public GenericCell set(RichText arg) {
+        if (arg == null || arg.isEmpty()) {
             clear();
             return this;
         } else {
@@ -326,7 +301,7 @@ public class GenericCell implements Cell {
         if (isEmpty()) {
             return "";
         } else {
-            return getAsText();
+            return getAsText().toString();
         }
     }
 
@@ -353,11 +328,7 @@ public class GenericCell implements Cell {
                 set(other.getDate());
                 break;
             case TEXT:
-                if (other.isRichText()) {
-                    set(other.getAttributedString());
-                } else {
-                    set(other.getText());
-                }
+                set(other.getText());
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -415,12 +386,6 @@ public class GenericCell implements Cell {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean isRichText() {
-        // no need to check the cell type!
-        return value instanceof AttributedString;
     }
 
     @Override

@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.dua3.meja.util;
-
-import java.text.AttributedCharacterIterator;
-import java.util.Map;
+package com.dua3.meja.text;
 
 /**
  * Base class for text builders.
  * This class is intended a s a common base class for creating builders
- * that transform text represented as {@code AttributedString} into other
+ * that transform text represented as {@code RichText} into other
  * formats.
  * @author Axel Howind (axel@dua3.com)
  * @param <T> class matching produced document type
@@ -36,26 +33,11 @@ public abstract class TextBuilder<T> {
 
     /**
      * Add text.
-     * @param iter character iterator
+     * @param text
      */
-    void add(AttributedCharacterIterator iter) {
-        // extract the text
-        final int begin = iter.getBeginIndex();
-        final int end = iter.getEndIndex();
-        StringBuilder sb = new StringBuilder(end-begin);
-        for (int i=begin; i<end;i++,iter.next()) {
-            sb.append(iter.current());
-        }
-        String text = new String(sb);
-
-        iter.setIndex(begin);
-        while (iter.getIndex() != end) {
-            int runStart = iter.getRunStart();
-            int runLimit = iter.getRunLimit();
-
-            Map<AttributedCharacterIterator.Attribute, Object> attributes = iter.getAttributes();
-            append(text.substring(runStart, runLimit), attributes);
-            iter.setIndex(runLimit);
+    public void add(RichText text) {
+        for (Run r: text) {
+            append(r);
         }
     }
 
@@ -63,10 +45,9 @@ public abstract class TextBuilder<T> {
      * Add text to document.
      * Implementations must override this method to append {@code text} which
      * is attributed with {@code attributes} to the result document.
-     * @param text the text to append
-     * @param attributes the attributes to use
+     * @param run
      */
-    protected abstract void append(String text, Map<AttributedCharacterIterator.Attribute, Object> attributes);
+    protected abstract void append(Run run);
 
     /**
      * Get document.

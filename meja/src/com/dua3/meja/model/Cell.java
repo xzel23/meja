@@ -16,7 +16,7 @@
  */
 package com.dua3.meja.model;
 
-import java.text.AttributedString;
+import com.dua3.meja.text.RichText;
 import java.util.Date;
 
 /**
@@ -100,14 +100,14 @@ public interface Cell {
      * @return text cell value
      * @throws IllegalArgumentException if cell is not of text type
      */
-    String getText();
+    RichText getText();
 
     /**
      * Return text representation of value.
      *
      * @return cell value as String, as it would be displayed
      */
-    String getAsText();
+    RichText getAsText();
 
     /**
      * Test for empty cell.
@@ -115,12 +115,6 @@ public interface Cell {
      * @return true if cell has cell type BLANK or contains the empty string.
      */
     boolean isEmpty();
-
-    /**
-     * Test if text is attributed.
-     * @return true if cell is has type TEXT and the stored text is attributed.
-     */
-    boolean isRichText();
 
     /**
      * Return the cell style.
@@ -182,15 +176,6 @@ public interface Cell {
     Sheet getSheet();
 
     /**
-     * Get the cell`s content as AttributedString for display.
-     *
-     * If the cell is of formula type, the result of evaluation is returned.
-     *
-     * @return cell content as AttributedString
-     */
-    AttributedString getAttributedString();
-
-    /**
      * Set cell value to date.
      *
      * @param arg date
@@ -217,10 +202,10 @@ public interface Cell {
     /**
      * Set cell value to string with markup.
      *
-     * @param s attributed string
+     * @param s rich text string
      * @return this cell
      */
-    Cell set(AttributedString s);
+    Cell set(RichText s);
 
     /**
      * Set cell value to boolean value.

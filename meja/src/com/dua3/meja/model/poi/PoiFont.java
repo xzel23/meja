@@ -17,8 +17,6 @@ package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.Font;
 import java.awt.Color;
-import java.awt.font.TextAttribute;
-import java.text.AttributedString;
 import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -117,33 +115,8 @@ public class PoiFont implements Font {
         return getPoiFont().getStrikeout();
     }
 
-    /**
-     *
-     * @param at
-     * @param start
-     * @param end
-     */
-    public void addAttributes(AttributedString at, int start, int end) {
-        at.addAttribute(TextAttribute.FAMILY, getFamily(), start, end);
-        at.addAttribute(TextAttribute.SIZE, getSizeInPoints(), start, end);
-        at.addAttribute(TextAttribute.FOREGROUND, getColor(), start, end);
-        if (isBold()) {
-            at.addAttribute(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, start, end);
-        }
-        if (isItalic()) {
-            at.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, start, end);
-        }
-        if (isUnderlined()) {
-            at.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, start, end);
-            at.addAttribute(TextAttribute.INPUT_METHOD_UNDERLINE, TextAttribute.UNDERLINE_LOW_TWO_PIXEL, start, end);
-        }
-        if (isStrikeThrough()) {
-            at.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, start, end);
-        }
-    }
-
     @SuppressWarnings("rawtypes")
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiFont) {
             return Objects.equals(getPoiFont(), ((PoiFont)obj).getPoiFont());
@@ -163,15 +136,15 @@ public class PoiFont implements Font {
     }
 
     @Override
-    public PoiFont deriveFont(FontDef fd) {        
+    public PoiFont deriveFont(FontDef fd) {
         String fontFamily = fd.getFamily() != null ?fd.getFamily(): this.getFamily();
         float fontSize = fd.getSize()!=null?fd.getSize():this.getSizeInPoints();
-        Color fontColor = fd.getColor()!=null?fd.getColor():this.getColor(); 
+        Color fontColor = fd.getColor()!=null?fd.getColor():this.getColor();
         boolean fontBold = fd.getBold()!=null?fd.getBold():this.isBold();
-        boolean fontItalic = fd.getItalic()!=null?fd.getItalic():this.isItalic(); 
-        boolean fontUnderlined = fd.getUnderline()!=null?fd.getUnderline():this.isUnderlined(); 
+        boolean fontItalic = fd.getItalic()!=null?fd.getItalic():this.isItalic();
+        boolean fontUnderlined = fd.getUnderline()!=null?fd.getUnderline():this.isUnderlined();
         boolean fontStrikeThrough = fd.getStrikeThrough()!=null?fd.getStrikeThrough():this.isStrikeThrough();
-        
+
         return workbook.createFont(fontFamily, fontSize, fontColor, fontBold, fontItalic, fontUnderlined, fontStrikeThrough);
     }
 }

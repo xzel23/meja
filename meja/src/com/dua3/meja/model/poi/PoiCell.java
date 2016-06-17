@@ -19,28 +19,18 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
-import com.dua3.meja.util.AttributedStringHelper;
+import com.dua3.meja.text.RichText;
+import com.dua3.meja.text.RichTextBuilder;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
-import java.awt.Color;
-import java.awt.font.TextAttribute;
-import java.text.AttributedCharacterIterator;
-import java.text.AttributedCharacterIterator.Attribute;
-import java.text.AttributedString;
 import java.util.Date;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
@@ -156,7 +146,7 @@ public final class PoiCell implements Cell {
         if (isEmpty()) {
             return null;
         }
-        
+
         switch (getCellType()) {
             case BLANK:
                 return null;
@@ -169,7 +159,7 @@ public final class PoiCell implements Cell {
             case BOOLEAN:
                 return poiCell.getBooleanCellValue();
             case TEXT:
-                return isRichText() ? getAttributedString() : poiCell.getStringCellValue();
+                return getText();
             case ERROR:
                 return ERROR_TEXT;
             default:
@@ -214,29 +204,11 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public String getText() {
+    public RichText getText() {
         try {
-            return isEmpty() ? "" : poiCell.getStringCellValue();
+            return isEmpty() ? RichText.emptyText() : RichText.valueOf(poiCell.getStringCellValue());
         } catch (Exception e) {
             throw newIllegalStateException(e);
-        }
-    }
-
-    @Override
-    public String getAsText() {
-        if (isEmpty()) {
-            return "";
-        }
-
-        // FIXME locale specific grouping separator does not work in POI
-        // see https://bz.apache.org/bugzilla/show_bug.cgi?id=59638
-        // TODO create and submit patch for POI
-        DataFormatter dataFormatter = getWorkbook().getDataFormatter();
-        try {
-            FormulaEvaluator evaluator = getWorkbook().evaluator;
-            return dataFormatter.formatCellValue(poiCell, evaluator);
-        } catch (Exception ex) {
-            return Cell.ERROR_TEXT;
         }
     }
 
@@ -272,9 +244,10 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public Cell set(AttributedString s) {
-        RichTextString richText = workbook.createRichTextString(AttributedStringHelper.toString(s));
-        AttributedCharacterIterator iter = s.getIterator();
+    public Cell set(RichText s) {
+        RichTextString richText = workbook.createRichTextString(s.toString());
+        /*
+        Iterator<Run> iter = s.iterator();
         int endIndex = iter.getEndIndex();
         while (iter.getIndex() != endIndex) {
             int runStart = iter.getRunStart();
@@ -311,6 +284,7 @@ public final class PoiCell implements Cell {
             richText.applyFont(runStart, runLimit, font);
             iter.setIndex(runLimit);
         }
+        */
         poiCell.setCellValue(richText);
 
         updateRow();
@@ -319,34 +293,51 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public AttributedString getAttributedString() {
-        if (getCellType() != CellType.TEXT) {
-            return new AttributedString(getAsText());
-        }
+    public RichText getAsText() {
+        if (getCellType() == CellType.TEXT) {
+            RichTextString richText = poiCell.getRichStringCellValue();
 
-        RichTextString richText = poiCell.getRichStringCellValue();
+            String text = richText.getString();
+            //TODO: properly process tabs
+            text = text.replace('\t', ' '); // tab
+            text = text.replace((char) 160, ' '); // non-breaking space
 
-        String text = richText.getString();
-        //TODO: properly process tabs
-        text = text.replace('\t', ' '); // tab
-        text = text.replace((char) 160, ' '); // non-breaking space
+            RichTextBuilder rtb = new RichTextBuilder();
+            int start = 0;
+            for (int i = 0; i < richText.numFormattingRuns(); i++) {
+                start = richText.getIndexOfFormattingRun(i);
+                int end = i + 1 < richText.numFormattingRuns() ? richText.getIndexOfFormattingRun(i + 1) : richText.length();
 
-        AttributedString as = new AttributedString(text);
+                if (start == end) {
+                    // skip empty
+                    continue;
+                }
 
-        for (int i = 0; i < richText.numFormattingRuns(); i++) {
-            int start = richText.getIndexOfFormattingRun(i);
-            int end = i + 1 < richText.numFormattingRuns() ? richText.getIndexOfFormattingRun(i + 1) : richText.length();
+                // apply font attributes for formatting run
+                // FIXME getFontForFormattingRun(richText, i).addAttributes(as, start, end);
+                rtb.append(text, start, end);
+                start = end;
+            }
+            rtb.append(text, start, text.length());
 
-            if (start == end) {
-                // skip empty
-                continue;
+            return rtb.toRichText();
+        } else {
+            if (isEmpty()) {
+                return RichText.emptyText();
             }
 
-            // apply font attributes for formatting run
-            getFontForFormattingRun(richText, i).addAttributes(as, start, end);
+            // FIXME locale specific grouping separator does not work in POI
+            // see https://bz.apache.org/bugzilla/show_bug.cgi?id=59638
+            // TODO create and submit patch for POI
+            DataFormatter dataFormatter = getWorkbook().getDataFormatter();
+            try {
+                FormulaEvaluator evaluator = getWorkbook().evaluator;
+                return RichText.valueOf(dataFormatter.formatCellValue(poiCell, evaluator));
+            } catch (Exception ex) {
+                return RichText.valueOf(Cell.ERROR_TEXT);
+            }
         }
 
-        return as;
     }
 
     @Override
@@ -516,11 +507,7 @@ public final class PoiCell implements Cell {
                 set(other.getDate());
                 break;
             case TEXT:
-                if (other.isRichText()) {
-                    set(other.getAttributedString());
-                } else {
-                    set(other.getText());
-                }
+                set(other.getText());
                 break;
         }
     }
@@ -563,11 +550,6 @@ public final class PoiCell implements Cell {
         }
 
         getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
-    }
-
-    @Override
-    public boolean isRichText() {
-        return getResultType()==CellType.TEXT && poiCell.getRichStringCellValue().numFormattingRuns()!=0;
     }
 
     @Override

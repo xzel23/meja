@@ -21,8 +21,7 @@ import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
-import com.dua3.meja.util.AttributedStringHelper;
-import java.text.AttributedString;
+import com.dua3.meja.text.RichText;
 import javax.swing.JTextPane;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -68,7 +67,7 @@ public class CellEditorPane extends JTextPane {
         if (hAlign != HAlign.ALIGN_AUTOMATIC) {
             return hAlign;
         }
-        
+
         switch (type) {
             case BLANK:
             case BOOLEAN:
@@ -96,22 +95,22 @@ public class CellEditorPane extends JTextPane {
      * @param scale the scale to apply
      * @param eval set to true to display formula results instead of the formula itself
      */
-    public void setContent(Cell cell, float scale, boolean eval) {        
+    public void setContent(Cell cell, float scale, boolean eval) {
         CellStyle cellStyle = cell.getCellStyle();
         final Font font = cellStyle.getFont();
         setFont(getAwtFont(font, scale));
         setBackground(cellStyle.getFillBgColor());
         setForeground(font.getColor());
 
-        final AttributedString text;
+        final RichText text;
         if (!eval && cell.getCellType() == CellType.FORMULA) {
-            text = new AttributedString("="+cell.getFormula());
+            text = RichText.valueOf("="+cell.getFormula());
         } else {
-            text = cell.getAttributedString();
+            text = cell.getAsText();
         }
-        
+
         AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
-        setDocument(AttributedStringHelper.toStyledDocument(text, dfltAttr, scale));
+        setDocument(StyledDocumentBuilder.toStyledDocument(text, dfltAttr, scale));
 
         this.vAlign = cellStyle.getVAlign();
 

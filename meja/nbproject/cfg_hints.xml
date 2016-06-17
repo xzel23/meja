@@ -44,5 +44,8 @@
         <node name="Javac_EMPTY_STATEMENT_AFTER_IF">
             <attribute name="enabled" value="true"/>
         </node>
+        <node name="org.netbeans.modules.java.hints.suggestions.Move.moveInitialization">
+            <attribute name="enabled" value="false"/>
+        </node>
     </tool>
 </configuration>

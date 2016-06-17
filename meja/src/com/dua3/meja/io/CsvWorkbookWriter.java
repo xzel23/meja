@@ -46,14 +46,14 @@ public class CsvWorkbookWriter extends WorkbookWriter {
      * Append workbook data as CSV to the given Appendable.
      * @param workbook the workbook to write
      * @param app Appendable to write to
-     * @throws IOException 
+     * @throws IOException
      */
     public void write(Workbook workbook, Appendable app) throws IOException {
         try (CsvWriter writer = new CsvWriter(MejaHelper.createWriter(app))) {
             writeSheets(workbook, writer);
         }
     }
-    
+
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
         try (CsvWriter writer = new CsvWriter(out)) {
@@ -65,7 +65,7 @@ public class CsvWorkbookWriter extends WorkbookWriter {
         for (Sheet sheet: workbook) {
             for (Row row:sheet) {
                 for (Cell cell: row) {
-                    writer.addField(cell.getAsText());
+                    writer.addField(cell.getAsText().toString());
                 }
                 writer.nextRow();
             }
