@@ -64,4 +64,12 @@ public class Run implements CharSequence {
         return text.substring(start, start+length);
     }
 
+    public int getStart() {
+        return start;
+    }
+
+    public int getEnd() {
+        return start+length;
+    }
+    
 }

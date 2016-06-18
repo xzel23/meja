@@ -76,7 +76,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 StyleConstants.setFontFamily(as, e.getValue());
                 break;
             case Style.FONT_SIZE:
-                StyleConstants.setFontSize(as, Math.round(scale * decodeFontSize(e.getValue())));
+                StyleConstants.setFontSize(as, Math.round(scale * MejaHelper.decodeFontSize(e.getValue())));
                 break;
             case Style.COLOR:
                 StyleConstants.setForeground(as, MejaHelper.getColor(e.getValue()));
@@ -116,18 +116,6 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         } catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Exception in StyledDocumentBuilder.append()", ex);
         }
-    }
-
-    private static float decodeFontSize(String s) throws NumberFormatException {
-        float factor = 1f;
-        if (s.endsWith("pt")) {
-            s = s.substring(0, s.length()-2);
-            factor = 1f;
-        } else if (s.endsWith("px")) {
-            s = s.substring(0, s.length()-2);
-            factor = 96f/72f;
-        }
-        return factor * Float.parseFloat(s);
     }
 
 }
