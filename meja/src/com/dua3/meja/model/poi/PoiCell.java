@@ -21,6 +21,7 @@ import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.text.RichText;
 import com.dua3.meja.text.RichTextBuilder;
+import com.dua3.meja.text.Style;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 import java.util.Date;
@@ -38,6 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  * @author axel
  */
 public final class PoiCell implements Cell {
+
     private static final Logger LOGGER = Logger.getLogger(PoiCell.class.getName());
 
     private static CellType translateCellType(int poiType) {
@@ -107,7 +109,6 @@ public final class PoiCell implements Cell {
         return row.getSheet();
     }
 
-
     @Override
     public PoiRow getRow() {
         return row;
@@ -138,7 +139,7 @@ public final class PoiCell implements Cell {
     }
 
     private IllegalStateException newIllegalStateException(Exception e) {
-        return new IllegalStateException("["+getCellRef(true)+"]: "+e.getMessage());
+        return new IllegalStateException("[" + getCellRef(true) + "]: " + e.getMessage());
     }
 
     @Override
@@ -206,7 +207,7 @@ public final class PoiCell implements Cell {
     @Override
     public RichText getText() {
         try {
-            return isEmpty() ? RichText.emptyText() : RichText.valueOf(poiCell.getStringCellValue());
+            return isEmpty() ? RichText.emptyText() : toRichText(poiCell.getRichStringCellValue());
         } catch (Exception e) {
             throw newIllegalStateException(e);
         }
@@ -284,7 +285,7 @@ public final class PoiCell implements Cell {
             richText.applyFont(runStart, runLimit, font);
             iter.setIndex(runLimit);
         }
-        */
+         */
         poiCell.setCellValue(richText);
 
         updateRow();
@@ -295,32 +296,7 @@ public final class PoiCell implements Cell {
     @Override
     public RichText getAsText() {
         if (getCellType() == CellType.TEXT) {
-            RichTextString richText = poiCell.getRichStringCellValue();
-
-            String text = richText.getString();
-            //TODO: properly process tabs
-            text = text.replace('\t', ' '); // tab
-            text = text.replace((char) 160, ' '); // non-breaking space
-
-            RichTextBuilder rtb = new RichTextBuilder();
-            int start = 0;
-            for (int i = 0; i < richText.numFormattingRuns(); i++) {
-                start = richText.getIndexOfFormattingRun(i);
-                int end = i + 1 < richText.numFormattingRuns() ? richText.getIndexOfFormattingRun(i + 1) : richText.length();
-
-                if (start == end) {
-                    // skip empty
-                    continue;
-                }
-
-                // apply font attributes for formatting run
-                // FIXME getFontForFormattingRun(richText, i).addAttributes(as, start, end);
-                rtb.append(text, start, end);
-                start = end;
-            }
-            rtb.append(text, start, text.length());
-
-            return rtb.toRichText();
+            return toRichText(poiCell.getRichStringCellValue());
         } else {
             if (isEmpty()) {
                 return RichText.emptyText();
@@ -386,7 +362,7 @@ public final class PoiCell implements Cell {
          * TODO create SCCSE and report bug against POI
          */
         int poiType = poiCell.getCellType();
-        if (poiType==org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
+        if (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
             poiType = poiCell.getCachedFormulaResultType();
         }
         return (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC)
@@ -479,10 +455,53 @@ public final class PoiCell implements Cell {
     private PoiFont getFontForFormattingRun(RichTextString richText, int i) {
         if (richText instanceof HSSFRichTextString) {
             HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
-            return ((PoiHssfWorkbook) workbook).getFont(hssfRichText.getFontOfFormattingRun(i));
+            return ((PoiWorkbook.PoiHssfWorkbook) workbook).getFont(hssfRichText.getFontOfFormattingRun(i));
         } else {
             return workbook.getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
         }
+    }
+
+    public RichText toRichText(RichTextString rts) {
+        String text = rts.getString();
+        //TODO: properly process tabs
+        text = text.replace('\t', ' '); // tab
+        text = text.replace((char) 160, ' '); // non-breaking space
+
+        RichTextBuilder rtb = new RichTextBuilder();
+        int start = 0;
+        for (int i = 0; i < rts.numFormattingRuns(); i++) {
+            start = rts.getIndexOfFormattingRun(i);
+            int end = i + 1 < rts.numFormattingRuns() ? rts.getIndexOfFormattingRun(i + 1) : rts.length();
+
+            if (start == end) {
+                // skip empty
+                continue;
+            }
+
+            // apply font attributes for formatting run
+            PoiFont runFont = getFontForFormattingRun(rts, i);
+            rtb.push(Style.FONT_FAMILY, runFont.getFamily());
+            rtb.push(Style.FONT_SIZE, runFont.getSizeInPoints() + "pt");
+            rtb.push(Style.COLOR, MejaHelper.encode(runFont.getColor()));
+            if (runFont.isBold()) {
+                rtb.push(Style.FONT_WEIGHT, "bold");
+            }
+            if (runFont.isItalic()) {
+                rtb.push(Style.FONT_STYLE, "italic");
+            }
+            if (runFont.isUnderlined()) {
+                rtb.push(Style.TEXT_DECORATION, "underline");
+            }
+            if (runFont.isStrikeThrough()) {
+                rtb.push(Style.TEXT_DECORATION, "line-through");
+            }
+
+            rtb.append(text, start, end);
+            start = end;
+        }
+        rtb.append(text, start, text.length());
+
+        return rtb.toRichText();
     }
 
     @Override
@@ -561,4 +580,5 @@ public final class PoiCell implements Cell {
     public String getCellRef(boolean includeSheet) {
         return MejaHelper.getCellRef(this, includeSheet);
     }
+
 }

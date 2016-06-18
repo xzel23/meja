@@ -17,14 +17,20 @@ package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
+import com.dua3.meja.text.RichText;
+import com.dua3.meja.text.RichTextBuilder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
  *
  * @author Axel Howind (axel@dua3.com)
  */
 public class PoiHelper {
+
     private static final Logger LOGGER = Logger.getLogger(PoiHelper.class.getName());
 
     public static HAlign poiToHAlign(final short alignment) {
@@ -96,4 +102,5 @@ public class PoiHelper {
     private PoiHelper() {
         // no instantiation
     }
+
 }

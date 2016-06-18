@@ -447,6 +447,10 @@ public class MejaHelper {
         }
     }
 
+    public static String encode(Color color) {
+        return "#"+Integer.toHexString(color.getRGB());
+    }
+
     private MejaHelper() {
     }
 
@@ -615,7 +619,7 @@ public class MejaHelper {
 
         // HEX colors
         if (s.startsWith("#")) {
-            int i = Integer.parseInt(s.substring(1), 16);
+            int i = Integer.parseUnsignedInt(s.substring(1), 16);
             return colorDecode(i);
         }
 
