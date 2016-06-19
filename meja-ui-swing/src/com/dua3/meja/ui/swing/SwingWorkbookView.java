@@ -17,17 +17,21 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.ui.WorkbookView;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
  *
  * @author axel
  */
-public class SwingWorkbookView extends JComponent implements com.dua3.meja.ui.WorkbookView {
+public class SwingWorkbookView extends JComponent implements WorkbookView, ChangeListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -63,6 +67,7 @@ public class SwingWorkbookView extends JComponent implements com.dua3.meja.ui.Wo
                 content.addTab(sheet.getSheetName(), sheetView);
             }
             content.setSelectedIndex(workbook.getCurrentSheetIndex());
+            content.addChangeListener(this);
             add(content);
             revalidate();
         }
@@ -139,4 +144,12 @@ public class SwingWorkbookView extends JComponent implements com.dua3.meja.ui.Wo
         }
         return null;
     }
+
+    @Override
+    public void stateChanged(ChangeEvent evt) {
+        if (evt.getSource()==content) {
+            workbook.setCurrentSheet(content.getSelectedIndex());
+        }
+    }
+
 }
