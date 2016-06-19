@@ -229,7 +229,7 @@ public class GenericCell implements Cell {
             clear();
             return this;
         }
-        return set(arg, CellType.TEXT);
+        return set(RichText.valueOf(arg), CellType.TEXT);
     }
 
     @Override

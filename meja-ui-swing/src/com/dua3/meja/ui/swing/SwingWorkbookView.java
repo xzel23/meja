@@ -20,7 +20,6 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.WorkbookView;
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
