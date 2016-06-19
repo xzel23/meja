@@ -19,6 +19,8 @@ import com.dua3.meja.io.FileType;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,17 +41,20 @@ import java.util.Map;
 public class GenericWorkbook implements Workbook {
     private static final URI DEFAULT_URI = URI.create("");
 
+    final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
     final List<GenericSheet> sheets = new ArrayList<>();
     final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
     final Locale locale;
     private final GenericCellStyle defaultCellStyle;
     private URI uri;
-    
+    private int currentSheetIdx = 0;
+
 
     public GenericWorkbook(Locale locale) {
         this(locale, DEFAULT_URI);
     }
-    
+
     /**
      * Construct a new {@code GenericWorkbook}.
      * @param locale the locale to use
@@ -90,14 +95,15 @@ public class GenericWorkbook implements Workbook {
     @Override
     public void removeSheet(int sheetNr) {
         sheets.remove(sheetNr);
-    }
+        pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
+     }
 
     @Override
     public boolean removeSheetByName(String sheetName) {
-        Iterator<GenericSheet> iter = sheets.iterator();
-        while (iter.hasNext()) {
-            if (iter.next().getSheetName().equals(sheetName)) {
-                iter.remove();
+        for ( int i=0; i<sheets.size(); i++) {
+            if (sheets.get(i).getSheetName().equals(sheetName)) {
+                sheets.remove(i);
+                pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, i, null);
                 return true;
             }
         }
@@ -130,7 +136,31 @@ public class GenericWorkbook implements Workbook {
     public GenericSheet createSheet(String sheetName) {
         final GenericSheet sheet = new GenericSheet(this, sheetName, locale);
         sheets.add(sheet);
+        pcs.firePropertyChange(PROPERTY_SHEET_ADDED, null, sheets.size()-1);
         return sheet;
+    }
+
+    @Override
+    public Sheet getCurrentSheet() {
+        return getSheet(getCurrentSheetIndex());
+    }
+
+    @Override
+    public int getCurrentSheetIndex() {
+        return currentSheetIdx;
+    }
+
+    @Override
+    public void setCurrentSheet(int idx) {
+        if (idx<0 || idx>sheets.size()) {
+            throw new IllegalArgumentException("Sheet index outt of range: "+idx);
+        }
+
+        int oldIdx = getCurrentSheetIndex();
+        if (idx != oldIdx) {
+            currentSheetIdx = idx;
+            pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
+        }
     }
 
     @Override
@@ -231,6 +261,26 @@ public class GenericWorkbook implements Workbook {
             Sheet newSheet = createSheet(sheet.getSheetName());
             newSheet.copy(sheet);
         }
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(propertyName, listener);
     }
 
 }

@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import com.dua3.meja.io.FileType;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,6 +36,10 @@ import java.util.Locale;
  * @author axel
  */
 public interface Workbook extends AutoCloseable, Iterable<Sheet> {
+
+    public static final String PROPERTY_ACTIVE_SHEET = "active sheet";
+    public static final String PROPERTY_SHEET_ADDED = "sheet added";
+    public static final String PROPERTY_SHEET_REMOVED = "sheet removed";
 
     /**
      * Get the URI for this workbook.
@@ -73,6 +78,12 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @return sheet or {@code null}
      */
     Sheet getSheetByName(String sheetName);
+
+    Sheet getCurrentSheet();
+
+    int getCurrentSheetIndex();
+
+    void setCurrentSheet(int idx);
 
     /**
      * Remove sheet by number.
@@ -181,5 +192,13 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param other workbook to copy
      */
     void copy(Workbook other);
+
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+    public void removePropertyChangeListener(PropertyChangeListener listener);
+
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
 }

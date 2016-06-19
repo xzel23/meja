@@ -22,6 +22,8 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,6 +59,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author axel
  */
 public abstract class PoiWorkbook implements Workbook {
+
+    protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /**
      *
@@ -158,6 +162,7 @@ public abstract class PoiWorkbook implements Workbook {
     public void removeSheet(int sheetNr) {
         poiWorkbook.removeSheetAt(sheetNr);
         sheets.remove(sheetNr);
+        pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
     }
 
     @Override
@@ -166,6 +171,7 @@ public abstract class PoiWorkbook implements Workbook {
             if (sheets.get(i).getSheetName().equals(sheetName)) {
                 poiWorkbook.removeSheetAt(i);
                 sheets.remove(i);
+                pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, i, null);
                 return true;
             }
         }
@@ -239,6 +245,25 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     @Override
+    public Sheet getCurrentSheet() {
+        return getSheet(getCurrentSheetIndex());
+    }
+
+    @Override
+    public int getCurrentSheetIndex() {
+        return poiWorkbook.getActiveSheetIndex();
+    }
+
+    @Override
+    public void setCurrentSheet(int idx) {
+        int oldIdx = getCurrentSheetIndex();
+        if (idx != oldIdx) {
+            poiWorkbook.setActiveSheet(idx);
+            pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
+        }
+    }
+
+    @Override
     public PoiCellStyle copyCellStyle(String styleName, CellStyle style) {
         PoiCellStyle cellStyle = getCellStyle(styleName);
         cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
@@ -298,7 +323,9 @@ public abstract class PoiWorkbook implements Workbook {
 
     @Override
     public void setUri(URI uri) {
+        URI oldUri = this.uri;
         this.uri = uri;
+        pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldUri, uri);
     }
 
     /**
@@ -334,6 +361,7 @@ public abstract class PoiWorkbook implements Workbook {
         org.apache.poi.ss.usermodel.Sheet poiSheet = poiWorkbook.createSheet(sheetName);
         PoiSheet sheet = new PoiSheet(this, poiSheet);
         sheets.add(sheet);
+        pcs.firePropertyChange(PROPERTY_SHEET_ADDED, null, sheets.size()-1);
         return sheet;
     }
 
@@ -635,6 +663,26 @@ public abstract class PoiWorkbook implements Workbook {
             poiFont.setStrikeout(fontStrikeThrough);
             return new PoiFont(this, poiFont);
         }
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(propertyName, listener);
     }
 
 }

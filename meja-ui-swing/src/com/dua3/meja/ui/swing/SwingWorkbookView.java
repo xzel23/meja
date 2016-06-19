@@ -62,7 +62,7 @@ public class SwingWorkbookView extends JComponent implements com.dua3.meja.ui.Wo
                 final SwingSheetView sheetView = new SwingSheetView(sheet);
                 content.addTab(sheet.getSheetName(), sheetView);
             }
-            content.setSelectedIndex(0);
+            content.setSelectedIndex(workbook.getCurrentSheetIndex());
             add(content);
             revalidate();
         }
