@@ -25,7 +25,7 @@ public class JfxSheetView extends BorderPane implements SheetView {
 
     @Override
     public Sheet getSheet() {
-return sheet;
+        return sheet;
     }
 
     @Override

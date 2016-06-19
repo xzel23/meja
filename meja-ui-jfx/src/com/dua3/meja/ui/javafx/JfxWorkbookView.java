@@ -85,8 +85,8 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
         for (Tab tab: content.getTabs()) {
             Node view = tab.getContent();
             if (view != null) {
-                //assert view instanceof JfxSheetView;
-                //((JfxSheetView) view).setEditable(editable);
+                assert view instanceof JfxSheetView;
+                ((JfxSheetView) view).setEditable(editable);
             }
         }
     }
@@ -101,11 +101,11 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
         for (Tab tab: content.getTabs()) {
             Node view = tab.getContent();
             if (view != null) {
-                //assert view instanceof JfxSheetView;
-                //JfxSheetView sheetView = (JfxSheetView) view;
-                //if (sheetView.getSheet().getSheetName().equals(sheetName)) {
-                //    return sheetView;
-                //}
+                assert view instanceof JfxSheetView;
+                JfxSheetView sheetView = (JfxSheetView) view;
+                if (sheetView.getSheet().getSheetName().equals(sheetName)) {
+                    return sheetView;
+                }
             }
         }
         return null;
@@ -117,8 +117,9 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
      */
     @Override
     public SheetView getCurrentView() {
-        // FIXME
-        return null;
+        Node node = content.getSelectionModel().getSelectedItem().getContent();
+        assert node instanceof JfxSheetView;
+        return (SheetView) node;
     }
 
     public SheetView getViewForSheet(Sheet sheet) {
@@ -129,11 +130,11 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
         for (Tab tab: content.getTabs()) {
             Node view = tab.getContent();
             if (view != null) {
-                //assert view instanceof JfxSheetView;
-                //JfxSheetView sheetView = (SwingSheetView) view;
-                //if (sheet==sheetView.getSheet()) {
-                //    return sheetView;
-                //}
+                assert view instanceof JfxSheetView;
+                JfxSheetView sheetView = (JfxSheetView) view;
+                if (sheet==sheetView.getSheet()) {
+                    return sheetView;
+                }
             }
         }
         return null;
