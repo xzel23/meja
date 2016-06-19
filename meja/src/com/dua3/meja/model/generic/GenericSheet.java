@@ -346,14 +346,18 @@ public class GenericSheet implements Sheet {
         if (cell.getSheet()!=this) {
             throw new IllegalArgumentException("Cannot set cell from another sheet as current cell.");
         }
-        this.currentRow = cell.getRowNumber();
-        this.currentColumn = cell.getColumnNumber();
+
+        Cell old = getCurrentCell();
+
+        currentRow = cell.getRowNumber();
+        currentColumn = cell.getColumnNumber();
+
+        pcs.firePropertyChange(PROPERTY_ACTIVE_CELL, old, cell);
     }
 
     @Override
     public void setCurrentCell(int i, int j) {
-        this.currentRow = i;
-        this.currentColumn = j;
+        setCurrentCell(getCell(i, j));
     }
 
     @Override

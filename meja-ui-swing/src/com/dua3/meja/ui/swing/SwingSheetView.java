@@ -296,8 +296,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
                 break;
         }
-
-        scrollToCurrentCell();
     }
 
     /**
@@ -322,7 +320,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         int row = getRowNumberFromY(y);
         int col = getColumnNumberFromX(x);
         setCurrentCell(row, col);
-        scrollToCurrentCell();
     }
 
     /**
@@ -435,7 +432,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
         int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
         sheet.setCurrentCell(newRowNum, newColNum);
-        scrollToCurrentCell();
 
         Cell newCell = getCurrentCell().getLogicalCell();
         if (newCell.getRowNumber() != oldCell.getRowNumber()
@@ -589,8 +585,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 stopEditing(true);
                 editing = false;
             }
-            // scroll the selected cell into view
-            scrollToCurrentCell();
         }
     }
 
@@ -770,8 +764,14 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         switch (evt.getPropertyName()) {
             case Sheet.PROPERTY_ZOOM:
             case Sheet.PROPERTY_LAYOUT:
+                updateContent();
+                break;
             case Sheet.PROPERTY_FREEZE:
                 updateContent();
+                scrollToCurrentCell();
+                break;
+            case Sheet.PROPERTY_ACTIVE_CELL:
+                scrollToCurrentCell();
                 break;
             default:
                 // nop

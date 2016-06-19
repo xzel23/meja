@@ -53,8 +53,6 @@ public class PoiSheet implements Sheet {
     private int firstColumn;
     private int lastColumn;
     private List<RectangularRegion> mergedRegions;
-    private int currentRow = 0;
-    private int currentColumn = 0;
     private float zoom = 1.0f;
     private int autoFilterRow = -1;
 
@@ -117,21 +115,6 @@ public class PoiSheet implements Sheet {
             CellRangeAddress r = poiSheet.getMergedRegion(i);
             final RectangularRegion rr = new RectangularRegion(r.getFirstRow(), r.getLastRow(), r.getFirstColumn(), r.getLastColumn());
             mergedRegions.add(rr);
-        }
-
-        // set current row and column
-        if (poiSheet instanceof XSSFSheet) {
-            CellAddress cellRef = poiSheet.getActiveCell();
-            if (cellRef!=null) {
-                this.currentRow = Math.max(getFirstRowNum(), Math.min(getLastRowNum(), cellRef.getRow()));
-                this.currentColumn = Math.max(getFirstColNum(), Math.min(getLastColNum(), cellRef.getColumn()));
-            } else {
-                this.currentRow = poiSheet.getTopRow();
-                this.currentColumn = poiSheet.getLeftCol();
-            }
-        } else if (poiSheet instanceof HSSFSheet) {
-            this.currentRow = poiSheet.getTopRow();
-            this.currentColumn = poiSheet.getLeftCol();
         }
     }
 
@@ -450,6 +433,15 @@ public class PoiSheet implements Sheet {
 
     @Override
     public PoiCell getCurrentCell() {
+        final int currentRow, currentColumn;
+        CellAddress cellRef = poiSheet.getActiveCell();
+        if (cellRef!=null) {
+            currentRow = Math.max(getFirstRowNum(), Math.min(getLastRowNum(), cellRef.getRow()));
+            currentColumn = Math.max(getFirstColNum(), Math.min(getLastColNum(), cellRef.getColumn()));
+        } else {
+            currentRow = poiSheet.getTopRow();
+            currentColumn = poiSheet.getLeftCol();
+        }
         return getCell(currentRow, currentColumn);
     }
 
@@ -458,14 +450,17 @@ public class PoiSheet implements Sheet {
         if (cell.getSheet()!=this) {
             throw new IllegalArgumentException("Cannot set cell from another sheet as current cell.");
         }
-        setCurrentCell(cell.getRowNumber(), cell.getColumnNumber());
+
+        Cell old = getCurrentCell();
+
+        ((PoiCell)cell).poiCell.setAsActiveCell();
+
+        pcs.firePropertyChange(PROPERTY_ACTIVE_CELL, old, cell);
     }
 
     @Override
     public void setCurrentCell(int i, int j) {
-        this.currentRow = i;
-        this.currentColumn = j;
-        getCell(i, j).poiCell.setAsActiveCell();
+        setCurrentCell(getCell(i, j));
     }
 
     @Override
