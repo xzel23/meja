@@ -16,8 +16,8 @@
 package com.dua3.meja.text;
 
 import java.util.stream.Collectors;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *

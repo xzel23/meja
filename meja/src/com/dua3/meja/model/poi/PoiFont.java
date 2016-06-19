@@ -16,8 +16,6 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.Font;
-import com.dua3.meja.text.RichTextBuilder;
-import com.dua3.meja.text.Style;
 import java.awt.Color;
 import java.util.Objects;
 import org.apache.poi.hssf.usermodel.HSSFFont;

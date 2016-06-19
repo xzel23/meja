@@ -58,7 +58,7 @@ public class PoiSheet implements Sheet {
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     @SuppressWarnings("rawtypes")
-    private WeakReference[] rows = new WeakReference[8000];
+    private WeakReference[] rows = new WeakReference[8_000];
 
     protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
         this.workbook = workbook;

@@ -29,8 +29,8 @@ import java.util.Date;
  */
 public class GenericCell implements Cell {
     public static final int MAX_HORIZONTAL_SPAN = 0xefff;
-    public static final int MAX_VERTICAL_SPAN = 0xefffff;
-    public static final int MAX_COLUMN_NUMBER = 0xefffff;
+    public static final int MAX_VERTICAL_SPAN = 0xef_ffff;
+    public static final int MAX_COLUMN_NUMBER = 0xef_ffff;
 
     private final GenericRow row;
     private Object value;
@@ -71,7 +71,7 @@ public class GenericCell implements Cell {
     }
 
     private void setCellType(CellType type) {
-        data = (data & 0xffffffffffffff00L) | type.ordinal();
+        data = (data & 0xffff_ffff_ffff_ff00L) | type.ordinal();
     }
 
     @Override
@@ -84,12 +84,12 @@ public class GenericCell implements Cell {
             throw new IllegalArgumentException();
         }
 
-        data = (data & 0xffffffff000000ffL) | (((long) spanY) << 8);
+        data = (data & 0xffff_ffff_0000_00ffL) | (((long) spanY) << 8);
     }
 
     @Override
     public int getVerticalSpan() {
-        return (int) ((data & 0x00000000ffffff00L) >> 8);
+        return (int) ((data & 0x0000_0000_ffff_ff00L) >> 8);
     }
 
     private void setHorizontalSpan(int spanX) {
@@ -97,12 +97,12 @@ public class GenericCell implements Cell {
             throw new IllegalArgumentException();
         }
 
-        data = (data & 0xffff0000ffffffffL) | (((long) spanX) << 32);
+        data = (data & 0xffff_0000_ffff_ffffL) | (((long) spanX) << 32);
     }
 
     @Override
     public int getHorizontalSpan() {
-        return (int) ((data & 0x0000ffff00000000L) >> 32);
+        return (int) ((data & 0x0000_ffff_0000_0000L) >> 32);
     }
 
     private void setColumnNr(int colNr) {
@@ -110,12 +110,12 @@ public class GenericCell implements Cell {
             throw new IllegalArgumentException();
         }
 
-        data = (data & 0x0000ffffffffffffL) | (((long) colNr) << 48);
+        data = (data & 0x0000_ffff_ffff_ffffL) | (((long) colNr) << 48);
     }
 
     @Override
     public int getColumnNumber() {
-        return (int) ((data & 0xffff000000000000L) >> 48);
+        return (int) ((data & 0xffff_0000_0000_0000L) >> 48);
     }
 
     @Override
