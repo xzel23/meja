@@ -253,16 +253,18 @@ public final class PoiCell implements Cell {
 
     @Override
     public Cell set(RichText s) {
-        RichTextString richText = workbook.createRichTextString(s.toString());
+        Object old = get();
 
+        RichTextString richText = workbook.createRichTextString(s.toString());
         for (Run run : s) {
             org.apache.poi.ss.usermodel.Font font = convertFont(run.getStyle());
             richText.applyFont(run.getStart(), run.getEnd(), font);
         }
-
         poiCell.setCellValue(richText);
 
         updateRow();
+
+        getSheet().cellValueChanged(this, old, s);
 
         return this;
     }
@@ -292,23 +294,30 @@ public final class PoiCell implements Cell {
 
     @Override
     public void clear() {
-        poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
-        updateRow();
+        if (!isEmpty()) {
+            Object old = get();
+            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+            updateRow();
+            getSheet().cellValueChanged(this, old, null);
+        }
     }
 
     @Override
     public PoiCell set(Boolean arg) {
+        Object old = get();
         if (arg == null) {
             clear();
         } else {
             poiCell.setCellValue(arg);
         }
         updateRow();
+        getSheet().cellValueChanged(this, old, arg);
         return this;
     }
 
     @Override
     public PoiCell set(Date arg) {
+        Object old = get();
         if (arg == null) {
             clear();
         } else {
@@ -320,6 +329,7 @@ public final class PoiCell implements Cell {
             }
         }
         updateRow();
+        getSheet().cellValueChanged(this, old, arg);
         return this;
     }
 
@@ -345,6 +355,7 @@ public final class PoiCell implements Cell {
 
     @Override
     public PoiCell set(Number arg) {
+        Object old = get();
         if (arg == null) {
             clear();
         } else {
@@ -356,18 +367,22 @@ public final class PoiCell implements Cell {
             }
         }
         updateRow();
+        getSheet().cellValueChanged(this, old, null);
         return this;
     }
 
     @Override
     public PoiCell set(String arg) {
+        Object old = get();
         poiCell.setCellValue(arg);
         updateRow();
+        getSheet().cellValueChanged(this, old, null);
         return this;
     }
 
     @Override
     public PoiCell setFormula(String arg) {
+        Object old = get();
         if (arg == null) {
             clear();
         } else {
@@ -376,6 +391,7 @@ public final class PoiCell implements Cell {
             getWorkbook().evaluator.evaluateFormulaCell(poiCell);
         }
         updateRow();
+        getSheet().cellValueChanged(this, old, null);
         return this;
     }
 
@@ -410,7 +426,9 @@ public final class PoiCell implements Cell {
     @Override
     public void setCellStyle(CellStyle cellStyle) {
         if (cellStyle instanceof PoiCellStyle) {
+            Object old = getCellStyle();
             poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
+            getSheet().cellStyleChanged(this, old, cellStyle);
         } else {
             throw new IllegalArgumentException("Incompatible implementation.");
         }

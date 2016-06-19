@@ -345,8 +345,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      *
      * @return selection rectangle in display coordinates
      */
-    private Rectangle getSelectionRect() {
-        Rectangle cellRect = getCellRect(getCurrentCell().getLogicalCell());
+    private Rectangle getSelectionRect(Cell cell) {
+        Rectangle cellRect = getCellRect(cell.getLogicalCell());
         int extra = (selectionStrokeWidth + 1) / 2;
         cellRect.x -= extra;
         cellRect.y -= extra;
@@ -379,6 +379,11 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         final int h = getRowPos(i + cell.getVerticalSpan()) - y + 1;
 
         return new Rectangle(x, y, w, h);
+    }
+
+    public void repaintCell(Cell cell) {
+        Rectangle r = getSelectionRect(cell);
+        sheetPane.repaintSheet(r);
     }
 
     /**
@@ -426,26 +431,11 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     @Override
     public boolean setCurrentCell(int rowNum, int colNum) {
-        Cell oldCell = getCurrentCell().getLogicalCell();
-        Rectangle oldRect = getSelectionRect();
-
+        Cell oldCell = sheet.getCurrentCell();
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
         int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
         sheet.setCurrentCell(newRowNum, newColNum);
-
-        Cell newCell = getCurrentCell().getLogicalCell();
-        if (newCell.getRowNumber() != oldCell.getRowNumber()
-                || newCell.getColumnNumber() != oldCell.getColumnNumber()) {
-            // get new selection for repainting
-            Rectangle newRect = getSelectionRect();
-
-            sheetPane.repaintSheet(oldRect);
-            sheetPane.repaintSheet(newRect);
-
-            return true;
-        } else {
-            return false;
-        }
+        return getCurrentCell() != oldCell;
     }
 
     /**
@@ -771,7 +761,13 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 scrollToCurrentCell();
                 break;
             case Sheet.PROPERTY_ACTIVE_CELL:
+                repaintCell((Cell) evt.getOldValue());
+                repaintCell((Cell) evt.getNewValue());
                 scrollToCurrentCell();
+                break;
+            case Sheet.PROPERTY_CELL_CONTENT:
+            case Sheet.PROPERTY_CELL_STYLE:
+                repaintCell((Cell) evt.getSource());
                 break;
             default:
                 // nop

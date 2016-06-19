@@ -33,6 +33,8 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     static final String PROPERTY_LAYOUT = "layout";
     static final String PROPERTY_FREEZE = "freeze";
     static final String PROPERTY_ACTIVE_CELL = "active cell";
+    static final String PROPERTY_CELL_CONTENT = "cell content";
+    static final String PROPERTY_CELL_STYLE = "cell style";
 
     /**
      * Get name of sheet.

@@ -208,6 +208,7 @@ public class GenericCell implements Cell {
                 setCellType(type);
                 value = arg;
             }
+            getSheet().cellValueChanged(this, old, arg);
        }
         return this;
     }
@@ -259,8 +260,10 @@ public class GenericCell implements Cell {
 
     @Override
     public void clear() {
+        Object old = value;
         setCellType(CellType.BLANK);
         this.value = null;
+        getSheet().cellValueChanged(this, old, null);
     }
 
     @Override
@@ -269,8 +272,9 @@ public class GenericCell implements Cell {
             throw new IllegalArgumentException("Cell style does not belong to this workbook.");
         }
         if (cellStyle!=this.cellStyle) {
-            GenericCellStyle oldCellStyle = this.cellStyle;
+            GenericCellStyle old = this.cellStyle;
             this.cellStyle = (GenericCellStyle) cellStyle;
+            getSheet().cellStyleChanged(this, old, cellStyle);
         }
     }
 

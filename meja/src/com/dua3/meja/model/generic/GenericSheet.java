@@ -21,6 +21,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.text.DateFormat;
@@ -383,6 +384,16 @@ public class GenericSheet implements Sheet {
     @Override
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(propertyName, listener);
+    }
+
+    void cellValueChanged(GenericCell cell, Object old, Object arg) {
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_CONTENT, old, arg);
+        pcs.firePropertyChange(evt);
+    }
+
+    void cellStyleChanged(GenericCell cell, Object old, Object arg) {
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_STYLE, old, arg);
+        pcs.firePropertyChange(evt);
     }
 
 }

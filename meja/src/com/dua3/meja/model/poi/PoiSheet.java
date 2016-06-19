@@ -20,6 +20,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.lang.ref.WeakReference;
@@ -33,12 +34,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.util.PaneInformation;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  *
@@ -501,6 +500,16 @@ public class PoiSheet implements Sheet {
     @Override
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(propertyName, listener);
+    }
+
+    void cellValueChanged(PoiCell cell, Object old, Object arg) {
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_CONTENT, old, arg);
+        pcs.firePropertyChange(evt);
+    }
+
+    void cellStyleChanged(PoiCell cell, Object old, Object arg) {
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_STYLE, old, arg);
+        pcs.firePropertyChange(evt);
     }
 
 }
