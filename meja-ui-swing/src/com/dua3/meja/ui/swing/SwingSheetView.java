@@ -77,7 +77,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     private static final long serialVersionUID = 1L;
 
-    static final int MAX_WIDTH = 800;
+    static final int MAX_COLUMN_WIDTH = 800;
 
     /**
      * Test whether style uses text wrapping. While there is a property for text
@@ -1392,7 +1392,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     return;
                 }
 
-                int maxWidthScaled = (int) (MAX_WIDTH * getScale());
+                int maxWidthScaled = (int) (MAX_COLUMN_WIDTH * getScale());
 
                 Rectangle clipBounds = g.getClipBounds();
 

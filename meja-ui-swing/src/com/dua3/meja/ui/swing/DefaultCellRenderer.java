@@ -45,7 +45,7 @@ public class DefaultCellRenderer implements CellRenderer {
             return;
         }
 
-        int maxWidthScaled = (int) (SwingSheetView.MAX_WIDTH*scale);
+        int maxWidthScaled = (int) (SwingSheetView.MAX_COLUMN_WIDTH*scale);
 
         // if text is not wrapped, paint with a maximum width to allow overflowing text
         CellStyle style = cell.getCellStyle();
