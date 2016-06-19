@@ -546,7 +546,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         this.sheet = sheet;
 
         if (this.sheet!=null) {
-            sheet.addPropertyChangeListener(Sheet.PROPERTY_ZOOM, this);
+            sheet.addPropertyChangeListener(this);
         }
 
         updateContent();
@@ -599,7 +599,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      *
      * @param gridColor the color for th grid
      */
-    @Override
     public void setGridColor(Color gridColor) {
         this.gridColor = gridColor;
     }
@@ -609,7 +608,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      *
      * @return color of grid
      */
-    @Override
     public Color getGridColor() {
         return gridColor;
     }
@@ -725,8 +723,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         return sheet.getCurrentCell();
     }
 
-    @Override
-    public void updateContent() {
+    private void updateContent() {
         // scale according to screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         scaleDpi = dpi / 72f;
@@ -773,6 +770,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         switch (evt.getPropertyName()) {
             case Sheet.PROPERTY_ZOOM:
             case Sheet.PROPERTY_LAYOUT:
+            case Sheet.PROPERTY_FREEZE:
                 updateContent();
                 break;
             default:

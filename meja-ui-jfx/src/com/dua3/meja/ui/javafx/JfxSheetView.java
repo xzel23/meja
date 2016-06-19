@@ -7,6 +7,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
 import java.awt.Color;
+import java.beans.PropertyChangeSupport;
 import javafx.scene.layout.BorderPane;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 
@@ -16,71 +17,54 @@ import org.controlsfx.control.spreadsheet.SpreadsheetView;
  */
 public class JfxSheetView extends BorderPane implements SheetView {
 
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Sheet sheet = null;
-    private final SpreadsheetView view;
 
     public JfxSheetView() {
-        view = new SpreadsheetView();
-        setCenter(view);
-    }
-
-    @Override
-    public Color getGridColor() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Sheet getSheet() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isEditable() {
-        return view.isEditable();
-    }
-
-    @Override
-    public boolean isEditing() {
-        return view.isEditable() && view.getEditingCell() != null;
-    }
-
-    @Override
-    public void scrollToCurrentCell() {
-        Cell cell = sheet.getCurrentCell();
-        view.scrollToColumnIndex(cell.getColumnNumber());
-        view.scrollToRow(cell.getRowNumber());
-    }
-
-    @Override
-    public boolean setCurrentCell(int rowNum, int colNum) {
-        // FIXME
-        return false;
-    }
-
-    @Override
-    public void setEditable(boolean editable) {
-        view.setEditable(editable);
-    }
-
-    @Override
-    public void setGridColor(Color gridColor) {
-        // fixme
+return sheet;
     }
 
     @Override
     public void setSheet(Sheet sheet) {
-        this.sheet = sheet;
-        view.setGrid(MejaJfxHelper.getGrid(sheet));
+        if (sheet != this.sheet) {
+            Sheet oldSheet = this.sheet;
+            this.sheet = sheet;
+            pcs.firePropertyChange("sheet", oldSheet, sheet);
+        }
+    }
+
+    @Override
+    public boolean isEditable() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isEditing() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void scrollToCurrentCell() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean setCurrentCell(int rowNum, int colNum) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void stopEditing(boolean commit) {
-        // fixme
-    }
-
-    @Override
-    public void updateContent() {
-        // fixme
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

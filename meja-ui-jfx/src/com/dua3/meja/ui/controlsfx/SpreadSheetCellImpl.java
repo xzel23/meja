@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dua3.meja.ui.javafx;
+package com.dua3.meja.ui.controlsfx;
 
 import com.dua3.meja.model.Cell;
 import com.sun.javafx.event.EventHandlerManager;

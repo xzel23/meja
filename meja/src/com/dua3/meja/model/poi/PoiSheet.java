@@ -225,6 +225,7 @@ public class PoiSheet implements Sheet {
     @Override
     public void splitAt(int i, int j) {
         poiSheet.createFreezePane(j, i);
+        pcs.firePropertyChange(PROPERTY_FREEZE, null, null);
     }
 
     @Override
@@ -253,7 +254,7 @@ public class PoiSheet implements Sheet {
                 return;
             }
         }
-        
+
         poiSheet.autoSizeColumn(j);
         pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
     }
@@ -261,7 +262,7 @@ public class PoiSheet implements Sheet {
     @Override
     public void autoSizeColumns() {
         boolean layoutChanged = false;
-        
+
         // for streaming implementation, only tracked columns can be autosized!
         if (poiSheet instanceof SXSSFSheet) {
             SXSSFSheet sxssfSheet = (SXSSFSheet) poiSheet;
@@ -275,7 +276,7 @@ public class PoiSheet implements Sheet {
             for (int j=0;j<getColumnCount();j++) {
                 poiSheet.autoSizeColumn(j);
                 layoutChanged = true;
-            }            
+            }
         }
 
         // inform listeners
@@ -390,11 +391,11 @@ public class PoiSheet implements Sheet {
             // ensure array size
             rows = Arrays.copyOf(rows, Math.max(rows.length*2, i+1));
         }
-        
+
         @SuppressWarnings("unchecked")
         WeakReference<PoiRow> rowRef = rows[i];
         PoiRow row = rowRef == null ? null : rowRef.get();
-        
+
         if (row==null) {
             org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
             if (poiRow==null) {
@@ -403,7 +404,7 @@ public class PoiSheet implements Sheet {
             row = new PoiRow(this, poiRow);
             rows[i] = new WeakReference<>(row);
         }
-        
+
         return row;
     }
 

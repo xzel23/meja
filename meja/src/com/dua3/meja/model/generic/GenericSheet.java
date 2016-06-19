@@ -115,15 +115,17 @@ public class GenericSheet implements Sheet {
     @Override
     public void setColumnWidth(int j, float width) {
         if (j < columnWidth.size()) {
-            columnWidth.set(j, width);
+            if (columnWidth.set(j, width) != width) {
+            pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
+            }
         } else {
             columnWidth.ensureCapacity(j + 1);
             while (columnWidth.size() < j) {
                 columnWidth.add(null); // use default width
             }
             columnWidth.add(width);
+            pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
         }
-        pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
     }
 
     @Override
@@ -172,7 +174,7 @@ public class GenericSheet implements Sheet {
     public void splitAt(int i, int j) {
         freezeRow = i;
         freezeColumn = j;
-        pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
+        pcs.firePropertyChange(PROPERTY_FREEZE, null, null);
     }
 
     @Override

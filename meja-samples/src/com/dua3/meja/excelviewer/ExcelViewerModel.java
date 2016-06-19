@@ -115,19 +115,19 @@ public class ExcelViewerModel {
 
     protected void freezeAtCurrentCell(SheetView view) {
         if (view != null) {
-            Cell cell = view.getSheet().getCurrentCell();
-            view.getSheet().splitAt(cell.getRowNumber(), cell.getColumnNumber());
-            view.updateContent();
+            final Sheet sheet = view.getSheet();
+            Cell cell = sheet.getCurrentCell();
+            sheet.splitAt(cell.getRowNumber(), cell.getColumnNumber());
         }
     }
 
     /**
      * Adjust all column sizes.
+     * @param view
      */
     protected void adjustColumns(SheetView view) {
         if (view != null) {
             view.getSheet().autoSizeColumns();
-            view.updateContent();
         }
     }
 

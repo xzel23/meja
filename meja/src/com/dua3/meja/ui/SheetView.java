@@ -16,20 +16,12 @@
 package com.dua3.meja.ui;
 
 import com.dua3.meja.model.Sheet;
-import java.awt.Color;
 
 /**
  *
  * @author axel
  */
 public interface SheetView {
-
-    /**
-     * Get the grid color.
-     *
-     * @return color of grid
-     */
-    Color getGridColor();
 
     Sheet getSheet();
 
@@ -69,13 +61,6 @@ public interface SheetView {
     void setEditable(boolean editable);
 
     /**
-     * Set the grid color.
-     *
-     * @param gridColor the color for th grid
-     */
-    void setGridColor(Color gridColor);
-
-    /**
      * Set sheet to display.
      *
      * @param sheet the sheet to display
@@ -88,7 +73,5 @@ public interface SheetView {
      * @param commit true if the content of the edited cell is to be updated
      */
     void stopEditing(boolean commit);
-
-    void updateContent();
 
 }

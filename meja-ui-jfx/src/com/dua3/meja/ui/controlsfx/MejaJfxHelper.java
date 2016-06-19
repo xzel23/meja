@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.dua3.meja.ui.javafx;
+package com.dua3.meja.ui.controlsfx;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
@@ -41,6 +42,16 @@ import org.controlsfx.control.spreadsheet.Grid;
  * @author Axel Howind (axel@dua3.com)
  */
 public class MejaJfxHelper {
+
+    /**
+     * Create a TableModel to be used with JTable.
+     *
+     * @param sheet the sheet to create a model for
+     * @return table model instance of {@code JTableModel} for the sheet
+     */
+    public static Grid getGrid(final Sheet sheet) {
+        return new GridImpl(sheet);
+    }
 
     /**
      * Show a file open dialog and load the selected workbook.

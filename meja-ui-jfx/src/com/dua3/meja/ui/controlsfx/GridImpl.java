@@ -1,7 +1,7 @@
 /*
  *
  */
-package com.dua3.meja.ui.javafx;
+package com.dua3.meja.ui.controlsfx;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
