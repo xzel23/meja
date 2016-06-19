@@ -20,7 +20,6 @@ import com.dua3.meja.text.Run;
 import com.dua3.meja.text.Style;
 import com.dua3.meja.text.TextBuilder;
 import com.dua3.meja.util.MejaHelper;
-import java.awt.font.TextAttribute;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -157,6 +157,11 @@ public class CellEditorPane extends JTextPane {
         public ViewFactory getViewFactory() {
             return new CellEditorViewFactory();
         }
+
+        @Override
+        public Object clone() {
+            return super.clone();
+        }
     }
 
     /**
