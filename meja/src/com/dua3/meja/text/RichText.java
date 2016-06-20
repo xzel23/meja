@@ -75,4 +75,19 @@ public class RichText implements Iterable<Run> {
         return text.length();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        
+        RichText other = (RichText) obj;        
+        return runs.equals(other.runs);
+    }
+
+    @Override
+    public int hashCode() {
+        return text.hashCode() + 17*runs.size();
+    }
+    
 }

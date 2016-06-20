@@ -67,5 +67,36 @@ public class Run implements CharSequence {
     public int getEnd() {
         return start+length;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass()!=obj.getClass()) {
+            return false;
+        }
+
+        Run other = (Run) obj;        
+        // it is not sufficient to compare text since even for different
+        // strings, the char sequences represented by two runs might be
+        // the same.
+        if (length!=other.length) {
+            return false;
+        }
+        for (int i=0;i<length; i++) {
+            if (charAt(i)!=other.charAt(i)) {
+                return false;
+            }
+        }
+        
+        return style.equals(other.style);
+    }
+
+    @Override
+    public int hashCode() {
+        int h = style.hashCode();
+        for (int i=0;i<length; i++) {
+            h = 31 * h + charAt(i);
+        }
+        return h;
+    }
     
 }

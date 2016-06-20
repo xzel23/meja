@@ -66,4 +66,19 @@ public class Style {
         return Collections.unmodifiableMap(properties);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj==null || getClass()!=obj.getClass()) {
+            return false;
+        }
+        
+        Style other = (Style) obj;
+        return properties.equals(other.properties);
+    }
+
+    @Override
+    public int hashCode() {
+        return properties.hashCode();
+    }
+    
 }
