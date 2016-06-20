@@ -105,7 +105,7 @@ public interface Cell {
     /**
      * Return text representation of value.
      *
-     * @return cell value as String, as it would be displayed
+     * @return cell value as R, as it would be displayed
      */
     RichText getAsText();
 
@@ -287,4 +287,11 @@ public interface Cell {
      * @return cell reference as String
      */
     String getCellRef(boolean includeSheet);
+
+    /**
+     * Return string representation of cell content.
+     * @return 
+     */
+    @Override
+    String toString();
 }

@@ -180,6 +180,22 @@ public class GenericCell implements Cell {
     }
 
     @Override
+    public String toString() {
+        switch (getCellType()) {
+            case BLANK:
+                return "";
+            case TEXT:
+                return getText().toString();
+            case NUMERIC:
+                return getCellStyle().format((Number) value);
+            case DATE:
+                return getCellStyle().format((Date) value);
+            default:
+                return String.valueOf(value);
+        }
+    }
+
+    @Override
     public GenericCellStyle getCellStyle() {
         return cellStyle;
     }
@@ -298,15 +314,6 @@ public class GenericCell implements Cell {
         setCellType(CellType.FORMULA);
         this.value = value;
         return this;
-    }
-
-    @Override
-    public String toString() {
-        if (isEmpty()) {
-            return "";
-        } else {
-            return getAsText().toString();
-        }
     }
 
     @Override

@@ -221,12 +221,6 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public String toString() {
-        DataFormatter dataFormatter = getWorkbook().getDataFormatter();
-        return dataFormatter.formatCellValue(poiCell);
-    }
-
-    @Override
     public int getRowNumber() {
         return poiCell.getRowIndex();
     }
@@ -289,9 +283,30 @@ public final class PoiCell implements Cell {
                 return RichText.valueOf(Cell.ERROR_TEXT);
             }
         }
-
     }
 
+    @Override
+    public String toString() {
+        if (getCellType() == CellType.TEXT) {
+            return poiCell.getStringCellValue();
+        } else {
+            if (isEmpty()) {
+                return "";
+            }
+
+            // FIXME locale specific grouping separator does not work in POI
+            // see https://bz.apache.org/bugzilla/show_bug.cgi?id=59638
+            // TODO create and submit patch for POI
+            DataFormatter dataFormatter = getWorkbook().getDataFormatter();
+            try {
+                FormulaEvaluator evaluator = getWorkbook().evaluator;
+                return dataFormatter.formatCellValue(poiCell, evaluator);
+            } catch (Exception ex) {
+                return Cell.ERROR_TEXT;
+            }
+        }
+    }
+    
     @Override
     public void clear() {
         if (!isEmpty()) {

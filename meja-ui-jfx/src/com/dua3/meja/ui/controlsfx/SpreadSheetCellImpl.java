@@ -49,7 +49,7 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
     private final ReadOnlyStringProperty TEXT_PROPERTY = new ReadOnlyStringPropertyBase() {
         @Override
         public String get() {
-            return cell.getAsText().toString();
+            return cell.toString();
         }
 
         @Override
@@ -161,7 +161,7 @@ public class SpreadSheetCellImpl implements SpreadsheetCell {
 
     @Override
     public String getText() {
-        return cell.getAsText().toString();
+        return cell.toString();
     }
 
     @Override

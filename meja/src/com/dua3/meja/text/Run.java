@@ -17,10 +17,6 @@ package com.dua3.meja.text;
 
 import java.util.Objects;
 
-/**
- *
- * @author Axel Howind <axel@dua3.com>
- */
 public class Run implements CharSequence {
 
     private final String text;

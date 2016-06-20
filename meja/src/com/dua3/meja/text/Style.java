@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind
  */
 public class Style {
 

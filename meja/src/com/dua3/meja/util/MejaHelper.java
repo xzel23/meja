@@ -342,7 +342,7 @@ public class MejaHelper {
             if (searchFormula && cell.getCellType() == CellType.FORMULA) {
                 cellText = cell.getFormula();
             } else {
-                cellText = cell.getAsText().toString();
+                cellText = cell.toString();
             }
 
             if (ignoreCase) {
@@ -411,7 +411,7 @@ public class MejaHelper {
             if (searchFormula && cell.getCellType() == CellType.FORMULA) {
                 cellText = cell.getFormula();
             } else {
-                cellText = cell.getAsText().toString();
+                cellText = cell.toString();
             }
 
             if (ignoreCase) {

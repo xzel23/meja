@@ -196,7 +196,7 @@ public class GenericSheet implements Sheet {
             if (cell!=null && cell.getCellType()!=CellType.BLANK) {
                 float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
                 float aspect = DEFAULT_FONT_ASPECT_RATIO;
-                int chars = cell.getAsText().length();
+                int chars = cell.toString().length();
                 colWidth = Math.max(colWidth, fontSize*chars*aspect);
             }
         }
@@ -216,7 +216,7 @@ public class GenericSheet implements Sheet {
                 if (cell!=null && cell.getCellType()!=CellType.BLANK) {
                     float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
                     float aspect = DEFAULT_FONT_ASPECT_RATIO;
-                    int chars = cell.getAsText().length();
+                    int chars = cell.toString().length();
                     colWidth[j] = Math.max(colWidth[j], fontSize*chars*aspect);
                 }
             }
