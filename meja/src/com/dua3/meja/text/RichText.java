@@ -37,6 +37,13 @@ public class RichText implements Iterable<Run> {
         }
     };
     
+    private static final Comparator<RichText> COMPARATOR_CASE_INSENSITIVE = new Comparator<RichText>() {
+        @Override
+        public int compare(RichText o1, RichText o2) {
+            return o1.text.compareToIgnoreCase(o2.text);
+        }
+    };
+    
     private final String text;
     private final List<Run> runs;
 
@@ -46,8 +53,10 @@ public class RichText implements Iterable<Run> {
 
     /**
      * Get comparator.
-     * <b>Note:</b> The comparator returned only compares texts and completely
-     * ignores formatting. In consequence, the comparator violates the condition
+     * 
+     * <b>Note:</b> This ordering is inconsistent with equals because the
+     * comparator returned only compares texts and completely ignores
+     * formatting. In consequence, the comparator violates the condition
      * {@code (x.compareTo(y)==0) == (x.equals(y)) } if {@code x} and {@code y}
      * are instances of {@code RichText} that differ only in formatting.
      * 
@@ -55,6 +64,16 @@ public class RichText implements Iterable<Run> {
      */
     public static Comparator<RichText> comparator() {
         return COMPARATOR;        
+    }
+    
+    /**
+     * Get case insensitive comparator.
+     * <b>Note:</b> this ordering is inconsistent with equals.
+     * 
+     * @return case insensitive comparator for instances of {@code RichText}.
+     */
+    public static Comparator<RichText> comparatorIgnoreCase() {
+        return COMPARATOR_CASE_INSENSITIVE;        
     }
     
     public static RichText valueOf(Object o) {
