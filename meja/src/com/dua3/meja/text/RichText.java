@@ -16,6 +16,7 @@
 package com.dua3.meja.text;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +30,13 @@ public class RichText implements Iterable<Run> {
 
     private static RichText EMPTY_TEXT = RichText.valueOf("");
 
+    private static final Comparator<RichText> COMPARATOR = new Comparator<RichText>() {
+        @Override
+        public int compare(RichText o1, RichText o2) {
+            return o1.text.compareTo(o2.text);
+        }
+    };
+    
     private final String text;
     private final List<Run> runs;
 
@@ -36,6 +44,19 @@ public class RichText implements Iterable<Run> {
         return EMPTY_TEXT;
     }
 
+    /**
+     * Get comparator.
+     * <b>Note:</b> The comparator returned only compares texts and completely
+     * ignores formatting. In consequence, the comparator violates the condition
+     * {@code (x.compareTo(y)==0) == (x.equals(y)) } if {@code x} and {@code y}
+     * are instances of {@code RichText} that differ only in formatting.
+     * 
+     * @return comparator for instances of {@code RichText}.
+     */
+    public static Comparator<RichText> comparator() {
+        return COMPARATOR;        
+    }
+    
     public static RichText valueOf(Object o) {
         return valueOf(String.valueOf(o));
     }
