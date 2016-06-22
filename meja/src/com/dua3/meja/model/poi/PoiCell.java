@@ -80,7 +80,7 @@ public final class PoiCell implements Cell {
         this.row = row;
         this.poiCell = cell;
 
-        RectangularRegion mergedRegion = row.getMergedRegion(cell.getColumnIndex());
+        RectangularRegion mergedRegion = row.getSheet().getMergedRegion(cell.getRowIndex(), cell.getColumnIndex());
 
         if (mergedRegion == null) {
             // cell is not merged

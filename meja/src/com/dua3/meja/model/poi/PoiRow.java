@@ -22,7 +22,6 @@ import com.dua3.meja.util.RectangularRegion;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 /**
  *
@@ -48,11 +47,6 @@ public final class PoiRow implements Row {
     /**
      *
      */
-    final List<RectangularRegion> mergedRegions;
-
-    /**
-     *
-     */
     final ArrayList<PoiCell> cells;
 
     /**
@@ -64,14 +58,6 @@ public final class PoiRow implements Row {
         this.sheet = sheet;
         this.poiRow = row;
         this.rowNumber = poiRow.getRowNum();
-
-        // init list of merged regions
-        this.mergedRegions = new ArrayList<>();
-        for (RectangularRegion r: getSheet().getMergedRegions()) {
-            if (r.getFirstRow()<=rowNumber&&rowNumber<=r.getLastRow()) {
-                this.mergedRegions.add(r);
-            }
-        }
 
         // create cells
         final short nCol = poiRow.getLastCellNum();
@@ -108,14 +94,12 @@ public final class PoiRow implements Row {
         return sheet.getWorkbook();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof PoiRow) {
-            return Objects.equals(poiRow, ((PoiRow) obj).poiRow);
-        } else {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
+        return poiRow.equals(((PoiRow) obj).poiRow);
     }
 
     @Override
@@ -141,15 +125,6 @@ public final class PoiRow implements Row {
     @Override
     public int getLastCellNum() {
         return poiRow.getLastCellNum()-1;
-    }
-
-    RectangularRegion getMergedRegion(int columnIndex) {
-        for (RectangularRegion r: mergedRegions) {
-            if (r.getFirstColumn()<=columnIndex&&columnIndex<=r.getLastColumn()) {
-                return r;
-            }
-        }
-        return null;
     }
 
     @Override

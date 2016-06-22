@@ -23,11 +23,9 @@ import com.dua3.meja.util.RectangularRegion;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -56,9 +54,6 @@ public class PoiSheet implements Sheet {
     private int autoFilterRow = -1;
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
-    @SuppressWarnings("rawtypes")
-    private WeakReference[] rows = new WeakReference[8_000];
 
     protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
         this.workbook = workbook;
@@ -363,31 +358,11 @@ public class PoiSheet implements Sheet {
 
     @Override
     public PoiRow getRow(int i) {
-        if (i>=rows.length) {
-            // remove dead references
-            for (int idx=0; idx<rows.length; idx++) {
-                if (rows[idx]!=null && rows[idx].get()==null) {
-                    rows[idx] = null;
-                }
-            }
-            // ensure array size
-            rows = Arrays.copyOf(rows, Math.max(rows.length*2, i+1));
+        org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
+        if (poiRow==null) {
+            poiRow = poiSheet.createRow(i);
         }
-
-        @SuppressWarnings("unchecked")
-        WeakReference<PoiRow> rowRef = rows[i];
-        PoiRow row = rowRef == null ? null : rowRef.get();
-
-        if (row==null) {
-            org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
-            if (poiRow==null) {
-                poiRow = poiSheet.createRow(i);
-            }
-            row = new PoiRow(this, poiRow);
-            rows[i] = new WeakReference<>(row);
-        }
-
-        return row;
+        return new PoiRow(this, poiRow);
     }
 
     @Override
