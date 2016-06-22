@@ -18,10 +18,7 @@ package com.dua3.meja.model.poi;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.util.MejaHelper;
-import com.dua3.meja.util.RectangularRegion;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  *
@@ -46,11 +43,6 @@ public final class PoiRow implements Row {
 
     /**
      *
-     */
-    final ArrayList<PoiCell> cells;
-
-    /**
-     *
      * @param sheet
      * @param row
      */
@@ -58,30 +50,6 @@ public final class PoiRow implements Row {
         this.sheet = sheet;
         this.poiRow = row;
         this.rowNumber = poiRow.getRowNum();
-
-        // create cells
-        final short nCol = poiRow.getLastCellNum();
-        this.cells = new ArrayList<>(Math.max(10, nCol));
-        for (int j=0; j<nCol; j++) {
-            org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(j);
-            PoiCell cell;
-            if (poiCell == null) {
-                cell = null;
-            } else {
-                cell = new PoiCell(this, poiCell);
-                setColumnUsed(j);
-            }
-            cells.add(cell);
-        }
-    }
-
-    private void reserve(int col) {
-        if (col >= cells.size()) {
-            cells.ensureCapacity(col+1);
-            for (int colNum = cells.size(); colNum <= col; colNum++) {
-                cells.add(null);
-            }
-        }
     }
 
     @Override
@@ -129,21 +97,17 @@ public final class PoiRow implements Row {
 
     @Override
     public PoiCell getCell(int col) {
-        reserve(col);
-
-        PoiCell cell = cells.get(col);
-        if (cell==null) {
-            cell = new PoiCell(this, poiRow.createCell(col));
-            cells.set(col, cell);
-            sheet.setColumnUsed(col);
+        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col);
+        if (poiCell == null) {
+            poiCell = poiRow.createCell(col);
         }
-
-        return cell;
+        return new PoiCell(this, poiCell);
     }
 
     @Override
     public PoiCell getCellIfExists(int col) {
-        return col<cells.size() ? cells.get(col) : null;
+        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col);
+        return poiCell != null ? new PoiCell(this, poiCell) : null;
     }
 
     @Override
