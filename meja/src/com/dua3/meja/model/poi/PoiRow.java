@@ -19,6 +19,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.util.MejaHelper;
 import java.util.Iterator;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 /**
  *
@@ -97,10 +98,7 @@ public final class PoiRow implements Row {
 
     @Override
     public PoiCell getCell(int col) {
-        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col);
-        if (poiCell == null) {
-            poiCell = poiRow.createCell(col);
-        }
+        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col, MissingCellPolicy.CREATE_NULL_AS_BLANK);
         return new PoiCell(this, poiCell);
     }
 
