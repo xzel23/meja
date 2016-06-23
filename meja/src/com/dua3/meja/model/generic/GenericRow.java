@@ -40,7 +40,6 @@ public class GenericRow implements Row {
         this.sheet = sheet;
         this.rowNumber = rowNumber;
         this.cells = new ArrayList<>(sheet.getColumnCount());
-        reserve(sheet.getColumnCount()-1);
     }
 
     @Override
