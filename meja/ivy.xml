@@ -5,6 +5,8 @@
         <conf name="compile" description="Required to compile application"/>
         <conf name="runtime" description="Additional run-time dependencies" extends="compile"/>
         <conf name="test"    description="Required for test only" extends="runtime"/>
+        <conf name="sources" description="Source code"/>
+        <conf name="javadoc" description="Documentation"/>
     </configurations>
 
     <dependencies>
