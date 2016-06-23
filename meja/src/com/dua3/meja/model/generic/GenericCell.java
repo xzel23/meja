@@ -46,6 +46,15 @@ public class GenericCell implements Cell {
      * span (3 bytes) T - cell type (1 byte)
      */
     private long data;
+    
+    /**
+     * The precalculated initial value for the data field with
+     * rowspan=colspan=1 and a cell type of blank.
+     */
+    private static final long INITIAL_DATA
+            = ((/* spanX */ 1L) << 32)
+            | ((/* spanY */ 1L) <<  8)
+            | CellType.BLANK.ordinal();
 
     /**
      * Construct a new {@code GenericCell}.
@@ -64,10 +73,15 @@ public class GenericCell implements Cell {
         this.cellStyle = cellStyle;
         this.value = null;
 
-        setColumnNr(colNumber);
-        setHorizontalSpan(1);
-        setVerticalSpan(1);
-        setCellType(CellType.BLANK);
+        initData(colNumber);
+    }
+
+    private void initData(int colNr) {
+        if (colNr < 0 || colNr > MAX_COLUMN_NUMBER) {
+            throw new IllegalArgumentException();
+        }
+
+        data = (((long) colNr) << 48)| INITIAL_DATA;
     }
 
     private void setCellType(CellType type) {
@@ -103,14 +117,6 @@ public class GenericCell implements Cell {
     @Override
     public int getHorizontalSpan() {
         return (int) ((data & 0x0000_ffff_0000_0000L) >> 32);
-    }
-
-    private void setColumnNr(int colNr) {
-        if (colNr < 0 || colNr > MAX_COLUMN_NUMBER) {
-            throw new IllegalArgumentException();
-        }
-
-        data = (data & 0x0000_ffff_ffff_ffffL) | (((long) colNr) << 48);
     }
 
     @Override
