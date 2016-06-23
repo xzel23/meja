@@ -21,6 +21,8 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
+import com.dua3.meja.text.Style;
+import com.dua3.meja.util.MejaHelper;
 import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -329,15 +331,6 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     /**
-     * Get instance of {@link PoiFont}.
-     * @param poiFont the POI font instance
-     * @return instance of {@link PoiFont} for the given font
-     */
-    public PoiFont getFont(org.apache.poi.ss.usermodel.Font poiFont) {
-        return poiFont == null ? getDefaultCellStyle().getFont() : new PoiFont(this, poiFont);
-    }
-
-    /**
      * Get font color.
      * @param poiFont instance of POI font
      * @param dfltColor color return if none is set
@@ -423,6 +416,60 @@ public abstract class PoiWorkbook implements Workbook {
      * @return an instance of {@link PoiFont}
      */
     public abstract PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough);
+
+    /**
+     * Get instance of {@link PoiFont}.
+     * @param poiFont the POI font instance
+     * @return instance of {@link PoiFont} for the given font
+     */
+    public PoiFont getFont(org.apache.poi.ss.usermodel.Font poiFont) {
+        return poiFont == null ? getDefaultCellStyle().getFont() : new PoiFont(this, poiFont);
+    }
+
+    PoiFont getPoiFont(com.dua3.meja.model.Font font, Style style) {
+        Map<String, String> properties = style.properties();
+        
+        if (properties.isEmpty() && font instanceof PoiFont && ((PoiFont)font).workbook==this) {
+            return (PoiFont) font;
+        }
+
+        String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
+        
+        String sSize = properties.get(Style.FONT_SIZE);
+        short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : MejaHelper.decodeFontSize(sSize));
+
+        final String sStyle = properties.get(Style.FONT_STYLE);
+        boolean italic = sStyle == null ? font.isItalic() : "italic".equals(sStyle);
+        
+        final String sWeight = properties.get(Style.FONT_WEIGHT);
+        boolean bold = sWeight == null ? font.isBold() : "bold".equals(sWeight);
+        
+        String sDecoration = properties.get(Style.TEXT_DECORATION);
+        boolean underline = sDecoration==null ? font.isUnderlined() : "underline".equals(sDecoration);
+        boolean strikethrough = sDecoration==null ? font.isStrikeThrough() : "line-through".equals(sDecoration);
+
+        String sColor = properties.get(Style.COLOR);
+        Color color = sColor == null ? font.getColor() : MejaHelper.getColor(sColor);
+
+        // try to find existing font
+        for (short i=0;i<poiWorkbook.getNumberOfFonts(); i++) {
+            Font poiFont = poiWorkbook.getFontAt(i);
+            
+            if (poiFont.getFontName().equalsIgnoreCase(name)
+                    && poiFont.getFontHeightInPoints()==height
+                    && poiFont.getBold() == bold
+                    && poiFont.getItalic() == italic
+                    && (poiFont.getUnderline()!=Font.U_NONE) == underline
+                    && poiFont.getStrikeout() == strikethrough
+                    && getColor(poiFont, Color.BLACK).equals(color)
+                    && poiFont.getTypeOffset()==Font.SS_NONE) {
+                return new PoiFont(this,  poiFont);
+            }
+        }
+
+        // if not found, create it
+        return createFont(name, height, font.getColor(), bold, italic, underline, strikethrough);
+    }
 
     /**
      * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks

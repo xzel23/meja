@@ -251,8 +251,8 @@ public final class PoiCell implements Cell {
 
         RichTextString richText = workbook.createRichTextString(s.toString());
         for (Run run : s) {
-            org.apache.poi.ss.usermodel.Font font = convertFont(run.getStyle());
-            richText.applyFont(run.getStart(), run.getEnd(), font);
+            PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont(), run.getStyle());
+            richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
         poiCell.setCellValue(richText);
 
@@ -586,49 +586,6 @@ public final class PoiCell implements Cell {
     @Override
     public String getCellRef(boolean includeSheet) {
         return MejaHelper.getCellRef(this, includeSheet);
-    }
-
-    private Font convertFont(Style style) {
-        org.apache.poi.ss.usermodel.Font font = workbook.getPoiWorkbook().createFont();
-        for (Map.Entry<String, String> p : style.properties().entrySet()) {
-            String property = p.getKey();
-            String value = p.getValue();
-            switch (property) {
-                case Style.FONT_FAMILY:
-                    font.setFontName(value);
-                    break;
-                case Style.FONT_STYLE:
-                    break;
-                case Style.FONT_SIZE:
-                    font.setFontHeightInPoints((short) Math.round(MejaHelper.decodeFontSize(value)));
-                    break;
-                case Style.FONT_WEIGHT:
-                    font.setBold(value.equals("bold"));
-                    break;
-                case Style.FONT_VARIANT:
-                    break;
-                case Style.TEXT_DECORATION:
-                    font.setUnderline(value.equals("underline") ? Font.U_SINGLE : Font.U_NONE);
-                    font.setStrikeout(value.equals("line-through"));
-                    break;
-                case Style.COLOR:
-                    org.apache.poi.ss.usermodel.Color poiColor = workbook.getPoiColor(MejaHelper.getColor(value));
-                    if (font instanceof XSSFFont && poiColor instanceof XSSFColor) {
-                        ((XSSFFont) font).setColor((XSSFColor) poiColor);
-                    } else if (font instanceof HSSFFont && poiColor instanceof HSSFColor) {
-                        font.setColor(((HSSFColor) poiColor).getIndex());
-                    } else {
-                        // this should never happen because font and color
-                        // should always both be either XSSF or HSSF instances
-                        throw new IllegalStateException();
-                    }
-                    break;
-                default:
-                    LOGGER.log(Level.WARNING, "{0} is not supported.", property);
-                    break;
-            }
-        }
-        return font;
     }
 
 }

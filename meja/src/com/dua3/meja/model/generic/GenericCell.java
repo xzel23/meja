@@ -157,10 +157,14 @@ public class GenericCell implements Cell {
 
     @Override
     public RichText getText() {
-        if (getCellType() != CellType.TEXT) {
-            throw new IllegalStateException("Cannot get text value from cell of type " + getCellType().name() + ".");
+        switch (getCellType()) {
+            case BLANK:
+                return RichText.emptyText();
+            case TEXT:
+                return (RichText) value;
+            default:
+                throw new IllegalStateException("Cannot get text value from cell of type " + getCellType().name() + ".");
         }
-        return (RichText) value;
     }
 
     @Override
@@ -184,8 +188,6 @@ public class GenericCell implements Cell {
         switch (getCellType()) {
             case BLANK:
                 return "";
-            case TEXT:
-                return getText().toString();
             case NUMERIC:
                 return getCellStyle().format((Number) value);
             case DATE:

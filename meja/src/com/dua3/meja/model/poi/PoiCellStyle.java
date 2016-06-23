@@ -24,6 +24,7 @@ import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
+import com.dua3.meja.text.Style;
 import java.awt.Color;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -191,12 +192,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
     @Override
     public void setFont(Font font) {
-        if (font instanceof PoiFont && ((PoiFont)font).workbook==this.workbook) {
-            poiCellStyle.setFont(((PoiFont) font).getPoiFont());
-        } else {
-            PoiFont poiFont = new PoiFont(workbook, font);
-            poiCellStyle.setFont(poiFont.getPoiFont());
-        }
+        poiCellStyle.setFont(workbook.getPoiFont(font, Style.none()).getPoiFont());
     }
 
     @Override
@@ -212,7 +208,6 @@ public abstract class PoiCellStyle implements CellStyle {
         setFillPattern(other.getFillPattern());
         setFont(other.getFont());
         setWrap(other.isWrap());
-        setFont(new PoiFont(getWorkbook(), other.getFont()));
     }
 
     static class PoiHssfCellStyle extends PoiCellStyle {

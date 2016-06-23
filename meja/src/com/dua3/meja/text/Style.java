@@ -40,7 +40,7 @@ public class Style {
 
     private static final Style NONE = new Style();
 
-    static Style none() {
+    public static Style none() {
         return NONE;
     }
 
