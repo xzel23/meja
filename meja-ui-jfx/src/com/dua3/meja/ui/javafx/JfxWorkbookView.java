@@ -57,7 +57,9 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
                 Sheet sheet = workbook.getSheet(i);
                 final JfxSheetView sheetView = new JfxSheetView();
                 sheetView.setSheet(sheet);
-                content.getTabs().add(new Tab(sheet.getSheetName(), sheetView));
+                final Tab tab = new Tab(sheet.getSheetName(), sheetView);
+                tab.setClosable(false);
+                content.getTabs().add(tab);
             }
             this.setCenter(content);
         }
