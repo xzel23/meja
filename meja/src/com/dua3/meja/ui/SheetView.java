@@ -16,13 +16,49 @@
 package com.dua3.meja.ui;
 
 import com.dua3.meja.model.Sheet;
+import java.beans.PropertyChangeListener;
 
 /**
  *
  * @author axel
  */
-public interface SheetView {
+public interface SheetView  {
 
+    /**
+     * property "sheet".
+     */
+    final String PROPERTY_SHEET = "sheet";
+
+    /**
+     * Add a new listener.
+     * @param listener
+     */
+    void addPropertyChangeListener(PropertyChangeListener listener);
+
+    /**
+     * Add a new listener for the given property.
+     * @param propertyName
+     * @param listener
+     */
+    void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+    /**
+     * Remove a listener.
+     * @param listener
+     */
+    void removePropertyChangeListener(PropertyChangeListener listener);
+
+    /**
+     * Remove a listener.
+     * @param propertyName
+     * @param listener
+     */
+    void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+    /**
+     * Get the sheet for this view.
+     * @return  the sheet
+     */
     Sheet getSheet();
 
     /**
