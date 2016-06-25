@@ -15,30 +15,23 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Direction;
-import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.model.Row;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.ui.GraphicsContext;
+import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.MejaHelper;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -90,17 +83,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
     }
 
-    private final CellRenderer renderer;
+    private final SwingSheetPainter sheetPainter;
     private final CellEditor editor;
     private final SheetPane sheetPane;
     private SearchDialog searchDialog = null;
-
-    Cache<Float, java.awt.Stroke> strokeCache = new Cache<Float, java.awt.Stroke>() {
-        @Override
-        protected java.awt.Stroke create(Float width) {
-            return new BasicStroke(width);
-        }
-    };
 
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
@@ -111,16 +97,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      * The scaling factor used to draw the sheet according to current zoom.
      */
     private float scale = 1f;
-
-    /**
-     * Array with column positions (x-axis) in pixels.
-     */
-    private float columnPos[];
-
-    /**
-     * Array with column positions (y-axis) in pixels.
-     */
-    private float rowPos[];
 
     /**
      * Height of the sheet in points.
@@ -143,31 +119,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     private Color gridColor = Color.LIGHT_GRAY;
 
     /**
-     * Horizontal padding.
-     */
-    private final int paddingX = 2;
-
-    /**
-     * Vertical padding.
-     */
-    private final int paddingY = 1;
-
-    /**
-     * Color used to draw the selection rectangle.
-     */
-    private Color selectionColor = Color.BLACK;
-
-    /**
-     * Width of the selection rectangle borders.
-     */
-    private final int selectionStrokeWidth = 4;
-
-    /**
-     * Stroke used to draw the selection rectangle.
-     */
-    private Stroke selectionStroke = getStroke((float) selectionStrokeWidth);
-
-    /**
      * Read-only mode.
      */
     private boolean editable = false;
@@ -186,6 +137,31 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         this(null);
     }
 
+    int xS2D(double x) {
+        return (int) Math.round(x);
+    }
+
+    int yS2D(double y) {
+        return (int) Math.round(y);
+    }
+
+    int wS2D(double w) {
+        return (int) Math.round(w);
+    }
+
+    int hS2D(double h) {
+        return (int) Math.round(h);
+    }
+
+    java.awt.Rectangle rectS2D(Rectangle r) {
+        return new java.awt.Rectangle(
+                xS2D(r.getX()),
+                yS2D(r.getY()),
+                wS2D(r.getW()),
+                hS2D(r.getH())
+        );
+    }
+
     /**
      * Construct a new SheetView for the given sheet.
      *
@@ -195,7 +171,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
 
-        renderer = new DefaultCellRenderer();
+        sheetPainter = new SwingSheetPainter(new DefaultCellRenderer());
         editor = new DefaultCellEditor(this);
         sheetPane = new SheetPane();
         searchDialog = new SearchDialog();
@@ -214,8 +190,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK ), Actions.MOVE_HOME);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK ), Actions.MOVE_END);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK), Actions.MOVE_HOME);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK), Actions.MOVE_END);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
         inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
 
@@ -228,7 +204,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                onMousePressed(e.getX() + getSplitX(), e.getY() + getSplitY());
+                onMousePressed(e.getX() + xS2D(getSplitX()), e.getY() + yS2D(getSplitY()));
             }
         });
 
@@ -305,20 +281,20 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     private void movePage(Direction d) {
         Cell cell = getCurrentCell().getLogicalCell();
-        Rectangle cellRect = getCellRect(cell);
-        int x = cellRect.x;
-        int y = cellRect.y;
+        Rectangle cellRect = sheetPainter.getCellRect(cell);
+        double x = cellRect.getX();
+        double y = cellRect.getY();
         switch (d) {
             case NORTH:
-                y = Math.max(0, y-getVisibleRect().height);
+                y = Math.max(0, y - getVisibleRect().height);
                 break;
             case SOUTH:
-                y = Math.min(getSheetHeight()-1, y+getVisibleRect().height);
+                y = Math.min(getSheetHeight() - 1, y + getVisibleRect().height);
                 break;
         }
 
-        int row = getRowNumberFromY(y);
-        int col = getColumnNumberFromX(x);
+        int row = sheetPainter.getRowNumberFromY(y);
+        int col = sheetPainter.getColumnNumberFromX(x);
         setCurrentCell(row, col);
     }
 
@@ -341,21 +317,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     }
 
     /**
-     * Get display coordinates of selection rectangle.
-     *
-     * @return selection rectangle in display coordinates
-     */
-    private Rectangle getSelectionRect(Cell cell) {
-        Rectangle cellRect = getCellRect(cell.getLogicalCell());
-        int extra = (selectionStrokeWidth + 1) / 2;
-        cellRect.x -= extra;
-        cellRect.y -= extra;
-        cellRect.width += 2 * extra;
-        cellRect.height += 2 * extra;
-        return cellRect;
-    }
-
-    /**
      * Scroll the currently selected cell into view.
      */
     @Override
@@ -363,27 +324,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         sheetPane.ensureCellIsVisibile(getCurrentCell().getLogicalCell());
     }
 
-    /**
-     * Calculate the rectangle the cell occupies on screen.
-     *
-     * @param cell the cell whose area is requested
-     * @return rectangle the rectangle the cell takes up in screen coordinates
-     */
-    public Rectangle getCellRect(Cell cell) {
-        final int i = cell.getRowNumber();
-        final int j = cell.getColumnNumber();
-
-        final int x = getColumnPos(j);
-        final int w = getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
-        final int y = getRowPos(i);
-        final int h = getRowPos(i + cell.getVerticalSpan()) - y + 1;
-
-        return new Rectangle(x, y, w, h);
-    }
-
     public void repaintCell(Cell cell) {
-        Rectangle r = getSelectionRect(cell);
-        sheetPane.repaintSheet(r);
+        sheetPane.repaintSheet(sheetPainter.getSelectionRect(cell));
     }
 
     /**
@@ -456,7 +398,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         JComponent editorParent;
         editorParent = sheetPane;
-        editorComp.setBounds(cellRect);
+        editorComp.setBounds(rectS2D(cellRect));
         editorParent.add(editorComp);
         editorComp.validate();
         editorComp.setVisible(true);
@@ -489,22 +431,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     }
 
     /**
-     * @param j the column number
-     * @return the columnPos
-     */
-    public int getColumnPos(int j) {
-        return Math.round(columnPos[j] * getScale());
-    }
-
-    /**
-     * @param i the row number
-     * @return the rowPos
-     */
-    public int getRowPos(int i) {
-        return Math.round(rowPos[i] * getScale());
-    }
-
-    /**
      * @return the sheetWidth
      */
     public int getSheetWidth() {
@@ -525,7 +451,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     @Override
     public final void setSheet(Sheet sheet) {
-        if (this.sheet!=null) {
+        if (this.sheet != null) {
             this.sheet.removePropertyChangeListener(this);
         }
 
@@ -533,7 +459,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             Sheet oldSheet = this.sheet;
             this.sheet = sheet;
 
-            if (this.sheet!=null) {
+            if (this.sheet != null) {
                 sheet.addPropertyChangeListener(this);
             }
 
@@ -563,8 +489,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     void onMousePressed(int x, int y) {
         // make the cell under pointer the current cell
-        int row = getRowNumberFromY(y);
-        int col = getColumnNumberFromX(x);
+        int row = sheetPainter.getRowNumberFromY(y);
+        int col = sheetPainter.getColumnNumberFromX(x);
         boolean currentCellChanged = setCurrentCell(row, col);
         requestFocusInWindow();
 
@@ -574,8 +500,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 startEditing();
                 editing = true;
             }
-        } else {
-            // otherwise stop cell editing
+        } else // otherwise stop cell editing
+        {
             if (editing) {
                 stopEditing(true);
                 editing = false;
@@ -606,8 +532,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      *
      * @return y coordinate of split
      */
-    int getSplitY() {
-        return sheet == null ? 0 : getRowPos(sheet.getSplitRow());
+    double getSplitY() {
+        return sheet == null ? 0 : sheetPainter.getRowPos(sheet.getSplitRow());
     }
 
     /**
@@ -615,77 +541,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      *
      * @return x coordinate of split
      */
-    int getSplitX() {
-        return sheet == null ? 0 : getColumnPos(sheet.getSplitColumn());
-    }
-
-    /**
-     * Get the row number that the given y-coordinate belongs to.
-     *
-     * @param y y-coordinate
-     *
-     * @return
-     * <ul>
-     * <li> -1, if the first row is displayed below the given coordinate
-     * <li> number of rows, if the lower edge of the last row is displayed above
-     * the given coordinate
-     * <li> the number of the row that belongs to the given coordinate
-     * </ul>
-     */
-    public int getRowNumberFromY(int y) {
-        int i = 0;
-        while (i < rowPos.length && getRowPos(i) <= y) {
-            i++;
-        }
-        return i - 1;
-    }
-
-    /**
-     * Get the column number that the given x-coordinate belongs to.
-     *
-     * @param x x-coordinate
-     *
-     * @return
-     * <ul>
-     * <li> -1, if the first column is displayed to the right of the given
-     * coordinate
-     * <li> number of columns, if the right edge of the last column is displayed
-     * to the left of the given coordinate
-     * <li> the number of the column that belongs to the given coordinate
-     * </ul>
-     */
-    public int getColumnNumberFromX(int x) {
-        int j = 0;
-        while (j < columnPos.length && getColumnPos(j) <= x) {
-            j++;
-        }
-        return j - 1;
+    double getSplitX() {
+        return sheet == null ? 0 : sheetPainter.getColumnPos(sheet.getSplitColumn());
     }
 
     public Dimension getSheetSize() {
         return new Dimension(getSheetWidth() + 1, getSheetHeight() + 1);
-    }
-
-    /**
-     * Get number of columns for the currently loaded sheet.
-     *
-     * @return number of columns
-     */
-    private int getNumberOfColumns() {
-        return columnPos.length - 1;
-    }
-
-    /**
-     * Get number of rows for the currently loaded sheet.
-     *
-     * @return number of rows
-     */
-    private int getNumberOfRows() {
-        return rowPos.length - 1;
-    }
-
-    private java.awt.Stroke getStroke(Float width) {
-        return strokeCache.get(width);
     }
 
     /**
@@ -717,38 +578,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         scaleDpi = dpi / 72f;
 
-        // determine sheet dimensions
-        if (sheet == null) {
-            sheetWidthInPoints = 0;
-            sheetHeightInPoints = 0;
-            rowPos = new float[]{0};
-            columnPos = new float[]{0};
-            scale = 1f;
-            return;
-        }
-
-        Lock readLock = sheet.readLock();
-        readLock.lock();
-        try {
-            scale = sheet.getZoom() * scaleDpi;
-            sheetHeightInPoints = 0;
-            rowPos = new float[2 + sheet.getLastRowNum()];
-            rowPos[0] = 0;
-            for (int i = 1; i < rowPos.length; i++) {
-                sheetHeightInPoints += sheet.getRowHeight(i - 1);
-                rowPos[i] = sheetHeightInPoints;
-            }
-
-            sheetWidthInPoints = 0;
-            columnPos = new float[2 + sheet.getLastColNum()];
-            columnPos[0] = 0;
-            for (int j = 1; j < columnPos.length; j++) {
-                sheetWidthInPoints += sheet.getColumnWidth(j - 1);
-                columnPos[j] = sheetWidthInPoints;
-            }
-        } finally {
-            readLock.unlock();
-        }
+        sheetPainter.update(sheet);
 
         revalidate();
         repaint();
@@ -786,127 +616,112 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     @SuppressWarnings("serial")
     static enum Actions {
         MOVE_UP {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
                     @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.move(Direction.NORTH);
-                            }
-                        };
-                    }
-                }, MOVE_DOWN {
-                    @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.move(Direction.SOUTH);
-                            }
-                        };
-                    }
-                }, MOVE_LEFT {
-                    @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.move(Direction.WEST);
-                            }
-                        };
-                    }
-                }, MOVE_RIGHT {
-                    @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.move(Direction.EAST);
-                            }
-                        };
-                    }
-                }, PAGE_UP {
-                    @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.movePage(Direction.NORTH);
-                            }
-                        };
-                    }
-                }, PAGE_DOWN {
-                    @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.movePage(Direction.SOUTH);
-                            }
-                        };
-                    }
-                }, MOVE_HOME {
-                    @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.moveHome();
-                            }
-                        };
-                    }
-                }, MOVE_END {
-                    @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.moveEnd();
-                            }
-                        };
-                    }
-                }, START_EDITING {
-                    @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.startEditing();
-                            }
-                        };
-                    }
-                }, SHOW_SEARCH_DIALOG {
-                    @Override
-                    public Action getAction(final SwingSheetView view) {
-                        return new AbstractAction(name()) {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                view.showSearchDialog();
-                            }
-                        };
+                    public void actionPerformed(ActionEvent e) {
+                        view.move(Direction.NORTH);
                     }
                 };
+            }
+        }, MOVE_DOWN {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.move(Direction.SOUTH);
+                    }
+                };
+            }
+        }, MOVE_LEFT {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.move(Direction.WEST);
+                    }
+                };
+            }
+        }, MOVE_RIGHT {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.move(Direction.EAST);
+                    }
+                };
+            }
+        }, PAGE_UP {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.movePage(Direction.NORTH);
+                    }
+                };
+            }
+        }, PAGE_DOWN {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.movePage(Direction.SOUTH);
+                    }
+                };
+            }
+        }, MOVE_HOME {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.moveHome();
+                    }
+                };
+            }
+        }, MOVE_END {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.moveEnd();
+                    }
+                };
+            }
+        }, START_EDITING {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.startEditing();
+                    }
+                };
+            }
+        }, SHOW_SEARCH_DIALOG {
+            @Override
+            public Action getAction(final SwingSheetView view) {
+                return new AbstractAction(name()) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        view.showSearchDialog();
+                    }
+                };
+            }
+        };
 
         abstract Action getAction(SwingSheetView view);
     }
 
-    protected static enum CellDrawMode {
-
-        /**
-         *
-         */
-        DRAW_CELL_BACKGROUND,
-        /**
-         *
-         */
-        DRAW_CELL_BORDER,
-        /**
-         *
-         */
-        DRAW_CELL_FOREGROUND
-    }
-
     private class SearchDialog extends JDialog {
+
         private static final long serialVersionUID = 1L;
 
         private final JTextField jtfText;
@@ -1088,26 +903,34 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
          * @param cell the cell to scroll to
          */
         public void ensureCellIsVisibile(Cell cell) {
-            final Rectangle cellRect = getCellRect(cell);
-            boolean aboveSplit = getSplitY() >= cellRect.getMaxY() - 1;
-            boolean toLeftOfSplit = getSplitX() >= cellRect.getMaxX() - 1;
+            final Rectangle cellRect = sheetPainter.getCellRect(cell);
+            boolean aboveSplit = getSplitY() >= cellRect.getBottom();
+            boolean toLeftOfSplit = getSplitX() >= cellRect.getRight();
 
-            cellRect.translate(toLeftOfSplit ? 0 : -getSplitX(), aboveSplit ? 0 : -getSplitY());
+            cellRect.translate(toLeftOfSplit ? 0 : -sheetPainter.getSplitX(), aboveSplit ? 0 : -sheetPainter.getSplitY());
 
             if (aboveSplit && toLeftOfSplit) {
                 // nop: cell is always visible!
             } else if (aboveSplit) {
                 // only scroll x
-                cellRect.y = -getY();
-                cellRect.height = 1;
-                bottomRightQuadrant.scrollRectToVisible(cellRect);
+                java.awt.Rectangle r = new java.awt.Rectangle(
+                        xS2D(cellRect.getX()),
+                        yS2D(cellRect.getY()) - getY(),
+                        wS2D(cellRect.getW()),
+                        1
+                );
+                bottomRightQuadrant.scrollRectToVisible(r);
             } else if (toLeftOfSplit) {
                 // only scroll y
-                cellRect.x = -getX();
-                cellRect.width = 1;
-                bottomRightQuadrant.scrollRectToVisible(cellRect);
+                java.awt.Rectangle r = new java.awt.Rectangle(
+                        xS2D(cellRect.getX()) - getX(),
+                        yS2D(cellRect.getY()),
+                        1,
+                        hS2D(cellRect.getH())
+                );
+                bottomRightQuadrant.scrollRectToVisible(r);
             } else {
-                bottomRightQuadrant.scrollRectToVisible(cellRect);
+                bottomRightQuadrant.scrollRectToVisible(rectS2D(cellRect));
             }
         }
 
@@ -1127,7 +950,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 // of zeroes instead of the last row number because a proportional
                 // font might be used)
                 StringBuilder sb = new StringBuilder();
-                for (int i = 1; i <= getNumberOfRows(); i *= 10) {
+                for (int i = 1; i <= sheetPainter.getNumberOfRows(); i *= 10) {
                     sb.append('0');
                 }
                 painter.setText(new String(sb));
@@ -1162,10 +985,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
             int i = cell.getRowNumber();
             int j = cell.getColumnNumber();
-            int x = getColumnPos(j);
-            int w = getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
-            int y = getRowPos(i);
-            int h = getRowPos(i + cell.getVerticalSpan()) - y + 1;
+            double x = sheetPainter.getColumnPos(j);
+            double w = sheetPainter.getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
+            double y = sheetPainter.getRowPos(i);
+            double h = sheetPainter.getRowPos(i + cell.getVerticalSpan()) - y + 1;
             x -= quadrant.getXMinInViewCoordinates();
             x += parent.getX();
             x -= pos.x;
@@ -1214,7 +1037,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             abstract int getYMinInViewCoordinates();
 
             void repaintSheet(Rectangle rect) {
-                Rectangle rect2 = new Rectangle(rect);
+                java.awt.Rectangle rect2 = rectS2D(rect);
                 rect2.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
                 repaint(rect2);
             }
@@ -1248,10 +1071,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             public void validate() {
                 if (sheet != null) {
                     // the width is the width for the labels showing row names ...
-                    int width = hasRowHeaders() ? labelWidth : 1;
+                    double width = hasRowHeaders() ? labelWidth : 1;
 
                     // ... plus the width of the columns displayed ...
-                    width += getColumnPos(getLastColumn() + 1) - getColumnPos(getFirstColumn());
+                    width += sheetPainter.getColumnPos(getLastColumn() + 1) - sheetPainter.getColumnPos(getFirstColumn());
 
                     // ... plus 1 pixel for drawing a line at the split position.
                     if (hasVLine()) {
@@ -1259,17 +1082,17 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     }
 
                     // the height is the height for the labels showing column names ...
-                    int height = hasColumnHeaders() ? labelHeight : 1;
+                    double height = hasColumnHeaders() ? labelHeight : 1;
 
                     // ... plus the height of the rows displayed ...
-                    height += getRowPos(getLastRow() + 1) - getRowPos(getFirstRow());
+                    height += sheetPainter.getRowPos(getLastRow() + 1) - sheetPainter.getRowPos(getFirstRow());
 
                     // ... plus 1 pixel for drawing a line below the lines above the split.
                     if (hasHLine()) {
                         height += 1;
                     }
 
-                    final Dimension size = new Dimension(width, height);
+                    final Dimension size = new Dimension((int) Math.round(width), (int) Math.round(height));
                     setSize(size);
                     setPreferredSize(size);
                 }
@@ -1280,41 +1103,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-
-                if (sheet == null) {
-                    return;
-                }
-
-                Lock readLock = sheet.readLock();
-                readLock.lock();
-                try {
-                    Graphics2D g2d = (Graphics2D) g;
-
-                    final int x = getXMinInViewCoordinates();
-                    final int y = getYMinInViewCoordinates();
-                    final int width = getWidth();
-                    final int height = getHeight();
-
-                    // set origin
-                    g2d.translate(-x, -y);
-
-                    // draw labels
-                    drawColumnLabels(g2d);
-                    drawRowLabels(g2d);
-                    drawSheet(g2d);
-
-                    // draw lines
-                    g2d.setColor(Color.BLACK);
-                    g2d.setStroke(getStroke(1f));
-                    if (hasHLine()) {
-                        g2d.drawLine(x, height + y - 1, width + x - 1, height + y - 1);
-                    }
-                    if (hasVLine()) {
-                        g2d.drawLine(width + x - 1, y, width + x - 1, height + y - 1);
-                    }
-                } finally {
-                    readLock.unlock();
-                }
+                GraphicsContext gc = new SwingGraphicsContext(g);
+                sheetPainter.drawSheet(gc);
             }
 
             protected void drawRowLabels(Graphics g) {
@@ -1322,12 +1112,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     return;
                 }
 
-                Rectangle clipBounds = g.getClipBounds();
-                int startRow = Math.max(getFirstRow(), getRowNumberFromY(clipBounds.y));
-                int endRow = Math.min(1 + getRowNumberFromY(clipBounds.y + clipBounds.height), getLastRow() + 1);
+                java.awt.Rectangle clipBounds = g.getClipBounds();
+                int startRow = Math.max(getFirstRow(), sheetPainter.getRowNumberFromY(clipBounds.y));
+                int endRow = Math.min(1 + sheetPainter.getRowNumberFromY(clipBounds.y + clipBounds.height), getLastRow() + 1);
                 for (int i = startRow; i < endRow; i++) {
-                    int y = getRowPos(i);
-                    int h = getRowPos(i + 1) - y + 1;
+                    int y = yS2D(sheetPainter.getRowPos(i));
+                    int h = hS2D(sheetPainter.getRowPos(i + 1) - y);
                     String text = getRowName(i);
 
                     painter.setBounds(0, 0, labelWidth, h);
@@ -1341,12 +1131,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     return;
                 }
 
-                Rectangle clipBounds = g.getClipBounds();
-                int startCol = Math.max(getFirstColumn(), getColumnNumberFromX(clipBounds.x));
-                int endCol = Math.min(1 + getColumnNumberFromX(clipBounds.x + clipBounds.width), getLastColumn() + 1);
+                java.awt.Rectangle clipBounds = g.getClipBounds();
+                int startCol = Math.max(getFirstColumn(), sheetPainter.getColumnNumberFromX(clipBounds.x));
+                int endCol = Math.min(1 + sheetPainter.getColumnNumberFromX(clipBounds.x + clipBounds.width), getLastColumn() + 1);
                 for (int j = startCol; j < endCol; j++) {
-                    int x = getColumnPos(j);
-                    int w = getColumnPos(j + 1) - x + 1;
+                    int x = xS2D(sheetPainter.getColumnPos(j));
+                    int w = wS2D(sheetPainter.getColumnPos(j + 1) - x);
                     String text = getColumnName(j);
 
                     painter.setBounds(0, 0, w, labelHeight);
@@ -1355,322 +1145,62 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 }
             }
 
-            private void drawSheet(Graphics g) {
-                Graphics2D g2d = (Graphics2D) g;
-
-                Lock readLock = sheet.readLock();
-                readLock.lock();
-                try {
-                    g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-                    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-                    g2d.setBackground(sheet.getWorkbook().getDefaultCellStyle().getFillBgColor());
-                    g2d.clearRect(getColumnPos(0), getRowPos(0), getSheetWidth(), getSheetHeight());
-
-                    drawCells(g2d, CellDrawMode.DRAW_CELL_BACKGROUND);
-                    drawCells(g2d, CellDrawMode.DRAW_CELL_BORDER);
-                    drawCells(g2d, CellDrawMode.DRAW_CELL_FOREGROUND);
-                    drawSelection(g2d);
-                } finally {
-                    readLock.unlock();
-                }
-            }
-
-            /**
-             * Draw cells.
-             *
-             * Since borders can be draw over by the background of adjacent
-             * cells and text can overlap, drawing is done in three steps:
-             * <ul>
-             * <li> draw background for <em>all</em> cells
-             * <li> draw borders for <em>all</em> cells
-             * <li> draw foreground <em>all</em> cells
-             * </ul>
-             * This is controlled by {@code cellDrawMode}.
-             *
-             * @param g the graphics object to use
-             * @param cellDrawMode the draw mode to use
-             */
-            void drawCells(Graphics2D g, CellDrawMode cellDrawMode) {
-                // no sheet, no drawing
-                if (sheet == null) {
-                    return;
-                }
-
-                int maxWidthScaled = (int) (MAX_COLUMN_WIDTH * getScale());
-
-                Rectangle clipBounds = g.getClipBounds();
-
-                // determine visible rows and columns
-                int startRow = Math.max(0, getRowNumberFromY(clipBounds.y));
-                int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.y + clipBounds.height));
-                int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.x));
-                int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.x + clipBounds.width));
-
-                // Collect cells to be drawn
-                for (int i = startRow; i < endRow; i++) {
-                    Row row = sheet.getRow(i);
-
-                    if (row == null) {
-                        continue;
-                    }
-
-                    // if first/last displayed cell of row is empty, start drawing at
-                    // the first non-empty cell to the left/right to make sure
-                    // overflowing text is visible.
-                    int first = startColumn;
-                    while (first > 0 && getColumnPos(first) + maxWidthScaled > clipBounds.x && row.getCell(first).isEmpty()) {
-                        first--;
-                    }
-
-                    int end = endColumn;
-                    while (end < getNumberOfColumns() && getColumnPos(end) - maxWidthScaled < clipBounds.x + clipBounds.width && (end <= 0 || row.getCell(end - 1).isEmpty())) {
-                        end++;
-                    }
-
-                    for (int j = first; j < end; j++) {
-                        Cell cell = row.getCell(j);
-                        Cell logicalCell = cell.getLogicalCell();
-
-                        final boolean visible;
-                        if (cell == logicalCell) {
-                            // if cell is not merged or the topleft cell of the
-                            // merged region, then it is visible
-                            visible = true;
-                        } else {
-                            // otherwise calculate row and column numbers of the
-                            // first visible cell of the merged region
-                            int iCell = Math.max(startRow, logicalCell.getRowNumber());
-                            int jCell = Math.max(first, logicalCell.getColumnNumber());
-                            visible = i == iCell && j == jCell;
-                            // skip the other cells of this row that belong to the same merged region
-                            j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
-                            // filter out cells that cannot overflow into the visible region
-                            if (j < startColumn && isWrapping(cell.getCellStyle())) {
-                                continue;
-                            }
-                        }
-
-                        // draw cell
-                        if (visible) {
-                            switch (cellDrawMode) {
-                                case DRAW_CELL_BACKGROUND:
-                                    drawCellBackground(g, logicalCell);
-                                    break;
-                                case DRAW_CELL_BORDER:
-                                    drawCellBorder(g, logicalCell);
-                                    break;
-                                case DRAW_CELL_FOREGROUND:
-                                    drawCellForeground(g, logicalCell);
-                                    break;
-                            }
-                        }
-
-                    }
-                }
-            }
-
-            /**
-             * Draw cell background.
-             *
-             * @param g the graphics context to use
-             * @param cell cell to draw
-             */
-            private void drawCellBackground(Graphics2D g, Cell cell) {
-                Rectangle cr = getCellRect(cell);
-
-                // draw grid lines
-                g.setColor(gridColor);
-                g.drawRect(cr.x, cr.y, cr.width - 1, cr.height - 1);
-
-                CellStyle style = cell.getCellStyle();
-                FillPattern pattern = style.getFillPattern();
-
-                if (pattern == FillPattern.NONE) {
-                    return;
-                }
-
-                if (pattern != FillPattern.SOLID) {
-                    Color fillBgColor = style.getFillBgColor();
-                    if (fillBgColor != null) {
-                        g.setColor(fillBgColor);
-                        g.fillRect(cr.x, cr.y, cr.width, cr.height);
-                    }
-                }
-
-                if (pattern != FillPattern.NONE) {
-                    Color fillFgColor = style.getFillFgColor();
-                    if (fillFgColor != null) {
-                        g.setColor(fillFgColor);
-                        g.fillRect(cr.x, cr.y, cr.width, cr.height);
-                    }
-                }
-            }
-
-            /**
-             * Draw cell border.
-             *
-             * @param g the graphics context to use
-             * @param cell cell to draw
-             */
-            private void drawCellBorder(Graphics2D g, Cell cell) {
-                CellStyle styleTopLeft = cell.getCellStyle();
-
-                Cell cellBottomRight = sheet.getRow(cell.getRowNumber() + cell.getVerticalSpan() - 1).getCell(cell.getColumnNumber() + cell.getHorizontalSpan() - 1);
-                CellStyle styleBottomRight = cellBottomRight.getCellStyle();
-
-                Rectangle cr = getCellRect(cell);
-
-                // draw border
-                for (Direction d : Direction.values()) {
-                    boolean isTopLeft = d == Direction.NORTH || d == Direction.WEST;
-                    CellStyle style = isTopLeft ? styleTopLeft : styleBottomRight;
-
-                    BorderStyle b = style.getBorderStyle(d);
-                    if (b.getWidth() == 0) {
-                        continue;
-                    }
-
-                    Color color = b.getColor();
-                    if (color == null) {
-                        color = Color.BLACK;
-                    }
-
-                    g.setColor(color);
-                    g.setStroke(getStroke(b.getWidth() * getScale()));
-                    switch (d) {
-                        case NORTH:
-                            g.drawLine(cr.x, cr.y, cr.x + cr.width - 1, cr.y);
-                            break;
-                        case EAST:
-                            g.drawLine(cr.x + cr.width - 1, cr.y, cr.x + cr.width - 1, cr.y + cr.height - 1);
-                            break;
-                        case SOUTH:
-                            g.drawLine(cr.x, cr.y + cr.height - 1, cr.x + cr.width - 1, cr.y + cr.height - 1);
-                            break;
-                        case WEST:
-                            g.drawLine(cr.x, cr.y, cr.x, cr.y + cr.height - 1);
-                            break;
-                    }
-                }
-            }
-
-            /**
-             * Draw cell foreground.
-             *
-             * @param g the graphics context to use
-             * @param cell cell to draw
-             */
-            private void drawCellForeground(Graphics2D g, Cell cell) {
-                if (cell.isEmpty()) {
-                    return;
-                }
-
-                // the cell rectangle, used for positioning the text
-                Rectangle cellRect = getCellRect(cell);
-                cellRect.x += paddingX;
-                cellRect.width -= 2 * paddingX;
-                cellRect.y += paddingY;
-                cellRect.height -= 2 * paddingY;
-
-                // the clipping rectangle
-                final Rectangle clipRect;
-                final CellStyle style = cell.getCellStyle();
-                if (isWrapping(style)) {
-                    clipRect = cellRect;
-                } else {
-                    Row row = cell.getRow();
-                    int clipXMin = cellRect.x;
-                    for (int j = cell.getColumnNumber() - 1; j > 0; j--) {
-                        if (!row.getCell(j).isEmpty()) {
-                            break;
-                        }
-                        clipXMin = getColumnPos(j) + paddingX;
-                    }
-                    int clipXMax = cellRect.x + cellRect.width;
-                    for (int j = cell.getColumnNumber() + 1; j < getNumberOfColumns(); j++) {
-                        if (!row.getCell(j).isEmpty()) {
-                            break;
-                        }
-                        clipXMax = getColumnPos(j + 1) - paddingX;
-                    }
-                    clipRect = new Rectangle(clipXMin, cellRect.y, clipXMax - clipXMin, cellRect.height);
-                }
-
-                renderer.render(g, cell, cellRect, clipRect, getScale());
-            }
-
-            /**
-             * Draw frame around current selection.
-             *
-             * @param g2d graphics object used for drawing
-             */
-            private void drawSelection(Graphics2D g2d) {
-                // no sheet, no drawing
-                if (sheet == null) {
-                    return;
-                }
-
-                Cell logicalCell = getCurrentCell().getLogicalCell();
-                Rectangle rect = getCellRect(logicalCell);
-
-                g2d.setColor(selectionColor);
-                g2d.setStroke(selectionStroke);
-                g2d.drawRect(rect.x, rect.y, rect.width, rect.height);
-            }
-
             @Override
             public Dimension getPreferredScrollableViewportSize() {
                 return getPreferredSize();
             }
 
             @Override
-            public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            public int getScrollableUnitIncrement(java.awt.Rectangle visibleRect, int orientation, int direction) {
                 if (orientation == SwingConstants.VERTICAL) {
                     // scroll vertical
                     if (direction < 0) {
                         //scroll up
                         final int y = visibleRect.y;
-                        int yPrevious = 0;
-                        for (int i = sheet.getSplitRow(); i < rowPos.length; i++) {
-                            if (getRowPos(i) >= y) {
-                                return y - yPrevious;
+                        double yPrevious = 0;
+                        for (int i = sheet.getSplitRow(); i <= sheetPainter.getNumberOfRows(); i++) {
+                            final double pos = sheetPainter.getRowPos(i);
+                            if (pos >= y) {
+                                return (int) Math.round(y - yPrevious);
                             }
-                            yPrevious = getRowPos(i);
+                            yPrevious = pos;
                         }
                         // should never be reached
                         return 0;
                     } else {
                         // scroll down
                         final int y = visibleRect.y + visibleRect.height;
-                        for (int i = sheet.getSplitRow(); i < rowPos.length; i++) {
-                            if (getRowPos(i) > y) {
-                                return getRowPos(i) - y;
+                        for (int i = sheet.getSplitRow(); i <= sheetPainter.getNumberOfRows(); i++) {
+                            final double pos = sheetPainter.getRowPos(i);
+                            if (pos > y) {
+                                return (int) Math.round(pos - y);
                             }
                         }
                         // should never be reached
                         return 0;
                     }
-                } else {
-                    // scroll horizontal
+                } else // scroll horizontal
+                {
                     if (direction < 0) {
                         //scroll left
                         final int x = visibleRect.x;
-                        int xPrevious = 0;
-                        for (int j = sheet.getSplitColumn(); j < columnPos.length; j++) {
-                            if (getColumnPos(j) >= x) {
-                                return x - xPrevious;
+                        double xPrevious = 0;
+                        for (int j = sheet.getSplitColumn(); j <= sheetPainter.getNumberOfColumns(); j++) {
+                            final double pos = sheetPainter.getColumnPos(j);
+                            if (pos >= x) {
+                                return (int) Math.round(x - xPrevious);
                             }
-                            xPrevious = getColumnPos(j);
+                            xPrevious = pos;
                         }
                         // should never be reached
                         return 0;
                     } else {
                         // scroll right
                         final int x = visibleRect.x + visibleRect.width;
-                        for (int j = sheet.getSplitColumn(); j < columnPos.length; j++) {
-                            if (getColumnPos(j) > x) {
-                                return getColumnPos(j) - x;
+                        for (int j = sheet.getSplitColumn(); j <= sheetPainter.getNumberOfColumns(); j++) {
+                            final double pos = sheetPainter.getColumnPos(j);
+                            if (pos > x) {
+                                return (int) Math.round(pos - x);
                             }
                         }
                         // should never be reached
@@ -1680,7 +1210,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             }
 
             @Override
-            public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            public int getScrollableBlockIncrement(java.awt.Rectangle visibleRect, int orientation, int direction) {
                 return 3 * getScrollableUnitIncrement(visibleRect, orientation, direction);
             }
 
@@ -1699,7 +1229,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
             @Override
             int getXMinInViewCoordinates() {
-                return getColumnPos(getFirstColumn());
+                return xS2D(sheetPainter.getColumnPos(getFirstColumn()));
             }
 
             @Override
@@ -1732,12 +1262,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
             @Override
             int getXMinInViewCoordinates() {
-                return getColumnPos(getFirstColumn());
+                return xS2D(sheetPainter.getColumnPos(getFirstColumn()));
             }
 
             @Override
             int getYMinInViewCoordinates() {
-                return getRowPos(getFirstRow());
+                return yS2D(sheetPainter.getRowPos(getFirstRow()));
             }
 
             @Override
@@ -1770,7 +1300,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
             @Override
             int getYMinInViewCoordinates() {
-                return getRowPos(getFirstRow());
+                return yS2D(sheetPainter.getRowPos(getFirstRow()));
             }
 
             @Override

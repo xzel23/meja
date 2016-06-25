@@ -10,15 +10,15 @@ import javafx.scene.control.Skin;
  *
  * @author Axel Howind <axel@dua3.com>
  */
-public class ColumnHeader extends HeaderBase {
+public class RowHeader extends HeaderBase {
 
-    ColumnHeader(JfxSheetView sheetView, IntSupplier firstColumn, IntSupplier lastColumn) {
-        super(sheetView, firstColumn, lastColumn);
+    RowHeader(JfxSheetView sheetView, IntSupplier firstRow, IntSupplier lastRow) {
+        super(sheetView, firstRow, lastRow);
     }
 
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new ColumnHeaderSkin(this);
+        return new RowHeaderSkin(this);
     }
 
 }

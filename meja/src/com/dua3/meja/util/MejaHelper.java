@@ -659,7 +659,7 @@ public class MejaHelper {
         // no luck so far
         throw new IllegalArgumentException("\"" + s + "\" is no valid color.");
     }
-    
+
     public static float decodeFontSize(String s) throws NumberFormatException {
         float factor = 1f;
         if (s.endsWith("pt")) {

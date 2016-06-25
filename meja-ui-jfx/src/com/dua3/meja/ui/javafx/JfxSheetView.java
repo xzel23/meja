@@ -8,11 +8,10 @@ import com.dua3.meja.ui.SheetView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.function.IntSupplier;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 
 /**
  *
@@ -31,15 +30,26 @@ public class JfxSheetView extends Control implements SheetView, PropertyChangeLi
 
         gridPane.setGridLinesVisible(true); // FIXME
 
-        headerTopLeft = new Label("1");
-        columnHeaderLeft = new ColumnHeader(this, () -> 0, () -> getSplitColumn());
-        columnHeaderRight = new ColumnHeader(this, () -> getSplitColumn(), () -> getColumnCount());
-        rowHeaderTop = new Label("4");
-        leftTopChart = new Label("5");
-        rightTopChart = new Label("6");
-        rowHeaderBottom = new Label("7");
-        leftBottomChart = new Label("8");
-        rightBottomChart = new Label("9");
+        // define row and column ranges
+        final IntSupplier startColumn = () -> 0;
+        final IntSupplier splitColumn = () -> getSplitColumn();
+        final IntSupplier endColumn = () -> getColumnCount();
+
+        final IntSupplier startRow = () -> 0;
+        final IntSupplier splitRow = () -> getSplitRow();
+        final IntSupplier endRow = () -> getColumnCount();
+
+        headerTopLeft = new CornerHeader(this);
+        columnHeaderLeft = new ColumnHeader(this, startColumn, splitColumn);
+        columnHeaderRight = new ColumnHeader(this, splitColumn, endColumn);
+
+        rowHeaderTop = new RowHeader(this, startRow, splitRow);
+        leftTopChart = new SegmentView(this, startRow, splitRow, startColumn, splitColumn);
+        rightTopChart = new SegmentView(this, startRow, splitRow, splitColumn, endColumn);
+
+        rowHeaderBottom = new RowHeader(this, splitRow, endRow);
+        leftBottomChart = new SegmentView(this, splitRow, endRow, startColumn, splitColumn);
+        rightBottomChart = new SegmentView(this, splitRow, endRow, splitColumn, endColumn);
 
         gridPane.addRow(1, headerTopLeft, columnHeaderLeft, columnHeaderRight);
         gridPane.addRow(2, rowHeaderTop, leftTopChart, rightTopChart);
@@ -56,6 +66,10 @@ public class JfxSheetView extends Control implements SheetView, PropertyChangeLi
         return sheet == null ? 0 : sheet.getSplitColumn();
     }
 
+    private int getSplitRow() {
+        return sheet == null ? 0 : sheet.getSplitRow();
+    }
+
     @Override
     public Sheet getSheet() {
         return sheet;
@@ -63,7 +77,7 @@ public class JfxSheetView extends Control implements SheetView, PropertyChangeLi
 
     @Override
     public void setSheet(Sheet sheet) {
-        if (this.sheet!=null) {
+        if (this.sheet != null) {
             this.sheet.removePropertyChangeListener(this);
         }
 
@@ -71,7 +85,7 @@ public class JfxSheetView extends Control implements SheetView, PropertyChangeLi
             Sheet oldSheet = this.sheet;
             this.sheet = sheet;
 
-            if (this.sheet!=null) {
+            if (this.sheet != null) {
                 sheet.addPropertyChangeListener(this);
             }
 

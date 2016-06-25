@@ -5,19 +5,13 @@ package com.dua3.meja.ui.javafx;
 
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
-import javafx.event.Event;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.SkinBase;
-import javafx.scene.paint.Color;
 
 /**
  *
  * @author Axel Howind <axel@dua3.com>
  */
-public class ColumnHeaderSkin extends SkinBase<ColumnHeader> {
+public class ColumnHeaderSkin extends HeaderSkinBase<ColumnHeader> {
 
-    private Canvas canvas = null;
 
     public ColumnHeaderSkin(ColumnHeader columnHeader) {
         super(columnHeader);
@@ -25,57 +19,8 @@ public class ColumnHeaderSkin extends SkinBase<ColumnHeader> {
         redraw();
     }
 
-    private void init(ColumnHeader columnHeader) {
-        canvas = new Canvas();
-        getChildren().setAll(canvas);
-
-        columnHeader.setMinSize(getPreferredWidth(), getPreferredHeight());
-        columnHeader.setPrefSize(getPreferredWidth(), getPreferredHeight());
-        columnHeader.setMaxSize(getPreferredWidth(), getPreferredHeight());
-
-        columnHeader.addEventHandler(
-                ColumnHeader.EVENT_TYPE_LAYOUT_CHANGED,
-                (Event t) -> redraw()
-        );
-    }
-
-    private void redraw() {
-        ColumnHeader columnHeader = (ColumnHeader) getNode();
-        Sheet sheet = columnHeader.getSheet();
-
-        if (sheet == null) {
-            return;
-        }
-
-        canvas.setWidth(getPreferredWidth());
-        canvas.setHeight(getPreferredHeight());
-
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        double x = 0;
-        double y = 0;
-        double h = canvas.getHeight();
-        for (int j = columnHeader.getFirstColumn(); j < columnHeader.getLastColumn(); j++) {
-            String text = MejaHelper.getColumnName(j);
-            double w = sheet.getColumnWidth(j);
-            gc.setFill(Color.LIGHTGREY);
-            gc.fillRect(x, y, w, h);
-            gc.strokeText(text, x + w / 2, y + h / 2, w);
-            x += w;
-        }
-    }
-
     @Override
-    protected double computeMinWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return getPreferredWidth();
-    }
-
-    @Override
-    protected double computePrefWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return getPreferredWidth();
-    }
-
-    private double getPreferredWidth() {
+    protected double getPreferredWidth() {
         ColumnHeader columnHeader = (ColumnHeader) getNode();
         Sheet sheet = columnHeader.getSheet();
 
@@ -84,24 +29,39 @@ public class ColumnHeaderSkin extends SkinBase<ColumnHeader> {
         }
 
         double w = 0;
-        for (int j = columnHeader.getFirstColumn(); j <= columnHeader.getLastColumn(); j++) {
+        for (int j = columnHeader.getBegin(); j <= columnHeader.getEnd(); j++) {
             w += sheet.getColumnWidth(j);
         }
         return w;
     }
 
     @Override
-    protected double computePrefHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return getPreferredHeight();
+    protected double getPreferredHeight() {
+        return getDefaultHeight();
     }
 
-    private double getPreferredHeight() {
-        return 12;
+    static double getDefaultHeight() {
+        return 20;
     }
 
     @Override
-    protected double computeMinHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
+    protected String getName(int i) {
+        return MejaHelper.getColumnName(i);
+    }
+
+    @Override
+    protected double getWidth(Sheet sheet, int i) {
+        return sheet == null ? 0 : sheet.getColumnWidth(i);
+    }
+
+    @Override
+    protected double getHeight(Sheet sheet, int i) {
         return getPreferredHeight();
+    }
+
+    @Override
+    protected double nextX(double x, double w) {
+        return x+w;
     }
 
 }
