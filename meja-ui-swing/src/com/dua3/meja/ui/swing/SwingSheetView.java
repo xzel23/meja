@@ -529,13 +529,18 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             this.sheet.removePropertyChangeListener(this);
         }
 
-        this.sheet = sheet;
+        if (sheet != this.sheet) {
+            Sheet oldSheet = this.sheet;
+            this.sheet = sheet;
 
-        if (this.sheet!=null) {
-            sheet.addPropertyChangeListener(this);
+            if (this.sheet!=null) {
+                sheet.addPropertyChangeListener(this);
+            }
+
+            updateContent();
+
+            firePropertyChange(PROPERTY_SHEET, oldSheet, sheet);
         }
-
-        updateContent();
     }
 
     @Override
