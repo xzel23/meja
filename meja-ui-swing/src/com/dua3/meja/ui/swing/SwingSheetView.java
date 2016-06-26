@@ -20,7 +20,6 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
-import com.dua3.meja.ui.GraphicsContext;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.MejaHelper;
@@ -176,8 +175,11 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         sheetPane = new SheetPane();
         searchDialog = new SearchDialog();
 
-        add(sheetPane);
+        init(sheet);
+    }
 
+    private void init(Sheet sheet1) {
+        add(sheetPane);
         // setup input map for keyboard navigation
         final InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
@@ -194,12 +196,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK), Actions.MOVE_END);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
         inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
-
         final ActionMap actionMap = getActionMap();
         for (Actions action : Actions.values()) {
             actionMap.put(action, action.getAction(this));
         }
-
         // listen to mouse events
         addMouseListener(new MouseAdapter() {
             @Override
@@ -207,7 +207,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 onMousePressed(e.getX() + xS2D(getSplitX()), e.getY() + yS2D(getSplitY()));
             }
         });
-
         // make focusable
         setFocusable(true);
         SwingUtilities.invokeLater(new Runnable() {
@@ -216,8 +215,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 requestFocusInWindow();
             }
         });
-
-        setSheet(sheet);
+        setSheet(sheet1);
     }
 
     /**
@@ -724,11 +722,15 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         private static final long serialVersionUID = 1L;
 
-        private final JTextField jtfText;
-        private final JCheckBox jcbIgnoreCase;
-        private final JCheckBox jcbMatchCompleteText;
+        private final JTextField jtfText = new JTextField(40);
+        private final JCheckBox jcbIgnoreCase = new JCheckBox("ignore case", true);
+        private final JCheckBox jcbMatchCompleteText = new JCheckBox("match complete text", false);
 
         SearchDialog() {
+            init();
+        }
+
+        private void init() {
             setTitle("Search");
             setModal(true);
             setResizable(false);
@@ -750,7 +752,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             c.gridy = 1;
             c.gridwidth = 4;
             c.gridheight = 1;
-            jtfText = new JTextField(40);
             add(jtfText, c);
 
             // options
@@ -764,14 +765,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             c.gridy = 2;
             c.gridwidth = 1;
             c.gridheight = 1;
-            jcbIgnoreCase = new JCheckBox("ignore case", true);
             add(jcbIgnoreCase, c);
 
             c.gridx = 3;
             c.gridy = 2;
             c.gridwidth = 1;
             c.gridheight = 1;
-            jcbMatchCompleteText = new JCheckBox("match complete text", false);
             add(jcbMatchCompleteText, c);
 
             // submit button
@@ -864,7 +863,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     private class SheetPane extends JScrollPane {
 
-        private final JLabel painter;
+        private final JLabel painter = new JLabel();
         private int labelHeight = 0;
         private int labelWidth = 0;
         private final TopLeftQuadrant topLeftQuadrant = new TopLeftQuadrant();
@@ -873,9 +872,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         private final BottomRightQuadrant bottomRightQuadrant = new BottomRightQuadrant();
 
         SheetPane() {
+            init();
+        }
+
+        private void init() {
             setDoubleBuffered(false);
 
-            painter = new JLabel();
             painter.setOpaque(true);
             painter.setHorizontalAlignment(SwingConstants.CENTER);
             painter.setVerticalAlignment(SwingConstants.CENTER);
@@ -1010,6 +1012,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             QuadrantPainter() {
                 super(null, false);
 
+                init();
+            }
+
+            private void init() {
                 setOpaque(true);
                 setDoubleBuffered(false);
 
