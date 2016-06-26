@@ -66,7 +66,7 @@ public final class Rectangle {
     }
 
     public double getRight() {
-        return x+w;
+        return x + w;
     }
 
     public double getTop() {
@@ -74,7 +74,7 @@ public final class Rectangle {
     }
 
     public double getBottom() {
-        return y+h;
+        return y + h;
     }
 
     public void translate(double dx, double dy) {
@@ -82,5 +82,25 @@ public final class Rectangle {
         y += dy;
     }
 
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setW(double w) {
+        this.w = w;
+    }
+
+    public void setH(double h) {
+        this.h = h;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + x + ", " + y + ", " + w + ", " + h + "]";
+    }
 
 }

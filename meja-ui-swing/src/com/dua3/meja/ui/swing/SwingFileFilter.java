@@ -23,6 +23,14 @@ import java.util.List;
  */
 public class SwingFileFilter extends javax.swing.filechooser.FileFilter
             implements java.io.FileFilter, java.io.FilenameFilter {
+    public static List<SwingFileFilter> getFilters(OpenMode mode) {
+        List<FileType> fileTypes = FileType.getFileTypes(mode);
+        List<SwingFileFilter> filters = new ArrayList<>(fileTypes.size());
+        for (FileType ft: fileTypes) {
+            filters.add(new SwingFileFilter(ft));
+        }
+        return filters;
+    }
 
         private final FileType fileType;
 
@@ -66,13 +74,5 @@ public class SwingFileFilter extends javax.swing.filechooser.FileFilter
             return fileType.getFactory();
         }
 
-        public static List<SwingFileFilter> getFilters(OpenMode mode) {
-            List<FileType> fileTypes = FileType.getFileTypes(mode);
-            List<SwingFileFilter> filters = new ArrayList<>(fileTypes.size());
-            for (FileType ft: fileTypes) {
-                filters.add(new SwingFileFilter(ft));
-            }
-            return filters;
-        }
 
 }

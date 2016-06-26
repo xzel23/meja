@@ -40,7 +40,7 @@ public class DefaultCellRenderer implements CellRenderer {
     }
 
     @Override
-    public void render(Graphics2D g, Cell cell, Rectangle cr, Rectangle clip, float scale) {
+    public void render(Graphics2D g, Cell cell, Rectangle cr, Rectangle clip, double scale) {
         if (cell.isEmpty()) {
             return;
         }

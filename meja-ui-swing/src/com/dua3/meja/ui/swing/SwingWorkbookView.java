@@ -17,6 +17,7 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.ui.WorkbookView;
 import java.awt.CardLayout;
 import java.awt.Component;
@@ -95,7 +96,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
             Component view = content.getComponentAt(i);
             if (view != null) {
                 assert view instanceof SwingSheetView;
-                ((SwingSheetView) view).setEditable(editable);
+                ((SheetView) view).setEditable(editable);
             }
         }
     }

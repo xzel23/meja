@@ -90,22 +90,17 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
-    private float scaleDpi = 1f;
-
-    /**
-     * The scaling factor used to draw the sheet according to current zoom.
-     */
-    private float scale = 1f;
+    private double scale = 1f;
 
     /**
      * Height of the sheet in points.
      */
-    private float sheetWidthInPoints;
+    private double sheetWidthInPoints;
 
     /**
      * Width of the sheet in points.
      */
-    private float sheetHeightInPoints;
+    private double sheetHeightInPoints;
 
     /**
      * The sheet displayed.
@@ -135,32 +130,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     public SwingSheetView() {
         this(null);
     }
-
-    int xS2D(double x) {
-        return (int) Math.round(x);
-    }
-
-    int yS2D(double y) {
-        return (int) Math.round(y);
-    }
-
-    int wS2D(double w) {
-        return (int) Math.round(w);
-    }
-
-    int hS2D(double h) {
-        return (int) Math.round(h);
-    }
-
-    java.awt.Rectangle rectS2D(Rectangle r) {
-        return new java.awt.Rectangle(
-                xS2D(r.getX()),
-                yS2D(r.getY()),
-                wS2D(r.getW()),
-                hS2D(r.getH())
-        );
-    }
-
     /**
      * Construct a new SheetView for the given sheet.
      *
@@ -177,6 +146,56 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         init(sheet);
     }
+
+    int xS2D(double x) {
+        return (int) Math.round(scale * x);
+    }
+
+    int yS2D(double y) {
+        return (int) Math.round(scale * y);
+    }
+
+    int wS2D(double w) {
+        return (int) Math.round(scale * w);
+    }
+
+    int hS2D(double h) {
+        return (int) Math.round(scale * h);
+    }
+
+    double xD2S(int x) {
+        return x / scale;
+    }
+
+    double yD2S(int y) {
+        return y / scale;
+    }
+
+    double wD2S(int w) {
+        return w / scale;
+    }
+
+    double hD2S(int h) {
+        return h / scale;
+    }
+
+    java.awt.Rectangle rectS2D(Rectangle r) {
+        final int x1 = xS2D(r.getLeft());
+        final int y1 = yS2D(r.getTop());
+        final int x2 = xS2D(r.getRight());
+        final int y2 = yS2D(r.getBottom());
+        return new java.awt.Rectangle(x1,y1, x2-x1, y2-y1);
+    }
+
+    Rectangle rectD2S(java.awt.Rectangle r) {
+        return new Rectangle(
+                xD2S(r.x),
+                yD2S(r.y),
+                wD2S(r.width),
+                hD2S(r.height)
+        );
+    }
+
 
     private void init(Sheet sheet1) {
         add(sheetPane);
@@ -424,22 +443,18 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         sheetPane.setScrollable(true);
     }
 
-    float getScale() {
-        return scale;
-    }
-
     /**
      * @return the sheetWidth
      */
     public int getSheetWidth() {
-        return Math.round(sheetWidthInPoints * getScale());
+        return wS2D(sheetWidthInPoints);
     }
 
     /**
      * @return the sheetHeight
      */
     public int getSheetHeight() {
-        return Math.round(sheetHeightInPoints * getScale());
+        return hS2D(sheetHeightInPoints);
     }
 
     /**
@@ -499,12 +514,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 editing = true;
             }
         } else // otherwise stop cell editing
-        {
-            if (editing) {
+         if (editing) {
                 stopEditing(true);
                 editing = false;
             }
-        }
     }
 
     /**
@@ -574,7 +587,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     private void updateContent() {
         // scale according to screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-        scaleDpi = dpi / 72f;
+        double scaleDpi = dpi / 72.0; // 1 point = 1/72 inch
+        scale = sheet.getZoom() * scaleDpi;
 
         sheetPainter.update(sheet);
 
@@ -606,6 +620,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 // nop
                 break;
         }
+    }
+
+    double getScale() {
+        return scale;
     }
 
     /**
@@ -863,9 +881,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     private class SheetPane extends JScrollPane {
 
-        private final JLabel painter = new JLabel();
-        private int labelHeight = 0;
-        private int labelWidth = 0;
         private final TopLeftQuadrant topLeftQuadrant = new TopLeftQuadrant();
         private final TopRightQuadrant topRightQuadrant = new TopRightQuadrant();
         private final BottomLeftQuadrant bottomLeftQuadrant = new BottomLeftQuadrant();
@@ -877,11 +892,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         private void init() {
             setDoubleBuffered(false);
-
-            painter.setOpaque(true);
-            painter.setHorizontalAlignment(SwingConstants.CENTER);
-            painter.setVerticalAlignment(SwingConstants.CENTER);
-            painter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, gridColor));
 
             // set quadrant painters
             setViewportView(bottomRightQuadrant);
@@ -936,30 +946,9 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             }
         }
 
-        public int getLabelWidth() {
-            return labelWidth;
-        }
-
-        public int getLabelHeight() {
-            return labelHeight;
-        }
-
         @Override
         public void validate() {
             if (sheet != null) {
-                // create a string with the maximum number of digits needed to
-                // represent the highest row number (use a string only consisting
-                // of zeroes instead of the last row number because a proportional
-                // font might be used)
-                StringBuilder sb = new StringBuilder();
-                for (int i = 1; i <= sheetPainter.getNumberOfRows(); i *= 10) {
-                    sb.append('0');
-                }
-                painter.setText(new String(sb));
-                final Dimension labelSize = painter.getPreferredSize();
-                labelWidth = labelSize.width;
-                labelHeight = labelSize.height;
-
                 topLeftQuadrant.validate();
                 topRightQuadrant.validate();
                 bottomLeftQuadrant.validate();
@@ -991,10 +980,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             double w = sheetPainter.getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
             double y = sheetPainter.getRowPos(i);
             double h = sheetPainter.getRowPos(i + cell.getVerticalSpan()) - y + 1;
-            x -= quadrant.getXMinInViewCoordinates();
+            //x -= quadrant.getXMinInViewCoordinates();
             x += parent.getX();
             x -= pos.x;
-            y -= quadrant.getYMinInViewCoordinates();
+            //y -= quadrant.getYMinInViewCoordinates();
             y += parent.getY();
             y -= pos.y;
 
@@ -1038,13 +1027,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
             abstract int getLastRow();
 
-            abstract int getXMinInViewCoordinates();
-
-            abstract int getYMinInViewCoordinates();
-
             void repaintSheet(Rectangle rect) {
                 java.awt.Rectangle rect2 = rectS2D(rect);
-                rect2.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
                 repaint(rect2);
             }
 
@@ -1054,7 +1038,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             }
 
             void translateMousePosition(Point p) {
-                p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
+                // FIXME p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
             }
 
             private boolean hasColumnHeaders() {
@@ -1077,7 +1061,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             public void validate() {
                 if (sheet != null) {
                     // the width is the width for the labels showing row names ...
-                    double width = hasRowHeaders() ? labelWidth : 1;
+                    double width = hasRowHeaders() ? sheetPainter.getLabelWidth() : wD2S(1);
 
                     // ... plus the width of the columns displayed ...
                     width += sheetPainter.getColumnPos(getLastColumn() + 1) - sheetPainter.getColumnPos(getFirstColumn());
@@ -1088,17 +1072,17 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     }
 
                     // the height is the height for the labels showing column names ...
-                    double height = hasColumnHeaders() ? labelHeight : 1;
+                    double height = hasColumnHeaders() ? sheetPainter.getLabelHeight() : hD2S(1);
 
                     // ... plus the height of the rows displayed ...
                     height += sheetPainter.getRowPos(getLastRow() + 1) - sheetPainter.getRowPos(getFirstRow());
 
                     // ... plus 1 pixel for drawing a line below the lines above the split.
                     if (hasHLine()) {
-                        height += 1;
+                        height += hD2S(1);
                     }
 
-                    final Dimension size = new Dimension((int) Math.round(width), (int) Math.round(height));
+                    final Dimension size = new Dimension(wS2D(width), hS2D(height));
                     setSize(size);
                     setPreferredSize(size);
                 }
@@ -1109,45 +1093,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                sheetPainter.drawSheet(new SwingGraphicsContext(g));
-            }
-
-            protected void drawRowLabels(Graphics g) {
-                if (!hasRowHeaders()) {
-                    return;
-                }
-
-                java.awt.Rectangle clipBounds = g.getClipBounds();
-                int startRow = Math.max(getFirstRow(), sheetPainter.getRowNumberFromY(clipBounds.y));
-                int endRow = Math.min(1 + sheetPainter.getRowNumberFromY(clipBounds.y + clipBounds.height), getLastRow() + 1);
-                for (int i = startRow; i < endRow; i++) {
-                    int y = yS2D(sheetPainter.getRowPos(i));
-                    int h = hS2D(sheetPainter.getRowPos(i + 1) - y);
-                    String text = getRowName(i);
-
-                    painter.setBounds(0, 0, labelWidth, h);
-                    painter.setText(text);
-                    painter.paint(g.create(-labelWidth, y, labelWidth, h));
-                }
-            }
-
-            protected void drawColumnLabels(Graphics g) {
-                if (!hasColumnHeaders()) {
-                    return;
-                }
-
-                java.awt.Rectangle clipBounds = g.getClipBounds();
-                int startCol = Math.max(getFirstColumn(), sheetPainter.getColumnNumberFromX(clipBounds.x));
-                int endCol = Math.min(1 + sheetPainter.getColumnNumberFromX(clipBounds.x + clipBounds.width), getLastColumn() + 1);
-                for (int j = startCol; j < endCol; j++) {
-                    int x = xS2D(sheetPainter.getColumnPos(j));
-                    int w = wS2D(sheetPainter.getColumnPos(j + 1) - x);
-                    String text = getColumnName(j);
-
-                    painter.setBounds(0, 0, w, labelHeight);
-                    painter.setText(text);
-                    painter.paint(g.create(x, -labelHeight, w, labelHeight));
-                }
+                int dx = hasRowHeaders() ? xS2D(sheetPainter.getLabelWidth()) : 0;
+                int dy = hasColumnHeaders() ? yS2D(sheetPainter.getLabelHeight()) : 0;
+                g.translate(dx, dy);
+                sheetPainter.drawSheet(new SwingGraphicsContext(g, SwingSheetView.this));
             }
 
             @Override
@@ -1185,8 +1134,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                         return 0;
                     }
                 } else // scroll horizontal
-                {
-                    if (direction < 0) {
+                 if (direction < 0) {
                         //scroll left
                         final int x = visibleRect.x;
                         double xPrevious = 0;
@@ -1211,7 +1159,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                         // should never be reached
                         return 0;
                     }
-                }
             }
 
             @Override
@@ -1231,16 +1178,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         private class TopRightQuadrant extends QuadrantPainter {
-
-            @Override
-            int getXMinInViewCoordinates() {
-                return xS2D(sheetPainter.getColumnPos(getFirstColumn()));
-            }
-
-            @Override
-            int getYMinInViewCoordinates() {
-                return -getLabelHeight();
-            }
 
             @Override
             int getFirstColumn() {
@@ -1266,16 +1203,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         private class BottomRightQuadrant extends QuadrantPainter {
 
             @Override
-            int getXMinInViewCoordinates() {
-                return xS2D(sheetPainter.getColumnPos(getFirstColumn()));
-            }
-
-            @Override
-            int getYMinInViewCoordinates() {
-                return yS2D(sheetPainter.getRowPos(getFirstRow()));
-            }
-
-            @Override
             int getFirstColumn() {
                 return sheet.getSplitColumn();
             }
@@ -1299,16 +1226,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         private class BottomLeftQuadrant extends QuadrantPainter {
 
             @Override
-            int getXMinInViewCoordinates() {
-                return -getLabelWidth();
-            }
-
-            @Override
-            int getYMinInViewCoordinates() {
-                return yS2D(sheetPainter.getRowPos(getFirstRow()));
-            }
-
-            @Override
             int getFirstColumn() {
                 return 0;
             }
@@ -1330,16 +1247,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         private class TopLeftQuadrant extends QuadrantPainter {
-
-            @Override
-            int getXMinInViewCoordinates() {
-                return -getLabelWidth();
-            }
-
-            @Override
-            int getYMinInViewCoordinates() {
-                return -getLabelHeight();
-            }
 
             @Override
             int getFirstColumn() {

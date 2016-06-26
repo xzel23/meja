@@ -17,17 +17,15 @@ import java.awt.Graphics2D;
 public final class SwingGraphicsContext implements GraphicsContext {
 
     private final Graphics2D g;
+    private final SwingSheetView view;
 
-    private static int round(double d) {
-        return (int) Math.round(d);
+    SwingGraphicsContext(Graphics g, SwingSheetView view) {
+        this.g = (Graphics2D) g;
+        this.view = view;
     }
 
     public Graphics2D graphics() {
         return g;
-    }
-
-    SwingGraphicsContext(Graphics g) {
-        this.g = (Graphics2D) g;
     }
 
     @Override
@@ -35,19 +33,35 @@ public final class SwingGraphicsContext implements GraphicsContext {
         g.setColor(color);
     }
 
+    private int xS2D(double d) {
+        return view.xS2D(d);
+    }
+
+    private int yS2D(double d) {
+        return view.yS2D(d);
+    }
+
+    private int wS2D(double d) {
+        return view.wS2D(d);
+    }
+
+    private int hS2D(double d) {
+        return view.hS2D(d);
+    }
+
     @Override
     public void drawLine(double x1, double y1, double x2, double y2) {
-        g.drawLine(round(x1), round(y1), round(x2), round(y2));
+        g.drawLine(xS2D(x1), yS2D(y1), wS2D(x2), hS2D(y2));
     }
 
     @Override
     public void drawRect(double x, double y, double width, double height) {
-        g.drawRect(round(x), round(y), round(width), round(height));
+        g.drawRect(xS2D(x), yS2D(y), wS2D(width), hS2D(height));
     }
 
     @Override
     public void fillRect(double x, double y, double width, double height) {
-        g.fillRect(round(x), round(y), round(width), round(height));
+        g.fillRect(xS2D(x), yS2D(y), wS2D(width), hS2D(height));
     }
 
     @Override
@@ -58,11 +72,7 @@ public final class SwingGraphicsContext implements GraphicsContext {
 
     @Override
     public Rectangle getClipBounds() {
-        return convertRectangle(g.getClipBounds());
-    }
-
-    private Rectangle convertRectangle(java.awt.Rectangle clipBounds) {
-        return new Rectangle(clipBounds.x, clipBounds.y, clipBounds.width,clipBounds.height);
+        return view.rectD2S(g.getClipBounds());
     }
 
 }

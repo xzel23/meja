@@ -22,6 +22,7 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.MejaHelper;
 import java.awt.Color;
 import java.util.concurrent.locks.Lock;
 
@@ -56,6 +57,8 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
 
     protected abstract void drawBackground(GC gc);
 
+    protected abstract void drawLabel(GC gc, Rectangle rect, String text);
+
     protected abstract double getPaddingX();
 
     protected abstract double getPaddingY();
@@ -67,6 +70,21 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
     protected abstract double getSelectionStrokeWidth();
 
     protected abstract void render(GC g, Cell cell, Rectangle textRect, Rectangle clipRect);
+
+    protected abstract double getLabelHeight();
+
+    protected abstract double getLabelWidth();
+    private String getRowName(int i) {
+        return Integer.toString(i+1);
+    }
+
+    private String getColumnName(int j) {
+        return MejaHelper.getColumnName(j);
+    }
+
+    protected abstract double getRowLabelWidth();
+
+    protected abstract double getColumnLabelHeight();
 
     static enum CellDrawMode {
         /**
@@ -101,6 +119,8 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
             beginDraw(gc);
 
             drawBackground(gc);
+
+            drawLabels(gc);
 
             drawCells(gc, CellDrawMode.DRAW_CELL_BACKGROUND);
             drawCells(gc, CellDrawMode.DRAW_CELL_BORDER);
@@ -356,7 +376,7 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
         Rectangle rect = getCellRect(logicalCell);
 
         gc.setStroke(getSelectionColor(), getSelectionStrokeWidth());
-        gc.fillRect(rect.getX(), rect.getY(), rect.getW(), rect.getH());
+        gc.drawRect(rect.getX(), rect.getY(), rect.getW(), rect.getH());
     }
 
     /**
@@ -515,4 +535,30 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
         return getRowPos(sheet.getSplitRow());
     }
 
+    protected void drawLabels(GC gc) {
+        // determine visible rows and columns
+        Rectangle clipBounds = gc.getClipBounds();
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.getTop()));
+        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.getBottom()));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.getLeft()));
+        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.getRight()));
+
+        // draw row labels
+        Rectangle r = new Rectangle(-getRowLabelWidth(), 0, getRowLabelWidth(), getRowPos(startRow));
+        for (int i = startRow; i < endRow; i++) {
+            r.setY(r.getBottom());
+            r.setH(getRowPos(i+1)-r.getY());
+            String text = getRowName(i);
+            drawLabel(gc, r, text);
+        }
+
+        // draw column labels
+        r = new Rectangle(0, -getColumnLabelHeight(), getColumnPos(startColumn), getColumnLabelHeight());
+        for (int j = startColumn; j < endColumn; j++) {
+            r.setX(r.getRight());
+            r.setW(getColumnPos(j+1)-r.getX());
+            String text = getColumnName(j);
+            drawLabel(gc, r, text);
+        }
+    }
 }
