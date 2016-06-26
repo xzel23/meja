@@ -22,6 +22,10 @@ public final class SwingGraphicsContext implements GraphicsContext {
         return (int) Math.round(d);
     }
 
+    public Graphics2D graphics() {
+        return g;
+    }
+
     SwingGraphicsContext(Graphics g) {
         this.g = (Graphics2D) g;
     }

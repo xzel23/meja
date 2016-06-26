@@ -28,8 +28,9 @@ import java.util.concurrent.locks.Lock;
 /**
  *
  * @author Axel Howind <axel@dua3.com>
+ * @param <GC>
  */
-public abstract class SheetPainterBase {
+public abstract class SheetPainterBase<GC extends GraphicsContext> {
 
     private Sheet sheet = null;
 
@@ -47,13 +48,13 @@ public abstract class SheetPainterBase {
     private double sheetHeightInPoints = 0;
     private double sheetWidthInPoints = 0;
 
-    protected abstract void beginDraw(GraphicsContext gc);
+    protected abstract void beginDraw(GC gc);
 
-    protected abstract void endDraw(GraphicsContext gc);
+    protected abstract void endDraw(GC gc);
 
     protected abstract int getMaxColumnWidth();
 
-    protected abstract void drawBackground(GraphicsContext gc);
+    protected abstract void drawBackground(GC gc);
 
     protected abstract double getPaddingX();
 
@@ -65,7 +66,7 @@ public abstract class SheetPainterBase {
 
     protected abstract double getSelectionStrokeWidth();
 
-    protected abstract void render(GraphicsContext g, Cell cell, Rectangle textRect, Rectangle clipRect);
+    protected abstract void render(GC g, Cell cell, Rectangle textRect, Rectangle clipRect);
 
     static enum CellDrawMode {
         /**
@@ -93,7 +94,7 @@ public abstract class SheetPainterBase {
         return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
     }
 
-    public void drawSheet(GraphicsContext gc) {
+    public void drawSheet(GC gc) {
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {
@@ -127,7 +128,7 @@ public abstract class SheetPainterBase {
      * @param g the graphics object to use
      * @param cellDrawMode the draw mode to use
      */
-    void drawCells(GraphicsContext g, CellDrawMode cellDrawMode) {
+    void drawCells(GC g, CellDrawMode cellDrawMode) {
         // no sheet, no drawing
         if (sheet == null) {
             return;
@@ -212,7 +213,7 @@ public abstract class SheetPainterBase {
      * @param g the graphics context to use
      * @param cell cell to draw
      */
-    private void drawCellBackground(GraphicsContext g, Cell cell) {
+    private void drawCellBackground(GC g, Cell cell) {
         Rectangle cr = getCellRect(cell);
 
         // draw grid lines
@@ -249,7 +250,7 @@ public abstract class SheetPainterBase {
      * @param g the graphics context to use
      * @param cell cell to draw
      */
-    private void drawCellBorder(GraphicsContext g, Cell cell) {
+    private void drawCellBorder(GC g, Cell cell) {
         CellStyle styleTopLeft = cell.getCellStyle();
 
         Cell cellBottomRight = sheet.getRow(cell.getRowNumber() + cell.getVerticalSpan() - 1).getCell(cell.getColumnNumber() + cell.getHorizontalSpan() - 1);
@@ -296,7 +297,7 @@ public abstract class SheetPainterBase {
      * @param g the graphics context to use
      * @param cell cell to draw
      */
-    private void drawCellForeground(GraphicsContext g, Cell cell) {
+    private void drawCellForeground(GC g, Cell cell) {
         if (cell.isEmpty()) {
             return;
         }
@@ -345,7 +346,7 @@ public abstract class SheetPainterBase {
      *
      * @param gc graphics object used for drawing
      */
-    private void drawSelection(GraphicsContext gc) {
+    private void drawSelection(GC gc) {
         // no sheet, no drawing
         if (sheet == null) {
             return;

@@ -4,16 +4,16 @@
 package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.ui.GraphicsContext;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SheetPainterBase;
 import java.awt.Color;
+import java.awt.Graphics2D;
 
 /**
  *
  * @author Axel Howind <axel@dua3.com>
  */
-public class SwingSheetPainter extends SheetPainterBase {
+public class SwingSheetPainter extends SheetPainterBase<SwingGraphicsContext> {
 
     private final float scale = 1f;
     /**
@@ -37,19 +37,21 @@ public class SwingSheetPainter extends SheetPainterBase {
      * Width of the selection rectangle borders.
      */
     private final int selectionStrokeWidth = 4;
+    private final SwingSheetView sheetView;
     private final CellRenderer renderer;
 
-    SwingSheetPainter(CellRenderer renderer) {
+    SwingSheetPainter(SwingSheetView sheetView, CellRenderer renderer) {
+        this.sheetView = sheetView;
         this.renderer = renderer;
     }
 
     @Override
-    protected void beginDraw(GraphicsContext gc) {
+    protected void beginDraw(SwingGraphicsContext gc) {
         // nop
     }
 
     @Override
-    protected void endDraw(GraphicsContext gc) {
+    protected void endDraw(SwingGraphicsContext gc) {
         // nop
     }
 
@@ -59,8 +61,10 @@ public class SwingSheetPainter extends SheetPainterBase {
     }
 
     @Override
-    protected void drawBackground(GraphicsContext gc) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected void drawBackground(SwingGraphicsContext gc) {
+        final Graphics2D g = gc.graphics();
+        java.awt.Rectangle r = g.getClipBounds();
+        g.clearRect(r.x, r.y, r.width, r.height);
     }
 
     @Override
@@ -89,8 +93,11 @@ public class SwingSheetPainter extends SheetPainterBase {
     }
 
     @Override
-    protected void render(GraphicsContext g, Cell cell, Rectangle textRect, Rectangle clipRect) {
-        renderer.render(g, cell, cellRect, clipRect, scale);
+    protected void render(SwingGraphicsContext g, Cell cell, Rectangle rect, Rectangle clipRect) {
+        java.awt.Rectangle rectD = sheetView.rectS2D(rect);
+        java.awt.Rectangle clipRectD = sheetView.rectS2D(clipRect);
+
+        renderer.render(g.graphics(), cell, rectD, clipRectD, scale);
     }
 
 }

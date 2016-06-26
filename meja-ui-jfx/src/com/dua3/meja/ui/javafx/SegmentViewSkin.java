@@ -39,14 +39,14 @@ public abstract class SegmentViewSkin extends SkinBase<SegmentView> {
             return;
         }
 
-                Lock readLock = sheet.readLock();
-                readLock.lock();
-                try {
-        canvas.setWidth(getPreferredWidth());
-        canvas.setHeight(getPreferredHeight());
+        Lock readLock = sheet.readLock();
+        readLock.lock();
+        try {
+            canvas.setWidth(getPreferredWidth());
+            canvas.setHeight(getPreferredHeight());
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            /*
         g2d.setBackground(sheet.getWorkbook().getDefaultCellStyle().getFillBgColor());
         g2d.clearRect(getColumnPos(0), getRowPos(0), getSheetWidth(), getSheetHeight());
 
@@ -54,9 +54,10 @@ public abstract class SegmentViewSkin extends SkinBase<SegmentView> {
                     drawCells(g2d, CellDrawMode.DRAW_CELL_BORDER);
                     drawCells(g2d, CellDrawMode.DRAW_CELL_FOREGROUND);
                     drawSelection(g2d);
-                } finally {
-                    readLock.unlock();
-                }
+             */
+        } finally {
+            readLock.unlock();
+        }
 
     }
 

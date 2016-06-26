@@ -171,7 +171,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
 
-        sheetPainter = new SwingSheetPainter(new DefaultCellRenderer());
+        sheetPainter = new SwingSheetPainter(this, new DefaultCellRenderer());
         editor = new DefaultCellEditor(this);
         sheetPane = new SheetPane();
         searchDialog = new SearchDialog();
@@ -1103,8 +1103,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                GraphicsContext gc = new SwingGraphicsContext(g);
-                sheetPainter.drawSheet(gc);
+                sheetPainter.drawSheet(new SwingGraphicsContext(g));
             }
 
             protected void drawRowLabels(Graphics g) {
