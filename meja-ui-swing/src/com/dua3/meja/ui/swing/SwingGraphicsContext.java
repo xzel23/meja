@@ -56,12 +56,20 @@ public final class SwingGraphicsContext implements GraphicsContext {
 
     @Override
     public void drawRect(double x, double y, double width, double height) {
-        g.drawRect(xS2D(x), yS2D(y), wS2D(width), hS2D(height));
+        final int xd = xS2D(x);
+        final int yd = yS2D(y);
+        final int wd = xS2D(x+width)-xd;
+        final int hd = yS2D(y+height)-yd;
+        g.drawRect(xd, yd, wd, hd);
     }
 
     @Override
     public void fillRect(double x, double y, double width, double height) {
-        g.fillRect(xS2D(x), yS2D(y), wS2D(width), hS2D(height));
+        final int xd = xS2D(x);
+        final int yd = yS2D(y);
+        final int wd = xS2D(x+width)-xd;
+        final int hd = yS2D(y+height)-yd;
+        g.fillRect(xd, yd, wd, hd);
     }
 
     @Override

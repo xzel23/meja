@@ -130,6 +130,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     public SwingSheetView() {
         this(null);
     }
+
     /**
      * Construct a new SheetView for the given sheet.
      *
@@ -184,18 +185,16 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         final int y1 = yS2D(r.getTop());
         final int x2 = xS2D(r.getRight());
         final int y2 = yS2D(r.getBottom());
-        return new java.awt.Rectangle(x1,y1, x2-x1, y2-y1);
+        return new java.awt.Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
     Rectangle rectD2S(java.awt.Rectangle r) {
-        return new Rectangle(
-                xD2S(r.x),
-                yD2S(r.y),
-                wD2S(r.width),
-                hD2S(r.height)
-        );
+        final double x1 = xD2S(r.x);
+        final double y1 = yD2S(r.y);
+        final double x2 = xD2S(r.x + r.width);
+        final double y2 = yD2S(r.y + r.height);
+        return new Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
-
 
     private void init(Sheet sheet1) {
         add(sheetPane);
@@ -502,8 +501,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     void onMousePressed(int x, int y) {
         // make the cell under pointer the current cell
-        int row = sheetPainter.getRowNumberFromY(y);
-        int col = sheetPainter.getColumnNumberFromX(x);
+        int row = sheetPainter.getRowNumberFromY(yD2S(y));
+        int col = sheetPainter.getColumnNumberFromX(xD2S(x));
         boolean currentCellChanged = setCurrentCell(row, col);
         requestFocusInWindow();
 
@@ -1038,7 +1037,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             }
 
             void translateMousePosition(Point p) {
-                // FIXME p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
+//                p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
             }
 
             private boolean hasColumnHeaders() {

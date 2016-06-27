@@ -390,9 +390,9 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
         final int j = cell.getColumnNumber();
 
         final double x = getColumnPos(j);
-        final double w = getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
+        final double w = getColumnPos(j + cell.getHorizontalSpan()) - x;
         final double y = getRowPos(i);
-        final double h = getRowPos(i + cell.getVerticalSpan()) - y + 1;
+        final double h = getRowPos(i + cell.getVerticalSpan()) - y;
 
         return new Rectangle(x, y, w, h);
     }
@@ -544,18 +544,18 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
         int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.getRight()));
 
         // draw row labels
-        Rectangle r = new Rectangle(-getRowLabelWidth(), 0, getRowLabelWidth(), getRowPos(startRow));
+        Rectangle r = new Rectangle(-getRowLabelWidth(), 0, getRowLabelWidth(), 0);
         for (int i = startRow; i < endRow; i++) {
-            r.setY(r.getBottom());
+            r.setY(getRowPos(i));
             r.setH(getRowPos(i+1)-r.getY());
             String text = getRowName(i);
             drawLabel(gc, r, text);
         }
 
         // draw column labels
-        r = new Rectangle(0, -getColumnLabelHeight(), getColumnPos(startColumn), getColumnLabelHeight());
+        r = new Rectangle(0, -getColumnLabelHeight(), 0, getColumnLabelHeight());
         for (int j = startColumn; j < endColumn; j++) {
-            r.setX(r.getRight());
+            r.setX(getColumnPos(j));
             r.setW(getColumnPos(j+1)-r.getX());
             String text = getColumnName(j);
             drawLabel(gc, r, text);
