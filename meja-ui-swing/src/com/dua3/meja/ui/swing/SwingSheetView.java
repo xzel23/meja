@@ -1018,6 +1018,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 });
             }
 
+            abstract int getXMinInViewCoordinates();
+
+            abstract int getYMinInViewCoordinates();
+
             abstract int getFirstColumn();
 
             abstract int getLastColumn();
@@ -1037,7 +1041,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             }
 
             void translateMousePosition(Point p) {
-//                p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
+                p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
             }
 
             private boolean hasColumnHeaders() {
@@ -1092,9 +1096,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                int dx = hasRowHeaders() ? xS2D(sheetPainter.getLabelWidth()) : 0;
-                int dy = hasColumnHeaders() ? yS2D(sheetPainter.getLabelHeight()) : 0;
-                g.translate(dx, dy);
+                g.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
                 sheetPainter.drawSheet(new SwingGraphicsContext(g, SwingSheetView.this));
             }
 
@@ -1179,6 +1181,16 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         private class TopRightQuadrant extends QuadrantPainter {
 
             @Override
+            int getXMinInViewCoordinates() {
+                return xS2D(sheetPainter.getColumnPos(getFirstColumn()));
+            }
+
+            @Override
+            int getYMinInViewCoordinates() {
+                return yS2D(-sheetPainter.getLabelHeight());
+            }
+
+            @Override
             int getFirstColumn() {
                 return sheet.getSplitColumn();
             }
@@ -1202,6 +1214,16 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         private class BottomRightQuadrant extends QuadrantPainter {
 
             @Override
+            int getXMinInViewCoordinates() {
+                return xS2D(sheetPainter.getColumnPos(getFirstColumn()));
+            }
+
+            @Override
+            int getYMinInViewCoordinates() {
+                return yS2D(sheetPainter.getRowPos(getFirstRow()));
+            }
+
+            @Override
             int getFirstColumn() {
                 return sheet.getSplitColumn();
             }
@@ -1223,7 +1245,15 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         private class BottomLeftQuadrant extends QuadrantPainter {
+         @Override
+            int getXMinInViewCoordinates() {
+                return xS2D(-sheetPainter.getLabelWidth());
+            }
 
+            @Override
+            int getYMinInViewCoordinates() {
+                return yS2D(sheetPainter.getRowPos(getFirstRow()));
+            }
             @Override
             int getFirstColumn() {
                 return 0;
@@ -1246,6 +1276,16 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         private class TopLeftQuadrant extends QuadrantPainter {
+
+            @Override
+            int getXMinInViewCoordinates() {
+                return xS2D(-sheetPainter.getLabelWidth());
+            }
+
+            @Override
+            int getYMinInViewCoordinates() {
+                return yS2D(-sheetPainter.getLabelHeight());
+            }
 
             @Override
             int getFirstColumn() {
