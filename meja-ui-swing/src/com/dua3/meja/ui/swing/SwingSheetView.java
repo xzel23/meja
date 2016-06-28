@@ -23,10 +23,12 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.MejaHelper;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -979,10 +981,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             double w = sheetPainter.getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
             double y = sheetPainter.getRowPos(i);
             double h = sheetPainter.getRowPos(i + cell.getVerticalSpan()) - y + 1;
-            //x -= quadrant.getXMinInViewCoordinates();
+            x -= quadrant.getXMinInViewCoordinates();
             x += parent.getX();
             x -= pos.x;
-            //y -= quadrant.getYMinInViewCoordinates();
+            y -= quadrant.getYMinInViewCoordinates();
             y += parent.getY();
             y -= pos.y;
 
@@ -1032,6 +1034,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
             void repaintSheet(Rectangle rect) {
                 java.awt.Rectangle rect2 = rectS2D(rect);
+                rect2.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
                 repaint(rect2);
             }
 
@@ -1095,9 +1098,27 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
             @Override
             protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
-                sheetPainter.drawSheet(new SwingGraphicsContext(g, SwingSheetView.this));
+                Graphics2D g2d = (Graphics2D) g;
+
+                super.paintComponent(g2d);
+
+                final int x = getXMinInViewCoordinates();
+                final int y = getYMinInViewCoordinates();
+                final int width = getWidth();
+                final int height = getHeight();
+
+                g2d.translate(-x, -y);
+                sheetPainter.drawSheet(new SwingGraphicsContext(g2d, SwingSheetView.this));
+
+                // draw split lines
+                g2d.setColor(Color.BLACK);
+                g2d.setStroke(new BasicStroke());
+                if (hasHLine()) {
+                    g2d.drawLine(x, height + y - 1, width + x - 1, height + y - 1);
+                }
+                if (hasVLine()) {
+                    g2d.drawLine(width + x - 1, y, width + x - 1, height + y - 1);
+                }
             }
 
             @Override
@@ -1245,7 +1266,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         private class BottomLeftQuadrant extends QuadrantPainter {
-         @Override
+
+            @Override
             int getXMinInViewCoordinates() {
                 return xS2D(-sheetPainter.getLabelWidth());
             }
@@ -1254,6 +1276,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             int getYMinInViewCoordinates() {
                 return yS2D(sheetPainter.getRowPos(getFirstRow()));
             }
+
             @Override
             int getFirstColumn() {
                 return 0;
