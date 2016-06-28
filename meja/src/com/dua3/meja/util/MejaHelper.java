@@ -621,7 +621,7 @@ public class MejaHelper {
         if (s.startsWith("#")) {
             // FIXME JDK 8
             // int i = Integer.parseUnsignedInt(s.substring(1), 16);
-            int i = Integer.parseInt(s.substring(1), 16);
+            int i = (int)Long.parseLong(s.substring(1), 16);
             return colorDecode(i);
         }
 
