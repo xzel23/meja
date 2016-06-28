@@ -257,4 +257,9 @@ public class Color {
         throw new IllegalArgumentException("\"" + s + "\" is no valid color.");
     }
 
+    @Override
+    public String toString() {
+        return "#" + Integer.toHexString(rgba);
+    }
+
 }
