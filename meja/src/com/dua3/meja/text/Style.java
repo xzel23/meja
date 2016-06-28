@@ -59,7 +59,10 @@ public class Style {
     }
 
     String getOrDefault(String property, String def) {
-        return properties.getOrDefault(property, def);
+        // FIXME JDK 8
+        // return properties.getOrDefault(property, def);
+        String s = properties.get(property);
+        return s!=null ? s : def;
     }
 
     public Map<String,String> properties() {

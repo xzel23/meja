@@ -433,7 +433,12 @@ public abstract class PoiWorkbook implements Workbook {
             return (PoiFont) font;
         }
 
-        String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
+        // FIXME JDK 8 
+        // String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
+        String name = properties.get(Style.FONT_FAMILY);
+        if (name == null) {
+            name = font.getFamily();
+        }
         
         String sSize = properties.get(Style.FONT_SIZE);
         short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : MejaHelper.decodeFontSize(sSize));

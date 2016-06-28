@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
+// FIXME JDK 8 import java.util.stream.Stream;
 
 /**
  *
@@ -103,9 +103,10 @@ public class RichText implements Iterable<Run> {
         return runs.iterator();
     }
 
-    public Stream<Run> stream() {
-        return runs.stream();
-    }
+    // FIXME JDK 8
+    // public Stream<Run> stream() {
+    //     return runs.stream();
+    // }
 
     public boolean isEmpty() {
         return text.isEmpty();
