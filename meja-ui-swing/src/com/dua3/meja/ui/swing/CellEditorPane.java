@@ -46,9 +46,9 @@ public class CellEditorPane extends JTextPane {
 
     private static final long serialVersionUID = 1L;
 
-    static java.awt.Font getAwtFont(Font font, float scale) {
+    static java.awt.Font getAwtFont(Font font, double scale) {
         int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-        return new java.awt.Font(font.getFamily(), style, Math.round(scale * font.getSizeInPoints()));
+        return new java.awt.Font(font.getFamily(), style, (int) Math.round(scale * font.getSizeInPoints()));
     }
 
     /**
@@ -96,7 +96,7 @@ public class CellEditorPane extends JTextPane {
      * @param scale the scale to apply
      * @param eval set to true to display formula results instead of the formula itself
      */
-    public void setContent(Cell cell, float scale, boolean eval) {
+    public void setContent(Cell cell, double scale, boolean eval) {
         CellStyle cellStyle = cell.getCellStyle();
         final Font font = cellStyle.getFont();
         setFont(getAwtFont(font, scale));

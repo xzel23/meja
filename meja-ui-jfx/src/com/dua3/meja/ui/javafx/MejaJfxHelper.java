@@ -33,7 +33,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import org.controlsfx.control.spreadsheet.Grid;
 
 /**
  * Helper class.

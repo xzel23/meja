@@ -47,7 +47,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
      * @param scale
      * @return instance of {@code StyledDocument} with {@code text} as its content
      */
-    public static StyledDocument toStyledDocument(RichText text, AttributeSet dfltAttr, float scale) {
+    public static StyledDocument toStyledDocument(RichText text, AttributeSet dfltAttr, double scale) {
         StyledDocumentBuilder builder = new StyledDocumentBuilder(scale);
         builder.add(text);
         final StyledDocument doc = builder.get();
@@ -56,9 +56,9 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     }
 
     private final StyledDocument doc = new DefaultStyledDocument();
-    private final float scale;
+    private final double scale;
 
-    public StyledDocumentBuilder(float scale) {
+    public StyledDocumentBuilder(double scale) {
         this.scale = scale;
     }
 
@@ -76,7 +76,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 StyleConstants.setFontFamily(as, e.getValue());
                 break;
             case Style.FONT_SIZE:
-                StyleConstants.setFontSize(as, Math.round(scale * MejaHelper.decodeFontSize(e.getValue())));
+                StyleConstants.setFontSize(as, (int) Math.round(scale * MejaHelper.decodeFontSize(e.getValue())));
                 break;
             case Style.COLOR:
                 StyleConstants.setForeground(as, MejaSwingHelper.toAwtColor(e.getValue()));

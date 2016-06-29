@@ -30,8 +30,8 @@ public interface CellRenderer {
      * @param cell the cell whose content shall be rendered
      * @param cellRect the rectangle taken up by the cell
      * @param clipRect the clipping rectangle
-     * @param scale the scla to apply when rendering
+     * @param scale the scale to apply when rendering
      */
-    void render(Graphics2D g, Cell cell, Rectangle cellRect, Rectangle clipRect, float scale);
+    void render(Graphics2D g, Cell cell, Rectangle cellRect, Rectangle clipRect, double scale);
 
 }

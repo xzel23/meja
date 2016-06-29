@@ -96,7 +96,7 @@ public class DefaultCellEditor implements CellEditor {
         // update the cell with the new value
         if (commit) {
             updateCellContent();
-            sheetView.repaint(sheetView.getCellRect(cell));
+            sheetView.repaintCell(cell);
         }
 
         // reset editor state
@@ -158,8 +158,8 @@ public class DefaultCellEditor implements CellEditor {
                         };
                     }
         };
-        
+
         abstract Action getAction(DefaultCellEditor editor);
     }
-    
+
 }

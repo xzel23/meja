@@ -7,8 +7,4 @@
         <conf name="test"    description="Required for test only" extends="runtime"/>
     </configurations>
 
-    <dependencies>
-        <dependency org="org.controlsfx" name="controlsfx" rev="8.40.10"/>
-    </dependencies>
-
 </ivy-module>

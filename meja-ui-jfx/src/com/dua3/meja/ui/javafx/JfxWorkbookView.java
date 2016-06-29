@@ -57,7 +57,9 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
                 Sheet sheet = workbook.getSheet(i);
                 final JfxSheetView sheetView = new JfxSheetView();
                 sheetView.setSheet(sheet);
-                content.getTabs().add(new Tab(sheet.getSheetName(), sheetView));
+                final Tab tab = new Tab(sheet.getSheetName(), sheetView);
+                tab.setClosable(false);
+                content.getTabs().add(tab);
             }
             this.setCenter(content);
         }
@@ -85,8 +87,8 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
         for (Tab tab: content.getTabs()) {
             Node view = tab.getContent();
             if (view != null) {
-                assert view instanceof JfxSheetView;
-                ((JfxSheetView) view).setEditable(editable);
+                assert view instanceof SheetView;
+                ((SheetView) view).setEditable(editable);
             }
         }
     }
@@ -101,8 +103,8 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
         for (Tab tab: content.getTabs()) {
             Node view = tab.getContent();
             if (view != null) {
-                assert view instanceof JfxSheetView;
-                JfxSheetView sheetView = (JfxSheetView) view;
+                assert view instanceof SheetView;
+                SheetView sheetView = (SheetView) view;
                 if (sheetView.getSheet().getSheetName().equals(sheetName)) {
                     return sheetView;
                 }
@@ -118,7 +120,7 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
     @Override
     public SheetView getCurrentView() {
         Node node = content.getSelectionModel().getSelectedItem().getContent();
-        assert node instanceof JfxSheetView;
+        assert node instanceof SheetView;
         return (SheetView) node;
     }
 
@@ -130,8 +132,8 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
         for (Tab tab: content.getTabs()) {
             Node view = tab.getContent();
             if (view != null) {
-                assert view instanceof JfxSheetView;
-                JfxSheetView sheetView = (JfxSheetView) view;
+                assert view instanceof SheetView;
+                SheetView sheetView = (SheetView) view;
                 if (sheet==sheetView.getSheet()) {
                     return sheetView;
                 }
