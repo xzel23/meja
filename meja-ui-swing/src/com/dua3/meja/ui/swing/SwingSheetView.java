@@ -1138,7 +1138,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                         final int yD = yS2D(y);
                         int i = sheetPainter.getRowNumberFromY(y);
                         int posD = yD;
-                        while (i <= sheetPainter.getNumberOfRows() && posD <= yD) {
+                        while (i <= sheetPainter.getRowCount() && posD <= yD) {
                             posD = yS2D(sheetPainter.getRowPos(i++));
                         }
                         return posD - yD;
@@ -1161,7 +1161,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                         int xD = xS2D(x);
                         int j = sheetPainter.getColumnNumberFromX(x);
                         int posD = xD;
-                        while (j <= sheetPainter.getNumberOfColumns() && posD <= xD) {
+                        while (j <= sheetPainter.getColumnCount() && posD <= xD) {
                             posD = xS2D(sheetPainter.getColumnPos(j++));
                         }
                         return posD - xD;

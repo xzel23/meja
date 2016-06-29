@@ -11,7 +11,11 @@ import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.ui.WorkbookView;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import java.awt.HeadlessException;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /**
@@ -38,6 +42,11 @@ public class KitchenSink extends JFrame {
         
         Workbook wb = createWorkbook(GenericWorkbookFactory.instance());
         view.setWorkbook(wb);
+        try {
+            wb.write(new File("d:/usr/tmp/kitchensink.xlsx"), true);
+        } catch (IOException ex) {
+            Logger.getLogger(KitchenSink.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }        
 
     Workbook createWorkbook(WorkbookFactory factory) {

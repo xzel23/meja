@@ -168,9 +168,9 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
 
         // determine visible rows and columns
         int startRow = Math.max(0, getRowNumberFromY(clipBounds.getTop()));
-        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.getBottom()));
+        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.getBottom()));
         int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.getLeft()));
-        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.getRight()));
+        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.getRight()));
 
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
@@ -189,7 +189,7 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
             }
 
             int end = endColumn;
-            while (end < getNumberOfColumns() && getColumnPos(end) - maxWidth < clipBounds.getRight() && (end <= 0 || row.getCell(end - 1).isEmpty())) {
+            while (end < getColumnCount() && getColumnPos(end) - maxWidth < clipBounds.getRight() && (end <= 0 || row.getCell(end - 1).isEmpty())) {
                 end++;
             }
 
@@ -357,7 +357,7 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
                 clipXMin = getColumnPos(j) + paddingX;
             }
             double clipXMax = textRect.getRight();
-            for (int j = cell.getColumnNumber() + 1; j < getNumberOfColumns(); j++) {
+            for (int j = cell.getColumnNumber() + 1; j < getColumnCount(); j++) {
                 if (!row.getCell(j).isEmpty()) {
                     break;
                 }
@@ -507,7 +507,7 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
      *
      * @return number of columns
      */
-    public int getNumberOfColumns() {
+    public int getColumnCount() {
         return columnPos.length - 1;
     }
 
@@ -516,7 +516,7 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
      *
      * @return number of rows
      */
-    public int getNumberOfRows() {
+    public int getRowCount() {
         return rowPos.length - 1;
     }
 
@@ -585,9 +585,9 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
         // determine visible rows and columns
         Rectangle clipBounds = gc.getClipBounds();
         int startRow = Math.max(0, getRowNumberFromY(clipBounds.getTop()));
-        int endRow = Math.min(getNumberOfRows(), 1 + getRowNumberFromY(clipBounds.getBottom()));
+        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.getBottom()));
         int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.getLeft()));
-        int endColumn = Math.min(getNumberOfColumns(), 1 + getColumnNumberFromX(clipBounds.getRight()));
+        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.getRight()));
 
         // draw row labels
         Rectangle r = new Rectangle(-getRowLabelWidth(), 0, getRowLabelWidth(), 0);

@@ -249,7 +249,7 @@ public class Color {
 
     public byte[] toByteArray() {
         byte[] arr = {
-            (byte) r(), (byte) g(), (byte) b(), (byte) a()
+            (byte) a(), (byte) r(), (byte) g(), (byte) b()
         };
         return arr;
     }
@@ -352,4 +352,19 @@ public class Color {
                 Math.max((int) (b() * F_BRIGHTEN), 0),
                 a());
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass()!=getClass()) {
+            return false;
+        }
+        
+        return ((Color)obj).argb == argb;
+    }
+
+    @Override
+    public int hashCode() {
+        return argb;
+    }
+        
 }
