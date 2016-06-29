@@ -15,8 +15,6 @@
  */
 package com.dua3.meja.model;
 
-import java.awt.Color;
-
 /**
  * Interface describing fonts used in workbooks.
  *

@@ -18,6 +18,7 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
@@ -27,7 +28,6 @@ import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.Cache;
 import com.dua3.meja.util.MejaHelper;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -140,7 +140,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     /**
      * The color to use for the grid lines.
      */
-    private Color gridColor = Color.LIGHT_GRAY;
+    private Color gridColor = Color.LIGHTGRAY;
 
     /**
      * Horizontal padding.
@@ -1059,7 +1059,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             painter.setOpaque(true);
             painter.setHorizontalAlignment(SwingConstants.CENTER);
             painter.setVerticalAlignment(SwingConstants.CENTER);
-            painter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, gridColor));
+            painter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, MejaSwingHelper.toAwtColor(gridColor)));
 
             // set quadrant painters
             setViewportView(bottomRightQuadrant);
@@ -1299,7 +1299,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     drawSheet(g2d);
 
                     // draw lines
-                    g2d.setColor(Color.BLACK);
+                    g2d.setColor(MejaSwingHelper.toAwtColor(Color.BLACK));
                     g2d.setStroke(getStroke(1f));
                     if (hasHLine()) {
                         g2d.drawLine(x, height + y - 1, width + x - 1, height + y - 1);
@@ -1359,7 +1359,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
                     g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-                    g2d.setBackground(sheet.getWorkbook().getDefaultCellStyle().getFillBgColor());
+                    g2d.setBackground(MejaSwingHelper.toAwtColor(sheet.getWorkbook().getDefaultCellStyle().getFillBgColor()));
                     g2d.clearRect(getColumnPos(0), getRowPos(0), getSheetWidth(), getSheetHeight());
 
                     drawCells(g2d, CellDrawMode.DRAW_CELL_BACKGROUND);
@@ -1475,7 +1475,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 Rectangle cr = getCellRect(cell);
 
                 // draw grid lines
-                g.setColor(gridColor);
+                g.setColor(MejaSwingHelper.toAwtColor(gridColor));
                 g.drawRect(cr.x, cr.y, cr.width - 1, cr.height - 1);
 
                 CellStyle style = cell.getCellStyle();
@@ -1488,7 +1488,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 if (pattern != FillPattern.SOLID) {
                     Color fillBgColor = style.getFillBgColor();
                     if (fillBgColor != null) {
-                        g.setColor(fillBgColor);
+                        g.setColor(MejaSwingHelper.toAwtColor(fillBgColor));
                         g.fillRect(cr.x, cr.y, cr.width, cr.height);
                     }
                 }
@@ -1496,7 +1496,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 if (pattern != FillPattern.NONE) {
                     Color fillFgColor = style.getFillFgColor();
                     if (fillFgColor != null) {
-                        g.setColor(fillFgColor);
+                        g.setColor(MejaSwingHelper.toAwtColor(fillFgColor));
                         g.fillRect(cr.x, cr.y, cr.width, cr.height);
                     }
                 }
@@ -1531,7 +1531,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                         color = Color.BLACK;
                     }
 
-                    g.setColor(color);
+                    g.setColor(MejaSwingHelper.toAwtColor(color));
                     g.setStroke(getStroke(b.getWidth() * getScale()));
                     switch (d) {
                         case NORTH:
@@ -1609,7 +1609,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 Cell logicalCell = getCurrentCell().getLogicalCell();
                 Rectangle rect = getCellRect(logicalCell);
 
-                g2d.setColor(selectionColor);
+                g2d.setColor(MejaSwingHelper.toAwtColor(selectionColor));
                 g2d.setStroke(selectionStroke);
                 g2d.drawRect(rect.x, rect.y, rect.width, rect.height);
             }

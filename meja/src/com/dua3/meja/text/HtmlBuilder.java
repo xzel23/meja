@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.text;
 
-import java.awt.Color;
 import java.util.Map;
 
 /**
@@ -24,10 +23,6 @@ import java.util.Map;
  * @author Axel Howind (axel@dua3.com)
  */
 public class HtmlBuilder extends TextBuilder<String> {
-
-    private static String getColorValue(Color color) {
-        return Integer.toHexString(color.getRGB()).substring(2);
-    }
 
     private final StringBuilder buffer = new StringBuilder();
 

@@ -6,7 +6,6 @@ package com.dua3.meja.ui.controlsfx;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
-import java.awt.Color;
 import javafx.scene.layout.BorderPane;
 import org.controlsfx.control.spreadsheet.SpreadsheetView;
 

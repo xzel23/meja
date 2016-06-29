@@ -23,7 +23,7 @@ import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.text.Style;
 import com.dua3.meja.util.MejaHelper;
-import java.awt.Color;
+import com.dua3.meja.model.Color;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -454,7 +454,7 @@ public abstract class PoiWorkbook implements Workbook {
         boolean strikethrough = sDecoration==null ? font.isStrikeThrough() : "line-through".equals(sDecoration);
 
         String sColor = properties.get(Style.COLOR);
-        Color color = sColor == null ? font.getColor() : MejaHelper.getColor(sColor);
+        Color color = sColor == null ? font.getColor() : Color.valueOf(sColor);
 
         // try to find existing font
         for (short i=0;i<poiWorkbook.getNumberOfFonts(); i++) {
@@ -555,7 +555,7 @@ public abstract class PoiWorkbook implements Workbook {
                 return null;
             }
             HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
-            return palette.findSimilarColor(color.getRed(), color.getGreen(), color.getBlue());
+            return palette.findSimilarColor(color.r(), color.g(), color.b());
         }
 
         /**
@@ -668,7 +668,7 @@ public abstract class PoiWorkbook implements Workbook {
          */
         @Override
         public XSSFColor getPoiColor(Color color) {
-            return new XSSFColor(color);
+            return new XSSFColor(color.toByteArray());
         }
 
         /**

@@ -482,7 +482,7 @@ public final class PoiCell implements Cell {
             PoiFont runFont = getFontForFormattingRun(rts, i);
             rtb.push(Style.FONT_FAMILY, runFont.getFamily());
             rtb.push(Style.FONT_SIZE, runFont.getSizeInPoints() + "pt");
-            rtb.push(Style.COLOR, MejaHelper.encode(runFont.getColor()));
+            rtb.push(Style.COLOR, runFont.getColor().toString());
             if (runFont.isBold()) {
                 rtb.push(Style.FONT_WEIGHT, "bold");
             }

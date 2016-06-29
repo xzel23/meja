@@ -17,12 +17,12 @@ package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
-import java.awt.Color;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

@@ -23,6 +23,8 @@ import java.util.Map;
  * @author axel@dua3.com
  */
 public class Color {
+    
+    private static final Map<String, Color> COLORS = new HashMap<>();
 
     public static final Color BLACK = register("BLACK", 0X000000);
     public static final Color SILVER = register("SILVER", 0XC0C0C0);
@@ -185,21 +187,63 @@ public class Color {
     }
 
     public Color(int r, int g, int b, int a) {
-        rgba = shiftComponentValue(a, 24)
-                + shiftComponentValue(r, 16)
-                + shiftComponentValue(g, 8)
-                + shiftComponentValue(b, 0);
+        rgba = shiftComponentValue(a, SHIFT_A)
+                + shiftComponentValue(r, SHIFT_R)
+                + shiftComponentValue(g, SHIFT_G)
+                + shiftComponentValue(b, SHIFT_B);
     }
+
+    private static final int SHIFT_A = 24;
+    private static final int SHIFT_R = 16;
+    private static final int SHIFT_G = 8;
+    private static final int SHIFT_B = 0;
 
     private Color(int rgba) {
         this.rgba = rgba;
     }
 
-    public int getRgba() {
+    public int rgba() {
         return rgba;
     }
 
-    private static Map<String, Color> COLORS = new HashMap<>();
+    public int r() {
+        return (rgba >> SHIFT_R) & 0xff;
+    }
+
+    public int g() {
+        return (rgba >> SHIFT_G) & 0xff;
+    }
+
+    public int b() {
+        return (rgba >> SHIFT_B) & 0xff;
+    }
+
+    public int a() {
+        return (rgba >> SHIFT_A) & 0xff;
+    }
+
+    public float rf() {
+        return r() / 255f;
+    }
+
+    public float gf() {
+        return g() / 255f;
+    }
+
+    public float bf() {
+        return b() / 255f;
+    }
+
+    public float af() {
+        return a() / 255f;
+    }
+
+    public byte[] toByteArray() {
+        byte[] arr = {
+            (byte) r(), (byte) g(), (byte) b(), (byte) a()
+        };
+        return arr;
+    }
 
     private static Color register(String name, int code) {
         Color c = new Color(code);
@@ -218,7 +262,7 @@ public class Color {
         if (s.startsWith("#")) {
             // FIXME JDK 8
             // int i = Integer.parseUnsignedInt(s.substring(1), 16);
-            int i = Integer.parseInt(s.substring(1), 16);
+            int i = Integer.parseInt(s.substring(1), SHIFT_R);
             return new Color(i);
         }
 

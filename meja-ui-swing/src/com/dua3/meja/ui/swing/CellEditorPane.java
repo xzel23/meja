@@ -18,6 +18,7 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
@@ -99,8 +100,8 @@ public class CellEditorPane extends JTextPane {
         CellStyle cellStyle = cell.getCellStyle();
         final Font font = cellStyle.getFont();
         setFont(getAwtFont(font, scale));
-        setBackground(cellStyle.getFillBgColor());
-        setForeground(font.getColor());
+        setBackground(MejaSwingHelper.toAwtColor(cellStyle.getFillBgColor()));
+        setForeground(MejaSwingHelper.toAwtColor(font.getColor()));
 
         final RichText text;
         if (!eval && cell.getCellType() == CellType.FORMULA) {

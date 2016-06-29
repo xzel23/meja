@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.ui.swing;
 
+import com.dua3.meja.model.Color;
 import com.dua3.meja.text.RichText;
 import com.dua3.meja.text.Run;
 import com.dua3.meja.text.Style;
@@ -78,10 +79,10 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 StyleConstants.setFontSize(as, Math.round(scale * MejaHelper.decodeFontSize(e.getValue())));
                 break;
             case Style.COLOR:
-                StyleConstants.setForeground(as, MejaHelper.getColor(e.getValue()));
+                StyleConstants.setForeground(as, MejaSwingHelper.toAwtColor(e.getValue()));
                 break;
             case Style.BACKGROUND_COLOR:
-                StyleConstants.setBackground(as, MejaHelper.getColor(e.getValue()));
+                StyleConstants.setBackground(as, MejaSwingHelper.toAwtColor(e.getValue()));
                 break;
             case Style.FONT_WEIGHT:
                 StyleConstants.setBold(as, e.getValue().equals("bold"));

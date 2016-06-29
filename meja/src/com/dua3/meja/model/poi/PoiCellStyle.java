@@ -25,7 +25,7 @@ import com.dua3.meja.model.VAlign;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.text.Style;
-import java.awt.Color;
+import com.dua3.meja.model.Color;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;

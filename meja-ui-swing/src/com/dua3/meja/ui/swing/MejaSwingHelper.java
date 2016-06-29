@@ -23,6 +23,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
+import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -173,6 +174,14 @@ public class MejaSwingHelper {
         return uri;
     }
 
+    public static Color toAwtColor(com.dua3.meja.model.Color color) {
+        return new java.awt.Color(color.rgba());
+    }
+
+    public static Color toAwtColor(String s) {
+        return toAwtColor(com.dua3.meja.model.Color.valueOf(s));
+    }
+    
     private MejaSwingHelper() {
     }
 

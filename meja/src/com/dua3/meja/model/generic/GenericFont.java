@@ -16,7 +16,7 @@
 package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.Font;
-import java.awt.Color;
+import com.dua3.meja.model.Color;
 
 /**
  *
