@@ -8,14 +8,9 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
-import com.dua3.meja.ui.WorkbookView;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import java.awt.HeadlessException;
-import java.io.File;
-import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /**
@@ -42,11 +37,6 @@ public class KitchenSink extends JFrame {
         
         Workbook wb = createWorkbook(GenericWorkbookFactory.instance());
         view.setWorkbook(wb);
-        try {
-            wb.write(new File("d:/usr/tmp/kitchensink.xlsx"), true);
-        } catch (IOException ex) {
-            Logger.getLogger(KitchenSink.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }        
 
     Workbook createWorkbook(WorkbookFactory factory) {
@@ -65,6 +55,8 @@ public class KitchenSink extends JFrame {
         row.getCell(1).set("Code");
         row.getCell(2).set("darker");
         row.getCell(3).set("brighter");
+        
+        sheet.splitAt(1, 0);
 
         for (Map.Entry<String, Color> e: Color.palette().entrySet()) {
             String name = e.getKey();
