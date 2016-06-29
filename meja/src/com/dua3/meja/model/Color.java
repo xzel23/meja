@@ -15,7 +15,8 @@
  */
 package com.dua3.meja.model;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ import java.util.Map;
  */
 public class Color {
 
-    private static final Map<String, Color> COLORS = new HashMap<>();
+    private static final Map<String, Color> COLORS = new LinkedHashMap<>();
 
     // predefined Color constants
     public static final Color BLACK = register("BLACK", 0X000000);
@@ -172,6 +173,14 @@ public class Color {
     public static final Color WHITESMOKE = register("WHITESMOKE", 0XF5F5F5);
     public static final Color YELLOWGREEN = register("YELLOWGREEN", 0X9ACD32);
     public static final Color REBECCAPURPLE = register("REBECCAPURPLE", 0X663399);
+
+    public static Iterable<Color> values() {
+        return COLORS.values();
+    }
+
+    public static Map<String, Color> palette() {
+        return Collections.unmodifiableMap(COLORS);
+    }
 
     private final int argb;
 
@@ -339,8 +348,8 @@ public class Color {
     public Color darker() {
         return new Color(
                 Math.max((int) (r() * F_BRIGHTEN), 0),
-                Math.max((int) (r() * F_BRIGHTEN), 0),
-                Math.max((int) (r() * F_BRIGHTEN), 0),
+                Math.max((int) (g() * F_BRIGHTEN), 0),
+                Math.max((int) (b() * F_BRIGHTEN), 0),
                 a());
     }
 }
