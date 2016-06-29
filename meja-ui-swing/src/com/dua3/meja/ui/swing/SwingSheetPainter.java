@@ -33,9 +33,9 @@ public class SwingSheetPainter extends SheetPainterBase<SwingGraphicsContext> {
     /**
      * Color used to draw the selection rectangle.
      */
-    private final Color selectionColor = Color.BLACK;
+    private static final Color SELECTION_COLOR = Color.BLACK;
 
-    private final Color gridColor = Color.LIGHTGRAY;
+    private static final Color GRID_COLOR = Color.GRAY;
 
     /**
      * Width of the selection rectangle borders.
@@ -52,7 +52,7 @@ public class SwingSheetPainter extends SheetPainterBase<SwingGraphicsContext> {
         labelPainter.setOpaque(true);
         labelPainter.setHorizontalAlignment(SwingConstants.CENTER);
         labelPainter.setVerticalAlignment(SwingConstants.CENTER);
-        labelPainter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, MejaSwingHelper.toAwtColor(gridColor)));
+        labelPainter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, MejaSwingHelper.toAwtColor(GRID_COLOR)));
     }
 
     @Override
@@ -74,7 +74,8 @@ public class SwingSheetPainter extends SheetPainterBase<SwingGraphicsContext> {
     protected void drawBackground(SwingGraphicsContext gc) {
         final Graphics2D g = gc.graphics();
         java.awt.Rectangle r = g.getClipBounds();
-        g.clearRect(r.x, r.y, r.width, r.height);
+        g.setColor(g.getBackground().brighter());
+        g.fillRect(r.x, r.y, r.width, r.height);
     }
 
     @Override
@@ -89,12 +90,12 @@ public class SwingSheetPainter extends SheetPainterBase<SwingGraphicsContext> {
 
     @Override
     protected Color getGridColor() {
-        return gridColor;
+        return GRID_COLOR;
     }
 
     @Override
     protected Color getSelectionColor() {
-        return selectionColor;
+        return SELECTION_COLOR;
     }
 
     @Override
