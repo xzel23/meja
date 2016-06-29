@@ -19,13 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @author axel@dua3.com
+ * Color in ARGB format.
  */
 public class Color {
     
     private static final Map<String, Color> COLORS = new HashMap<>();
 
+    // predefined Color constants
     public static final Color BLACK = register("BLACK", 0X000000);
     public static final Color SILVER = register("SILVER", 0XC0C0C0);
     public static final Color GRAY = register("GRAY", 0X808080);
@@ -173,7 +173,7 @@ public class Color {
     public static final Color YELLOWGREEN = register("YELLOWGREEN", 0X9ACD32);
     public static final Color REBECCAPURPLE = register("REBECCAPURPLE", 0X663399);
 
-    private final int rgba;
+    private final int argb;
 
     private static int shiftComponentValue(int value, int bits) {
         if (value < 0 || value > 255) {
@@ -187,7 +187,7 @@ public class Color {
     }
 
     public Color(int r, int g, int b, int a) {
-        rgba = shiftComponentValue(a, SHIFT_A)
+        argb = shiftComponentValue(a, SHIFT_A)
                 + shiftComponentValue(r, SHIFT_R)
                 + shiftComponentValue(g, SHIFT_G)
                 + shiftComponentValue(b, SHIFT_B);
@@ -198,28 +198,28 @@ public class Color {
     private static final int SHIFT_G = 8;
     private static final int SHIFT_B = 0;
 
-    private Color(int rgba) {
-        this.rgba = rgba;
+    private Color(int argb) {
+        this.argb = argb;
     }
 
-    public int rgba() {
-        return rgba;
+    public int argb() {
+        return argb;
     }
 
     public int r() {
-        return (rgba >> SHIFT_R) & 0xff;
+        return (argb >> SHIFT_R) & 0xff;
     }
 
     public int g() {
-        return (rgba >> SHIFT_G) & 0xff;
+        return (argb >> SHIFT_G) & 0xff;
     }
 
     public int b() {
-        return (rgba >> SHIFT_B) & 0xff;
+        return (argb >> SHIFT_B) & 0xff;
     }
 
     public int a() {
-        return (rgba >> SHIFT_A) & 0xff;
+        return (argb >> SHIFT_A) & 0xff;
     }
 
     public float rf() {
@@ -303,7 +303,7 @@ public class Color {
 
     @Override
     public String toString() {
-        return "#" + Integer.toHexString(rgba);
+        return "#" + Integer.toHexString(argb);
     }
 
 }

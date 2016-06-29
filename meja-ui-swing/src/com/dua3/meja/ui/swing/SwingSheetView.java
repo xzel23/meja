@@ -515,10 +515,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 editing = true;
             }
         } else // otherwise stop cell editing
-         if (editing) {
+        {
+            if (editing) {
                 stopEditing(true);
                 editing = false;
             }
+        }
     }
 
     /**
@@ -1132,55 +1134,49 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     // scroll vertical
                     if (direction < 0) {
                         //scroll up
-                        final int y = visibleRect.y;
-                        double yPrevious = 0;
-                        for (int i = sheet.getSplitRow(); i <= sheetPainter.getNumberOfRows(); i++) {
-                            final double pos = sheetPainter.getRowPos(i);
-                            if (pos >= y) {
-                                return (int) Math.round(y - yPrevious);
-                            }
-                            yPrevious = pos;
+                        final double y = yD2S(visibleRect.y);
+                        final int yD = yS2D(y);
+                        int i = sheetPainter.getRowNumberFromY(y);
+                        int posD = yD;
+                        while (i >= 0 && yD <= posD) {
+                            posD = yS2D(sheetPainter.getRowPos(i--));
                         }
-                        // should never be reached
-                        return 0;
+                        return yD - posD;
                     } else {
                         // scroll down
-                        final int y = visibleRect.y + visibleRect.height;
-                        for (int i = sheet.getSplitRow(); i <= sheetPainter.getNumberOfRows(); i++) {
-                            final double pos = sheetPainter.getRowPos(i);
-                            if (pos > y) {
-                                return (int) Math.round(pos - y);
-                            }
+                        final double y = yD2S(visibleRect.y + visibleRect.height);
+                        final int yD = yS2D(y);
+                        int i = sheetPainter.getRowNumberFromY(y);
+                        int posD = yD;
+                        while (i <= sheetPainter.getNumberOfRows() && posD <= yD) {
+                            posD = yS2D(sheetPainter.getRowPos(i++));
                         }
-                        // should never be reached
-                        return 0;
+                        return posD - yD;
                     }
                 } else // scroll horizontal
-                 if (direction < 0) {
+                {
+                    if (direction < 0) {
                         //scroll left
-                        final int x = visibleRect.x;
-                        double xPrevious = 0;
-                        for (int j = sheet.getSplitColumn(); j <= sheetPainter.getNumberOfColumns(); j++) {
-                            final double pos = sheetPainter.getColumnPos(j);
-                            if (pos >= x) {
-                                return (int) Math.round(x - xPrevious);
-                            }
-                            xPrevious = pos;
+                        final double x = xD2S(visibleRect.x);
+                        final int xD = xS2D(x);
+                        int j = sheetPainter.getColumnNumberFromX(x);
+                        int posD = xD;
+                        while (j >= 0 && xD <= posD) {
+                            posD = xS2D(sheetPainter.getColumnPos(j--));
                         }
-                        // should never be reached
-                        return 0;
+                        return xD - posD;
                     } else {
                         // scroll right
-                        final int x = visibleRect.x + visibleRect.width;
-                        for (int j = sheet.getSplitColumn(); j <= sheetPainter.getNumberOfColumns(); j++) {
-                            final double pos = sheetPainter.getColumnPos(j);
-                            if (pos > x) {
-                                return (int) Math.round(pos - x);
-                            }
+                        final double x = xD2S(visibleRect.x + visibleRect.width);
+                        int xD = xS2D(x);
+                        int j = sheetPainter.getColumnNumberFromX(x);
+                        int posD = xD;
+                        while (j <= sheetPainter.getNumberOfColumns() && posD <= xD) {
+                            posD = xS2D(sheetPainter.getColumnPos(j++));
                         }
-                        // should never be reached
-                        return 0;
+                        return posD - xD;
                     }
+                }
             }
 
             @Override

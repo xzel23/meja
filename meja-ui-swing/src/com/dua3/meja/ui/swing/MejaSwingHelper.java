@@ -175,7 +175,7 @@ public class MejaSwingHelper {
     }
 
     public static Color toAwtColor(com.dua3.meja.model.Color color) {
-        return new java.awt.Color(color.rgba());
+        return new java.awt.Color(color.argb());
     }
 
     public static Color toAwtColor(String s) {
