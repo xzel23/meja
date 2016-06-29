@@ -78,6 +78,14 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
         return Integer.toString(i+1);
     }
 
+    public double getSheetWidthInPoints() {
+        return sheetWidthInPoints;
+    }
+
+    public double getSheetHeightInPoints() {
+        return sheetHeightInPoints;
+    }
+
     private String getColumnName(int j) {
         return MejaHelper.getColumnName(j);
     }

@@ -95,16 +95,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     private double scale = 1f;
 
     /**
-     * Height of the sheet in points.
-     */
-    private double sheetWidthInPoints;
-
-    /**
-     * Width of the sheet in points.
-     */
-    private double sheetHeightInPoints;
-
-    /**
      * The sheet displayed.
      */
     private Sheet sheet;
@@ -299,9 +289,9 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     private void movePage(Direction d) {
         Cell cell = getCurrentCell().getLogicalCell();
-        Rectangle cellRect = sheetPainter.getCellRect(cell);
-        double x = cellRect.getX();
-        double y = cellRect.getY();
+        java.awt.Rectangle cellRect = rectS2D(sheetPainter.getCellRect(cell));
+        int x = cellRect.x;
+        int y = cellRect.y;
         switch (d) {
             case NORTH:
                 y = Math.max(0, y - getVisibleRect().height);
@@ -311,8 +301,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 break;
         }
 
-        int row = sheetPainter.getRowNumberFromY(y);
-        int col = sheetPainter.getColumnNumberFromX(x);
+        int row = sheetPainter.getRowNumberFromY(yD2S(y));
+        int col = sheetPainter.getColumnNumberFromX(xD2S(x));
         setCurrentCell(row, col);
     }
 
@@ -448,14 +438,14 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      * @return the sheetWidth
      */
     public int getSheetWidth() {
-        return wS2D(sheetWidthInPoints);
+        return wS2D(sheetPainter.getSheetWidthInPoints());
     }
 
     /**
      * @return the sheetHeight
      */
     public int getSheetHeight() {
-        return hS2D(sheetHeightInPoints);
+        return hS2D(sheetPainter.getSheetHeightInPoints());
     }
 
     /**
