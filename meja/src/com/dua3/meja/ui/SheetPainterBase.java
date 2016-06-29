@@ -427,10 +427,29 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
      * </ul>
      */
     public int getRowNumberFromY(double y) {
-        int i = 0;
-        while (i < rowPos.length && getRowPos(i) <= y) {
-            i++;
+        if (rowPos.length==0) {
+            return  0;
         }
+        
+        // guess position 
+        int i = (int) (rowPos.length*y/sheetHeightInPoints);
+        if (i<0) {
+            i=0;
+        } else if (i>=rowPos.length) {
+            i = rowPos.length-1;
+        }
+
+        // linear search from here
+        if (getRowPos(i) > y) {
+            while (i > 0 && getRowPos(i-1) > y) {
+                i--;
+            }
+        } else {
+            while (i < rowPos.length && getRowPos(i) <= y) {
+                i++;
+            }
+        }
+
         return i - 1;
     }
 
@@ -449,10 +468,29 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
      * </ul>
      */
     public int getColumnNumberFromX(double x) {
-        int j = 0;
-        while (j < columnPos.length && getColumnPos(j) <= x) {
-            j++;
+        if (columnPos.length==0) {
+            return  0;
         }
+        
+        // guess position 
+        int j = (int) (columnPos.length*x/sheetWidthInPoints);
+        if (j<0) {
+            j=0;
+        } else if (j>=columnPos.length) {
+            j = columnPos.length-1;
+        }
+
+        // linear search from here
+        if (getColumnPos(j) > x) {
+            while (j > 0 && getColumnPos(j-1) > x) {
+                j--;
+            }
+        } else {
+            while (j < columnPos.length && getColumnPos(j) <= x) {
+                j++;
+            }
+        }
+        
         return j - 1;
     }
 
