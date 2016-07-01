@@ -10,10 +10,6 @@ import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-/**
- *
- * @author Axel Howind <axel@dua3.com>
- */
 public final class SwingGraphicsContext implements GraphicsContext {
 
     private final Graphics2D g;

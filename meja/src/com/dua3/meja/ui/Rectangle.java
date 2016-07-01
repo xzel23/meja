@@ -15,10 +15,6 @@
  */
 package com.dua3.meja.ui;
 
-/**
- *
- * @author Axel Howind <axel@dua3.com>
- */
 public final class Rectangle {
 
     private double x;

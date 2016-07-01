@@ -28,7 +28,6 @@ import java.util.concurrent.locks.Lock;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
  * @param <GC>
  */
 public abstract class SheetPainterBase<GC extends GraphicsContext> {

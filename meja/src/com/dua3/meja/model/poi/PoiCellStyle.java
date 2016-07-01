@@ -98,26 +98,26 @@ public abstract class PoiCellStyle implements CellStyle {
      * @param poiBorder the POI border value
      * @return the width of the border in points
      */
-    protected float getBorderWidth(short poiBorder) {
+    protected float getBorderWidth(org.apache.poi.ss.usermodel.BorderStyle poiBorder) {
         switch (poiBorder) {
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_NONE:
+            case NONE:
                 return 0;
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_THIN:
+            case THIN:
                 return 0.75f;
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_MEDIUM:
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_MEDIUM_DASHED:
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_MEDIUM_DASH_DOT:
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_MEDIUM_DASH_DOT_DOT:
+            case MEDIUM:
+            case MEDIUM_DASHED:
+            case MEDIUM_DASH_DOT:
+            case MEDIUM_DASH_DOT_DOT:
                 return 1.75f;
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_THICK:
+            case THICK:
                 return 2;
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_DASHED:
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_DOTTED:
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_DOUBLE:
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_HAIR:
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_DASH_DOT:
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_DASH_DOT_DOT:
-            case org.apache.poi.ss.usermodel.CellStyle.BORDER_SLANTED_DASH_DOT:
+            case DASHED:
+            case DOTTED:
+            case DOUBLE:
+            case HAIR:
+            case DASH_DOT:
+            case DASH_DOT_DOT:
+            case SLANTED_DASH_DOT:
             default:
                 return 1;
         }
@@ -128,21 +128,21 @@ public abstract class PoiCellStyle implements CellStyle {
      * @param borderStyle the border style
      * @return the POI constant to use
      */
-    protected short getPoiBorder(BorderStyle borderStyle) {
+    protected org.apache.poi.ss.usermodel.BorderStyle getPoiBorder(BorderStyle borderStyle) {
         float width = borderStyle.getWidth();
         if (width == 0) {
-            return org.apache.poi.ss.usermodel.CellStyle.BORDER_NONE;
+            return org.apache.poi.ss.usermodel.BorderStyle.NONE;
         }
         if (width <= 0.75f) {
-            return org.apache.poi.ss.usermodel.CellStyle.BORDER_THIN;
+            return org.apache.poi.ss.usermodel.BorderStyle.THIN;
         }
         if (width <= 1.75f) {
-            return org.apache.poi.ss.usermodel.CellStyle.BORDER_MEDIUM;
+            return org.apache.poi.ss.usermodel.BorderStyle.MEDIUM;
         }
         if (width <= 2.0f) {
-            return org.apache.poi.ss.usermodel.CellStyle.BORDER_THICK;
+            return org.apache.poi.ss.usermodel.BorderStyle.THICK;
         }
-        return org.apache.poi.ss.usermodel.CellStyle.BORDER_THIN;
+        return org.apache.poi.ss.usermodel.BorderStyle.THIN;
     }
 
     @Override
@@ -270,7 +270,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setBorderStyle(Direction d, BorderStyle borderStyle) {
-            short poiBorder = getPoiBorder(borderStyle);
+            org.apache.poi.ss.usermodel.BorderStyle poiBorder = getPoiBorder(borderStyle);
             short poiColor = ((PoiHssfWorkbook) workbook).getPoiColor(borderStyle.getColor()).getIndex();
             switch (d) {
                 case NORTH:
@@ -360,7 +360,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setBorderStyle(Direction d, BorderStyle borderStyle) {
-            short poiBorder = getPoiBorder(borderStyle);
+            org.apache.poi.ss.usermodel.BorderStyle poiBorder = getPoiBorder(borderStyle);
             final Color color = borderStyle.getColor();
             XSSFColor poiColor = color==null?null:((PoiXssfWorkbook) workbook).getPoiColor(color);
             switch (d) {

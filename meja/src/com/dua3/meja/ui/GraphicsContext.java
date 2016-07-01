@@ -17,10 +17,6 @@ package com.dua3.meja.ui;
 
 import com.dua3.meja.model.Color;
 
-/**
- *
- * @author Axel Howind <axel@dua3.com>
- */
 public interface GraphicsContext {
 
     void setColor(Color color);

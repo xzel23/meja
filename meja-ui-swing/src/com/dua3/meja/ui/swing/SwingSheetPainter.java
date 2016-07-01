@@ -14,10 +14,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-/**
- *
- * @author Axel Howind <axel@dua3.com>
- */
 public class SwingSheetPainter extends SheetPainterBase<SwingGraphicsContext> {
 
     /**
