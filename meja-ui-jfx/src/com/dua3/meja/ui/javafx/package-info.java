@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Axel Howind (axel@dua3.com).
+ * Copyright 2016 Axel Howind (axel@dua3.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,6 @@
  */
 
 /**
- * Components to display workbooks and sheets in Swing applications.
+ * Components to display workbooks and sheets in JavaFX applications.
  */
-package com.dua3.meja.ui.swing;
+package com.dua3.meja.ui.javafx;
