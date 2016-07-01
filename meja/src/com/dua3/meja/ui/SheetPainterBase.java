@@ -30,8 +30,42 @@ import java.util.concurrent.locks.Lock;
  *
  * @param <GC>
  */
-public abstract class SheetPainterBase<GC extends GraphicsContext> {
+public abstract class SheetPainterBase<SV extends SheetView, GC extends GraphicsContext> {
 
+    protected final SV sheetView;
+
+    protected SheetPainterBase(SV sheetView) {
+        this.sheetView = sheetView;
+    }
+
+    /**
+     * Horizontal padding.
+     */
+    protected static final int PADDING_X = 2;
+
+    /**
+     * Vertical padding.
+     */
+    protected static final int PADDING_Y = 1;
+
+    /**
+     * Color used to draw the selection rectangle.
+     */
+    protected static final Color SELECTION_COLOR = Color.BLACK;
+
+    /**
+     * Color used to draw the grid lines.
+     */
+    protected static final Color GRID_COLOR = Color.GRAY;
+
+    /**
+     * Width of the selection rectangle borders.
+     */
+    protected static final int SELECTION_STROKE_WIDTH = 4;
+
+    /**
+     * Reference to the sheet.
+     */
     private Sheet sheet = null;
 
     /**
@@ -44,37 +78,45 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
      */
     private double rowPos[];
 
-    static final int MAX_COLUMN_WIDTH = 800;
     private double sheetHeightInPoints = 0;
     private double sheetWidthInPoints = 0;
-
-    protected abstract void beginDraw(GC gc);
-
-    protected abstract void endDraw(GC gc);
-
-    protected abstract int getMaxColumnWidth();
 
     protected abstract void drawBackground(GC gc);
 
     protected abstract void drawLabel(GC gc, Rectangle rect, String text);
 
-    protected abstract double getPaddingX();
-
-    protected abstract double getPaddingY();
-
-    protected abstract Color getGridColor();
-
-    protected abstract Color getSelectionColor();
-
-    protected abstract double getSelectionStrokeWidth();
-
     protected abstract void render(GC g, Cell cell, Rectangle textRect, Rectangle clipRect);
 
-    protected abstract double getLabelHeight();
-
-    protected abstract double getLabelWidth();
     private String getRowName(int i) {
         return Integer.toString(i+1);
+    }
+
+    protected void beginDraw(GC gc) {
+        // nop
+    }
+
+    protected void endDraw(GC gc) {
+        // nop
+    }
+
+    protected double getPaddingX() {
+        return PADDING_X;
+    }
+
+    protected double getPaddingY() {
+        return PADDING_Y;
+    }
+
+    protected Color getGridColor() {
+        return GRID_COLOR;
+    }
+
+    protected Color getSelectionColor() {
+        return SELECTION_COLOR;
+    }
+
+    protected double getSelectionStrokeWidth() {
+        return SELECTION_STROKE_WIDTH;
     }
 
     public double getSheetWidthInPoints() {
@@ -120,6 +162,10 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
     }
 
     public void drawSheet(GC gc) {
+        if (sheet==null) {
+            return;
+        }
+        
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {
@@ -161,7 +207,7 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
             return;
         }
 
-        int maxWidth = getMaxColumnWidth();
+        double maxWidth = SheetView.MAX_COLUMN_WIDTH;
 
         Rectangle clipBounds = g.getClipBounds();
 
@@ -437,8 +483,8 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
         if (rowPos.length==0) {
             return  0;
         }
-        
-        // guess position 
+
+        // guess position
         int i = (int) (rowPos.length*y/sheetHeightInPoints);
         if (i<0) {
             i=0;
@@ -478,8 +524,8 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
         if (columnPos.length==0) {
             return  0;
         }
-        
-        // guess position 
+
+        // guess position
         int j = (int) (columnPos.length*x/sheetWidthInPoints);
         if (j<0) {
             j=0;
@@ -497,7 +543,7 @@ public abstract class SheetPainterBase<GC extends GraphicsContext> {
                 j++;
             }
         }
-        
+
         return j - 1;
     }
 

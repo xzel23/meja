@@ -16,12 +16,12 @@
 package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.Rectangle;
+import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.MejaHelper;
 import java.awt.BasicStroke;
@@ -43,6 +43,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.EnumSet;
 import java.util.concurrent.locks.Lock;
+import java.util.function.IntSupplier;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -70,19 +71,6 @@ import javax.swing.SwingUtilities;
 public class SwingSheetView extends JPanel implements SheetView, PropertyChangeListener {
 
     private static final long serialVersionUID = 1L;
-
-    static final int MAX_COLUMN_WIDTH = 800;
-
-    /**
-     * Test whether style uses text wrapping. While there is a property for text
-     * wrapping, the alignment settings have to be taken into account too.
-     *
-     * @param style style
-     * @return true if cell content should be displayed with text wrapping
-     */
-    static boolean isWrapping(CellStyle style) {
-        return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
-    }
 
     private final SwingSheetPainter sheetPainter;
     private final CellEditor editor;
@@ -219,12 +207,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         });
         // make focusable
         setFocusable(true);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                requestFocusInWindow();
-            }
-        });
+        SwingUtilities.invokeLater( () -> requestFocusInWindow() );
         setSheet(sheet1);
     }
 
@@ -874,17 +857,31 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     private class SheetPane extends JScrollPane {
 
-        private final TopLeftQuadrant topLeftQuadrant = new TopLeftQuadrant();
-        private final TopRightQuadrant topRightQuadrant = new TopRightQuadrant();
-        private final BottomLeftQuadrant bottomLeftQuadrant = new BottomLeftQuadrant();
-        private final BottomRightQuadrant bottomRightQuadrant = new BottomRightQuadrant();
+        final SwingSegmentView topLeftQuadrant;
+        final SwingSegmentView topRightQuadrant;
+        final SwingSegmentView bottomLeftQuadrant;
+        final SwingSegmentView bottomRightQuadrant;
 
         SheetPane() {
+            // define row and column ranges and set up segments
+            final IntSupplier startColumn = () -> 0;
+            final IntSupplier splitColumn = () -> getSplitColumn();
+            final IntSupplier endColumn = () -> getColumnCount();
+
+            final IntSupplier startRow = () -> 0;
+            final IntSupplier splitRow = () -> getSplitRow();
+            final IntSupplier endRow = () -> getRowCount();
+
+            topLeftQuadrant = new SwingSegmentView(startRow, splitRow, startColumn, splitColumn);
+            topRightQuadrant = new SwingSegmentView(startRow, splitRow, splitColumn, endColumn);
+            bottomLeftQuadrant = new SwingSegmentView(splitRow, endRow, startColumn, splitColumn);
+            bottomRightQuadrant = new SwingSegmentView(splitRow, endRow, splitColumn, endColumn);
+
             init();
         }
 
         private void init() {
-            setDoubleBuffered(false);
+            setDoubleBuffered(true);
 
             // set quadrant painters
             setViewportView(bottomRightQuadrant);
@@ -893,6 +890,22 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, topLeftQuadrant);
 
             setViewportBorder(BorderFactory.createEmptyBorder());
+        }
+
+        private int getSplitColumn() {
+            return sheet == null ? 0 : sheet.getSplitColumn();
+        }
+
+        private int getSplitRow() {
+            return sheet == null ? 0 : sheet.getSplitRow();
+        }
+
+        private int getColumnCount() {
+            return sheet == null ? 0 : sheet.getColumnCount();
+        }
+
+        private int getRowCount() {
+            return sheet == null ? 0 : sheet.getRowCount();
         }
 
         private void repaintSheet(Rectangle rect) {
@@ -955,7 +968,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
             boolean isLeft = cell.getColumnNumber() < sheet.getSplitColumn();
 
-            final QuadrantPainter quadrant;
+            final SwingSegmentView quadrant;
             if (isTop) {
                 quadrant = isLeft ? topLeftQuadrant : topRightQuadrant;
             } else {
@@ -989,332 +1002,205 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             getViewport().getView().setEnabled(b);
         }
 
-        private abstract class QuadrantPainter extends JPanel implements Scrollable {
 
-            QuadrantPainter() {
-                super(null, false);
+    }
 
-                init();
-            }
+    class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, SwingGraphicsContext> {
 
-            private void init() {
-                setOpaque(true);
-                setDoubleBuffered(false);
+        private final IntSupplier startRow;
+        private final IntSupplier endRow;
+        private final IntSupplier startColumn;
+        private final IntSupplier endColumn;
 
-                // listen to mouse events
-                addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        Point p = e.getPoint();
-                        translateMousePosition(p);
-                        onMousePressed(p.x, p.y);
-                    }
-                });
-            }
+        SwingSegmentView(IntSupplier startRow, IntSupplier endRow, IntSupplier startColumn, IntSupplier endColumn) {
+            super(null, false);
+            this.startRow = startRow;
+            this.endRow = endRow;
+            this.startColumn = startColumn;
+            this.endColumn = endColumn;
+            init();
+        }
 
-            abstract int getXMinInViewCoordinates();
+        @Override
+        public int getBeginRow() {
+            return startRow.getAsInt();
+        }
 
-            abstract int getYMinInViewCoordinates();
+        @Override
+        public int getEndRow() {
+            return endRow.getAsInt();
+        }
 
-            abstract int getFirstColumn();
+        @Override
+        public int getBeginColumn() {
+            return startColumn.getAsInt();
+        }
 
-            abstract int getLastColumn();
+        @Override
+        public int getEndColumn() {
+            return endColumn.getAsInt();
+        }
 
-            abstract int getFirstRow();
-
-            abstract int getLastRow();
-
-            void repaintSheet(Rectangle rect) {
-                java.awt.Rectangle rect2 = rectS2D(rect);
-                rect2.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
-                repaint(rect2);
-            }
-
-            @Override
-            public boolean isOptimizedDrawingEnabled() {
-                return true;
-            }
-
-            void translateMousePosition(Point p) {
-                p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
-            }
-
-            private boolean hasColumnHeaders() {
-                return getLastRow() < sheet.getSplitRow();
-            }
-
-            private boolean hasRowHeaders() {
-                return getLastColumn() < sheet.getSplitColumn();
-            }
-
-            private boolean hasHLine() {
-                return getLastRow() >= 0 && getLastRow() < sheet.getLastRowNum();
-            }
-
-            private boolean hasVLine() {
-                return getLastColumn() >= 0 && getLastColumn() < sheet.getLastColNum();
-            }
-
-            @Override
-            public void validate() {
-                if (sheet != null) {
-                    // the width is the width for the labels showing row names ...
-                    double width = hasRowHeaders() ? sheetPainter.getLabelWidth() : wD2S(1);
-
-                    // ... plus the width of the columns displayed ...
-                    width += sheetPainter.getColumnPos(getLastColumn() + 1) - sheetPainter.getColumnPos(getFirstColumn());
-
-                    // ... plus 1 pixel for drawing a line at the split position.
-                    if (hasVLine()) {
-                        width += 1;
-                    }
-
-                    // the height is the height for the labels showing column names ...
-                    double height = hasColumnHeaders() ? sheetPainter.getLabelHeight() : hD2S(1);
-
-                    // ... plus the height of the rows displayed ...
-                    height += sheetPainter.getRowPos(getLastRow() + 1) - sheetPainter.getRowPos(getFirstRow());
-
-                    // ... plus 1 pixel for drawing a line below the lines above the split.
-                    if (hasHLine()) {
-                        height += hD2S(1);
-                    }
-
-                    final Dimension size = new Dimension(wS2D(width), hS2D(height));
-                    setSize(size);
-                    setPreferredSize(size);
+        private void init() {
+            setOpaque(true);
+            setDoubleBuffered(false);
+            // listen to mouse events
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    Point p = e.getPoint();
+                    translateMousePosition(p);
+                    onMousePressed(p.x, p.y);
                 }
+            });
+        }
 
-                super.validate();
+        int getXMinInViewCoordinates() {
+            double x = sheetPainter.getColumnPos(getBeginColumn());
+            if (hasRowHeaders()) {
+                x -= sheetPainter.getRowLabelWidth();
             }
+            return xS2D(x);
+        }
 
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2d = (Graphics2D) g;
-
-                super.paintComponent(g2d);
-
-                final int x = getXMinInViewCoordinates();
-                final int y = getYMinInViewCoordinates();
-                final int width = getWidth();
-                final int height = getHeight();
-
-                g2d.translate(-x, -y);
-                sheetPainter.drawSheet(new SwingGraphicsContext(g2d, SwingSheetView.this));
-
-                // draw split lines
-                g2d.setColor(MejaSwingHelper.toAwtColor(Color.BLACK));
-                g2d.setStroke(new BasicStroke());
-                if (hasHLine()) {
-                    g2d.drawLine(x, height + y - 1, width + x - 1, height + y - 1);
-                }
-                if (hasVLine()) {
-                    g2d.drawLine(width + x - 1, y, width + x - 1, height + y - 1);
-                }
+        int getYMinInViewCoordinates() {
+            double y = sheetPainter.getRowPos(getBeginRow());
+            if (hasColumnHeaders()) {
+                y -= sheetPainter.getColumnLabelHeight();
             }
+            return yS2D(y);
+        }
 
-            @Override
-            public Dimension getPreferredScrollableViewportSize() {
-                return getPreferredSize();
+        void repaintSheet(Rectangle rect) {
+            java.awt.Rectangle rect2 = rectS2D(rect);
+            rect2.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
+            repaint(rect2);
+        }
+
+        @Override
+        public boolean isOptimizedDrawingEnabled() {
+            return true;
+        }
+
+        void translateMousePosition(Point p) {
+            p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
+        }
+
+        @Override
+        public void validate() {
+            updateLayout();
+            super.validate();
+        }
+
+        @Override
+        public SwingSheetPainter getSheetPainter() {
+            return sheetPainter;
+        }
+
+        @Override
+        public Sheet getSheet() {
+            return sheet;
+        }
+
+        @Override
+        public void setViewSize(double wd, double hd) {
+            int w = wS2D(wd);
+            int h = hS2D(hd);
+            Dimension d = new Dimension(w, h);
+            setSize(d);
+            setPreferredSize(d);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g;
+            super.paintComponent(g2d);
+            final int x = getXMinInViewCoordinates();
+            final int y = getYMinInViewCoordinates();
+            final int width = getWidth();
+            final int height = getHeight();
+            g2d.translate(-x, -y);
+            sheetPainter.drawSheet(new SwingGraphicsContext(g2d, SwingSheetView.this));
+            // draw split lines
+            g2d.setColor(MejaSwingHelper.toAwtColor(Color.BLACK));
+            g2d.setStroke(new BasicStroke());
+            if (hasHLine()) {
+                g2d.drawLine(x, height + y - 1, width + x - 1, height + y - 1);
             }
-
-            @Override
-            public int getScrollableUnitIncrement(java.awt.Rectangle visibleRect, int orientation, int direction) {
-                if (orientation == SwingConstants.VERTICAL) {
-                    // scroll vertical
-                    if (direction < 0) {
-                        //scroll up
-                        final double y = yD2S(visibleRect.y);
-                        final int yD = yS2D(y);
-                        int i = sheetPainter.getRowNumberFromY(y);
-                        int posD = yD;
-                        while (i >= 0 && yD <= posD) {
-                            posD = yS2D(sheetPainter.getRowPos(i--));
-                        }
-                        return yD - posD;
-                    } else {
-                        // scroll down
-                        final double y = yD2S(visibleRect.y + visibleRect.height);
-                        final int yD = yS2D(y);
-                        int i = sheetPainter.getRowNumberFromY(y);
-                        int posD = yD;
-                        while (i <= sheetPainter.getRowCount() && posD <= yD) {
-                            posD = yS2D(sheetPainter.getRowPos(i++));
-                        }
-                        return posD - yD;
-                    }
-                } else // scroll horizontal
-                {
-                    if (direction < 0) {
-                        //scroll left
-                        final double x = xD2S(visibleRect.x);
-                        final int xD = xS2D(x);
-                        int j = sheetPainter.getColumnNumberFromX(x);
-                        int posD = xD;
-                        while (j >= 0 && xD <= posD) {
-                            posD = xS2D(sheetPainter.getColumnPos(j--));
-                        }
-                        return xD - posD;
-                    } else {
-                        // scroll right
-                        final double x = xD2S(visibleRect.x + visibleRect.width);
-                        int xD = xS2D(x);
-                        int j = sheetPainter.getColumnNumberFromX(x);
-                        int posD = xD;
-                        while (j <= sheetPainter.getColumnCount() && posD <= xD) {
-                            posD = xS2D(sheetPainter.getColumnPos(j++));
-                        }
-                        return posD - xD;
-                    }
-                }
-            }
-
-            @Override
-            public int getScrollableBlockIncrement(java.awt.Rectangle visibleRect, int orientation, int direction) {
-                return 3 * getScrollableUnitIncrement(visibleRect, orientation, direction);
-            }
-
-            @Override
-            public boolean getScrollableTracksViewportWidth() {
-                return false;
-            }
-
-            @Override
-            public boolean getScrollableTracksViewportHeight() {
-                return false;
+            if (hasVLine()) {
+                g2d.drawLine(width + x - 1, y, width + x - 1, height + y - 1);
             }
         }
 
-        private class TopRightQuadrant extends QuadrantPainter {
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
 
-            @Override
-            int getXMinInViewCoordinates() {
-                return xS2D(sheetPainter.getColumnPos(getFirstColumn()));
-            }
-
-            @Override
-            int getYMinInViewCoordinates() {
-                return yS2D(-sheetPainter.getLabelHeight());
-            }
-
-            @Override
-            int getFirstColumn() {
-                return sheet.getSplitColumn();
-            }
-
-            @Override
-            int getLastColumn() {
-                return sheet.getLastColNum();
-            }
-
-            @Override
-            int getFirstRow() {
-                return 0;
-            }
-
-            @Override
-            int getLastRow() {
-                return sheet.getSplitRow() - 1;
+        @Override
+        public int getScrollableUnitIncrement(java.awt.Rectangle visibleRect, int orientation, int direction) {
+            if (orientation == SwingConstants.VERTICAL) {
+                // scroll vertical
+                if (direction < 0) {
+                    //scroll up
+                    final double y = yD2S(visibleRect.y);
+                    final int yD = yS2D(y);
+                    int i = sheetPainter.getRowNumberFromY(y);
+                    int posD = yD;
+                    while (i >= 0 && yD <= posD) {
+                        posD = yS2D(sheetPainter.getRowPos(i--));
+                    }
+                    return yD - posD;
+                } else {
+                    // scroll down
+                    final double y = yD2S(visibleRect.y + visibleRect.height);
+                    final int yD = yS2D(y);
+                    int i = sheetPainter.getRowNumberFromY(y);
+                    int posD = yD;
+                    while (i <= sheetPainter.getRowCount() && posD <= yD) {
+                        posD = yS2D(sheetPainter.getRowPos(i++));
+                    }
+                    return posD - yD;
+                }
+            } else // scroll horizontal
+            {
+                if (direction < 0) {
+                    //scroll left
+                    final double x = xD2S(visibleRect.x);
+                    final int xD = xS2D(x);
+                    int j = sheetPainter.getColumnNumberFromX(x);
+                    int posD = xD;
+                    while (j >= 0 && xD <= posD) {
+                        posD = xS2D(sheetPainter.getColumnPos(j--));
+                    }
+                    return xD - posD;
+                } else {
+                    // scroll right
+                    final double x = xD2S(visibleRect.x + visibleRect.width);
+                    int xD = xS2D(x);
+                    int j = sheetPainter.getColumnNumberFromX(x);
+                    int posD = xD;
+                    while (j <= sheetPainter.getColumnCount() && posD <= xD) {
+                        posD = xS2D(sheetPainter.getColumnPos(j++));
+                    }
+                    return posD - xD;
+                }
             }
         }
 
-        private class BottomRightQuadrant extends QuadrantPainter {
-
-            @Override
-            int getXMinInViewCoordinates() {
-                return xS2D(sheetPainter.getColumnPos(getFirstColumn()));
-            }
-
-            @Override
-            int getYMinInViewCoordinates() {
-                return yS2D(sheetPainter.getRowPos(getFirstRow()));
-            }
-
-            @Override
-            int getFirstColumn() {
-                return sheet.getSplitColumn();
-            }
-
-            @Override
-            int getLastColumn() {
-                return sheet.getLastColNum();
-            }
-
-            @Override
-            int getFirstRow() {
-                return sheet.getSplitRow();
-            }
-
-            @Override
-            int getLastRow() {
-                return sheet.getLastRowNum();
-            }
+        @Override
+        public int getScrollableBlockIncrement(java.awt.Rectangle visibleRect, int orientation, int direction) {
+            return 3 * getScrollableUnitIncrement(visibleRect, orientation, direction);
         }
 
-        private class BottomLeftQuadrant extends QuadrantPainter {
-
-            @Override
-            int getXMinInViewCoordinates() {
-                return xS2D(-sheetPainter.getLabelWidth());
-            }
-
-            @Override
-            int getYMinInViewCoordinates() {
-                return yS2D(sheetPainter.getRowPos(getFirstRow()));
-            }
-
-            @Override
-            int getFirstColumn() {
-                return 0;
-            }
-
-            @Override
-            int getLastColumn() {
-                return sheet.getSplitColumn() - 1;
-            }
-
-            @Override
-            int getFirstRow() {
-                return sheet.getSplitRow();
-            }
-
-            @Override
-            int getLastRow() {
-                return sheet.getLastRowNum();
-            }
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return false;
         }
 
-        private class TopLeftQuadrant extends QuadrantPainter {
-
-            @Override
-            int getXMinInViewCoordinates() {
-                return xS2D(-sheetPainter.getLabelWidth());
-            }
-
-            @Override
-            int getYMinInViewCoordinates() {
-                return yS2D(-sheetPainter.getLabelHeight());
-            }
-
-            @Override
-            int getFirstColumn() {
-                return 0;
-            }
-
-            @Override
-            int getLastColumn() {
-                return sheet.getSplitColumn() - 1;
-            }
-
-            @Override
-            int getFirstRow() {
-                return 0;
-            }
-
-            @Override
-            int getLastRow() {
-                return sheet.getSplitRow() - 1;
-            }
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
         }
     }
 }

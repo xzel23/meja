@@ -3,59 +3,39 @@
  */
 package com.dua3.meja.ui.javafx;
 
-import com.dua3.meja.model.Sheet;
 import javafx.event.Event;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.SkinBase;
-import javafx.scene.paint.Color;
 
 /**
  *
  * @author Axel Howind <axel@dua3.com>
- * @param <C>
  */
-public abstract class HeaderSkinBase<C extends HeaderBase> extends SkinBase<C> {
+public class JfxSegmentViewSkin extends SkinBase<JfxSegmentView> {
 
     protected Canvas canvas = null;
 
-    protected HeaderSkinBase(C control) {
+    protected JfxSegmentViewSkin(JfxSegmentView control) {
         super(control);
+        init(control);
+        redraw();
     }
 
-    protected void init(C control) {
+    protected void init(JfxSegmentView control) {
         canvas = new Canvas();
         getChildren().setAll(canvas);
         control.setMinSize(getPreferredWidth(), getPreferredHeight());
         control.setPrefSize(getPreferredWidth(), getPreferredHeight());
         control.setMaxSize(getPreferredWidth(), getPreferredHeight());
-        control.addEventHandler(C.EVENT_TYPE_LAYOUT_CHANGED, (Event t) -> redraw());
+        control.addEventHandler(JfxSegmentView.EVENT_TYPE_LAYOUT_CHANGED, (Event t) -> redraw());
     }
 
     protected void redraw() {
-        HeaderBase header = (HeaderBase) getNode();
-        Sheet sheet = header.getSheet();
-        if (sheet == null) {
-            return;
-        }
-
         canvas.setWidth(getPreferredWidth());
         canvas.setHeight(getPreferredHeight());
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        double x = 0;
-        double y = 0;
-        for (int i = header.getBegin(); i < header.getEnd(); i++) {
-            String text = getName(i);
-            double w = getWidth(sheet, i);
-            double h = getHeight(sheet, i);
-            gc.setFill(Color.LIGHTGREY);
-            gc.fillRect(x, y, w, h);
-            gc.strokeText(text, x + w / 2, y + h / 2, w);
-            x = nextX(x, w);
-            y = nextY(y, h);
-        }
+        JfxGraphicsContext gc = new JfxGraphicsContext(canvas.getGraphicsContext2D());
+        getView().getSheetPainter().drawSheet(gc);
     }
 
     @Override
@@ -78,18 +58,16 @@ public abstract class HeaderSkinBase<C extends HeaderBase> extends SkinBase<C> {
         return getPreferredHeight();
     }
 
-    protected abstract double getPreferredWidth();
-    protected abstract double getPreferredHeight();
-
-    protected abstract String getName(int i);
-    protected abstract double getWidth(Sheet sheet, int i);
-    protected abstract double getHeight(Sheet sheet, int i);
-
-    protected double nextX(double x, double w) {
-        return x;
+    private JfxSegmentView getView() {
+        return (JfxSegmentView) getNode();
     }
-    protected double nextY(double y, double h) {
-        return y;
+
+    private double getPreferredWidth() {
+        return getView().getViewWidth();
+    }
+
+    private double getPreferredHeight() {
+        return getView().getViewHeight();
     }
 
 }

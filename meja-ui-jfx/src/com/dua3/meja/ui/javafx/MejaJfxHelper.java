@@ -18,6 +18,7 @@ package com.dua3.meja.ui.javafx;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
+import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 import javax.swing.JFileChooser;
@@ -125,9 +127,12 @@ public class MejaJfxHelper {
                 workbook.write(file, true);
             }
             uri = file.toURI();
-
         }
         return uri;
+    }
+
+    static Paint toJfxColor(Color c) {
+        return javafx.scene.paint.Color.rgb(c.r(), c.g(), c.b(), c.af());
     }
 
     private MejaJfxHelper() {

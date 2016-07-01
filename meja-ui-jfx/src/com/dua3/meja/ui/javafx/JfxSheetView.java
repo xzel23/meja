@@ -10,20 +10,19 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.function.IntSupplier;
 import javafx.scene.Node;
-import javafx.scene.control.Control;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 
 /**
  *
  * @author axel
  */
-public class JfxSheetView extends Control implements SheetView, PropertyChangeListener {
+public class JfxSheetView extends Pane implements SheetView, PropertyChangeListener {
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Sheet sheet = null;
-    private final Node headerTopLeft, columnHeaderLeft, columnHeaderRight,
-            rowHeaderTop, leftTopChart, rightTopChart,
-            rowHeaderBottom, leftBottomChart, rightBottomChart;
+    private final JfxSheetPainter sheetPainter = new JfxSheetPainter(this);
+    private final Node leftTopChart, rightTopChart, leftBottomChart, rightBottomChart;
 
     public JfxSheetView() {
         final GridPane gridPane = new GridPane();
@@ -37,29 +36,25 @@ public class JfxSheetView extends Control implements SheetView, PropertyChangeLi
 
         final IntSupplier startRow = () -> 0;
         final IntSupplier splitRow = () -> getSplitRow();
-        final IntSupplier endRow = () -> getColumnCount();
+        final IntSupplier endRow = () -> getRowCount();
 
-        headerTopLeft = new CornerHeader(this);
-        columnHeaderLeft = new ColumnHeader(this, startColumn, splitColumn);
-        columnHeaderRight = new ColumnHeader(this, splitColumn, endColumn);
+        leftTopChart = new JfxSegmentView(this, startRow, splitRow, startColumn, splitColumn);
+        rightTopChart = new JfxSegmentView(this, startRow, splitRow, splitColumn, endColumn);
+        leftBottomChart = new JfxSegmentView(this, splitRow, endRow, startColumn, splitColumn);
+        rightBottomChart = new JfxSegmentView(this, splitRow, endRow, splitColumn, endColumn);
 
-        rowHeaderTop = new RowHeader(this, startRow, splitRow);
-        leftTopChart = new SegmentView(this, startRow, splitRow, startColumn, splitColumn);
-        rightTopChart = new SegmentView(this, startRow, splitRow, splitColumn, endColumn);
-
-        rowHeaderBottom = new RowHeader(this, splitRow, endRow);
-        leftBottomChart = new SegmentView(this, splitRow, endRow, startColumn, splitColumn);
-        rightBottomChart = new SegmentView(this, splitRow, endRow, splitColumn, endColumn);
-
-        gridPane.addRow(1, headerTopLeft, columnHeaderLeft, columnHeaderRight);
-        gridPane.addRow(2, rowHeaderTop, leftTopChart, rightTopChart);
-        gridPane.addRow(3, rowHeaderBottom, leftBottomChart, rightBottomChart);
+        gridPane.addRow(1, leftTopChart, rightTopChart);
+        gridPane.addRow(2, leftBottomChart, rightBottomChart);
 
         getChildren().setAll(gridPane);
     }
 
     private int getColumnCount() {
         return sheet == null ? 0 : sheet.getColumnCount();
+    }
+
+    private int getRowCount() {
+        return sheet == null ? 0 : sheet.getRowCount();
     }
 
     private int getSplitColumn() {
@@ -88,6 +83,8 @@ public class JfxSheetView extends Control implements SheetView, PropertyChangeLi
             if (this.sheet != null) {
                 sheet.addPropertyChangeListener(this);
             }
+
+            sheetPainter.update(sheet);
 
             pcs.firePropertyChange(PROPERTY_SHEET, oldSheet, sheet);
         }
@@ -150,6 +147,10 @@ public class JfxSheetView extends Control implements SheetView, PropertyChangeLi
     @Override
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(propertyName, listener);
+    }
+
+    JfxSheetPainter getSheetPainter() {
+        return sheetPainter;
     }
 
 }

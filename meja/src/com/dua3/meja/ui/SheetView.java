@@ -24,6 +24,8 @@ import java.beans.PropertyChangeListener;
  */
 public interface SheetView  {
 
+    public static final double MAX_COLUMN_WIDTH = 800;
+
     /**
      * property "sheet".
      */

@@ -17,6 +17,7 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.ui.SheetView;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -45,7 +46,7 @@ public class DefaultCellRenderer implements CellRenderer {
             return;
         }
 
-        int maxWidthScaled = (int) (SwingSheetView.MAX_COLUMN_WIDTH*scale);
+        int maxWidthScaled = (int) (SheetView.MAX_COLUMN_WIDTH*scale);
 
         // if text is not wrapped, paint with a maximum width to allow overflowing text
         CellStyle style = cell.getCellStyle();
