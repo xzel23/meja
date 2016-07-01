@@ -70,7 +70,7 @@ public class SwingSheetPainter extends SheetPainterBase<SwingGraphicsContext> {
     protected void drawBackground(SwingGraphicsContext gc) {
         final Graphics2D g = gc.graphics();
         java.awt.Rectangle r = g.getClipBounds();
-        g.setColor(g.getBackground().brighter());
+        g.setColor(sheetView.getBackground().brighter());
         g.fillRect(r.x, r.y, r.width, r.height);
     }
 
