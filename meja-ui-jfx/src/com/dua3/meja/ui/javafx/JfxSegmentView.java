@@ -9,7 +9,7 @@ import javafx.scene.control.Skin;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind
  */
 public class JfxSegmentView extends SheetControl implements SegmentView<JfxSheetView, JfxGraphicsContext> {
 

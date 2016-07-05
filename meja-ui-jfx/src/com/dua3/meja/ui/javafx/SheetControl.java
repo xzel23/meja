@@ -13,7 +13,7 @@ import javafx.scene.control.Control;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind
  */
 public abstract class SheetControl extends Control implements PropertyChangeListener {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Axel Howind <axel@dua3.com>.
+ * Copyright 2016 Axel Howind.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.junit.Test;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind
  */
 public class RichTextTest {
 

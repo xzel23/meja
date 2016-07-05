@@ -15,7 +15,7 @@ import javafx.scene.control.Label;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind
  */
 class JfxSheetPainter extends SheetPainterBase<JfxSheetView, JfxGraphicsContext> {
 

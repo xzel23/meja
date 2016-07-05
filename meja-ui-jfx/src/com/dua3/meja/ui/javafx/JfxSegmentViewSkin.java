@@ -9,7 +9,7 @@ import javafx.scene.control.SkinBase;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind
  */
 public class JfxSegmentViewSkin extends SkinBase<JfxSegmentView> {
 

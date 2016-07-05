@@ -7,7 +7,7 @@ import com.dua3.meja.model.Sheet;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind
  * @param <SV>
  * @param <GC>
  */

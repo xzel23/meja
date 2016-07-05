@@ -10,7 +10,7 @@ import javafx.geometry.Bounds;
 
 /**
  *
- * @author Axel Howind <axel@dua3.com>
+ * @author Axel Howind
  */
 class JfxGraphicsContext implements GraphicsContext {
 
