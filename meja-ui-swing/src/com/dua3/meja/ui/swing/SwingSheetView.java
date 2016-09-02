@@ -293,6 +293,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      * Move the selection rectangle to the top left cell.
      */
     private void moveHome() {
+        if (sheet==null) {
+            return;
+        }
+        
         int row = sheet.getFirstRowNum();
         int col = sheet.getFirstColNum();
         setCurrentCell(row, col);
@@ -302,6 +306,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      * Move the selection rectangle to the bottom right cell.
      */
     private void moveEnd() {
+        if (sheet==null) {
+            return;
+        }
+        
         int row = sheet.getLastRowNum();
         int col = sheet.getLastColNum();
         setCurrentCell(row, col);
@@ -325,7 +333,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      * @return row number of the selected cell
      */
     public int getCurrentRowNum() {
-        return sheet.getCurrentCell().getRowNumber();
+        return sheet==null ? 0 : sheet.getCurrentCell().getRowNumber();
     }
 
     /**
@@ -343,7 +351,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      * @return column number of the selected cell
      */
     public int getCurrentColNum() {
-        return sheet.getCurrentCell().getColumnNumber();
+        return sheet==null ? 0 : sheet.getCurrentCell().getColumnNumber();
     }
 
     /**
@@ -364,6 +372,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     @Override
     public boolean setCurrentCell(int rowNum, int colNum) {
+        if (sheet==null) {
+            return false;
+        }
+        
         Cell oldCell = sheet.getCurrentCell();
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
         int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
@@ -557,10 +569,14 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     }
 
     private Cell getCurrentCell() {
-        return sheet.getCurrentCell();
+        return sheet==null ? null : sheet.getCurrentCell();
     }
 
     private void updateContent() {
+        if (sheet==null) {
+            return;
+        }
+        
         // scale according to screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         double scaleDpi = dpi / 72.0; // 1 point = 1/72 inch
@@ -817,6 +833,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         void doSearch() {
+            if (sheet==null) {
+                return;
+            }
+
             EnumSet<SearchOptions> options = EnumSet.of(SearchOptions.SEARCH_FROM_CURRENT);
 
             if (jcbIgnoreCase.isSelected()) {
@@ -965,6 +985,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         private Rectangle getCellRectInViewCoordinates(Cell cell) {
+            if (sheet==null) {
+                return null;
+            }    
+
             boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
             boolean isLeft = cell.getColumnNumber() < sheet.getSplitColumn();
 
