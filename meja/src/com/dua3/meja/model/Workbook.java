@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -149,24 +147,6 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @return the new cell style
      */
     CellStyle copyCellStyle(String styleName, CellStyle style);
-
-    /**
-     * Get number format for this workbook.
-     * <p>
-     * The number format is used when parsing user input.
-     * </p>
-     * @return the number format for this workbook
-     */
-    NumberFormat getNumberFormat();
-
-    /**
-     * Get date format for this workbook.
-     * <p>
-     * The date format is used when parsing user input.
-     * </p>
-     * @return the date format for this workbook
-     */
-    DateFormat getDateFormat();
 
     /**
      * Close workbook.

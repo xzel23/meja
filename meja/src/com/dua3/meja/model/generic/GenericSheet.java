@@ -24,8 +24,6 @@ import com.dua3.meja.util.RectangularRegion;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -245,17 +243,6 @@ public class GenericSheet implements Sheet {
     void reserveColumn(int col) {
         numberOfColumns = Math.max(col + 1, numberOfColumns);
     }
-
-    @Override
-    public NumberFormat getNumberFormat() {
-        return NumberFormat.getInstance(locale);
-    }
-
-    @Override
-    public DateFormat getDateFormat() {
-        return DateFormat.getDateInstance(DateFormat.SHORT, locale);
-    }
-
 
     @Override
     public Lock readLock() {

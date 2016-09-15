@@ -23,8 +23,6 @@ import com.dua3.meja.util.RectangularRegion;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -312,17 +310,6 @@ public class PoiSheet implements Sheet {
             }
         }
     }
-
-    @Override
-    public NumberFormat getNumberFormat() {
-        return getWorkbook().getNumberFormat();
-    }
-
-    @Override
-    public DateFormat getDateFormat() {
-        return getWorkbook().getDateFormat();
-    }
-
 
     @Override
     public Lock readLock() {

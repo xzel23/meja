@@ -16,9 +16,12 @@
 package com.dua3.meja.util;
 
 import com.dua3.meja.model.Cell;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Locale;
 
@@ -29,24 +32,24 @@ import java.util.Locale;
 public class CellValueHelper {
 
     private final NumberFormat numberFormat;
-    private final DateFormat dateFormat;
+    private final DateTimeFormatter dateFormatter;
 
     /**
      * Construct an instance of {@code CellValueHelper} for a specific locale.
      * @param locale the locale to use
      */
     public CellValueHelper(Locale locale) {
-        this(NumberFormat.getInstance(locale), DateFormat.getDateInstance(DateFormat.SHORT, locale));
+        this(NumberFormat.getInstance(locale), DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale));
     }
 
     /**
      * Construct an instance of {@code CellValueHelper} with specific data formats.
      * @param numberFormat the {@link NumberFormat} to use
-     * @param dateFormat the {@code DateFormat} to use
+     * @param dateFormatter the {@code DateFormat} to use
      */
-    public CellValueHelper(NumberFormat numberFormat, DateFormat dateFormat) {
+    public CellValueHelper(NumberFormat numberFormat, DateTimeFormatter dateFormatter) {
         this.numberFormat = numberFormat;
-        this.dateFormat = dateFormat;
+        this.dateFormatter = dateFormatter;
     }
 
     /**
@@ -82,7 +85,7 @@ public class CellValueHelper {
         }
 
         // date
-        Date date = parseDate(value);
+        LocalDateTime date = parseDate(value);
         if (date != null) {
             cell.set(date);
             return;
@@ -127,10 +130,10 @@ public class CellValueHelper {
      * @return instance of {@link Date} representing {@code value} or
      * {@code null}, if {@code value} could not be fully parsed
      */
-    protected Date parseDate(String text) {
+    protected LocalDateTime parseDate(String text) {
         ParsePosition pos = new ParsePosition(0);
-        Date date = dateFormat.parse(text, pos);
-        return pos.getIndex() == text.length() ? date : null;
+        TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);        
+        return pos.getIndex() == text.length() ? LocalDateTime.from(ta) : null;
     }
 
 }

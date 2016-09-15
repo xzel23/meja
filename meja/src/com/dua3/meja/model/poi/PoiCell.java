@@ -24,6 +24,8 @@ import com.dua3.meja.text.Run;
 import com.dua3.meja.text.Style;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -187,9 +189,19 @@ public final class PoiCell implements Cell {
     }
 
     @Override
+    @Deprecated
     public Date getDate() {
         try {
             return isEmpty() ? null : poiCell.getDateCellValue();
+        } catch (Exception e) {
+            throw newIllegalStateException(e);
+        }
+    }
+
+    @Override
+    public LocalDateTime getDateTime() {
+        try {
+            return isEmpty() ? null : LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
         } catch (Exception e) {
             throw newIllegalStateException(e);
         }
@@ -324,12 +336,32 @@ public final class PoiCell implements Cell {
     }
 
     @Override
+    @Deprecated
     public PoiCell set(Date arg) {
         Object old = get();
         if (arg == null) {
             clear();
         } else {
             poiCell.setCellValue(arg);
+            if (!isCellDateFormatted()) {
+                // Excel does not have a cell type for dates!
+                // Warn if cell is not date formatted
+                LOGGER.warning("Cell is not date formatted!");
+            }
+        }
+        updateRow();
+        getSheet().cellValueChanged(this, old, arg);
+        return this;
+    }
+
+    @Override
+    public PoiCell set(LocalDateTime arg) {
+        Object old = get();
+        if (arg == null) {
+            clear();
+        } else {
+            Date d = Date.from(arg.atZone(ZoneId.systemDefault()).toInstant());
+            poiCell.setCellValue(d);
             if (!isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is not date formatted

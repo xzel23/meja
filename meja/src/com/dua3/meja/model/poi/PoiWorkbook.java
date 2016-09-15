@@ -31,8 +31,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -126,8 +124,7 @@ public abstract class PoiWorkbook implements Workbook {
     /**
      *
      */
-    @SuppressWarnings("unchecked")
-    protected void init() {
+    protected final void init() {
         for (int i = 0; i < poiWorkbook.getNumberOfSheets(); i++) {
             createSheet(poiWorkbook.getSheetAt(i));
         }
@@ -284,16 +281,6 @@ public abstract class PoiWorkbook implements Workbook {
             poiCellStyle = poiWorkbook.getCellStyleAt(index);
         }
         return getPoiCellStyle(poiCellStyle);
-    }
-
-    @Override
-    public NumberFormat getNumberFormat() {
-        return NumberFormat.getInstance(Locale.getDefault());
-    }
-
-    @Override
-    public DateFormat getDateFormat() {
-        return DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
     }
 
     @Override

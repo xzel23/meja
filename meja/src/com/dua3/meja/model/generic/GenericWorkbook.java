@@ -26,8 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,7 +48,6 @@ public class GenericWorkbook implements Workbook {
     private URI uri;
     private int currentSheetIdx = 0;
 
-
     public GenericWorkbook(Locale locale) {
         this(locale, DEFAULT_URI);
     }
@@ -64,7 +61,7 @@ public class GenericWorkbook implements Workbook {
         this.locale = locale;
         this.uri = uri;
         this.defaultCellStyle = new GenericCellStyle(this);
-        this.cellStyles.put("", defaultCellStyle);
+        this.cellStyles.put("", defaultCellStyle);        
     }
 
     @Override
@@ -188,16 +185,6 @@ public class GenericWorkbook implements Workbook {
     @Override
     public void close() throws IOException {
         // nop
-    }
-
-    @Override
-    public NumberFormat getNumberFormat() {
-        return NumberFormat.getInstance(locale);
-    }
-
-    @Override
-    public DateFormat getDateFormat() {
-        return DateFormat.getDateInstance(DateFormat.SHORT, locale);
     }
 
     @Override

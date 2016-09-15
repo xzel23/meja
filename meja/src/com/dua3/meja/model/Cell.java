@@ -17,6 +17,7 @@
 package com.dua3.meja.model;
 
 import com.dua3.meja.text.RichText;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -83,8 +84,18 @@ public interface Cell {
      *
      * @return date cell value
      * @throws IllegalArgumentException if cell is not of date value
+     * @deprecated
      */
+    @Deprecated
     Date getDate();
+
+    /**
+     * Return date value.
+     *
+     * @return date cell value
+     * @throws IllegalArgumentException if cell is not of date value
+     */
+    LocalDateTime getDateTime();
 
     /**
      * Return numeric value.
@@ -180,8 +191,18 @@ public interface Cell {
      *
      * @param arg date
      * @return this cell
+     * @deprecated 
      */
+    @Deprecated
     Cell set(Date arg);
+
+    /**
+     * Set cell value to date.
+     *
+     * @param arg date
+     * @return this cell
+     */
+    Cell set(LocalDateTime arg);
 
     /**
      * Set cell value to number.

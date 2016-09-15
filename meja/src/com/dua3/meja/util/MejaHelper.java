@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -435,6 +436,8 @@ public class MejaHelper {
             cell.set((Number) arg);
         } else if (arg instanceof Boolean) {
             cell.set((Boolean) arg);
+        } else if (arg instanceof LocalDateTime) {
+            cell.set((LocalDateTime) arg);
         } else if (arg instanceof Date) {
             cell.set((Date) arg);
         } else if (arg instanceof RichText) {

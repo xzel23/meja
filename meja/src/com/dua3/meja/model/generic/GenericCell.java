@@ -21,6 +21,8 @@ import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.text.RichText;
 import com.dua3.meja.util.MejaHelper;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -146,9 +148,18 @@ public class GenericCell implements Cell {
     }
 
     @Override
+    @Deprecated
     public Date getDate() {
         if (getCellType() == CellType.DATE) {
             return (Date) value;
+        }
+        throw new IllegalStateException("Cannot get date value from cell of type " + getCellType().name() + ".");
+    }
+
+    @Override
+    public LocalDateTime getDateTime() {
+        if (getCellType() == CellType.DATE) {
+            return (LocalDateTime) value;
         }
         throw new IllegalStateException("Cannot get date value from cell of type " + getCellType().name() + ".");
     }
@@ -238,7 +249,14 @@ public class GenericCell implements Cell {
     }
 
     @Override
+    @Deprecated
     public GenericCell set(Date arg) {
+        LocalDateTime ldt = LocalDateTime.ofInstant(arg.toInstant(), ZoneId.systemDefault());
+        return set(ldt, CellType.DATE);
+    }
+
+    @Override
+    public GenericCell set(LocalDateTime arg) {
         return set(arg, CellType.DATE);
     }
 

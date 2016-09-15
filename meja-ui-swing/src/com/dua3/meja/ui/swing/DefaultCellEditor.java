@@ -126,7 +126,7 @@ public class DefaultCellEditor implements CellEditor {
             Logger.getLogger(DefaultCellEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
         Sheet sheet = sheetView.getSheet();
-        CellValueHelper helper = new CellValueHelper(sheet.getNumberFormat(), sheet.getDateFormat());
+        CellValueHelper helper = new CellValueHelper(sheet.getWorkbook().getLocale());
         helper.setCellValue(cell, text);
     }
 

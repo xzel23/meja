@@ -17,8 +17,6 @@ package com.dua3.meja.model;
 
 import com.dua3.meja.util.RectangularRegion;
 import java.beans.PropertyChangeListener;
-import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 
@@ -175,24 +173,6 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @return row number for auto filter or -1 if not set
      */
     int getAutoFilterRow();
-
-    /**
-     * Get number format for this sheet.
-     * <p>
-     * The number format is used when parsing user input.
-     * </p>
-     * @return the number format for this sheet
-     */
-    NumberFormat getNumberFormat();
-
-    /**
-     * Get date format for this sheet.
-     * <p>
-     * The date format is used when parsing user input.
-     * </p>
-     * @return the date format for this sheet
-     */
-    DateFormat getDateFormat();
 
     /**
      * Set the zoom factor for this sheet.
