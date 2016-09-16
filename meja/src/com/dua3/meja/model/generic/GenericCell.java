@@ -194,7 +194,7 @@ public class GenericCell implements Cell {
             case NUMERIC:
                 return RichText.valueOf(getCellStyle().format((Number) value));
             case DATE:
-                return RichText.valueOf(getCellStyle().format((Date) value));
+                return RichText.valueOf(getCellStyle().format((LocalDateTime) value));
             default:
                 return RichText.valueOf(value);
         }
@@ -208,7 +208,7 @@ public class GenericCell implements Cell {
             case NUMERIC:
                 return getCellStyle().format((Number) value);
             case DATE:
-                return getCellStyle().format((Date) value);
+                return getCellStyle().format((LocalDateTime) value);
             default:
                 return String.valueOf(value);
         }
@@ -362,7 +362,7 @@ public class GenericCell implements Cell {
                 set(other.getNumber());
                 break;
             case DATE:
-                set(other.getDate());
+                set(other.getDateTime());
                 break;
             case TEXT:
                 set(other.getText());

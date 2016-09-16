@@ -23,11 +23,11 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,7 +54,7 @@ public class GenericCellStyle implements CellStyle {
     private String dataFormat = "";
 
     // formatting helper
-    transient private DateFormat dateFormatter = null;
+    transient private DateTimeFormatter dateFormatter = null;
     transient private NumberFormat numberFormatter = null;
 
     /**
@@ -200,17 +200,17 @@ public class GenericCellStyle implements CellStyle {
      * @param date the date to format
      * @return text representation of {@code date}
      */
-    public String format(Date date) {
+    public String format(LocalDateTime date) {
         if (dateFormatter==null) {
             try {
                 if (dataFormat==null || dataFormat.isEmpty()) {
-                    dateFormatter = DateFormat.getDateInstance(DateFormat.DEFAULT, workbook.getLocale());
+                    dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(workbook.getLocale());
                 } else {
-                    dateFormatter = new SimpleDateFormat(dataFormat, workbook.getLocale());
+                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat, workbook.getLocale());
                 }
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
-                dateFormatter = SimpleDateFormat.getDateInstance();
+                dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(workbook.getLocale());
             }
         }
 
