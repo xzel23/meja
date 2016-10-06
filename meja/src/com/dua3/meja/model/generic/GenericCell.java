@@ -150,10 +150,7 @@ public class GenericCell implements Cell {
     @Override
     @Deprecated
     public Date getDate() {
-        if (getCellType() == CellType.DATE) {
-            return (Date) value;
-        }
-        throw new IllegalStateException("Cannot get date value from cell of type " + getCellType().name() + ".");
+        return Date.from(getDateTime().atZone(ZoneId.systemDefault()).toInstant());
     }
 
     @Override
