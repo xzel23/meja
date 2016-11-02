@@ -34,6 +34,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -43,6 +45,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.EnumSet;
 import java.util.concurrent.locks.Lock;
+import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -178,8 +181,9 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     private void init(Sheet sheet1) {
         add(sheetPane);
-        // setup input map for keyboard navigation
+        // setup input map for ...
         final InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        // ... keyboard navigation
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_UP, 0), Actions.MOVE_UP);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, 0), Actions.MOVE_DOWN);
@@ -193,7 +197,9 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK), Actions.MOVE_HOME);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK), Actions.MOVE_END);
         inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
+        // ... other stuff
         inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
+        inputMap.put(KeyStroke.getKeyStroke('C', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.COPY);
         final ActionMap actionMap = getActionMap();
         for (Actions action : Actions.values()) {
             actionMap.put(action, action.getAction(this));
@@ -618,114 +624,43 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         return scale;
     }
 
+    private void copyToClipboard() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection text = new StringSelection(getCurrentCell().getAsText().toString());
+        clipboard.setContents(text, text);
+    }
+
     /**
      * Actions for key bindings.
      */
     @SuppressWarnings("serial")
     static enum Actions {
-        MOVE_UP {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.NORTH);
-                    }
-                };
-            }
-        }, MOVE_DOWN {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.SOUTH);
-                    }
-                };
-            }
-        }, MOVE_LEFT {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.WEST);
-                    }
-                };
-            }
-        }, MOVE_RIGHT {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.move(Direction.EAST);
-                    }
-                };
-            }
-        }, PAGE_UP {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.movePage(Direction.NORTH);
-                    }
-                };
-            }
-        }, PAGE_DOWN {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.movePage(Direction.SOUTH);
-                    }
-                };
-            }
-        }, MOVE_HOME {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.moveHome();
-                    }
-                };
-            }
-        }, MOVE_END {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.moveEnd();
-                    }
-                };
-            }
-        }, START_EDITING {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.startEditing();
-                    }
-                };
-            }
-        }, SHOW_SEARCH_DIALOG {
-            @Override
-            public Action getAction(final SwingSheetView view) {
-                return new AbstractAction(name()) {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        view.showSearchDialog();
-                    }
-                };
-            }
-        };
+        MOVE_UP (view -> view.move(Direction.NORTH)),
+        MOVE_DOWN (view -> view.move(Direction.SOUTH)),
+        MOVE_LEFT (view -> view.move(Direction.WEST)),
+        MOVE_RIGHT (view -> view.move(Direction.EAST)),
+        PAGE_UP (view -> view.movePage(Direction.NORTH)),
+        PAGE_DOWN (view -> view.movePage(Direction.SOUTH)),
+        MOVE_HOME (view -> view.moveHome()),
+        MOVE_END (view -> view.moveEnd()),
+        START_EDITING (view -> view.startEditing()),
+        SHOW_SEARCH_DIALOG (view -> view.showSearchDialog()),
+        COPY (view -> view.copyToClipboard());
 
-        abstract Action getAction(SwingSheetView view);
+        private final Consumer<SwingSheetView> action;
+        
+        private Actions(Consumer<SwingSheetView> action) {
+            this.action = action;
+        }
+        
+        Action getAction(SwingSheetView view) {
+            return new AbstractAction(name()) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    action.accept(view);
+                }
+            };
+        }
     }
 
     private class SearchDialog extends JDialog {
