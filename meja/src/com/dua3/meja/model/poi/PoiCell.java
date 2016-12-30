@@ -429,7 +429,10 @@ public final class PoiCell implements Cell {
         } else {
             poiCell.setCellFormula(arg);
             poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
-            getWorkbook().evaluator.evaluateFormulaCell(poiCell);
+            final PoiWorkbook wb = getWorkbook();
+            if(wb.isFormulaEvaluationSupported()) {
+                wb.evaluator.evaluateFormulaCell(poiCell);
+            }
         }
         updateRow();
         getSheet().cellValueChanged(this, old, null);

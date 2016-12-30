@@ -385,6 +385,12 @@ public abstract class PoiWorkbook implements Workbook {
     public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
 
     /**
+     * Test if formula evaluation is supported.
+     * @return true if formula evaluation is supported
+     */
+    public abstract boolean isFormulaEvaluationSupported();
+    
+    /**
      * Convert {@link String} to {@link RichTextString}.
      * @param s the {@link String} to convert
      * @return {@link RichTextString} with the same text as {@code s}
@@ -494,6 +500,11 @@ public abstract class PoiWorkbook implements Workbook {
         }
 
         @Override
+        public boolean isFormulaEvaluationSupported() {
+            return true;
+        }
+        
+        @Override
         Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
             if (poiColor == null || poiColor == HSSFColor.AUTOMATIC.getInstance()) {
                 return defaultColor;
@@ -512,30 +523,15 @@ public abstract class PoiWorkbook implements Workbook {
             return new Color(r, g, b, a);
         }
 
-        /**
-         *
-         * @param poiStyle
-         * @return
-         */
         @Override
         public PoiHssfCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
             return new PoiHssfCellStyle(this, (HSSFCellStyle) poiStyle);
         }
 
-        /**
-         *
-         * @param idx
-         * @return
-         */
         public PoiFont getFont(short idx) {
             return getFont(poiWorkbook.getFontAt(idx));
         }
 
-        /**
-         *
-         * @param color
-         * @return
-         */
         @Override
         public HSSFColor getPoiColor(Color color) {
             if (color == null) {
@@ -545,38 +541,16 @@ public abstract class PoiWorkbook implements Workbook {
             return palette.findSimilarColor(color.r(), color.g(), color.b());
         }
 
-        /**
-         *
-         * @param poiFont
-         * @param dfltColor
-         * @return
-         */
         @Override
         public Color getColor(Font poiFont, Color dfltColor) {
             return getColor(((HSSFFont) poiFont).getHSSFColor(((HSSFWorkbook) getPoiWorkbook())), Color.BLACK);
         }
 
-        /**
-         *
-         * @param s
-         * @return
-         */
         @Override
         public HSSFRichTextString createRichTextString(String s) {
             return new HSSFRichTextString(s);
         }
 
-        /**
-         *
-         * @param fontFamily
-         * @param fontSize
-         * @param fontColor
-         * @param fontBold
-         * @param fontItalic
-         * @param fontUnderlined
-         * @param fontStrikeThrough
-         * @return
-         */
         @Override
         public PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough) {
             Font poiFont = poiWorkbook.createFont();
@@ -613,11 +587,6 @@ public abstract class PoiWorkbook implements Workbook {
             init();
         }
 
-        /**
-         *
-         * @param poiStyle
-         * @return
-         */
         @Override
         public PoiXssfCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
             return new PoiXssfCellStyle(this, (XSSFCellStyle) poiStyle);
@@ -648,48 +617,26 @@ public abstract class PoiWorkbook implements Workbook {
             return new Color(r, g, b, a);
         }
 
-        /**
-         *
-         * @param color
-         * @return
-         */
         @Override
         public XSSFColor getPoiColor(Color color) {
             return new XSSFColor(color.toByteArray());
         }
 
-        /**
-         *
-         * @param poiFont
-         * @param dfltColor
-         * @return
-         */
+        @Override
+        public boolean isFormulaEvaluationSupported() {
+            return !(poiWorkbook instanceof SXSSFWorkbook);
+        }
+        
         @Override
         public Color getColor(Font poiFont, Color dfltColor) {
             return getColor(((XSSFFont) poiFont).getXSSFColor(), Color.BLACK);
         }
 
-        /**
-         *
-         * @param s
-         * @return
-         */
         @Override
         public XSSFRichTextString createRichTextString(String s) {
             return new XSSFRichTextString(s);
         }
 
-        /**
-         *
-         * @param fontFamily
-         * @param fontSize
-         * @param fontColor
-         * @param fontBold
-         * @param fontItalic
-         * @param fontUnderlined
-         * @param fontStrikeThrough
-         * @return
-         */
         @Override
         public PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold, boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough) {
             XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();
