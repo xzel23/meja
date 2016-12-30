@@ -20,6 +20,7 @@ import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.RefOption;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
@@ -200,13 +201,32 @@ public class MejaHelper {
      * Get cell reference as string.
      *
      * @param cell
-     * @param includeSheet true, if the sheet name should be part of the cell
-     * reference
+     * @param options  Options to use
      * @return the cell in Excel conventions, ie "A1" for the first cell.
      */
-    public static String getCellRef(Cell cell, boolean includeSheet) {
-        String ref = includeSheet ? cell.getSheet().getSheetName() + "!" : "";
-        ref += getColumnName(cell.getColumnNumber()) + (cell.getRowNumber() + 1);
+    public static String getCellRef(Cell cell, RefOption... options) {
+        String prefixRow = "";
+        String prefixColumn = "";
+        String sheet = "";
+        
+        for (RefOption o: options) {
+            switch (o) {
+            case FIX_COLUMN:
+                prefixColumn = "$";
+                break;
+            case FIX_ROW:
+                prefixRow = "$";
+                break;
+            case WITH_SHEET:
+                sheet = "'" + cell.getSheet().getSheetName() + "'!";
+                break;
+            }
+        }
+        
+        String ref = sheet 
+                + prefixColumn + getColumnName(cell.getColumnNumber()) 
+                + prefixRow + (cell.getRowNumber() + 1);
+        
         return ref;
     }
 

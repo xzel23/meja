@@ -30,19 +30,9 @@ public class RichText implements Iterable<Run> {
 
     private static RichText EMPTY_TEXT = RichText.valueOf("");
 
-    private static final Comparator<RichText> COMPARATOR = new Comparator<RichText>() {
-        @Override
-        public int compare(RichText o1, RichText o2) {
-            return o1.text.compareTo(o2.text);
-        }
-    };
+    private static final Comparator<RichText> COMPARATOR = (RichText o1, RichText o2) -> o1.text.compareTo(o2.text);
     
-    private static final Comparator<RichText> COMPARATOR_CASE_INSENSITIVE = new Comparator<RichText>() {
-        @Override
-        public int compare(RichText o1, RichText o2) {
-            return o1.text.compareToIgnoreCase(o2.text);
-        }
-    };
+    private static final Comparator<RichText> COMPARATOR_CASE_INSENSITIVE = (RichText o1, RichText o2) -> o1.text.compareToIgnoreCase(o2.text);
     
     private final String text;
     private final List<Run> runs;

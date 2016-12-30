@@ -135,12 +135,9 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
 
             {
                 // enable when workbook is loaded
-                PropertyChangeListener listener = new PropertyChangeListener() {
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        if (PROPERTY_FILE_CHANGED.equals(evt.getPropertyName())) {
-                            setEnabled(evt.getNewValue() != null);
-                        }
+                PropertyChangeListener listener = (PropertyChangeEvent evt) -> {
+                    if (PROPERTY_FILE_CHANGED.equals(evt.getPropertyName())) {
+                        setEnabled(evt.getNewValue() != null);
                     }
                 };
                 SwingExcelViewer.this.addPropertyChangeListener(PROPERTY_FILE_CHANGED, listener);

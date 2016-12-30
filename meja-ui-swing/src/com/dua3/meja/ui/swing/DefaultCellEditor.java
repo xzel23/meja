@@ -77,12 +77,7 @@ public class DefaultCellEditor implements CellEditor {
         component.revalidate();
         component.setCaretPosition(component.getDocument().getLength());
         component.selectAll();
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                component.requestFocusInWindow();
-            }
-        });
+        SwingUtilities.invokeLater(component::requestFocusInWindow);
 
         return component;
     }
@@ -108,12 +103,7 @@ public class DefaultCellEditor implements CellEditor {
         sheetView.stoppedEditing();
 
         // give focus back to sheetview
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                sheetView.requestFocusInWindow();
-            }
-        });
+        SwingUtilities.invokeLater(sheetView::requestFocusInWindow);
     }
 
     protected void updateCellContent() {

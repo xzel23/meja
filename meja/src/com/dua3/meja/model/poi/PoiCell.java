@@ -18,6 +18,7 @@ package com.dua3.meja.model.poi;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.RefOption;
 import com.dua3.meja.text.RichText;
 import com.dua3.meja.text.RichTextBuilder;
 import com.dua3.meja.text.Run;
@@ -141,7 +142,7 @@ public final class PoiCell implements Cell {
     }
 
     private IllegalStateException newIllegalStateException(Exception e) {
-        return new IllegalStateException("[" + getCellRef(true) + "]: " + e.getMessage());
+        return new IllegalStateException("[" + getCellRef(RefOption.WITH_SHEET) + "]: " + e.getMessage());
     }
 
     @Override
@@ -551,6 +552,9 @@ public final class PoiCell implements Cell {
                 // FIXME
                 setFormula("1/0");
                 break;
+            case FORMULA:
+                setFormula(other.getFormula());
+                break;
             case NUMERIC:
                 set(other.getNumber());
                 break;
@@ -560,6 +564,8 @@ public final class PoiCell implements Cell {
             case TEXT:
                 set(other.getText());
                 break;
+            default:
+                throw new UnsupportedOperationException("Unsupported Cell Type: "+other.getCellType());
         }
     }
 
@@ -604,13 +610,8 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public String getCellRef() {
-        return MejaHelper.getCellRef(this, false);
-    }
-
-    @Override
-    public String getCellRef(boolean includeSheet) {
-        return MejaHelper.getCellRef(this, includeSheet);
+    public String getCellRef(RefOption... options) {
+        return MejaHelper.getCellRef(this, options);
     }
 
 }

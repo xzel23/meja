@@ -18,12 +18,14 @@ package com.dua3.meja.model.generic;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.RefOption;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.text.RichText;
 import com.dua3.meja.util.MejaHelper;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  *
@@ -334,8 +336,7 @@ public class GenericCell implements Cell {
 
     @Override
     public GenericCell setFormula(String value) {
-        setCellType(CellType.FORMULA);
-        this.value = value;
+        set(value, CellType.FORMULA);
         return this;
     }
 
@@ -423,12 +424,8 @@ public class GenericCell implements Cell {
     }
 
     @Override
-    public String getCellRef() {
-        return MejaHelper.getCellRef(this, false);
+    public String getCellRef(RefOption... options) {
+        return MejaHelper.getCellRef(this, options);
     }
 
-    @Override
-    public String getCellRef(boolean includeSheet) {
-        return MejaHelper.getCellRef(this, includeSheet);
-    }
 }
