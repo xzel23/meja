@@ -6,7 +6,7 @@ Méja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 - provide ui elements for rendering tables
 
 ## Requirements
-- JDK 8 (Meja code is compatible with Java 7 except for samples and meja-ui-jfx)
+- JDK 8
 - Apache Ant
  
 Required libraries (currently that's just Apache POI) should be automatically downloaded by Ant (provided I got the Ivy part right).
