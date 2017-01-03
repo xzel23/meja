@@ -45,19 +45,19 @@ public final class PoiCell implements Cell {
 
     private static final Logger LOGGER = Logger.getLogger(PoiCell.class.getName());
 
-    private static CellType translateCellType(int poiType) {
+    private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
         switch (poiType) {
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
+            case BLANK:
                 return CellType.BLANK;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BOOLEAN:
+            case BOOLEAN:
                 return CellType.BOOLEAN;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_ERROR:
+            case ERROR:
                 return CellType.ERROR;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 return CellType.NUMERIC;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
+            case STRING:
                 return CellType.TEXT;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA:
+            case FORMULA:
                 return CellType.FORMULA;
             default:
                 throw new IllegalArgumentException();
@@ -119,7 +119,7 @@ public final class PoiCell implements Cell {
 
     @Override
     public CellType getCellType() {
-        CellType type = translateCellType(poiCell.getCellType());
+        CellType type = translateCellType(poiCell.getCellTypeEnum());
         // since formulas returning dates should return CellType.FORMULA
         // rather than CellType.DATE, only test for dates if cell is numeric.
         if (type == CellType.NUMERIC && isCellDateFormatted()) {
@@ -130,9 +130,9 @@ public final class PoiCell implements Cell {
 
     @Override
     public CellType getResultType() {
-        int poiType = poiCell.getCellType();
-        if (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
-            poiType = poiCell.getCachedFormulaResultType();
+        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
+        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
+            poiType = poiCell.getCachedFormulaResultTypeEnum();
         }
         CellType type = translateCellType(poiType);
         if (type == CellType.NUMERIC && isCellDateFormatted()) {
@@ -317,7 +317,7 @@ public final class PoiCell implements Cell {
     public void clear() {
         if (!isEmpty()) {
             Object old = get();
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK);
+            poiCell.setCellType(org.apache.poi.ss.usermodel.CellType.BLANK);
             updateRow();
             getSheet().cellValueChanged(this, old, null);
         }
@@ -386,11 +386,11 @@ public final class PoiCell implements Cell {
          * when cell is not numeric, so we have to work around this.
          * TODO create SCCSE and report bug against POI
          */
-        int poiType = poiCell.getCellType();
-        if (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA) {
-            poiType = poiCell.getCachedFormulaResultType();
+        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
+        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
+            poiType = poiCell.getCachedFormulaResultTypeEnum();
         }
-        return (poiType == org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC)
+        return (poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC)
                 && DateUtil.isCellDateFormatted(poiCell);
     }
 
@@ -428,7 +428,7 @@ public final class PoiCell implements Cell {
             clear();
         } else {
             poiCell.setCellFormula(arg);
-            poiCell.setCellType(org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA);
+            poiCell.setCellType(org.apache.poi.ss.usermodel.CellType.FORMULA);
             final PoiWorkbook wb = getWorkbook();
             if(wb.isFormulaEvaluationSupported()) {
                 wb.evaluator.evaluateFormulaCell(poiCell);
@@ -456,10 +456,10 @@ public final class PoiCell implements Cell {
 
     @Override
     public boolean isEmpty() {
-        switch (poiCell.getCellType()) {
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_BLANK:
+        switch (poiCell.getCellTypeEnum()) {
+            case BLANK:
                 return true;
-            case org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING:
+            case STRING:
                 return poiCell.getStringCellValue().isEmpty();
             default:
                 return false;
