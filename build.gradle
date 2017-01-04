@@ -51,6 +51,13 @@ project(':meja-samples') {
     }
 }
 
+// create javadoc
+task javadoc(type: Javadoc) {
+    subprojects.each { project ->
+        source = project.sourceSets.main.java.srcDirs
+    }
+}
+
 // create a jar with the dependencies
 task depJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
     baseName = 'meja'
@@ -72,17 +79,13 @@ task srcJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
 }
 
 // create a jar with javadoc
-task javadoc(type: Javadoc) {
-    subprojects.each { project ->
-        source = project.sourceSets.main.java.srcDirs
-    }
-}
-
 task docJar(type: Jar, dependsOn: javadoc) {
     baseName = 'meja'    
     classifier = 'javadoc'
-    
-    subprojects.each { project ->
-        from project.docsDir
-    }
+
+    from file("$rootDir/doc")    
+}
+
+task dist(dependsOn: [depJar, srcJar, docJar]) {
+    println "creating distribution files"
 }
