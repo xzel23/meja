@@ -8,8 +8,17 @@ subprojects {
     }
 
     dependencies {
+		def poiVersion = "3.15"
+		compile "org.apache.poi:poi:${poiVersion}"
+		compile "org.apache.poi:poi-ooxml:${poiVersion}"
+		compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+		
         testCompile "junit:junit:4.12"
     }
+
+}
+
+project(':meja') {
 }
 
 project(':meja-ui-swing') {
@@ -29,5 +38,12 @@ project(':meja-samples') {
         compile project(':meja')
         compile project(':meja-ui-swing')
         compile project(':meja-ui-jfx')
+    }
+}
+
+task depJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+    baseName = 'meja-dependencies'
+    from project(':meja').configurations.compile.collect { 
+		it.isDirectory() ? it : zipTree(it) 
     }
 }

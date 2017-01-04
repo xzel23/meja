@@ -12,3 +12,5 @@
 /meja-ui-jfx/dist/
 /meja-ui-jfx/build/
 .gradle/
+build
+*.jar

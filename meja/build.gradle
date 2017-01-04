@@ -1,8 +1,0 @@
-dependencies {
-    def poiVersion = "3.15"
-    compile "org.apache.poi:poi:${poiVersion}"
-    compile "org.apache.poi:poi-ooxml:${poiVersion}"
-    compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
-	
-    testCompile 'junit:junit:4.+'
-}
