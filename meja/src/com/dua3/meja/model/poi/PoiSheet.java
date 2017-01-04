@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.poi.hssf.util.PaneInformation;
+import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;

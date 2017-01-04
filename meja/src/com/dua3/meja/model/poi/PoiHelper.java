@@ -19,6 +19,8 @@ import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 /**
  *
@@ -28,49 +30,49 @@ public class PoiHelper {
 
     private static final Logger LOGGER = Logger.getLogger(PoiHelper.class.getName());
 
-    public static HAlign poiToHAlign(final short alignment) {
+    public static HAlign poiToHAlign(HorizontalAlignment alignment) {
         switch (alignment) {
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_LEFT:
+            case LEFT:
                 return HAlign.ALIGN_LEFT;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_CENTER:
+            case CENTER:
                 return HAlign.ALIGN_CENTER;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_RIGHT:
+            case RIGHT:
                 return HAlign.ALIGN_RIGHT;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_CENTER_SELECTION:
+            case CENTER_SELECTION:
                 return HAlign.ALIGN_CENTER;
-            case org.apache.poi.ss.usermodel.CellStyle.ALIGN_GENERAL:
+            case GENERAL:
                 return HAlign.ALIGN_AUTOMATIC;
             default:
                 return HAlign.ALIGN_JUSTIFY;
         }
     }
 
-    public static short hAlignToPoi(HAlign hAlign) {
+    public static HorizontalAlignment hAlignToPoi(HAlign hAlign) {
         switch (hAlign) {
             case ALIGN_LEFT:
-                return org.apache.poi.ss.usermodel.CellStyle.ALIGN_LEFT;
+                return HorizontalAlignment.LEFT;
             case ALIGN_RIGHT:
-                return org.apache.poi.ss.usermodel.CellStyle.ALIGN_RIGHT;
+                return HorizontalAlignment.RIGHT;
             case ALIGN_CENTER:
-                return org.apache.poi.ss.usermodel.CellStyle.ALIGN_CENTER;
+                return HorizontalAlignment.CENTER;
             case ALIGN_JUSTIFY:
-                return org.apache.poi.ss.usermodel.CellStyle.ALIGN_JUSTIFY;
+                return HorizontalAlignment.JUSTIFY;
             case ALIGN_AUTOMATIC:
-                return org.apache.poi.ss.usermodel.CellStyle.ALIGN_GENERAL;
+                return HorizontalAlignment.GENERAL;
             default:
                 throw new IllegalArgumentException();
         }
     }
 
-    public static VAlign poiToVAlign(final short alignment) {
+    public static VAlign poiToVAlign(VerticalAlignment alignment) {
         switch (alignment) {
-            case org.apache.poi.ss.usermodel.CellStyle.VERTICAL_TOP:
+            case TOP:
                 return VAlign.ALIGN_TOP;
-            case org.apache.poi.ss.usermodel.CellStyle.VERTICAL_CENTER:
+            case CENTER:
                 return VAlign.ALIGN_MIDDLE;
-            case org.apache.poi.ss.usermodel.CellStyle.VERTICAL_BOTTOM:
+            case BOTTOM:
                 return VAlign.ALIGN_BOTTOM;
-            case org.apache.poi.ss.usermodel.CellStyle.VERTICAL_JUSTIFY:
+            case JUSTIFY:
                 return VAlign.ALIGN_JUSTIFY;
             default:
                 LOGGER.log(Level.WARNING,
@@ -79,16 +81,16 @@ public class PoiHelper {
         }
     }
 
-    public static short vAlignToPoi(VAlign vAlign) {
+    public static VerticalAlignment vAlignToPoi(VAlign vAlign) {
         switch (vAlign) {
             case ALIGN_TOP:
-                return org.apache.poi.ss.usermodel.CellStyle.VERTICAL_TOP;
+                return VerticalAlignment.TOP;
             case ALIGN_MIDDLE:
-                return org.apache.poi.ss.usermodel.CellStyle.VERTICAL_CENTER;
+                return VerticalAlignment.CENTER;
             case ALIGN_BOTTOM:
-                return org.apache.poi.ss.usermodel.CellStyle.VERTICAL_BOTTOM;
+                return VerticalAlignment.BOTTOM;
             case ALIGN_JUSTIFY:
-                return org.apache.poi.ss.usermodel.CellStyle.VERTICAL_JUSTIFY;
+                return VerticalAlignment.JUSTIFY;
             default:
                 throw new IllegalArgumentException();
         }
