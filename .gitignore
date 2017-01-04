@@ -14,3 +14,10 @@
 /meja-samples/build/
 /meja-samples/dist/
 /meja-samples/testdata/
+.gradle
+build
+dist
+meja
+meja-samples
+meja-ui-swing
+meja-ui-jfx
