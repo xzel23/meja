@@ -1,7 +1,6 @@
 subprojects {
     apply plugin: 'java'
     group = 'com.dua3.meja'
-    version = '0.3 beta'
 
     repositories {
         mavenCentral()
@@ -15,7 +14,12 @@ subprojects {
 		
         testCompile "junit:junit:4.12"
     }
+}
 
+allprojects {
+    tasks.withType(Jar) {
+        destinationDir = file("$rootDir/dist")
+    }
 }
 
 project(':meja') {
@@ -41,9 +45,28 @@ project(':meja-samples') {
     }
 }
 
+// create a jar with the dependencies
 task depJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
     baseName = 'meja-dependencies'
     from project(':meja').configurations.compile.collect { 
 		it.isDirectory() ? it : zipTree(it) 
     }
 }
+
+// create a jar with sources
+/*task srcJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+    baseName = 'meja-src'
+    classifier = 'sources'
+    
+    subprojects.each { project ->
+        from project.configurations.compile.collect { 
+            it.isDirectory() ? it : zipTree(it) 
+        }
+    }
+}
+*/
+
+//task copyJars(type: Copy) {
+//    from subprojects.collect { it.tasks.withType(Jar) }
+//    into "$buildDir/allJars"
+//}
