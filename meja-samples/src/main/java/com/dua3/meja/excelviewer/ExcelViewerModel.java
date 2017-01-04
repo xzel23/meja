@@ -3,16 +3,17 @@
  */
 package com.dua3.meja.excelviewer;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.util.MejaHelper;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.ui.SheetView;
+import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -123,7 +124,7 @@ public class ExcelViewerModel {
 
     /**
      * Adjust all column sizes.
-     * @param view
+     * @param view the view
      */
     protected void adjustColumns(SheetView view) {
         if (view != null) {

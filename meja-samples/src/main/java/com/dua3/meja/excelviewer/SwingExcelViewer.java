@@ -108,7 +108,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
 
     /**
      * Constructor.
-     * @param model
+     * @param model the model
      */
     public SwingExcelViewer(ExcelViewerModel model) {
         super(APPLICATION_NAME);

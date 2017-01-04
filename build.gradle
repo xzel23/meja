@@ -22,8 +22,6 @@ allprojects {
     }
 
     tasks.withType(Javadoc) {
-        classpath = files("$rootDir/dist/meja.jar")
-        include '**/*.java'
         destinationDir = file("$rootDir/doc")
     }
 }
@@ -53,9 +51,8 @@ project(':meja-samples') {
 
 // create javadoc
 task javadoc(type: Javadoc) {
-    subprojects.each { project ->
-        source = project.sourceSets.main.java.srcDirs
-    }
+    source subprojects.collect {project -> project.sourceSets.main.allJava } 
+    classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath}) 
 }
 
 // create a jar with the dependencies

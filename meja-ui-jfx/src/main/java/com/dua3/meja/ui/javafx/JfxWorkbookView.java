@@ -18,13 +18,14 @@ package com.dua3.meja.ui.javafx;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
+
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 
 /**
- * Swing component for displaying instances of class {@link Workbook}.
+ * JavaFX component for displaying instances of class {@link Workbook}.
  *
  * @author axel
  */
@@ -114,8 +115,8 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
     }
 
     /**
-     * Get the {@link SwingSheetView} that is currently visible.
-     * @return the {@link SwingSheetView} displayed on the visible tab of this view
+     * Get the {@link JfxSheetView} that is currently visible.
+     * @return the {@link JfxSheetView} displayed on the visible tab of this view
      */
     @Override
     public SheetView getCurrentView() {

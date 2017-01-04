@@ -5,4 +5,3 @@ rm -r javadoc
 mv /tmp/meja-javadoc ./javadoc
 git add javadoc
 git commit -m "updated javadoc"
-
