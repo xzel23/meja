@@ -20,6 +20,12 @@ allprojects {
     tasks.withType(Jar) {
         destinationDir = file("$rootDir/dist")
     }
+
+    tasks.withType(Javadoc) {
+        classpath = files("$rootDir/dist/meja.jar")
+        include '**/*.java'
+        destinationDir = file("$rootDir/doc")
+    }
 }
 
 project(':meja') {
@@ -47,26 +53,36 @@ project(':meja-samples') {
 
 // create a jar with the dependencies
 task depJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
-    baseName = 'meja-dependencies'
+    baseName = 'meja'
+    classifier = 'dependencies'
+    
     from project(':meja').configurations.compile.collect { 
 		it.isDirectory() ? it : zipTree(it) 
     }
 }
 
 // create a jar with sources
-/*task srcJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
-    baseName = 'meja-src'
+task srcJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+    baseName = 'meja'
     classifier = 'sources'
     
     subprojects.each { project ->
-        from project.configurations.compile.collect { 
-            it.isDirectory() ? it : zipTree(it) 
-        }
+        from project.sourceSets.main.java.srcDirs
     }
 }
-*/
 
-//task copyJars(type: Copy) {
-//    from subprojects.collect { it.tasks.withType(Jar) }
-//    into "$buildDir/allJars"
-//}
+// create a jar with javadoc
+task javadoc(type: Javadoc) {
+    subprojects.each { project ->
+        source = project.sourceSets.main.java.srcDirs
+    }
+}
+
+task docJar(type: Jar, dependsOn: javadoc) {
+    baseName = 'meja'    
+    classifier = 'javadoc'
+    
+    subprojects.each { project ->
+        from project.docsDir
+    }
+}
