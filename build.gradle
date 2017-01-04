@@ -84,7 +84,7 @@ task docJar(type: Jar, dependsOn: javadoc) {
 }
 
 // create a jar with classes from all subprojects
-task allJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+task allJar(type: Jar, dependsOn: [subprojects.tasks['classes'], javadoc]) {
     baseName = 'meja'
     classifier = 'all'
     
@@ -93,9 +93,9 @@ task allJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
         from project.sourceSets.main.output
         // sources
         from project.sourceSets.main.java.srcDirs
-        // javadoc
-        from file("$rootDir/doc")    
     }
+    // javadoc
+    from file("$rootDir/doc")    
 }
 
 task dist(dependsOn: [depJar, srcJar, docJar, allJar]) {
