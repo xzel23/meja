@@ -1,0 +1,33 @@
+subprojects {
+    apply plugin: 'java'
+    group = 'com.dua3.meja'
+    version = '0.3 beta'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile "junit:junit:4.12"
+    }
+}
+
+project(':meja-ui-swing') {
+    dependencies {
+        compile project(':meja')
+    }
+}
+
+project(':meja-ui-jfx') {
+    dependencies {
+        compile project(':meja')
+    }
+}
+
+project(':meja-samples') {
+    dependencies {
+        compile project(':meja')
+        compile project(':meja-ui-swing')
+        compile project(':meja-ui-jfx')
+    }
+}
