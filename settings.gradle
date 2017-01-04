@@ -1,0 +1,3 @@
+include 'meja'
+
+rootProject.name = 'meja-root'
