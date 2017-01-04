@@ -1,3 +1,6 @@
 include 'meja'
+include 'meja-ui-swing'
+include 'meja-ui-jfx'
+include 'meja-ui-samples'
 
 rootProject.name = 'meja-root'
