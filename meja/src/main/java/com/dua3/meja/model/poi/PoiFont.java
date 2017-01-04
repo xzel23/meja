@@ -15,13 +15,15 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.meja.model.Font;
-import com.dua3.meja.model.Color;
 import java.util.Objects;
+
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+
+import com.dua3.meja.model.Color;
+import com.dua3.meja.model.Font;
 
 /**
  *
@@ -115,7 +117,6 @@ public class PoiFont implements Font {
         return getPoiFont().getStrikeout();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiFont) {

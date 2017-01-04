@@ -15,6 +15,10 @@
  */
 package com.dua3.meja.model.generic;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
@@ -22,10 +26,6 @@ import com.dua3.meja.model.RefOption;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.text.RichText;
 import com.dua3.meja.util.MejaHelper;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.Objects;
 
 /**
  *
@@ -50,7 +50,7 @@ public class GenericCell implements Cell {
      * span (3 bytes) T - cell type (1 byte)
      */
     private long data;
-    
+
     /**
      * The precalculated initial value for the data field with
      * rowspan=colspan=1 and a cell type of blank.

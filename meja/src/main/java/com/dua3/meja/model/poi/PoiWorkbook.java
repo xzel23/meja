@@ -15,15 +15,6 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
-import com.dua3.meja.text.Style;
-import com.dua3.meja.util.MejaHelper;
-import com.dua3.meja.model.Color;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -38,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -53,6 +45,16 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Color;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
+import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
+import com.dua3.meja.text.Style;
+import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -228,7 +230,6 @@ public abstract class PoiWorkbook implements Workbook {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiWorkbook) {
@@ -389,7 +390,7 @@ public abstract class PoiWorkbook implements Workbook {
      * @return true if formula evaluation is supported
      */
     public abstract boolean isFormulaEvaluationSupported();
-    
+
     /**
      * Convert {@link String} to {@link RichTextString}.
      * @param s the {@link String} to convert
@@ -421,27 +422,27 @@ public abstract class PoiWorkbook implements Workbook {
 
     PoiFont getPoiFont(com.dua3.meja.model.Font font, Style style) {
         Map<String, String> properties = style.properties();
-        
+
         if (properties.isEmpty() && font instanceof PoiFont && ((PoiFont)font).workbook==this) {
             return (PoiFont) font;
         }
 
-        // FIXME JDK 8 
+        // FIXME JDK 8
         // String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
         String name = properties.get(Style.FONT_FAMILY);
         if (name == null) {
             name = font.getFamily();
         }
-        
+
         String sSize = properties.get(Style.FONT_SIZE);
         short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : MejaHelper.decodeFontSize(sSize));
 
         final String sStyle = properties.get(Style.FONT_STYLE);
         boolean italic = sStyle == null ? font.isItalic() : "italic".equals(sStyle);
-        
+
         final String sWeight = properties.get(Style.FONT_WEIGHT);
         boolean bold = sWeight == null ? font.isBold() : "bold".equals(sWeight);
-        
+
         String sDecoration = properties.get(Style.TEXT_DECORATION);
         boolean underline = sDecoration==null ? font.isUnderlined() : "underline".equals(sDecoration);
         boolean strikethrough = sDecoration==null ? font.isStrikeThrough() : "line-through".equals(sDecoration);
@@ -452,7 +453,7 @@ public abstract class PoiWorkbook implements Workbook {
         // try to find existing font
         for (short i=0;i<poiWorkbook.getNumberOfFonts(); i++) {
             Font poiFont = poiWorkbook.getFontAt(i);
-            
+
             if (poiFont.getFontName().equalsIgnoreCase(name)
                     && poiFont.getFontHeightInPoints()==height
                     && poiFont.getBold() == bold
@@ -503,7 +504,7 @@ public abstract class PoiWorkbook implements Workbook {
         public boolean isFormulaEvaluationSupported() {
             return true;
         }
-        
+
         @Override
         Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
             if (poiColor == null || poiColor == HSSFColor.AUTOMATIC.getInstance()) {
@@ -626,7 +627,7 @@ public abstract class PoiWorkbook implements Workbook {
         public boolean isFormulaEvaluationSupported() {
             return !(poiWorkbook instanceof SXSSFWorkbook);
         }
-        
+
         @Override
         public Color getColor(Font poiFont, Color dfltColor) {
             return getColor(((XSSFFont) poiFont).getXSSFColor(), Color.BLACK);

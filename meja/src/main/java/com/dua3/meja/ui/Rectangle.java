@@ -37,10 +37,6 @@ public final class Rectangle {
         this(r.x, r.y, r.w, r.h);
     }
 
-    private static int round(double x) {
-        return (int) Math.round(x);
-    }
-
     public double getX() {
         return x;
     }

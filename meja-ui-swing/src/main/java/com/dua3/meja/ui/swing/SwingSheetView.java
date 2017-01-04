@@ -15,15 +15,6 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Color;
-import com.dua3.meja.model.Direction;
-import com.dua3.meja.model.SearchOptions;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.ui.Rectangle;
-import com.dua3.meja.ui.SegmentView;
-import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.util.MejaHelper;
 import java.awt.BasicStroke;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -47,6 +38,7 @@ import java.util.EnumSet;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -67,6 +59,16 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Color;
+import com.dua3.meja.model.Direction;
+import com.dua3.meja.model.SearchOptions;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.ui.Rectangle;
+import com.dua3.meja.ui.SegmentView;
+import com.dua3.meja.ui.SheetView;
+import com.dua3.meja.util.MejaHelper;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -119,7 +121,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      *
      * @param sheet the sheet to display
      */
-    @SuppressWarnings("LeakingThisInConstructor")
     public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
 
@@ -302,7 +303,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         if (sheet==null) {
             return;
         }
-        
+
         int row = sheet.getFirstRowNum();
         int col = sheet.getFirstColNum();
         setCurrentCell(row, col);
@@ -315,7 +316,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         if (sheet==null) {
             return;
         }
-        
+
         int row = sheet.getLastRowNum();
         int col = sheet.getLastColNum();
         setCurrentCell(row, col);
@@ -381,7 +382,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         if (sheet==null) {
             return false;
         }
-        
+
         Cell oldCell = sheet.getCurrentCell();
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
         int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
@@ -582,7 +583,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         if (sheet==null) {
             return;
         }
-        
+
         // scale according to screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         double scaleDpi = dpi / 72.0; // 1 point = 1/72 inch
@@ -648,11 +649,11 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         COPY (view -> view.copyToClipboard());
 
         private final Consumer<SwingSheetView> action;
-        
+
         private Actions(Consumer<SwingSheetView> action) {
             this.action = action;
         }
-        
+
         Action getAction(SwingSheetView view) {
             return new AbstractAction(name()) {
                 @Override
@@ -922,7 +923,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         private Rectangle getCellRectInViewCoordinates(Cell cell) {
             if (sheet==null) {
                 return null;
-            }    
+            }
 
             boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
             boolean isLeft = cell.getColumnNumber() < sheet.getSplitColumn();

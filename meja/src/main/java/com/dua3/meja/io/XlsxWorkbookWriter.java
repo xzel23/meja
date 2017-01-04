@@ -15,14 +15,15 @@
  */
 package com.dua3.meja.io;
 
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.poi.PoiWorkbook;
-import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.poi.PoiWorkbook;
+import com.dua3.meja.model.poi.PoiWorkbookFactory;
+
 /**
- * Implementation of {@link WorkbookWriter} for Excel files in the new 
+ * Implementation of {@link WorkbookWriter} for Excel files in the new
  * ".xlsx"-format.
  */
 public class XlsxWorkbookWriter extends WorkbookWriter {
@@ -45,13 +46,10 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
         if (workbook instanceof PoiWorkbook.PoiXssfWorkbook) {
             workbook.write(FileType.XLSX, out);
         } else {
-            Workbook xlsxWorkbook = PoiWorkbookFactory.instance().createXlsxStreaming(workbook.getLocale());
-            try {
+            try (Workbook xlsxWorkbook = PoiWorkbookFactory.instance().createXlsxStreaming(workbook.getLocale())) {
                 xlsxWorkbook.copy(workbook);
                 xlsxWorkbook.write(FileType.XLSX, out);
-            } finally {
                 out.flush();
-                xlsxWorkbook.close();
             }
         }
     }

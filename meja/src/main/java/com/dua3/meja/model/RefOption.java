@@ -31,5 +31,5 @@ public enum RefOption {
    * include the sheet name
    */
   WITH_SHEET
-};
+}
 

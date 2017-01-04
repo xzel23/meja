@@ -15,11 +15,6 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.util.MejaHelper;
-import com.dua3.meja.util.RectangularRegion;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -30,10 +25,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.apache.poi.ss.util.PaneInformation;
+
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
+
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.MejaHelper;
+import com.dua3.meja.util.RectangularRegion;
 
 /**
  *
@@ -182,7 +184,6 @@ public class PoiSheet implements Sheet {
         pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiSheet) {

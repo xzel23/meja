@@ -3,8 +3,10 @@
  */
 package com.dua3.meja.ui.javafx;
 
-import com.dua3.meja.ui.SegmentView;
 import java.util.function.IntSupplier;
+
+import com.dua3.meja.ui.SegmentView;
+
 import javafx.scene.control.Skin;
 
 /**
@@ -34,6 +36,7 @@ public class JfxSegmentView extends SheetControl implements SegmentView<JfxSheet
         return new JfxSegmentViewSkin(this);
     }
 
+    @Override
     protected void layoutChanged() {
         updateLayout();
     }

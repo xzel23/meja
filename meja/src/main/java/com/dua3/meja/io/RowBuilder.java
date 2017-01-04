@@ -61,6 +61,7 @@ public interface RowBuilder {
 
         @Override
         public void endRow() {
+          // nop
         }
 
         /**

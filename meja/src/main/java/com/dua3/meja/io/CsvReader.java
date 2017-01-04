@@ -40,7 +40,7 @@ public class CsvReader implements DataReader, AutoCloseable {
         return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, new FileReader(file), file.getName());
     }
 
-    public static CsvReader createReader(RowBuilder builder, InputStream in) throws IOException {
+    public static CsvReader createReader(RowBuilder builder, InputStream in) {
         return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, new InputStreamReader(in), "[stream]");
     }
 

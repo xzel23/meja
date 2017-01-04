@@ -15,14 +15,6 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.Color;
-import com.dua3.meja.model.Font;
-import com.dua3.meja.model.HAlign;
-import com.dua3.meja.model.VAlign;
-import com.dua3.meja.text.RichText;
 import javax.swing.JTextPane;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -37,6 +29,14 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
+
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.Font;
+import com.dua3.meja.model.HAlign;
+import com.dua3.meja.model.VAlign;
+import com.dua3.meja.text.RichText;
 
 /**
  *

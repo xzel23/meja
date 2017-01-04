@@ -15,10 +15,6 @@
  */
 package com.dua3.meja.excelviewer;
 
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.ui.swing.MejaSwingHelper;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -29,6 +25,7 @@ import java.net.URI;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -38,6 +35,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
+
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.ui.SheetView;
+import com.dua3.meja.ui.swing.MejaSwingHelper;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 
 /**
@@ -46,6 +48,7 @@ import com.dua3.meja.ui.swing.SwingWorkbookView;
  *
  * @author axel
  */
+@SuppressWarnings("serial")
 public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelViewer {
 
     private static final int STATUS_ERROR = 1;

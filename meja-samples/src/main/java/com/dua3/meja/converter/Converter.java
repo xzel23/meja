@@ -1,7 +1,7 @@
 /*
  *
  */
-package converter;
+package com.dua3.meja.converter;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
