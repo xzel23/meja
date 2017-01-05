@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.util;
 
-import com.dua3.meja.model.Cell;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.LocalDateTime;
@@ -24,6 +23,9 @@ import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
+
+import com.dua3.meja.model.Cell;
 
 /**
  *
@@ -71,23 +73,23 @@ public class CellValueHelper {
         }
 
         // boolean
-        Boolean b = parseBoolean(value);
-        if (b != null) {
-            cell.set(b);
+        Optional<Boolean> b = parseBoolean(value);
+        if (b.isPresent()) {
+            cell.set(b.get());
             return;
         }
 
         // number
-        Number number = parseNumber(value);
-        if (number != null) {
-            cell.set(number);
+        Optional<Number> number = parseNumber(value);
+        if (number.isPresent()) {
+            cell.set(number.get());
             return;
         }
 
         // date
-        LocalDateTime date = parseDate(value);
-        if (date != null) {
-            cell.set(date);
+        Optional<LocalDateTime> date = parseDate(value);
+        if (date.isPresent()) {
+            cell.set(date.get());
             return;
         }
 
@@ -102,14 +104,14 @@ public class CellValueHelper {
      * if{@code value} is equal to either "true" or "false" (ignoring case).
      * {@code null} otherwise.
      */
-    protected Boolean parseBoolean(String value) {
+    protected Optional<Boolean> parseBoolean(String value) {
         if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
-            return Boolean.FALSE;
+            return Optional.of(Boolean.FALSE);
         }
         if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
-            return Boolean.TRUE;
+            return Optional.of(Boolean.TRUE);
         }
-        return null;
+        return Optional.ofNullable(null);
     }
 
     /**
@@ -118,10 +120,10 @@ public class CellValueHelper {
      * @return instance of {@link Number} representing {@code value} or
      * {@code null}, if {@code value} could not be fully parsed
      */
-    protected Number parseNumber(String text) {
+    protected Optional<Number> parseNumber(String text) {
         ParsePosition pos = new ParsePosition(0);
         Number number = numberFormat.parse(text, pos);
-        return pos.getIndex() == text.length() ? number : null;
+        return Optional.ofNullable(pos.getIndex() == text.length() ? number : null);
     }
 
     /**
@@ -130,10 +132,10 @@ public class CellValueHelper {
      * @return instance of {@link Date} representing {@code value} or
      * {@code null}, if {@code value} could not be fully parsed
      */
-    protected LocalDateTime parseDate(String text) {
+    protected Optional<LocalDateTime> parseDate(String text) {
         ParsePosition pos = new ParsePosition(0);
-        TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);        
-        return pos.getIndex() == text.length() ? LocalDateTime.from(ta) : null;
+        TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);
+        return Optional.ofNullable(pos.getIndex() == text.length() ? LocalDateTime.from(ta) : null);
     }
 
 }

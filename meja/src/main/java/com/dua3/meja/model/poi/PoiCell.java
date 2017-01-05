@@ -15,6 +15,19 @@
  */
 package com.dua3.meja.model.poi;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.Objects;
+import java.util.logging.Logger;
+
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
@@ -25,17 +38,6 @@ import com.dua3.meja.text.Run;
 import com.dua3.meja.text.Style;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.Objects;
-import java.util.logging.Logger;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
  *
@@ -141,10 +143,6 @@ public final class PoiCell implements Cell {
         return type;
     }
 
-    private IllegalStateException newIllegalStateException(Exception e) {
-        return new IllegalStateException("[" + getCellRef(RefOption.WITH_SHEET) + "]: " + e.getMessage());
-    }
-
     @Override
     public Object get() {
         if (isEmpty()) {
@@ -173,57 +171,33 @@ public final class PoiCell implements Cell {
 
     @Override
     public boolean getBoolean() {
-        try {
-            return isEmpty() ? null : poiCell.getBooleanCellValue();
-        } catch (Exception e) {
-            throw newIllegalStateException(e);
-        }
+      return poiCell.getBooleanCellValue();
     }
 
     @Override
     public String getFormula() {
-        try {
-            return isEmpty() ? null : poiCell.getCellFormula();
-        } catch (Exception e) {
-            throw newIllegalStateException(e);
-        }
+        return poiCell.getCellFormula();
     }
 
     @Override
     @Deprecated
     public Date getDate() {
-        try {
-            return isEmpty() ? null : poiCell.getDateCellValue();
-        } catch (Exception e) {
-            throw newIllegalStateException(e);
-        }
+        return poiCell.getDateCellValue();
     }
 
     @Override
     public LocalDateTime getDateTime() {
-        try {
-            return isEmpty() ? null : LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
-        } catch (Exception e) {
-            throw newIllegalStateException(e);
-        }
+        return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
     }
 
     @Override
     public Number getNumber() {
-        try {
-            return isEmpty() ? null : poiCell.getNumericCellValue();
-        } catch (Exception e) {
-            throw newIllegalStateException(e);
-        }
+        return poiCell.getNumericCellValue();
     }
 
     @Override
     public RichText getText() {
-        try {
-            return isEmpty() ? RichText.emptyText() : toRichText(poiCell.getRichStringCellValue());
-        } catch (Exception e) {
-            throw newIllegalStateException(e);
-        }
+        return isEmpty() ? RichText.emptyText() : toRichText(poiCell.getRichStringCellValue());
     }
 
     @Override
@@ -312,7 +286,7 @@ public final class PoiCell implements Cell {
             }
         }
     }
-    
+
     @Override
     public void clear() {
         if (!isEmpty()) {
@@ -439,7 +413,6 @@ public final class PoiCell implements Cell {
         return this;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PoiCell) {
@@ -466,7 +439,6 @@ public final class PoiCell implements Cell {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public void setCellStyle(CellStyle cellStyle) {
         if (cellStyle instanceof PoiCellStyle) {

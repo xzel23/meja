@@ -1,5 +1,7 @@
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'findbugs'
+    
     group = 'com.dua3.meja'
 
     repositories {
@@ -23,6 +25,13 @@ allprojects {
 
     tasks.withType(Javadoc) {
         destinationDir = file("$rootDir/doc")
+    }
+
+    tasks.withType(FindBugs) {
+        reports {
+            xml.enabled false
+            html.enabled true
+        }
     }
 }
 

@@ -16,9 +16,10 @@
  */
 package com.dua3.meja.model;
 
-import com.dua3.meja.text.RichText;
 import java.time.LocalDateTime;
 import java.util.Date;
+
+import com.dua3.meja.text.RichText;
 
 /**
  * A single cell of a sheet.
@@ -67,7 +68,7 @@ public interface Cell {
      * Return boolean cell value.
      *
      * @return boolean cell value
-     * @throws IllegalArgumentException if cell is not of boolean type
+     * @throws IllegalStateException if cell is not of boolean type
      */
     boolean getBoolean();
 
@@ -75,7 +76,7 @@ public interface Cell {
      * Return formula.
      *
      * @return the cell`s formula
-     * @throws IllegalArgumentException if no formula is set
+     * @throws IllegalStateException if no formula is set
      */
     String getFormula();
 
@@ -83,7 +84,7 @@ public interface Cell {
      * Return date value.
      *
      * @return date cell value
-     * @throws IllegalArgumentException if cell is not of date value
+     * @throws IllegalStateException if cell is not of date value
      * @deprecated
      */
     @Deprecated
@@ -93,7 +94,7 @@ public interface Cell {
      * Return date value.
      *
      * @return date cell value
-     * @throws IllegalArgumentException if cell is not of date value
+     * @throws IllegalStateException if cell is not of date value
      */
     LocalDateTime getDateTime();
 
@@ -101,7 +102,7 @@ public interface Cell {
      * Return numeric value.
      *
      * @return numeric cell value
-     * @throws IllegalArgumentException if cell is not of numeric type
+     * @throws IllegalStateException if cell is not of numeric type
      */
     Number getNumber();
 
@@ -109,7 +110,7 @@ public interface Cell {
      * Return string value.
      *
      * @return text cell value
-     * @throws IllegalArgumentException if cell is not of text type
+     * @throws IllegalStateException if cell is not of text type
      */
     RichText getText();
 
@@ -191,7 +192,7 @@ public interface Cell {
      *
      * @param arg date
      * @return this cell
-     * @deprecated 
+     * @deprecated
      */
     @Deprecated
     Cell set(Date arg);
@@ -291,7 +292,7 @@ public interface Cell {
 
     /**
      * Unmerge cell.
-     * @throws IllegalArgumentException if this cell is not the top left cell
+     * @throws IllegalStateException if this cell is not the top left cell
      * of a merged region
      */
     void unMerge();
@@ -305,7 +306,7 @@ public interface Cell {
 
     /**
      * Return string representation of cell content.
-     * @return 
+     * @return string representation of cell content
      */
     @Override
     String toString();
