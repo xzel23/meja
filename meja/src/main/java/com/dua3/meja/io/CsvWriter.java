@@ -26,7 +26,7 @@ import java.io.Writer;
  * @author axel@dua3.com
  */
 public class CsvWriter implements AutoCloseable, Flushable {
-    private static final String allowedChars = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
+  private static final String allowedChars = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
   private PrintWriter out;
   private String lineDelimiter = "%n";
@@ -77,7 +77,7 @@ public class CsvWriter implements AutoCloseable, Flushable {
     return isQuoteNeeded(text) ? quote(text) : text;
   }
 
-  
+
   private boolean isQuoteNeeded(String text) {
     for(char c:text.toCharArray()) {
         if (c==separator || c==delimiter) {
@@ -85,10 +85,10 @@ public class CsvWriter implements AutoCloseable, Flushable {
         } else if (!Character.isLetterOrDigit(c) && allowedChars.indexOf(c)==-1) {
             return true;
         }
-    }    
+    }
     return false;
   }
-  
+
   private String quote(String text) {
     return delimiter+text.replaceAll("\"", "\"\"")+delimiter;
   }

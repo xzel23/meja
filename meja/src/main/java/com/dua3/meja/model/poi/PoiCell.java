@@ -121,6 +121,7 @@ public final class PoiCell implements Cell {
 
     @Override
     public CellType getCellType() {
+        @SuppressWarnings("deprecation")
         CellType type = translateCellType(poiCell.getCellTypeEnum());
         // since formulas returning dates should return CellType.FORMULA
         // rather than CellType.DATE, only test for dates if cell is numeric.
@@ -130,6 +131,7 @@ public final class PoiCell implements Cell {
         return type;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public CellType getResultType() {
         org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
@@ -354,6 +356,7 @@ public final class PoiCell implements Cell {
         return this;
     }
 
+    @SuppressWarnings("deprecation")
     private boolean isCellDateFormatted() {
         /*
          * DateUtil.isCellDateFormatted() throws IllegalStateException
@@ -395,6 +398,7 @@ public final class PoiCell implements Cell {
         return this;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public PoiCell setFormula(String arg) {
         Object old = get();
@@ -427,6 +431,7 @@ public final class PoiCell implements Cell {
         return poiCell.hashCode();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isEmpty() {
         switch (poiCell.getCellTypeEnum()) {
@@ -512,6 +517,7 @@ public final class PoiCell implements Cell {
         return rtb.toRichText();
     }
 
+    @SuppressWarnings("deprecation") // because use of set(java.util.Date)
     @Override
     public void copy(Cell other) {
         setStyle(other.getCellStyle().getName());

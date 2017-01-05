@@ -15,17 +15,6 @@
  */
 package com.dua3.meja.util;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.io.OpenMode;
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.RefOption;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.SearchOptions;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.text.RichText;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
@@ -39,6 +28,18 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.RefOption;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.SearchOptions;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.text.RichText;
 
 /**
  * Helper class.
@@ -208,7 +209,7 @@ public class MejaHelper {
         String prefixRow = "";
         String prefixColumn = "";
         String sheet = "";
-        
+
         for (RefOption o: options) {
             switch (o) {
             case FIX_COLUMN:
@@ -222,11 +223,11 @@ public class MejaHelper {
                 break;
             }
         }
-        
-        String ref = sheet 
-                + prefixColumn + getColumnName(cell.getColumnNumber()) 
+
+        String ref = sheet
+                + prefixColumn + getColumnName(cell.getColumnNumber())
                 + prefixRow + (cell.getRowNumber() + 1);
-        
+
         return ref;
     }
 
@@ -449,6 +450,7 @@ public class MejaHelper {
         return null;
     }
 
+    @SuppressWarnings("deprecation") // because of using cell.set(java.util.Date)
     public static void set(Cell cell, Object arg) {
         if (arg == null) {
             cell.clear();
