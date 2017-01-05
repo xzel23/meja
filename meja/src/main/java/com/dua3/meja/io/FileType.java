@@ -15,12 +15,15 @@
  */
 package com.dua3.meja.io;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -74,8 +77,8 @@ public enum FileType {
         return extensions[0];
     }
 
-    public String[] getExtensions() {
-        return extensions;
+    public List<String> getExtensions() {
+        return Collections.unmodifiableList(Arrays.asList(extensions));
     }
 
     /**

@@ -15,12 +15,6 @@
  */
 package com.dua3.meja.model.generic;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.util.MejaHelper;
-import com.dua3.meja.util.RectangularRegion;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -33,6 +27,13 @@ import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.MejaHelper;
+import com.dua3.meja.util.RectangularRegion;
+
 /**
  * A generic implementation of {@link Sheet}.
  */
@@ -43,6 +44,9 @@ public class GenericSheet implements Sheet {
      */
     private static final float DEFAULT_FONT_ASPECT_RATIO = 0.52f;
 
+    private static final float DEFAULT_COLUMN_WIDTH = 80f;
+    private static final float DEFAULT_ROW_HEIGHT = 12f;
+
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private final GenericWorkbook workbook;
@@ -50,9 +54,7 @@ public class GenericSheet implements Sheet {
     private final Locale locale;
     private final List<GenericRow> rows = new ArrayList<>(4_000);
     private final List<RectangularRegion> mergedRegions = new ArrayList<>();
-    private final float defaultColumnWidth = 80f;
     private final ArrayList<Float> columnWidth = new ArrayList<>(200);
-    private final float defaultRowHeight = 12f;
     private final ArrayList<Float> rowHeight = new ArrayList<>(4_000);
     private int freezeRow;
     private int freezeColumn;
@@ -108,7 +110,7 @@ public class GenericSheet implements Sheet {
     @Override
     public float getColumnWidth(int j) {
         Float width = j < columnWidth.size() ? columnWidth.get(j) : null;
-        return width != null ? width : defaultColumnWidth;
+        return width != null ? width : DEFAULT_COLUMN_WIDTH;
     }
 
     @Override
@@ -130,7 +132,7 @@ public class GenericSheet implements Sheet {
     @Override
     public float getRowHeight(int i) {
         Float height = i < rowHeight.size() ? rowHeight.get(i) : null;
-        return height != null ? height : defaultRowHeight;
+        return height != null ? height : DEFAULT_ROW_HEIGHT;
     }
 
     @Override
