@@ -341,7 +341,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
                     // user cancelled the dialog
                     return;
                 }
-                workbookChanged(uri, newUri);
+                workbookChanged(null /* uri */, newUri);
             } else {
                 model.saveWorkbook(uri);
             }

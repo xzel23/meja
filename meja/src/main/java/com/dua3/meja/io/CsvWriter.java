@@ -18,8 +18,10 @@ package com.dua3.meja.io;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 
 /**
  *
@@ -51,7 +53,11 @@ public class CsvWriter implements AutoCloseable, Flushable {
   }
 
   public CsvWriter(char separator, char delimiter, OutputStream out) {
-    this(separator, delimiter, new PrintWriter(out));
+    this(separator, delimiter, out, Charset.defaultCharset());
+  }
+
+  public CsvWriter(char separator, char delimiter, OutputStream out, Charset cs) {
+    this(separator, delimiter, new PrintWriter(new OutputStreamWriter(out, cs)));
   }
 
   public CsvWriter(char separator, char delimiter, PrintWriter out) {

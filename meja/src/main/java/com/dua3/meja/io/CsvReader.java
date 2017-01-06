@@ -17,12 +17,13 @@ package com.dua3.meja.io;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -36,12 +37,14 @@ import java.util.regex.Pattern;
  */
 public class CsvReader implements DataReader, AutoCloseable {
 
-    public static CsvReader createReader(RowBuilder builder, File file) throws FileNotFoundException {
-        return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, new FileReader(file), file.getName());
+    public static CsvReader createReader(RowBuilder builder, File file, Charset charSet) throws FileNotFoundException {
+        Reader reader = new InputStreamReader(new FileInputStream(file), charSet);
+        return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, reader, file.getName());
     }
 
-    public static CsvReader createReader(RowBuilder builder, InputStream in) {
-        return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, new InputStreamReader(in), "[stream]");
+    public static CsvReader createReader(RowBuilder builder, InputStream in, Charset charSet) {
+        Reader reader = new InputStreamReader(in, charSet);
+        return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, reader, "[stream]");
     }
 
     private RowBuilder rowBuilder;

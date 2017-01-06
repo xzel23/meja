@@ -3,15 +3,18 @@
  */
 package com.dua3.meja.excelviewer;
 
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.ui.javafx.JfxWorkbookView;
-import com.dua3.meja.ui.javafx.MejaJfxHelper;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JOptionPane;
+
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.ui.SheetView;
+import com.dua3.meja.ui.javafx.JfxWorkbookView;
+import com.dua3.meja.ui.javafx.MejaJfxHelper;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -24,7 +27,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -151,7 +153,6 @@ public class JfxExcelViewer extends Application {
                     return;
                 }
             } else {
-                File file = new File(uri);
                 model.saveWorkbook(uri);
             }
         } catch (IOException ex) {
