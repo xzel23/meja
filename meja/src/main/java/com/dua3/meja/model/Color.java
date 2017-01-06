@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,7 +23,8 @@ import java.util.Map;
 /**
  * Color in ARGB format.
  */
-public class Color {
+public class Color implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private static final Map<String, Color> COLORS = new LinkedHashMap<>();
 
@@ -358,7 +360,7 @@ public class Color {
         if (obj == null || obj.getClass()!=getClass()) {
             return false;
         }
-        
+
         return ((Color)obj).argb == argb;
     }
 
@@ -366,5 +368,5 @@ public class Color {
     public int hashCode() {
         return argb;
     }
-        
+
 }

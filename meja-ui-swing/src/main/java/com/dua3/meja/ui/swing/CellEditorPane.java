@@ -225,7 +225,7 @@ public class CellEditorPane extends JTextPane {
                     increase = 0;
                     break;
                 case ALIGN_MIDDLE:
-                    offset = available / 2;
+                    offset = (float) available / 2;
                     increase = 0;
                     break;
                 case ALIGN_JUSTIFY:

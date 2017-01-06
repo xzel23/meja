@@ -97,6 +97,9 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 case "oblique":
                     StyleConstants.setItalic(as, true);
                     break;
+                default:
+                  LOGGER.warning("Unknown value for FONT_STYLE: "+e.getValue());
+                  break;
                 }
                 break;
             case Style.TEXT_DECORATION:
@@ -107,6 +110,9 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 case "underline":
                     StyleConstants.setUnderline(as, true);
                     break;
+                default:
+                  LOGGER.warning("Unknown value for TEXT_DECORATION: "+e.getValue());
+                  break;
                 }
                 break;
             }

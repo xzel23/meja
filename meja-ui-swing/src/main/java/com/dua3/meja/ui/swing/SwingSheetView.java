@@ -77,10 +77,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     private static final long serialVersionUID = 1L;
 
-    private final SwingSheetPainter sheetPainter;
-    private final CellEditor editor;
-    private final SheetPane sheetPane;
-    private SearchDialog searchDialog = null;
+    private final transient SwingSheetPainter sheetPainter = new SwingSheetPainter(this, new DefaultCellRenderer());
+    private final transient CellEditor editor = new DefaultCellEditor(this);
+    private final transient SheetPane sheetPane = new SheetPane();
+    private final transient SearchDialog searchDialog = new SearchDialog();
 
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
@@ -123,12 +123,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
-
-        sheetPainter = new SwingSheetPainter(this, new DefaultCellRenderer());
-        editor = new DefaultCellEditor(this);
-        sheetPane = new SheetPane();
-        searchDialog = new SearchDialog();
-
         init(sheet);
     }
 
@@ -289,6 +283,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             case SOUTH:
                 y = Math.min(getSheetHeight() - 1, y + getVisibleRect().height);
                 break;
+            case WEST:
+              x = Math.max(0, x - getVisibleRect().width);
+              break;
+            case EAST:
+              x = Math.min(getSheetWidth() - 1, y + getVisibleRect().width);
+              break;
         }
 
         int row = sheetPainter.getRowNumberFromY(yD2S(y));
