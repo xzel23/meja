@@ -23,9 +23,8 @@ import java.util.Map;
 /**
  * Color in ARGB format.
  */
-public class Color implements Serializable {
-    private static final long serialVersionUID = 1L;
-
+@SuppressWarnings("serial")
+public final class Color implements Serializable {
     private static final Map<String, Color> COLORS = new LinkedHashMap<>();
 
     // predefined Color constants

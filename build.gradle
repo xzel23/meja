@@ -32,7 +32,13 @@ allprojects {
             xml.enabled false
             html.enabled true
         }
+
+        findbugs {
+            effort = "max"
+            reportLevel = "high"
+        }
     }
+
 }
 
 project(':meja') {

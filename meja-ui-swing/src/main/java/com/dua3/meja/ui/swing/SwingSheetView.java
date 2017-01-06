@@ -73,6 +73,7 @@ import com.dua3.meja.util.MejaHelper;
 /**
  * Swing component for displaying instances of {@link Sheet}.
  */
+@SuppressWarnings("serial")
 public class SwingSheetView extends JPanel implements SheetView, PropertyChangeListener {
 
     private static final long serialVersionUID = 1L;
@@ -634,7 +635,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     /**
      * Actions for key bindings.
      */
-    @SuppressWarnings("serial")
     static enum Actions {
         MOVE_UP (view -> view.move(Direction.NORTH)),
         MOVE_DOWN (view -> view.move(Direction.SOUTH)),
