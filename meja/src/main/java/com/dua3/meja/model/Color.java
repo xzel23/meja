@@ -270,9 +270,7 @@ public final class Color implements Serializable {
 
         // HEX colors
         if (s.startsWith("#")) {
-            // FIXME JDK 8
-            // int i = Integer.parseUnsignedInt(s.substring(1), 16);
-            int i = (int) Long.parseLong(s.substring(1), SHIFT_R);
+            int i = Integer.parseUnsignedInt(s.substring(1), 16);
             return new Color(i);
         }
 

@@ -124,6 +124,12 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     /**
+     * Return the standard file type for this implementation.
+     * @return the file type matching the underlying POI implementation
+     */
+    protected abstract FileType getStandardFileType();
+
+    /**
      *
      */
     protected final void init() {
@@ -195,9 +201,7 @@ public abstract class PoiWorkbook implements Workbook {
 
     @Override
     public void write(FileType type, OutputStream out) throws IOException {
-        boolean saveXlsxAsIs = type == FileType.XLSX && (poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook);
-        boolean saveXlsAsIS = type == FileType.XLS && poiWorkbook instanceof HSSFWorkbook;
-        if (saveXlsxAsIs || saveXlsAsIS) {
+        if (type == getStandardFileType()) {
             // if the workbook is to be saved in the same format, write it out directly so that
             // features not yet supported by Meja don't get lost in the process
             poiWorkbook.write(out);
@@ -428,12 +432,7 @@ public abstract class PoiWorkbook implements Workbook {
             return (PoiFont) font;
         }
 
-        // FIXME JDK 8
-        // String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
-        String name = properties.get(Style.FONT_FAMILY);
-        if (name == null) {
-            name = font.getFamily();
-        }
+        String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
 
         String sSize = properties.get(Style.FONT_SIZE);
         short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : MejaHelper.decodeFontSize(sSize));
@@ -566,6 +565,11 @@ public abstract class PoiWorkbook implements Workbook {
             return new PoiFont(this, poiFont);
         }
 
+        @Override
+        protected FileType getStandardFileType() {
+          return FileType.XLS;
+        }
+
     }
 
     /**
@@ -650,6 +654,11 @@ public abstract class PoiWorkbook implements Workbook {
             poiFont.setUnderline(fontUnderlined ? org.apache.poi.ss.usermodel.Font.U_SINGLE : org.apache.poi.ss.usermodel.Font.U_NONE);
             poiFont.setStrikeout(fontStrikeThrough);
             return new PoiFont(this, poiFont);
+        }
+
+        @Override
+        protected FileType getStandardFileType() {
+          return FileType.XLSX;
         }
     }
 
