@@ -132,15 +132,17 @@ public class MejaHelper {
      * name
      */
     public static int getColumnNumber(String colName) {
-        int col = 0;
-        for (char c : colName.toLowerCase().toCharArray()) {
-            if (c < 'a' || 'z' < c) {
-                throw new IllegalArgumentException("'" + colName + "' ist no valid column name.");
-            }
-
-            col = col * ('z' - 'a' + 1) + (c - 'a' + 1);
+      final int stride = 'z' - 'a' + 1;
+      int col = 0;
+      for (char c : colName.toLowerCase().toCharArray()) {
+        if (c < 'a' || 'z' < c) {
+          throw new IllegalArgumentException("'" + colName + "' ist no valid column name.");
         }
-        return col - 1;
+
+        int d = c - 'a' + 1;
+        col = col * stride + d;
+      }
+      return col - 1;
     }
 
     /**

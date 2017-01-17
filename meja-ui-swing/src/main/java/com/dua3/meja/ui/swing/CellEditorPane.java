@@ -151,17 +151,11 @@ public class CellEditorPane extends JTextPane {
      * A custom EditorKit to allow vertical alignment of text.
      */
     class CellEditorKit extends StyledEditorKit {
-
         private static final long serialVersionUID = 1L;
 
         @Override
         public ViewFactory getViewFactory() {
             return new CellEditorViewFactory();
-        }
-
-        @Override
-        public Object clone() {
-            return super.clone();
         }
     }
 

@@ -195,9 +195,10 @@ public abstract class PoiWorkbook implements Workbook {
 
     @Override
     public void write(FileType type, OutputStream out) throws IOException {
-        if ((type == FileType.XLSX && ((poiWorkbook instanceof XSSFWorkbook) || (poiWorkbook instanceof SXSSFWorkbook)))
-                || (type == FileType.XLS && poiWorkbook instanceof HSSFWorkbook)) {
-            // if Workbook is PoiWorkbook it should be written directly so that
+        boolean saveXlsxAsIs = type == FileType.XLSX && (poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook);
+        boolean saveXlsAsIS = type == FileType.XLS && poiWorkbook instanceof HSSFWorkbook;
+        if (saveXlsxAsIs || saveXlsAsIS) {
+            // if the workbook is to be saved in the same format, write it out directly so that
             // features not yet supported by Meja don't get lost in the process
             poiWorkbook.write(out);
         } else {
@@ -583,7 +584,7 @@ public abstract class PoiWorkbook implements Workbook {
          */
         public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
             super(poiWorkbook, locale, uri);
-            assert (poiWorkbook instanceof XSSFWorkbook) || (poiWorkbook instanceof SXSSFWorkbook);
+            assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt((short) 0));
             init();
         }
