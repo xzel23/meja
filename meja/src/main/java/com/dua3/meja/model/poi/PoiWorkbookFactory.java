@@ -87,24 +87,13 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     /**
      *
      * @param in
-     * @param uri
-     * @return
-     * @throws IOException
-     */
-    public Workbook open(InputStream in, URI uri)
-            throws IOException {
-        return open(in, Locale.getDefault(), uri);
-    }
-
-    /**
-     *
-     * @param in
      * @param locale
      * @param uri
-     * @return
+     * @return the workbook
      * @throws IOException
      */
-    public Workbook open(InputStream in, Locale locale, URI uri)
+    @SuppressWarnings("resource")
+	private static Workbook open(InputStream in, Locale locale, URI uri)
             throws IOException {
         try {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
@@ -118,7 +107,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     /**
      *
      * @param uri
-     * @return
+     * @return the workbook
      * @throws IOException
      */
     public Workbook open(URI uri) throws IOException {
@@ -129,7 +118,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
      *
      * @param uri
      * @param locale
-     * @return
+     * @return the workbook
      * @throws IOException
      */
     public Workbook open(URI uri, Locale locale)
@@ -140,7 +129,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     /**
      *
      * @param url
-     * @return
+     * @return the workbook
      * @throws IOException
      */
     public Workbook open(URL url) throws IOException {
@@ -148,10 +137,10 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     /**
-     *
+     * Open workbook from URL.
      * @param url
      * @param locale
-     * @return
+     * @return the workbook
      * @throws IOException
      */
     public Workbook open(URL url, Locale locale)
@@ -201,7 +190,8 @@ public class PoiWorkbookFactory extends WorkbookFactory {
      * @param locale the locale to use
      * @return the newly created Workbook
      */
-    public Workbook createXls(Locale locale) {
+    @SuppressWarnings("resource")
+	public Workbook createXls(Locale locale) {
         return new PoiHssfWorkbook(
                 new org.apache.poi.hssf.usermodel.HSSFWorkbook(), locale, null);
     }
@@ -219,7 +209,8 @@ public class PoiWorkbookFactory extends WorkbookFactory {
      * @param locale
      * @return the newly created Workbook
      */
-    public Workbook createXlsx(Locale locale) {
+    @SuppressWarnings("resource")
+	public Workbook createXlsx(Locale locale) {
         return new PoiXssfWorkbook(new XSSFWorkbook(), locale, null);
     }
 
@@ -228,11 +219,12 @@ public class PoiWorkbookFactory extends WorkbookFactory {
      * @param locale the {@link Locale} to use
      * @return the newly created Workbook
      */
-    public Workbook createXlsxStreaming(Locale locale) {
+    @SuppressWarnings("resource")
+	public Workbook createXlsxStreaming(Locale locale) {
         return new PoiXssfWorkbook(new SXSSFWorkbook(), locale, null);
     }
 
-    private Workbook createWorkbook(
+    private static Workbook createWorkbook(
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
         if (poiWorkbook instanceof HSSFWorkbook) {
             return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, locale, uri);
