@@ -98,7 +98,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
     /**
      * The application name to show in title bar.
      */
-    public final static String APPLICATION_NAME = "Méja ExcelViewer";
+    public final static String APPLICATION_NAME = "Meja ExcelViewer";
 
     public final static String AUTHOR = "Axel Howind";
 
@@ -297,7 +297,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
             final URI uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
             if (uri != null) {
                 workbook.setUri(uri);
-                updateTitle(uri);
+                updateUri(uri);
                 Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Successfully saved ''{0}''.", uri);
             }
         } catch (IOException ex) {
@@ -306,13 +306,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         }
     }
 
-    public void updateTitle(URI uri) {
+    private void updateUri(URI uri) {
         if (uri != null) {
             setTitle(APPLICATION_NAME + " - " + uri.getPath());
-            try {
-                model.setCurrentDir(new File(uri));
-            } catch (IllegalArgumentException e) {
-                //nop
+            if (uri.getScheme().equalsIgnoreCase("file")) {
+              model.setCurrentDir(new File(uri).getParentFile());
             }
         } else {
             setTitle(APPLICATION_NAME);
@@ -323,7 +321,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
     public void workbookChanged(URI oldUri, URI newUri) {
         firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
         workbookView.setWorkbook(model.getWorkbook());
-        updateTitle(newUri);
+        updateUri(newUri);
     }
 
 

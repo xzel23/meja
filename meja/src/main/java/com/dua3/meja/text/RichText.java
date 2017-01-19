@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-// FIXME JDK 8 import java.util.stream.Stream;
+import java.util.stream.Stream;
 
 /**
  *
@@ -31,9 +31,9 @@ public class RichText implements Iterable<Run> {
     private static RichText EMPTY_TEXT = RichText.valueOf("");
 
     private static final Comparator<RichText> COMPARATOR = (RichText o1, RichText o2) -> o1.text.compareTo(o2.text);
-    
+
     private static final Comparator<RichText> COMPARATOR_CASE_INSENSITIVE = (RichText o1, RichText o2) -> o1.text.compareToIgnoreCase(o2.text);
-    
+
     private final String text;
     private final List<Run> runs;
 
@@ -43,29 +43,29 @@ public class RichText implements Iterable<Run> {
 
     /**
      * Get comparator.
-     * 
+     *
      * <b>Note:</b> This ordering is inconsistent with equals because the
      * comparator returned only compares texts and completely ignores
      * formatting. In consequence, the comparator violates the condition
      * {@code (x.compareTo(y)==0) == (x.equals(y)) } if {@code x} and {@code y}
      * are instances of {@code RichText} that differ only in formatting.
-     * 
+     *
      * @return comparator for instances of {@code RichText}.
      */
     public static Comparator<RichText> comparator() {
-        return COMPARATOR;        
+        return COMPARATOR;
     }
-    
+
     /**
      * Get case insensitive comparator.
      * <b>Note:</b> this ordering is inconsistent with equals.
-     * 
+     *
      * @return case insensitive comparator for instances of {@code RichText}.
      */
     public static Comparator<RichText> comparatorIgnoreCase() {
-        return COMPARATOR_CASE_INSENSITIVE;        
+        return COMPARATOR_CASE_INSENSITIVE;
     }
-    
+
     public static RichText valueOf(Object o) {
         return valueOf(String.valueOf(o));
     }
@@ -93,10 +93,9 @@ public class RichText implements Iterable<Run> {
         return runs.iterator();
     }
 
-    // FIXME JDK 8
-    // public Stream<Run> stream() {
-    //     return runs.stream();
-    // }
+     public Stream<Run> stream() {
+       return runs.stream();
+    }
 
     public boolean isEmpty() {
         return text.isEmpty();
@@ -111,8 +110,8 @@ public class RichText implements Iterable<Run> {
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        
-        RichText other = (RichText) obj;        
+
+        RichText other = (RichText) obj;
         return runs.equals(other.runs);
     }
 
@@ -120,5 +119,5 @@ public class RichText implements Iterable<Run> {
     public int hashCode() {
         return text.hashCode() + 17*runs.size();
     }
-    
+
 }

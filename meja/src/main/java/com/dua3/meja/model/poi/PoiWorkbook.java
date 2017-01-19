@@ -124,6 +124,12 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     /**
+     * Return the standard file type for this implementation.
+     * @return the file type matching the underlying POI implementation
+     */
+    protected abstract FileType getStandardFileType();
+
+    /**
      *
      */
     protected final void init() {
@@ -195,9 +201,8 @@ public abstract class PoiWorkbook implements Workbook {
 
     @Override
     public void write(FileType type, OutputStream out) throws IOException {
-        if ((type == FileType.XLSX && ((poiWorkbook instanceof XSSFWorkbook) || (poiWorkbook instanceof SXSSFWorkbook)))
-                || (type == FileType.XLS && poiWorkbook instanceof HSSFWorkbook)) {
-            // if Workbook is PoiWorkbook it should be written directly so that
+        if (type == getStandardFileType()) {
+            // if the workbook is to be saved in the same format, write it out directly so that
             // features not yet supported by Meja don't get lost in the process
             poiWorkbook.write(out);
         } else {
@@ -427,12 +432,7 @@ public abstract class PoiWorkbook implements Workbook {
             return (PoiFont) font;
         }
 
-        // FIXME JDK 8
-        // String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
-        String name = properties.get(Style.FONT_FAMILY);
-        if (name == null) {
-            name = font.getFamily();
-        }
+        String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
 
         String sSize = properties.get(Style.FONT_SIZE);
         short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : MejaHelper.decodeFontSize(sSize));
@@ -565,6 +565,11 @@ public abstract class PoiWorkbook implements Workbook {
             return new PoiFont(this, poiFont);
         }
 
+        @Override
+        protected FileType getStandardFileType() {
+          return FileType.XLS;
+        }
+
     }
 
     /**
@@ -583,7 +588,7 @@ public abstract class PoiWorkbook implements Workbook {
          */
         public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
             super(poiWorkbook, locale, uri);
-            assert (poiWorkbook instanceof XSSFWorkbook) || (poiWorkbook instanceof SXSSFWorkbook);
+            assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt((short) 0));
             init();
         }
@@ -649,6 +654,11 @@ public abstract class PoiWorkbook implements Workbook {
             poiFont.setUnderline(fontUnderlined ? org.apache.poi.ss.usermodel.Font.U_SINGLE : org.apache.poi.ss.usermodel.Font.U_NONE);
             poiFont.setStrikeout(fontStrikeThrough);
             return new PoiFont(this, poiFont);
+        }
+
+        @Override
+        protected FileType getStandardFileType() {
+          return FileType.XLSX;
         }
     }
 

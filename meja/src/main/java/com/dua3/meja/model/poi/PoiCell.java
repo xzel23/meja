@@ -367,7 +367,7 @@ public final class PoiCell implements Cell {
         if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
             poiType = poiCell.getCachedFormulaResultTypeEnum();
         }
-        return (poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC)
+        return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC
                 && DateUtil.isCellDateFormatted(poiCell);
     }
 
