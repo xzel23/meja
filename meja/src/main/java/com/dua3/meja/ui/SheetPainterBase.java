@@ -88,10 +88,6 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
     protected abstract void render(GC g, Cell cell, Rectangle textRect, Rectangle clipRect);
 
-    private String getRowName(int i) {
-        return Integer.toString(i+1);
-    }
-
     protected void beginDraw(GC gc) {
         // nop
     }
@@ -126,10 +122,6 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
     public double getSheetHeightInPoints() {
         return sheetHeightInPoints;
-    }
-
-    private String getColumnName(int j) {
-        return MejaHelper.getColumnName(j);
     }
 
     protected abstract double getRowLabelWidth();
@@ -640,7 +632,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         for (int i = startRow; i < endRow; i++) {
             r.setY(getRowPos(i));
             r.setH(getRowPos(i+1)-r.getY());
-            String text = getRowName(i);
+            String text = MejaHelper.getRowName(i);
             drawLabel(gc, r, text);
         }
 
@@ -649,7 +641,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         for (int j = startColumn; j < endColumn; j++) {
             r.setX(getColumnPos(j));
             r.setW(getColumnPos(j+1)-r.getX());
-            String text = getColumnName(j);
+            String text = MejaHelper.getColumnName(j);
             drawLabel(gc, r, text);
         }
     }

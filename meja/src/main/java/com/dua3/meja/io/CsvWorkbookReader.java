@@ -49,8 +49,7 @@ public class CsvWorkbookReader extends WorkbookReader {
       return read(clazz, locale, in, uri, Charset.defaultCharset());
     }
 
-    @SuppressWarnings("static-method")
-	public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, InputStream in, URI uri, Charset charset) throws IOException {
+    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, InputStream in, URI uri, Charset charset) throws IOException {
       try {
           WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
           workbook.setUri(uri);

@@ -1,6 +1,7 @@
 package com.dua3.meja.samples;
 
 import java.awt.HeadlessException;
+import java.io.IOException;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -28,6 +29,8 @@ public class KitchenSink extends JFrame {
         instance.setVisible(true);
     }
 
+	private Workbook wb;
+
     public KitchenSink() throws HeadlessException {
         super("Méja Kitchensink demo");
         init();
@@ -38,11 +41,12 @@ public class KitchenSink extends JFrame {
         final SwingWorkbookView view = new SwingWorkbookView();
         this.setContentPane(view);
 
-        Workbook wb = createWorkbook(GenericWorkbookFactory.instance());
+        wb = createWorkbook(GenericWorkbookFactory.instance());
+        
         view.setWorkbook(wb);
     }
 
-    Workbook createWorkbook(WorkbookFactory factory) {
+    private static Workbook createWorkbook(WorkbookFactory factory) {
         Workbook wb = factory.create();
 
         addColorSheet(wb);
@@ -50,7 +54,7 @@ public class KitchenSink extends JFrame {
         return wb;
     }
 
-    void addColorSheet(Workbook wb) {
+    private static void addColorSheet(Workbook wb) {
         Sheet sheet = wb.createSheet("colors");
 
         Row row = sheet.getRow(0);
@@ -82,5 +86,15 @@ public class KitchenSink extends JFrame {
             row.getCell(2).set("darker").setCellStyle(csDark);
             row.getCell(3).set("brighter").setCellStyle(csBright);
         }
+    }
+    
+    @Override
+    public void dispose() {
+    	try {
+			wb.close();
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+    	super.dispose();
     }
 }

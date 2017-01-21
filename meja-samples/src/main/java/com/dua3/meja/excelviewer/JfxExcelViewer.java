@@ -121,7 +121,7 @@ public class JfxExcelViewer extends Application {
         launch(args);
     }
 
-    void closeApplication() {
+    private void closeApplication() {
         Platform.exit();
     }
 

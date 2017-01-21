@@ -149,7 +149,7 @@ public class ExcelViewerModel {
         LOGGER.log(Level.INFO, "Workbook changed to {0}.", getUri(this.workbook));
     }
 
-    private URI getUri(Workbook workbook) {
+    private static URI getUri(Workbook workbook) {
         return workbook != null ? workbook.getUri() : null;
     }
 

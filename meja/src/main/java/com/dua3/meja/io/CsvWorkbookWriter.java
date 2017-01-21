@@ -61,7 +61,7 @@ public class CsvWorkbookWriter extends WorkbookWriter {
         }
     }
 
-    private void writeSheets(Workbook workbook, final CsvWriter writer) {
+    private static void writeSheets(Workbook workbook, final CsvWriter writer) {
         for (Sheet sheet: workbook) {
             for (Row row:sheet) {
                 for (Cell cell: row) {

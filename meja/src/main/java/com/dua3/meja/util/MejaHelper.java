@@ -68,6 +68,15 @@ public class MejaHelper {
     }
 
     /**
+     * Get row name as String.
+     * @param i the row number as used in Excel spreadsheets
+     * @return the row name ("1" for row number 0)
+     */
+	public static String getRowName(int i) {
+		return Integer.toString(i+1);
+	}
+
+    /**
      * Create row iterator.
      *
      * @param sheet the sheet for which to create a row iterator
