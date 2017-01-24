@@ -35,7 +35,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.EnumSet;
-import java.util.concurrent.locks.Lock;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 
@@ -783,18 +783,11 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 options.add(SearchOptions.MATCH_COMPLETE_TEXT);
             }
 
-            Lock readLock = sheet.readLock();
-            Cell cell = null;
-            try {
-                readLock.lock();
-                cell = MejaHelper.find(sheet, getText(), options);
-            } finally {
-                readLock.unlock();
-            }
-
-            if (cell == null) {
+            Optional<Cell> oc = MejaHelper.find(sheet, getText(), options);
+            if (!oc.isPresent()) {
                 JOptionPane.showMessageDialog(this, "Text was not found.");
             } else {
+                Cell cell = oc.get();
                 setCurrentCell(cell.getRowNumber(), cell.getColumnNumber());
             }
         }

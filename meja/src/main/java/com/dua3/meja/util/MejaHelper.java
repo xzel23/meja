@@ -25,7 +25,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -322,7 +324,7 @@ public class MejaHelper {
      * @param options the {@link SearchOptions} to use
      * @return the cell found or {@code null} if nothing found
      */
-    public static Cell find(Sheet sheet, String text, SearchOptions... options) {
+    public static Optional<Cell> find(Sheet sheet, String text, SearchOptions... options) {
         // EnumSet.of throws IllegalArgumentException if options is empty, so
         // use a standard HashSet instead.
         return find(sheet, text, new HashSet<>(Arrays.asList(options)));
@@ -334,61 +336,104 @@ public class MejaHelper {
      * @param sheet the sheet
      * @param text the text to searcg for
      * @param options the {@link SearchOptions} to use
-     * @return the cell found or {@code null} if nothing found
+     * @return {@code Optional} holding the cell found or empty
      */
-    public static Cell find(Sheet sheet, String text, Set<SearchOptions> options) {
-        boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
-        boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
-        boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
-        boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
-        boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMLUA_TEXT);
+    public static Optional<Cell> find(Sheet sheet, String text, Set<SearchOptions> options) {
+        Lock lock = sheet.readLock();
+        lock.lock();
+        try {
+            boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
+            boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
+            boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
+            boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
+            boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMLUA_TEXT);
 
-        if (ignoreCase) {
-            text = text.toLowerCase();
-        }
-
-        Cell cell = searchFromCurrent ? sheet.getCurrentCell() : null;
-        int iStart = cell != null ? cell.getRowNumber() : sheet.getLastRowNum();
-        int jStart = cell != null ? cell.getColumnNumber() : sheet.getLastColNum();
-        int i = iStart;
-        int j = jStart;
-        do {
-            // move to next cell
-            if (j < sheet.getRow(i).getLastCellNum()) {
-                j++;
-            } else {
-                j = 0;
-                if (i < sheet.getLastRowNum()) {
-                    i++;
-                } else {
-                    i = 0;
-                }
-            }
-
-            cell = sheet.getCell(i, j);
-
-            // check cell content
-            String cellText;
-            if (searchFormula && cell.getCellType() == CellType.FORMULA) {
-                cellText = cell.getFormula();
-            } else {
-                cellText = cell.toString();
+            if (isEmpty(sheet)) {
+              return Optional.empty();
             }
 
             if (ignoreCase) {
-                cellText = cellText.toLowerCase();
+                text = text.toLowerCase();
             }
 
-            if (matchComplete && cellText.equals(text)
-                    || !matchComplete && cellText.contains(text)) {
-                // found!
-                if (updateCurrent) {
-                    sheet.setCurrentCell(cell);
-                }
-                return cell;
+            Cell end = null;
+            Cell cell;
+            if (searchFromCurrent) {
+                cell = nextCell(sheet.getCurrentCell());
+            } else {
+                cell = sheet.getCell(sheet.getFirstRowNum(), sheet.getFirstColNum());
             }
-        } while (i != iStart || j != jStart);
-        return null;
+
+            while (end==null || !(cell.getRowNumber()==end.getRowNumber() && cell.getColumnNumber()==end.getColumnNumber())) {
+                if (end == null) {
+                  // remember the first visited cell
+                  end = cell;
+                }
+
+                // check cell content
+                String cellText;
+                if (searchFormula && cell.getCellType() == CellType.FORMULA) {
+                    cellText = cell.getFormula();
+                } else {
+                    cellText = cell.toString();
+                }
+
+                if (ignoreCase) {
+                    cellText = cellText.toLowerCase();
+                }
+
+                if (matchComplete && cellText.equals(text)
+                        || !matchComplete && cellText.contains(text)) {
+                    // found!
+                    if (updateCurrent) {
+                        sheet.setCurrentCell(cell);
+                    }
+                    return Optional.of(cell);
+                }
+
+                // move to next cell
+                cell = nextCell(cell);
+            }
+
+            // not found
+            return Optional.empty();
+        } finally {
+          lock.unlock();
+        }
+    }
+
+    private static Cell nextCell(Cell cell) {
+      // move to next cell
+      Row row = cell.getRow();
+      int j = cell.getColumnNumber();
+      if (j<row.getLastCellNum()) {
+        // cell is not the last one in row -> move right
+        return row.getCell(j+1);
+      } else {
+        // cell is the last one in row...
+        Sheet sheet = row.getSheet();
+        int i = row.getRowNumber();
+        if (i < sheet.getLastRowNum()) {
+          // not the last row -> move to next row
+          row = sheet.getRow(i+1);
+        } else {
+          // last row -> move to first row
+          row = sheet.getRow(sheet.getFirstRowNum());
+        }
+        // return the first cell of the new row
+        return row.getCell(row.getFirstCellNum());
+      }
+    }
+
+    /**
+     * Test if sheet is empty.
+     * @param sheet
+     *    the sheet to test
+     * @return
+     *    true, if the sheet is empty
+     */
+    public static boolean isEmpty(Sheet sheet) {
+      return sheet.getRowCount()==0;
     }
 
     /**
