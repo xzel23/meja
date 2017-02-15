@@ -47,11 +47,6 @@ allprojects {
             csv.enabled false
             html.enabled true
         }
-
-        findbugs {
-            effort = "max"
-            reportLevel = "high"
-        }
     }
 }
 
