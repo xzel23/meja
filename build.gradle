@@ -2,6 +2,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'findbugs'
     apply plugin: 'pmd'
+    apply plugin: 'jacoco'
     
     group = 'com.dua3.meja'
 
@@ -40,6 +41,18 @@ allprojects {
         }
     }
 
+    tasks.withType(JacocoReport) {
+        reports {
+            xml.enabled false
+            csv.enabled false
+            html.enabled true
+        }
+
+        findbugs {
+            effort = "max"
+            reportLevel = "high"
+        }
+    }
 }
 
 project(':meja') {
