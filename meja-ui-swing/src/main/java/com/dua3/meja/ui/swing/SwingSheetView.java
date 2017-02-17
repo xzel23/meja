@@ -274,27 +274,30 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     private void movePage(Direction d) {
         Cell cell = getCurrentCell().getLogicalCell();
-        java.awt.Rectangle cellRect = rectS2D(sheetPainter.getCellRect(cell));
-        int x = cellRect.x;
-        int y = cellRect.y;
-        switch (d) {
-            case NORTH:
-                y = Math.max(0, y - getVisibleRect().height);
-                break;
-            case SOUTH:
-                y = Math.min(getSheetHeight() - 1, y + getVisibleRect().height);
-                break;
-            case WEST:
-              x = Math.max(0, x - getVisibleRect().width);
-              break;
-            case EAST:
-              x = Math.min(getSheetWidth() - 1, y + getVisibleRect().width);
-              break;
-        }
 
-        int row = sheetPainter.getRowNumberFromY(yD2S(y));
-        int col = sheetPainter.getColumnNumberFromX(xD2S(x));
-        setCurrentCell(row, col);
+        java.awt.Rectangle cellRect = rectS2D(sheetPainter.getCellRect(cell));
+        switch (d) {
+            case NORTH: {
+                int y = Math.max(0, cellRect.y - getVisibleRect().height);
+                setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
+                break;
+            }
+            case SOUTH: {
+                int y = Math.min(getSheetHeight() - 1, cellRect.y + getVisibleRect().height);
+                setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
+                break;
+            }
+            case WEST: {
+                int x = Math.max(0, cellRect.x - getVisibleRect().width);
+                setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
+                break;
+            }
+            case EAST: {
+                int x = Math.min(getSheetWidth() - 1, cellRect.x + getVisibleRect().width);
+                setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
+                break;
+            }
+        }
     }
 
     /**
