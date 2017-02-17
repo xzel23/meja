@@ -70,7 +70,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
             // Do not use the create(File) method to avoid exception when trying to
             // save the workbook again to the same file.
             try (InputStream in = new FileInputStream(file)) {
-                return open(in, Locale.getDefault(), file.toURI());
+                return open(in, locale, file.toURI());
             }
         } else if (type==null) {
             // if type could not be determined, try to open as CSV

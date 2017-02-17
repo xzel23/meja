@@ -254,10 +254,8 @@ public final class PoiCell implements Cell {
                 return RichText.emptyText();
             }
 
-            // FIXME locale specific grouping separator does not work in POI
-            // see https://bz.apache.org/bugzilla/show_bug.cgi?id=59638
-            // TODO create and submit patch for POI
             DataFormatter dataFormatter = getWorkbook().getDataFormatter();
+
             try {
                 FormulaEvaluator evaluator = getWorkbook().evaluator;
                 return RichText.valueOf(dataFormatter.formatCellValue(poiCell, evaluator));
