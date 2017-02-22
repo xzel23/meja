@@ -173,6 +173,9 @@ public final class PoiCell implements Cell {
 
     @Override
     public boolean getBoolean() {
+      if (getCellType()!=CellType.BOOLEAN) {
+        throw new IllegalStateException("Cell does not contain a boolean value.");
+      }
       return poiCell.getBooleanCellValue();
     }
 
@@ -184,17 +187,26 @@ public final class PoiCell implements Cell {
     @Override
     @Deprecated
     public Date getDate() {
+        if (isEmpty()) { // POI will throw for wrong CellType but return null for empty cells
+          throw new IllegalStateException("Cell does not contain a date.");
+        }
         return poiCell.getDateCellValue();
     }
 
     @Override
     public LocalDateTime getDateTime() {
+        if (isEmpty()) { // POI will throw for wrong CellType but return null for empty cells
+          throw new IllegalStateException("Cell does not contain date/time.");
+        }
         return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
     }
 
     @Override
     public Number getNumber() {
-        return poiCell.getNumericCellValue();
+      if (getCellType()!=CellType.NUMERIC) {
+        throw new IllegalStateException("Cell does not contain a numeric value.");
+      }
+      return poiCell.getNumericCellValue();
     }
 
     @Override
