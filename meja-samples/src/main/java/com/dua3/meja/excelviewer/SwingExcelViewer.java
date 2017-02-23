@@ -279,9 +279,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         try {
             final URI oldUri = model.getUri();
             final Workbook newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this, model.getCurrentDir());
-            model.setWorkbook(newWorkbook);
-            final URI newUri = model.getUri();
-            workbookChanged(oldUri, newUri);
+            if (newWorkbook!=null) {
+	            model.setWorkbook(newWorkbook);
+	            final URI newUri = model.getUri();
+	            workbookChanged(oldUri, newUri);
+            }
         } catch (IOException ex) {
             Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
