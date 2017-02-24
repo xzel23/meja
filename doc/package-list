@@ -1,0 +1,12 @@
+com.dua3.meja.converter
+com.dua3.meja.excelviewer
+com.dua3.meja.io
+com.dua3.meja.model
+com.dua3.meja.model.generic
+com.dua3.meja.model.poi
+com.dua3.meja.samples
+com.dua3.meja.text
+com.dua3.meja.ui
+com.dua3.meja.ui.javafx
+com.dua3.meja.ui.swing
+com.dua3.meja.util
