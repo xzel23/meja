@@ -17,7 +17,7 @@
 .gradle
 build
 dist
-meja
-meja-samples
-meja-ui-swing
-meja-ui-jfx
+/meja
+/meja-samples
+/meja-ui-swing
+/meja-ui-jfx
