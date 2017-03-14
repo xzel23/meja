@@ -605,22 +605,33 @@ public abstract class PoiWorkbook implements Workbook {
 
         @Override
         Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
-            if (poiColor == null || ((org.apache.poi.xssf.usermodel.XSSFColor) poiColor).isAuto()) {
+            org.apache.poi.xssf.usermodel.XSSFColor xssfColor = (org.apache.poi.xssf.usermodel.XSSFColor) poiColor;
+            if (poiColor == null || xssfColor.isAuto()) {
                 return defaultColor;
             }
 
-            byte[] rgb = ((org.apache.poi.xssf.usermodel.XSSFColor) poiColor).getARGB();
+            // try to get RGB values
+            byte[] rgb = xssfColor.hasAlpha() ? xssfColor.getARGB()
+                : xssfColor.hasTint() ? xssfColor.getRGBWithTint()
+                : xssfColor.getRGB();
 
-            if (rgb == null) {
-                return defaultColor;
+            if (rgb != null) {
+              if (rgb.length==4) {
+                int a = rgb[0] & 0xFF;
+                int r = rgb[1] & 0xFF;
+                int g = rgb[2] & 0xFF;
+                int b = rgb[3] & 0xFF;
+                return new Color(r, g, b, a);
+              } else {
+                int r = rgb[0] & 0xFF;
+                int g = rgb[1] & 0xFF;
+                int b = rgb[2] & 0xFF;
+                return new Color(r, g, b);
+              }
             }
 
-            int a = rgb[0] & 0xFF;
-            int r = rgb[1] & 0xFF;
-            int g = rgb[2] & 0xFF;
-            int b = rgb[3] & 0xFF;
-
-            return new Color(r, g, b, a);
+            // what should be done now?
+            return defaultColor;
         }
 
         @Override
