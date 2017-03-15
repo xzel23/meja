@@ -3,12 +3,15 @@
  */
 package com.dua3.meja.ui.javafx;
 
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.ui.SheetView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.function.IntSupplier;
+
+import com.dua3.meja.model.Color;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.ui.SheetView;
+
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -23,6 +26,11 @@ public class JfxSheetView extends Pane implements SheetView, PropertyChangeListe
     private Sheet sheet = null;
     private final JfxSheetPainter sheetPainter = new JfxSheetPainter(this);
     private final Node leftTopChart, rightTopChart, leftBottomChart, rightBottomChart;
+
+    /**
+     * The color to use for the grid lines.
+     */
+    private Color gridColor = Color.LIGHTGRAY;
 
     public JfxSheetView() {
         final GridPane gridPane = new GridPane();
@@ -151,6 +159,16 @@ public class JfxSheetView extends Pane implements SheetView, PropertyChangeListe
 
     JfxSheetPainter getSheetPainter() {
         return sheetPainter;
+    }
+
+    @Override
+    public void setGridColor(Color gridColor) {
+        this.gridColor = gridColor;
+    }
+
+    @Override
+    public Color getGridColor() {
+        return gridColor;
     }
 
 }

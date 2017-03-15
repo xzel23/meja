@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.ui;
 
+import java.util.concurrent.locks.Lock;
+
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
@@ -24,11 +26,10 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
-import java.util.concurrent.locks.Lock;
 
 /**
  *
- * @param <SV> 
+ * @param <SV>
  * @param <GC>
  */
 public abstract class SheetPainterBase<SV extends SheetView, GC extends GraphicsContext> {
@@ -53,11 +54,6 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * Color used to draw the selection rectangle.
      */
     protected static final Color SELECTION_COLOR = Color.BLACK;
-
-    /**
-     * Color used to draw the grid lines.
-     */
-    protected static final Color GRID_COLOR = Color.GRAY;
 
     /**
      * Width of the selection rectangle borders.
@@ -105,7 +101,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     }
 
     protected Color getGridColor() {
-        return GRID_COLOR;
+        return sheetView.getGridColor();
     }
 
     protected Color getSelectionColor() {
@@ -158,7 +154,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         if (sheet==null) {
             return;
         }
-        
+
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {

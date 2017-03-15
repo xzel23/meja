@@ -3,15 +3,17 @@
  */
 package com.dua3.meja.ui.swing;
 
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SheetPainterBase;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 
 public class SwingSheetPainter extends SheetPainterBase<SwingSheetView,SwingGraphicsContext> {
 
@@ -30,7 +32,7 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView,SwingGrap
         labelPainter.setOpaque(true);
         labelPainter.setHorizontalAlignment(SwingConstants.CENTER);
         labelPainter.setVerticalAlignment(SwingConstants.CENTER);
-        labelPainter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, MejaSwingHelper.toAwtColor(GRID_COLOR)));
+        labelPainter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, MejaSwingHelper.toAwtColor(getGridColor())));
     }
 
     @Override

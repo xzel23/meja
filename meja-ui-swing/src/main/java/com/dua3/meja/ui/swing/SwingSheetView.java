@@ -35,6 +35,7 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
@@ -78,7 +79,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     private static final long serialVersionUID = 1L;
 
-    private final transient SwingSheetPainter sheetPainter = new SwingSheetPainter(this, new DefaultCellRenderer());
+    private final transient SwingSheetPainter sheetPainter;
     private final transient CellEditor editor = new DefaultCellEditor(this);
     private final transient SheetPane sheetPane = new SheetPane();
     private final transient SearchDialog searchDialog = new SearchDialog();
@@ -124,6 +125,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
+        sheetPainter = new SwingSheetPainter(this, new DefaultCellRenderer());
         init(sheet);
     }
 
@@ -519,20 +521,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
     }
 
-    /**
-     * Set the grid color.
-     *
-     * @param gridColor the color for th grid
-     */
+    @Override
     public void setGridColor(Color gridColor) {
-        this.gridColor = gridColor;
+        this.gridColor = Objects.requireNonNull(gridColor);
     }
 
-    /**
-     * Get the grid color.
-     *
-     * @return color of grid
-     */
+    @Override
     public Color getGridColor() {
         return gridColor;
     }

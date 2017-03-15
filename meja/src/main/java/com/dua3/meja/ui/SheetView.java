@@ -17,6 +17,7 @@ package com.dua3.meja.ui;
 
 import java.beans.PropertyChangeListener;
 
+import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Sheet;
 
 /**
@@ -113,4 +114,17 @@ public interface SheetView  {
      */
     void stopEditing(boolean commit);
 
+    /**
+     * Set the grid color.
+     *
+     * @param gridColor the color for th grid
+     */
+    public void setGridColor(Color gridColor);
+
+    /**
+     * Get the grid color.
+     *
+     * @return color of grid
+     */
+    public Color getGridColor();
 }
