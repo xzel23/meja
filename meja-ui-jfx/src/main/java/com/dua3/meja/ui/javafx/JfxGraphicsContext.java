@@ -6,6 +6,7 @@ package com.dua3.meja.ui.javafx;
 import com.dua3.meja.model.Color;
 import com.dua3.meja.ui.GraphicsContext;
 import com.dua3.meja.ui.Rectangle;
+
 import javafx.geometry.Bounds;
 
 /**
@@ -59,6 +60,11 @@ class JfxGraphicsContext implements GraphicsContext {
 
     public javafx.scene.canvas.GraphicsContext graphics() {
         return gc;
+    }
+
+    @Override
+    public void setXOR(boolean on) {
+      // FIXME
     }
 
 }

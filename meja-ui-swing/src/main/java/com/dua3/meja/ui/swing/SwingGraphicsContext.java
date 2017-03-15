@@ -3,12 +3,13 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.meja.model.Color;
-import com.dua3.meja.ui.GraphicsContext;
-import com.dua3.meja.ui.Rectangle;
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+
+import com.dua3.meja.model.Color;
+import com.dua3.meja.ui.GraphicsContext;
+import com.dua3.meja.ui.Rectangle;
 
 public final class SwingGraphicsContext implements GraphicsContext {
 
@@ -77,6 +78,15 @@ public final class SwingGraphicsContext implements GraphicsContext {
     @Override
     public Rectangle getClipBounds() {
         return view.rectD2S(g.getClipBounds());
+    }
+
+    @Override
+    public void setXOR(boolean on) {
+      if (on) {
+        g.setXORMode(MejaSwingHelper.toAwtColor(Color.WHITE));
+      } else {
+        g.setPaintMode();
+      }
     }
 
 }

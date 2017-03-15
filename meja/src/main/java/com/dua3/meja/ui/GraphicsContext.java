@@ -19,6 +19,8 @@ import com.dua3.meja.model.Color;
 
 public interface GraphicsContext {
 
+    void setXOR(boolean on);
+
     void setColor(Color color);
 
     void drawLine(double x, double y, double i, double y0);
