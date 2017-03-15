@@ -52,6 +52,9 @@ public class PoiSheet implements Sheet {
     private List<RectangularRegion> mergedRegions;
     private float zoom = 1.0f;
     private int autoFilterRow = -1;
+    /** the default font size, used to calculate column widths */
+    private float fontSize = 1;
+    private float factorWidth = 1;
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -110,6 +113,10 @@ public class PoiSheet implements Sheet {
             final RectangularRegion rr = new RectangularRegion(r.getFirstRow(), r.getLastRow(), r.getFirstColumn(), r.getLastColumn());
             mergedRegions.add(rr);
         }
+
+        // determine default font size
+        fontSize = getWorkbook().poiWorkbook.getFontAt((short) 0).getFontHeightInPoints();
+        factorWidth = fontSize * 0.525f / 256;
     }
 
     @Override
@@ -148,13 +155,11 @@ public class PoiSheet implements Sheet {
     }
 
     private float poiColumnWidthToPoints(int poiWidth) {
-        float fontSize = getWorkbook().getDefaultCellStyle().getFont().getSizeInPoints();
-        return poiWidth * fontSize * 0.6175f / 256;
+        return poiWidth * factorWidth;
     }
 
     private int pointsToPoiColumnWidth(float width) {
-        float fontSize = getWorkbook().getDefaultCellStyle().getFont().getSizeInPoints();
-        return Math.round(width / (fontSize * 0.6175f / 256));
+        return Math.round(width / factorWidth);
     }
 
     @Override
