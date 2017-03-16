@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -162,14 +163,14 @@ public abstract class PoiWorkbook implements Workbook {
                 return sheet;
             }
         }
-        return null;
+        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
     }
 
     @Override
     public void removeSheet(int sheetNr) {
-        poiWorkbook.removeSheetAt(sheetNr);
-        sheets.remove(sheetNr);
-        pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
+      sheets.remove(sheetNr);
+      poiWorkbook.removeSheetAt(sheetNr);
+      pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
     }
 
     @Override
@@ -182,7 +183,7 @@ public abstract class PoiWorkbook implements Workbook {
                 return true;
             }
         }
-        return false;
+        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
     }
 
     /**
@@ -261,11 +262,15 @@ public abstract class PoiWorkbook implements Workbook {
 
     @Override
     public void setCurrentSheet(int idx) {
-        int oldIdx = getCurrentSheetIndex();
-        if (idx != oldIdx) {
-            poiWorkbook.setActiveSheet(idx);
-            pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
-        }
+      if (idx<0 || idx>sheets.size()) {
+        throw new IndexOutOfBoundsException("Sheet index out of range: "+idx);
+      }
+
+      int oldIdx = getCurrentSheetIndex();
+      if (idx != oldIdx) {
+          poiWorkbook.setActiveSheet(idx);
+          pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
+      }
     }
 
     @Override
@@ -312,8 +317,8 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     @Override
-    public URI getUri() {
-        return uri;
+    public Optional<URI> getUri() {
+        return Optional.ofNullable(uri);
     }
 
     @Override

@@ -15,10 +15,6 @@
  */
 package com.dua3.meja.model.generic;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -32,6 +28,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
 
 /**
  * Generic implementation of {@link Workbook}.
@@ -61,7 +63,7 @@ public class GenericWorkbook implements Workbook {
         this.locale = locale;
         this.uri = uri;
         this.defaultCellStyle = new GenericCellStyle(this);
-        this.cellStyles.put("", defaultCellStyle);        
+        this.cellStyles.put("", defaultCellStyle);
     }
 
     @Override
@@ -86,7 +88,7 @@ public class GenericWorkbook implements Workbook {
                 return sheet;
             }
         }
-        return null;
+        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
     }
 
     @Override
@@ -104,7 +106,7 @@ public class GenericWorkbook implements Workbook {
                 return true;
             }
         }
-        return false;
+        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
     }
 
     @Override
@@ -150,7 +152,7 @@ public class GenericWorkbook implements Workbook {
     @Override
     public void setCurrentSheet(int idx) {
         if (idx<0 || idx>sheets.size()) {
-            throw new IllegalArgumentException("Sheet index outt of range: "+idx);
+            throw new IndexOutOfBoundsException("Sheet index out of range: "+idx);
         }
 
         int oldIdx = getCurrentSheetIndex();
@@ -210,8 +212,8 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public URI getUri() {
-        return uri;
+    public Optional<URI> getUri() {
+        return Optional.ofNullable(uri);
     }
 
     @Override

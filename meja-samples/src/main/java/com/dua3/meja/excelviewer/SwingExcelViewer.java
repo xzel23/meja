@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -277,12 +278,12 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
      */
     private void showOpenDialog() {
         try {
-            final URI oldUri = model.getUri();
-            final Workbook newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this, model.getCurrentDir());
-            if (newWorkbook!=null) {
-	            model.setWorkbook(newWorkbook);
-	            final URI newUri = model.getUri();
-	            workbookChanged(oldUri, newUri);
+            final Optional<URI> oldUri = model.getUri();
+            final Optional<Workbook> newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this, model.getCurrentDir());
+            if (newWorkbook.isPresent()) {
+	            model.setWorkbook(newWorkbook.get());
+	            final Optional<URI> newUri = model.getUri();
+	            workbookChanged(oldUri.orElse(null), newUri.orElse(null));
             }
         } catch (IOException ex) {
             Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
@@ -296,10 +297,10 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
     private void showSaveAsDialog() {
         try {
             Workbook workbook = model.getWorkbook();
-            final URI uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
-            if (uri != null) {
-                workbook.setUri(uri);
-                updateUri(uri);
+            final Optional<URI> uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
+            if (uri.isPresent()) {
+                workbook.setUri(uri.get());
+                updateUri(uri.get());
                 Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Successfully saved ''{0}''.", uri);
             }
         } catch (IOException ex) {
@@ -333,17 +334,17 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
             return;
         }
 
-        URI uri = workbook.getUri();
+        Optional<URI> uri = workbook.getUri();
         try {
-            if (uri == null) {
-                final URI newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
-                if (newUri == null) {
+            if (!uri.isPresent()) {
+                final Optional<URI> newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
+                if (!newUri.isPresent()) {
                     // user cancelled the dialog
                     return;
                 }
-                workbookChanged(null /* uri */, newUri);
+                workbookChanged(null /* uri */, newUri.get());
             } else {
-                model.saveWorkbook(uri);
+                model.saveWorkbook(uri.get());
             }
         } catch (IOException ex) {
             Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "IO-Error saving workbook", ex);

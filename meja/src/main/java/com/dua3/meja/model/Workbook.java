@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.model;
 
-import com.dua3.meja.io.FileType;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +22,9 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+
+import com.dua3.meja.io.FileType;
 
 /**
  * Workbook class.
@@ -46,9 +48,9 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * When a workbook is opened, the URI is set so that it can be used to later
      * save the file back to the same location.
      * </p>
-     * @return the URI for this workbook, or {@code null} if none was set
+     * @return the URI for this workbook
      */
-    URI getUri();
+    Optional<URI> getUri();
 
     /**
      * Set URI for this workbook.
@@ -66,14 +68,19 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Get sheet by number.
      * @param sheetNr number of sheet
-     * @return sheet or {@code null}
+     * @return
+     *   sheet
+     * @throws IndexOutOfBoundsException
+     *   if no sheet exists at the given index
      */
     Sheet getSheet(int sheetNr);
 
     /**
      * Get sheet by name.
      * @param sheetName name of sheet
-     * @return sheet or {@code null}
+     * @return sheet
+     * @throws IllegalArgumentException
+     *   if no sheet exists with the given name
      */
     Sheet getSheetByName(String sheetName);
 
@@ -81,18 +88,29 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     int getCurrentSheetIndex();
 
+    /**
+     * Set the current sheet.
+     * @param idx
+     *   index of the sheet to make current
+     * @throws IndexOutOfBoundsException
+     *   if no sheet exists at the given index
+     */
     void setCurrentSheet(int idx);
 
     /**
      * Remove sheet by number.
      * @param sheetNr number of sheet
+     * @throws IndexOutOfBoundsException
+     *   if no sheet exists at the given index
      */
-    void removeSheet(int sheetNr);
+    void removeSheet(int idx);
 
     /**
      * Remove sheet by name.
      * @param sheetName name of sheet
      * @return true, if sheet with that name was found and removed
+     * @throws IllegalArgumentException
+     *   if no sheet exists with the given name
      */
     boolean removeSheetByName(String sheetName);
 

@@ -16,12 +16,6 @@
 
 package com.dua3.meja.ui.javafx;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.io.OpenMode;
-import com.dua3.meja.model.Color;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.meja.util.MejaHelper;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +24,20 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
+import com.dua3.meja.model.Color;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.meja.util.MejaHelper;
+
 import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 /**
  * Helper class.
@@ -51,7 +54,7 @@ public class MejaJfxHelper {
      * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException if a workbook was selected but could not be loaded
      */
-    public static Workbook showDialogAndOpenWorkbook(Window parent, File file) throws IOException {
+    public static Optional<Workbook> showDialogAndOpenWorkbook(Window parent, File file) throws IOException {
         FileChooser fc = new FileChooser();
         fc.setInitialDirectory(file == null || file.isDirectory() ? file : file.getParentFile());
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("All files", "*.*"));
@@ -59,23 +62,23 @@ public class MejaJfxHelper {
 
         file = fc.showOpenDialog(parent);
 
-        Workbook workbook = null;
-        if (file != null) {
-            FileChooser.ExtensionFilter ef = fc.getSelectedExtensionFilter();
-            Optional<FileType> type = Arrays.stream(FileType.values())
-                    .filter((ft)->ft.getDescription().equals(ef.getDescription()) && Arrays.asList(ft.getExtensions()).equals(ef.getExtensions()))
-                    .findFirst();
-
-            if (type.isPresent()) {
-                // load workbook using the factory from the used filter definition
-                final WorkbookFactory factory = type.get().getFactory();
-                workbook = factory.open(file);
-            } else {
-                // another filter was used (ie. "all files")
-                workbook = MejaHelper.openWorkbook(file);
-            }
+        if (file == null) {
+          return Optional.empty();
         }
-        return workbook;
+
+        FileChooser.ExtensionFilter ef = fc.getSelectedExtensionFilter();
+        Optional<FileType> type = Arrays.stream(FileType.values())
+                .filter((ft)->ft.getDescription().equals(ef.getDescription()) && Arrays.asList(ft.getExtensions()).equals(ef.getExtensions()))
+                .findFirst();
+
+        if (type.isPresent()) {
+            // load workbook using the factory from the used filter definition
+            final WorkbookFactory factory = type.get().getFactory();
+            return Optional.of(factory.open(file));
+        } else {
+            // another filter was used (ie. "all files")
+          return Optional.of(MejaHelper.openWorkbook(file));
+        }
     }
 
     public static FileChooser.ExtensionFilter[] getExtensionFilters(OpenMode mode) {
@@ -99,36 +102,37 @@ public class MejaJfxHelper {
      * canceled the dialog
      * @throws IOException if an exception occurs while saving
      */
-    public static URI showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file) throws IOException {
+    public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file) throws IOException {
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         int rc = jfc.showSaveDialog(parent);
 
-        URI uri = null;
-        if (rc == JFileChooser.APPROVE_OPTION) {
-            file = jfc.getSelectedFile();
-
-            if (file.exists()) {
-                rc = JOptionPane.showConfirmDialog(
-                        parent,
-                        "File '" + file.getAbsolutePath() + "' already exists. Overwrite?",
-                        "File exists",
-                        JOptionPane.YES_NO_OPTION);
-                if (rc != JOptionPane.YES_OPTION) {
-                    Logger.getLogger(MejaHelper.class.getName()).log(Level.INFO, "User selected not to overwrite file.");
-                    return null;
-                }
-            }
-
-            FileType type = FileType.forFile(file);
-            if (type != null) {
-                type.getWriter().write(workbook, file);
-            } else {
-                workbook.write(file, true);
-            }
-            uri = file.toURI();
+        if (rc != JFileChooser.APPROVE_OPTION) {
+          return Optional.empty();
         }
-        return uri;
+
+        file = jfc.getSelectedFile();
+
+        if (file.exists()) {
+            rc = JOptionPane.showConfirmDialog(
+                    parent,
+                    "File '" + file.getAbsolutePath() + "' already exists. Overwrite?",
+                    "File exists",
+                    JOptionPane.YES_NO_OPTION);
+            if (rc != JOptionPane.YES_OPTION) {
+                Logger.getLogger(MejaHelper.class.getName()).log(Level.INFO, "User selected not to overwrite file.");
+                return Optional.empty();
+            }
+        }
+
+        FileType type = FileType.forFile(file);
+        if (type != null) {
+            type.getWriter().write(workbook, file);
+        } else {
+            workbook.write(file, true);
+        }
+
+        return Optional.of(file.toURI());
     }
 
     static Paint toJfxColor(Color c) {

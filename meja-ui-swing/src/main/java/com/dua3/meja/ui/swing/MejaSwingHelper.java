@@ -15,6 +15,21 @@
  */
 package com.dua3.meja.ui.swing;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
@@ -23,18 +38,6 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
-import java.awt.Color;
-import java.awt.Component;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
 
 /**
  * Helper class.
@@ -101,7 +104,7 @@ public class MejaSwingHelper {
      * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException if a workbook was selected but could not be loaded
      */
-    public static Workbook showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
+    public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         for (FileFilter filter : SwingFileFilter.getFilters(OpenMode.READ)) {
@@ -110,21 +113,21 @@ public class MejaSwingHelper {
 
         int rc = jfc.showOpenDialog(parent);
 
-        Workbook workbook = null;
-        if (rc == JFileChooser.APPROVE_OPTION) {
-            file = jfc.getSelectedFile();
-            FileFilter filter = jfc.getFileFilter();
-
-            if (filter instanceof SwingFileFilter) {
-                // load workbook using the factory from the used filter definition
-                final WorkbookFactory factory = ((SwingFileFilter) filter).getFactory();
-                workbook = factory.open(file);
-            } else {
-                // another filter was used (ie. "all files")
-                workbook = MejaHelper.openWorkbook(file);
-            }
+        if (rc != JFileChooser.APPROVE_OPTION) {
+          return Optional.empty();
         }
-        return workbook;
+
+        file = jfc.getSelectedFile();
+        FileFilter filter = jfc.getFileFilter();
+
+        if (filter instanceof SwingFileFilter) {
+            // load workbook using the factory from the used filter definition
+            final WorkbookFactory factory = ((SwingFileFilter) filter).getFactory();
+            return Optional.of(factory.open(file));
+        } else {
+            // another filter was used (ie. "all files")
+            return Optional.of(MejaHelper.openWorkbook(file));
+        }
     }
 
     /**
@@ -141,37 +144,37 @@ public class MejaSwingHelper {
      * canceled the dialog
      * @throws IOException if an exception occurs while saving
      */
-    public static URI showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file) throws IOException {
+    public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file) throws IOException {
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         int rc = jfc.showSaveDialog(parent);
 
-        URI uri = null;
-        if (rc == JFileChooser.APPROVE_OPTION) {
-            file = jfc.getSelectedFile();
-
-            if (file.exists()) {
-                rc = JOptionPane.showConfirmDialog(
-                        parent,
-                        "File '" + file.getAbsolutePath() + "' already exists. Overwrite?",
-                        "File exists",
-                        JOptionPane.YES_NO_OPTION);
-                if (rc != JOptionPane.YES_OPTION) {
-                    Logger.getLogger(MejaHelper.class.getName()).log(Level.INFO, "User selected not to overwrite file.");
-                    return null;
-                }
-            }
-
-            FileType type = FileType.forFile(file);
-            if (type != null) {
-                type.getWriter().write(workbook, file);
-            } else {
-                workbook.write(file, true);
-            }
-            uri = file.toURI();
-
+        if (rc != JFileChooser.APPROVE_OPTION) {
+          return Optional.empty();
         }
-        return uri;
+
+        file = jfc.getSelectedFile();
+
+        if (file.exists()) {
+            rc = JOptionPane.showConfirmDialog(
+                    parent,
+                    "File '" + file.getAbsolutePath() + "' already exists. Overwrite?",
+                    "File exists",
+                    JOptionPane.YES_NO_OPTION);
+            if (rc != JOptionPane.YES_OPTION) {
+                Logger.getLogger(MejaHelper.class.getName()).log(Level.INFO, "User selected not to overwrite file.");
+                return Optional.empty();
+            }
+        }
+
+        FileType type = FileType.forFile(file);
+        if (type != null) {
+            type.getWriter().write(workbook, file);
+        } else {
+            workbook.write(file, true);
+        }
+
+        return Optional.of(file.toURI());
     }
 
     public static Color toAwtColor(com.dua3.meja.model.Color color) {
@@ -181,7 +184,7 @@ public class MejaSwingHelper {
     public static Color toAwtColor(String s) {
         return toAwtColor(com.dua3.meja.model.Color.valueOf(s));
     }
-    
+
     private MejaSwingHelper() {
     }
 

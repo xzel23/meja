@@ -256,7 +256,7 @@ public class MejaHelper {
     public static <WORKBOOK extends Workbook> WORKBOOK cloneWorkbookAs(Class<WORKBOOK> clazz, Workbook workbook) {
         try {
             WORKBOOK newWorkbook = clazz.getConstructor(Locale.class).newInstance(workbook.getLocale());
-            newWorkbook.setUri(workbook.getUri());
+            newWorkbook.setUri(workbook.getUri().orElse(null));
 
             // copy styles
             for (String styleName : workbook.getCellStyleNames()) {

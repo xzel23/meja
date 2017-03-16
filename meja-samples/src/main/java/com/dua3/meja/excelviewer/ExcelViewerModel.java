@@ -6,6 +6,7 @@ package com.dua3.meja.excelviewer;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,8 +32,8 @@ public class ExcelViewerModel {
         setWorkbook(MejaHelper.openWorkbook(file));
     }
 
-    URI getUri() {
-        return workbook==null ? null : workbook.getUri();
+    Optional<URI> getUri() {
+        return getUri(workbook);
     }
 
     enum MessageType {
@@ -149,8 +150,8 @@ public class ExcelViewerModel {
         LOGGER.log(Level.INFO, "Workbook changed to {0}.", getUri(this.workbook));
     }
 
-    private static URI getUri(Workbook workbook) {
-        return workbook != null ? workbook.getUri() : null;
+    private static Optional<URI> getUri(Workbook workbook) {
+        return workbook == null ? Optional.empty() : workbook.getUri();
     }
 
     public Workbook getWorkbook() {

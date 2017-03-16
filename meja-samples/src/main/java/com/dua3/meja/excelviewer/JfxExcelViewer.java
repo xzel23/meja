@@ -5,6 +5,7 @@ package com.dua3.meja.excelviewer;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -127,11 +128,11 @@ public class JfxExcelViewer extends Application {
 
     private void showOpenDialog(Window parent) {
         try {
-            final URI oldUri = model.getUri();
-            final Workbook newWorkbook = MejaJfxHelper.showDialogAndOpenWorkbook(parent, model.getCurrentDir());
+            final Optional<URI> oldUri = model.getUri();
+            final Workbook newWorkbook = MejaJfxHelper.showDialogAndOpenWorkbook(parent, model.getCurrentDir()).orElse(null);
             model.setWorkbook(newWorkbook);
-            final URI newUri = model.getUri();
-            workbookChanged(oldUri, newUri);
+            final Optional<URI> newUri = model.getUri();
+            workbookChanged(oldUri.orElse(null), newUri.orElse(null));
         } catch (IOException ex) {
             Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
             new Alert(AlertType.ERROR, "Error loading workbook: " + ex.getMessage()).showAndWait();
@@ -144,16 +145,16 @@ public class JfxExcelViewer extends Application {
             return;
         }
 
-        URI uri = workbook.getUri();
+        Optional<URI> uri = workbook.getUri();
         try {
-            if (uri == null) {
+            if (!uri.isPresent()) {
                 uri = MejaJfxHelper.showDialogAndSaveWorkbook(null, workbook, model.getCurrentDir());
                 if (uri == null) {
                     // user cancelled the dialog
                     return;
                 }
             } else {
-                model.saveWorkbook(uri);
+                model.saveWorkbook(uri.get());
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "IO-Error saving workbook", ex);
