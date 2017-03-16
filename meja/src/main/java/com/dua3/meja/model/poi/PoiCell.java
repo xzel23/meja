@@ -66,7 +66,6 @@ public final class PoiCell implements Cell {
         }
     }
 
-    final PoiWorkbook workbook;
     final PoiRow row;
     final org.apache.poi.ss.usermodel.Cell poiCell;
     int spanX;
@@ -74,7 +73,6 @@ public final class PoiCell implements Cell {
     PoiCell logicalCell;
 
     public PoiCell(PoiRow row, org.apache.poi.ss.usermodel.Cell cell) {
-        this.workbook = row.getWorkbook();
         this.row = row;
         this.poiCell = cell;
 
@@ -106,7 +104,7 @@ public final class PoiCell implements Cell {
 
     @Override
     public PoiWorkbook getWorkbook() {
-        return workbook;
+        return row.getWorkbook();
     }
 
     @Override
@@ -243,7 +241,7 @@ public final class PoiCell implements Cell {
     public Cell set(RichText s) {
         Object old = get();
 
-        RichTextString richText = workbook.createRichTextString(s.toString());
+        RichTextString richText = getWorkbook().createRichTextString(s.toString());
         for (Run run : s) {
             PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont(), run.getStyle());
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
@@ -469,15 +467,15 @@ public final class PoiCell implements Cell {
 
     @Override
     public PoiCellStyle getCellStyle() {
-        return workbook.getPoiCellStyle(poiCell.getCellStyle());
+        return getWorkbook().getPoiCellStyle(poiCell.getCellStyle());
     }
 
     private PoiFont getFontForFormattingRun(RichTextString richText, int i) {
         if (richText instanceof HSSFRichTextString) {
             HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
-            return ((PoiWorkbook.PoiHssfWorkbook) workbook).getFont(hssfRichText.getFontOfFormattingRun(i));
+            return ((PoiWorkbook.PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i));
         } else {
-            return workbook.getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
+            return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
         }
     }
 
