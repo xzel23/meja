@@ -847,11 +847,11 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         private int getColumnCount() {
-            return sheet == null ? 0 : sheet.getColumnCount();
+            return sheet == null ? 0 : 1+sheet.getLastColNum();
         }
 
         private int getRowCount() {
-            return sheet == null ? 0 : sheet.getRowCount();
+            return sheet == null ? 0 : 1+sheet.getLastRowNum();
         }
 
         private void repaintSheet(Rectangle rect) {
