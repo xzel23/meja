@@ -99,7 +99,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Remove sheet by number.
-     * @param sheetNr number of sheet
+     * @param idx number of sheet
      * @throws IndexOutOfBoundsException
      *   if no sheet exists at the given index
      */
