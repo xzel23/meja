@@ -44,7 +44,12 @@ public enum FileType {
     /**
      * File type for the new XML-based Excel format that uses the '.xlsx' extension.
      */
-    XLSX("Excel 2007", PoiWorkbookFactory.instance(), null, XlsxWorkbookWriter.instance(), "*.xlsx", "*.xlsm");
+    XLSX("Excel 2007", PoiWorkbookFactory.instance(), null, XlsxWorkbookWriter.instance(), "*.xlsx", "*.xlsm"),
+
+    /**
+     * All supported Excel files.
+     */
+    EXCEL("Excel", PoiWorkbookFactory.instance(), null, null, "*.xlsx", "*.xlsm", "*.xls");
 
     private final String description;
     private final WorkbookFactory factory;
