@@ -39,12 +39,12 @@ public enum FileType {
     /**
      * File type for the old Excel format that uses the '.xls' extension.
      */
-    XLS("Excel 97-2003", PoiWorkbookFactory.instance(), XlsWorkbookReader.instance(), XlsWorkbookWriter.instance(), "*.xls"),
+    XLS("Excel 97-2003", PoiWorkbookFactory.instance(), null, XlsWorkbookWriter.instance(), "*.xls"),
 
     /**
      * File type for the new XML-based Excel format that uses the '.xlsx' extension.
      */
-    XLSX("Excel 2007", PoiWorkbookFactory.instance(), XlsxWorkbookReader.instance(), XlsxWorkbookWriter.instance(), "*.xlsx", "*.xlsm");
+    XLSX("Excel 2007", PoiWorkbookFactory.instance(), null, XlsxWorkbookWriter.instance(), "*.xlsx", "*.xlsm");
 
     private final String description;
     private final WorkbookFactory factory;
@@ -125,9 +125,10 @@ public enum FileType {
     }
 
     private OpenMode getOpenMode() {
-        if (reader != null && writer != null) {
+        boolean canRead = reader != null || factory != null;
+        if (canRead && writer != null) {
             return OpenMode.READ_AND_WRITE;
-        } else if (reader != null) {
+        } else if (canRead) {
             return OpenMode.READ;
         } else if (writer != null) {
             return OpenMode.WRITE;
