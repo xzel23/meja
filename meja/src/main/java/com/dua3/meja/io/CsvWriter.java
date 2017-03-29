@@ -15,67 +15,60 @@
  */
 package com.dua3.meja.io;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Map;
+
+import com.dua3.meja.util.Option;
 
 /**
  *
  * @author axel@dua3.com
  */
-public class CsvWriter implements AutoCloseable, Flushable {
+public class CsvWriter extends Csv implements AutoCloseable, Flushable {
+  public static CsvWriter create(File file, Map<Option<?>, Object> options) throws FileNotFoundException {
+    return create(new FileOutputStream(file), options);
+  }
+
+  public static CsvWriter create(OutputStream out, Map<Option<?>, Object> options) {
+      Charset charset = (Charset) getOptionValue(OPTION_CHARSET, options);
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, charset));
+      CsvWriter csvWriter = new CsvWriter(writer, options);
+      return csvWriter;
+  }
+
   private static final String allowedChars = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
-  private PrintWriter out;
-  private String lineDelimiter = "%n";
-  private char separator = ';';
-  private char delimiter = '"';
+  private final BufferedWriter out;
+  private final String lineDelimiter;
+  private final String separator;
+  private final String delimiter;
   private int fieldsInRow = 0;
 
-  public CsvWriter(Writer writer) {
-    this(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, writer);
-  }
-
-  public CsvWriter(OutputStream out) {
-    this(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, out);
-  }
-
-  public CsvWriter(PrintWriter out) {
-    this(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, out);
-  }
-
-  public CsvWriter(char separator, char delimiter, Writer writer) {
-    this(separator, delimiter, new PrintWriter(writer));
-  }
-
-  public CsvWriter(char separator, char delimiter, OutputStream out) {
-    this(separator, delimiter, out, Charset.defaultCharset());
-  }
-
-  public CsvWriter(char separator, char delimiter, OutputStream out, Charset cs) {
-    this(separator, delimiter, new PrintWriter(new OutputStreamWriter(out, cs)));
-  }
-
-  public CsvWriter(char separator, char delimiter, PrintWriter out) {
-    this.separator = separator;
-    this.delimiter = delimiter;
+  public CsvWriter(BufferedWriter out, Map<Option<?>, Object> options) {
+    this.separator = String.valueOf(getOptionValue(OPTION_SEPARATOR, options));
+    this.delimiter = String.valueOf(getOptionValue(OPTION_DELIMITER, options));
+    this.lineDelimiter = String.format("%n");
     this.out = out;
   }
 
-  public void nextRow() {
-    out.printf(lineDelimiter);
+  public void nextRow() throws IOException {
+    out.write(lineDelimiter);
     fieldsInRow = 0;
   }
 
-  public void addField(String text) {
+  public void addField(String text) throws IOException {
     if (fieldsInRow > 0) {
-      out.print(separator);
+      out.write(separator);
     }
-    out.print(quoteIfNeeded(text));
+    out.write(quoteIfNeeded(text));
     fieldsInRow++;
   }
 
@@ -85,10 +78,14 @@ public class CsvWriter implements AutoCloseable, Flushable {
 
 
   private boolean isQuoteNeeded(String text) {
+    // quote if separator or delimiter are present
+    if (text.indexOf(separator)>=0 || text.indexOf(delimiter)>=0) {
+      return true;
+    }
+
+    // also quote if unusual characters are present
     for(char c:text.toCharArray()) {
-        if (c==separator || c==delimiter) {
-          return true;
-        } else if (!Character.isLetterOrDigit(c) && allowedChars.indexOf(c)==-1) {
+        if (!Character.isLetterOrDigit(c) && allowedChars.indexOf(c)==-1) {
             return true;
         }
     }
@@ -108,7 +105,7 @@ public class CsvWriter implements AutoCloseable, Flushable {
   }
 
   @Override
-  public void flush() {
+  public void flush() throws IOException {
     out.flush();
   }
 

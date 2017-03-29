@@ -15,12 +15,17 @@
  */
 package com.dua3.meja.model.generic;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.io.OpenMode;
-import com.dua3.meja.model.WorkbookFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
+
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
+import com.dua3.meja.io.WorkbookReader;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.meja.util.Option;
 
 /**
  * A Factory for creating instances of {@link GenericWorkbook}.
@@ -37,21 +42,23 @@ public class GenericWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public GenericWorkbook open(File file) throws IOException {
-        Locale locale = Locale.getDefault();
-        
+    public Workbook open(File file, Map<Option<?>, Object> importSettings) throws IOException {
         FileType type = FileType.forFile(file);
-        
+
         if (type==null) {
             // if type could not be determined, try to open as CSV
             type = FileType.CSV;
         }
-        
+
         if (!type.isSupported(OpenMode.READ)) {
             throw new IllegalArgumentException("Reading is not supported for files of type '"+type.getDescription()+"'.");
         }
-        
-        return type.getReader().read(GenericWorkbook.class, locale, file);
+
+        WorkbookReader reader = type.getReader();
+
+        reader.setOptions(importSettings);
+
+        return reader.read(GenericWorkbook.class, file);
     }
 
     @Override

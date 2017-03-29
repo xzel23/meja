@@ -15,12 +15,14 @@
  */
 package com.dua3.meja.io;
 
-import com.dua3.meja.model.Workbook;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Locale;
+import java.util.Map;
+
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.util.Option;
 
 /**
  * Abstract base class for reading workbook data.
@@ -31,29 +33,27 @@ public abstract class WorkbookReader {
      * Read workbook from file.
      * @param <WORKBOOK> workbook class
      * @param clazz the {@code Class} instance of the workbook class to instantiate
-     * @param locale the locale to use when creating the workbook
      * @param file the file to read from
      * @return the workbook read
      * @throws IOException if the workbook could not be read
      */
     public <WORKBOOK extends Workbook>
-    WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, File file) throws IOException {
-        return read(clazz, locale, file.toURI());
+    WORKBOOK read(Class<WORKBOOK> clazz, File file) throws IOException {
+        return read(clazz, file.toURI());
     }
 
     /**
      * Read workbook from URI.
      * @param <WORKBOOK> workbook class
      * @param clazz the {@code Class} instance of the workbook class to instantiate
-     * @param locale the locale to use when creating the workbook
      * @param uri the uri to set in the workbook
      * @return the workbook read
      * @throws IOException if the workbook could not be read
      */
     public <WORKBOOK extends Workbook>
-    WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, URI uri) throws IOException {
+    WORKBOOK read(Class<WORKBOOK> clazz, URI uri) throws IOException {
         try (InputStream in = uri.toURL().openStream()) {
-            return read(clazz, locale, in, uri);
+            return read(clazz, in, uri);
         }
     }
 
@@ -61,13 +61,16 @@ public abstract class WorkbookReader {
      * Read workbook from stream.
      * @param <WORKBOOK> workbook class
      * @param clazz the {@code Class} instance of the workbook class to instantiate
-     * @param locale the locale to use when creating the workbook
      * @param in the stream to read from
      * @param uri the uri to set in the workbook
      * @return the workbook read
      * @throws IOException if the workbook could not be read
      */
     public abstract  <WORKBOOK extends Workbook>
-    WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, InputStream in, URI uri) throws IOException;
+    WORKBOOK read(Class<WORKBOOK> clazz, InputStream in, URI uri) throws IOException;
+
+    public void setOptions(Map<Option<?>, Object> importSettings) {
+      // nop: empty default implementation for Readers that don't take options
+    }
 
 }

@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.io;
 
-import com.dua3.meja.model.Workbook;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,6 +22,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URLConnection;
+import java.util.Map;
+
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.util.Option;
 
 /**
  * Abstract base class for writing workbook data.
@@ -62,5 +65,9 @@ public abstract class WorkbookWriter {
      * @throws IOException if an error occurs when writing out the workbook
      */
     public abstract void write(Workbook workbook, OutputStream out) throws IOException;
+
+    public void setOptions(Map<Option<?>, Object> exportSettings) {
+      // empty implementation for writers not taking export options
+    }
 
 }

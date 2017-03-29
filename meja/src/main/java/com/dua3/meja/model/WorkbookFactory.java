@@ -17,7 +17,11 @@ package com.dua3.meja.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
+
+import com.dua3.meja.util.Option;
 
 /**
  * Abstract base class for workbook factories.
@@ -41,7 +45,7 @@ public abstract class WorkbookFactory {
      * @return workbook
      */
     public abstract Workbook createStreaming(Locale locale);
-    
+
     /**
      * Create a new Workbook instance.
      *
@@ -62,10 +66,28 @@ public abstract class WorkbookFactory {
      * The file type is determined automatically based on the extension so
      * that it is possible to open a CSV file as Excel workbook.
      * </p>
-     * @param file the workbook file
+     * @param file
+     *  the workbook file
      * @return workbook
      * @throws IOException
      */
-    public abstract Workbook open(File file) throws IOException;
+    public Workbook open(File file) throws IOException {
+      return open(file, Collections.emptyMap());
+    }
+
+    /**
+     * Load workbook from file.
+     * <p>
+     * The file type is determined automatically based on the extension so
+     * that it is possible to open a CSV file as Excel workbook.
+     * </p>
+     * @param file
+     *  the workbook file
+     * @param importSettings
+     *  settings to configure the input process
+     * @return workbook
+     * @throws IOException
+     */
+    public abstract Workbook open(File file, Map<Option<?>, Object> importSettings) throws IOException;
 
 }

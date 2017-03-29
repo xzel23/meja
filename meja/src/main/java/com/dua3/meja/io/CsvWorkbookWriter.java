@@ -15,13 +15,17 @@
  */
 package com.dua3.meja.io;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.util.MejaHelper;
-import java.io.IOException;
-import java.io.OutputStream;
+import com.dua3.meja.util.Option;
 
 /**
  *
@@ -29,39 +33,27 @@ import java.io.OutputStream;
  */
 public class CsvWorkbookWriter extends WorkbookWriter {
 
-    private static final CsvWorkbookWriter INSTANCE = new CsvWorkbookWriter();
-
     /**
      * The singleton instance.
      * @return the singleton instance of {@code CsvWorkbookWriter}
      */
-    public static CsvWorkbookWriter instance() {
-        return INSTANCE;
+    public static CsvWorkbookWriter create() {
+        return new CsvWorkbookWriter();
     }
+
+    private Map<Option<?>, Object> options = Collections.emptyMap();
 
     private CsvWorkbookWriter() {
     }
 
-    /**
-     * Append workbook data as CSV to the given Appendable.
-     * @param workbook the workbook to write
-     * @param app Appendable to write to
-     * @throws IOException
-     */
-    public void write(Workbook workbook, Appendable app) throws IOException {
-        try (CsvWriter writer = new CsvWriter(MejaHelper.createWriter(app))) {
-            writeSheets(workbook, writer);
-        }
-    }
-
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
-        try (CsvWriter writer = new CsvWriter(out)) {
+        try (CsvWriter writer = CsvWriter.create(out, options)) {
             writeSheets(workbook, writer);
         }
     }
 
-    private static void writeSheets(Workbook workbook, final CsvWriter writer) {
+    private static void writeSheets(Workbook workbook, final CsvWriter writer) throws IOException {
         for (Sheet sheet: workbook) {
             for (Row row:sheet) {
                 for (Cell cell: row) {
@@ -73,4 +65,8 @@ public class CsvWorkbookWriter extends WorkbookWriter {
         }
     }
 
+    @Override
+    public void setOptions(Map<Option<?>, Object> importSettings) {
+      this.options  = new HashMap<>(importSettings);
+    }
 }

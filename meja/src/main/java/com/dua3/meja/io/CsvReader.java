@@ -22,12 +22,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.dua3.meja.util.Option;
 
 /**
  * @author axel TODO: see below number of fields require fixed number of columns
@@ -35,16 +37,17 @@ import java.util.regex.Pattern;
  *
  * optional: trim field values
  */
-public class CsvReader implements DataReader, AutoCloseable {
+public class CsvReader extends Csv implements DataReader, AutoCloseable {
 
-    public static CsvReader createReader(RowBuilder builder, File file, Charset charSet) throws FileNotFoundException {
-        Reader reader = new InputStreamReader(new FileInputStream(file), charSet);
-        return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, reader, file.getName());
+    public static CsvReader create(RowBuilder builder, File file, HashMap<Option<?>, Object> options) throws FileNotFoundException {
+      return create(builder, new FileInputStream(file), options);
     }
 
-    public static CsvReader createReader(RowBuilder builder, InputStream in, Charset charSet) {
-        Reader reader = new InputStreamReader(in, charSet);
-        return new CsvReader(Csv.DEFAULT_SEPARATOR, Csv.DEFAULT_DELIMITER, builder, reader, "[stream]");
+    public static CsvReader create(RowBuilder builder, InputStream in, HashMap<Option<?>, Object> options) {
+        Charset charset = (Charset) getOptionValue(OPTION_CHARSET, options);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
+        CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
+        return csvReader;
     }
 
     private RowBuilder rowBuilder;
@@ -58,11 +61,7 @@ public class CsvReader implements DataReader, AutoCloseable {
     private boolean ignoreMissingFields;
     private final String source;
 
-    public CsvReader(char separator, char delimiter, RowBuilder rowBuilder, Reader reader, String source) {
-        this(separator, delimiter, rowBuilder, new BufferedReader(reader), source);
-    }
-
-    public CsvReader(char separator, char delimiter, RowBuilder rowBuilder, BufferedReader reader, String source) {
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, HashMap<Option<?>, Object> options) {
         this.rowBuilder = rowBuilder;
         this.reader = reader;
         this.columnNames = null;
@@ -70,8 +69,8 @@ public class CsvReader implements DataReader, AutoCloseable {
         this.ignoreMissingFields = false;
         this.source = source;
 
-        String sep = Pattern.quote(String.valueOf(separator));
-        String del = Pattern.quote(String.valueOf(delimiter));
+        String sep = Pattern.quote(String.valueOf(getOptionValue(OPTION_SEPARATOR, options)));
+        String del = Pattern.quote(String.valueOf(getOptionValue(OPTION_DELIMITER, options)));
 
         // create pattern for matching of csv fields
         String regexEnd = "(?:" + sep + "|$)";

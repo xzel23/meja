@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,6 +39,7 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
+import com.dua3.meja.util.Option;
 
 /**
  *
@@ -60,9 +62,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public Workbook open(File file) throws IOException {
-        Locale locale = Locale.getDefault();
-
+    public Workbook open(File file, Map<Option<?>, Object> importSettings) throws IOException {
         FileType type = FileType.forFile(file);
 
         if (type==FileType.XLS||type==FileType.XLSX) {
@@ -70,6 +70,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
             // Do not use the create(File) method to avoid exception when trying to
             // save the workbook again to the same file.
             try (InputStream in = new FileInputStream(file)) {
+                Locale locale = (Locale) importSettings.getOrDefault("Locale", Locale.getDefault());
                 return open(in, locale, file.toURI());
             }
         } else if (type==null) {
@@ -81,7 +82,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
             throw new IllegalArgumentException("Reading is not supported for files of type '"+type.getDescription()+"'.");
         }
 
-        return type.getReader().read(PoiXssfWorkbook.class, locale, file);
+        return type.getReader().read(PoiXssfWorkbook.class, file);
     }
 
     /**

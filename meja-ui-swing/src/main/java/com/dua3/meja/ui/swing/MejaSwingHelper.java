@@ -17,13 +17,21 @@ package com.dua3.meja.ui.swing;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -38,6 +46,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.meja.util.Option;
 
 /**
  * Helper class.
@@ -104,7 +113,7 @@ public class MejaSwingHelper {
      * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException if a workbook was selected but could not be loaded
      */
-    public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
+    public static Optional<Workbook> showDialogAndOpenWorkbook(Frame parent, File file) throws IOException {
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         for (FileFilter filter : SwingFileFilter.getFilters(OpenMode.READ)) {
@@ -121,9 +130,22 @@ public class MejaSwingHelper {
         FileFilter filter = jfc.getFileFilter();
 
         if (filter instanceof SwingFileFilter) {
-            // load workbook using the factory from the used filter definition
-            final WorkbookFactory factory = ((SwingFileFilter) filter).getFactory();
-            return Optional.of(factory.open(file));
+            // get factory from the used filter definition
+            final SwingFileFilter swingFileFilter = (SwingFileFilter) filter;
+            final FileType fileType = swingFileFilter.getFileType();
+            final WorkbookFactory factory = swingFileFilter.getFactory();
+
+            // ask user for file type specific settings
+            List<Option<?>> settings = fileType.getSettings();
+            Map<Option<?>, Object> importSettings = Collections.emptyMap(); // default is empty
+            if (!settings.isEmpty()) {
+              SettingsDialog dialog = new SettingsDialog(parent, fileType.name()+" - Settings", "Please verify the import settings:", settings);
+              dialog.setVisible(true);
+              importSettings = dialog.getResult();
+            }
+
+            // load
+            return Optional.of(factory.open(file, importSettings));
         } else {
             // another filter was used (ie. "all files")
             return Optional.of(MejaHelper.openWorkbook(file));
@@ -188,4 +210,23 @@ public class MejaSwingHelper {
     private MejaSwingHelper() {
     }
 
+    @SuppressWarnings("serial")
+    public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
+      return new AbstractAction(name) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          onActionPerformed.accept(e);
+        }
+      };
+    }
+
+    @SuppressWarnings("serial")
+    public static Action createAction(String name, Runnable onActionPerformed) {
+      return new AbstractAction(name) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          onActionPerformed.run();
+        }
+      };
+    }
 }

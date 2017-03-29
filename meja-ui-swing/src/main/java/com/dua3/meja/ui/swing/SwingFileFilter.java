@@ -3,12 +3,13 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.io.OpenMode;
-import com.dua3.meja.model.WorkbookFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
+import com.dua3.meja.model.WorkbookFactory;
 
 /**
  * A FileFilter class to be used as a drop-in file filter for dialogs.
@@ -74,5 +75,7 @@ public class SwingFileFilter extends javax.swing.filechooser.FileFilter
             return fileType.getFactory();
         }
 
-
+        public FileType getFileType() {
+          return fileType;
+        }
 }

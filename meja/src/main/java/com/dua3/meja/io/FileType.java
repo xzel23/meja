@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.function.Supplier;
 
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
+import com.dua3.meja.util.Option;
 
 /**
  *
@@ -34,17 +37,31 @@ public enum FileType {
     /**
      * File type for CSV files.
      */
-    CSV("CSV-Data", GenericWorkbookFactory.instance(), CsvWorkbookReader.instance(), CsvWorkbookWriter.instance(), "*.csv", "*.txt"),
+    CSV("CSV-Data", GenericWorkbookFactory.instance(), () -> CsvWorkbookReader.create(), () -> CsvWorkbookWriter.create(), "*.csv", "*.txt") {
+      List<Option<?>> options;
+
+      {
+        options = new ArrayList<>();
+        options.add(new Option<>("Separator", Character.class, ',', ';'));
+        options.add(new Option<>("Text delimiter", Character.class, '"', '\''));
+        options.add(new Option<>("Locale", Locale.class, Locale.getDefault(), Locale.getAvailableLocales()));
+      }
+
+      @Override
+      public List<Option<?>> getSettings() {
+        return options;
+      }
+    },
 
     /**
      * File type for the old Excel format that uses the '.xls' extension.
      */
-    XLS("Excel 97-2003", PoiWorkbookFactory.instance(), null, XlsWorkbookWriter.instance(), "*.xls"),
+    XLS("Excel 97-2003", PoiWorkbookFactory.instance(), null, () -> XlsWorkbookWriter.instance(), "*.xls"),
 
     /**
      * File type for the new XML-based Excel format that uses the '.xlsx' extension.
      */
-    XLSX("Excel 2007", PoiWorkbookFactory.instance(), null, XlsxWorkbookWriter.instance(), "*.xlsx", "*.xlsm"),
+    XLSX("Excel 2007", PoiWorkbookFactory.instance(), null, () -> XlsxWorkbookWriter.instance(), "*.xlsx", "*.xlsm"),
 
     /**
      * All supported Excel files.
@@ -53,11 +70,11 @@ public enum FileType {
 
     private final String description;
     private final WorkbookFactory factory;
-    private final WorkbookWriter writer;
-    private final WorkbookReader reader;
+    private final Supplier<WorkbookWriter> writer;
+    private final Supplier<WorkbookReader> reader;
     private final String[] extensions;
 
-    private FileType(String description, WorkbookFactory factory, WorkbookReader reader, WorkbookWriter writer, String... extensions) {
+    private FileType(String description, WorkbookFactory factory, Supplier<WorkbookReader> reader, Supplier<WorkbookWriter> writer, String... extensions) {
         this.description = description;
         this.factory = factory;
         this.writer = writer;
@@ -99,7 +116,7 @@ public enum FileType {
      * @return instance of {@link WorkbookWriter}
      */
     public WorkbookWriter getWriter() {
-        return writer;
+        return writer  == null ? null : writer.get();
     }
 
     /**
@@ -107,7 +124,7 @@ public enum FileType {
      * @return instance of {@link WorkbookReader}
      */
     public WorkbookReader getReader() {
-        return reader;
+        return reader == null ? null : reader.get();
     }
 
     /**
@@ -175,6 +192,10 @@ public enum FileType {
             default:
                 throw new IllegalArgumentException(String.valueOf(modeRequested));
         }
+    }
+
+    public List<Option<?>> getSettings() {
+      return Collections.emptyList();
     }
 
 }

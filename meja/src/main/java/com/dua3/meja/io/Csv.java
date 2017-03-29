@@ -15,15 +15,35 @@
  */
 package com.dua3.meja.io;
 
+import java.nio.charset.Charset;
+import java.util.Locale;
+import java.util.Map;
+
+import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options;
+
 /**
  *
  * @author axel
  */
-public class Csv {
+public abstract class Csv {
 
-    public final static char DEFAULT_SEPARATOR = ';';
-    public final static char DEFAULT_DELIMITER = '"';
+  public static final String OPTION_CHARSET = "Character Encoding";
+  public static final String OPTION_LOCALE = "Locale";
+  public static final String OPTION_DELIMITER = "Text delimiter";
+  public static final String OPTION_SEPARATOR = "Separator";
 
-    private Csv() {
-    }
+  private static final Options OPTIONS = new Options();
+
+  static {
+    OPTIONS.addOption(OPTION_SEPARATOR, Character.class, ',', ';');
+    OPTIONS.addOption(OPTION_DELIMITER, Character.class, '"', '\'');
+    OPTIONS.addOption(OPTION_LOCALE, Locale.class, Locale.getDefault(), Locale.getAvailableLocales());
+    OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset(), Charset.availableCharsets().values().toArray(new Charset[0]));
+  }
+
+  public static Object getOptionValue(String name, Map<Option<?>, Object> overrides) {
+    return OPTIONS.getOptionValue(name, overrides);
+  }
+
 }

@@ -19,11 +19,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.generic.GenericRowBuilder;
+import com.dua3.meja.util.Option;
 
 /**
  *
@@ -31,30 +33,27 @@ import com.dua3.meja.model.generic.GenericRowBuilder;
  */
 public class CsvWorkbookReader extends WorkbookReader {
 
-    private static final CsvWorkbookReader INSTANCE = new CsvWorkbookReader();
-
     /**
-     * Get instance of {@code CsvWorkbookReader}.
+     * Create a new instance of {@code CsvWorkbookReader}.
      * @return the singleton instance of {@code CsvWorkbookReader}.
      */
-    public static CsvWorkbookReader instance() {
-        return INSTANCE;
+    public static CsvWorkbookReader create() {
+        return new CsvWorkbookReader();
     }
+
+    private HashMap<Option<?>, Object> options = new HashMap<>();
 
     private CsvWorkbookReader() {
     }
 
     @Override
-    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, InputStream in, URI uri) throws IOException {
-      return read(clazz, locale, in, uri, Charset.defaultCharset());
-    }
-
-    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, Locale locale, InputStream in, URI uri, Charset charset) throws IOException {
+    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, InputStream in, URI uri) throws IOException {
       try {
+          Locale locale = (Locale) CsvReader.getOptionValue(CsvReader.OPTION_LOCALE, options);
           WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
           workbook.setUri(uri);
           GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), locale);
-          try (CsvReader reader = CsvReader.createReader(builder, in, charset)) {
+          try (CsvReader reader = CsvReader.create(builder, in, options)) {
               reader.readAll();
           }
           return workbook;
@@ -65,4 +64,8 @@ public class CsvWorkbookReader extends WorkbookReader {
       }
     }
 
+    @Override
+    public void setOptions(Map<Option<?>, Object> importSettings) {
+      this.options = new HashMap<>(importSettings);
+    }
 }
