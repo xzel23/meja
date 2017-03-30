@@ -1,6 +1,8 @@
 package com.dua3.meja.util;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -35,7 +37,7 @@ public class Options {
     }
 
     // retrieve the override
-    Object value = overrides.get(name);
+    Object value = overrides.get(option.get());
 
     if (value!=null) {
       // value present in overrides -> check its type
@@ -51,5 +53,9 @@ public class Options {
     }
 
     return value;
+  }
+
+  public List<Option<?>> asList() {
+    return new ArrayList<>(options);
   }
 }

@@ -226,6 +226,11 @@ public class GenericWorkbook implements Workbook {
         return new ArrayList<>(cellStyles.keySet());
     }
 
+    @Override
+    public boolean hasCellStyle(java.lang.String name) {
+      return cellStyles.keySet().contains(name);
+    }
+
     String getCellStyleName(GenericCellStyle cellStyle) {
         for (Map.Entry<String, GenericCellStyle> entry : cellStyles.entrySet()) {
             if (entry.getValue() == cellStyle) {

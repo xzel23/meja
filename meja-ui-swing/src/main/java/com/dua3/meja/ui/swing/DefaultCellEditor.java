@@ -15,12 +15,14 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.util.CellValueHelper;
 import java.awt.event.ActionEvent;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -31,6 +33,10 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.CellValueHelper;
 
 /**
  * Default implementation for cell editor.
@@ -116,7 +122,10 @@ public class DefaultCellEditor implements CellEditor {
             Logger.getLogger(DefaultCellEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
         Sheet sheet = sheetView.getSheet();
-        CellValueHelper helper = new CellValueHelper(sheet.getWorkbook().getLocale());
+        Locale locale = sheet.getWorkbook().getLocale();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+        NumberFormat numberFormat = NumberFormat.getInstance(locale);
+        CellValueHelper helper = new CellValueHelper(numberFormat, dateFormatter);
         helper.setCellValue(cell, text);
     }
 

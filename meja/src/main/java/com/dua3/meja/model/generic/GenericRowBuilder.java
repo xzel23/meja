@@ -15,13 +15,20 @@
  */
 package com.dua3.meja.model.generic;
 
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import java.util.Map;
+
+import com.dua3.meja.io.Csv;
+import com.dua3.meja.io.Csv.PredefinedDateFormat;
 import com.dua3.meja.io.DataException;
 import com.dua3.meja.io.RowBuilder;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.CellValueHelper;
-import java.util.Locale;
+import com.dua3.meja.util.Option;
 
 /**
  * Implementation of the {@link RowBuilder} interface that builds instances
@@ -37,11 +44,18 @@ public class GenericRowBuilder implements RowBuilder {
     /**
      * Construct a new {@code GenericRowBuilder}.
      * @param sheet the sheet to build rows for
-     * @param locale the locale to use
+     * @param options the locale to use
      */
-    public GenericRowBuilder(Sheet sheet, Locale locale) {
-        this.sheet = sheet;
-        this.helper = new CellValueHelper(locale);
+    public GenericRowBuilder(Sheet sheet, Map<Option<?>, Object> options) {
+      this.sheet = sheet;
+
+      Locale locale = (Locale) Csv.getOptionValue(Csv.OPTION_LOCALE, options);
+      Csv.PredefinedDateFormat dateFormat = (PredefinedDateFormat) Csv.getOptionValue(Csv.OPTION_DATEFORMAT, options);
+
+      NumberFormat numberFormat = NumberFormat.getInstance(locale);
+      DateTimeFormatter dateFormatter = dateFormat.getFormatter(locale);
+
+        this.helper = new CellValueHelper(numberFormat, dateFormatter);
     }
 
     @Override

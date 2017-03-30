@@ -17,7 +17,11 @@ package com.dua3.meja.model.poi;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.chrono.IsoChronology;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.FormatStyle;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -451,13 +455,39 @@ public final class PoiCell implements Cell {
 
     @Override
     public void setCellStyle(CellStyle cellStyle) {
-        if (cellStyle instanceof PoiCellStyle) {
-            Object old = getCellStyle();
-            poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
-            getSheet().cellStyleChanged(this, old, cellStyle);
-        } else {
-            throw new IllegalArgumentException("Incompatible implementation.");
+        if (! (cellStyle instanceof PoiCellStyle)) {
+          throw new IllegalArgumentException("Incompatible implementation.");
         }
+
+        Object old = getCellStyle();
+        poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
+        getSheet().cellStyleChanged(this, old, cellStyle);
+    }
+
+    private void setCellStyleDate(PoiCellStyle cellStyle) {
+      if (isDateFormat(cellStyle)) {
+        // nothing to do
+        return;
+      }
+
+      // try to get a version adapted to dates
+      String dateStyleName = cellStyle.getName()+"#DATE#";
+      if (!getWorkbook().hasCellStyle(dateStyleName)) {
+        // if that doesn't exist, create a new format
+        PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
+        dateStyle.copyStyle(cellStyle);
+        Locale locale = getWorkbook().getLocale();
+        String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, null, IsoChronology.INSTANCE, locale);
+        dateStyle.setDataFormat(pattern);
+      }
+      setCellStyle(getWorkbook().getCellStyle(dateStyleName));
+    }
+
+    boolean isDateFormat(PoiCellStyle cellStyle) {
+      org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
+      int i = style.getDataFormat();
+      String f = style.getDataFormatString();
+      return DateUtil.isADateFormat(i, f);
     }
 
     @Override
@@ -522,10 +552,10 @@ public final class PoiCell implements Cell {
         return rtb.toRichText();
     }
 
-    @SuppressWarnings("deprecation") // because use of set(java.util.Date)
     @Override
     public void copy(Cell other) {
-        setStyle(other.getCellStyle().getName());
+        PoiCellStyle cellStyle = getWorkbook().getCellStyle(other.getCellStyle().getName());
+        setCellStyle(cellStyle);
 
         switch (other.getCellType()) {
             case BLANK:
@@ -545,7 +575,8 @@ public final class PoiCell implements Cell {
                 set(other.getNumber());
                 break;
             case DATE:
-                set(other.getDate());
+                setCellStyleDate(cellStyle);
+                set(other.getDateTime());
                 break;
             case TEXT:
                 set(other.getText());

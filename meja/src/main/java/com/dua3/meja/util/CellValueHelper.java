@@ -19,10 +19,8 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Optional;
 
 import com.dua3.meja.model.Cell;
@@ -38,20 +36,12 @@ public class CellValueHelper {
 
     /**
      * Construct an instance of {@code CellValueHelper} for a specific locale.
-     * @param locale the locale to use
-     */
-    public CellValueHelper(Locale locale) {
-        this(NumberFormat.getInstance(locale), DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale));
-    }
-
-    /**
-     * Construct an instance of {@code CellValueHelper} with specific data formats.
-     * @param numberFormat the {@link NumberFormat} to use
-     * @param dateFormatter the {@code DateFormat} to use
+     * @param numberFormat
+     * @param dateFormatter
      */
     public CellValueHelper(NumberFormat numberFormat, DateTimeFormatter dateFormatter) {
-        this.numberFormat = numberFormat;
-        this.dateFormatter = dateFormatter;
+      this.numberFormat = numberFormat;
+      this.dateFormatter = dateFormatter;
     }
 
     /**
@@ -134,8 +124,19 @@ public class CellValueHelper {
      */
     protected Optional<LocalDateTime> parseDate(String text) {
         ParsePosition pos = new ParsePosition(0);
+
+        // dry run first: try a complete parse first, but do not resolve fields
+        // (to avoid exceoptions if this is not a date)
         TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);
-        return Optional.ofNullable(pos.getIndex() == text.length() ? LocalDateTime.from(ta) : null);
+        if (ta==null || pos.getErrorIndex()>=0 || pos.getIndex() != text.length()) {
+          // an error occurred or parsing did not use all available input
+          return Optional.empty();
+        }
+
+        // everything ok? then get the real data
+        ta = dateFormatter.parse(text);
+        LocalDateTime dateTime = LocalDateTime.from(ta);
+        return Optional.of(dateTime);
     }
 
 }

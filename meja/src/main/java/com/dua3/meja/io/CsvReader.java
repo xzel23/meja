@@ -24,8 +24,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,18 +39,18 @@ import com.dua3.meja.util.Option;
  */
 public class CsvReader extends Csv implements DataReader, AutoCloseable {
 
-    public static CsvReader create(RowBuilder builder, File file, HashMap<Option<?>, Object> options) throws FileNotFoundException {
+    public static CsvReader create(RowBuilder builder, File file, Map<Option<?>, Object> options) throws FileNotFoundException {
       return create(builder, new FileInputStream(file), options);
     }
 
-    public static CsvReader create(RowBuilder builder, InputStream in, HashMap<Option<?>, Object> options) {
+    public static CsvReader create(RowBuilder builder, InputStream in, Map<Option<?>, Object> options) {
         Charset charset = (Charset) getOptionValue(OPTION_CHARSET, options);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
         return create(builder, reader, options);
     }
 
     static CsvReader create(RowBuilder builder, BufferedReader reader,
-        HashMap<Option<?>, Object> options) {
+        Map<Option<?>, Object> options) {
       CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
       return csvReader;
     }
@@ -66,7 +66,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
     private boolean ignoreMissingFields;
     private final String source;
 
-    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, HashMap<Option<?>, Object> options) {
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, Map<Option<?>, Object> options) {
         this.rowBuilder = rowBuilder;
         this.reader = reader;
         this.columnNames = null;

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Supplier;
 
 import com.dua3.meja.model.WorkbookFactory;
@@ -38,18 +37,9 @@ public enum FileType {
      * File type for CSV files.
      */
     CSV("CSV-Data", GenericWorkbookFactory.instance(), () -> CsvWorkbookReader.create(), () -> CsvWorkbookWriter.create(), "*.csv", "*.txt") {
-      List<Option<?>> options;
-
-      {
-        options = new ArrayList<>();
-        options.add(new Option<>("Separator", Character.class, ',', ';'));
-        options.add(new Option<>("Text delimiter", Character.class, '"', '\''));
-        options.add(new Option<>("Locale", Locale.class, Locale.getDefault(), Locale.getAvailableLocales()));
-      }
-
       @Override
       public List<Option<?>> getSettings() {
-        return options;
+        return Csv.getOptions();
       }
     },
 

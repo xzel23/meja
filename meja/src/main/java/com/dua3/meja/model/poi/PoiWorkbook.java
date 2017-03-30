@@ -361,6 +361,11 @@ public abstract class PoiWorkbook implements Workbook {
         return new ArrayList<>(cellStyles.keySet());
     }
 
+    @Override
+    public boolean hasCellStyle(java.lang.String name) {
+      return cellStyles.keySet().contains(name);
+    }
+
     String getCellStyleName(PoiCellStyle cellStyle) {
         final short styleIndex = cellStyle.poiCellStyle.getIndex();
         for (Map.Entry<String, Short> entry : cellStyles.entrySet()) {

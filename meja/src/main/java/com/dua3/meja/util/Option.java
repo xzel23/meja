@@ -56,4 +56,20 @@ public class Option<T> {
   public String toString() {
     return name+"["+klass+"]";
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (getClass()!=obj.getClass()) {
+      return false;
+    }
+
+    Option<?> other = (Option<?>) obj;
+    return name.equals(other.name) && klass.equals(other.klass);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, klass);
+  }
+
 }

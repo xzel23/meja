@@ -42,7 +42,7 @@ public class CsvWorkbookReader extends WorkbookReader {
         return new CsvWorkbookReader();
     }
 
-    private HashMap<Option<?>, Object> options = new HashMap<>();
+    private Map<Option<?>, Object> options = new HashMap<>();
 
     private CsvWorkbookReader() {
     }
@@ -53,7 +53,7 @@ public class CsvWorkbookReader extends WorkbookReader {
           Locale locale = (Locale) CsvReader.getOptionValue(CsvReader.OPTION_LOCALE, options);
           WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
           workbook.setUri(uri);
-          GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), locale);
+          GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), options);
           try (CsvReader reader = CsvReader.create(builder, in, options)) {
               reader.readAll();
           }
@@ -79,7 +79,7 @@ public class CsvWorkbookReader extends WorkbookReader {
           Locale locale = (Locale) CsvReader.getOptionValue(CsvReader.OPTION_LOCALE, options);
           WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
           workbook.setUri(uri);
-          GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), locale);
+          GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), options);
           try (CsvReader reader = CsvReader.create(builder, in, options)) {
               reader.readAll();
           }

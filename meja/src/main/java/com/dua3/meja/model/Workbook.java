@@ -180,6 +180,12 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     List<String> getCellStyleNames();
 
     /**
+     * Check if a style with this name is defined.
+     * @return true, if style is present
+     */
+    boolean hasCellStyle(String name);
+
+    /**
      * Get the locale for this workbook.
      * @return the workbook`s locale
      */
