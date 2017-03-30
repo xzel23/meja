@@ -53,7 +53,7 @@ public class CsvWorkbookReader extends WorkbookReader {
           Locale locale = (Locale) CsvReader.getOptionValue(CsvReader.OPTION_LOCALE, options);
           WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
           workbook.setUri(uri);
-          GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), locale);
+          GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), locale);
           try (CsvReader reader = CsvReader.create(builder, in, options)) {
               reader.readAll();
           }
