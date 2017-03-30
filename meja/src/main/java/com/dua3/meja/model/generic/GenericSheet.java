@@ -268,7 +268,7 @@ public class GenericSheet implements Sheet {
         }
 
         if (zoom != this.zoom) {
-            float oldZoom = zoom;
+            float oldZoom = this.zoom;
             this.zoom = zoom;
             pcs.firePropertyChange(PROPERTY_ZOOM, oldZoom, zoom);
         }
