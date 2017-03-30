@@ -51,4 +51,9 @@ public class Option<T> {
       this.choices = allChoices.toArray(choices);
     }
   }
+
+  @Override
+  public String toString() {
+    return name+"["+klass+"]";
+  }
 }
