@@ -17,7 +17,6 @@ package com.dua3.meja.ui.swing;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -113,7 +112,7 @@ public class MejaSwingHelper {
      * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException if a workbook was selected but could not be loaded
      */
-    public static Optional<Workbook> showDialogAndOpenWorkbook(Frame parent, File file) throws IOException {
+    public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         for (FileFilter filter : SwingFileFilter.getFilters(OpenMode.READ)) {

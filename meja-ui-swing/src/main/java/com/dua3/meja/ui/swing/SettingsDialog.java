@@ -1,6 +1,7 @@
 package com.dua3.meja.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -12,8 +13,10 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import com.dua3.meja.util.Option;
 
@@ -24,8 +27,8 @@ public class SettingsDialog extends JDialog {
   private final JPanel settingsPanel;
   private Map<Option<?>, Object> result = null;
 
-  SettingsDialog(Frame parent, String title, String text, List<Option<?>> options) {
-    super(parent, title, true);
+  SettingsDialog(Component parent, String title, String text, List<Option<?>> options) {
+    super((JFrame) SwingUtilities.getRoot(parent), title, true);
     setLayout(new BorderLayout());
 
     add(new JLabel(text), BorderLayout.NORTH);
