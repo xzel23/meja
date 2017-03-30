@@ -46,8 +46,13 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
     public static CsvReader create(RowBuilder builder, InputStream in, HashMap<Option<?>, Object> options) {
         Charset charset = (Charset) getOptionValue(OPTION_CHARSET, options);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
-        CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
-        return csvReader;
+        return create(builder, reader, options);
+    }
+
+    static CsvReader create(RowBuilder builder, BufferedReader reader,
+        HashMap<Option<?>, Object> options) {
+      CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
+      return csvReader;
     }
 
     private RowBuilder rowBuilder;

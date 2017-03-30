@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.io;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
@@ -48,9 +49,23 @@ public class CsvWorkbookWriter extends WorkbookWriter {
 
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
-        try (CsvWriter writer = CsvWriter.create(out, options)) {
-            writeSheets(workbook, writer);
-        }
+      try (CsvWriter writer = CsvWriter.create(out, options)) {
+          writeSheets(workbook, writer);
+      }
+    }
+
+    /**
+     * Write to a BufferedWriter.
+     * This is implemented because CSV is a character format. The Encoding must be
+     * set correctly in the writer.
+     * @param workbook
+     * @param out
+     * @throws IOException
+     */
+    public void write(Workbook workbook, BufferedWriter out) throws IOException {
+      try (CsvWriter writer = CsvWriter.create(out, options)) {
+          writeSheets(workbook, writer);
+      }
     }
 
     private static void writeSheets(Workbook workbook, final CsvWriter writer) throws IOException {

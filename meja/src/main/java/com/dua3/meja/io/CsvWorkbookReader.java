@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.io;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +49,32 @@ public class CsvWorkbookReader extends WorkbookReader {
 
     @Override
     public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, InputStream in, URI uri) throws IOException {
+      try {
+          Locale locale = (Locale) CsvReader.getOptionValue(CsvReader.OPTION_LOCALE, options);
+          WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
+          workbook.setUri(uri);
+          GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), locale);
+          try (CsvReader reader = CsvReader.create(builder, in, options)) {
+              reader.readAll();
+          }
+          return workbook;
+      } catch (DataException | InstantiationException | IllegalAccessException
+              | IllegalArgumentException | InvocationTargetException
+              | NoSuchMethodException | SecurityException ex) {
+          throw new IOException("Error reading workbook: "+ex.getMessage(), ex);
+      }
+    }
+
+    /**
+     * Read from a BufferedReader.
+     * This is implemented because CSV is a character format. The Encoding must be
+     * set correctly in the reader.
+     * @param clazz
+     * @param in
+     * @param uri
+     * @throws IOException
+     */
+    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, BufferedReader in, URI uri) throws IOException {
       try {
           Locale locale = (Locale) CsvReader.getOptionValue(CsvReader.OPTION_LOCALE, options);
           WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);

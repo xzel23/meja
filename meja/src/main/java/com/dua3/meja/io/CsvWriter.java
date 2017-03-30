@@ -40,8 +40,12 @@ public class CsvWriter extends Csv implements AutoCloseable, Flushable {
   public static CsvWriter create(OutputStream out, Map<Option<?>, Object> options) {
       Charset charset = (Charset) getOptionValue(OPTION_CHARSET, options);
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, charset));
-      CsvWriter csvWriter = new CsvWriter(writer, options);
-      return csvWriter;
+      return create(writer, options);
+  }
+
+  public static CsvWriter create(BufferedWriter writer, Map<Option<?>, Object> options) {
+    CsvWriter csvWriter = new CsvWriter(writer, options);
+    return csvWriter;
   }
 
   private static final String allowedChars = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
