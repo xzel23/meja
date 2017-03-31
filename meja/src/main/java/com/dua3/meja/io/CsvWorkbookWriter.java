@@ -27,6 +27,8 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options;
+import com.dua3.meja.util.Options.Value;
 
 /**
  *
@@ -42,16 +44,26 @@ public class CsvWorkbookWriter extends WorkbookWriter {
         return new CsvWorkbookWriter();
     }
 
-    private Map<Option<?>, Object> options = Collections.emptyMap();
+    private Map<Option<?>, Value<?>> options = Collections.emptyMap();
 
     private CsvWorkbookWriter() {
     }
 
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
-      try (CsvWriter writer = CsvWriter.create(out, options)) {
+      try (CsvWriter writer = CsvWriter.create(out, getOptionsWithLocale(options, workbook))) {
           writeSheets(workbook, writer);
       }
+    }
+
+    private Map<Option<?>, Value<?>> getOptionsWithLocale(Map<Option<?>, Value<?>> options, Workbook workbook) {
+      if (options.containsKey(Csv.OPTION_LOCALE)) {
+        return options;
+      }
+
+      HashMap<Option<?>, Value<?>> options2 = new HashMap<>(options);
+      options2.put(Csv.getOption(Csv.OPTION_LOCALE).get(), Options.value("Locale from Workbook", workbook.getLocale()));
+      return options2;
     }
 
     /**
@@ -63,7 +75,7 @@ public class CsvWorkbookWriter extends WorkbookWriter {
      * @throws IOException
      */
     public void write(Workbook workbook, BufferedWriter out) throws IOException {
-      try (CsvWriter writer = CsvWriter.create(out, options)) {
+      try (CsvWriter writer = CsvWriter.create(out, getOptionsWithLocale(options, workbook))) {
           writeSheets(workbook, writer);
       }
     }
@@ -81,7 +93,7 @@ public class CsvWorkbookWriter extends WorkbookWriter {
     }
 
     @Override
-    public void setOptions(Map<Option<?>, Object> importSettings) {
+    public void setOptions(Map<Option<?>, Value<?>> importSettings) {
       this.options  = new HashMap<>(importSettings);
     }
 }

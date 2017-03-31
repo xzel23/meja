@@ -40,6 +40,8 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options;
+import com.dua3.meja.util.Options.Value;
 
 /**
  *
@@ -62,7 +64,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public Workbook open(File file, Map<Option<?>, Object> importSettings) throws IOException {
+    public Workbook open(File file, Map<Option<?>, Value<?>> importSettings) throws IOException {
         FileType type = FileType.forFile(file);
 
         if (type==FileType.XLS||type==FileType.XLSX) {
@@ -70,7 +72,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
             // Do not use the create(File) method to avoid exception when trying to
             // save the workbook again to the same file.
             try (InputStream in = new FileInputStream(file)) {
-                Locale locale = (Locale) importSettings.getOrDefault("Locale", Locale.getDefault());
+                Locale locale = (Locale) importSettings.getOrDefault("Locale", Options.value(Locale.getDefault())).getValue();
                 return open(in, locale, file.toURI());
             }
         } else if (type==null) {

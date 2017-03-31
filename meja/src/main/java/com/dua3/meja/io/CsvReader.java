@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options.Value;
 
 /**
  * @author axel TODO: see below number of fields require fixed number of columns
@@ -39,18 +40,18 @@ import com.dua3.meja.util.Option;
  */
 public class CsvReader extends Csv implements DataReader, AutoCloseable {
 
-    public static CsvReader create(RowBuilder builder, File file, Map<Option<?>, Object> options) throws FileNotFoundException {
+    public static CsvReader create(RowBuilder builder, File file, Map<Option<?>, Value<?>> options) throws FileNotFoundException {
       return create(builder, new FileInputStream(file), options);
     }
 
-    public static CsvReader create(RowBuilder builder, InputStream in, Map<Option<?>, Object> options) {
-        Charset charset = (Charset) getOptionValue(OPTION_CHARSET, options);
+    public static CsvReader create(RowBuilder builder, InputStream in, Map<Option<?>, Value<?>> options) {
+        Charset charset = getCharset(options);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
         return create(builder, reader, options);
     }
 
     static CsvReader create(RowBuilder builder, BufferedReader reader,
-        Map<Option<?>, Object> options) {
+        Map<Option<?>, Value<?>> options) {
       CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
       return csvReader;
     }
@@ -66,7 +67,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
     private boolean ignoreMissingFields;
     private final String source;
 
-    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, Map<Option<?>, Object> options) {
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, Map<Option<?>, Value<?>> options) {
         this.rowBuilder = rowBuilder;
         this.reader = reader;
         this.columnNames = null;
@@ -74,8 +75,8 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
         this.ignoreMissingFields = false;
         this.source = source;
 
-        String sep = Pattern.quote(String.valueOf(getOptionValue(OPTION_SEPARATOR, options)));
-        String del = Pattern.quote(String.valueOf(getOptionValue(OPTION_DELIMITER, options)));
+        String sep = Pattern.quote(String.valueOf(getSeparator(options)));
+        String del = Pattern.quote(String.valueOf(getDelimiter(options)));
 
         // create pattern for matching of csv fields
         String regexEnd = "(?:" + sep + "|$)";

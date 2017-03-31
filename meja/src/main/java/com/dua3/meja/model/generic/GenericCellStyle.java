@@ -15,6 +15,15 @@
  */
 package com.dua3.meja.model.generic;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Color;
@@ -23,13 +32,6 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -226,7 +228,8 @@ public class GenericCellStyle implements CellStyle {
         if (numberFormatter==null) {
             try {
                 String fmt = dataFormat==null||dataFormat.isEmpty() ? "0.##########": dataFormat;
-                numberFormatter = new DecimalFormat(fmt);
+                DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(workbook.getLocale());
+                numberFormatter = new DecimalFormat(fmt, symbols);
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
                 numberFormatter = DecimalFormat.getInstance(workbook.getLocale());

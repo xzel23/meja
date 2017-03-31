@@ -9,13 +9,62 @@ import java.util.Set;
 
 public class Options {
 
+  public interface Value<T> {
+    T getValue();
+  }
+
+  private static class StaticValue<T> implements Value<T> {
+
+    private final String name;
+    private final T value;
+
+    @Override
+    public String toString() {
+      return name;
+    }
+
+    @Override
+    public T getValue() {
+      return value;
+    }
+
+    public StaticValue(String name, T value) {
+      this.name = name;
+      this.value = value;
+    }
+  }
+
+  public static <T> Value<T> value(String name, T value) {
+    return new StaticValue<>(name, value);
+  }
+
+  public static <T> Value<T> value(T value) {
+    return new StaticValue<>(String.valueOf(value), value);
+  }
+
+  public static <T> Value<T>[] wrap(T[] choices) {
+    @SuppressWarnings("unchecked")
+    Value<T>[] values = new Value[choices.length];
+    for (int i=0; i<choices.length; i++) {
+      values[i] = value(choices[i]);
+    }
+    return values;
+  }
+
   private final Set<Option<?>> options = new LinkedHashSet<>();
 
   public Options() {
   }
 
-  @SuppressWarnings("unchecked")
-  public <T> void addOption(String name, Class<T> klass, T defaultValue, T... values) {
+  @SafeVarargs
+  public final <T> void addOption(String name, Class<T> klass, Value<T> defaultValue, Value<T>... values) {
+    options.add(new Option<>(name, klass, defaultValue, values));
+  }
+
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  public <T> void addOption(String name, Class<T> klass, T defaultChoice, T... choices) {
+    Value<T> defaultValue = value(String.valueOf(defaultChoice), defaultChoice);
+    Value[] values = wrap(choices);
     options.add(new Option<>(name, klass, defaultValue, values));
   }
 
@@ -28,7 +77,7 @@ public class Options {
     return Optional.empty();
   }
 
-  public Object getOptionValue(String name, Map<Option<?>, Object> overrides) {
+  public Object getOptionValue(String name, Map<Option<?>, Value<?>> overrides) {
     Optional<Option<?>> option = getOption(name);
 
     // the requested option does not exist
@@ -36,26 +85,13 @@ public class Options {
       return null;
     }
 
-    // retrieve the override
-    Object value = overrides.get(option.get());
-
-    if (value!=null) {
-      // value present in overrides -> check its type
-      if (!option.get().getOptionClass().isInstance(value)) {
-        throw new IllegalStateException("Incompatible types for option.");
-      }
-    } else {
-      // fetch the default value
-      Optional<Object> v = option.map(op -> op.getDefaultChoice());
-      if (v.isPresent()) {
-        value = v.get();
-      }
-    }
-
-    return value;
+    Option<?> op = option.get();
+    Value<?> value = overrides.getOrDefault(op, op.getDefault());
+    return value.getValue();
   }
 
   public List<Option<?>> asList() {
     return new ArrayList<>(options);
   }
+
 }

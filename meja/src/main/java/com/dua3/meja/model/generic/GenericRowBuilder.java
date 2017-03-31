@@ -21,7 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.dua3.meja.io.Csv;
-import com.dua3.meja.io.Csv.PredefinedDateFormat;
 import com.dua3.meja.io.DataException;
 import com.dua3.meja.io.RowBuilder;
 import com.dua3.meja.model.Cell;
@@ -29,6 +28,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.CellValueHelper;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options.Value;
 
 /**
  * Implementation of the {@link RowBuilder} interface that builds instances
@@ -46,16 +46,16 @@ public class GenericRowBuilder implements RowBuilder {
      * @param sheet the sheet to build rows for
      * @param options the locale to use
      */
-    public GenericRowBuilder(Sheet sheet, Map<Option<?>, Object> options) {
+    public GenericRowBuilder(Sheet sheet, Map<Option<?>, Value<?>> options) {
       this.sheet = sheet;
 
-      Locale locale = (Locale) Csv.getOptionValue(Csv.OPTION_LOCALE, options);
-      Csv.PredefinedDateFormat dateFormat = (PredefinedDateFormat) Csv.getOptionValue(Csv.OPTION_DATEFORMAT, options);
+      Locale locale = Csv.getLocale(options);
+      Csv.PredefinedDateFormat dateFormat = Csv.getDateFormat(options);
 
       NumberFormat numberFormat = NumberFormat.getInstance(locale);
       DateTimeFormatter dateFormatter = dateFormat.getFormatter(locale);
 
-        this.helper = new CellValueHelper(numberFormat, dateFormatter);
+      this.helper = new CellValueHelper(numberFormat, dateFormatter);
     }
 
     @Override

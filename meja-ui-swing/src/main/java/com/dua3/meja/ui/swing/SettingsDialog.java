@@ -19,13 +19,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options.Value;
 
 public class SettingsDialog extends JDialog {
 
   private static final long serialVersionUID = 1L;
 
   private final JPanel settingsPanel;
-  private Map<Option<?>, Object> result = null;
+  private Map<Option<?>, Value<?>> result = null;
 
   SettingsDialog(Component parent, String title, String text, List<Option<?>> options) {
     super((JFrame) SwingUtilities.getRoot(parent), title, true);
@@ -33,14 +34,14 @@ public class SettingsDialog extends JDialog {
 
     add(new JLabel(text), BorderLayout.NORTH);
 
-    List<JComboBox<?>> inputs = new ArrayList<>(options.size());
+    List<JComboBox<Value<?>>> inputs = new ArrayList<>(options.size());
 
     settingsPanel = new JPanel();
     settingsPanel.setLayout(new GridLayout(options.size(), 2));
     for (Option<?> option: options) {
       settingsPanel.add(new JLabel(option.getName()));
-      JComboBox<?> cb = new JComboBox<>(option.getChoices());
-      cb.setSelectedItem(option.getDefaultChoice());
+      JComboBox<Value<?>> cb = new JComboBox<>(option.getChoices());
+      cb.setSelectedItem(option.getDefault());
       inputs.add(cb);
       settingsPanel.add(cb);
     }
@@ -49,7 +50,7 @@ public class SettingsDialog extends JDialog {
     add(new JButton(MejaSwingHelper.createAction("OK", () -> {
       result = new HashMap<>();
       for(int i=0; i<options.size(); i++) {
-        result.put(options.get(i), inputs.get(i).getSelectedItem());
+        result.put(options.get(i), (Value<?>) inputs.get(i).getSelectedItem());
       }
       this.dispose();
     })), BorderLayout.SOUTH);
@@ -62,7 +63,7 @@ public class SettingsDialog extends JDialog {
     this(parent, title, text, Arrays.asList(options));
   }
 
-  public Map<Option<?>, Object> getResult() {
+  public Map<Option<?>, Value<?>> getResult() {
     return result;
   }
 }

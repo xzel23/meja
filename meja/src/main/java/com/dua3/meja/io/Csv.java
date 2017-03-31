@@ -16,16 +16,20 @@
 package com.dua3.meja.io;
 
 import java.nio.charset.Charset;
+import java.text.DecimalFormatSymbols;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
+import com.dua3.meja.util.NamedFunction;
 import com.dua3.meja.util.Option;
 import com.dua3.meja.util.Options;
+import com.dua3.meja.util.Options.Value;
 
 /**
  *
@@ -40,6 +44,10 @@ public abstract class Csv {
   public static final String OPTION_SEPARATOR = "Separator";
 
   private static final Options OPTIONS = new Options();
+
+  public static Optional<Option<?>> getOption(String name) {
+    return OPTIONS.getOption(name);
+  }
 
   public enum PredefinedDateFormat {
     LOCALE_SHORT("short (locale dependent)", locale -> formatFromLocale(locale, FormatStyle.SHORT)),
@@ -72,22 +80,72 @@ public abstract class Csv {
     }
   }
 
-  static {
-    OPTIONS.addOption(OPTION_SEPARATOR, Character.class, ',', ';');
-    OPTIONS.addOption(OPTION_DELIMITER, Character.class, '"', '\'');
-    Locale[] locales = Locale.getAvailableLocales();
-    Arrays.sort(locales, (a,b) -> a.toString().compareTo(b.toString()));
-    OPTIONS.addOption(OPTION_LOCALE, Locale.class, Locale.getDefault(), locales);
-    OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset(), Charset.availableCharsets().values().toArray(new Charset[0]));
-    OPTIONS.addOption(OPTION_DATEFORMAT, PredefinedDateFormat.class, PredefinedDateFormat.LOCALE_SHORT, PredefinedDateFormat.values());
+  public static class LocaleDependent<T> {
+
+    private final Function<Locale,T> producer;
+
+    public T forLocale(Locale locale) {
+      return producer.apply(locale);
+    }
+
+    public LocaleDependent(Function<Locale,T> producer) {
+      this.producer = producer;
+    }
   }
 
-  public static Object getOptionValue(String name, Map<Option<?>, Object> overrides) {
+  static {
+    Locale[] locales = Locale.getAvailableLocales();
+    Arrays.sort(locales, (a,b) -> a.toString().compareTo(b.toString()));
+    OPTIONS.addOption(OPTION_LOCALE, Locale.class, Options.value("default",Locale.ROOT), Options.wrap(locales));
+    OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset(), Charset.availableCharsets().values().toArray(new Charset[0]));
+    OPTIONS.addOption(OPTION_DATEFORMAT, PredefinedDateFormat.class, PredefinedDateFormat.LOCALE_SHORT, PredefinedDateFormat.values());
+
+    OPTIONS.addOption(OPTION_SEPARATOR, NamedFunction.class,
+        NamedFunction.create("Locale Dependent",
+            (Locale locale) -> {
+              char ds = DecimalFormatSymbols.getInstance(locale).getDecimalSeparator();
+              return ds != ',' ? ',' : ';';
+            }),
+        NamedFunction.create(",", locale -> ','),
+        NamedFunction.create(";", locale -> ';')
+      );
+
+    OPTIONS.addOption(OPTION_DELIMITER, Character.class, Options.value("\"", '"'), Options.value("'", '\''));
+  }
+
+  public static Object getOptionValue(String name, Map<Option<?>, Value<?>> overrides) {
     return OPTIONS.getOptionValue(name, overrides);
   }
 
   public static List<Option<?>> getOptions() {
     return OPTIONS.asList();
+  }
+
+  public static Locale getLocale(Map<Option<?>, Value<?>> options) {
+    Locale locale = (Locale) getOptionValue(OPTION_LOCALE, options);
+    return locale;
+  }
+
+  public static Character getDelimiter(Map<Option<?>, Value<?>> options) {
+    Character delimiter = (Character) getOptionValue(OPTION_DELIMITER, options);
+    return delimiter;
+  }
+
+  public static Character getSeparator(Map<Option<?>, Value<?>> options) {
+    Locale locale = getLocale(options);
+    @SuppressWarnings("unchecked")
+    NamedFunction<Locale,Character> selector = (NamedFunction<Locale,Character>) getOptionValue(OPTION_SEPARATOR, options);
+    return selector.apply(locale);
+  }
+
+  public static Charset getCharset(Map<Option<?>, Value<?>> options) {
+    Charset charset = (Charset) getOptionValue(OPTION_CHARSET, options);
+    return charset;
+  }
+
+  public static PredefinedDateFormat getDateFormat(Map<Option<?>, Value<?>> options) {
+    PredefinedDateFormat dateFormat = (PredefinedDateFormat) Csv.getOptionValue(Csv.OPTION_DATEFORMAT, options);
+    return dateFormat;
   }
 
 }

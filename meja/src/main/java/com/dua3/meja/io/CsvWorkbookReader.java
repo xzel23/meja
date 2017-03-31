@@ -27,6 +27,7 @@ import java.util.Map;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.generic.GenericRowBuilder;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options.Value;
 
 /**
  *
@@ -42,7 +43,7 @@ public class CsvWorkbookReader extends WorkbookReader {
         return new CsvWorkbookReader();
     }
 
-    private Map<Option<?>, Object> options = new HashMap<>();
+    private Map<Option<?>, Value<?>> options = new HashMap<>();
 
     private CsvWorkbookReader() {
     }
@@ -50,7 +51,7 @@ public class CsvWorkbookReader extends WorkbookReader {
     @Override
     public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, InputStream in, URI uri) throws IOException {
       try {
-          Locale locale = (Locale) CsvReader.getOptionValue(CsvReader.OPTION_LOCALE, options);
+          Locale locale = Csv.getLocale(options);
           WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
           workbook.setUri(uri);
           GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), options);
@@ -76,7 +77,7 @@ public class CsvWorkbookReader extends WorkbookReader {
      */
     public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, BufferedReader in, URI uri) throws IOException {
       try {
-          Locale locale = (Locale) CsvReader.getOptionValue(CsvReader.OPTION_LOCALE, options);
+          Locale locale = Csv.getLocale(options);
           WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
           workbook.setUri(uri);
           GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), options);
@@ -92,7 +93,7 @@ public class CsvWorkbookReader extends WorkbookReader {
     }
 
     @Override
-    public void setOptions(Map<Option<?>, Object> importSettings) {
+    public void setOptions(Map<Option<?>, Value<?>> importSettings) {
       this.options = new HashMap<>(importSettings);
     }
 }

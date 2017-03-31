@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options.Value;
 
 /**
  * Abstract base class for reading workbook data.
@@ -69,7 +70,7 @@ public abstract class WorkbookReader {
     public abstract  <WORKBOOK extends Workbook>
     WORKBOOK read(Class<WORKBOOK> clazz, InputStream in, URI uri) throws IOException;
 
-    public void setOptions(Map<Option<?>, Object> importSettings) {
+    public void setOptions(Map<Option<?>, Value<?>> importSettings) {
       // nop: empty default implementation for Readers that don't take options
     }
 

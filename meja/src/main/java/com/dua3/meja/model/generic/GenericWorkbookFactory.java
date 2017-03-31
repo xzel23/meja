@@ -26,6 +26,7 @@ import com.dua3.meja.io.WorkbookReader;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options.Value;
 
 /**
  * A Factory for creating instances of {@link GenericWorkbook}.
@@ -42,7 +43,7 @@ public class GenericWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public Workbook open(File file, Map<Option<?>, Object> importSettings) throws IOException {
+    public Workbook open(File file, Map<Option<?>, Value<?>> importSettings) throws IOException {
         FileType type = FileType.forFile(file);
 
         if (type==null) {

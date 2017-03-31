@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import com.dua3.meja.util.Options.Value;
+
 /**
  * An Option that changes the behavior of other classes.
  * This class is intended to be used to create  settings dialogs at runtime.
@@ -15,18 +17,18 @@ public class Option<T> {
 
   private final String name;
   private final Class<T> klass;
-  private final T[] choices;
-  private final T defaultChoice;
+  private final Value<T>[] choices;
+  private final Value<T> defaultChoice;
 
   public String getName() {
     return name;
   }
 
-  public Object[] getChoices() {
+  public Value<T>[] getChoices() {
     return choices;
   }
 
-  public T getDefaultChoice() {
+  public Value<T> getDefault() {
     return defaultChoice;
   }
 
@@ -35,17 +37,17 @@ public class Option<T> {
   }
 
   @SafeVarargs
-  public Option(String name, Class<T> klass, T defaultChoice, T... choices) {
+  public Option(String name, Class<T> klass, Value<T> defaultChoice, Value<T>... choices) {
     this.name = Objects.requireNonNull(name);
     this.klass = Objects.requireNonNull(klass);
     this.defaultChoice = defaultChoice;
 
     // make sure this.choices does not contain a duplicate for defaultChoice
-    List<T> choices_ = Arrays.asList(choices);
+    List<Value<T>> choices_ = Arrays.asList(choices);
     if (choices_.contains(defaultChoice)) {
       this.choices = choices;
     } else {
-      List<T> allChoices = new ArrayList<>(choices.length+1);
+      List<Value<T>> allChoices = new ArrayList<>(choices.length+1);
       allChoices.add(defaultChoice);
       allChoices.addAll(choices_);
       this.choices = allChoices.toArray(choices);

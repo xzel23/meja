@@ -26,6 +26,7 @@ import java.util.Map;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.Options.Value;
 
 /**
  * Abstract base class for writing workbook data.
@@ -66,7 +67,7 @@ public abstract class WorkbookWriter {
      */
     public abstract void write(Workbook workbook, OutputStream out) throws IOException;
 
-    public void setOptions(Map<Option<?>, Object> exportSettings) {
+    public void setOptions(Map<Option<?>, Value<?>> exportSettings) {
       // empty implementation for writers not taking export options
     }
 
