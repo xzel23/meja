@@ -94,14 +94,15 @@ public class CellValueHelper {
      * if{@code value} is equal to either "true" or "false" (ignoring case).
      * {@code null} otherwise.
      */
-    protected Optional<Boolean> parseBoolean(String value) {
-        if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+    protected Optional<Boolean> parseBoolean(String text) {
+        text = text.trim();
+        if (Boolean.FALSE.toString().equalsIgnoreCase(text)) {
             return Optional.of(Boolean.FALSE);
         }
-        if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
+        if (Boolean.TRUE.toString().equalsIgnoreCase(text)) {
             return Optional.of(Boolean.TRUE);
         }
-        return Optional.ofNullable(null);
+        return Optional.empty();
     }
 
     /**
@@ -111,6 +112,7 @@ public class CellValueHelper {
      * {@code null}, if {@code value} could not be fully parsed
      */
     protected Optional<Number> parseNumber(String text) {
+        text = text.trim();
         ParsePosition pos = new ParsePosition(0);
         Number number = numberFormat.parse(text, pos);
         return Optional.ofNullable(pos.getIndex() == text.length() ? number : null);
@@ -123,6 +125,7 @@ public class CellValueHelper {
      * {@code null}, if {@code value} could not be fully parsed
      */
     protected Optional<LocalDateTime> parseDate(String text) {
+        text = text.trim();
         ParsePosition pos = new ParsePosition(0);
 
         // dry run first: try a complete parse first, but do not resolve fields
