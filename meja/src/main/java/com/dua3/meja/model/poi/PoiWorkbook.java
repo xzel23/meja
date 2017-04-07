@@ -48,6 +48,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Sheet;
@@ -56,6 +57,7 @@ import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.text.Style;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.meja.util.Options;
 
 /**
  *
@@ -201,18 +203,20 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     @Override
-    public void write(FileType type, OutputStream out) throws IOException {
+    public void write(FileType type, OutputStream out, Options options) throws IOException {
         if (type == getStandardFileType()) {
             // if the workbook is to be saved in the same format, write it out directly so that
             // features not yet supported by Meja don't get lost in the process
             poiWorkbook.write(out);
         } else {
-            type.getWriter().write(this, out);
+            WorkbookWriter writer = type.getWriter();
+            writer .setOptions(options);
+            writer.write(this, out);
         }
     }
 
     @Override
-    public boolean write(File file, boolean overwriteIfExists) throws IOException {
+    public boolean write(File file, boolean overwriteIfExists, Options options) throws IOException {
         boolean exists = file.createNewFile();
         if (!exists || overwriteIfExists) {
             FileType type = FileType.forFile(file);
@@ -220,7 +224,7 @@ public abstract class PoiWorkbook implements Workbook {
                 throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
             }
             try (FileOutputStream out = new FileOutputStream(file)) {
-                write(type, out);
+                write(type, out, options);
             }
             return true;
         } else {

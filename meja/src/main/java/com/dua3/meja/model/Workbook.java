@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import com.dua3.meja.io.FileType;
+import com.dua3.meja.util.Options;
 
 /**
  * Workbook class.
@@ -116,11 +117,25 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Writes the workbook to a stream.
+     * @param fileType the
+     *  file type to use
+     * @param out
+     *  output stream to write to
+     * @param options
+     *  special options to use (supported options depend on the file type)
+     * @throws java.io.IOException
+     */
+    void write(FileType fileType, OutputStream out, Options options) throws IOException;
+
+    /**
+     * Writes the workbook to a stream using default options.
      * @param fileType the file type to use
      * @param out output stream to write to
      * @throws java.io.IOException
      */
-    void write(FileType fileType, OutputStream out) throws IOException;
+    default void write(FileType fileType, OutputStream out) throws IOException {
+      write(fileType, out, Options.empty());
+    }
 
     /**
      * Writes the workbook to a file.
@@ -131,11 +146,32 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * by the extension of {@code file} which must be one of the extensions
      * defined in {@link FileType}.
      * </p>
-     * @param overwriteIfExists set to true if an existing file should be overwritten
+     * @param overwriteIfExists
+     *  set to true if an existing file should be overwritten
+     * @param options
+     *  special options to use (supported options depend on the file type)
      * @return true if workbook was written to file, otherwise false
      * @throws java.io.IOException
      */
-    boolean write(File file, boolean overwriteIfExists) throws IOException;
+    boolean write(File file, boolean overwriteIfExists, Options options) throws IOException;
+
+    /**
+     * Writes the workbook to a file using standard options.
+     *
+     * @param file the file to write to.
+     * <p>
+     * The file format to used is determined
+     * by the extension of {@code file} which must be one of the extensions
+     * defined in {@link FileType}.
+     * </p>
+     * @param overwriteIfExists
+     *  set to true if an existing file should be overwritten
+     * @return true if workbook was written to file, otherwise false
+     * @throws java.io.IOException
+     */
+    default boolean write(File file, boolean overwriteIfExists) throws IOException {
+      return write(file, overwriteIfExists, Options.empty());
+    }
 
     /**
      * Add a new sheet as last sheet of this workbook.

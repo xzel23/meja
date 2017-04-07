@@ -25,12 +25,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.dua3.meja.util.Option;
-import com.dua3.meja.util.Options.Value;
+import com.dua3.meja.util.Options;
 
 /**
  * @author axel TODO: see below number of fields require fixed number of columns
@@ -40,18 +38,18 @@ import com.dua3.meja.util.Options.Value;
  */
 public class CsvReader extends Csv implements DataReader, AutoCloseable {
 
-    public static CsvReader create(RowBuilder builder, File file, Map<Option<?>, Value<?>> options) throws FileNotFoundException {
+    public static CsvReader create(RowBuilder builder, File file, Options options) throws FileNotFoundException {
       return create(builder, new FileInputStream(file), options);
     }
 
-    public static CsvReader create(RowBuilder builder, InputStream in, Map<Option<?>, Value<?>> options) {
+    public static CsvReader create(RowBuilder builder, InputStream in, Options options) {
         Charset charset = getCharset(options);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
         return create(builder, reader, options);
     }
 
     static CsvReader create(RowBuilder builder, BufferedReader reader,
-        Map<Option<?>, Value<?>> options) {
+        Options options) {
       CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
       return csvReader;
     }
@@ -67,7 +65,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
     private boolean ignoreMissingFields;
     private final String source;
 
-    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, Map<Option<?>, Value<?>> options) {
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, Options options) {
         this.rowBuilder = rowBuilder;
         this.reader = reader;
         this.columnNames = null;
@@ -231,10 +229,10 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
 
     /**
      * @param columnNr
+     *  the column number
      * @return name of column or columnNr as String if no name was set
-     * @throws IOException
      */
-    public String getColumnName(int columnNr) throws IOException {
+    public String getColumnName(int columnNr) {
         if (columnNames == null) {
             return Integer.toString(columnNr);
         } else if (columnNr < columnNames.size()) {

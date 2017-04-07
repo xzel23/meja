@@ -24,27 +24,25 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
-import java.util.Map;
 
-import com.dua3.meja.util.Option;
-import com.dua3.meja.util.Options.Value;
+import com.dua3.meja.util.Options;
 
 /**
  *
  * @author axel@dua3.com
  */
 public class CsvWriter extends Csv implements AutoCloseable, Flushable {
-  public static CsvWriter create(File file, Map<Option<?>, Value<?>> options) throws FileNotFoundException {
+  public static CsvWriter create(File file, Options options) throws FileNotFoundException {
     return create(new FileOutputStream(file), options);
   }
 
-  public static CsvWriter create(OutputStream out, Map<Option<?>, Value<?>> options) {
+  public static CsvWriter create(OutputStream out, Options options) {
       Charset charset = getCharset(options);
       BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, charset));
       return create(writer, options);
   }
 
-  public static CsvWriter create(BufferedWriter writer, Map<Option<?>, Value<?>> options) {
+  public static CsvWriter create(BufferedWriter writer, Options options) {
     CsvWriter csvWriter = new CsvWriter(writer, options);
     return csvWriter;
   }
@@ -57,7 +55,7 @@ public class CsvWriter extends Csv implements AutoCloseable, Flushable {
   private final String delimiter;
   private int fieldsInRow = 0;
 
-  public CsvWriter(BufferedWriter out, Map<Option<?>, Value<?>> options) {
+  public CsvWriter(BufferedWriter out, Options options) {
     this.separator = String.valueOf(getSeparator(options));
     this.delimiter = String.valueOf(getDelimiter(options));
     this.lineDelimiter = String.format("%n");

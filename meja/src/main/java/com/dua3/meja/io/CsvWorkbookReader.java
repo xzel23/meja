@@ -20,14 +20,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.generic.GenericRowBuilder;
-import com.dua3.meja.util.Option;
-import com.dua3.meja.util.Options.Value;
+import com.dua3.meja.util.Options;
 
 /**
  *
@@ -43,7 +40,7 @@ public class CsvWorkbookReader extends WorkbookReader {
         return new CsvWorkbookReader();
     }
 
-    private Map<Option<?>, Value<?>> options = new HashMap<>();
+    private Options options = Options.empty();
 
     private CsvWorkbookReader() {
     }
@@ -71,9 +68,13 @@ public class CsvWorkbookReader extends WorkbookReader {
      * This is implemented because CSV is a character format. The Encoding must be
      * set correctly in the reader.
      * @param clazz
+     *  class of the workboook implementation to use
      * @param in
+     *  the reader to read from
      * @param uri
+     *  the URI of the source (for creating meaningful error messages)
      * @throws IOException
+     *  if an io-error occurs during reading
      */
     public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, BufferedReader in, URI uri) throws IOException {
       try {
@@ -93,7 +94,7 @@ public class CsvWorkbookReader extends WorkbookReader {
     }
 
     @Override
-    public void setOptions(Map<Option<?>, Value<?>> importSettings) {
-      this.options = new HashMap<>(importSettings);
+    public void setOptions(Options importSettings) {
+      this.options = new Options(importSettings);
     }
 }

@@ -23,8 +23,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Locale;
-import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,8 +41,8 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.OptionSet;
 import com.dua3.meja.util.Options;
-import com.dua3.meja.util.Options.Value;
 
 /**
  *
@@ -52,6 +53,20 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
 
     private static final Logger LOGGER = Logger.getLogger(PoiWorkbookFactory.class.getName());
+
+    private static final OptionSet OPTIONS = new OptionSet();
+
+    public static final String OPTION_LOCALE = "Locale";
+
+    public static Optional<Option<?>> getOption(String name) {
+      return OPTIONS.getOption(name);
+    }
+
+    static {
+      Locale[] locales = Locale.getAvailableLocales();
+      Arrays.sort(locales, (a,b) -> a.toString().compareTo(b.toString()));
+      OPTIONS.addOption(OPTION_LOCALE, Locale.class, OptionSet.value("default",Locale.ROOT), OptionSet.wrap(locales));
+    }
 
     /**
      * @return the singleton instance
@@ -64,7 +79,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public Workbook open(File file, Map<Option<?>, Value<?>> importSettings) throws IOException {
+    public Workbook open(File file, Options importSettings) throws IOException {
         FileType type = FileType.forFile(file);
 
         if (type==FileType.XLS||type==FileType.XLSX) {
@@ -72,8 +87,8 @@ public class PoiWorkbookFactory extends WorkbookFactory {
             // Do not use the create(File) method to avoid exception when trying to
             // save the workbook again to the same file.
             try (InputStream in = new FileInputStream(file)) {
-                Locale locale = (Locale) importSettings.getOrDefault("Locale", Options.value(Locale.getDefault())).getValue();
-                return open(in, locale, file.toURI());
+              Locale locale = (Locale) importSettings.get(OPTIONS.getOption(OPTION_LOCALE).get()).getValue();
+              return open(in, locale, file.toURI());
             }
         } else if (type==null) {
             // if type could not be determined, try to open as CSV
@@ -109,8 +124,11 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     /**
      *
      * @param uri
+     *  URI of the workbook to open
      * @return the workbook
+     *  the workbook
      * @throws IOException
+     *  if an error occurs
      */
     public Workbook open(URI uri) throws IOException {
         return open(uri, Locale.getDefault());
@@ -119,9 +137,13 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     /**
      *
      * @param uri
+     *  URI of the workbook to open
      * @param locale
+     *  locale to use
      * @return the workbook
+     *  the workbook
      * @throws IOException
+     *  if an error occurs
      */
     public Workbook open(URI uri, Locale locale)
             throws IOException {
@@ -131,8 +153,11 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     /**
      *
      * @param url
+     *  URL of the workbook to open
      * @return the workbook
+     *  the workbook
      * @throws IOException
+     *  if an error occurs
      */
     public Workbook open(URL url) throws IOException {
         return open(url, Locale.getDefault());
@@ -141,9 +166,13 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     /**
      * Open workbook from URL.
      * @param url
+     *  URL of the workbook to open
      * @param locale
+     *  the locale to use
      * @return the workbook
+     *  the workbook
      * @throws IOException
+     *  if an error occurs
      */
     public Workbook open(URL url, Locale locale)
             throws IOException {
@@ -208,6 +237,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     /**
      * Create a new Xlsx-Workbook in streaming mode (write only) with the given Locale settings.
      * @param locale
+     *  the locale to use
      * @return the newly created Workbook
      */
     public Workbook createXlsx(Locale locale) {

@@ -6,9 +6,7 @@ import java.awt.Frame;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,15 +17,17 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.dua3.meja.util.Option;
-import com.dua3.meja.util.Options.Value;
+import com.dua3.meja.util.OptionSet.Value;
+import com.dua3.meja.util.Options;
 
 public class SettingsDialog extends JDialog {
 
   private static final long serialVersionUID = 1L;
 
   private final JPanel settingsPanel;
-  private Map<Option<?>, Value<?>> result = null;
+  private Options result = Options.empty();
 
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   SettingsDialog(Component parent, String title, String text, List<Option<?>> options) {
     super((JFrame) SwingUtilities.getRoot(parent), title, true);
     setLayout(new BorderLayout());
@@ -48,9 +48,9 @@ public class SettingsDialog extends JDialog {
     add(settingsPanel, BorderLayout.CENTER);
 
     add(new JButton(MejaSwingHelper.createAction("OK", () -> {
-      result = new HashMap<>();
+      result = new Options();
       for(int i=0; i<options.size(); i++) {
-        result.put(options.get(i), (Value<?>) inputs.get(i).getSelectedItem());
+        result.put((Option) options.get(i), (Value) inputs.get(i).getSelectedItem());
       }
       this.dispose();
     })), BorderLayout.SOUTH);
@@ -63,7 +63,7 @@ public class SettingsDialog extends JDialog {
     this(parent, title, text, Arrays.asList(options));
   }
 
-  public Map<Option<?>, Value<?>> getResult() {
+  public Options getResult() {
     return result;
   }
 }

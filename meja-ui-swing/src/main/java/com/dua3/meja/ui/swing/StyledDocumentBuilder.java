@@ -45,7 +45,9 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
      * Convert {@code RichText} to {@code StyledDocument} conserving text attributes.
      * @param text an instance of {@code RichText}
      * @param dfltAttr
+     *  the default attributes to use
      * @param scale
+     *  scaling factor to start with
      * @return instance of {@code StyledDocument} with {@code text} as its content
      */
     public static StyledDocument toStyledDocument(RichText text, AttributeSet dfltAttr, double scale) {

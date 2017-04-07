@@ -17,12 +17,9 @@ package com.dua3.meja.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 
-import com.dua3.meja.util.Option;
-import com.dua3.meja.util.Options.Value;
+import com.dua3.meja.util.Options;
 
 /**
  * Abstract base class for workbook factories.
@@ -73,7 +70,7 @@ public abstract class WorkbookFactory {
      * @throws IOException
      */
     public Workbook open(File file) throws IOException {
-      return open(file, Collections.emptyMap());
+      return open(file, Options.empty());
     }
 
     /**
@@ -89,6 +86,6 @@ public abstract class WorkbookFactory {
      * @return workbook
      * @throws IOException
      */
-    public abstract Workbook open(File file, Map<Option<?>, Value<?>> importSettings) throws IOException;
+    public abstract Workbook open(File file, Options importSettings) throws IOException;
 
 }

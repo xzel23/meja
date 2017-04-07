@@ -35,9 +35,11 @@ public class CellValueHelper {
     private final DateTimeFormatter dateFormatter;
 
     /**
-     * Construct an instance of {@code CellValueHelper} for a specific locale.
+     * Construct an instance of {@code CellValueHelper}.
      * @param numberFormat
+     *  the number format to use
      * @param dateFormatter
+     *  the date format to use
      */
     public CellValueHelper(NumberFormat numberFormat, DateTimeFormatter dateFormatter) {
       this.numberFormat = numberFormat;
@@ -89,9 +91,9 @@ public class CellValueHelper {
 
     /**
      * Parse a boolean value.
-     * @param value string representation of a boolean value
+     * @param text string representation of a boolean value
      * @return {code Boolean.TRUE} or {Boolean.FALSE} respectively,
-     * if{@code value} is equal to either "true" or "false" (ignoring case).
+     * if{@code text} is equal to either "true" or "false" (ignoring case).
      * {@code null} otherwise.
      */
     protected Optional<Boolean> parseBoolean(String text) {

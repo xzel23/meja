@@ -21,9 +21,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -46,7 +44,7 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.Option;
-import com.dua3.meja.util.Options.Value;
+import com.dua3.meja.util.Options;
 
 /**
  * Helper class.
@@ -137,7 +135,7 @@ public class MejaSwingHelper {
 
             // ask user for file type specific settings
             List<Option<?>> settings = fileType.getSettings();
-            Map<Option<?>, Value<?>> importSettings = Collections.emptyMap(); // default is empty
+            Options importSettings = Options.empty(); // default is empty
             if (!settings.isEmpty()) {
               SettingsDialog dialog = new SettingsDialog(parent, fileType.name()+" - Settings", "Please verify the import settings:", settings);
               dialog.setVisible(true);

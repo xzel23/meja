@@ -31,9 +31,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.util.Options;
 
 /**
  * Generic implementation of {@link Workbook}.
@@ -110,12 +112,14 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public void write(FileType type, OutputStream out) throws IOException {
-        type.getWriter().write(this, out);
+    public void write(FileType type, OutputStream out, Options options) throws IOException {
+        WorkbookWriter writer = type.getWriter();
+        writer.setOptions(options);
+        writer.write(this, out);
     }
 
     @Override
-    public boolean write(File file, boolean overwriteIfExists) throws IOException {
+    public boolean write(File file, boolean overwriteIfExists, Options options) throws IOException {
         boolean exists = file.createNewFile();
         if (!exists || overwriteIfExists) {
             FileType type = FileType.forFile(file);
@@ -123,7 +127,7 @@ public class GenericWorkbook implements Workbook {
                 throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
             }
             try (FileOutputStream out = new FileOutputStream(file)) {
-                write(type, out);
+                write(type, out, options);
             }
             return true;
         } else {

@@ -19,11 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Map;
 
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.util.Option;
-import com.dua3.meja.util.Options.Value;
+import com.dua3.meja.util.Options;
 
 /**
  * Abstract base class for reading workbook data.
@@ -70,7 +68,7 @@ public abstract class WorkbookReader {
     public abstract  <WORKBOOK extends Workbook>
     WORKBOOK read(Class<WORKBOOK> clazz, InputStream in, URI uri) throws IOException;
 
-    public void setOptions(Map<Option<?>, Value<?>> importSettings) {
+    public void setOptions(Options importSettings) {
       // nop: empty default implementation for Readers that don't take options
     }
 

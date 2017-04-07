@@ -18,15 +18,13 @@ package com.dua3.meja.model.generic;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Map;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookReader;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.meja.util.Option;
-import com.dua3.meja.util.Options.Value;
+import com.dua3.meja.util.Options;
 
 /**
  * A Factory for creating instances of {@link GenericWorkbook}.
@@ -43,7 +41,7 @@ public class GenericWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public Workbook open(File file, Map<Option<?>, Value<?>> importSettings) throws IOException {
+    public Workbook open(File file, Options importSettings) throws IOException {
         FileType type = FileType.forFile(file);
 
         if (type==null) {

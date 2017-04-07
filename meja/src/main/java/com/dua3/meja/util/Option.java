@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import com.dua3.meja.util.Options.Value;
+import com.dua3.meja.util.OptionSet.Value;
 
 /**
  * An Option that changes the behavior of other classes.

@@ -22,14 +22,13 @@ import java.time.format.FormatStyle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
 import com.dua3.meja.util.NamedFunction;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.OptionSet;
 import com.dua3.meja.util.Options;
-import com.dua3.meja.util.Options.Value;
 
 /**
  *
@@ -43,7 +42,7 @@ public abstract class Csv {
   public static final String OPTION_DELIMITER = "Text delimiter";
   public static final String OPTION_SEPARATOR = "Separator";
 
-  private static final Options OPTIONS = new Options();
+  private static final OptionSet OPTIONS = new OptionSet();
 
   public static Optional<Option<?>> getOption(String name) {
     return OPTIONS.getOption(name);
@@ -96,7 +95,7 @@ public abstract class Csv {
   static {
     Locale[] locales = Locale.getAvailableLocales();
     Arrays.sort(locales, (a,b) -> a.toString().compareTo(b.toString()));
-    OPTIONS.addOption(OPTION_LOCALE, Locale.class, Options.value("default",Locale.ROOT), Options.wrap(locales));
+    OPTIONS.addOption(OPTION_LOCALE, Locale.class, OptionSet.value("default",Locale.ROOT), OptionSet.wrap(locales));
     OPTIONS.addOption(OPTION_CHARSET, Charset.class, Charset.defaultCharset(), Charset.availableCharsets().values().toArray(new Charset[0]));
     OPTIONS.addOption(OPTION_DATEFORMAT, PredefinedDateFormat.class, PredefinedDateFormat.LOCALE_SHORT, PredefinedDateFormat.values());
 
@@ -110,10 +109,10 @@ public abstract class Csv {
         NamedFunction.create(";", locale -> ';')
       );
 
-    OPTIONS.addOption(OPTION_DELIMITER, Character.class, Options.value("\"", '"'), Options.value("'", '\''));
+    OPTIONS.addOption(OPTION_DELIMITER, Character.class, OptionSet.value("\"", '"'), OptionSet.value("'", '\''));
   }
 
-  public static Object getOptionValue(String name, Map<Option<?>, Value<?>> overrides) {
+  public static Object getOptionValue(String name, Options overrides) {
     return OPTIONS.getOptionValue(name, overrides);
   }
 
@@ -121,29 +120,29 @@ public abstract class Csv {
     return OPTIONS.asList();
   }
 
-  public static Locale getLocale(Map<Option<?>, Value<?>> options) {
+  public static Locale getLocale(Options options) {
     Locale locale = (Locale) getOptionValue(OPTION_LOCALE, options);
     return locale;
   }
 
-  public static Character getDelimiter(Map<Option<?>, Value<?>> options) {
+  public static Character getDelimiter(Options options) {
     Character delimiter = (Character) getOptionValue(OPTION_DELIMITER, options);
     return delimiter;
   }
 
-  public static Character getSeparator(Map<Option<?>, Value<?>> options) {
+  public static Character getSeparator(Options options) {
     Locale locale = getLocale(options);
     @SuppressWarnings("unchecked")
     NamedFunction<Locale,Character> selector = (NamedFunction<Locale,Character>) getOptionValue(OPTION_SEPARATOR, options);
     return selector.apply(locale);
   }
 
-  public static Charset getCharset(Map<Option<?>, Value<?>> options) {
+  public static Charset getCharset(Options options) {
     Charset charset = (Charset) getOptionValue(OPTION_CHARSET, options);
     return charset;
   }
 
-  public static PredefinedDateFormat getDateFormat(Map<Option<?>, Value<?>> options) {
+  public static PredefinedDateFormat getDateFormat(Options options) {
     PredefinedDateFormat dateFormat = (PredefinedDateFormat) Csv.getOptionValue(Csv.OPTION_DATEFORMAT, options);
     return dateFormat;
   }

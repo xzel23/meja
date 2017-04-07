@@ -18,17 +18,16 @@ package com.dua3.meja.io;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Locale;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.Option;
+import com.dua3.meja.util.OptionSet;
+import com.dua3.meja.util.OptionSet.Value;
 import com.dua3.meja.util.Options;
-import com.dua3.meja.util.Options.Value;
 
 /**
  *
@@ -44,7 +43,7 @@ public class CsvWorkbookWriter extends WorkbookWriter {
         return new CsvWorkbookWriter();
     }
 
-    private Map<Option<?>, Value<?>> options = Collections.emptyMap();
+    private Options options = Options.empty();
 
     private CsvWorkbookWriter() {
     }
@@ -56,13 +55,15 @@ public class CsvWorkbookWriter extends WorkbookWriter {
       }
     }
 
-    private Map<Option<?>, Value<?>> getOptionsWithLocale(Map<Option<?>, Value<?>> options, Workbook workbook) {
-      if (options.containsKey(Csv.OPTION_LOCALE)) {
+    @SuppressWarnings("unchecked")
+    private Options getOptionsWithLocale(Options options, Workbook workbook) {
+      if (options.hasOption(Csv.getOption(Csv.OPTION_LOCALE).get())) {
         return options;
       }
 
-      HashMap<Option<?>, Value<?>> options2 = new HashMap<>(options);
-      options2.put(Csv.getOption(Csv.OPTION_LOCALE).get(), Options.value("Locale from Workbook", workbook.getLocale()));
+      Options options2 = new Options(options);
+      Value<Locale> value = OptionSet.value("Locale from Workbook", workbook.getLocale());
+      options2.put((Option) (Csv.getOption(Csv.OPTION_LOCALE).get()), (Value) value);
       return options2;
     }
 
@@ -71,8 +72,11 @@ public class CsvWorkbookWriter extends WorkbookWriter {
      * This is implemented because CSV is a character format. The Encoding must be
      * set correctly in the writer.
      * @param workbook
+     *  the workbook to write
      * @param out
+     *  the write to write the workbook to
      * @throws IOException
+     *  if an input/output error occurs
      */
     public void write(Workbook workbook, BufferedWriter out) throws IOException {
       try (CsvWriter writer = CsvWriter.create(out, getOptionsWithLocale(options, workbook))) {
@@ -93,7 +97,7 @@ public class CsvWorkbookWriter extends WorkbookWriter {
     }
 
     @Override
-    public void setOptions(Map<Option<?>, Value<?>> importSettings) {
-      this.options  = new HashMap<>(importSettings);
+    public void setOptions(Options importSettings) {
+      this.options  = new Options(importSettings);
     }
 }
