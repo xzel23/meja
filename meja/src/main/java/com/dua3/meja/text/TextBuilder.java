@@ -34,6 +34,7 @@ public abstract class TextBuilder<T> {
     /**
      * Add text.
      * @param text
+     *  the richt text to add
      */
     public void add(RichText text) {
         for (Run r: text) {

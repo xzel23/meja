@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -83,10 +84,44 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @throws IllegalArgumentException
      *   if no sheet exists with the given name
      */
-    Sheet getSheetByName(String sheetName);
+    default Sheet getSheetByName(String sheetName) {
+      int idx = getSheetIndexByName(sheetName);
 
+      if (idx<0) {
+        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
+      }
+
+      return getSheet(idx);
+    }
+
+    /**
+     * Get index of sheet by name.
+     * @param sheetName name of sheet
+     * @return index of sheet or -1 if no sheet with this name exists
+     */
+    default int getSheetIndexByName(String sheetName) {
+      int idx=0;
+      for (Sheet sheet: this) {
+        if (sheet.getSheetName().equals(sheetName)) {
+            return idx;
+        }
+        idx++;
+      }
+      return -1;
+    }
+
+    /**
+     * Get the current sheet.
+     * @return the current sheet.
+     * @throws IllegalArgumentException
+     *  if the current sheet does not exist (i.e. the workbook does not contain any sheets)
+     */
     Sheet getCurrentSheet();
 
+    /**
+     * Get index of current sheet.
+     * @return index of current sheet
+     */
     int getCurrentSheetIndex();
 
     /**
@@ -109,11 +144,18 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Remove sheet by name.
      * @param sheetName name of sheet
-     * @return true, if sheet with that name was found and removed
      * @throws IllegalArgumentException
      *   if no sheet exists with the given name
      */
-    boolean removeSheetByName(String sheetName);
+    default void removeSheetByName(String sheetName) {
+      int idx = getSheetIndexByName(sheetName);
+
+      if (idx<0) {
+        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
+      }
+
+      removeSheet(idx);
+    }
 
     /**
      * Writes the workbook to a stream.
@@ -233,12 +275,34 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      */
     void copy(Workbook other);
 
+    /**
+     * Add property change listener.
+     * @see PropertyChangeSupport#addPropertyChangeListener(PropertyChangeListener)
+     * @param listener the listener
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener);
 
+    /**
+     * Add property change listener.
+     * @see PropertyChangeSupport#addPropertyChangeListener(String, PropertyChangeListener)
+     * @param propertyName the property name
+     * @param listener the listener
+     */
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
+    /**
+     * Remove property change listener.
+     * @see PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
+     * @param listener the listener
+     */
     public void removePropertyChangeListener(PropertyChangeListener listener);
 
+    /**
+     * Remove property change listener.
+     * @see PropertyChangeSupport#removePropertyChangeListener(String, PropertyChangeListener)
+     * @param propertyName the name of the property
+     * @param listener the listener
+     */
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
 }

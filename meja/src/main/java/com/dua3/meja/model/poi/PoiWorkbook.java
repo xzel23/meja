@@ -159,33 +159,10 @@ public abstract class PoiWorkbook implements Workbook {
     }
 
     @Override
-    public PoiSheet getSheetByName(String sheetName) {
-        for (PoiSheet sheet : sheets) {
-            if (sheet.getSheetName().equals(sheetName)) {
-                return sheet;
-            }
-        }
-        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
-    }
-
-    @Override
     public void removeSheet(int sheetNr) {
       sheets.remove(sheetNr);
       poiWorkbook.removeSheetAt(sheetNr);
       pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
-    }
-
-    @Override
-    public boolean removeSheetByName(String sheetName) {
-        for ( int i=0; i<sheets.size(); i++) {
-            if (sheets.get(i).getSheetName().equals(sheetName)) {
-                poiWorkbook.removeSheetAt(i);
-                sheets.remove(i);
-                pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, i, null);
-                return true;
-            }
-        }
-        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
     }
 
     /**
@@ -493,10 +470,13 @@ public abstract class PoiWorkbook implements Workbook {
         private final PoiHssfCellStyle defaultCellStyle;
 
         /**
-         *
+         * Construct instance from existing POI workbook.
          * @param poiWorkbook
+         *  the POI workbook instance
          * @param locale
+         *  the locale to use
          * @param uri
+         *  the URI of the workbook
          */
         public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Locale locale, URI uri) {
             super(poiWorkbook, locale, uri);
@@ -595,10 +575,13 @@ public abstract class PoiWorkbook implements Workbook {
         private final PoiXssfCellStyle defaultCellStyle;
 
         /**
-         *
+         * Construct instance from existing POI workbook.
          * @param poiWorkbook
+         *  the POI workbook instance
          * @param locale
+         *  the locale to use
          * @param uri
+         *  the URI of the workbook
          */
         public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
             super(poiWorkbook, locale, uri);
