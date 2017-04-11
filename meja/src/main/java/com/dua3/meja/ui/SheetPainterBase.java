@@ -28,9 +28,11 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
 
 /**
- *
+ * A helper class that implements the actual drawing algorithm.
  * @param <SV>
+ *  the concrete class implementing SheetView
  * @param <GC>
+ *  the concrete class implementing GraphicsContext
  */
 public abstract class SheetPainterBase<SV extends SheetView, GC extends GraphicsContext> {
 
@@ -597,6 +599,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * Get display coordinates of selection rectangle.
      *
      * @param cell
+     *  the selected cell
      * @return selection rectangle in display coordinates
      */
     public Rectangle getSelectionRect(Cell cell) {

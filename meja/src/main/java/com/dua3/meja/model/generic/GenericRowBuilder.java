@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.dua3.meja.io.Csv;
-import com.dua3.meja.io.DataException;
 import com.dua3.meja.io.RowBuilder;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
@@ -63,7 +62,7 @@ public class GenericRowBuilder implements RowBuilder {
     }
 
     @Override
-    public void add(String value) throws DataException {
+    public void add(String value) {
         Cell cell = currentRow.getCell(colNr++);
         helper.setCellValue(cell, value);
     }

@@ -166,6 +166,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param options
      *  special options to use (supported options depend on the file type)
      * @throws java.io.IOException
+     *  if an I/O error occurs
      */
     void write(FileType fileType, OutputStream out, Options options) throws IOException;
 
@@ -174,6 +175,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param fileType the file type to use
      * @param out output stream to write to
      * @throws java.io.IOException
+     *  if an I/O error occurs
      */
     default void write(FileType fileType, OutputStream out) throws IOException {
       write(fileType, out, Options.empty());
@@ -194,6 +196,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *  special options to use (supported options depend on the file type)
      * @return true if workbook was written to file, otherwise false
      * @throws java.io.IOException
+     *  if an I/O error occurs
      */
     boolean write(File file, boolean overwriteIfExists, Options options) throws IOException;
 
@@ -210,6 +213,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *  set to true if an existing file should be overwritten
      * @return true if workbook was written to file, otherwise false
      * @throws java.io.IOException
+     *  if an I/O error occurs
      */
     default boolean write(File file, boolean overwriteIfExists) throws IOException {
       return write(file, overwriteIfExists, Options.empty());
@@ -218,6 +222,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Add a new sheet as last sheet of this workbook.
      * @param sheetName
+     *  the name of the sheet
      * @return the new sheet
      */
     Sheet createSheet(String sheetName);
@@ -247,6 +252,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Close workbook.
      * @throws IOException
+     *  if an I/O error occurs
      */
     @Override
     void close() throws IOException;
@@ -259,6 +265,8 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Check if a style with this name is defined.
+     * @param name
+     *  the name of the cell style
      * @return true, if style is present
      */
     boolean hasCellStyle(String name);

@@ -103,10 +103,13 @@ public abstract class PoiWorkbook implements Workbook {
     protected URI uri;
 
     /**
-     *
+     * Construct a new instance.
      * @param poiWorkbook
+     *  the POI workbook instance
      * @param locale
+     *  the locale to use
      * @param uri
+     *  the URI of this workbook
      */
     protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
         this.locale = locale;

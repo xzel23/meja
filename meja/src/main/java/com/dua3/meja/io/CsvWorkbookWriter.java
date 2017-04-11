@@ -24,7 +24,6 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.util.Option;
 import com.dua3.meja.util.OptionSet;
 import com.dua3.meja.util.OptionSet.Value;
 import com.dua3.meja.util.Options;
@@ -55,7 +54,6 @@ public class CsvWorkbookWriter extends WorkbookWriter {
       }
     }
 
-    @SuppressWarnings("unchecked")
     private Options getOptionsWithLocale(Options options, Workbook workbook) {
       if (options.hasOption(Csv.getOption(Csv.OPTION_LOCALE).get())) {
         return options;
@@ -63,7 +61,7 @@ public class CsvWorkbookWriter extends WorkbookWriter {
 
       Options options2 = new Options(options);
       Value<Locale> value = OptionSet.value("Locale from Workbook", workbook.getLocale());
-      options2.put((Option) (Csv.getOption(Csv.OPTION_LOCALE).get()), (Value) value);
+      options2.put(Csv.getOption(Csv.OPTION_LOCALE).get(), value);
       return options2;
     }
 
