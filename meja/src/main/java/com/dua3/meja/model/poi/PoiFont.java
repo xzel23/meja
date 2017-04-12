@@ -42,9 +42,11 @@ public class PoiFont implements Font {
     protected final org.apache.poi.ss.usermodel.Font poiFont;
 
     /**
-     *
+     * Construct instance from POI font.
      * @param workbook
+     *  the workbook the font belongs to
      * @param poiFont
+     *  the POI font instance
      */
     public PoiFont(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Font poiFont) {
         this.workbook = workbook;
@@ -52,9 +54,11 @@ public class PoiFont implements Font {
     }
 
     /**
-     *
+     * Copy constructor.
      * @param workbook
+     *  the workbook the font belongs to
      * @param other
+     *  the font to copy
      */
     public PoiFont(PoiWorkbook workbook, Font other) {
         this.workbook = workbook;

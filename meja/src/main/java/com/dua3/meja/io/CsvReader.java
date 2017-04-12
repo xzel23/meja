@@ -118,7 +118,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
      * @see com.dua3.data.DataReader#read()
      */
     @Override
-    public int readAll() throws IOException, DataException {
+    public int readAll() throws IOException {
         return readRows(0);
     }
 
@@ -126,7 +126,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
      * @see com.dua3.data.DataReader#read(int)
      */
     @Override
-    public int readSome(int rowsToRead) throws IOException, DataException {
+    public int readSome(int rowsToRead) throws IOException {
         if (rowsToRead > 0) {
             return readRows(rowsToRead);
         } else {
@@ -143,7 +143,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
      * @throws IOException
      * @throws CsvFormatException
      */
-    private int readRows(int maxRows) throws IOException, DataException {
+    private int readRows(int maxRows) throws IOException {
         int read = 0;
         while (maxRows == 0 || read < maxRows) {
             if (readRow(rowBuilder) < 0) {
@@ -159,9 +159,8 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
      *
      * @return number of fields in row or -1 when end of input is reached
      * @throws IOException
-     * @throws DataException
      */
-    private int readRow(RowBuilder rb) throws IOException, DataException {
+    private int readRow(RowBuilder rb) throws IOException {
         String line = reader.readLine();
 
         if (line == null) {
@@ -242,7 +241,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
         }
     }
 
-    public void readColumnNames() throws IOException, DataException {
+    public void readColumnNames() throws IOException {
         RowBuilder.ListRowBuilder rb = new RowBuilder.ListRowBuilder();
         readRow(rb);
         columnNames = rb.getRow();

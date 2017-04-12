@@ -68,6 +68,7 @@ public abstract class WorkbookFactory {
      *  the workbook file
      * @return workbook
      * @throws IOException
+     *  if an inoput/output error occurs
      */
     public Workbook open(File file) throws IOException {
       return open(file, Options.empty());
@@ -85,6 +86,7 @@ public abstract class WorkbookFactory {
      *  settings to configure the input process
      * @return workbook
      * @throws IOException
+     *  if an inoput/output error occurs
      */
     public abstract Workbook open(File file, Options importSettings) throws IOException;
 

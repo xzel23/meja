@@ -215,8 +215,10 @@ public class MejaHelper {
      * Get cell reference as string.
      *
      * @param cell
-     * @param options  Options to use
-     * @return the cell in Excel conventions, ie "A1" for the first cell.
+     *  the Cell
+     * @param options
+     *  the Options to use
+     * @return the cell reference in Excel conventions, ie "A1" for the first cell.
      */
     public static String getCellRef(Cell cell, RefOption... options) {
         String prefixRow = "";

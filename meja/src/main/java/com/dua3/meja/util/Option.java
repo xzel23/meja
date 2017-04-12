@@ -12,6 +12,7 @@ import com.dua3.meja.util.OptionSet.Value;
  * This class is intended to be used to create  settings dialogs at runtime.
  *
  * @param <T>
+ *  the type of this option's values
  */
 public class Option<T> {
 

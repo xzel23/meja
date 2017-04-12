@@ -84,32 +84,10 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public GenericSheet getSheetByName(String sheetName) {
-        for (GenericSheet sheet : sheets) {
-            if (sheet.getSheetName().equals(sheetName)) {
-                return sheet;
-            }
-        }
-        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
-    }
-
-    @Override
     public void removeSheet(int sheetNr) {
         sheets.remove(sheetNr);
         pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
      }
-
-    @Override
-    public boolean removeSheetByName(String sheetName) {
-        for ( int i=0; i<sheets.size(); i++) {
-            if (sheets.get(i).getSheetName().equals(sheetName)) {
-                sheets.remove(i);
-                pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, i, null);
-                return true;
-            }
-        }
-        throw new IllegalArgumentException("No sheet with name '"+sheetName+"'.");
-    }
 
     @Override
     public void write(FileType type, OutputStream out, Options options) throws IOException {

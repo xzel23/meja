@@ -28,27 +28,28 @@ public interface DataReader {
      * rows are read, EOF is reached, or an exception occurs.
      *
      * @param rowsToRead	maximum number of Rows to be read
-     * @throws IOException
      * @return the number of rows read.
-     * @throws DataException
+     * @throws java.io.IOException
+     *  if an I/O error occurs
      */
-    public int readSome(int rowsToRead) throws IOException, DataException;
+    public int readSome(int rowsToRead) throws IOException;
 
     /**
      * Read rows till end of input is reached.
      *
      * @return the number of rows read.
-     * @throws IOException
-     * @throws com.dua3.meja.io.DataException
+     * @throws java.io.IOException
+     *  if an I/O error occurs
      */
-    public int readAll() throws IOException, DataException;
+    public int readAll() throws IOException;
 
     /**
      * Ignore the given number of rows.
      *
      * @param rowsToIgnore	maximum number of Rows to be read.
-     * @throws IOException
      * @return the number of rows ignored.
+     * @throws java.io.IOException
+     *  if an I/O error occurs
      */
     public int ignoreRows(int rowsToIgnore) throws IOException;
 

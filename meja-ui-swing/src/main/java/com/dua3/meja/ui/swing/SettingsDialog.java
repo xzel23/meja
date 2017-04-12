@@ -27,7 +27,7 @@ public class SettingsDialog extends JDialog {
   private final JPanel settingsPanel;
   private Options result = Options.empty();
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({ "rawtypes" })
   SettingsDialog(Component parent, String title, String text, List<Option<?>> options) {
     super((JFrame) SwingUtilities.getRoot(parent), title, true);
     setLayout(new BorderLayout());

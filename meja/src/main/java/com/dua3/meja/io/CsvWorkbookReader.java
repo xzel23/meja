@@ -56,7 +56,7 @@ public class CsvWorkbookReader extends WorkbookReader {
               reader.readAll();
           }
           return workbook;
-      } catch (DataException | InstantiationException | IllegalAccessException
+      } catch (InstantiationException | IllegalAccessException
               | IllegalArgumentException | InvocationTargetException
               | NoSuchMethodException | SecurityException ex) {
           throw new IOException("Error reading workbook: "+ex.getMessage(), ex);
@@ -67,12 +67,16 @@ public class CsvWorkbookReader extends WorkbookReader {
      * Read from a BufferedReader.
      * This is implemented because CSV is a character format. The Encoding must be
      * set correctly in the reader.
+     * @param <WORKBOOK>
+     *  the Workbook implementation class to use
      * @param clazz
      *  class of the workboook implementation to use
      * @param in
      *  the reader to read from
      * @param uri
      *  the URI of the source (for creating meaningful error messages)
+     * @return
+     *  the workbook read
      * @throws IOException
      *  if an io-error occurs during reading
      */
@@ -86,7 +90,7 @@ public class CsvWorkbookReader extends WorkbookReader {
               reader.readAll();
           }
           return workbook;
-      } catch (DataException | InstantiationException | IllegalAccessException
+      } catch (InstantiationException | IllegalAccessException
               | IllegalArgumentException | InvocationTargetException
               | NoSuchMethodException | SecurityException ex) {
           throw new IOException("Error reading workbook: "+ex.getMessage(), ex);

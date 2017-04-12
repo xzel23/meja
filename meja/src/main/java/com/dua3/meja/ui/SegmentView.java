@@ -11,7 +11,9 @@ import com.dua3.meja.model.Sheet;
  *
  * @author Axel Howind
  * @param <SV>
+ *  the concrete class implementing SheetView
  * @param <GC>
+ *  the concrete class implementing GraphicsContext
  */
 public interface SegmentView<SV extends SheetView, GC extends GraphicsContext> {
 

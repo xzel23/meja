@@ -34,6 +34,7 @@ public abstract class TextBuilder<T> {
     /**
      * Add text.
      * @param text
+     *  the richt text to add
      */
     public void add(RichText text) {
         for (Run r: text) {
@@ -46,6 +47,7 @@ public abstract class TextBuilder<T> {
      * Implementations must override this method to append {@code text} which
      * is attributed with {@code attributes} to the result document.
      * @param run
+     *  the {@link com.dua3.meja.text.Run} to append
      */
     protected abstract void append(Run run);
 

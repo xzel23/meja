@@ -33,9 +33,8 @@ public interface RowBuilder {
     /**
      * Add a value.
      * @param value the value to add
-     * @throws DataException if {@code value} could not be added
      */
-    public void add(String value) throws DataException;
+    public void add(String value);
 
     /**
      * End the current row.

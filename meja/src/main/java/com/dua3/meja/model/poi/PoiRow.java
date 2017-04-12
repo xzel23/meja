@@ -15,11 +15,13 @@
  */
 package com.dua3.meja.model.poi;
 
+import java.util.Iterator;
+
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.util.MejaHelper;
-import java.util.Iterator;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 /**
  *
@@ -43,9 +45,11 @@ public final class PoiRow implements Row {
     final int rowNumber;
 
     /**
-     *
+     * Construct row from existing POI row instance.
      * @param sheet
+     *  the sheet
      * @param row
+     *  the row
      */
     public PoiRow(PoiSheet sheet, org.apache.poi.ss.usermodel.Row row) {
         this.sheet = sheet;

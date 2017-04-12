@@ -15,8 +15,13 @@
  */
 package com.dua3.meja.model.poi;
 
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Font;
@@ -25,10 +30,6 @@ import com.dua3.meja.model.VAlign;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.text.Style;
-import com.dua3.meja.model.Color;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 
 /**
  *
@@ -52,10 +53,13 @@ public abstract class PoiCellStyle implements CellStyle {
     protected final org.apache.poi.ss.usermodel.CellStyle poiCellStyle;
 
     /**
-     *
+     * Construct new instance.
      * @param workbook
+     *  the workbook this style belings to
      * @param font
+     *  the font
      * @param poiCellStyle
+     *  the POI cell style
      */
     protected PoiCellStyle(PoiWorkbook workbook, PoiFont font, org.apache.poi.ss.usermodel.CellStyle poiCellStyle) {
         this.workbook = workbook;
