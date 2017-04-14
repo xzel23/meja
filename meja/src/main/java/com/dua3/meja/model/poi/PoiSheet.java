@@ -426,11 +426,6 @@ public class PoiSheet implements Sheet {
     }
 
     @Override
-    public void setCurrentCell(int i, int j) {
-        setCurrentCell(getCell(i, j));
-    }
-
-    @Override
     public void clear() {
         // determine sheet number
         int sheetNr = workbook.poiWorkbook.getSheetIndex(poiSheet);

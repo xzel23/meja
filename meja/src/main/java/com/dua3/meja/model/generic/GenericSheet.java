@@ -346,11 +346,6 @@ public class GenericSheet implements Sheet {
     }
 
     @Override
-    public void setCurrentCell(int i, int j) {
-        setCurrentCell(getCell(i, j));
-    }
-
-    @Override
     public void clear() {
         copy(new GenericSheet(workbook, sheetName, locale));
     }

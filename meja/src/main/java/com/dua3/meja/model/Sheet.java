@@ -222,7 +222,9 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @param i the row of the cell to set
      * @param j the column of the cell to set
      */
-    void setCurrentCell(int i, int j);
+    default void setCurrentCell(int i, int j) {
+        setCurrentCell(getCell(i, j));
+    }
 
     /**
      * Remove all content from sheet.
