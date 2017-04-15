@@ -605,9 +605,9 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 scrollToCurrentCell();
                 break;
             case Sheet.PROPERTY_ACTIVE_CELL:
+                scrollToCurrentCell();
                 repaintCell((Cell) evt.getOldValue());
                 repaintCell((Cell) evt.getNewValue());
-                scrollToCurrentCell();
                 break;
             case Sheet.PROPERTY_CELL_CONTENT:
             case Sheet.PROPERTY_CELL_STYLE:
@@ -1064,13 +1064,22 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
+
+            // clear background by calling super method
             super.paintComponent(g2d);
+            
+            // set transformation
             final int x = getXMinInViewCoordinates();
             final int y = getYMinInViewCoordinates();
+            g2d.translate(-x, -y);
+                        
+            // get dimensions
             final int width = getWidth();
             final int height = getHeight();
-            g2d.translate(-x, -y);
+            
+            // draw sheet
             sheetPainter.drawSheet(new SwingGraphicsContext(g2d, SwingSheetView.this));
+            
             // draw split lines
             g2d.setColor(MejaSwingHelper.toAwtColor(Color.BLACK));
             g2d.setStroke(new BasicStroke());
