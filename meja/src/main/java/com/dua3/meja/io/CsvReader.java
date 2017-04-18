@@ -38,7 +38,8 @@ import com.dua3.meja.util.Options;
 public class CsvReader extends Csv implements DataReader, AutoCloseable {
 
     public static CsvReader create(RowBuilder builder, File file, Options options) throws IOException {
-      return create(builder, Files.newInputStream(file.toPath()), options);
+      Charset cs = getCharset(options);
+      return create(builder, Files.newBufferedReader(file.toPath(), cs), options);
     }
 
     public static CsvReader create(RowBuilder builder, InputStream in, Options options) {
@@ -47,8 +48,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
         return create(builder, reader, options);
     }
 
-    static CsvReader create(RowBuilder builder, BufferedReader reader,
-        Options options) {
+    static CsvReader create(RowBuilder builder, BufferedReader reader, Options options) {
       CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
       return csvReader;
     }

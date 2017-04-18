@@ -32,12 +32,13 @@ import com.dua3.meja.util.Options;
  */
 public class CsvWriter extends Csv implements AutoCloseable, Flushable {
   public static CsvWriter create(File file, Options options) throws IOException {
-    return create(Files.newOutputStream(file.toPath()), options);
+    Charset cs = getCharset(options);
+    return create(Files.newBufferedWriter(file.toPath(), cs), options);
   }
 
   public static CsvWriter create(OutputStream out, Options options) {
-      Charset charset = getCharset(options);
-      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, charset));
+      Charset cs = getCharset(options);
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, cs));
       return create(writer, options);
   }
 
