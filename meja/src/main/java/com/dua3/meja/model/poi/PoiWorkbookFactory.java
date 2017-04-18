@@ -17,12 +17,12 @@ package com.dua3.meja.model.poi;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
@@ -86,7 +86,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
             // Read Excel files directly using POI methods
             // Do not use the create(File) method to avoid exception when trying to
             // save the workbook again to the same file.
-            try (InputStream in = new FileInputStream(file)) {
+            try (InputStream in = Files.newInputStream(file.toPath())) {
               Locale locale = (Locale) importSettings.get(OPTIONS.getOption(OPTION_LOCALE).get()).getValue();
               return open(in, locale, file.toURI());
             }

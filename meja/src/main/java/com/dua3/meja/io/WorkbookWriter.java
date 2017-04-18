@@ -17,11 +17,11 @@ package com.dua3.meja.io;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URLConnection;
+import java.nio.file.Files;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.Options;
@@ -38,7 +38,7 @@ public abstract class WorkbookWriter {
      * @throws IOException if an error occurs when writing out the workbook
      */
     public void write(Workbook workbook, File file) throws IOException {
-        try (OutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
             write(workbook, out);
         }
     }
