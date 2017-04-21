@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -40,7 +41,7 @@ public class SettingsDialog extends JDialog {
     settingsPanel.setLayout(new GridLayout(options.size(), 2));
     for (Option<?> option: options) {
       settingsPanel.add(new JLabel(option.getName()));
-      JComboBox<Value<?>> cb = new JComboBox<>(option.getChoices());
+      JComboBox<Value<?>> cb = new JComboBox<>(new Vector<Value<?>>(option.getChoices()));
       cb.setSelectedItem(option.getDefault());
       inputs.add(cb);
       settingsPanel.add(cb);
