@@ -18,10 +18,10 @@ package com.dua3.meja.model.poi;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -203,7 +203,7 @@ public abstract class PoiWorkbook implements Workbook {
             if (type == null) {
                 throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
             }
-            try (FileOutputStream out = new FileOutputStream(file)) {
+            try (OutputStream out = Files.newOutputStream(file.toPath())) {
                 write(type, out, options);
             }
             return true;

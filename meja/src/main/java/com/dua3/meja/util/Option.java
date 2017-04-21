@@ -2,6 +2,7 @@ package com.dua3.meja.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,15 +19,15 @@ public class Option<T> {
 
   private final String name;
   private final Class<T> klass;
-  private final Value<T>[] choices;
+  private final List<Value<T>> choices;
   private final Value<T> defaultChoice;
 
   public String getName() {
     return name;
   }
 
-  public Value<T>[] getChoices() {
-    return choices;
+  public List<Value<T>> getChoices() {
+    return Collections.unmodifiableList(choices);
   }
 
   public Value<T> getDefault() {
@@ -46,12 +47,12 @@ public class Option<T> {
     // make sure this.choices does not contain a duplicate for defaultChoice
     List<Value<T>> choices_ = Arrays.asList(choices);
     if (choices_.contains(defaultChoice)) {
-      this.choices = choices;
+      this.choices = Arrays.asList(choices);
     } else {
       List<Value<T>> allChoices = new ArrayList<>(choices.length+1);
       allChoices.add(defaultChoice);
       allChoices.addAll(choices_);
-      this.choices = allChoices.toArray(choices);
+      this.choices = allChoices;
     }
   }
 
@@ -62,7 +63,7 @@ public class Option<T> {
 
   @Override
   public boolean equals(Object obj) {
-    if (getClass()!=obj.getClass()) {
+    if (obj==null || getClass()!=obj.getClass()) {
       return false;
     }
 

@@ -17,12 +17,11 @@ package com.dua3.meja.io;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -38,8 +37,9 @@ import com.dua3.meja.util.Options;
  */
 public class CsvReader extends Csv implements DataReader, AutoCloseable {
 
-    public static CsvReader create(RowBuilder builder, File file, Options options) throws FileNotFoundException {
-      return create(builder, new FileInputStream(file), options);
+    public static CsvReader create(RowBuilder builder, File file, Options options) throws IOException {
+      Charset cs = getCharset(options);
+      return create(builder, Files.newBufferedReader(file.toPath(), cs), options);
     }
 
     public static CsvReader create(RowBuilder builder, InputStream in, Options options) {
@@ -48,8 +48,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
         return create(builder, reader, options);
     }
 
-    static CsvReader create(RowBuilder builder, BufferedReader reader,
-        Options options) {
+    static CsvReader create(RowBuilder builder, BufferedReader reader, Options options) {
       CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
       return csvReader;
     }

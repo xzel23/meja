@@ -17,13 +17,12 @@ package com.dua3.meja.io;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 
 import com.dua3.meja.util.Options;
 
@@ -32,13 +31,14 @@ import com.dua3.meja.util.Options;
  * @author axel@dua3.com
  */
 public class CsvWriter extends Csv implements AutoCloseable, Flushable {
-  public static CsvWriter create(File file, Options options) throws FileNotFoundException {
-    return create(new FileOutputStream(file), options);
+  public static CsvWriter create(File file, Options options) throws IOException {
+    Charset cs = getCharset(options);
+    return create(Files.newBufferedWriter(file.toPath(), cs), options);
   }
 
   public static CsvWriter create(OutputStream out, Options options) {
-      Charset charset = getCharset(options);
-      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, charset));
+      Charset cs = getCharset(options);
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, cs));
       return create(writer, options);
   }
 
