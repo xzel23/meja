@@ -6,6 +6,7 @@ package com.dua3.meja.ui.swing;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -42,7 +43,7 @@ public class SwingFileFilter extends javax.swing.filechooser.FileFilter
         @Override
         public boolean accept(File pathname) {
             for (String ext : fileType.getExtensions()) {
-                if (pathname.getName().toLowerCase().endsWith(ext.substring(1).toLowerCase())) {
+                if (pathname.getName().toLowerCase(Locale.ROOT).endsWith(ext.substring(1).toLowerCase(Locale.ROOT))) {
                     return true;
                 }
             }
@@ -51,9 +52,9 @@ public class SwingFileFilter extends javax.swing.filechooser.FileFilter
 
         @Override
         public boolean accept(File dir, String name) {
-            name = name.toLowerCase();
+            name = name.toLowerCase(Locale.ROOT);
             for (String ext : fileType.getExtensions()) {
-                if (name.endsWith(ext.toLowerCase())) {
+                if (name.endsWith(ext.toLowerCase(Locale.ROOT))) {
                     return true;
                 }
             }

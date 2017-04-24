@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 import com.dua3.meja.model.WorkbookFactory;
@@ -125,10 +126,10 @@ public enum FileType {
      * found
      */
     public static FileType forFile(File file) {
-        String fileNameLower = file.getName().toLowerCase();
+        String fileNameLower = file.getName().toLowerCase(Locale.ROOT);
         for (FileType type : values()) {
             for (String ext : type.extensions) {
-                if (fileNameLower.endsWith(ext.substring(1).toLowerCase())) {
+                if (fileNameLower.endsWith(ext.substring(1).toLowerCase(Locale.ROOT))) {
                     return type;
                 }
             }

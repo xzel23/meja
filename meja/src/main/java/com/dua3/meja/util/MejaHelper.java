@@ -145,7 +145,7 @@ public class MejaHelper {
     public static int getColumnNumber(String colName) {
       final int stride = 'z' - 'a' + 1;
       int col = 0;
-      for (char c : colName.toLowerCase().toCharArray()) {
+      for (char c : colName.toLowerCase(Locale.ROOT).toCharArray()) {
         if (c < 'a' || 'z' < c) {
           throw new IllegalArgumentException("'" + colName + "' ist no valid column name.");
         }
@@ -355,7 +355,7 @@ public class MejaHelper {
             }
 
             if (ignoreCase) {
-                text = text.toLowerCase();
+                text = text.toLowerCase(Locale.ROOT);
             }
 
             Cell end = null;
@@ -381,7 +381,7 @@ public class MejaHelper {
                 }
 
                 if (ignoreCase) {
-                    cellText = cellText.toLowerCase();
+                    cellText = cellText.toLowerCase(Locale.ROOT);
                 }
 
                 if (matchComplete && cellText.equals(text)
@@ -468,7 +468,7 @@ public class MejaHelper {
         boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMLUA_TEXT);
 
         if (ignoreCase) {
-            text = text.toLowerCase();
+            text = text.toLowerCase(Locale.ROOT);
         }
 
         int jStart = searchFromCurrent ? row.getSheet().getCurrentCell().getColumnNumber() : row.getLastCellNum();
@@ -492,7 +492,7 @@ public class MejaHelper {
             }
 
             if (ignoreCase) {
-                cellText = cellText.toLowerCase();
+                cellText = cellText.toLowerCase(Locale.ROOT);
             }
 
             if (matchComplete && cellText.equals(text)
