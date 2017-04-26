@@ -58,7 +58,7 @@ public class Option<T> {
 
   @Override
   public String toString() {
-    return name+"["+klass+"]";
+    return name+"["+klass+",default="+getDefault()+"]";
   }
 
   @Override

@@ -45,4 +45,8 @@ public class Options {
     return options.containsKey(option);
   }
 
+  @Override
+  public String toString() {
+    return options.toString();
+  }
 }

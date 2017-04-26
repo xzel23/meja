@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -37,18 +39,35 @@ import com.dua3.meja.util.Options;
  */
 public class CsvReader extends Csv implements DataReader, AutoCloseable {
 
+    // the unicode codepoint for the UTF-8 BOM
+    private static final int UTF8_BOM = 0xfeff;
+    // the bytes sequence the UTF-8 BOM
+    private static final byte[] UTF8_BOM_BYTES = { (byte)0xef, (byte)0xbb, (byte)0xbf };
+
     public static CsvReader create(RowBuilder builder, File file, Options options) throws IOException {
       Charset cs = getCharset(options);
       return create(builder, Files.newBufferedReader(file.toPath(), cs), options);
     }
 
-    public static CsvReader create(RowBuilder builder, InputStream in, Options options) {
+    public static CsvReader create(RowBuilder builder, InputStream in, Options options) throws IOException {
+        // auto-detect UTF-8 with BOM
         Charset charset = getCharset(options);
+        if (in.markSupported() && !options.hasOption(Csv.getOption(OPTION_CHARSET).orElseThrow(() -> new IllegalStateException()))) {
+          int bomLength = UTF8_BOM_BYTES.length;
+          byte[] buffer = new byte[bomLength];
+          in.mark(bomLength);
+          if (in.read(buffer)!=bomLength || !Arrays.equals(UTF8_BOM_BYTES, buffer)) {
+            in.reset();
+          } else {
+            charset = StandardCharsets.UTF_8;
+          }
+        }
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
         return create(builder, reader, options);
     }
 
-    static CsvReader create(RowBuilder builder, BufferedReader reader, Options options) {
+    static CsvReader create(RowBuilder builder, BufferedReader reader, Options options) throws IOException {
       CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
       return csvReader;
     }
@@ -64,13 +83,27 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
     private boolean ignoreMissingFields;
     private final String source;
 
-    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, Options options) {
+    public CsvReader(RowBuilder rowBuilder, BufferedReader reader, String source, Options options) throws IOException {
         this.rowBuilder = rowBuilder;
         this.reader = reader;
         this.columnNames = null;
         this.ignoreExcessFields = false;
         this.ignoreMissingFields = false;
         this.source = source;
+
+        // remove optional UTF-8 BOM from content
+        // this should be ok independent of the actual encoding since the unicode  representing
+        // the UTF-8 BOM marker should only occur at the beginning of UTF-8 texts, and the old
+        // (now obsolete) meaning as "ZERO WIDTH NON-BREAKING SPACE (ZWNBSP)" does not make sense
+        // at the beginning of a text.
+        //
+        // http://www.unicode.org/faq/utf_bom.html:
+        // > In the absence of a protocol supporting its use as a BOM and when not at the beginning
+        // > of a text stream, U+FEFF should normally not occur.
+        reader.mark(1);
+        if (reader.read()!=UTF8_BOM) {
+          reader.reset();
+        }
 
         String sep = Pattern.quote(String.valueOf(getSeparator(options)));
         String del = Pattern.quote(String.valueOf(getDelimiter(options)));
