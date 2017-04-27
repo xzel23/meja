@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package com.dua3.meja.ui.javafx;
@@ -46,13 +46,23 @@ import javafx.stage.Window;
  */
 public class MejaJfxHelper {
 
+    public static FileChooser.ExtensionFilter[] getExtensionFilters(OpenMode mode) {
+        return Arrays.stream(FileType.values())
+                .filter(ft -> ft.isSupported(mode))
+                .map(ft -> new FileChooser.ExtensionFilter(ft.getDescription(), ft.getExtensions()))
+                .toArray((size) -> new FileChooser.ExtensionFilter[size]);
+    }
+
     /**
      * Show a file open dialog and load the selected workbook.
      *
-     * @param parent the parent component to use for the dialog
-     * @param file the directory to set in the open dialog or the default file
+     * @param parent
+     *            the parent component to use for the dialog
+     * @param file
+     *            the directory to set in the open dialog or the default file
      * @return the workbook the user chose or null if dialog was canceled
-     * @throws IOException if a workbook was selected but could not be loaded
+     * @throws IOException
+     *             if a workbook was selected but could not be loaded
      */
     public static Optional<Workbook> showDialogAndOpenWorkbook(Window parent, File file) throws IOException {
         FileChooser fc = new FileChooser();
@@ -63,12 +73,13 @@ public class MejaJfxHelper {
         file = fc.showOpenDialog(parent);
 
         if (file == null) {
-          return Optional.empty();
+            return Optional.empty();
         }
 
         FileChooser.ExtensionFilter ef = fc.getSelectedExtensionFilter();
         Optional<FileType> type = Arrays.stream(FileType.values())
-                .filter((ft)->ft.getDescription().equals(ef.getDescription()) && Arrays.asList(ft.getExtensions()).equals(ef.getExtensions()))
+                .filter((ft) -> ft.getDescription().equals(ef.getDescription())
+                        && Arrays.asList(ft.getExtensions()).equals(ef.getExtensions()))
                 .findFirst();
 
         if (type.isPresent()) {
@@ -77,15 +88,8 @@ public class MejaJfxHelper {
             return Optional.of(factory.open(file));
         } else {
             // another filter was used (ie. "all files")
-          return Optional.of(MejaHelper.openWorkbook(file));
+            return Optional.of(MejaHelper.openWorkbook(file));
         }
-    }
-
-    public static FileChooser.ExtensionFilter[] getExtensionFilters(OpenMode mode) {
-        return Arrays.stream(FileType.values())
-                .filter(ft -> ft.isSupported(mode))
-                .map(ft -> new FileChooser.ExtensionFilter(ft.getDescription(), ft.getExtensions()))
-                .toArray((size) -> new FileChooser.ExtensionFilter[size]);
     }
 
     /**
@@ -93,22 +97,28 @@ public class MejaJfxHelper {
      * <p>
      * A file selection dialog is shown and the workbook is saved to the
      * selected file. If the file already exists, a confirmation dialog is
-     * shown, asking the user whether to overwrite the file.</p>
+     * shown, asking the user whether to overwrite the file.
+     * </p>
      *
-     * @param parent the parent component for the dialog
-     * @param workbook the workbook to save
-     * @param file the file to set the default path in the dialog
+     * @param parent
+     *            the parent component for the dialog
+     * @param workbook
+     *            the workbook to save
+     * @param file
+     *            the file to set the default path in the dialog
      * @return the URI the file was saved to or {@code null} if the user
-     * canceled the dialog
-     * @throws IOException if an exception occurs while saving
+     *         canceled the dialog
+     * @throws IOException
+     *             if an exception occurs while saving
      */
-    public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file) throws IOException {
+    public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file)
+            throws IOException {
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         int rc = jfc.showSaveDialog(parent);
 
         if (rc != JFileChooser.APPROVE_OPTION) {
-          return Optional.empty();
+            return Optional.empty();
         }
 
         file = jfc.getSelectedFile();

@@ -15,68 +15,68 @@ import com.dua3.meja.model.WorkbookFactory;
 /**
  * A FileFilter class to be used as a drop-in file filter for dialogs.
  *
- * This class can be used in all cases where one of the three standard Java
- * file filter implementations is required, namely:
+ * This class can be used in all cases where one of the three standard Java file
+ * filter implementations is required, namely:
  * <ul>
  * <li>{@link java.io.FileFilter java.io.FileFilter}</li>
  * <li>{@link java.io.FilenameFilter java.io.FilenameFilter}</li>
- * <li>{@link javax.swing.filechooser.FileFilter javax.swing.filechooser.FileFilter}</li>
+ * <li>{@link javax.swing.filechooser.FileFilter
+ * javax.swing.filechooser.FileFilter}</li>
  * </ul>
  */
 public class SwingFileFilter extends javax.swing.filechooser.FileFilter
-            implements java.io.FileFilter, java.io.FilenameFilter {
+        implements java.io.FileFilter, java.io.FilenameFilter {
     public static List<SwingFileFilter> getFilters(OpenMode mode) {
         List<FileType> fileTypes = FileType.getFileTypes(mode);
         List<SwingFileFilter> filters = new ArrayList<>(fileTypes.size());
-        for (FileType ft: fileTypes) {
+        for (FileType ft : fileTypes) {
             filters.add(new SwingFileFilter(ft));
         }
         return filters;
     }
 
-        private final FileType fileType;
+    private final FileType fileType;
 
-        private SwingFileFilter(FileType fileType) {
-            this.fileType = fileType;
-        }
+    private SwingFileFilter(FileType fileType) {
+        this.fileType = fileType;
+    }
 
-        @Override
-        public boolean accept(File pathname) {
-            for (String ext : fileType.getExtensions()) {
-                if (pathname.getName().toLowerCase(Locale.ROOT).endsWith(ext.substring(1).toLowerCase(Locale.ROOT))) {
-                    return true;
-                }
+    @Override
+    public boolean accept(File pathname) {
+        for (String ext : fileType.getExtensions()) {
+            if (pathname.getName().toLowerCase(Locale.ROOT).endsWith(ext.substring(1).toLowerCase(Locale.ROOT))) {
+                return true;
             }
-            return false;
         }
+        return false;
+    }
 
-        @Override
-        public boolean accept(File dir, String name) {
-            name = name.toLowerCase(Locale.ROOT);
-            for (String ext : fileType.getExtensions()) {
-                if (name.endsWith(ext.toLowerCase(Locale.ROOT))) {
-                    return true;
-                }
+    @Override
+    public boolean accept(File dir, String name) {
+        name = name.toLowerCase(Locale.ROOT);
+        for (String ext : fileType.getExtensions()) {
+            if (name.endsWith(ext.toLowerCase(Locale.ROOT))) {
+                return true;
             }
-            return false;
         }
+        return false;
+    }
 
-        @Override
-        public String getDescription() {
-            return fileType.getDescription();
-        }
+    @Override
+    public String getDescription() {
+        return fileType.getDescription();
+    }
 
-        /**
-         * Get factory to use with this filter.
-         *
-         * @return an instance of {@link WorkbookFactory} to use this filter
-         * with
-         */
-        public WorkbookFactory getFactory() {
-            return fileType.getFactory();
-        }
+    /**
+     * Get factory to use with this filter.
+     *
+     * @return an instance of {@link WorkbookFactory} to use this filter with
+     */
+    public WorkbookFactory getFactory() {
+        return fileType.getFactory();
+    }
 
-        public FileType getFileType() {
-          return fileType;
-        }
+    public FileType getFileType() {
+        return fileType;
+    }
 }

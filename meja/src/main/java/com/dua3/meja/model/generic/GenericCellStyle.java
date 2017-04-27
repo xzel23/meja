@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.model.generic;
 
@@ -37,7 +37,8 @@ import com.dua3.meja.model.VAlign;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class GenericCellStyle implements CellStyle {
+public class GenericCellStyle
+        implements CellStyle {
 
     private static final BorderStyle defaultBorderStyle = new BorderStyle(0.0f, Color.BLACK);
 
@@ -61,7 +62,9 @@ public class GenericCellStyle implements CellStyle {
 
     /**
      * Construct a new {@code GenericCellStyle}.
-     * @param workbook the workbook the style is defined in
+     *
+     * @param workbook
+     *            the workbook the style is defined in
      */
     public GenericCellStyle(GenericWorkbook workbook) {
         this.workbook = workbook;
@@ -80,13 +83,77 @@ public class GenericCellStyle implements CellStyle {
     }
 
     @Override
-    public String getName() {
-        return workbook.getCellStyleName(this);
+    public void copyStyle(CellStyle other) {
+        setHAlign(other.getHAlign());
+        setVAlign(other.getVAlign());
+        for (Direction d : Direction.values()) {
+            setBorderStyle(d, other.getBorderStyle(d));
+        }
+        setDataFormat(other.getDataFormat());
+        setFillBgColor(other.getFillBgColor());
+        setFillFgColor(other.getFillFgColor());
+        setFillPattern(other.getFillPattern());
+        setFont(other.getFont());
+        setWrap(other.isWrap());
+        setFont(new GenericFont(other.getFont()));
+    }
+
+    /**
+     * Format date for output.
+     *
+     * @param date
+     *            the date to format
+     * @return text representation of {@code date}
+     */
+    public String format(LocalDateTime date) {
+        if (dateFormatter == null) {
+            try {
+                if (dataFormat == null || dataFormat.isEmpty()) {
+                    dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                            .withLocale(workbook.getLocale());
+                } else {
+                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat, workbook.getLocale());
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
+                dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(workbook.getLocale());
+            }
+        }
+
+        return dateFormatter.format(date);
+    }
+
+    /**
+     * Format number for output.
+     *
+     * @param n
+     *            the number to format
+     * @return text representation of {@code n}
+     */
+    public String format(Number n) {
+        if (numberFormatter == null) {
+            try {
+                String fmt = dataFormat == null || dataFormat.isEmpty() ? "0.##########" : dataFormat;
+                DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(workbook.getLocale());
+                numberFormatter = new DecimalFormat(fmt, symbols);
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
+                numberFormatter = NumberFormat.getInstance(workbook.getLocale());
+                numberFormatter.setGroupingUsed(false);
+            }
+        }
+
+        return numberFormatter.format(n);
     }
 
     @Override
-    public Font getFont() {
-        return font;
+    public BorderStyle getBorderStyle(Direction d) {
+        return borderStyle[d.ordinal()];
+    }
+
+    @Override
+    public String getDataFormat() {
+        return dataFormat;
     }
 
     @Override
@@ -105,8 +172,18 @@ public class GenericCellStyle implements CellStyle {
     }
 
     @Override
+    public Font getFont() {
+        return font;
+    }
+
+    @Override
     public HAlign getHAlign() {
         return hAlign;
+    }
+
+    @Override
+    public String getName() {
+        return workbook.getCellStyleName(this);
     }
 
     @Override
@@ -115,13 +192,40 @@ public class GenericCellStyle implements CellStyle {
     }
 
     @Override
-    public BorderStyle getBorderStyle(Direction d) {
-        return borderStyle[d.ordinal()];
+    public GenericWorkbook getWorkbook() {
+        return workbook;
     }
 
     @Override
     public boolean isWrap() {
         return wrap;
+    }
+
+    @Override
+    public void setBorderStyle(Direction d, BorderStyle borderStyle) {
+        this.borderStyle[d.ordinal()] = borderStyle;
+    }
+
+    @Override
+    public void setDataFormat(String format) {
+        this.dataFormat = format;
+        this.dateFormatter = null;
+        this.numberFormatter = null;
+    }
+
+    @Override
+    public void setFillBgColor(Color fillBgColor) {
+        this.fillBgColor = fillBgColor;
+    }
+
+    @Override
+    public void setFillFgColor(Color fillFgColor) {
+        this.fillFgColor = fillFgColor;
+    }
+
+    @Override
+    public void setFillPattern(FillPattern fillPattern) {
+        this.fillPattern = fillPattern;
     }
 
     @Override
@@ -142,102 +246,6 @@ public class GenericCellStyle implements CellStyle {
     @Override
     public void setWrap(boolean wrap) {
         this.wrap = wrap;
-    }
-
-    @Override
-    public void setFillBgColor(Color fillBgColor) {
-        this.fillBgColor = fillBgColor;
-    }
-
-    @Override
-    public void setFillFgColor(Color fillFgColor) {
-        this.fillFgColor = fillFgColor;
-    }
-
-    @Override
-    public void setFillPattern(FillPattern fillPattern) {
-        this.fillPattern = fillPattern;
-    }
-
-    @Override
-    public void setBorderStyle(Direction d, BorderStyle borderStyle) {
-        this.borderStyle[d.ordinal()] = borderStyle;
-    }
-
-    @Override
-    public String getDataFormat() {
-        return dataFormat;
-    }
-
-    @Override
-    public void setDataFormat(String format) {
-        this.dataFormat = format;
-        this.dateFormatter = null;
-        this.numberFormatter = null;
-    }
-
-    @Override
-    public void copyStyle(CellStyle other) {
-        setHAlign(other.getHAlign());
-        setVAlign(other.getVAlign());
-        for (Direction d : Direction.values()) {
-            setBorderStyle(d, other.getBorderStyle(d));
-        }
-        setDataFormat(other.getDataFormat());
-        setFillBgColor(other.getFillBgColor());
-        setFillFgColor(other.getFillFgColor());
-        setFillPattern(other.getFillPattern());
-        setFont(other.getFont());
-        setWrap(other.isWrap());
-        setFont(new GenericFont(other.getFont()));
-    }
-
-    @Override
-    public GenericWorkbook getWorkbook() {
-        return workbook;
-    }
-
-    /**
-     * Format date for output.
-     * @param date the date to format
-     * @return text representation of {@code date}
-     */
-    public String format(LocalDateTime date) {
-        if (dateFormatter==null) {
-            try {
-                if (dataFormat==null || dataFormat.isEmpty()) {
-                    dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(workbook.getLocale());
-                } else {
-                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat, workbook.getLocale());
-                }
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
-                dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(workbook.getLocale());
-            }
-        }
-
-        return dateFormatter.format(date);
-    }
-
-    /**
-     * Format number for output.
-     * @param n the number to format
-     * @return text representation of {@code n}
-     */
-    public String format(Number n) {
-        if (numberFormatter==null) {
-            try {
-                String fmt = dataFormat==null||dataFormat.isEmpty() ? "0.##########": dataFormat;
-                DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(workbook.getLocale());
-                numberFormatter = new DecimalFormat(fmt, symbols);
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
-                numberFormatter = DecimalFormat.getInstance(workbook.getLocale());
-                numberFormatter.setGroupingUsed(false);
-            }
-        }
-
-        return numberFormatter.format(n);
     }
 
 }

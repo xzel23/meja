@@ -11,7 +11,8 @@ import com.dua3.meja.model.Color;
 import com.dua3.meja.ui.GraphicsContext;
 import com.dua3.meja.ui.Rectangle;
 
-public final class SwingGraphicsContext implements GraphicsContext {
+public final class SwingGraphicsContext
+        implements GraphicsContext {
 
     private final Graphics2D g;
     private final SwingSheetView view;
@@ -19,31 +20,6 @@ public final class SwingGraphicsContext implements GraphicsContext {
     SwingGraphicsContext(Graphics g, SwingSheetView view) {
         this.g = (Graphics2D) g;
         this.view = view;
-    }
-
-    public Graphics2D graphics() {
-        return g;
-    }
-
-    @Override
-    public void setColor(Color color) {
-        g.setColor(MejaSwingHelper.toAwtColor(color));
-    }
-
-    private int xS2D(double d) {
-        return view.xS2D(d);
-    }
-
-    private int yS2D(double d) {
-        return view.yS2D(d);
-    }
-
-    private int wS2D(double d) {
-        return view.wS2D(d);
-    }
-
-    private int hS2D(double d) {
-        return view.hS2D(d);
     }
 
     @Override
@@ -55,8 +31,8 @@ public final class SwingGraphicsContext implements GraphicsContext {
     public void drawRect(double x, double y, double width, double height) {
         final int xd = xS2D(x);
         final int yd = yS2D(y);
-        final int wd = xS2D(x+width)-xd;
-        final int hd = yS2D(y+height)-yd;
+        final int wd = xS2D(x + width) - xd;
+        final int hd = yS2D(y + height) - yd;
         g.drawRect(xd, yd, wd, hd);
     }
 
@@ -64,9 +40,23 @@ public final class SwingGraphicsContext implements GraphicsContext {
     public void fillRect(double x, double y, double width, double height) {
         final int xd = xS2D(x);
         final int yd = yS2D(y);
-        final int wd = xS2D(x+width)-xd;
-        final int hd = yS2D(y+height)-yd;
+        final int wd = xS2D(x + width) - xd;
+        final int hd = yS2D(y + height) - yd;
         g.fillRect(xd, yd, wd, hd);
+    }
+
+    @Override
+    public Rectangle getClipBounds() {
+        return view.rectD2S(g.getClipBounds());
+    }
+
+    public Graphics2D graphics() {
+        return g;
+    }
+
+    @Override
+    public void setColor(Color color) {
+        g.setColor(MejaSwingHelper.toAwtColor(color));
     }
 
     @Override
@@ -76,17 +66,28 @@ public final class SwingGraphicsContext implements GraphicsContext {
     }
 
     @Override
-    public Rectangle getClipBounds() {
-        return view.rectD2S(g.getClipBounds());
+    public void setXOR(boolean on) {
+        if (on) {
+            g.setXORMode(MejaSwingHelper.toAwtColor(Color.WHITE));
+        } else {
+            g.setPaintMode();
+        }
     }
 
-    @Override
-    public void setXOR(boolean on) {
-      if (on) {
-        g.setXORMode(MejaSwingHelper.toAwtColor(Color.WHITE));
-      } else {
-        g.setPaintMode();
-      }
+    private int hS2D(double d) {
+        return view.hS2D(d);
+    }
+
+    private int wS2D(double d) {
+        return view.wS2D(d);
+    }
+
+    private int xS2D(double d) {
+        return view.xS2D(d);
+    }
+
+    private int yS2D(double d) {
+        return view.yS2D(d);
     }
 
 }

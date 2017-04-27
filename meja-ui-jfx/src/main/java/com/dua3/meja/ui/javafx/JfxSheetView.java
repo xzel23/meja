@@ -20,7 +20,8 @@ import javafx.scene.layout.Pane;
  *
  * @author axel
  */
-public class JfxSheetView extends Pane implements SheetView, PropertyChangeListener {
+public class JfxSheetView extends Pane
+        implements SheetView, PropertyChangeListener {
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Sheet sheet = null;
@@ -57,25 +58,118 @@ public class JfxSheetView extends Pane implements SheetView, PropertyChangeListe
         getChildren().setAll(gridPane);
     }
 
-    private int getColumnCount() {
-        return sheet == null ? 0 : sheet.getColumnCount();
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
     }
 
-    private int getRowCount() {
-        return sheet == null ? 0 : sheet.getRowCount();
+    @Override
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
     }
 
-    private int getSplitColumn() {
-        return sheet == null ? 0 : sheet.getSplitColumn();
-    }
-
-    private int getSplitRow() {
-        return sheet == null ? 0 : sheet.getSplitRow();
+    @Override
+    public Color getGridColor() {
+        return gridColor;
     }
 
     @Override
     public Sheet getSheet() {
         return sheet;
+    }
+
+    @Override
+    public boolean isEditable() {
+        throw new UnsupportedOperationException("Not supported yet."); // To
+                                                                       // change
+                                                                       // body
+                                                                       // of
+                                                                       // generated
+                                                                       // methods,
+                                                                       // choose
+                                                                       // Tools
+                                                                       // |
+                                                                       // Templates.
+    }
+
+    @Override
+    public boolean isEditing() {
+        throw new UnsupportedOperationException("Not supported yet."); // To
+                                                                       // change
+                                                                       // body
+                                                                       // of
+                                                                       // generated
+                                                                       // methods,
+                                                                       // choose
+                                                                       // Tools
+                                                                       // |
+                                                                       // Templates.
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() != sheet) {
+            return;
+        }
+
+        // FIXME
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(propertyName, listener);
+    }
+
+    @Override
+    public void scrollToCurrentCell() {
+        throw new UnsupportedOperationException("Not supported yet."); // To
+                                                                       // change
+                                                                       // body
+                                                                       // of
+                                                                       // generated
+                                                                       // methods,
+                                                                       // choose
+                                                                       // Tools
+                                                                       // |
+                                                                       // Templates.
+    }
+
+    @Override
+    public boolean setCurrentCell(int rowNum, int colNum) {
+        throw new UnsupportedOperationException("Not supported yet."); // To
+                                                                       // change
+                                                                       // body
+                                                                       // of
+                                                                       // generated
+                                                                       // methods,
+                                                                       // choose
+                                                                       // Tools
+                                                                       // |
+                                                                       // Templates.
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        throw new UnsupportedOperationException("Not supported yet."); // To
+                                                                       // change
+                                                                       // body
+                                                                       // of
+                                                                       // generated
+                                                                       // methods,
+                                                                       // choose
+                                                                       // Tools
+                                                                       // |
+                                                                       // Templates.
+    }
+
+    @Override
+    public void setGridColor(Color gridColor) {
+        this.gridColor = gridColor;
     }
 
     @Override
@@ -99,76 +193,37 @@ public class JfxSheetView extends Pane implements SheetView, PropertyChangeListe
     }
 
     @Override
-    public boolean isEditable() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean isEditing() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void scrollToCurrentCell() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean setCurrentCell(int rowNum, int colNum) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setEditable(boolean editable) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void stopEditing(boolean commit) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); // To
+                                                                       // change
+                                                                       // body
+                                                                       // of
+                                                                       // generated
+                                                                       // methods,
+                                                                       // choose
+                                                                       // Tools
+                                                                       // |
+                                                                       // Templates.
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource() != sheet) {
-            return;
-        }
-
-        // FIXME
+    private int getColumnCount() {
+        return sheet == null ? 0 : sheet.getColumnCount();
     }
 
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
+    private int getRowCount() {
+        return sheet == null ? 0 : sheet.getRowCount();
     }
 
-    @Override
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(propertyName, listener);
+    private int getSplitColumn() {
+        return sheet == null ? 0 : sheet.getSplitColumn();
     }
 
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(propertyName, listener);
+    private int getSplitRow() {
+        return sheet == null ? 0 : sheet.getSplitRow();
     }
 
     JfxSheetPainter getSheetPainter() {
         return sheetPainter;
-    }
-
-    @Override
-    public void setGridColor(Color gridColor) {
-        this.gridColor = gridColor;
-    }
-
-    @Override
-    public Color getGridColor() {
-        return gridColor;
     }
 
 }

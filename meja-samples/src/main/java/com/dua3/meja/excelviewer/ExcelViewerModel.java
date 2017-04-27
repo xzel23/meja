@@ -22,18 +22,14 @@ import com.dua3.meja.util.MejaHelper;
  */
 public class ExcelViewerModel {
 
-    private static final Logger LOGGER = Logger.getLogger(ExcelViewer.class .getName());
+    interface ExcelViewer {
+        public SheetView getCurrentView();
 
-    private final String appName;
-    private final int year;
-    private final String author;
+        public SheetView getViewForSheet(Sheet sheet);
 
-    void openWorkbook(File file) throws IOException {
-        setWorkbook(MejaHelper.openWorkbook(file));
-    }
+        public void setEditable(boolean b);
 
-    Optional<URI> getUri() {
-        return getUri(workbook);
+        public void workbookChanged(URI oldUri, URI newUri);
     }
 
     enum MessageType {
@@ -41,16 +37,7 @@ public class ExcelViewerModel {
         INFO;
     }
 
-    interface ExcelViewer {
-        public void workbookChanged(URI oldUri, URI newUri);
-
-        public void setEditable(boolean b);
-
-        public SheetView getCurrentView();
-
-        public SheetView getViewForSheet(Sheet sheet);
-    }
-
+    private static final Logger LOGGER = Logger.getLogger(ExcelViewer.class.getName());
     private static final String LICENSE = "Copyright %d %s%n"
             + "%n"
             + "Licensed under the Apache License, Version 2.0 (the \"License\");%n"
@@ -65,19 +52,15 @@ public class ExcelViewerModel {
             + "See the License for the specific language governing permissions and%n"
             + "limitations under the License.%n";
 
-    public String getLicenseText() {
-        return String.format(LICENSE, year, author);
+    private static Optional<URI> getUri(Workbook workbook) {
+        return workbook == null ? Optional.empty() : workbook.getUri();
     }
 
-    protected void showInfo() {
-        System.out.format("%s%n%n%s%n", appName, getLicenseText());
-    }
+    private final String appName;
 
-    ExcelViewerModel(String appName, int year, String author) {
-        this.appName = appName;
-        this.year = year;
-        this.author = author;
-    }
+    private final int year;
+
+    private final String author;
 
     /**
      * The currently opened workbook.
@@ -91,13 +74,10 @@ public class ExcelViewerModel {
      */
     private File currentDir = new File(".");
 
-    /**
-     * Sets the current directory for this window.
-     *
-     * @param currentDir directory to set as current directory
-     */
-    public void setCurrentDir(File currentDir) {
-        this.currentDir = currentDir;
+    ExcelViewerModel(String appName, int year, String author) {
+        this.appName = appName;
+        this.year = year;
+        this.author = author;
     }
 
     /**
@@ -109,49 +89,8 @@ public class ExcelViewerModel {
         return currentDir;
     }
 
-    protected void setZoom(float zoom) {
-        for (Sheet sheet : workbook) {
-            sheet.setZoom(zoom);
-        }
-    }
-
-    protected void freezeAtCurrentCell(SheetView view) {
-        if (view != null) {
-            final Sheet sheet = view.getSheet();
-            Cell cell = sheet.getCurrentCell();
-            sheet.splitAt(cell.getRowNumber(), cell.getColumnNumber());
-        }
-    }
-
-    /**
-     * Adjust all column sizes.
-     * @param view the view
-     */
-    protected void adjustColumns(SheetView view) {
-        if (view != null) {
-            view.getSheet().autoSizeColumns();
-        }
-    }
-
-    /**
-     * Set the current workbook.
-     *
-     * @param workbook the workbook
-     */
-    public void setWorkbook(Workbook workbook) {
-        if (this.workbook != null) {
-            try {
-                this.workbook.close();
-            } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "IOException when closing workbook.", ex);
-            }
-        }
-        this.workbook = workbook;
-        LOGGER.log(Level.INFO, "Workbook changed to {0}.", getUri(this.workbook));
-    }
-
-    private static Optional<URI> getUri(Workbook workbook) {
-        return workbook == null ? Optional.empty() : workbook.getUri();
+    public String getLicenseText() {
+        return String.format(LICENSE, year, author);
     }
 
     public Workbook getWorkbook() {
@@ -167,6 +106,72 @@ public class ExcelViewerModel {
         final File file = new File(uri);
         workbook.write(file, true);
         LOGGER.log(Level.INFO, "Workbook written to {0}.", file.getAbsolutePath());
+    }
+
+    /**
+     * Sets the current directory for this window.
+     *
+     * @param currentDir
+     *            directory to set as current directory
+     */
+    public void setCurrentDir(File currentDir) {
+        this.currentDir = currentDir;
+    }
+
+    /**
+     * Set the current workbook.
+     *
+     * @param workbook
+     *            the workbook
+     */
+    public void setWorkbook(Workbook workbook) {
+        if (this.workbook != null) {
+            try {
+                this.workbook.close();
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "IOException when closing workbook.", ex);
+            }
+        }
+        this.workbook = workbook;
+        LOGGER.log(Level.INFO, "Workbook changed to {0}.", getUri(this.workbook));
+    }
+
+    /**
+     * Adjust all column sizes.
+     * 
+     * @param view
+     *            the view
+     */
+    protected void adjustColumns(SheetView view) {
+        if (view != null) {
+            view.getSheet().autoSizeColumns();
+        }
+    }
+
+    protected void freezeAtCurrentCell(SheetView view) {
+        if (view != null) {
+            final Sheet sheet = view.getSheet();
+            Cell cell = sheet.getCurrentCell();
+            sheet.splitAt(cell.getRowNumber(), cell.getColumnNumber());
+        }
+    }
+
+    protected void setZoom(float zoom) {
+        for (Sheet sheet : workbook) {
+            sheet.setZoom(zoom);
+        }
+    }
+
+    protected void showInfo() {
+        System.out.format("%s%n%n%s%n", appName, getLicenseText());
+    }
+
+    Optional<URI> getUri() {
+        return getUri(workbook);
+    }
+
+    void openWorkbook(File file) throws IOException {
+        setWorkbook(MejaHelper.openWorkbook(file));
     }
 
 }

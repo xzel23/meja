@@ -45,7 +45,16 @@ public class JfxExcelViewer extends Application {
 
     public static final int YEAR = 2015;
 
-    private final ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME,YEAR, AUTHOR);
+    /**
+     * @param args
+     *            the command line arguments
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    private final ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
+
     private final JfxWorkbookView view = new JfxWorkbookView();
 
     @Override
@@ -61,21 +70,21 @@ public class JfxExcelViewer extends Application {
 
         final MenuItem miSave = new MenuItem("Save");
         miSave.setOnAction((e) -> saveWorkbook());
-        miSave.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook()==null));
+        miSave.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook() == null));
 
         final MenuItem miSaveAs = new MenuItem("Save");
         miSaveAs.setOnAction((e) -> showSaveAsDialog());
-        miSaveAs.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook()==null));
+        miSaveAs.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook() == null));
 
         final MenuItem miExit = new MenuItem("Exit");
-        miExit.setOnAction( e -> closeApplication() );
+        miExit.setOnAction(e -> closeApplication());
         mFile.getItems().addAll(miOpen, miSave, miSaveAs, new SeparatorMenuItem(), miExit);
 
         // Edit menu
         final Menu mEdit = new Menu("Edit");
 
         final MenuItem miAdjustColumns = new MenuItem("Adjust all column widths");
-        miAdjustColumns.setOnAction( (e) -> model.adjustColumns(getCurrentView()) );
+        miAdjustColumns.setOnAction((e) -> model.adjustColumns(getCurrentView()));
 
         mEdit.getItems().addAll(miAdjustColumns);
 
@@ -83,7 +92,7 @@ public class JfxExcelViewer extends Application {
         final Menu mOptions = new Menu("Options");
 
         final Menu mZoom = new Menu("Zoom");
-        for (final int zoom : new int[]{25, 50, 75, 100, 125, 150, 200, 400}) {
+        for (final int zoom : new int[] { 25, 50, 75, 100, 125, 150, 200, 400 }) {
             final MenuItem miZoom = new MenuItem(zoom + "%");
             miZoom.setOnAction((e) -> setZoom(zoom / 100.0f));
             mZoom.getItems().add(miZoom);
@@ -115,31 +124,15 @@ public class JfxExcelViewer extends Application {
         primaryStage.show();
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     private void closeApplication() {
         Platform.exit();
     }
 
-    private void showOpenDialog(Window parent) {
-        try {
-            final Optional<URI> oldUri = model.getUri();
-            final Workbook newWorkbook = MejaJfxHelper.showDialogAndOpenWorkbook(parent, model.getCurrentDir()).orElse(null);
-            model.setWorkbook(newWorkbook);
-            final Optional<URI> newUri = model.getUri();
-            workbookChanged(oldUri.orElse(null), newUri.orElse(null));
-        } catch (IOException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
-            new Alert(AlertType.ERROR, "Error loading workbook: " + ex.getMessage()).showAndWait();
-        }
+    private SheetView getCurrentView() {
+        return view.getCurrentView();
     }
 
-     private void saveWorkbook() {
+    private void saveWorkbook() {
         Workbook workbook = model.getWorkbook();
         if (workbook == null) {
             return;
@@ -166,25 +159,44 @@ public class JfxExcelViewer extends Application {
         }
     }
 
-    private void showSaveAsDialog() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private SheetView getCurrentView() {
-        return view.getCurrentView();
-    }
-
     private void setZoom(float f) {
         model.setZoom(f);
     }
 
     private void showAboutDialog() {
         Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("About "+APPLICATION_NAME);
+        alert.setTitle("About " + APPLICATION_NAME);
         alert.setHeaderText(APPLICATION_NAME);
         alert.setContentText(model.getLicenseText());
         alert.setResizable(true);
         alert.show();
+    }
+
+    private void showOpenDialog(Window parent) {
+        try {
+            final Optional<URI> oldUri = model.getUri();
+            final Workbook newWorkbook = MejaJfxHelper.showDialogAndOpenWorkbook(parent, model.getCurrentDir())
+                    .orElse(null);
+            model.setWorkbook(newWorkbook);
+            final Optional<URI> newUri = model.getUri();
+            workbookChanged(oldUri.orElse(null), newUri.orElse(null));
+        } catch (IOException ex) {
+            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
+            new Alert(AlertType.ERROR, "Error loading workbook: " + ex.getMessage()).showAndWait();
+        }
+    }
+
+    private void showSaveAsDialog() {
+        throw new UnsupportedOperationException("Not supported yet."); // To
+                                                                       // change
+                                                                       // body
+                                                                       // of
+                                                                       // generated
+                                                                       // methods,
+                                                                       // choose
+                                                                       // Tools
+                                                                       // |
+                                                                       // Templates.
     }
 
     private void workbookChanged(URI oldUri, URI newUri) {

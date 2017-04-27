@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.model.generic;
 
@@ -40,7 +40,8 @@ import com.dua3.meja.util.Options;
 /**
  * Generic implementation of {@link Workbook}.
  */
-public class GenericWorkbook implements Workbook {
+public class GenericWorkbook
+        implements Workbook {
     private static final URI DEFAULT_URI = URI.create("");
 
     final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -58,8 +59,11 @@ public class GenericWorkbook implements Workbook {
 
     /**
      * Construct a new {@code GenericWorkbook}.
-     * @param locale the locale to use
-     * @param uri the URI to set
+     *
+     * @param locale
+     *            the locale to use
+     * @param uri
+     *            the URI to set
      */
     public GenericWorkbook(Locale locale, URI uri) {
         this.locale = locale;
@@ -69,84 +73,50 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public Locale getLocale() {
-        return locale;
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
     }
 
     @Override
-    public int getSheetCount() {
-        return sheets.size();
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(propertyName, listener);
     }
 
     @Override
-    public GenericSheet getSheet(int sheetNr) {
-        return sheets.get(sheetNr);
+    public void close() throws IOException {
+        // nop
     }
 
     @Override
-    public void removeSheet(int sheetNr) {
-        sheets.remove(sheetNr);
-        pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
-     }
-
-    @Override
-    public void write(FileType type, OutputStream out, Options options) throws IOException {
-        WorkbookWriter writer = type.getWriter();
-        writer.setOptions(options);
-        writer.write(this, out);
-    }
-
-    @Override
-    public boolean write(File file, boolean overwriteIfExists, Options options) throws IOException {
-        boolean exists = file.createNewFile();
-        if (!exists || overwriteIfExists) {
-            FileType type = FileType.forFile(file);
-            if (type == null) {
-                throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
-            }
-            try (OutputStream out = Files.newOutputStream(file.toPath())) {
-                write(type, out, options);
-            }
-            return true;
-        } else {
-            return false;
+    public void copy(Workbook other) {
+        // copy styles
+        for (String styleName : other.getCellStyleNames()) {
+            CellStyle cellStyle = other.getCellStyle(styleName);
+            CellStyle newCellStyle = getCellStyle(styleName);
+            newCellStyle.copyStyle(cellStyle);
         }
+
+        // copy sheets
+        for (int sheetNr = 0; sheetNr < other.getSheetCount(); sheetNr++) {
+            Sheet sheet = other.getSheet(sheetNr);
+            Sheet newSheet = createSheet(sheet.getSheetName());
+            newSheet.copy(sheet);
+        }
+    }
+
+    @Override
+    public GenericCellStyle copyCellStyle(String styleName, CellStyle style) {
+        GenericCellStyle cellStyle = getCellStyle(styleName);
+        cellStyle.copyStyle(style);
+        return cellStyle;
     }
 
     @Override
     public GenericSheet createSheet(String sheetName) {
         final GenericSheet sheet = new GenericSheet(this, sheetName, locale);
         sheets.add(sheet);
-        pcs.firePropertyChange(PROPERTY_SHEET_ADDED, null, sheets.size()-1);
+        pcs.firePropertyChange(PROPERTY_SHEET_ADDED, null, sheets.size() - 1);
         return sheet;
-    }
-
-    @Override
-    public Sheet getCurrentSheet() {
-        return getSheet(getCurrentSheetIndex());
-    }
-
-    @Override
-    public int getCurrentSheetIndex() {
-        return currentSheetIdx;
-    }
-
-    @Override
-    public void setCurrentSheet(int idx) {
-        if (idx<0 || idx>sheets.size()) {
-            throw new IndexOutOfBoundsException("Sheet index out of range: "+idx);
-        }
-
-        int oldIdx = getCurrentSheetIndex();
-        if (idx != oldIdx) {
-            currentSheetIdx = idx;
-            pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
-        }
-    }
-
-    @Override
-    public GenericCellStyle getDefaultCellStyle() {
-        return defaultCellStyle;
     }
 
     @Override
@@ -160,15 +130,48 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public GenericCellStyle copyCellStyle(String styleName, CellStyle style) {
-        GenericCellStyle cellStyle = getCellStyle(styleName);
-        cellStyle.copyStyle(style);
-        return cellStyle;
+    public List<String> getCellStyleNames() {
+        return new ArrayList<>(cellStyles.keySet());
     }
 
     @Override
-    public void close() throws IOException {
-        // nop
+    public Sheet getCurrentSheet() {
+        return getSheet(getCurrentSheetIndex());
+    }
+
+    @Override
+    public int getCurrentSheetIndex() {
+        return currentSheetIdx;
+    }
+
+    @Override
+    public GenericCellStyle getDefaultCellStyle() {
+        return defaultCellStyle;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public GenericSheet getSheet(int sheetNr) {
+        return sheets.get(sheetNr);
+    }
+
+    @Override
+    public int getSheetCount() {
+        return sheets.size();
+    }
+
+    @Override
+    public Optional<URI> getUri() {
+        return Optional.ofNullable(uri);
+    }
+
+    @Override
+    public boolean hasCellStyle(java.lang.String name) {
+        return cellStyles.keySet().contains(name);
     }
 
     @Override
@@ -194,8 +197,32 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public Optional<URI> getUri() {
-        return Optional.ofNullable(uri);
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+        pcs.removePropertyChangeListener(propertyName, listener);
+    }
+
+    @Override
+    public void removeSheet(int sheetNr) {
+        sheets.remove(sheetNr);
+        pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
+    }
+
+    @Override
+    public void setCurrentSheet(int idx) {
+        if (idx < 0 || idx > sheets.size()) {
+            throw new IndexOutOfBoundsException("Sheet index out of range: " + idx);
+        }
+
+        int oldIdx = getCurrentSheetIndex();
+        if (idx != oldIdx) {
+            currentSheetIdx = idx;
+            pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
+        }
     }
 
     @Override
@@ -204,13 +231,27 @@ public class GenericWorkbook implements Workbook {
     }
 
     @Override
-    public List<String> getCellStyleNames() {
-        return new ArrayList<>(cellStyles.keySet());
+    public boolean write(File file, boolean overwriteIfExists, Options options) throws IOException {
+        boolean exists = file.createNewFile();
+        if (!exists || overwriteIfExists) {
+            FileType type = FileType.forFile(file);
+            if (type == null) {
+                throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
+            }
+            try (OutputStream out = Files.newOutputStream(file.toPath())) {
+                write(type, out, options);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
-    public boolean hasCellStyle(java.lang.String name) {
-      return cellStyles.keySet().contains(name);
+    public void write(FileType type, OutputStream out, Options options) throws IOException {
+        WorkbookWriter writer = type.getWriter();
+        writer.setOptions(options);
+        writer.write(this, out);
     }
 
     String getCellStyleName(GenericCellStyle cellStyle) {
@@ -220,43 +261,6 @@ public class GenericWorkbook implements Workbook {
             }
         }
         throw new IllegalArgumentException("CellStyle is not from this workbook.");
-    }
-
-    @Override
-    public void copy(Workbook other) {
-        // copy styles
-        for (String styleName : other.getCellStyleNames()) {
-            CellStyle cellStyle = other.getCellStyle(styleName);
-            CellStyle newCellStyle = getCellStyle(styleName);
-            newCellStyle.copyStyle(cellStyle);
-        }
-
-        // copy sheets
-        for (int sheetNr = 0; sheetNr < other.getSheetCount(); sheetNr++) {
-            Sheet sheet = other.getSheet(sheetNr);
-            Sheet newSheet = createSheet(sheet.getSheetName());
-            newSheet.copy(sheet);
-        }
-    }
-
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(propertyName, listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(propertyName, listener);
     }
 
 }

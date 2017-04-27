@@ -2,17 +2,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.model;
 
@@ -34,11 +34,137 @@ public interface Cell {
     public final String ERROR_TEXT = "#ERROR";
 
     /**
+     * Set formula
+     *
+     * @param value
+     *            the formula as a string
+     * @return this cell
+     */
+    public Cell setFormula(String value);
+
+    /**
+     * Clear the cell`s content.
+     */
+    void clear();
+
+    /**
+     * Copy cell data.
+     *
+     * @param other
+     *            cell to copy data from
+     */
+    void copy(Cell other);
+
+    /**
+     * Return raw cell value.
+     *
+     * @return cell value
+     */
+    Object get();
+
+    /**
+     * Return text representation of value.
+     *
+     * @return cell value as R, as it would be displayed
+     */
+    RichText getAsText();
+
+    /**
+     * Return boolean cell value.
+     *
+     * @return boolean cell value
+     * @throws IllegalStateException
+     *             if cell is not of boolean type
+     */
+    boolean getBoolean();
+
+    /**
+     * Get cell reference (ie. "Sheet!A1" for the top left cell).
+     *
+     * @param options
+     *            options to be used
+     * @return cell reference as String
+     */
+    String getCellRef(RefOption... options);
+
+    /**
+     * Return the cell style.
+     *
+     * @return cell style
+     */
+    CellStyle getCellStyle();
+
+    /**
      * Return the cell type.
      *
      * @return cell type
      */
     CellType getCellType();
+
+    /**
+     * Get the cell`s column number.
+     *
+     * @return column number of this cell
+     */
+    int getColumnNumber();
+
+    /**
+     * Return date value.
+     *
+     * @return date cell value
+     * @throws IllegalStateException
+     *             if cell is not of date value
+     * @deprecated
+     */
+    @Deprecated
+    Date getDate();
+
+    /**
+     * Return date value.
+     *
+     * @return date cell value
+     * @throws IllegalStateException
+     *             if cell is not of date value
+     */
+    LocalDateTime getDateTime();
+
+    /**
+     * Return formula.
+     *
+     * @return the cell`s formula
+     * @throws IllegalStateException
+     *             if no formula is set
+     */
+    String getFormula();
+
+    /**
+     * Get the horizontal span.
+     *
+     * The horizontal span of a merged cells is the horizontal number of merged
+     * cells for the top left cell of the merged cells and 0 for the other
+     * merged cells. For cells that are not merged, the span is 1.
+     *
+     * @return horizontal span for this cell
+     */
+    int getHorizontalSpan();
+
+    /**
+     * Get the logical cell. The logical cell for merged cells is the top left
+     * cell of the group of merged cells. For cells that are not merged, the
+     * logical cell is the cell itself.
+     *
+     * @return the logical cell
+     */
+    Cell getLogicalCell();
+
+    /**
+     * Return numeric value.
+     *
+     * @return numeric cell value
+     * @throws IllegalStateException
+     *             if cell is not of numeric type
+     */
+    Number getNumber();
 
     /**
      * Return the result type.
@@ -53,98 +179,40 @@ public interface Cell {
      * has to be set before calling this method to make sure
      * {@code CellType.DATE} is returned for formulas that return a date.</em>
      * </p>
+     *
      * @return cell type
      */
     CellType getResultType();
 
     /**
-     * Return raw cell value.
+     * Get the row this cell belongs to.
      *
-     * @return cell value
+     * @return the row for this cell
      */
-    Object get();
+    Row getRow();
 
     /**
-     * Return boolean cell value.
+     * Get the cell`s row number.
      *
-     * @return boolean cell value
-     * @throws IllegalStateException if cell is not of boolean type
+     * @return row number of this cell
      */
-    boolean getBoolean();
+    int getRowNumber();
 
     /**
-     * Return formula.
+     * Get the cell`s sheet.
      *
-     * @return the cell`s formula
-     * @throws IllegalStateException if no formula is set
+     * @return sheet this cell belongs to
      */
-    String getFormula();
-
-    /**
-     * Return date value.
-     *
-     * @return date cell value
-     * @throws IllegalStateException if cell is not of date value
-     * @deprecated
-     */
-    @Deprecated
-    Date getDate();
-
-    /**
-     * Return date value.
-     *
-     * @return date cell value
-     * @throws IllegalStateException if cell is not of date value
-     */
-    LocalDateTime getDateTime();
-
-    /**
-     * Return numeric value.
-     *
-     * @return numeric cell value
-     * @throws IllegalStateException if cell is not of numeric type
-     */
-    Number getNumber();
+    Sheet getSheet();
 
     /**
      * Return string value.
      *
      * @return text cell value
-     * @throws IllegalStateException if cell is not of text type
+     * @throws IllegalStateException
+     *             if cell is not of text type
      */
     RichText getText();
-
-    /**
-     * Return text representation of value.
-     *
-     * @return cell value as R, as it would be displayed
-     */
-    RichText getAsText();
-
-    /**
-     * Test for empty cell.
-     *
-     * @return true if cell has cell type BLANK or contains the empty string.
-     */
-    boolean isEmpty();
-
-    /**
-     * Return the cell style.
-     *
-     * @return cell style
-     */
-    CellStyle getCellStyle();
-
-    /**
-     * Get the horizontal span.
-     *
-     * The horizontal span of a merged cells is the horizontal number of merged
-     * cells for the top left cell of the merged cells and 0 for the other
-     * merged cells. For cells that are not merged, the span is 1.
-     *
-     * @return horizontal span for this cell
-     */
-    int getHorizontalSpan();
 
     /**
      * Get the vertical span.
@@ -158,39 +226,33 @@ public interface Cell {
     int getVerticalSpan();
 
     /**
-     * Get the logical cell. The logical cell for merged cells is the top left
-     * cell of the group of merged cells. For cells that are not merged, the
-     * logical cell is the cell itself.
+     * Get the workbook this cell belongs to.
      *
-     * @return the logical cell
+     * @return the workbook
      */
-    Cell getLogicalCell();
+    Workbook getWorkbook();
 
     /**
-     * Get the cell`s row number.
+     * Test for empty cell.
      *
-     * @return row number of this cell
+     * @return true if cell has cell type BLANK or contains the empty string.
      */
-    int getRowNumber();
+    boolean isEmpty();
 
     /**
-     * Get the cell`s column number.
+     * Set cell value to boolean value.
      *
-     * @return column number of this cell
+     * @param b
+     *            boolean value
+     * @return this cell
      */
-    int getColumnNumber();
-
-    /**
-     * Get the cell`s sheet.
-     *
-     * @return sheet this cell belongs to
-     */
-    Sheet getSheet();
+    Cell set(Boolean b);
 
     /**
      * Set cell value to date.
      *
-     * @param arg date
+     * @param arg
+     *            date
      * @return this cell
      * @deprecated
      */
@@ -200,7 +262,8 @@ public interface Cell {
     /**
      * Set cell value to date.
      *
-     * @param arg date
+     * @param arg
+     *            date
      * @return this cell
      */
     Cell set(LocalDateTime arg);
@@ -208,106 +271,68 @@ public interface Cell {
     /**
      * Set cell value to number.
      *
-     * @param arg number
+     * @param arg
+     *            number
      * @return this cell
      */
     Cell set(Number arg);
 
     /**
-     * Set cell value to string.
-     *
-     * @param s string
-     * @return this cell
-     */
-    Cell set(String s);
-
-    /**
-     * Set cell value to string with markup.
-     *
-     * @param s rich text string
-     * @return this cell
-     */
-    Cell set(RichText s);
-
-    /**
-     * Set cell value to boolean value.
-     *
-     * @param b boolean value
-     * @return this cell
-     */
-    Cell set(Boolean b);
-
-    /**
      * Set cell value.
      *
-     * @param b value
+     * @param b
+     *            value
      * @return this cell
      */
     Cell set(Object b);
 
     /**
-     * Get the row this cell belongs to.
+     * Set cell value to string with markup.
      *
-     * @return the row for this cell
+     * @param s
+     *            rich text string
+     * @return this cell
      */
-    Row getRow();
+    Cell set(RichText s);
 
     /**
-     * Clear the cell`s content.
+     * Set cell value to string.
+     *
+     * @param s
+     *            string
+     * @return this cell
      */
-    void clear();
+    Cell set(String s);
 
     /**
      * Set cell style.
      *
-     * @param cellStyle cell style
+     * @param cellStyle
+     *            cell style
      */
     void setCellStyle(CellStyle cellStyle);
 
     /**
      * Sets the cell style registered under name in the workbook.
      *
-     * @param cellStyleName cell style name
+     * @param cellStyleName
+     *            cell style name
      */
     void setStyle(String cellStyleName);
 
     /**
-     * Set formula
-     * @param value the formula as a string
-     * @return this cell
-     */
-    public Cell setFormula(String value);
-
-    /**
-     * Copy cell data.
-     * @param other cell to copy data from
-     */
-    void copy(Cell other);
-
-    /**
-     * Get the workbook this cell belongs to.
-     * @return the workbook
-     */
-    Workbook getWorkbook();
-
-    /**
-     * Unmerge cell.
-     * @throws IllegalStateException if this cell is not the top left cell
-     * of a merged region
-     */
-    void unMerge();
-
-    /**
-     * Get cell reference (ie. "Sheet!A1" for the top left cell).
-     * @param options options to be used
-     * @return cell reference as String
-     */
-    String getCellRef(RefOption... options);
-
-    /**
      * Return string representation of cell content.
+     *
      * @return string representation of cell content
      */
     @Override
     String toString();
+
+    /**
+     * Unmerge cell.
+     *
+     * @throws IllegalStateException
+     *             if this cell is not the top left cell of a merged region
+     */
+    void unMerge();
 }

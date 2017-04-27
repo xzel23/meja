@@ -15,7 +15,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SheetPainterBase;
 
-public class SwingSheetPainter extends SheetPainterBase<SwingSheetView,SwingGraphicsContext> {
+public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, SwingGraphicsContext> {
 
     private final CellRenderer cellRenderer;
     private final JLabel labelPainter = new JLabel();
@@ -36,40 +36,6 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView,SwingGrap
     }
 
     @Override
-    protected void drawBackground(SwingGraphicsContext gc) {
-        final Graphics2D g = gc.graphics();
-        java.awt.Rectangle r = g.getClipBounds();
-        g.setColor(sheetView.getBackground().brighter());
-        g.fillRect(r.x, r.y, r.width, r.height);
-    }
-
-    @Override
-    protected void render(SwingGraphicsContext g, Cell cell, Rectangle rect, Rectangle clipRect) {
-        java.awt.Rectangle rectD = sheetView.rectS2D(rect);
-        java.awt.Rectangle clipRectD = sheetView.rectS2D(clipRect);
-
-        cellRenderer.render(g.graphics(), cell, rectD, clipRectD, sheetView.getScale());
-    }
-
-    @Override
-    protected void drawLabel(SwingGraphicsContext gc, Rectangle r, String text) {
-        final java.awt.Rectangle rd = sheetView.rectS2D(r);
-        labelPainter.setBounds(0, 0, rd.width, rd.height);
-        labelPainter.setText(text);
-        labelPainter.paint(gc.graphics().create(rd.x, rd.y, rd.width, rd.height));
-    }
-
-    @Override
-    protected double getRowLabelWidth() {
-        return labelWidth;
-    }
-
-    @Override
-    protected double getColumnLabelHeight() {
-        return labelHeight;
-    }
-
-    @Override
     public void update(Sheet sheet) {
         super.update(sheet);
 
@@ -87,6 +53,40 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView,SwingGrap
             labelWidth = sheetView.wD2S(labelSize.width);
             labelHeight = sheetView.hD2S(labelSize.height);
         }
+    }
+
+    @Override
+    protected void drawBackground(SwingGraphicsContext gc) {
+        final Graphics2D g = gc.graphics();
+        java.awt.Rectangle r = g.getClipBounds();
+        g.setColor(sheetView.getBackground().brighter());
+        g.fillRect(r.x, r.y, r.width, r.height);
+    }
+
+    @Override
+    protected void drawLabel(SwingGraphicsContext gc, Rectangle r, String text) {
+        final java.awt.Rectangle rd = sheetView.rectS2D(r);
+        labelPainter.setBounds(0, 0, rd.width, rd.height);
+        labelPainter.setText(text);
+        labelPainter.paint(gc.graphics().create(rd.x, rd.y, rd.width, rd.height));
+    }
+
+    @Override
+    protected double getColumnLabelHeight() {
+        return labelHeight;
+    }
+
+    @Override
+    protected double getRowLabelWidth() {
+        return labelWidth;
+    }
+
+    @Override
+    protected void render(SwingGraphicsContext g, Cell cell, Rectangle rect, Rectangle clipRect) {
+        java.awt.Rectangle rectD = sheetView.rectS2D(rect);
+        java.awt.Rectangle clipRectD = sheetView.rectS2D(clipRect);
+
+        cellRenderer.render(g.graphics(), cell, rectD, clipRectD, sheetView.getScale());
     }
 
 }

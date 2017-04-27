@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.ui.swing;
 
@@ -53,19 +53,55 @@ import com.dua3.meja.util.Options;
  */
 public class MejaSwingHelper {
 
+    @SuppressWarnings("serial")
+    public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
+        return new AbstractAction(name) {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onActionPerformed.accept(e);
+            }
+        };
+    }
+
+    @SuppressWarnings("serial")
+    public static Action createAction(String name, Runnable onActionPerformed) {
+        return new AbstractAction(name) {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onActionPerformed.run();
+            }
+        };
+    }
+
     /**
      * Create a TableModel to be used with JTable.
      *
-     * @param sheet the sheet to create a model for
+     * @param sheet
+     *            the sheet to create a model for
      * @return table model instance of {@code JTableModel} for the sheet
      */
     @SuppressWarnings("serial")
     public static TableModel getTableModel(final Sheet sheet) {
         return new AbstractTableModel() {
 
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
+
             @Override
-            public int getRowCount() {
-                return sheet.getRowCount();
+            public Class<?> getColumnClass(int columnIndex) {
+                return Cell.class;
             }
 
             @Override
@@ -79,13 +115,8 @@ public class MejaSwingHelper {
             }
 
             @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return Cell.class;
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return false;
+            public int getRowCount() {
+                return sheet.getRowCount();
             }
 
             @Override
@@ -93,6 +124,11 @@ public class MejaSwingHelper {
                 Row row = sheet.getRow(i);
                 Cell cell = row == null ? null : row.getCell(j);
                 return cell;
+            }
+
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return false;
             }
 
             @Override
@@ -106,10 +142,13 @@ public class MejaSwingHelper {
     /**
      * Show a file open dialog and load the selected workbook.
      *
-     * @param parent the parent component to use for the dialog
-     * @param file the directory to set in the open dialog or the default file
+     * @param parent
+     *            the parent component to use for the dialog
+     * @param file
+     *            the directory to set in the open dialog or the default file
      * @return the workbook the user chose or null if dialog was canceled
-     * @throws IOException if a workbook was selected but could not be loaded
+     * @throws IOException
+     *             if a workbook was selected but could not be loaded
      */
     public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
@@ -121,7 +160,7 @@ public class MejaSwingHelper {
         int rc = jfc.showOpenDialog(parent);
 
         if (rc != JFileChooser.APPROVE_OPTION) {
-          return Optional.empty();
+            return Optional.empty();
         }
 
         file = jfc.getSelectedFile();
@@ -137,9 +176,10 @@ public class MejaSwingHelper {
             List<Option<?>> settings = fileType.getSettings();
             Options importSettings = Options.empty(); // default is empty
             if (!settings.isEmpty()) {
-              SettingsDialog dialog = new SettingsDialog(parent, fileType.name()+" - Settings", "Please verify the import settings:", settings);
-              dialog.setVisible(true);
-              importSettings = dialog.getResult();
+                SettingsDialog dialog = new SettingsDialog(parent, fileType.name() + " - Settings",
+                        "Please verify the import settings:", settings);
+                dialog.setVisible(true);
+                importSettings = dialog.getResult();
             }
 
             // load
@@ -155,22 +195,28 @@ public class MejaSwingHelper {
      * <p>
      * A file selection dialog is shown and the workbook is saved to the
      * selected file. If the file already exists, a confirmation dialog is
-     * shown, asking the user whether to overwrite the file.</p>
+     * shown, asking the user whether to overwrite the file.
+     * </p>
      *
-     * @param parent the parent component for the dialog
-     * @param workbook the workbook to save
-     * @param file the file to set the default path in the dialog
+     * @param parent
+     *            the parent component for the dialog
+     * @param workbook
+     *            the workbook to save
+     * @param file
+     *            the file to set the default path in the dialog
      * @return the URI the file was saved to or {@code null} if the user
-     * canceled the dialog
-     * @throws IOException if an exception occurs while saving
+     *         canceled the dialog
+     * @throws IOException
+     *             if an exception occurs while saving
      */
-    public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file) throws IOException {
+    public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file)
+            throws IOException {
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         int rc = jfc.showSaveDialog(parent);
 
         if (rc != JFileChooser.APPROVE_OPTION) {
-          return Optional.empty();
+            return Optional.empty();
         }
 
         file = jfc.getSelectedFile();
@@ -206,25 +252,5 @@ public class MejaSwingHelper {
     }
 
     private MejaSwingHelper() {
-    }
-
-    @SuppressWarnings("serial")
-    public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
-      return new AbstractAction(name) {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          onActionPerformed.accept(e);
-        }
-      };
-    }
-
-    @SuppressWarnings("serial")
-    public static Action createAction(String name, Runnable onActionPerformed) {
-      return new AbstractAction(name) {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          onActionPerformed.run();
-        }
-      };
     }
 }

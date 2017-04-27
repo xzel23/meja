@@ -1,33 +1,36 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.ui.swing;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+
+import javax.swing.BorderFactory;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.ui.SheetView;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import javax.swing.BorderFactory;
 
 /**
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class DefaultCellRenderer implements CellRenderer {
+public class DefaultCellRenderer
+        implements CellRenderer {
 
     private final CellEditorPane component;
 
@@ -46,9 +49,10 @@ public class DefaultCellRenderer implements CellRenderer {
             return;
         }
 
-        int maxWidthScaled = (int) (SheetView.MAX_COLUMN_WIDTH*scale);
+        int maxWidthScaled = (int) (SheetView.MAX_COLUMN_WIDTH * scale);
 
-        // if text is not wrapped, paint with a maximum width to allow overflowing text
+        // if text is not wrapped, paint with a maximum width to allow
+        // overflowing text
         CellStyle style = cell.getCellStyle();
         boolean wrap = style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
         Rectangle bounds = new Rectangle(wrap ? cr.width : maxWidthScaled, cr.height);
@@ -57,19 +61,20 @@ public class DefaultCellRenderer implements CellRenderer {
             canvas = cr;
         } else {
             switch (CellEditorPane.getHAlign(style.getHAlign(), cell.getResultType())) {
-                case ALIGN_LEFT:
-                    canvas = new Rectangle(cr.x, cr.y, maxWidthScaled, cr.height);
-                    break;
-                case ALIGN_RIGHT:
-                    canvas = new Rectangle(cr.x+cr.width-maxWidthScaled, cr.y, maxWidthScaled, cr.height);
-                    break;
-                case ALIGN_CENTER:
-                    canvas = new Rectangle(cr.x+(cr.width-maxWidthScaled)/2, cr.y, maxWidthScaled, cr.height);
-                    break;
-                case ALIGN_JUSTIFY:   // ALIGN_JUSTIFY implies wrap
-                case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be mapped to another value
-                default:
-                    throw new IllegalStateException();
+            case ALIGN_LEFT:
+                canvas = new Rectangle(cr.x, cr.y, maxWidthScaled, cr.height);
+                break;
+            case ALIGN_RIGHT:
+                canvas = new Rectangle(cr.x + cr.width - maxWidthScaled, cr.y, maxWidthScaled, cr.height);
+                break;
+            case ALIGN_CENTER:
+                canvas = new Rectangle(cr.x + (cr.width - maxWidthScaled) / 2, cr.y, maxWidthScaled, cr.height);
+                break;
+            case ALIGN_JUSTIFY:   // ALIGN_JUSTIFY implies wrap
+            case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be mapped to
+                                  // another value
+            default:
+                throw new IllegalStateException();
             }
         }
 

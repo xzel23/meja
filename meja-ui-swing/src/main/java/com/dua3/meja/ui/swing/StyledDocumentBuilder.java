@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.ui.swing;
 
@@ -33,8 +33,8 @@ import com.dua3.meja.text.TextBuilder;
 import com.dua3.meja.util.MejaHelper;
 
 /**
- * A {@link TextBuilder} implementation for translating {@code RichText}
- * to {@code StyledDocument}.
+ * A {@link TextBuilder} implementation for translating {@code RichText} to
+ * {@code StyledDocument}.
  *
  * @author Axel Howind (axel@dua3.com)
  */
@@ -42,13 +42,17 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     private static final Logger LOGGER = Logger.getLogger(StyledDocumentBuilder.class.getName());
 
     /**
-     * Convert {@code RichText} to {@code StyledDocument} conserving text attributes.
-     * @param text an instance of {@code RichText}
+     * Convert {@code RichText} to {@code StyledDocument} conserving text
+     * attributes.
+     * 
+     * @param text
+     *            an instance of {@code RichText}
      * @param dfltAttr
-     *  the default attributes to use
+     *            the default attributes to use
      * @param scale
-     *  scaling factor to start with
-     * @return instance of {@code StyledDocument} with {@code text} as its content
+     *            scaling factor to start with
+     * @return instance of {@code StyledDocument} with {@code text} as its
+     *         content
      */
     public static StyledDocument toStyledDocument(RichText text, AttributeSet dfltAttr, double scale) {
         StyledDocumentBuilder builder = new StyledDocumentBuilder(scale);
@@ -73,7 +77,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     @Override
     protected void append(Run run) {
         SimpleAttributeSet as = new SimpleAttributeSet();
-        for (Map.Entry<String, String> e: run.getStyle().properties().entrySet()) {
+        for (Map.Entry<String, String> e : run.getStyle().properties().entrySet()) {
             switch (e.getKey()) {
             case Style.FONT_FAMILY:
                 StyleConstants.setFontFamily(as, e.getValue());
@@ -91,7 +95,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                 StyleConstants.setBold(as, e.getValue().equals("bold"));
                 break;
             case Style.FONT_STYLE:
-                switch(e.getValue()) {
+                switch (e.getValue()) {
                 case "normal":
                     StyleConstants.setItalic(as, false);
                     break;
@@ -100,8 +104,8 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                     StyleConstants.setItalic(as, true);
                     break;
                 default:
-                  LOGGER.warning("Unknown value for FONT_STYLE: "+e.getValue());
-                  break;
+                    LOGGER.warning("Unknown value for FONT_STYLE: " + e.getValue());
+                    break;
                 }
                 break;
             case Style.TEXT_DECORATION:
@@ -113,8 +117,8 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                     StyleConstants.setUnderline(as, true);
                     break;
                 default:
-                  LOGGER.warning("Unknown value for TEXT_DECORATION: "+e.getValue());
-                  break;
+                    LOGGER.warning("Unknown value for TEXT_DECORATION: " + e.getValue());
+                    break;
                 }
                 break;
             }

@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.io;
 
@@ -31,11 +31,19 @@ import com.dua3.meja.util.Options;
  */
 public abstract class WorkbookWriter {
 
+    public void setOptions(Options exportSettings) {
+        // empty implementation for writers not taking export options
+    }
+
     /**
      * Write workbook to file.
-     * @param workbook the workbook to write
-     * @param file the file to write to
-     * @throws IOException if an error occurs when writing out the workbook
+     *
+     * @param workbook
+     *            the workbook to write
+     * @param file
+     *            the file to write to
+     * @throws IOException
+     *             if an error occurs when writing out the workbook
      */
     public void write(Workbook workbook, File file) throws IOException {
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
@@ -44,10 +52,26 @@ public abstract class WorkbookWriter {
     }
 
     /**
+     * Write workbook to a stream.
+     *
+     * @param workbook
+     *            the workbook to write
+     * @param out
+     *            the stream to write to
+     * @throws IOException
+     *             if an error occurs when writing out the workbook
+     */
+    public abstract void write(Workbook workbook, OutputStream out) throws IOException;
+
+    /**
      * Write workbook to URI.
-     * @param workbook the workbook to write
-     * @param uri the URI to write to
-     * @throws IOException if an error occurs when writing out the workbook
+     *
+     * @param workbook
+     *            the workbook to write
+     * @param uri
+     *            the URI to write to
+     * @throws IOException
+     *             if an error occurs when writing out the workbook
      */
     public void write(Workbook workbook, URI uri) throws IOException {
         URLConnection connection = uri.toURL().openConnection();
@@ -55,18 +79,6 @@ public abstract class WorkbookWriter {
         try (OutputStream out = new BufferedOutputStream(connection.getOutputStream())) {
             write(workbook, out);
         }
-    }
-
-    /**
-     * Write workbook to a stream.
-     * @param workbook the workbook to write
-     * @param out the stream to write to
-     * @throws IOException if an error occurs when writing out the workbook
-     */
-    public abstract void write(Workbook workbook, OutputStream out) throws IOException;
-
-    public void setOptions(Options exportSettings) {
-      // empty implementation for writers not taking export options
     }
 
 }

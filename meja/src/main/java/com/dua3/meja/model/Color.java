@@ -1,17 +1,17 @@
 /*
  * Copyright 2016 a5xysq1.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.model;
 
@@ -24,7 +24,13 @@ import java.util.Map;
  * Color in ARGB format.
  */
 @SuppressWarnings("serial")
-public final class Color implements Serializable {
+public final class Color
+        implements Serializable {
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
     private static final Map<String, Color> COLORS = new LinkedHashMap<>();
 
     // predefined Color constants
@@ -175,90 +181,18 @@ public final class Color implements Serializable {
     public static final Color YELLOWGREEN = register("YELLOWGREEN", 0xFF9ACD32);
     public static final Color REBECCAPURPLE = register("REBECCAPURPLE", 0xFF663399);
 
-    public static Iterable<Color> values() {
-        return COLORS.values();
-    }
+    private static final int SHIFT_A = 24;
+
+    private static final int SHIFT_R = 16;
+
+    private static final int SHIFT_G = 8;
+
+    private static final int SHIFT_B = 0;
+
+    private static final double F_BRIGHTEN = 0.7;
 
     public static Map<String, Color> palette() {
         return Collections.unmodifiableMap(COLORS);
-    }
-
-    private final int argb;
-
-    private static int shiftComponentValue(int value, int bits) {
-        if (value < 0 || value > 255) {
-            throw new IllegalArgumentException();
-        }
-        return value << bits;
-    }
-
-    public Color(int r, int g, int b) {
-        this(r, g, b, 255);
-    }
-
-    public Color(int r, int g, int b, int a) {
-        argb = shiftComponentValue(a, SHIFT_A)
-                + shiftComponentValue(r, SHIFT_R)
-                + shiftComponentValue(g, SHIFT_G)
-                + shiftComponentValue(b, SHIFT_B);
-    }
-
-    private static final int SHIFT_A = 24;
-    private static final int SHIFT_R = 16;
-    private static final int SHIFT_G = 8;
-    private static final int SHIFT_B = 0;
-
-    private Color(int argb) {
-        this.argb = argb;
-    }
-
-    public int argb() {
-        return argb;
-    }
-
-    public int r() {
-        return (argb >> SHIFT_R) & 0xff;
-    }
-
-    public int g() {
-        return (argb >> SHIFT_G) & 0xff;
-    }
-
-    public int b() {
-        return (argb >> SHIFT_B) & 0xff;
-    }
-
-    public int a() {
-        return (argb >> SHIFT_A) & 0xff;
-    }
-
-    public float rf() {
-        return r() / 255f;
-    }
-
-    public float gf() {
-        return g() / 255f;
-    }
-
-    public float bf() {
-        return b() / 255f;
-    }
-
-    public float af() {
-        return a() / 255f;
-    }
-
-    public byte[] toByteArray() {
-        byte[] arr = {
-            (byte) a(), (byte) r(), (byte) g(), (byte) b()
-        };
-        return arr;
-    }
-
-    private static Color register(String name, int code) {
-        Color c = new Color(code);
-        COLORS.put(name, c);
-        return c;
     }
 
     public static Color valueOf(String s) {
@@ -309,12 +243,59 @@ public final class Color implements Serializable {
         throw new IllegalArgumentException("\"" + s + "\" is no valid color.");
     }
 
-    @Override
-    public String toString() {
-        return "#" + Integer.toHexString(argb);
+    public static Iterable<Color> values() {
+        return COLORS.values();
     }
 
-    private static final double F_BRIGHTEN = 0.7;
+    private static Color register(String name, int code) {
+        Color c = new Color(code);
+        COLORS.put(name, c);
+        return c;
+    }
+
+    private static int shiftComponentValue(int value, int bits) {
+        if (value < 0 || value > 255) {
+            throw new IllegalArgumentException();
+        }
+        return value << bits;
+    }
+
+    private final int argb;
+
+    public Color(int r, int g, int b) {
+        this(r, g, b, 255);
+    }
+
+    public Color(int r, int g, int b, int a) {
+        argb = shiftComponentValue(a, SHIFT_A)
+                + shiftComponentValue(r, SHIFT_R)
+                + shiftComponentValue(g, SHIFT_G)
+                + shiftComponentValue(b, SHIFT_B);
+    }
+
+    private Color(int argb) {
+        this.argb = argb;
+    }
+
+    public int a() {
+        return (argb >> SHIFT_A) & 0xff;
+    }
+
+    public float af() {
+        return a() / 255f;
+    }
+
+    public int argb() {
+        return argb;
+    }
+
+    public int b() {
+        return (argb >> SHIFT_B) & 0xff;
+    }
+
+    public float bf() {
+        return b() / 255f;
+    }
 
     public Color brighter() {
         int r = r();
@@ -354,16 +335,44 @@ public final class Color implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || obj.getClass()!=getClass()) {
+        if (obj == null || obj.getClass() != getClass()) {
             return false;
         }
 
-        return ((Color)obj).argb == argb;
+        return ((Color) obj).argb == argb;
+    }
+
+    public int g() {
+        return (argb >> SHIFT_G) & 0xff;
+    }
+
+    public float gf() {
+        return g() / 255f;
     }
 
     @Override
     public int hashCode() {
         return argb;
+    }
+
+    public int r() {
+        return (argb >> SHIFT_R) & 0xff;
+    }
+
+    public float rf() {
+        return r() / 255f;
+    }
+
+    public byte[] toByteArray() {
+        byte[] arr = {
+                (byte) a(), (byte) r(), (byte) g(), (byte) b()
+        };
+        return arr;
+    }
+
+    @Override
+    public String toString() {
+        return "#" + Integer.toHexString(argb);
     }
 
 }

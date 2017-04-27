@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.io;
 
@@ -33,34 +33,36 @@ import com.dua3.meja.util.Options;
 
 /**
  * @author axel TODO: see below number of fields require fixed number of columns
- * allow lesser fields than columns append columns as necessary
+ *         allow lesser fields than columns append columns as necessary
  *
- * optional: trim field values
+ *         optional: trim field values
  */
-public class CsvReader extends Csv implements DataReader, AutoCloseable {
+public class CsvReader extends Csv
+        implements DataReader, AutoCloseable {
 
     // the unicode codepoint for the UTF-8 BOM
     private static final int UTF8_BOM = 0xfeff;
     // the bytes sequence the UTF-8 BOM
-    private static final byte[] UTF8_BOM_BYTES = { (byte)0xef, (byte)0xbb, (byte)0xbf };
+    private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
     public static CsvReader create(RowBuilder builder, File file, Options options) throws IOException {
-      Charset cs = getCharset(options);
-      return create(builder, Files.newBufferedReader(file.toPath(), cs), options);
+        Charset cs = getCharset(options);
+        return create(builder, Files.newBufferedReader(file.toPath(), cs), options);
     }
 
     public static CsvReader create(RowBuilder builder, InputStream in, Options options) throws IOException {
         // auto-detect UTF-8 with BOM
         Charset charset = getCharset(options);
-        if (in.markSupported() && !options.hasOption(Csv.getOption(OPTION_CHARSET).orElseThrow(() -> new IllegalStateException()))) {
-          int bomLength = UTF8_BOM_BYTES.length;
-          byte[] buffer = new byte[bomLength];
-          in.mark(bomLength);
-          if (in.read(buffer)!=bomLength || !Arrays.equals(UTF8_BOM_BYTES, buffer)) {
-            in.reset();
-          } else {
-            charset = StandardCharsets.UTF_8;
-          }
+        if (in.markSupported()
+                && !options.hasOption(Csv.getOption(OPTION_CHARSET).orElseThrow(() -> new IllegalStateException()))) {
+            int bomLength = UTF8_BOM_BYTES.length;
+            byte[] buffer = new byte[bomLength];
+            in.mark(bomLength);
+            if (in.read(buffer) != bomLength || !Arrays.equals(UTF8_BOM_BYTES, buffer)) {
+                in.reset();
+            } else {
+                charset = StandardCharsets.UTF_8;
+            }
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
@@ -68,8 +70,8 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
     }
 
     static CsvReader create(RowBuilder builder, BufferedReader reader, Options options) throws IOException {
-      CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
-      return csvReader;
+        CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
+        return csvReader;
     }
 
     private RowBuilder rowBuilder;
@@ -92,17 +94,21 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
         this.source = source;
 
         // remove optional UTF-8 BOM from content
-        // this should be ok independent of the actual encoding since the unicode  representing
-        // the UTF-8 BOM marker should only occur at the beginning of UTF-8 texts, and the old
-        // (now obsolete) meaning as "ZERO WIDTH NON-BREAKING SPACE (ZWNBSP)" does not make sense
+        // this should be ok independent of the actual encoding since the
+        // unicode representing
+        // the UTF-8 BOM marker should only occur at the beginning of UTF-8
+        // texts, and the old
+        // (now obsolete) meaning as "ZERO WIDTH NON-BREAKING SPACE (ZWNBSP)"
+        // does not make sense
         // at the beginning of a text.
         //
         // http://www.unicode.org/faq/utf_bom.html:
-        // > In the absence of a protocol supporting its use as a BOM and when not at the beginning
+        // > In the absence of a protocol supporting its use as a BOM and when
+        // not at the beginning
         // > of a text stream, U+FEFF should normally not occur.
         reader.mark(1);
-        if (reader.read()!=UTF8_BOM) {
-          reader.reset();
+        if (reader.read() != UTF8_BOM) {
+            reader.reset();
         }
 
         String sep = Pattern.quote(String.valueOf(getSeparator(options)));
@@ -114,7 +120,8 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
         String regexUnquotedField = "(?:((?:[^" + del + sep + "][^" + sep + "]*)?)" + regexEnd + ")";
         // pattern group2: quoted field
         String regexQuotedField = "(?:" + del + "((?:[^" + del + "]|" + del + del + ")*)" + del + regexEnd + ")";
-        // pattern group3: start of quoted field with embedded newline (group must contain delimiter!)
+        // pattern group3: start of quoted field with embedded newline (group
+        // must contain delimiter!)
         String regexStartQuotedFieldWithLineBreak = "(" + del + "(?:[^" + del + "]*(?:" + del + del + ")?)*$)";
 
         String regexField = "^(?:"
@@ -123,6 +130,54 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
                 + "|" + regexStartQuotedFieldWithLineBreak
                 + ")";
         patternField = Pattern.compile(regexField);
+    }
+
+    @Override
+    public void close() throws IOException {
+        reader.close();
+    }
+
+    /**
+     * @param columnNr
+     *            the column number
+     * @return name of column or columnNr as String if no name was set
+     */
+    public String getColumnName(int columnNr) {
+        if (columnNames == null) {
+            return Integer.toString(columnNr);
+        } else if (columnNr < columnNames.size()) {
+            return columnNames.get(columnNr);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @return the columnNames
+     */
+    public List<String> getColumnNames() {
+        return Collections.unmodifiableList(columnNames);
+    }
+
+    /**
+     * @return the ignoreExcessFields
+     */
+    public boolean getIgnoreExcessFields() {
+        return ignoreExcessFields;
+    }
+
+    /**
+     * @return the ignoreMissingFields
+     */
+    public boolean getIgnoreMissingFields() {
+        return ignoreMissingFields;
+    }
+
+    /**
+     * @return the lineNumber
+     */
+    public int getLineNumber() {
+        return lineNumber;
     }
 
     @Override
@@ -146,7 +201,9 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
         return ignored;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see com.dua3.data.DataReader#read()
      */
     @Override
@@ -154,7 +211,15 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
         return readRows(0);
     }
 
-    /* (non-Javadoc)
+    public void readColumnNames() throws IOException {
+        RowBuilder.ListRowBuilder rb = new RowBuilder.ListRowBuilder();
+        readRow(rb);
+        columnNames = rb.getRow();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see com.dua3.data.DataReader#read(int)
      */
     @Override
@@ -167,23 +232,31 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
     }
 
     /**
-     * read some rows with CSV data.
-     *
-     * @param maxRows	maximum number of rows to be read or 0 to read till end of
-     * input
-     * @return number of rows read
-     * @throws IOException
-     * @throws CsvFormatException
+     * @param columnNames
+     *            the columnNames to set
      */
-    private int readRows(int maxRows) throws IOException {
-        int read = 0;
-        while (maxRows == 0 || read < maxRows) {
-            if (readRow(rowBuilder) < 0) {
-                break;
-            }
-            read++;
-        }
-        return read;
+    public void setColumnNames(List<String> columnNames) {
+        this.columnNames = columnNames;
+    }
+
+    /**
+     * @param ignoreExcessFields
+     *            the ignoreExcessFields to set
+     */
+    public void setIgnoreExcessFields(boolean ignoreExcessFields) {
+        this.ignoreExcessFields = ignoreExcessFields;
+    }
+
+    /**
+     * @param ignoreMissingFields
+     *            the ignoreMissingFields to set
+     */
+    public void setIgnoreMissingFields(boolean ignoreMissingFields) {
+        this.ignoreMissingFields = ignoreMissingFields;
+    }
+
+    private String getSource() {
+        return source;
     }
 
     /**
@@ -220,7 +293,8 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
             if (field == null && matcher.group(3) != null) {
                 String nextLine = reader.readLine();
                 if (nextLine == null) {
-                    throw new CsvFormatException("Unexpected end of input while looking for matching delimiter.", getSource(), currentLine);
+                    throw new CsvFormatException("Unexpected end of input while looking for matching delimiter.",
+                            getSource(), currentLine);
                 }
                 lineNumber++;
                 line = matcher.group(3) + "\n" + nextLine;
@@ -259,82 +333,24 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
     }
 
     /**
-     * @param columnNr
-     *  the column number
-     * @return name of column or columnNr as String if no name was set
+     * read some rows with CSV data.
+     *
+     * @param maxRows
+     *            maximum number of rows to be read or 0 to read till end of
+     *            input
+     * @return number of rows read
+     * @throws IOException
+     * @throws CsvFormatException
      */
-    public String getColumnName(int columnNr) {
-        if (columnNames == null) {
-            return Integer.toString(columnNr);
-        } else if (columnNr < columnNames.size()) {
-            return columnNames.get(columnNr);
-        } else {
-            return null;
+    private int readRows(int maxRows) throws IOException {
+        int read = 0;
+        while (maxRows == 0 || read < maxRows) {
+            if (readRow(rowBuilder) < 0) {
+                break;
+            }
+            read++;
         }
-    }
-
-    public void readColumnNames() throws IOException {
-        RowBuilder.ListRowBuilder rb = new RowBuilder.ListRowBuilder();
-        readRow(rb);
-        columnNames = rb.getRow();
-    }
-
-    /**
-     * @param columnNames the columnNames to set
-     */
-    public void setColumnNames(List<String> columnNames) {
-        this.columnNames = columnNames;
-    }
-
-    /**
-     * @return the columnNames
-     */
-    public List<String> getColumnNames() {
-        return Collections.unmodifiableList(columnNames);
-    }
-
-    /**
-     * @param ignoreExcessFields the ignoreExcessFields to set
-     */
-    public void setIgnoreExcessFields(boolean ignoreExcessFields) {
-        this.ignoreExcessFields = ignoreExcessFields;
-    }
-
-    /**
-     * @return the ignoreExcessFields
-     */
-    public boolean getIgnoreExcessFields() {
-        return ignoreExcessFields;
-    }
-
-    /**
-     * @param ignoreMissingFields the ignoreMissingFields to set
-     */
-    public void setIgnoreMissingFields(boolean ignoreMissingFields) {
-        this.ignoreMissingFields = ignoreMissingFields;
-    }
-
-    /**
-     * @return the ignoreMissingFields
-     */
-    public boolean getIgnoreMissingFields() {
-        return ignoreMissingFields;
-    }
-
-    /**
-     * @return the lineNumber
-     */
-    public int getLineNumber() {
-        return lineNumber;
-    }
-
-    private String getSource() {
-        return source;
-    }
-
-    @Override
-    public void close() throws IOException {
-        reader.close();
+        return read;
     }
 
 }

@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.model.poi;
 
@@ -47,26 +47,27 @@ import com.dua3.meja.util.RectangularRegion;
  *
  * @author axel
  */
-public final class PoiCell implements Cell {
+public final class PoiCell
+        implements Cell {
 
     private static final Logger LOGGER = Logger.getLogger(PoiCell.class.getName());
 
     private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
         switch (poiType) {
-            case BLANK:
-                return CellType.BLANK;
-            case BOOLEAN:
-                return CellType.BOOLEAN;
-            case ERROR:
-                return CellType.ERROR;
-            case NUMERIC:
-                return CellType.NUMERIC;
-            case STRING:
-                return CellType.TEXT;
-            case FORMULA:
-                return CellType.FORMULA;
-            default:
-                throw new IllegalArgumentException();
+        case BLANK:
+            return CellType.BLANK;
+        case BOOLEAN:
+            return CellType.BOOLEAN;
+        case ERROR:
+            return CellType.ERROR;
+        case NUMERIC:
+            return CellType.NUMERIC;
+        case STRING:
+            return CellType.TEXT;
+        case FORMULA:
+            return CellType.FORMULA;
+        default:
+            throw new IllegalArgumentException();
         }
     }
 
@@ -107,44 +108,56 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public PoiWorkbook getWorkbook() {
-        return row.getWorkbook();
-    }
-
-    @Override
-    public PoiSheet getSheet() {
-        return row.getSheet();
-    }
-
-    @Override
-    public PoiRow getRow() {
-        return row;
-    }
-
-    @Override
-    public CellType getCellType() {
-        @SuppressWarnings("deprecation")
-        CellType type = translateCellType(poiCell.getCellTypeEnum());
-        // since formulas returning dates should return CellType.FORMULA
-        // rather than CellType.DATE, only test for dates if cell is numeric.
-        if (type == CellType.NUMERIC && isCellDateFormatted()) {
-            type = CellType.DATE;
+    public void clear() {
+        if (!isEmpty()) {
+            Object old = get();
+            poiCell.setCellType(org.apache.poi.ss.usermodel.CellType.BLANK);
+            updateRow();
+            getSheet().cellValueChanged(this, old, null);
         }
-        return type;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
-    public CellType getResultType() {
-        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
-        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
-            poiType = poiCell.getCachedFormulaResultTypeEnum();
+    public void copy(Cell other) {
+        PoiCellStyle cellStyle = getWorkbook().getCellStyle(other.getCellStyle().getName());
+        setCellStyle(cellStyle);
+
+        switch (other.getCellType()) {
+        case BLANK:
+            clear();
+            break;
+        case BOOLEAN:
+            set(other.getBoolean());
+            break;
+        case ERROR:
+            // FIXME
+            setFormula("1/0");
+            break;
+        case FORMULA:
+            setFormula(other.getFormula());
+            break;
+        case NUMERIC:
+            set(other.getNumber());
+            break;
+        case DATE:
+            setCellStyleDate(cellStyle);
+            set(other.getDateTime());
+            break;
+        case TEXT:
+            set(other.getText());
+            break;
+        default:
+            throw new UnsupportedOperationException("Unsupported Cell Type: " + other.getCellType());
         }
-        CellType type = translateCellType(poiType);
-        if (type == CellType.NUMERIC && isCellDateFormatted()) {
-            type = CellType.DATE;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof PoiCell) {
+            return Objects.equals(poiCell, ((PoiCell) obj).poiCell);
+        } else {
+            return false;
         }
-        return type;
     }
 
     @Override
@@ -154,109 +167,23 @@ public final class PoiCell implements Cell {
         }
 
         switch (getCellType()) {
-            case BLANK:
-                return null;
-            case DATE:
-                return poiCell.getDateCellValue();
-            case NUMERIC:
-                return poiCell.getNumericCellValue();
-            case FORMULA:
-                return poiCell.getCellFormula();
-            case BOOLEAN:
-                return poiCell.getBooleanCellValue();
-            case TEXT:
-                return getText();
-            case ERROR:
-                return ERROR_TEXT;
-            default:
-                throw new IllegalStateException();
+        case BLANK:
+            return null;
+        case DATE:
+            return poiCell.getDateCellValue();
+        case NUMERIC:
+            return poiCell.getNumericCellValue();
+        case FORMULA:
+            return poiCell.getCellFormula();
+        case BOOLEAN:
+            return poiCell.getBooleanCellValue();
+        case TEXT:
+            return getText();
+        case ERROR:
+            return ERROR_TEXT;
+        default:
+            throw new IllegalStateException();
         }
-    }
-
-    @Override
-    public boolean getBoolean() {
-      if (getCellType()!=CellType.BOOLEAN) {
-        throw new IllegalStateException("Cell does not contain a boolean value.");
-      }
-      return poiCell.getBooleanCellValue();
-    }
-
-    @Override
-    public String getFormula() {
-        return poiCell.getCellFormula();
-    }
-
-    @Override
-    @Deprecated
-    public Date getDate() {
-        if (isEmpty()) { // POI will throw for wrong CellType but return null for empty cells
-          throw new IllegalStateException("Cell does not contain a date.");
-        }
-        return poiCell.getDateCellValue();
-    }
-
-    @Override
-    public LocalDateTime getDateTime() {
-        if (isEmpty()) { // POI will throw for wrong CellType but return null for empty cells
-          throw new IllegalStateException("Cell does not contain date/time.");
-        }
-        return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
-    }
-
-    @Override
-    public Number getNumber() {
-      if (getCellType()!=CellType.NUMERIC) {
-        throw new IllegalStateException("Cell does not contain a numeric value.");
-      }
-      return poiCell.getNumericCellValue();
-    }
-
-    @Override
-    public RichText getText() {
-        return isEmpty() ? RichText.emptyText() : toRichText(poiCell.getRichStringCellValue());
-    }
-
-    @Override
-    public int getRowNumber() {
-        return poiCell.getRowIndex();
-    }
-
-    @Override
-    public int getColumnNumber() {
-        return poiCell.getColumnIndex();
-    }
-
-    @Override
-    public int getHorizontalSpan() {
-        return spanX;
-    }
-
-    @Override
-    public int getVerticalSpan() {
-        return spanY;
-    }
-
-    @Override
-    public Cell getLogicalCell() {
-        return logicalCell;
-    }
-
-    @Override
-    public Cell set(RichText s) {
-        Object old = get();
-
-        RichTextString richText = getWorkbook().createRichTextString(s.toString());
-        for (Run run : s) {
-            PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont(), run.getStyle());
-            richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
-        }
-        poiCell.setCellValue(richText);
-
-        updateRow();
-
-        getSheet().cellValueChanged(this, old, s);
-
-        return this;
     }
 
     @Override
@@ -280,31 +207,141 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public String toString() {
-        if (getCellType() == CellType.TEXT) {
-            return poiCell.getStringCellValue();
-        } else {
-            if (isEmpty()) {
-                return "";
-            }
-
-            DataFormatter dataFormatter = getWorkbook().getDataFormatter();
-            try {
-                FormulaEvaluator evaluator = getWorkbook().evaluator;
-                return dataFormatter.formatCellValue(poiCell, evaluator);
-            } catch (Exception ex) {
-                return Cell.ERROR_TEXT;
-            }
+    public boolean getBoolean() {
+        if (getCellType() != CellType.BOOLEAN) {
+            throw new IllegalStateException("Cell does not contain a boolean value.");
         }
+        return poiCell.getBooleanCellValue();
     }
 
     @Override
-    public void clear() {
-        if (!isEmpty()) {
-            Object old = get();
-            poiCell.setCellType(org.apache.poi.ss.usermodel.CellType.BLANK);
-            updateRow();
-            getSheet().cellValueChanged(this, old, null);
+    public String getCellRef(RefOption... options) {
+        return MejaHelper.getCellRef(this, options);
+    }
+
+    @Override
+    public PoiCellStyle getCellStyle() {
+        return getWorkbook().getPoiCellStyle(poiCell.getCellStyle());
+    }
+
+    @Override
+    public CellType getCellType() {
+        @SuppressWarnings("deprecation")
+        CellType type = translateCellType(poiCell.getCellTypeEnum());
+        // since formulas returning dates should return CellType.FORMULA
+        // rather than CellType.DATE, only test for dates if cell is numeric.
+        if (type == CellType.NUMERIC && isCellDateFormatted()) {
+            type = CellType.DATE;
+        }
+        return type;
+    }
+
+    @Override
+    public int getColumnNumber() {
+        return poiCell.getColumnIndex();
+    }
+
+    @Override
+    @Deprecated
+    public Date getDate() {
+        if (isEmpty()) { // POI will throw for wrong CellType but return null
+                         // for empty cells
+            throw new IllegalStateException("Cell does not contain a date.");
+        }
+        return poiCell.getDateCellValue();
+    }
+
+    @Override
+    public LocalDateTime getDateTime() {
+        if (isEmpty()) { // POI will throw for wrong CellType but return null
+                         // for empty cells
+            throw new IllegalStateException("Cell does not contain date/time.");
+        }
+        return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
+    }
+
+    @Override
+    public String getFormula() {
+        return poiCell.getCellFormula();
+    }
+
+    @Override
+    public int getHorizontalSpan() {
+        return spanX;
+    }
+
+    @Override
+    public Cell getLogicalCell() {
+        return logicalCell;
+    }
+
+    @Override
+    public Number getNumber() {
+        if (getCellType() != CellType.NUMERIC) {
+            throw new IllegalStateException("Cell does not contain a numeric value.");
+        }
+        return poiCell.getNumericCellValue();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public CellType getResultType() {
+        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
+        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
+            poiType = poiCell.getCachedFormulaResultTypeEnum();
+        }
+        CellType type = translateCellType(poiType);
+        if (type == CellType.NUMERIC && isCellDateFormatted()) {
+            type = CellType.DATE;
+        }
+        return type;
+    }
+
+    @Override
+    public PoiRow getRow() {
+        return row;
+    }
+
+    @Override
+    public int getRowNumber() {
+        return poiCell.getRowIndex();
+    }
+
+    @Override
+    public PoiSheet getSheet() {
+        return row.getSheet();
+    }
+
+    @Override
+    public RichText getText() {
+        return isEmpty() ? RichText.emptyText() : toRichText(poiCell.getRichStringCellValue());
+    }
+
+    @Override
+    public int getVerticalSpan() {
+        return spanY;
+    }
+
+    @Override
+    public PoiWorkbook getWorkbook() {
+        return row.getWorkbook();
+    }
+
+    @Override
+    public int hashCode() {
+        return poiCell.hashCode();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean isEmpty() {
+        switch (poiCell.getCellTypeEnum()) {
+        case BLANK:
+            return true;
+        case STRING:
+            return poiCell.getStringCellValue().isEmpty();
+        default:
+            return false;
         }
     }
 
@@ -360,27 +397,6 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public PoiCell set(Object arg) {
-        MejaHelper.set(this, arg);
-        return this;
-    }
-
-    @SuppressWarnings("deprecation")
-    private boolean isCellDateFormatted() {
-        /*
-         * DateUtil.isCellDateFormatted() throws IllegalStateException
-         * when cell is not numeric, so we have to work around this.
-         * TODO create SCCSE and report bug against POI
-         */
-        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
-        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
-            poiType = poiCell.getCachedFormulaResultTypeEnum();
-        }
-        return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC
-                && DateUtil.isCellDateFormatted(poiCell);
-    }
-
-    @Override
     public PoiCell set(Number arg) {
         Object old = get();
         if (arg == null) {
@@ -399,12 +415,47 @@ public final class PoiCell implements Cell {
     }
 
     @Override
+    public PoiCell set(Object arg) {
+        MejaHelper.set(this, arg);
+        return this;
+    }
+
+    @Override
+    public Cell set(RichText s) {
+        Object old = get();
+
+        RichTextString richText = getWorkbook().createRichTextString(s.toString());
+        for (Run run : s) {
+            PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont(), run.getStyle());
+            richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
+        }
+        poiCell.setCellValue(richText);
+
+        updateRow();
+
+        getSheet().cellValueChanged(this, old, s);
+
+        return this;
+    }
+
+    @Override
     public PoiCell set(String arg) {
         Object old = get();
         poiCell.setCellValue(arg);
         updateRow();
         getSheet().cellValueChanged(this, old, null);
         return this;
+    }
+
+    @Override
+    public void setCellStyle(CellStyle cellStyle) {
+        if (!(cellStyle instanceof PoiCellStyle)) {
+            throw new IllegalArgumentException("Incompatible implementation.");
+        }
+
+        Object old = getCellStyle();
+        poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
+        getSheet().cellStyleChanged(this, old, cellStyle);
     }
 
     @SuppressWarnings("deprecation")
@@ -417,7 +468,7 @@ public final class PoiCell implements Cell {
             poiCell.setCellFormula(arg);
             poiCell.setCellType(org.apache.poi.ss.usermodel.CellType.FORMULA);
             final PoiWorkbook wb = getWorkbook();
-            if(wb.isFormulaEvaluationSupported()) {
+            if (wb.isFormulaEvaluationSupported()) {
                 wb.evaluator.evaluateFormulaCell(poiCell);
             }
         }
@@ -427,91 +478,13 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof PoiCell) {
-            return Objects.equals(poiCell, ((PoiCell) obj).poiCell);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return poiCell.hashCode();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public boolean isEmpty() {
-        switch (poiCell.getCellTypeEnum()) {
-            case BLANK:
-                return true;
-            case STRING:
-                return poiCell.getStringCellValue().isEmpty();
-            default:
-                return false;
-        }
-    }
-
-    @Override
-    public void setCellStyle(CellStyle cellStyle) {
-        if (! (cellStyle instanceof PoiCellStyle)) {
-          throw new IllegalArgumentException("Incompatible implementation.");
-        }
-
-        Object old = getCellStyle();
-        poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
-        getSheet().cellStyleChanged(this, old, cellStyle);
-    }
-
-    private void setCellStyleDate(PoiCellStyle cellStyle) {
-      if (isDateFormat(cellStyle)) {
-        // nothing to do
-        return;
-      }
-
-      // try to get a version adapted to dates
-      String dateStyleName = cellStyle.getName()+"#DATE#";
-      if (!getWorkbook().hasCellStyle(dateStyleName)) {
-        // if that doesn't exist, create a new format
-        PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
-        dateStyle.copyStyle(cellStyle);
-        Locale locale = getWorkbook().getLocale();
-        String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, null, IsoChronology.INSTANCE, locale);
-        dateStyle.setDataFormat(pattern);
-      }
-      setCellStyle(getWorkbook().getCellStyle(dateStyleName));
-    }
-
-    boolean isDateFormat(PoiCellStyle cellStyle) {
-      org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
-      int i = style.getDataFormat();
-      String f = style.getDataFormatString();
-      return DateUtil.isADateFormat(i, f);
-    }
-
-    @Override
     public void setStyle(String cellStyleName) {
         setCellStyle(getWorkbook().getCellStyle(cellStyleName));
     }
 
-    @Override
-    public PoiCellStyle getCellStyle() {
-        return getWorkbook().getPoiCellStyle(poiCell.getCellStyle());
-    }
-
-    private PoiFont getFontForFormattingRun(RichTextString richText, int i) {
-        if (richText instanceof HSSFRichTextString) {
-            HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
-            return ((PoiWorkbook.PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i));
-        } else {
-            return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
-        }
-    }
-
     public RichText toRichText(RichTextString rts) {
         String text = rts.getString();
-        //TODO: properly process tabs
+        // TODO: properly process tabs
         text = text.replace('\t', ' '); // tab
         text = text.replace((char) 160, ' '); // non-breaking space
 
@@ -553,37 +526,77 @@ public final class PoiCell implements Cell {
     }
 
     @Override
-    public void copy(Cell other) {
-        PoiCellStyle cellStyle = getWorkbook().getCellStyle(other.getCellStyle().getName());
-        setCellStyle(cellStyle);
+    public String toString() {
+        if (getCellType() == CellType.TEXT) {
+            return poiCell.getStringCellValue();
+        } else {
+            if (isEmpty()) {
+                return "";
+            }
 
-        switch (other.getCellType()) {
-            case BLANK:
-                clear();
-                break;
-            case BOOLEAN:
-                set(other.getBoolean());
-                break;
-            case ERROR:
-                // FIXME
-                setFormula("1/0");
-                break;
-            case FORMULA:
-                setFormula(other.getFormula());
-                break;
-            case NUMERIC:
-                set(other.getNumber());
-                break;
-            case DATE:
-                setCellStyleDate(cellStyle);
-                set(other.getDateTime());
-                break;
-            case TEXT:
-                set(other.getText());
-                break;
-            default:
-                throw new UnsupportedOperationException("Unsupported Cell Type: "+other.getCellType());
+            DataFormatter dataFormatter = getWorkbook().getDataFormatter();
+            try {
+                FormulaEvaluator evaluator = getWorkbook().evaluator;
+                return dataFormatter.formatCellValue(poiCell, evaluator);
+            } catch (Exception ex) {
+                return Cell.ERROR_TEXT;
+            }
         }
+    }
+
+    @Override
+    public void unMerge() {
+        if (logicalCell != this) {
+            // this should never happen because we checked for this cell being
+            // the top left cell of the merged region
+            throw new IllegalArgumentException("Cell is not top left cell of a merged region");
+        }
+
+        getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
+    }
+
+    private PoiFont getFontForFormattingRun(RichTextString richText, int i) {
+        if (richText instanceof HSSFRichTextString) {
+            HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
+            return ((PoiWorkbook.PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i));
+        } else {
+            return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean isCellDateFormatted() {
+        /*
+         * DateUtil.isCellDateFormatted() throws IllegalStateException when cell
+         * is not numeric, so we have to work around this. TODO create SCCSE and
+         * report bug against POI
+         */
+        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
+        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
+            poiType = poiCell.getCachedFormulaResultTypeEnum();
+        }
+        return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC
+                && DateUtil.isCellDateFormatted(poiCell);
+    }
+
+    private void setCellStyleDate(PoiCellStyle cellStyle) {
+        if (isDateFormat(cellStyle)) {
+            // nothing to do
+            return;
+        }
+
+        // try to get a version adapted to dates
+        String dateStyleName = cellStyle.getName() + "#DATE#";
+        if (!getWorkbook().hasCellStyle(dateStyleName)) {
+            // if that doesn't exist, create a new format
+            PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
+            dateStyle.copyStyle(cellStyle);
+            Locale locale = getWorkbook().getLocale();
+            String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, null,
+                    IsoChronology.INSTANCE, locale);
+            dateStyle.setDataFormat(pattern);
+        }
+        setCellStyle(getWorkbook().getCellStyle(dateStyleName));
     }
 
     /**
@@ -609,26 +622,17 @@ public final class PoiCell implements Cell {
         }
     }
 
+    boolean isDateFormat(PoiCellStyle cellStyle) {
+        org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
+        int i = style.getDataFormat();
+        String f = style.getDataFormatString();
+        return DateUtil.isADateFormat(i, f);
+    }
+
     void removedFromMergedRegion() {
         this.logicalCell = this;
         this.spanX = 1;
         this.spanY = 1;
-    }
-
-    @Override
-    public void unMerge() {
-        if (logicalCell != this) {
-            // this should never happen because we checked for this cell being
-            // the top left cell of the merged region
-            throw new IllegalArgumentException("Cell is not top left cell of a merged region");
-        }
-
-        getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
-    }
-
-    @Override
-    public String getCellRef(RefOption... options) {
-        return MejaHelper.getCellRef(this, options);
     }
 
 }

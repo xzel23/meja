@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.model.poi;
 
@@ -27,7 +27,8 @@ import com.dua3.meja.util.MejaHelper;
  *
  * @author axel
  */
-public final class PoiRow implements Row {
+public final class PoiRow
+        implements Row {
 
     /**
      *
@@ -46,10 +47,11 @@ public final class PoiRow implements Row {
 
     /**
      * Construct row from existing POI row instance.
+     *
      * @param sheet
-     *  the sheet
+     *            the sheet
      * @param row
-     *  the row
+     *            the row
      */
     public PoiRow(PoiSheet sheet, org.apache.poi.ss.usermodel.Row row) {
         this.sheet = sheet;
@@ -58,13 +60,10 @@ public final class PoiRow implements Row {
     }
 
     @Override
-    public PoiSheet getSheet() {
-        return sheet;
-    }
-
-    @Override
-    public PoiWorkbook getWorkbook() {
-        return sheet.getWorkbook();
+    public void copy(Row other) {
+        for (Cell cell : other) {
+            getCell(cell.getColumnNumber()).copy(cell);
+        }
     }
 
     @Override
@@ -73,31 +72,6 @@ public final class PoiRow implements Row {
             return false;
         }
         return poiRow.equals(((PoiRow) obj).poiRow);
-    }
-
-    @Override
-    public int hashCode() {
-        return poiRow.hashCode();
-    }
-
-    @Override
-    public int getRowNumber() {
-        return rowNumber;
-    }
-
-    @Override
-    public Iterator<Cell> iterator() {
-        return MejaHelper.createCellIterator(this);
-    }
-
-    @Override
-    public int getFirstCellNum() {
-        return poiRow.getFirstCellNum();
-    }
-
-    @Override
-    public int getLastCellNum() {
-        return poiRow.getLastCellNum()-1;
     }
 
     @Override
@@ -113,14 +87,43 @@ public final class PoiRow implements Row {
     }
 
     @Override
-    public void copy(Row other) {
-        for (Cell cell: other) {
-            getCell(cell.getColumnNumber()).copy(cell);
-        }
+    public int getFirstCellNum() {
+        return poiRow.getFirstCellNum();
+    }
+
+    @Override
+    public int getLastCellNum() {
+        return poiRow.getLastCellNum() - 1;
+    }
+
+    @Override
+    public int getRowNumber() {
+        return rowNumber;
+    }
+
+    @Override
+    public PoiSheet getSheet() {
+        return sheet;
+    }
+
+    @Override
+    public PoiWorkbook getWorkbook() {
+        return sheet.getWorkbook();
+    }
+
+    @Override
+    public int hashCode() {
+        return poiRow.hashCode();
+    }
+
+    @Override
+    public Iterator<Cell> iterator() {
+        return MejaHelper.createCellIterator(this);
     }
 
     /**
      * Update first and last column numbers.
+     *
      * @param columnNumber
      */
     void setColumnUsed(int columnNumber) {

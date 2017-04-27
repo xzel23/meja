@@ -13,17 +13,13 @@ import javafx.geometry.Bounds;
  *
  * @author Axel Howind
  */
-class JfxGraphicsContext implements GraphicsContext {
+class JfxGraphicsContext
+        implements GraphicsContext {
 
     private final javafx.scene.canvas.GraphicsContext gc;
 
     public JfxGraphicsContext(javafx.scene.canvas.GraphicsContext gc) {
-          this.gc = gc;
-    }
-
-    @Override
-    public void setColor(Color color) {
-        gc.setFill(MejaJfxHelper.toJfxColor(color));
+        this.gc = gc;
     }
 
     @Override
@@ -47,12 +43,6 @@ class JfxGraphicsContext implements GraphicsContext {
     }
 
     @Override
-    public void setStroke(Color color, double width) {
-        setColor(color);
-        gc.setLineWidth(width);
-    }
-
-    @Override
     public Rectangle getClipBounds() {
         Bounds b = gc.getCanvas().getBoundsInLocal();
         return new Rectangle(b.getMinX(), b.getMinY(), b.getWidth(), b.getHeight());
@@ -63,8 +53,19 @@ class JfxGraphicsContext implements GraphicsContext {
     }
 
     @Override
+    public void setColor(Color color) {
+        gc.setFill(MejaJfxHelper.toJfxColor(color));
+    }
+
+    @Override
+    public void setStroke(Color color, double width) {
+        setColor(color);
+        gc.setLineWidth(width);
+    }
+
+    @Override
     public void setXOR(boolean on) {
-      // FIXME
+        // FIXME
     }
 
 }

@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.ui.javafx;
 
@@ -29,7 +29,8 @@ import javafx.scene.layout.BorderPane;
  *
  * @author axel
  */
-public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.WorkbookView {
+public class JfxWorkbookView extends BorderPane
+        implements com.dua3.meja.ui.WorkbookView {
 
     private Workbook workbook;
     private TabPane content = null;
@@ -41,8 +42,95 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
     }
 
     /**
+     * Get the {@link JfxSheetView} that is currently visible.
+     * 
+     * @return the {@link JfxSheetView} displayed on the visible tab of this
+     *         view
+     */
+    @Override
+    public SheetView getCurrentView() {
+        Node node = content.getSelectionModel().getSelectedItem().getContent();
+        assert node instanceof SheetView;
+        return (SheetView) node;
+    }
+
+    public SheetView getViewForSheet(Sheet sheet) {
+        if (content == null) {
+            return null;
+        }
+
+        for (Tab tab : content.getTabs()) {
+            Node view = tab.getContent();
+            if (view != null) {
+                assert view instanceof SheetView;
+                SheetView sheetView = (SheetView) view;
+                if (sheet == sheetView.getSheet()) {
+                    return sheetView;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get view for sheet.
+     * 
+     * @param sheetName
+     *            name of the sheet
+     * @return the view for the requested sheet or {@code null} if not found
+     */
+    @Override
+    public SheetView getViewForSheet(String sheetName) { // FIXME change return
+                                                         // type
+        for (Tab tab : content.getTabs()) {
+            Node view = tab.getContent();
+            if (view != null) {
+                assert view instanceof SheetView;
+                SheetView sheetView = (SheetView) view;
+                if (sheetView.getSheet().getSheetName().equals(sheetName)) {
+                    return sheetView;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get Workbook.
+     * 
+     * @return the workbook displayed
+     */
+    @Override
+    public Workbook getWorkbook() {
+        return workbook;
+    }
+
+    /**
+     * Set editable state.
+     * 
+     * @param editable
+     *            set to {@code true} to allow editing of the displayed workbook
+     */
+    @Override
+    public void setEditable(boolean editable) {
+        if (content == null) {
+            return;
+        }
+
+        for (Tab tab : content.getTabs()) {
+            Node view = tab.getContent();
+            if (view != null) {
+                assert view instanceof SheetView;
+                ((SheetView) view).setEditable(editable);
+            }
+        }
+    }
+
+    /**
      * Set the workbook.
-     * @param workbook the workbook to display
+     * 
+     * @param workbook
+     *            the workbook to display
      */
     @Override
     public void setWorkbook(Workbook workbook) {
@@ -64,82 +152,5 @@ public class JfxWorkbookView extends BorderPane implements com.dua3.meja.ui.Work
             }
             this.setCenter(content);
         }
-    }
-
-    /**
-     * Get Workbook.
-     * @return the workbook displayed
-     */
-    @Override
-    public Workbook getWorkbook() {
-        return workbook;
-    }
-
-    /**
-     * Set editable state.
-     * @param editable set to {@code true} to allow editing of the displayed workbook
-     */
-    @Override
-    public void setEditable(boolean editable) {
-        if (content == null) {
-            return;
-        }
-
-        for (Tab tab: content.getTabs()) {
-            Node view = tab.getContent();
-            if (view != null) {
-                assert view instanceof SheetView;
-                ((SheetView) view).setEditable(editable);
-            }
-        }
-    }
-
-    /**
-     * Get view for sheet.
-     * @param sheetName name of the sheet
-     * @return the view for the requested sheet or {@code null} if not found
-     */
-    @Override
-    public SheetView getViewForSheet(String sheetName) { // FIXME change return type
-        for (Tab tab: content.getTabs()) {
-            Node view = tab.getContent();
-            if (view != null) {
-                assert view instanceof SheetView;
-                SheetView sheetView = (SheetView) view;
-                if (sheetView.getSheet().getSheetName().equals(sheetName)) {
-                    return sheetView;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Get the {@link JfxSheetView} that is currently visible.
-     * @return the {@link JfxSheetView} displayed on the visible tab of this view
-     */
-    @Override
-    public SheetView getCurrentView() {
-        Node node = content.getSelectionModel().getSelectedItem().getContent();
-        assert node instanceof SheetView;
-        return (SheetView) node;
-    }
-
-    public SheetView getViewForSheet(Sheet sheet) {
-        if (content==null) {
-            return null;
-        }
-
-        for (Tab tab: content.getTabs()) {
-            Node view = tab.getContent();
-            if (view != null) {
-                assert view instanceof SheetView;
-                SheetView sheetView = (SheetView) view;
-                if (sheet==sheetView.getSheet()) {
-                    return sheetView;
-                }
-            }
-        }
-        return null;
     }
 }

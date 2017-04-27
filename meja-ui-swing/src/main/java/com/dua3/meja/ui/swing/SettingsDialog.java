@@ -23,48 +23,48 @@ import com.dua3.meja.util.Options;
 
 public class SettingsDialog extends JDialog {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  private final JPanel settingsPanel;
-  private Options result = Options.empty();
+    private final JPanel settingsPanel;
+    private Options result = Options.empty();
 
-  @SuppressWarnings({ "rawtypes" })
-  SettingsDialog(Component parent, String title, String text, List<Option<?>> options) {
-    super((JFrame) SwingUtilities.getRoot(parent), title, true);
-    setLayout(new BorderLayout());
+    @SuppressWarnings({ "rawtypes" })
+    SettingsDialog(Component parent, String title, String text, List<Option<?>> options) {
+        super((JFrame) SwingUtilities.getRoot(parent), title, true);
+        setLayout(new BorderLayout());
 
-    add(new JLabel(text), BorderLayout.NORTH);
+        add(new JLabel(text), BorderLayout.NORTH);
 
-    List<JComboBox<Value<?>>> inputs = new ArrayList<>(options.size());
+        List<JComboBox<Value<?>>> inputs = new ArrayList<>(options.size());
 
-    settingsPanel = new JPanel();
-    settingsPanel.setLayout(new GridLayout(options.size(), 2));
-    for (Option<?> option: options) {
-      settingsPanel.add(new JLabel(option.getName()));
-      JComboBox<Value<?>> cb = new JComboBox<>(new Vector<Value<?>>(option.getChoices()));
-      cb.setSelectedItem(option.getDefault());
-      inputs.add(cb);
-      settingsPanel.add(cb);
+        settingsPanel = new JPanel();
+        settingsPanel.setLayout(new GridLayout(options.size(), 2));
+        for (Option<?> option : options) {
+            settingsPanel.add(new JLabel(option.getName()));
+            JComboBox<Value<?>> cb = new JComboBox<>(new Vector<Value<?>>(option.getChoices()));
+            cb.setSelectedItem(option.getDefault());
+            inputs.add(cb);
+            settingsPanel.add(cb);
+        }
+        add(settingsPanel, BorderLayout.CENTER);
+
+        add(new JButton(MejaSwingHelper.createAction("OK", () -> {
+            result = new Options();
+            for (int i = 0; i < options.size(); i++) {
+                result.put((Option) options.get(i), (Value) inputs.get(i).getSelectedItem());
+            }
+            this.dispose();
+        })), BorderLayout.SOUTH);
+        pack();
+
+        setLocationRelativeTo(parent);
     }
-    add(settingsPanel, BorderLayout.CENTER);
 
-    add(new JButton(MejaSwingHelper.createAction("OK", () -> {
-      result = new Options();
-      for(int i=0; i<options.size(); i++) {
-        result.put((Option) options.get(i), (Value) inputs.get(i).getSelectedItem());
-      }
-      this.dispose();
-    })), BorderLayout.SOUTH);
-    pack();
+    SettingsDialog(Frame parent, String title, String text, Option<?>... options) {
+        this(parent, title, text, Arrays.asList(options));
+    }
 
-    setLocationRelativeTo(parent);
-  }
-
-  SettingsDialog(Frame parent, String title, String text, Option<?>... options) {
-    this(parent, title, text, Arrays.asList(options));
-  }
-
-  public Options getResult() {
-    return result;
-  }
+    public Options getResult() {
+        return result;
+    }
 }

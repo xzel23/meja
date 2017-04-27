@@ -21,13 +21,49 @@ public class JfxSegmentViewSkin extends SkinBase<JfxSegmentView> {
         redraw();
     }
 
+    private double getPreferredHeight() {
+        return getView().getViewHeight();
+    }
+
+    private double getPreferredWidth() {
+        return getView().getViewWidth();
+    }
+
+    private JfxSegmentView getView() {
+        return (JfxSegmentView) getNode();
+    }
+
+    @Override
+    protected double computeMinHeight(double width, double topInset, double rightInset, double bottomInset,
+            double leftInset) {
+        return getPreferredHeight();
+    }
+
+    @Override
+    protected double computeMinWidth(double height, double topInset, double rightInset, double bottomInset,
+            double leftInset) {
+        return getPreferredWidth();
+    }
+
+    @Override
+    protected double computePrefHeight(double width, double topInset, double rightInset, double bottomInset,
+            double leftInset) {
+        return getPreferredHeight();
+    }
+
+    @Override
+    protected double computePrefWidth(double height, double topInset, double rightInset, double bottomInset,
+            double leftInset) {
+        return getPreferredWidth();
+    }
+
     protected void init(JfxSegmentView control) {
         canvas = new Canvas();
         getChildren().setAll(canvas);
         control.setMinSize(getPreferredWidth(), getPreferredHeight());
         control.setPrefSize(getPreferredWidth(), getPreferredHeight());
         control.setMaxSize(getPreferredWidth(), getPreferredHeight());
-        control.addEventHandler(JfxSegmentView.EVENT_TYPE_LAYOUT_CHANGED, (Event t) -> redraw());
+        control.addEventHandler(SheetControl.EVENT_TYPE_LAYOUT_CHANGED, (Event t) -> redraw());
     }
 
     protected void redraw() {
@@ -36,38 +72,6 @@ public class JfxSegmentViewSkin extends SkinBase<JfxSegmentView> {
 
         JfxGraphicsContext gc = new JfxGraphicsContext(canvas.getGraphicsContext2D());
         getView().getSheetPainter().drawSheet(gc);
-    }
-
-    @Override
-    protected double computeMinWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return getPreferredWidth();
-    }
-
-    @Override
-    protected double computePrefWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return getPreferredWidth();
-    }
-
-    @Override
-    protected double computePrefHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return getPreferredHeight();
-    }
-
-    @Override
-    protected double computeMinHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return getPreferredHeight();
-    }
-
-    private JfxSegmentView getView() {
-        return (JfxSegmentView) getNode();
-    }
-
-    private double getPreferredWidth() {
-        return getView().getViewWidth();
-    }
-
-    private double getPreferredHeight() {
-        return getView().getViewHeight();
     }
 
 }

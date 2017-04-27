@@ -1,17 +1,17 @@
 /*
  * Copyright 2015 Axel Howind.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.dua3.meja.excelviewer;
 
@@ -50,26 +50,43 @@ import com.dua3.meja.ui.swing.SwingWorkbookView;
  * @author axel
  */
 @SuppressWarnings("serial")
-public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelViewer {
+public class SwingExcelViewer extends JFrame
+        implements ExcelViewerModel.ExcelViewer {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
     private static final int STATUS_ERROR = 1;
 
-    private final ExcelViewerModel model;
+    public static final String PROPERTY_FILE_CHANGED = "file changed";
+
+    /**
+     * The application name to show in title bar.
+     */
+    public final static String APPLICATION_NAME = "Meja ExcelViewer";
+
+    public final static String AUTHOR = "Axel Howind";
+
+    public static final int YEAR = 2015;
 
     /**
      * Main method.
      *
-     * @param args the command line arguments
+     * @param args
+     *            the command line arguments
      */
     public static void main(String[] args) {
         try {
             // Set system L&F
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
+                | IllegalAccessException ex) {
             Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME,YEAR, AUTHOR);
+        ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
         SwingExcelViewer viewer = new SwingExcelViewer(model);
 
         if (args.length > 1) {
@@ -88,37 +105,58 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
                 model.setCurrentDir(file.getParentFile());
                 model.openWorkbook(file);
             } catch (IOException ex) {
-                Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Could not load workbook from " + file.getAbsolutePath(), ex);
+                Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE,
+                        "Could not load workbook from " + file.getAbsolutePath(), ex);
             }
         }
     }
 
-
-    public static final String PROPERTY_FILE_CHANGED = "file changed";
-
-    /**
-     * The application name to show in title bar.
-     */
-    public final static String APPLICATION_NAME = "Meja ExcelViewer";
-
-    public final static String AUTHOR = "Axel Howind";
-
-    public static final int YEAR = 2015;
+    private final ExcelViewerModel model;
 
     private SwingWorkbookView workbookView;
 
     /**
      * Constructor.
-     * @param model the model
+     * 
+     * @param model
+     *            the model
      */
     public SwingExcelViewer(ExcelViewerModel model) {
         super(APPLICATION_NAME);
-        this.model=Objects.requireNonNull(model);
+        this.model = Objects.requireNonNull(model);
         createMenu();
         createContent();
         pack();
     }
 
+    @Override
+    public SheetView getCurrentView() {
+        return workbookView.getCurrentView();
+    }
+
+    @Override
+    public SheetView getViewForSheet(Sheet sheet) {
+        return workbookView.getViewForSheet(sheet);
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        workbookView.setEditable(editable);
+    }
+
+    @Override
+    public void workbookChanged(URI oldUri, URI newUri) {
+        firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
+        workbookView.setWorkbook(model.getWorkbook());
+        updateUri(newUri);
+    }
+
+    private void createContent() {
+        setLayout(new BorderLayout());
+        SwingWorkbookView view = new SwingWorkbookView();
+        add(view, BorderLayout.CENTER);
+        this.workbookView = view;
+    }
 
     /**
      * Creates the application menu bar.
@@ -130,12 +168,22 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         JMenu mnFile = new JMenu("File");
         mnFile.add(new AbstractAction("Open...") {
 
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 showOpenDialog();
             }
         });
         mnFile.add(new AbstractAction("Save") {
+
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
 
             {
                 // enable when workbook is loaded
@@ -155,6 +203,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         });
         mnFile.add(new AbstractAction("Save as...") {
 
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 showSaveAsDialog();
@@ -162,6 +215,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         });
         mnFile.addSeparator();
         mnFile.add(new AbstractAction("Exit") {
+
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -173,6 +231,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         // Edit menu
         JMenu mnEdit = new JMenu("Edit");
         mnEdit.add(new AbstractAction("Adjust all column widths") {
+
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -186,12 +249,22 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
 
         JMenu mnLookAndFeel = new JMenu("Look & Feel");
         mnLookAndFeel.add(new AbstractAction("System Default") {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             }
         });
         mnLookAndFeel.add(new AbstractAction("Cross Platform") {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -200,6 +273,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         mnLookAndFeel.addSeparator();
         for (final UIManager.LookAndFeelInfo lAF : UIManager.getInstalledLookAndFeels()) {
             mnLookAndFeel.add(new AbstractAction(lAF.getName()) {
+                /**
+                 *
+                 */
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     setLookAndFeel(lAF.getClassName());
@@ -210,8 +288,13 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         mnOptions.add(mnLookAndFeel);
 
         JMenu mnZoom = new JMenu("Zoom");
-        for (final int zoom : new int[]{25, 50, 75, 100, 125, 150, 200, 400}) {
+        for (final int zoom : new int[] { 25, 50, 75, 100, 125, 150, 200, 400 }) {
             mnZoom.add(new AbstractAction(zoom + "%") {
+                /**
+                 *
+                 */
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     setZoom(zoom / 100.0f);
@@ -223,6 +306,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         mnOptions.addSeparator();
 
         mnOptions.add(new AbstractAction("Freeze") {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 model.freezeAtCurrentCell(getCurrentView());
@@ -234,6 +322,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         // Help menu
         JMenu mnHelp = new JMenu("Help");
         mnHelp.add(new AbstractAction("About ...") {
+            /**
+             *
+             */
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 String title = "About " + APPLICATION_NAME;
@@ -247,87 +340,6 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         setJMenuBar(menuBar);
     }
 
-    private void setLookAndFeel(String lookAndFeelClassName) {
-        try {
-            UIManager.setLookAndFeel(lookAndFeelClassName);
-        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        SwingUtilities.updateComponentTreeUI(this);
-    }
-
-
-    private void createContent() {
-        setLayout(new BorderLayout());
-        SwingWorkbookView view = new SwingWorkbookView();
-        add(view, BorderLayout.CENTER);
-        this.workbookView = view;
-    }
-
-    /**
-     * Close the application window.
-     */
-    protected void closeApplication() {
-        Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Closing.");
-        dispose();
-    }
-
-
-    /**
-     * Show the Open dialog.
-     */
-    private void showOpenDialog() {
-        try {
-            final Optional<URI> oldUri = model.getUri();
-            final Optional<Workbook> newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this, model.getCurrentDir());
-            if (newWorkbook.isPresent()) {
-	            model.setWorkbook(newWorkbook.get());
-	            final Optional<URI> newUri = model.getUri();
-	            workbookChanged(oldUri.orElse(null), newUri.orElse(null));
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
-            JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    /**
-     * Show the "Save as" dialog.
-     */
-    private void showSaveAsDialog() {
-        try {
-            Workbook workbook = model.getWorkbook();
-            final Optional<URI> uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
-            if (uri.isPresent()) {
-                workbook.setUri(uri.get());
-                updateUri(uri.get());
-                Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Successfully saved ''{0}''.", uri);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception saving workbook.", ex);
-            JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void updateUri(URI uri) {
-        if (uri != null) {
-            setTitle(APPLICATION_NAME + " - " + uri.getPath());
-            if (uri.getScheme().equalsIgnoreCase("file")) {
-              model.setCurrentDir(new File(uri).getParentFile());
-            }
-        } else {
-            setTitle(APPLICATION_NAME);
-        }
-    }
-
-    @Override
-    public void workbookChanged(URI oldUri, URI newUri) {
-        firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
-        workbookView.setWorkbook(model.getWorkbook());
-        updateUri(newUri);
-    }
-
-
     private void saveWorkbook() {
         Workbook workbook = model.getWorkbook();
         if (workbook == null) {
@@ -337,7 +349,8 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         Optional<URI> uri = workbook.getUri();
         try {
             if (!uri.isPresent()) {
-                final Optional<URI> newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
+                final Optional<URI> newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
+                        model.getCurrentDir());
                 if (!newUri.isPresent()) {
                     // user cancelled the dialog
                     return;
@@ -356,23 +369,76 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         }
     }
 
-    @Override
-    public void setEditable(boolean editable) {
-        workbookView.setEditable(editable);
-    }
-
-    @Override
-    public SheetView getCurrentView() {
-        return workbookView.getCurrentView();
-    }
-
-    @Override
-    public SheetView getViewForSheet(Sheet sheet) {
-        return workbookView.getViewForSheet(sheet);
+    private void setLookAndFeel(String lookAndFeelClassName) {
+        try {
+            UIManager.setLookAndFeel(lookAndFeelClassName);
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
+                | IllegalAccessException ex) {
+            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        SwingUtilities.updateComponentTreeUI(this);
     }
 
     private void setZoom(float f) {
         model.setZoom(f);
+    }
+
+    /**
+     * Show the Open dialog.
+     */
+    private void showOpenDialog() {
+        try {
+            final Optional<URI> oldUri = model.getUri();
+            final Optional<Workbook> newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this,
+                    model.getCurrentDir());
+            if (newWorkbook.isPresent()) {
+                model.setWorkbook(newWorkbook.get());
+                final Optional<URI> newUri = model.getUri();
+                workbookChanged(oldUri.orElse(null), newUri.orElse(null));
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
+            JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Show the "Save as" dialog.
+     */
+    private void showSaveAsDialog() {
+        try {
+            Workbook workbook = model.getWorkbook();
+            final Optional<URI> uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
+            if (uri.isPresent()) {
+                workbook.setUri(uri.get());
+                updateUri(uri.get());
+                Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Successfully saved ''{0}''.", uri);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception saving workbook.", ex);
+            JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateUri(URI uri) {
+        if (uri != null) {
+            setTitle(APPLICATION_NAME + " - " + uri.getPath());
+            if (uri.getScheme().equalsIgnoreCase("file")) {
+                model.setCurrentDir(new File(uri).getParentFile());
+            }
+        } else {
+            setTitle(APPLICATION_NAME);
+        }
+    }
+
+    /**
+     * Close the application window.
+     */
+    protected void closeApplication() {
+        Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Closing.");
+        dispose();
     }
 
 }
