@@ -51,10 +51,9 @@ public class CsvReader extends Csv
     }
 
     public static CsvReader create(RowBuilder builder, InputStream in, Options options) throws IOException {
-        // auto-detect UTF-8 with BOM
+        // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet selection in options)
         Charset charset = getCharset(options);
-        if (in.markSupported()
-                && !options.hasOption(Csv.getOption(OPTION_CHARSET).orElseThrow(() -> new IllegalStateException()))) {
+        if (in.markSupported()) {
             int bomLength = UTF8_BOM_BYTES.length;
             byte[] buffer = new byte[bomLength];
             in.mark(bomLength);
