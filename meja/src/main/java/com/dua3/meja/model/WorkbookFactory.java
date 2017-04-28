@@ -24,16 +24,19 @@ import com.dua3.meja.util.Options;
 /**
  * Abstract base class for workbook factories.
  *
+ * @param <WORKBOOK>
+ *  the concrete workbook class
+ *
  * @author axel
  */
-public abstract class WorkbookFactory {
+public abstract class WorkbookFactory <WORKBOOK extends Workbook> {
 
     /**
      * Create a new Workbook instance.
      *
      * @return workbook
      */
-    public abstract Workbook create();
+    public abstract WORKBOOK create();
 
     /**
      * Create a new Workbook instance with the given locale.
@@ -42,14 +45,14 @@ public abstract class WorkbookFactory {
      *            the locale to use
      * @return workbook
      */
-    public abstract Workbook create(Locale locale);
+    public abstract WORKBOOK create(Locale locale);
 
     /**
      * Create a new Workbook instance, use streaming if available.
      *
      * @return workbook
      */
-    public abstract Workbook createStreaming();
+    public abstract WORKBOOK createStreaming();
 
     /**
      * Create a new Workbook instance with the given locale, use streaming if
@@ -59,7 +62,7 @@ public abstract class WorkbookFactory {
      *            the locale to use
      * @return workbook
      */
-    public abstract Workbook createStreaming(Locale locale);
+    public abstract WORKBOOK createStreaming(Locale locale);
 
     /**
      * Load workbook from file.
@@ -74,7 +77,7 @@ public abstract class WorkbookFactory {
      * @throws IOException
      *             if an inoput/output error occurs
      */
-    public Workbook open(File file) throws IOException {
+    public WORKBOOK open(File file) throws IOException {
         return open(file, Options.empty());
     }
 
@@ -93,6 +96,6 @@ public abstract class WorkbookFactory {
      * @throws IOException
      *             if an inoput/output error occurs
      */
-    public abstract Workbook open(File file, Options importSettings) throws IOException;
+    public abstract WORKBOOK open(File file, Options importSettings) throws IOException;
 
 }

@@ -22,14 +22,13 @@ import java.util.Locale;
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookReader;
-import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.Options;
 
 /**
  * A Factory for creating instances of {@link GenericWorkbook}.
  */
-public class GenericWorkbookFactory extends WorkbookFactory {
+public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
 
     private static final GenericWorkbookFactory INSTANCE = new GenericWorkbookFactory();
 
@@ -61,7 +60,7 @@ public class GenericWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public Workbook open(File file, Options importSettings) throws IOException {
+    public GenericWorkbook open(File file, Options importSettings) throws IOException {
         FileType type = FileType.forFile(file);
 
         if (type == null) {

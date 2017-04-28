@@ -48,7 +48,7 @@ import com.dua3.meja.util.Options;
  *
  * @author axel
  */
-public class PoiWorkbookFactory extends WorkbookFactory {
+public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
 
@@ -76,7 +76,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
         return INSTANCE;
     }
 
-    private static Workbook createWorkbook(
+    private static PoiWorkbook createWorkbook(
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
         if (poiWorkbook instanceof HSSFWorkbook) {
             return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, locale, uri);
@@ -93,7 +93,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
      * @return the workbook
      * @throws IOException
      */
-    private static Workbook open(InputStream in, Locale locale, URI uri)
+    private static PoiWorkbook open(InputStream in, Locale locale, URI uri)
             throws IOException {
         try {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
@@ -109,22 +109,22 @@ public class PoiWorkbookFactory extends WorkbookFactory {
     }
 
     @Override
-    public Workbook create() {
+    public PoiWorkbook create() {
         return create(Locale.getDefault());
     }
 
     @Override
-    public Workbook create(Locale locale) {
+    public PoiWorkbook create(Locale locale) {
         return createXlsx(locale);
     }
 
     @Override
-    public Workbook createStreaming() {
+    public PoiWorkbook createStreaming() {
         return createStreaming(Locale.getDefault());
     }
 
     @Override
-    public Workbook createStreaming(Locale locale) {
+    public PoiWorkbook createStreaming(Locale locale) {
         return createXlsxStreaming(locale);
     }
 
@@ -154,7 +154,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
      *
      * @return the newly created Workbook
      */
-    public Workbook createXlsx() {
+    public PoiWorkbook createXlsx() {
         return createXlsx(Locale.getDefault());
     }
 
@@ -166,7 +166,7 @@ public class PoiWorkbookFactory extends WorkbookFactory {
      *            the locale to use
      * @return the newly created Workbook
      */
-    public Workbook createXlsx(Locale locale) {
+    public PoiWorkbook createXlsx(Locale locale) {
         return new PoiXssfWorkbook(new XSSFWorkbook(), locale, null);
     }
 
@@ -177,12 +177,12 @@ public class PoiWorkbookFactory extends WorkbookFactory {
      *            the {@link Locale} to use
      * @return the newly created Workbook
      */
-    public Workbook createXlsxStreaming(Locale locale) {
+    public PoiWorkbook createXlsxStreaming(Locale locale) {
         return new PoiXssfWorkbook(new SXSSFWorkbook(), locale, null);
     }
 
     @Override
-    public Workbook open(File file, Options importSettings) throws IOException {
+    public PoiWorkbook open(File file, Options importSettings) throws IOException {
         FileType type = FileType.forFile(file);
 
         if (type == FileType.XLS || type == FileType.XLSX) {
