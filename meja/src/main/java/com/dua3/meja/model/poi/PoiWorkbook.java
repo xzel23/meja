@@ -15,8 +15,6 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -49,6 +46,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.WorkbookWriter;
+import com.dua3.meja.model.AbstractWorkbook;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Sheet;
@@ -63,8 +61,7 @@ import com.dua3.meja.util.Options;
  *
  * @author axel
  */
-public abstract class PoiWorkbook
-        implements Workbook {
+public abstract class PoiWorkbook extends AbstractWorkbook {
 
     /**
      * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks (the
@@ -281,8 +278,6 @@ public abstract class PoiWorkbook
         }
     }
 
-    protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
     /**
      *
      */
@@ -309,16 +304,6 @@ public abstract class PoiWorkbook
     protected final org.apache.poi.ss.usermodel.DataFormatter dataFormatter;
 
     /**
-     *
-     */
-    protected Locale locale;
-
-    /**
-     *
-     */
-    protected URI uri;
-
-    /**
      * Construct a new instance.
      *
      * @param poiWorkbook
@@ -329,26 +314,15 @@ public abstract class PoiWorkbook
      *            the URI of this workbook
      */
     protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
-        this.locale = locale;
+        super(locale, uri);
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
         this.dataFormatter = new org.apache.poi.ss.usermodel.DataFormatter(locale);
-        this.uri = uri;
 
         // init cell style map
         for (short i = 0; i < poiWorkbook.getNumCellStyles(); i++) {
             cellStyles.put("style#" + i, i);
         }
-    }
-
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(propertyName, listener);
     }
 
     @Override
@@ -522,11 +496,6 @@ public abstract class PoiWorkbook
     }
 
     @Override
-    public Optional<URI> getUri() {
-        return Optional.ofNullable(uri);
-    }
-
-    @Override
     public boolean hasCellStyle(java.lang.String name) {
         return cellStyles.keySet().contains(name);
     }
@@ -566,16 +535,6 @@ public abstract class PoiWorkbook
     }
 
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(propertyName, listener);
-    }
-
-    @Override
     public void removeSheet(int sheetNr) {
         sheets.remove(sheetNr);
         poiWorkbook.removeSheetAt(sheetNr);
@@ -593,13 +552,6 @@ public abstract class PoiWorkbook
             poiWorkbook.setActiveSheet(idx);
             pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
         }
-    }
-
-    @Override
-    public void setUri(URI uri) {
-        URI oldUri = this.uri;
-        this.uri = uri;
-        pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldUri, uri);
     }
 
     @Override

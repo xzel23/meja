@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import com.dua3.meja.io.FileType;
+import com.dua3.meja.util.ObjectCache;
 import com.dua3.meja.util.Options;
 
 /**
@@ -363,5 +364,9 @@ public interface Workbook
      *             if an I/O error occurs
      */
     void write(FileType fileType, OutputStream out, Options options) throws IOException;
+
+    boolean isObjectCachingEnabled();
+
+    void setObjectCaching(boolean enabled);
 
 }

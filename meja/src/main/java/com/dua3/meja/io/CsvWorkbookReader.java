@@ -70,7 +70,10 @@ public class CsvWorkbookReader extends WorkbookReader {
             workbook.setUri(uri);
             GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), options);
             try (CsvReader reader = CsvReader.create(builder, in, options)) {
+                workbook.setObjectCaching(true);
                 reader.readAll();
+            } finally {
+                workbook.setObjectCaching(false);
             }
             return workbook;
         } catch (InstantiationException | IllegalAccessException
@@ -89,7 +92,10 @@ public class CsvWorkbookReader extends WorkbookReader {
             workbook.setUri(uri);
             GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), options);
             try (CsvReader reader = CsvReader.create(builder, in, options)) {
+                workbook.setObjectCaching(true);
                 reader.readAll();
+            } finally {
+                workbook.setObjectCaching(false);
             }
             return workbook;
         } catch (InstantiationException | IllegalAccessException

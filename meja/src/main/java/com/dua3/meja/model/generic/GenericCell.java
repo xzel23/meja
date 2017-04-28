@@ -53,10 +53,14 @@ public class GenericCell
     /**
      * A single long storing meta information.
      *
-     * CCXXYYYT
+     * <pre>
+     * data format (bytes): CCXXYYYT
      *
-     * C - column number (2 bytes) X - horizontal span (2 bytes) Y - vertical
-     * span (3 bytes) T - cell type (1 byte)
+     * C - column number   (2 bytes)
+     * X - horizontal span (2 bytes)
+     * Y - vertical span   (3 bytes)
+     * T - cell type       (1 byte)
+     * </pre>
      */
     private long data;
 
@@ -371,6 +375,8 @@ public class GenericCell
     }
 
     private GenericCell set(Object arg, CellType type) {
+        GenericSheet sheet = getSheet();
+        arg = sheet.getWorkbook().cache(arg);
         if (arg != value || type != getCellType()) {
             Object old = value;
             if (arg == null) {
@@ -379,7 +385,7 @@ public class GenericCell
                 setCellType(type);
                 value = arg;
             }
-            getSheet().cellValueChanged(this, old, arg);
+            sheet.cellValueChanged(this, old, arg);
         }
         return this;
     }

@@ -347,6 +347,7 @@ public final class PoiCell
 
     @Override
     public PoiCell set(Boolean arg) {
+        arg = getWorkbook().cache(arg);
         Object old = get();
         if (arg == null) {
             clear();
@@ -361,6 +362,7 @@ public final class PoiCell
     @Override
     @Deprecated
     public PoiCell set(Date arg) {
+        arg = getWorkbook().cache(arg);
         Object old = get();
         if (arg == null) {
             clear();
@@ -379,6 +381,7 @@ public final class PoiCell
 
     @Override
     public PoiCell set(LocalDateTime arg) {
+        arg = getWorkbook().cache(arg);
         Object old = get();
         if (arg == null) {
             clear();
@@ -398,6 +401,7 @@ public final class PoiCell
 
     @Override
     public PoiCell set(Number arg) {
+        arg = getWorkbook().cache(arg);
         Object old = get();
         if (arg == null) {
             clear();
@@ -416,12 +420,14 @@ public final class PoiCell
 
     @Override
     public PoiCell set(Object arg) {
+        arg = getWorkbook().cache(arg);
         MejaHelper.set(this, arg);
         return this;
     }
 
     @Override
     public Cell set(RichText s) {
+        s = getWorkbook().cache(s);
         Object old = get();
 
         RichTextString richText = getWorkbook().createRichTextString(s.toString());
@@ -440,6 +446,7 @@ public final class PoiCell
 
     @Override
     public PoiCell set(String arg) {
+        arg = getWorkbook().cache(arg);
         Object old = get();
         poiCell.setCellValue(arg);
         updateRow();

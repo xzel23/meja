@@ -15,8 +15,6 @@
  */
 package com.dua3.meja.model.generic;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,10 +26,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.WorkbookWriter;
+import com.dua3.meja.model.AbstractWorkbook;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
@@ -40,21 +38,14 @@ import com.dua3.meja.util.Options;
 /**
  * Generic implementation of {@link Workbook}.
  */
-public class GenericWorkbook
-        implements Workbook {
-    private static final URI DEFAULT_URI = URI.create("");
-
-    final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
+public class GenericWorkbook extends AbstractWorkbook {
     final List<GenericSheet> sheets = new ArrayList<>();
     final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
-    final Locale locale;
     private final GenericCellStyle defaultCellStyle;
-    private URI uri;
     private int currentSheetIdx = 0;
 
     public GenericWorkbook(Locale locale) {
-        this(locale, DEFAULT_URI);
+        this(locale, URI.create(""));
     }
 
     /**
@@ -66,20 +57,9 @@ public class GenericWorkbook
      *            the URI to set
      */
     public GenericWorkbook(Locale locale, URI uri) {
-        this.locale = locale;
-        this.uri = uri;
+        super(locale, uri);
         this.defaultCellStyle = new GenericCellStyle(this);
         this.cellStyles.put("", defaultCellStyle);
-    }
-
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(propertyName, listener);
     }
 
     @Override
@@ -150,11 +130,6 @@ public class GenericWorkbook
     }
 
     @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
     public GenericSheet getSheet(int sheetNr) {
         return sheets.get(sheetNr);
     }
@@ -162,11 +137,6 @@ public class GenericWorkbook
     @Override
     public int getSheetCount() {
         return sheets.size();
-    }
-
-    @Override
-    public Optional<URI> getUri() {
-        return Optional.ofNullable(uri);
     }
 
     @Override
@@ -197,16 +167,6 @@ public class GenericWorkbook
     }
 
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(propertyName, listener);
-    }
-
-    @Override
     public void removeSheet(int sheetNr) {
         sheets.remove(sheetNr);
         pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
@@ -223,11 +183,6 @@ public class GenericWorkbook
             currentSheetIdx = idx;
             pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
         }
-    }
-
-    @Override
-    public void setUri(URI uri) {
-        this.uri = uri;
     }
 
     @Override
@@ -262,5 +217,4 @@ public class GenericWorkbook
         }
         throw new IllegalArgumentException("CellStyle is not from this workbook.");
     }
-
 }
