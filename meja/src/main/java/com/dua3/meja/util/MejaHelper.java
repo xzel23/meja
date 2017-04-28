@@ -18,7 +18,6 @@ package com.dua3.meja.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -34,7 +33,6 @@ import java.util.logging.Logger;
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.RefOption;
 import com.dua3.meja.model.Row;
@@ -51,43 +49,6 @@ import com.dua3.meja.text.RichText;
 public class MejaHelper {
 
     private static final Logger LOGGER = Logger.getLogger(MejaHelper.class.getName());
-
-    /**
-     * Return copy of workbook in a different implementation.
-     *
-     * @param <WORKBOOK>
-     *            the workbook class of the target
-     * @param clazz
-     *            {@code Class} instance for the workbook class of the target
-     * @param workbook
-     *            the source workbook
-     * @return workbook instance of type {@code WORKBOOK} with the contents of
-     *         {@code workbook}
-     */
-    public static <WORKBOOK extends Workbook> WORKBOOK cloneWorkbookAs(Class<WORKBOOK> clazz, Workbook workbook) {
-        try {
-            WORKBOOK newWorkbook = clazz.getConstructor(Locale.class).newInstance(workbook.getLocale());
-            newWorkbook.setUri(workbook.getUri().orElse(null));
-
-            // copy styles
-            for (String styleName : workbook.getCellStyleNames()) {
-                CellStyle cellStyle = workbook.getCellStyle(styleName);
-                CellStyle newCellStyle = newWorkbook.getCellStyle(styleName);
-                newCellStyle.copyStyle(cellStyle);
-            }
-
-            // copy sheets
-            for (int sheetNr = 0; sheetNr < workbook.getSheetCount(); sheetNr++) {
-                Sheet sheet = workbook.getSheet(sheetNr);
-                Sheet newSheet = newWorkbook.createSheet(sheet.getSheetName());
-                newSheet.copy(sheet);
-            }
-            return newWorkbook;
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException ex) {
-            throw new RuntimeException("Error cloning workbook: " + ex.getMessage(), ex);
-        }
-    }
 
     /**
      * Copy sheet data.

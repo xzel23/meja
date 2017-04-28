@@ -77,7 +77,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
 
         reader.setOptions(importSettings);
 
-        return reader.read(GenericWorkbook.class, file);
+        return reader.read(GenericWorkbookFactory.instance(), file);
     }
 
 }

@@ -204,7 +204,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
                     "Reading is not supported for files of type '" + type.getDescription() + "'.");
         }
 
-        return type.getReader().read(PoiXssfWorkbook.class, file);
+        return type.getReader().read(PoiWorkbookFactory.instance(), file);
     }
 
     /**

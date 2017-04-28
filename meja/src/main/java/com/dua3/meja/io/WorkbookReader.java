@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.Options;
 
 /**
@@ -33,17 +34,16 @@ public abstract class WorkbookReader {
      *
      * @param <WORKBOOK>
      *            workbook class
-     * @param clazz
-     *            the {@code Class} instance of the workbook class to
-     *            instantiate
+     * @param factory
+     *            the WorkbookFactory to use
      * @param file
      *            the file to read from
      * @return the workbook read
      * @throws IOException
      *             if the workbook could not be read
      */
-    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, File file) throws IOException {
-        return read(clazz, file.toURI());
+    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, File file) throws IOException {
+        return read(factory, file.toURI());
     }
 
     /**
@@ -51,9 +51,8 @@ public abstract class WorkbookReader {
      *
      * @param <WORKBOOK>
      *            workbook class
-     * @param clazz
-     *            the {@code Class} instance of the workbook class to
-     *            instantiate
+     * @param factory
+     *            the WorkbookFactory to use
      * @param in
      *            the stream to read from
      * @param uri
@@ -62,7 +61,7 @@ public abstract class WorkbookReader {
      * @throws IOException
      *             if the workbook could not be read
      */
-    public abstract <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, InputStream in, URI uri)
+    public abstract <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in, URI uri)
             throws IOException;
 
     /**
@@ -70,18 +69,17 @@ public abstract class WorkbookReader {
      *
      * @param <WORKBOOK>
      *            workbook class
-     * @param clazz
-     *            the {@code Class} instance of the workbook class to
-     *            instantiate
+     * @param factory
+     *            the WorkbookFactory to use
      * @param uri
      *            the uri to set in the workbook
      * @return the workbook read
      * @throws IOException
      *             if the workbook could not be read
      */
-    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, URI uri) throws IOException {
+    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, URI uri) throws IOException {
         try (InputStream in = uri.toURL().openStream()) {
-            return read(clazz, in, uri);
+            return read(factory, in, uri);
         }
     }
 

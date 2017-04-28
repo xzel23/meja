@@ -18,11 +18,11 @@ package com.dua3.meja.io;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Locale;
 
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericRowBuilder;
 import com.dua3.meja.util.Options;
 
@@ -52,8 +52,8 @@ public class CsvWorkbookReader extends WorkbookReader {
      *
      * @param <WORKBOOK>
      *            the Workbook implementation class to use
-     * @param clazz
-     *            class of the workboook implementation to use
+     * @param factory
+     *            the WorkbookFactory to use
      * @param in
      *            the reader to read from
      * @param uri
@@ -62,47 +62,35 @@ public class CsvWorkbookReader extends WorkbookReader {
      * @throws IOException
      *             if an io-error occurs during reading
      */
-    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, BufferedReader in, URI uri)
-            throws IOException {
-        try {
-            Locale locale = Csv.getLocale(options);
-            WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
-            workbook.setUri(uri);
-            GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), options);
-            try (CsvReader reader = CsvReader.create(builder, in, options)) {
-                workbook.setObjectCaching(true);
-                reader.readAll();
-            } finally {
-                workbook.setObjectCaching(false);
-            }
-            return workbook;
-        } catch (InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException ex) {
-            throw new IOException("Error reading workbook: " + ex.getMessage(), ex);
+    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, BufferedReader in, URI uri)
+        throws IOException {
+        Locale locale = Csv.getLocale(options);
+        WORKBOOK workbook = factory.create(locale);
+        workbook.setUri(uri);
+        GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), options);
+        try (CsvReader reader = CsvReader.create(builder, in, options)) {
+            workbook.setObjectCaching(true);
+            reader.readAll();
+        } finally {
+            workbook.setObjectCaching(false);
         }
+        return workbook;
     }
 
     @Override
-    public <WORKBOOK extends Workbook> WORKBOOK read(Class<WORKBOOK> clazz, InputStream in, URI uri)
+    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in, URI uri)
             throws IOException {
-        try {
-            Locale locale = Csv.getLocale(options);
-            WORKBOOK workbook = clazz.getConstructor(Locale.class).newInstance(locale);
-            workbook.setUri(uri);
-            GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), options);
-            try (CsvReader reader = CsvReader.create(builder, in, options)) {
-                workbook.setObjectCaching(true);
-                reader.readAll();
-            } finally {
-                workbook.setObjectCaching(false);
-            }
-            return workbook;
-        } catch (InstantiationException | IllegalAccessException
-                | IllegalArgumentException | InvocationTargetException
-                | NoSuchMethodException | SecurityException ex) {
-            throw new IOException("Error reading workbook: " + ex.getMessage(), ex);
+        Locale locale = Csv.getLocale(options);
+        WORKBOOK workbook = factory.create(locale);
+        workbook.setUri(uri);
+        GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), options);
+        try (CsvReader reader = CsvReader.create(builder, in, options)) {
+            workbook.setObjectCaching(true);
+            reader.readAll();
+        } finally {
+            workbook.setObjectCaching(false);
         }
+        return workbook;
     }
 
     @Override
