@@ -74,7 +74,6 @@ import com.dua3.meja.util.MejaHelper;
 /**
  * Swing component for displaying instances of {@link Sheet}.
  */
-@SuppressWarnings("serial")
 public class SwingSheetView extends JPanel
         implements SheetView, PropertyChangeListener {
 
