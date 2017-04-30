@@ -25,6 +25,7 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.MejaConfig;
 import com.dua3.meja.util.MejaHelper;
 
 /**
@@ -71,7 +72,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * Width of the selection rectangle borders.
      */
     protected static final int SELECTION_STROKE_WIDTH = 4;
-
+ 
     /**
      * Test whether style uses text wrapping. While there is a property for text
      * wrapping, the alignment settings have to be taken into account too.
@@ -496,7 +497,8 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         Cell logicalCell = sheet.getCurrentCell().getLogicalCell();
         Rectangle rect = getCellRect(logicalCell);
 
-        gc.setXOR(true);
+        gc.setXOR(MejaConfig.isXorDrawModeEnabled());
+        
         gc.setStroke(getSelectionColor(), getSelectionStrokeWidth());
         gc.drawRect(rect.getX(), rect.getY(), rect.getW(), rect.getH());
         gc.setXOR(false);
