@@ -54,6 +54,10 @@ public final class SwingGraphicsContext
         return g;
     }
 
+    private int hS2D(double d) {
+        return view.hS2D(d);
+    }
+
     @Override
     public void setColor(Color color) {
         g.setColor(MejaSwingHelper.toAwtColor(color));
@@ -72,10 +76,6 @@ public final class SwingGraphicsContext
         } else {
             g.setPaintMode();
         }
-    }
-
-    private int hS2D(double d) {
-        return view.hS2D(d);
     }
 
     private int wS2D(double d) {

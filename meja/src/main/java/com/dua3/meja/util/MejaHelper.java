@@ -454,6 +454,29 @@ public class MejaHelper {
         return sheet.getRowCount() == 0;
     }
 
+    private static Cell nextCell(Cell cell) {
+        // move to next cell
+        Row row = cell.getRow();
+        int j = cell.getColumnNumber();
+        if (j < row.getLastCellNum()) {
+            // cell is not the last one in row -> move right
+            return row.getCell(j + 1);
+        } else {
+            // cell is the last one in row...
+            Sheet sheet = row.getSheet();
+            int i = row.getRowNumber();
+            if (i < sheet.getLastRowNum()) {
+                // not the last row -> move to next row
+                row = sheet.getRow(i + 1);
+            } else {
+                // last row -> move to first row
+                row = sheet.getRow(sheet.getFirstRowNum());
+            }
+            // return the first cell of the new row
+            return row.getCell(row.getFirstCellNum());
+        }
+    }
+
     /**
      * Open workbook file.
      * <p>
@@ -505,29 +528,6 @@ public class MejaHelper {
             cell.set((RichText) arg);
         } else {
             cell.set(String.valueOf(arg));
-        }
-    }
-
-    private static Cell nextCell(Cell cell) {
-        // move to next cell
-        Row row = cell.getRow();
-        int j = cell.getColumnNumber();
-        if (j < row.getLastCellNum()) {
-            // cell is not the last one in row -> move right
-            return row.getCell(j + 1);
-        } else {
-            // cell is the last one in row...
-            Sheet sheet = row.getSheet();
-            int i = row.getRowNumber();
-            if (i < sheet.getLastRowNum()) {
-                // not the last row -> move to next row
-                row = sheet.getRow(i + 1);
-            } else {
-                // last row -> move to first row
-                row = sheet.getRow(sheet.getFirstRowNum());
-            }
-            // return the first cell of the new row
-            return row.getCell(row.getFirstCellNum());
         }
     }
 

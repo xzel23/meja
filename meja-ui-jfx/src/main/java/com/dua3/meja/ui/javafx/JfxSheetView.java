@@ -68,14 +68,34 @@ public class JfxSheetView extends Pane
         pcs.addPropertyChangeListener(propertyName, listener);
     }
 
+    private int getColumnCount() {
+        return sheet == null ? 0 : sheet.getColumnCount();
+    }
+
     @Override
     public Color getGridColor() {
         return gridColor;
     }
 
+    private int getRowCount() {
+        return sheet == null ? 0 : sheet.getRowCount();
+    }
+
     @Override
     public Sheet getSheet() {
         return sheet;
+    }
+
+    JfxSheetPainter getSheetPainter() {
+        return sheetPainter;
+    }
+
+    private int getSplitColumn() {
+        return sheet == null ? 0 : sheet.getSplitColumn();
+    }
+
+    private int getSplitRow() {
+        return sheet == null ? 0 : sheet.getSplitRow();
     }
 
     @Override
@@ -204,26 +224,6 @@ public class JfxSheetView extends Pane
                                                                        // Tools
                                                                        // |
                                                                        // Templates.
-    }
-
-    private int getColumnCount() {
-        return sheet == null ? 0 : sheet.getColumnCount();
-    }
-
-    private int getRowCount() {
-        return sheet == null ? 0 : sheet.getRowCount();
-    }
-
-    private int getSplitColumn() {
-        return sheet == null ? 0 : sheet.getSplitColumn();
-    }
-
-    private int getSplitRow() {
-        return sheet == null ? 0 : sheet.getSplitRow();
-    }
-
-    JfxSheetPainter getSheetPainter() {
-        return sheetPainter;
     }
 
 }

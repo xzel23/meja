@@ -27,6 +27,31 @@ public class HtmlBuilder extends TextBuilder<String> {
 
     private final StringBuilder buffer = new StringBuilder();
 
+    @Override
+    protected void append(Run run) {
+        // handle attributes
+        Style style = run.getStyle();
+        String separator = "<span style=\"";
+        String closing = "";
+        String endTag = "";
+        for (Map.Entry<String, String> e : style.properties().entrySet()) {
+            buffer.append(separator).append(e.getKey()).append(":").append(e.getValue());
+
+            separator = "; ";
+            closing = "\">";
+            endTag = "</span>";
+        }
+        buffer.append(closing);
+
+        // append text (need to do characterwise because of escaping)
+        for (int idx = 0; idx < run.length(); idx++) {
+            appendChar(run.charAt(idx));
+        }
+
+        // add end tag;
+        buffer.append(endTag);
+    }
+
     private void appendChar(char c) {
         // escape characters as suggested by OWASP.org
         switch (c) {
@@ -52,31 +77,6 @@ public class HtmlBuilder extends TextBuilder<String> {
             buffer.append(c);
             break;
         }
-    }
-
-    @Override
-    protected void append(Run run) {
-        // handle attributes
-        Style style = run.getStyle();
-        String separator = "<span style=\"";
-        String closing = "";
-        String endTag = "";
-        for (Map.Entry<String, String> e : style.properties().entrySet()) {
-            buffer.append(separator).append(e.getKey()).append(":").append(e.getValue());
-
-            separator = "; ";
-            closing = "\">";
-            endTag = "</span>";
-        }
-        buffer.append(closing);
-
-        // append text (need to do characterwise because of escaping)
-        for (int idx = 0; idx < run.length(); idx++) {
-            appendChar(run.charAt(idx));
-        }
-
-        // add end tag;
-        buffer.append(endTag);
     }
 
     @Override

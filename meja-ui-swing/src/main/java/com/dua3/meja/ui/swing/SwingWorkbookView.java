@@ -51,7 +51,7 @@ public class SwingWorkbookView extends JComponent
 
     /**
      * Get the {@link SwingSheetView} that is currently visible.
-     * 
+     *
      * @return the {@link SwingSheetView} displayed on the visible tab of this
      *         view
      */
@@ -77,7 +77,7 @@ public class SwingWorkbookView extends JComponent
 
     /**
      * Get view for sheet.
-     * 
+     *
      * @param sheetName
      *            name of the sheet
      * @return the view for the requested sheet or {@code null} if not found
@@ -99,7 +99,7 @@ public class SwingWorkbookView extends JComponent
 
     /**
      * Get Workbook.
-     * 
+     *
      * @return the workbook displayed
      */
     @Override
@@ -109,7 +109,7 @@ public class SwingWorkbookView extends JComponent
 
     /**
      * Set editable state.
-     * 
+     *
      * @param editable
      *            set to {@code true} to allow editing of the displayed workbook
      */
@@ -130,7 +130,7 @@ public class SwingWorkbookView extends JComponent
 
     /**
      * Set the workbook.
-     * 
+     *
      * @param workbook
      *            the workbook to display
      */

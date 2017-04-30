@@ -109,6 +109,15 @@ public class GenericWorkbook extends AbstractWorkbook {
         return cellStyle;
     }
 
+    String getCellStyleName(GenericCellStyle cellStyle) {
+        for (Map.Entry<String, GenericCellStyle> entry : cellStyles.entrySet()) {
+            if (entry.getValue() == cellStyle) {
+                return entry.getKey();
+            }
+        }
+        throw new IllegalArgumentException("CellStyle is not from this workbook.");
+    }
+
     @Override
     public List<String> getCellStyleNames() {
         return new ArrayList<>(cellStyles.keySet());
@@ -207,14 +216,5 @@ public class GenericWorkbook extends AbstractWorkbook {
         WorkbookWriter writer = type.getWriter();
         writer.setOptions(options);
         writer.write(this, out);
-    }
-
-    String getCellStyleName(GenericCellStyle cellStyle) {
-        for (Map.Entry<String, GenericCellStyle> entry : cellStyles.entrySet()) {
-            if (entry.getValue() == cellStyle) {
-                return entry.getKey();
-            }
-        }
-        throw new IllegalArgumentException("CellStyle is not from this workbook.");
     }
 }

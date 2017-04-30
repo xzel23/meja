@@ -63,7 +63,7 @@ public class CsvWorkbookReader extends WorkbookReader {
      *             if an io-error occurs during reading
      */
     public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, BufferedReader in, URI uri)
-        throws IOException {
+            throws IOException {
         Locale locale = Csv.getLocale(options);
         WORKBOOK workbook = factory.create(locale);
         workbook.setUri(uri);

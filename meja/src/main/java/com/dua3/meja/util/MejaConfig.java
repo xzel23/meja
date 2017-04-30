@@ -11,6 +11,7 @@ public class MejaConfig {
 
     /**
      * Check if XOR mode enabled for drawing the selection rectangle.
+     * 
      * @return true, if XOR drawing is enabled
      */
     public static boolean isXorDrawModeEnabled() {

@@ -11,10 +11,6 @@ import java.util.Set;
  */
 public class OptionSet {
 
-    public interface Value<T> {
-        T getValue();
-    }
-
     private static class StaticValue<T>
             implements Value<T> {
 
@@ -35,6 +31,10 @@ public class OptionSet {
         public String toString() {
             return name;
         }
+    }
+
+    public interface Value<T> {
+        T getValue();
     }
 
     public static <T> Value<T> value(String name, T value) {

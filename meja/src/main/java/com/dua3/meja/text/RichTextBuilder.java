@@ -53,6 +53,17 @@ public class RichTextBuilder
         return this;
     }
 
+    private Style currentStyle() {
+        final Style style;
+        if (parts.lastKey() == buffer.length()) {
+            style = parts.get(parts.lastKey());
+        } else {
+            style = new Style();
+            parts.put(buffer.length(), style);
+        }
+        return style;
+    }
+
     public Object get(String property) {
         return currentStyle().get(property);
     }
@@ -113,17 +124,6 @@ public class RichTextBuilder
     @Override
     public String toString() {
         return buffer.toString();
-    }
-
-    private Style currentStyle() {
-        final Style style;
-        if (parts.lastKey() == buffer.length()) {
-            style = parts.get(parts.lastKey());
-        } else {
-            style = new Style();
-            parts.put(buffer.length(), style);
-        }
-        return style;
     }
 
 }

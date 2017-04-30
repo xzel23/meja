@@ -146,6 +146,16 @@ public class GenericSheet
         }
     }
 
+    void cellStyleChanged(GenericCell cell, Object old, Object arg) {
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_STYLE, old, arg);
+        pcs.firePropertyChange(evt);
+    }
+
+    void cellValueChanged(GenericCell cell, Object old, Object arg) {
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_CONTENT, old, arg);
+        pcs.firePropertyChange(evt);
+    }
+
     @Override
     public void clear() {
         copy(new GenericSheet(workbook, sheetName, locale));
@@ -259,6 +269,24 @@ public class GenericSheet
         return lock.readLock();
     }
 
+    void removeMergedRegion(int rowNumber, int columnNumber) {
+        for (int idx = 0; idx < mergedRegions.size(); idx++) {
+            RectangularRegion rr = mergedRegions.get(idx);
+            if (rr.getFirstRow() == rowNumber && rr.getFirstColumn() == columnNumber) {
+                mergedRegions.remove(idx);
+                for (int i = rr.getFirstRow(); i <= rr.getLastRow(); i++) {
+                    GenericRow row = getRow(i);
+                    for (int j = rr.getFirstColumn(); j <= rr.getLastColumn(); j++) {
+                        GenericCell cell = row.getCellIfExists(j);
+                        if (cell != null) {
+                            cell.removedFromMergedRegion();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(listener);
@@ -267,6 +295,16 @@ public class GenericSheet
     @Override
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         pcs.removePropertyChangeListener(propertyName, listener);
+    }
+
+    private void reserve(int row) {
+        for (int rowNum = rows.size(); rowNum <= row; rowNum++) {
+            rows.add(new GenericRow(this, rowNum));
+        }
+    }
+
+    void reserveColumn(int col) {
+        numberOfColumns = Math.max(col + 1, numberOfColumns);
     }
 
     @Override
@@ -341,44 +379,6 @@ public class GenericSheet
     @Override
     public Lock writeLock() {
         return lock.writeLock();
-    }
-
-    private void reserve(int row) {
-        for (int rowNum = rows.size(); rowNum <= row; rowNum++) {
-            rows.add(new GenericRow(this, rowNum));
-        }
-    }
-
-    void cellStyleChanged(GenericCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_STYLE, old, arg);
-        pcs.firePropertyChange(evt);
-    }
-
-    void cellValueChanged(GenericCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_CONTENT, old, arg);
-        pcs.firePropertyChange(evt);
-    }
-
-    void removeMergedRegion(int rowNumber, int columnNumber) {
-        for (int idx = 0; idx < mergedRegions.size(); idx++) {
-            RectangularRegion rr = mergedRegions.get(idx);
-            if (rr.getFirstRow() == rowNumber && rr.getFirstColumn() == columnNumber) {
-                mergedRegions.remove(idx);
-                for (int i = rr.getFirstRow(); i <= rr.getLastRow(); i++) {
-                    GenericRow row = getRow(i);
-                    for (int j = rr.getFirstColumn(); j <= rr.getLastColumn(); j++) {
-                        GenericCell cell = row.getCellIfExists(j);
-                        if (cell != null) {
-                            cell.removedFromMergedRegion();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    void reserveColumn(int col) {
-        numberOfColumns = Math.max(col + 1, numberOfColumns);
     }
 
 }

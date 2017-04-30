@@ -34,6 +34,11 @@ public class JfxSegmentView extends SheetControl
     }
 
     @Override
+    protected Skin<?> createDefaultSkin() {
+        return new JfxSegmentViewSkin(this);
+    }
+
+    @Override
     public int getBeginColumn() {
         return startColumn.getAsInt();
     }
@@ -53,6 +58,19 @@ public class JfxSegmentView extends SheetControl
         return endRow.getAsInt();
     }
 
+    double getViewHeight() {
+        return viewHeight;
+    }
+
+    double getViewWidth() {
+        return viewWidth;
+    }
+
+    @Override
+    protected void layoutChanged() {
+        updateLayout();
+    }
+
     @Override
     public void setViewSize(double width, double height) {
         this.viewWidth = width;
@@ -66,24 +84,6 @@ public class JfxSegmentView extends SheetControl
         if (skin != null) {
             ((JfxSegmentViewSkin) skin).redraw();
         }
-    }
-
-    @Override
-    protected Skin<?> createDefaultSkin() {
-        return new JfxSegmentViewSkin(this);
-    }
-
-    @Override
-    protected void layoutChanged() {
-        updateLayout();
-    }
-
-    double getViewHeight() {
-        return viewHeight;
-    }
-
-    double getViewWidth() {
-        return viewWidth;
     }
 
 }

@@ -19,17 +19,17 @@ import com.dua3.meja.model.Color;
 
 public interface GraphicsContext {
 
-    public Rectangle getClipBounds();
-
-    public void setStroke(Color color, double width);
-
     void drawLine(double x, double y, double i, double y0);
 
     void drawRect(double x, double y, double width, double height);
 
     void fillRect(double x, double y, double width, double height);
 
+    public Rectangle getClipBounds();
+
     void setColor(Color color);
+
+    public void setStroke(Color color, double width);
 
     void setXOR(boolean on);
 

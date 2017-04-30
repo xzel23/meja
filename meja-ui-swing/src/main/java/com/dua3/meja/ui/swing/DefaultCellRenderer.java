@@ -88,7 +88,7 @@ public class DefaultCellRenderer
         gPaint.setClip(clip);
 
         component.paint(gPaint);
-        
+
         gPaint.dispose();
     }
 

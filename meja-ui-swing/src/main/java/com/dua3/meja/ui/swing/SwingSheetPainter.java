@@ -36,26 +36,6 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, SwingGra
     }
 
     @Override
-    public void update(Sheet sheet) {
-        super.update(sheet);
-
-        if (sheet != null) {
-            // create a string with the maximum number of digits needed to
-            // represent the highest row number (use a string only consisting
-            // of zeroes instead of the last row number because a proportional
-            // font might be used)
-            StringBuilder sb = new StringBuilder("0");
-            for (int i = 1; i <= getRowCount(); i *= 10) {
-                sb.append('0');
-            }
-            labelPainter.setText(new String(sb));
-            final Dimension labelSize = labelPainter.getPreferredSize();
-            labelWidth = sheetView.wD2S(labelSize.width);
-            labelHeight = sheetView.hD2S(labelSize.height);
-        }
-    }
-
-    @Override
     protected void drawBackground(SwingGraphicsContext gc) {
         final Graphics2D g = gc.graphics();
         java.awt.Rectangle r = g.getClipBounds();
@@ -87,6 +67,26 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, SwingGra
         java.awt.Rectangle clipRectD = sheetView.rectS2D(clipRect);
 
         cellRenderer.render(g.graphics(), cell, rectD, clipRectD, sheetView.getScale());
+    }
+
+    @Override
+    public void update(Sheet sheet) {
+        super.update(sheet);
+
+        if (sheet != null) {
+            // create a string with the maximum number of digits needed to
+            // represent the highest row number (use a string only consisting
+            // of zeroes instead of the last row number because a proportional
+            // font might be used)
+            StringBuilder sb = new StringBuilder("0");
+            for (int i = 1; i <= getRowCount(); i *= 10) {
+                sb.append('0');
+            }
+            labelPainter.setText(new String(sb));
+            final Dimension labelSize = labelPainter.getPreferredSize();
+            labelWidth = sheetView.wD2S(labelSize.width);
+            labelHeight = sheetView.hD2S(labelSize.height);
+        }
     }
 
 }

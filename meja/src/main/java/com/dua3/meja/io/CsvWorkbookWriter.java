@@ -60,6 +60,17 @@ public class CsvWorkbookWriter extends WorkbookWriter {
     private CsvWorkbookWriter() {
     }
 
+    private Options getOptionsWithLocale(Options options, Workbook workbook) {
+        if (options.hasOption(Csv.getOption(Csv.OPTION_LOCALE).get())) {
+            return options;
+        }
+
+        Options options2 = new Options(options);
+        Value<Locale> value = OptionSet.value("Locale from Workbook", workbook.getLocale());
+        options2.put(Csv.getOption(Csv.OPTION_LOCALE).get(), value);
+        return options2;
+    }
+
     @Override
     public void setOptions(Options importSettings) {
         this.options = new Options(importSettings);
@@ -87,16 +98,5 @@ public class CsvWorkbookWriter extends WorkbookWriter {
         try (CsvWriter writer = CsvWriter.create(out, getOptionsWithLocale(options, workbook))) {
             writeSheets(workbook, writer);
         }
-    }
-
-    private Options getOptionsWithLocale(Options options, Workbook workbook) {
-        if (options.hasOption(Csv.getOption(Csv.OPTION_LOCALE).get())) {
-            return options;
-        }
-
-        Options options2 = new Options(options);
-        Value<Locale> value = OptionSet.value("Locale from Workbook", workbook.getLocale());
-        options2.put(Csv.getOption(Csv.OPTION_LOCALE).get(), value);
-        return options2;
     }
 }

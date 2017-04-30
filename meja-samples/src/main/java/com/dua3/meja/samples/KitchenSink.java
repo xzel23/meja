@@ -29,12 +29,6 @@ public class KitchenSink extends JFrame {
      */
     private static final long serialVersionUID = 1L;
 
-    public static void main(String[] args) {
-        KitchenSink instance = new KitchenSink();
-        instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        instance.setVisible(true);
-    }
-
     private static void addColorSheet(Workbook wb) {
         Sheet sheet = wb.createSheet("colors");
 
@@ -75,6 +69,12 @@ public class KitchenSink extends JFrame {
         addColorSheet(wb);
 
         return wb;
+    }
+
+    public static void main(String[] args) {
+        KitchenSink instance = new KitchenSink();
+        instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        instance.setVisible(true);
     }
 
     private Workbook wb;

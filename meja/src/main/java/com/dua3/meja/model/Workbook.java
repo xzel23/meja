@@ -26,7 +26,6 @@ import java.util.Locale;
 import java.util.Optional;
 
 import com.dua3.meja.io.FileType;
-import com.dua3.meja.util.ObjectCache;
 import com.dua3.meja.util.Options;
 
 /**
@@ -66,27 +65,6 @@ public interface Workbook
      *            the listener
      */
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
-
-    /**
-     * Remove property change listener.
-     *
-     * @see PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
-     * @param listener
-     *            the listener
-     */
-    public void removePropertyChangeListener(PropertyChangeListener listener);
-
-    /**
-     * Remove property change listener.
-     *
-     * @see PropertyChangeSupport#removePropertyChangeListener(String,
-     *      PropertyChangeListener)
-     * @param propertyName
-     *            the name of the property
-     * @param listener
-     *            the listener
-     */
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Close workbook.
@@ -249,6 +227,29 @@ public interface Workbook
      */
     boolean hasCellStyle(String name);
 
+    boolean isObjectCachingEnabled();
+
+    /**
+     * Remove property change listener.
+     *
+     * @see PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
+     * @param listener
+     *            the listener
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener);
+
+    /**
+     * Remove property change listener.
+     *
+     * @see PropertyChangeSupport#removePropertyChangeListener(String,
+     *      PropertyChangeListener)
+     * @param propertyName
+     *            the name of the property
+     * @param listener
+     *            the listener
+     */
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
     /**
      * Remove sheet by number.
      *
@@ -286,6 +287,8 @@ public interface Workbook
      *             if no sheet exists at the given index
      */
     void setCurrentSheet(int idx);
+
+    void setObjectCaching(boolean enabled);
 
     /**
      * Set URI for this workbook. See {@link #getUri}.
@@ -364,9 +367,5 @@ public interface Workbook
      *             if an I/O error occurs
      */
     void write(FileType fileType, OutputStream out, Options options) throws IOException;
-
-    boolean isObjectCachingEnabled();
-
-    void setObjectCaching(boolean enabled);
 
 }

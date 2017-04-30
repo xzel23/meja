@@ -36,14 +36,6 @@ public interface Sheet
     static final String PROPERTY_CELL_CONTENT = "cell content";
     static final String PROPERTY_CELL_STYLE = "cell style";
 
-    public void addPropertyChangeListener(PropertyChangeListener listener);
-
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
-
-    public void removePropertyChangeListener(PropertyChangeListener listener);
-
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
-
     /**
      * Add new merged region.
      *
@@ -53,6 +45,10 @@ public interface Sheet
      *             if the region already contains merged cells
      */
     void addMergedRegion(RectangularRegion cells);
+
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+
+    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Adjusts the size of the column to its contents.
@@ -217,6 +213,10 @@ public interface Sheet
      * @return zoom factor, 1.0=100%
      */
     float getZoom();
+
+    public void removePropertyChangeListener(PropertyChangeListener listener);
+
+    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Sets an automatic filter on the given row (optional operation).

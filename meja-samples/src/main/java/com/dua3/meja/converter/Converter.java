@@ -15,7 +15,7 @@ import com.dua3.meja.model.generic.GenericWorkbookFactory;
  * Demonstrates reading and writing workbooks. The relevant format of the input
  * and output filenames is determined by the file extension.
  * </p>
- * 
+ *
  * @author Axel Howind (axel@dua3.com)
  */
 public class Converter {

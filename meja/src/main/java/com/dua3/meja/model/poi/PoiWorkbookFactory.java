@@ -65,6 +65,15 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
                 OptionSet.wrap(locales));
     }
 
+    private static PoiWorkbook createWorkbook(
+            final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
+        if (poiWorkbook instanceof HSSFWorkbook) {
+            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, locale, uri);
+        } else {
+            return new PoiXssfWorkbook(poiWorkbook, locale, uri);
+        }
+    }
+
     public static Optional<Option<?>> getOption(String name) {
         return OPTIONS.getOption(name);
     }
@@ -74,15 +83,6 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      */
     public static PoiWorkbookFactory instance() {
         return INSTANCE;
-    }
-
-    private static PoiWorkbook createWorkbook(
-            final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
-        if (poiWorkbook instanceof HSSFWorkbook) {
-            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, locale, uri);
-        } else {
-            return new PoiXssfWorkbook(poiWorkbook, locale, uri);
-        }
     }
 
     /**

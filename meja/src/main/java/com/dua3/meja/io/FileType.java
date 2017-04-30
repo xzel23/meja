@@ -146,6 +146,19 @@ public enum FileType {
         return factory;
     }
 
+    private OpenMode getOpenMode() {
+        boolean canRead = reader != null || factory != null;
+        if (canRead && writer != null) {
+            return OpenMode.READ_AND_WRITE;
+        } else if (canRead) {
+            return OpenMode.READ;
+        } else if (writer != null) {
+            return OpenMode.WRITE;
+        } else {
+            return OpenMode.NONE;
+        }
+    }
+
     /**
      * Get instance of {@link WorkbookReader} that matches this format.
      *
@@ -185,19 +198,6 @@ public enum FileType {
             return mode == OpenMode.WRITE || mode == OpenMode.READ_AND_WRITE;
         default:
             throw new IllegalArgumentException(String.valueOf(modeRequested));
-        }
-    }
-
-    private OpenMode getOpenMode() {
-        boolean canRead = reader != null || factory != null;
-        if (canRead && writer != null) {
-            return OpenMode.READ_AND_WRITE;
-        } else if (canRead) {
-            return OpenMode.READ;
-        } else if (writer != null) {
-            return OpenMode.WRITE;
-        } else {
-            return OpenMode.NONE;
         }
     }
 

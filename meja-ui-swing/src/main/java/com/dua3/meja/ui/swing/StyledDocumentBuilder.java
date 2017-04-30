@@ -44,7 +44,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
     /**
      * Convert {@code RichText} to {@code StyledDocument} conserving text
      * attributes.
-     * 
+     *
      * @param text
      *            an instance of {@code RichText}
      * @param dfltAttr
@@ -67,11 +67,6 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
 
     public StyledDocumentBuilder(double scale) {
         this.scale = scale;
-    }
-
-    @Override
-    public StyledDocument get() {
-        return doc;
     }
 
     @Override
@@ -129,6 +124,11 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         } catch (BadLocationException ex) {
             LOGGER.log(Level.SEVERE, "Exception in StyledDocumentBuilder.append()", ex);
         }
+    }
+
+    @Override
+    public StyledDocument get() {
+        return doc;
     }
 
 }

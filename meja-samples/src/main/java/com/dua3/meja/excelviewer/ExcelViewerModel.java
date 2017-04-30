@@ -81,6 +81,26 @@ public class ExcelViewerModel {
     }
 
     /**
+     * Adjust all column sizes.
+     *
+     * @param view
+     *            the view
+     */
+    protected void adjustColumns(SheetView view) {
+        if (view != null) {
+            view.getSheet().autoSizeColumns();
+        }
+    }
+
+    protected void freezeAtCurrentCell(SheetView view) {
+        if (view != null) {
+            final Sheet sheet = view.getSheet();
+            Cell cell = sheet.getCurrentCell();
+            sheet.splitAt(cell.getRowNumber(), cell.getColumnNumber());
+        }
+    }
+
+    /**
      * Returns the current directory for this window.
      *
      * @return current directory
@@ -93,8 +113,16 @@ public class ExcelViewerModel {
         return String.format(LICENSE, year, author);
     }
 
+    Optional<URI> getUri() {
+        return getUri(workbook);
+    }
+
     public Workbook getWorkbook() {
         return workbook;
+    }
+
+    void openWorkbook(File file) throws IOException {
+        setWorkbook(MejaHelper.openWorkbook(file));
     }
 
     public void saveWorkbook(URI uri) throws IOException {
@@ -136,26 +164,6 @@ public class ExcelViewerModel {
         LOGGER.log(Level.INFO, "Workbook changed to {0}.", getUri(this.workbook));
     }
 
-    /**
-     * Adjust all column sizes.
-     * 
-     * @param view
-     *            the view
-     */
-    protected void adjustColumns(SheetView view) {
-        if (view != null) {
-            view.getSheet().autoSizeColumns();
-        }
-    }
-
-    protected void freezeAtCurrentCell(SheetView view) {
-        if (view != null) {
-            final Sheet sheet = view.getSheet();
-            Cell cell = sheet.getCurrentCell();
-            sheet.splitAt(cell.getRowNumber(), cell.getColumnNumber());
-        }
-    }
-
     protected void setZoom(float zoom) {
         for (Sheet sheet : workbook) {
             sheet.setZoom(zoom);
@@ -164,14 +172,6 @@ public class ExcelViewerModel {
 
     protected void showInfo() {
         System.out.format("%s%n%n%s%n", appName, getLicenseText());
-    }
-
-    Optional<URI> getUri() {
-        return getUri(workbook);
-    }
-
-    void openWorkbook(File file) throws IOException {
-        setWorkbook(MejaHelper.openWorkbook(file));
     }
 
 }

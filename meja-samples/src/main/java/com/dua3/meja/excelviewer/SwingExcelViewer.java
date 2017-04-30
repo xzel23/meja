@@ -117,7 +117,7 @@ public class SwingExcelViewer extends JFrame
 
     /**
      * Constructor.
-     * 
+     *
      * @param model
      *            the model
      */
@@ -129,26 +129,12 @@ public class SwingExcelViewer extends JFrame
         pack();
     }
 
-    @Override
-    public SheetView getCurrentView() {
-        return workbookView.getCurrentView();
-    }
-
-    @Override
-    public SheetView getViewForSheet(Sheet sheet) {
-        return workbookView.getViewForSheet(sheet);
-    }
-
-    @Override
-    public void setEditable(boolean editable) {
-        workbookView.setEditable(editable);
-    }
-
-    @Override
-    public void workbookChanged(URI oldUri, URI newUri) {
-        firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
-        workbookView.setWorkbook(model.getWorkbook());
-        updateUri(newUri);
+    /**
+     * Close the application window.
+     */
+    protected void closeApplication() {
+        Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Closing.");
+        dispose();
     }
 
     private void createContent() {
@@ -340,6 +326,16 @@ public class SwingExcelViewer extends JFrame
         setJMenuBar(menuBar);
     }
 
+    @Override
+    public SheetView getCurrentView() {
+        return workbookView.getCurrentView();
+    }
+
+    @Override
+    public SheetView getViewForSheet(Sheet sheet) {
+        return workbookView.getViewForSheet(sheet);
+    }
+
     private void saveWorkbook() {
         Workbook workbook = model.getWorkbook();
         if (workbook == null) {
@@ -367,6 +363,11 @@ public class SwingExcelViewer extends JFrame
                     "Workbook could not be saved.",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        workbookView.setEditable(editable);
     }
 
     private void setLookAndFeel(String lookAndFeelClassName) {
@@ -433,12 +434,11 @@ public class SwingExcelViewer extends JFrame
         }
     }
 
-    /**
-     * Close the application window.
-     */
-    protected void closeApplication() {
-        Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Closing.");
-        dispose();
+    @Override
+    public void workbookChanged(URI oldUri, URI newUri) {
+        firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
+        workbookView.setWorkbook(model.getWorkbook());
+        updateUri(newUri);
     }
 
 }

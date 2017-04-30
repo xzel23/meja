@@ -20,12 +20,12 @@ public class Options {
         this(new HashMap<>());
     }
 
-    public Options(Options other) {
-        this.options = new HashMap<>(other.options);
-    }
-
     private Options(Map<Option<?>, Value<?>> options) {
         this.options = options;
+    }
+
+    public Options(Options other) {
+        this.options = new HashMap<>(other.options);
     }
 
     public Value<?> get(Option<?> op) {

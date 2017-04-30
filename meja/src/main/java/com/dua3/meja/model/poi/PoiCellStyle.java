@@ -260,6 +260,38 @@ public abstract class PoiCellStyle
         setWrap(other.isWrap());
     }
 
+    /**
+     * Get width for a POI defined border.
+     *
+     * @param poiBorder
+     *            the POI border value
+     * @return the width of the border in points
+     */
+    protected float getBorderWidth(org.apache.poi.ss.usermodel.BorderStyle poiBorder) {
+        switch (poiBorder) {
+        case NONE:
+            return 0;
+        case THIN:
+            return 0.75f;
+        case MEDIUM:
+        case MEDIUM_DASHED:
+        case MEDIUM_DASH_DOT:
+        case MEDIUM_DASH_DOT_DOT:
+            return 1.75f;
+        case THICK:
+            return 2;
+        case DASHED:
+        case DOTTED:
+        case DOUBLE:
+        case HAIR:
+        case DASH_DOT:
+        case DASH_DOT_DOT:
+        case SLANTED_DASH_DOT:
+        default:
+            return 1;
+        }
+    }
+
     @Override
     public String getDataFormat() {
         return poiCellStyle.getDataFormatString();
@@ -288,6 +320,30 @@ public abstract class PoiCellStyle
     @Override
     public String getName() {
         return workbook.getCellStyleName(this);
+    }
+
+    /**
+     * Translate border width to POI border.
+     *
+     * @param borderStyle
+     *            the border style
+     * @return the POI constant to use
+     */
+    protected org.apache.poi.ss.usermodel.BorderStyle getPoiBorder(BorderStyle borderStyle) {
+        float width = borderStyle.getWidth();
+        if (width == 0) {
+            return org.apache.poi.ss.usermodel.BorderStyle.NONE;
+        }
+        if (width <= 0.75f) {
+            return org.apache.poi.ss.usermodel.BorderStyle.THIN;
+        }
+        if (width <= 1.75f) {
+            return org.apache.poi.ss.usermodel.BorderStyle.MEDIUM;
+        }
+        if (width <= 2.0f) {
+            return org.apache.poi.ss.usermodel.BorderStyle.THICK;
+        }
+        return org.apache.poi.ss.usermodel.BorderStyle.THIN;
     }
 
     @Override
@@ -342,62 +398,6 @@ public abstract class PoiCellStyle
     @Override
     public void setWrap(boolean wrap) {
         poiCellStyle.setWrapText(wrap);
-    }
-
-    /**
-     * Get width for a POI defined border.
-     *
-     * @param poiBorder
-     *            the POI border value
-     * @return the width of the border in points
-     */
-    protected float getBorderWidth(org.apache.poi.ss.usermodel.BorderStyle poiBorder) {
-        switch (poiBorder) {
-        case NONE:
-            return 0;
-        case THIN:
-            return 0.75f;
-        case MEDIUM:
-        case MEDIUM_DASHED:
-        case MEDIUM_DASH_DOT:
-        case MEDIUM_DASH_DOT_DOT:
-            return 1.75f;
-        case THICK:
-            return 2;
-        case DASHED:
-        case DOTTED:
-        case DOUBLE:
-        case HAIR:
-        case DASH_DOT:
-        case DASH_DOT_DOT:
-        case SLANTED_DASH_DOT:
-        default:
-            return 1;
-        }
-    }
-
-    /**
-     * Translate border width to POI border.
-     *
-     * @param borderStyle
-     *            the border style
-     * @return the POI constant to use
-     */
-    protected org.apache.poi.ss.usermodel.BorderStyle getPoiBorder(BorderStyle borderStyle) {
-        float width = borderStyle.getWidth();
-        if (width == 0) {
-            return org.apache.poi.ss.usermodel.BorderStyle.NONE;
-        }
-        if (width <= 0.75f) {
-            return org.apache.poi.ss.usermodel.BorderStyle.THIN;
-        }
-        if (width <= 1.75f) {
-            return org.apache.poi.ss.usermodel.BorderStyle.MEDIUM;
-        }
-        if (width <= 2.0f) {
-            return org.apache.poi.ss.usermodel.BorderStyle.THICK;
-        }
-        return org.apache.poi.ss.usermodel.BorderStyle.THIN;
     }
 
 }

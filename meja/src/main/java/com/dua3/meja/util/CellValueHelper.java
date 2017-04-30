@@ -48,52 +48,6 @@ public class CellValueHelper {
     }
 
     /**
-     * Set cell value from {@link String} with automatic conversion.
-     *
-     * @param cell
-     *            the cell whose value is to be set
-     * @param value
-     *            the value to set
-     */
-    public void setCellValue(Cell cell, String value) {
-        // blank
-        if (value.isEmpty()) {
-            cell.clear();
-            return;
-        }
-
-        // formula
-        if (value.startsWith("=")) {
-            cell.setFormula(value.substring(1));
-            return;
-        }
-
-        // boolean
-        Optional<Boolean> b = parseBoolean(value);
-        if (b.isPresent()) {
-            cell.set(b.get());
-            return;
-        }
-
-        // number
-        Optional<Number> number = parseNumber(value);
-        if (number.isPresent()) {
-            cell.set(number.get());
-            return;
-        }
-
-        // date
-        Optional<LocalDateTime> date = parseDate(value);
-        if (date.isPresent()) {
-            cell.set(date.get());
-            return;
-        }
-
-        // text
-        cell.set(value);
-    }
-
-    /**
      * Parse a boolean value.
      *
      * @param text
@@ -152,6 +106,52 @@ public class CellValueHelper {
         ParsePosition pos = new ParsePosition(0);
         Number number = numberFormat.parse(text, pos);
         return Optional.ofNullable(pos.getIndex() == text.length() ? number : null);
+    }
+
+    /**
+     * Set cell value from {@link String} with automatic conversion.
+     *
+     * @param cell
+     *            the cell whose value is to be set
+     * @param value
+     *            the value to set
+     */
+    public void setCellValue(Cell cell, String value) {
+        // blank
+        if (value.isEmpty()) {
+            cell.clear();
+            return;
+        }
+
+        // formula
+        if (value.startsWith("=")) {
+            cell.setFormula(value.substring(1));
+            return;
+        }
+
+        // boolean
+        Optional<Boolean> b = parseBoolean(value);
+        if (b.isPresent()) {
+            cell.set(b.get());
+            return;
+        }
+
+        // number
+        Optional<Number> number = parseNumber(value);
+        if (number.isPresent()) {
+            cell.set(number.get());
+            return;
+        }
+
+        // date
+        Optional<LocalDateTime> date = parseDate(value);
+        if (date.isPresent()) {
+            cell.set(date.get());
+            return;
+        }
+
+        // text
+        cell.set(value);
     }
 
 }

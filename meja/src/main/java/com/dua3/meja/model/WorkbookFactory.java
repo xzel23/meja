@@ -25,11 +25,39 @@ import com.dua3.meja.util.Options;
  * Abstract base class for workbook factories.
  *
  * @param <WORKBOOK>
- *  the concrete workbook class
+ *            the concrete workbook class
  *
  * @author axel
  */
-public abstract class WorkbookFactory <WORKBOOK extends Workbook> {
+public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
+
+    /**
+     * Return copy of workbook in this factory`s implementation.
+     *
+     * @param other
+     *            the source workbook
+     * @return workbook instance of type {@code WORKBOOK} with the contents of
+     *         {@code workbook}
+     */
+    public WORKBOOK copyOf(Workbook other) {
+        WORKBOOK workbook = create(other.getLocale());
+        workbook.setUri(other.getUri().orElse(null));
+
+        // copy styles
+        for (String styleName : other.getCellStyleNames()) {
+            CellStyle cellStyle = other.getCellStyle(styleName);
+            CellStyle newCellStyle = workbook.getCellStyle(styleName);
+            newCellStyle.copyStyle(cellStyle);
+        }
+
+        // copy sheets
+        for (int sheetNr = 0; sheetNr < other.getSheetCount(); sheetNr++) {
+            Sheet sheet = other.getSheet(sheetNr);
+            Sheet newSheet = workbook.createSheet(sheet.getSheetName());
+            newSheet.copy(sheet);
+        }
+        return workbook;
+    }
 
     /**
      * Create a new Workbook instance.
@@ -97,33 +125,5 @@ public abstract class WorkbookFactory <WORKBOOK extends Workbook> {
      *             if an inoput/output error occurs
      */
     public abstract WORKBOOK open(File file, Options importSettings) throws IOException;
-
-    /**
-     * Return copy of workbook in this factory`s implementation.
-     *
-     * @param other
-     *            the source workbook
-     * @return workbook instance of type {@code WORKBOOK} with the contents of
-     *         {@code workbook}
-     */
-    public WORKBOOK copyOf(Workbook other) {
-        WORKBOOK workbook =  create(other.getLocale());
-        workbook.setUri(other.getUri().orElse(null));
-
-        // copy styles
-        for (String styleName : other.getCellStyleNames()) {
-            CellStyle cellStyle = other.getCellStyle(styleName);
-            CellStyle newCellStyle = workbook.getCellStyle(styleName);
-            newCellStyle.copyStyle(cellStyle);
-        }
-
-        // copy sheets
-        for (int sheetNr = 0; sheetNr < other.getSheetCount(); sheetNr++) {
-            Sheet sheet = other.getSheet(sheetNr);
-            Sheet newSheet = workbook.createSheet(sheet.getSheetName());
-            newSheet.copy(sheet);
-        }
-        return workbook;
-    }
 
 }

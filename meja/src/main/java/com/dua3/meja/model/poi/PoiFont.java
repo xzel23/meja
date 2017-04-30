@@ -120,6 +120,15 @@ public class PoiFont
         return getPoiFont().getFontName();
     }
 
+    /**
+     * Get the POI font.
+     *
+     * @return the {link org.apache.poi.ss.usermodel.Font} used
+     */
+    protected org.apache.poi.ss.usermodel.Font getPoiFont() {
+        return poiFont;
+    }
+
     @Override
     public float getSizeInPoints() {
         return getPoiFont().getFontHeightInPoints();
@@ -148,15 +157,6 @@ public class PoiFont
     @Override
     public boolean isUnderlined() {
         return getPoiFont().getUnderline() != org.apache.poi.ss.usermodel.Font.U_NONE;
-    }
-
-    /**
-     * Get the POI font.
-     *
-     * @return the {link org.apache.poi.ss.usermodel.Font} used
-     */
-    protected org.apache.poi.ss.usermodel.Font getPoiFont() {
-        return poiFont;
     }
 
 }

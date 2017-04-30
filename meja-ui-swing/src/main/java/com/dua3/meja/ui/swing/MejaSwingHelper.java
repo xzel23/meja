@@ -57,7 +57,7 @@ public class MejaSwingHelper {
     public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
             /**
-             * 
+             *
              */
             private static final long serialVersionUID = 1L;
 
@@ -72,7 +72,7 @@ public class MejaSwingHelper {
     public static Action createAction(String name, Runnable onActionPerformed) {
         return new AbstractAction(name) {
             /**
-             * 
+             *
              */
             private static final long serialVersionUID = 1L;
 

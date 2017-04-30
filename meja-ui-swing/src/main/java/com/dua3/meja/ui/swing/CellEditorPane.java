@@ -137,6 +137,11 @@ public class CellEditorPane extends JTextPane {
 
     private static final long serialVersionUID = 1L;
 
+    static java.awt.Font getAwtFont(Font font, double scale) {
+        int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
+        return new java.awt.Font(font.getFamily(), style, (int) Math.round(scale * font.getSizeInPoints()));
+    }
+
     /**
      * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell
      * type.
@@ -171,11 +176,6 @@ public class CellEditorPane extends JTextPane {
         default:
             throw new IllegalStateException();
         }
-    }
-
-    static java.awt.Font getAwtFont(Font font, double scale) {
-        int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-        return new java.awt.Font(font.getFamily(), style, (int) Math.round(scale * font.getSizeInPoints()));
     }
 
     private VAlign vAlign = VAlign.ALIGN_TOP;

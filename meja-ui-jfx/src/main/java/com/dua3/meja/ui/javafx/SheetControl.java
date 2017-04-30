@@ -38,16 +38,16 @@ public abstract class SheetControl extends Control
         return sheetView.getSheetPainter();
     }
 
+    protected void layoutChanged() {
+        fireEvent(new Event(EVENT_TYPE_LAYOUT_CHANGED));
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         assert evt.getSource() == sheetView;
         if (evt.getPropertyName().equals(SheetView.PROPERTY_SHEET)) {
             layoutChanged();
         }
-    }
-
-    protected void layoutChanged() {
-        fireEvent(new Event(EVENT_TYPE_LAYOUT_CHANGED));
     }
 
 }

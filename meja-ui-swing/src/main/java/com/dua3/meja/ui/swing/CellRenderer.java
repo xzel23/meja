@@ -27,7 +27,7 @@ public interface CellRenderer {
 
     /**
      * Render cell content.
-     * 
+     *
      * @param g
      *            the {@link Graphics2D} to use for rendering
      * @param cell

@@ -61,7 +61,8 @@ public abstract class WorkbookReader {
      * @throws IOException
      *             if the workbook could not be read
      */
-    public abstract <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in, URI uri)
+    public abstract <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in,
+            URI uri)
             throws IOException;
 
     /**

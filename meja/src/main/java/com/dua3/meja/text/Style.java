@@ -56,15 +56,6 @@ public class Style {
         return properties.equals(other.properties);
     }
 
-    @Override
-    public int hashCode() {
-        return properties.hashCode();
-    }
-
-    public Map<String, String> properties() {
-        return Collections.unmodifiableMap(properties);
-    }
-
     String get(String property) {
         return properties.get(property);
     }
@@ -74,6 +65,15 @@ public class Style {
         // return properties.getOrDefault(property, def);
         String s = properties.get(property);
         return s != null ? s : def;
+    }
+
+    @Override
+    public int hashCode() {
+        return properties.hashCode();
+    }
+
+    public Map<String, String> properties() {
+        return Collections.unmodifiableMap(properties);
     }
 
     void put(String property, String value) {

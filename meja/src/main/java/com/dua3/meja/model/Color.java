@@ -195,6 +195,19 @@ public final class Color
         return Collections.unmodifiableMap(COLORS);
     }
 
+    private static Color register(String name, int code) {
+        Color c = new Color(code);
+        COLORS.put(name, c);
+        return c;
+    }
+
+    private static int shiftComponentValue(int value, int bits) {
+        if (value < 0 || value > 255) {
+            throw new IllegalArgumentException();
+        }
+        return value << bits;
+    }
+
     public static Color valueOf(String s) {
         // try named colors first
         Color color = COLORS.get(s);
@@ -247,20 +260,11 @@ public final class Color
         return COLORS.values();
     }
 
-    private static Color register(String name, int code) {
-        Color c = new Color(code);
-        COLORS.put(name, c);
-        return c;
-    }
-
-    private static int shiftComponentValue(int value, int bits) {
-        if (value < 0 || value > 255) {
-            throw new IllegalArgumentException();
-        }
-        return value << bits;
-    }
-
     private final int argb;
+
+    private Color(int argb) {
+        this.argb = argb;
+    }
 
     public Color(int r, int g, int b) {
         this(r, g, b, 255);
@@ -271,10 +275,6 @@ public final class Color
                 + shiftComponentValue(r, SHIFT_R)
                 + shiftComponentValue(g, SHIFT_G)
                 + shiftComponentValue(b, SHIFT_B);
-    }
-
-    private Color(int argb) {
-        this.argb = argb;
     }
 
     public int a() {

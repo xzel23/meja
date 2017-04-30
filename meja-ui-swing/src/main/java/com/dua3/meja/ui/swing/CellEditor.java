@@ -27,14 +27,14 @@ public interface CellEditor {
 
     /**
      * Check editing state.
-     * 
+     *
      * @return true if CellEditor is currently used to edit a cell
      */
     boolean isEditing();
 
     /**
      * Start editing.
-     * 
+     *
      * @param cell
      *            the cell to be edited
      * @return the component that is used for editing
@@ -43,7 +43,7 @@ public interface CellEditor {
 
     /**
      * Stop editing.
-     * 
+     *
      * @param commit
      *            if true, changes will be applied to the edited cell
      */

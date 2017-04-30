@@ -107,6 +107,20 @@ public final class PoiCell
 
     }
 
+    void addedToMergedRegion(PoiCell topLeftCell, int spanX, int spanY) {
+        if (this.getRowNumber() == topLeftCell.getRowNumber()
+                && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
+            this.logicalCell = topLeftCell;
+            this.spanX = spanX;
+            this.spanY = spanY;
+        } else {
+            clear();
+            this.logicalCell = topLeftCell;
+            this.spanX = 0;
+            this.spanY = 0;
+        }
+    }
+
     @Override
     public void clear() {
         if (!isEmpty()) {
@@ -260,6 +274,15 @@ public final class PoiCell
         return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
     }
 
+    private PoiFont getFontForFormattingRun(RichTextString richText, int i) {
+        if (richText instanceof HSSFRichTextString) {
+            HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
+            return ((PoiWorkbook.PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i));
+        } else {
+            return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
+        }
+    }
+
     @Override
     public String getFormula() {
         return poiCell.getCellFormula();
@@ -333,6 +356,28 @@ public final class PoiCell
     }
 
     @SuppressWarnings("deprecation")
+    private boolean isCellDateFormatted() {
+        /*
+         * DateUtil.isCellDateFormatted() throws IllegalStateException when cell
+         * is not numeric, so we have to work around this. TODO create SCCSE and
+         * report bug against POI
+         */
+        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
+        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
+            poiType = poiCell.getCachedFormulaResultTypeEnum();
+        }
+        return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC
+                && DateUtil.isCellDateFormatted(poiCell);
+    }
+
+    boolean isDateFormat(PoiCellStyle cellStyle) {
+        org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
+        int i = style.getDataFormat();
+        String f = style.getDataFormatString();
+        return DateUtil.isADateFormat(i, f);
+    }
+
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isEmpty() {
         switch (poiCell.getCellTypeEnum()) {
@@ -343,6 +388,12 @@ public final class PoiCell
         default:
             return false;
         }
+    }
+
+    void removedFromMergedRegion() {
+        this.logicalCell = this;
+        this.spanX = 1;
+        this.spanY = 1;
     }
 
     @Override
@@ -465,6 +516,26 @@ public final class PoiCell
         getSheet().cellStyleChanged(this, old, cellStyle);
     }
 
+    private void setCellStyleDate(PoiCellStyle cellStyle) {
+        if (isDateFormat(cellStyle)) {
+            // nothing to do
+            return;
+        }
+
+        // try to get a version adapted to dates
+        String dateStyleName = cellStyle.getName() + "#DATE#";
+        if (!getWorkbook().hasCellStyle(dateStyleName)) {
+            // if that doesn't exist, create a new format
+            PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
+            dateStyle.copyStyle(cellStyle);
+            Locale locale = getWorkbook().getLocale();
+            String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, null,
+                    IsoChronology.INSTANCE, locale);
+            dateStyle.setDataFormat(pattern);
+        }
+        setCellStyle(getWorkbook().getCellStyle(dateStyleName));
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public PoiCell setFormula(String arg) {
@@ -562,50 +633,6 @@ public final class PoiCell
         getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
     }
 
-    private PoiFont getFontForFormattingRun(RichTextString richText, int i) {
-        if (richText instanceof HSSFRichTextString) {
-            HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
-            return ((PoiWorkbook.PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i));
-        } else {
-            return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i));
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private boolean isCellDateFormatted() {
-        /*
-         * DateUtil.isCellDateFormatted() throws IllegalStateException when cell
-         * is not numeric, so we have to work around this. TODO create SCCSE and
-         * report bug against POI
-         */
-        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
-        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
-            poiType = poiCell.getCachedFormulaResultTypeEnum();
-        }
-        return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC
-                && DateUtil.isCellDateFormatted(poiCell);
-    }
-
-    private void setCellStyleDate(PoiCellStyle cellStyle) {
-        if (isDateFormat(cellStyle)) {
-            // nothing to do
-            return;
-        }
-
-        // try to get a version adapted to dates
-        String dateStyleName = cellStyle.getName() + "#DATE#";
-        if (!getWorkbook().hasCellStyle(dateStyleName)) {
-            // if that doesn't exist, create a new format
-            PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
-            dateStyle.copyStyle(cellStyle);
-            Locale locale = getWorkbook().getLocale();
-            String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, null,
-                    IsoChronology.INSTANCE, locale);
-            dateStyle.setDataFormat(pattern);
-        }
-        setCellStyle(getWorkbook().getCellStyle(dateStyleName));
-    }
-
     /**
      * Update sheet data, ie. first and last cell numbers.
      */
@@ -613,33 +640,6 @@ public final class PoiCell
         if (getCellType() != CellType.BLANK) {
             getRow().setColumnUsed(getColumnNumber());
         }
-    }
-
-    void addedToMergedRegion(PoiCell topLeftCell, int spanX, int spanY) {
-        if (this.getRowNumber() == topLeftCell.getRowNumber()
-                && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
-            this.logicalCell = topLeftCell;
-            this.spanX = spanX;
-            this.spanY = spanY;
-        } else {
-            clear();
-            this.logicalCell = topLeftCell;
-            this.spanX = 0;
-            this.spanY = 0;
-        }
-    }
-
-    boolean isDateFormat(PoiCellStyle cellStyle) {
-        org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
-        int i = style.getDataFormat();
-        String f = style.getDataFormatString();
-        return DateUtil.isADateFormat(i, f);
-    }
-
-    void removedFromMergedRegion() {
-        this.logicalCell = this;
-        this.spanX = 1;
-        this.spanY = 1;
     }
 
 }

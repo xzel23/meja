@@ -34,21 +34,6 @@ public interface SheetView {
     final String PROPERTY_SHEET = "sheet";
 
     /**
-     * Get the grid color.
-     *
-     * @return color of grid
-     */
-    public Color getGridColor();
-
-    /**
-     * Set the grid color.
-     *
-     * @param gridColor
-     *            the color for th grid
-     */
-    public void setGridColor(Color gridColor);
-
-    /**
      * Add a new listener.
      *
      * @param listener
@@ -65,6 +50,13 @@ public interface SheetView {
      *            the listener
      */
     void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+
+    /**
+     * Get the grid color.
+     *
+     * @return color of grid
+     */
+    public Color getGridColor();
 
     /**
      * Get the sheet for this view.
@@ -128,6 +120,14 @@ public interface SheetView {
      *            true to allow editing
      */
     void setEditable(boolean editable);
+
+    /**
+     * Set the grid color.
+     *
+     * @param gridColor
+     *            the color for th grid
+     */
+    public void setGridColor(Color gridColor);
 
     /**
      * Set sheet to display.

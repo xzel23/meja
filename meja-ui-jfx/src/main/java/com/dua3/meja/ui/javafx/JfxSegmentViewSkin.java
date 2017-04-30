@@ -21,18 +21,6 @@ public class JfxSegmentViewSkin extends SkinBase<JfxSegmentView> {
         redraw();
     }
 
-    private double getPreferredHeight() {
-        return getView().getViewHeight();
-    }
-
-    private double getPreferredWidth() {
-        return getView().getViewWidth();
-    }
-
-    private JfxSegmentView getView() {
-        return (JfxSegmentView) getNode();
-    }
-
     @Override
     protected double computeMinHeight(double width, double topInset, double rightInset, double bottomInset,
             double leftInset) {
@@ -55,6 +43,18 @@ public class JfxSegmentViewSkin extends SkinBase<JfxSegmentView> {
     protected double computePrefWidth(double height, double topInset, double rightInset, double bottomInset,
             double leftInset) {
         return getPreferredWidth();
+    }
+
+    private double getPreferredHeight() {
+        return getView().getViewHeight();
+    }
+
+    private double getPreferredWidth() {
+        return getView().getViewWidth();
+    }
+
+    private JfxSegmentView getView() {
+        return (JfxSegmentView) getNode();
     }
 
     protected void init(JfxSegmentView control) {

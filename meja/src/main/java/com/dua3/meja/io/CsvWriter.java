@@ -84,11 +84,6 @@ public class CsvWriter extends Csv
         out.flush();
     }
 
-    public void nextRow() throws IOException {
-        out.write(lineDelimiter);
-        fieldsInRow = 0;
-    }
-
     private boolean isQuoteNeeded(String text) {
         // quote if separator or delimiter are present
         if (text.indexOf(separator) >= 0 || text.indexOf(delimiter) >= 0) {
@@ -102,6 +97,11 @@ public class CsvWriter extends Csv
             }
         }
         return false;
+    }
+
+    public void nextRow() throws IOException {
+        out.write(lineDelimiter);
+        fieldsInRow = 0;
     }
 
     private String quote(String text) {

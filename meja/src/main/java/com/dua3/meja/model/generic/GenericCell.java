@@ -87,6 +87,27 @@ public class GenericCell
         initData(colNumber);
     }
 
+    void addedToMergedRegion(GenericCell logicalCell, int spanX, int spanY) {
+        if (getHorizontalSpan() != 1 || getVerticalSpan() != 1) {
+            throw new IllegalStateException("Cell is already merged.");
+        }
+
+        if (spanX > Short.MAX_VALUE) {
+            throw new IllegalArgumentException("Maximum horizontal span number is " + Short.MAX_VALUE + ".");
+        }
+
+        if (this == logicalCell) {
+            this.logicalCell = logicalCell;
+            setHorizontalSpan(spanX);
+            setVerticalSpan(spanY);
+        } else {
+            clear();
+            this.logicalCell = logicalCell;
+            setHorizontalSpan(0);
+            setVerticalSpan(0);
+        }
+    }
+
     @Override
     public void clear() {
         Object old = value;
@@ -256,9 +277,23 @@ public class GenericCell
         return row.getWorkbook();
     }
 
+    private void initData(int colNr) {
+        if (colNr < 0 || colNr > MAX_COLUMN_NUMBER) {
+            throw new IllegalArgumentException();
+        }
+
+        data = (((long) colNr) << 48) | INITIAL_DATA;
+    }
+
     @Override
     public boolean isEmpty() {
         return getCellType() == CellType.BLANK;
+    }
+
+    void removedFromMergedRegion() {
+        this.logicalCell = this;
+        setHorizontalSpan(1);
+        setVerticalSpan(1);
     }
 
     @Override
@@ -286,6 +321,22 @@ public class GenericCell
     @Override
     public GenericCell set(Object arg) {
         MejaHelper.set(this, arg);
+        return this;
+    }
+
+    private GenericCell set(Object arg, CellType type) {
+        GenericSheet sheet = getSheet();
+        arg = sheet.getWorkbook().cache(arg);
+        if (arg != value || type != getCellType()) {
+            Object old = value;
+            if (arg == null) {
+                clear();
+            } else {
+                setCellType(type);
+                value = arg;
+            }
+            sheet.cellValueChanged(this, old, arg);
+        }
         return this;
     }
 
@@ -320,15 +371,35 @@ public class GenericCell
         }
     }
 
+    private void setCellType(CellType type) {
+        data = (data & 0xffff_ffff_ffff_ff00L) | type.ordinal();
+    }
+
     @Override
     public GenericCell setFormula(String value) {
         set(value, CellType.FORMULA);
         return this;
     }
 
+    private void setHorizontalSpan(int spanX) {
+        if (spanX < 0 || spanX > MAX_HORIZONTAL_SPAN) {
+            throw new IllegalArgumentException();
+        }
+
+        data = (data & 0xffff_0000_ffff_ffffL) | (((long) spanX) << 32);
+    }
+
     @Override
     public void setStyle(String cellStyleName) {
         this.cellStyle = getSheet().getWorkbook().getCellStyle(cellStyleName);
+    }
+
+    private void setVerticalSpan(int spanY) {
+        if (spanY < 0 || spanY > MAX_VERTICAL_SPAN) {
+            throw new IllegalArgumentException();
+        }
+
+        data = (data & 0xffff_ffff_0000_00ffL) | (((long) spanY) << 8);
     }
 
     @Override
@@ -364,77 +435,6 @@ public class GenericCell
                 }
             }
         }
-    }
-
-    private void initData(int colNr) {
-        if (colNr < 0 || colNr > MAX_COLUMN_NUMBER) {
-            throw new IllegalArgumentException();
-        }
-
-        data = (((long) colNr) << 48) | INITIAL_DATA;
-    }
-
-    private GenericCell set(Object arg, CellType type) {
-        GenericSheet sheet = getSheet();
-        arg = sheet.getWorkbook().cache(arg);
-        if (arg != value || type != getCellType()) {
-            Object old = value;
-            if (arg == null) {
-                clear();
-            } else {
-                setCellType(type);
-                value = arg;
-            }
-            sheet.cellValueChanged(this, old, arg);
-        }
-        return this;
-    }
-
-    private void setCellType(CellType type) {
-        data = (data & 0xffff_ffff_ffff_ff00L) | type.ordinal();
-    }
-
-    private void setHorizontalSpan(int spanX) {
-        if (spanX < 0 || spanX > MAX_HORIZONTAL_SPAN) {
-            throw new IllegalArgumentException();
-        }
-
-        data = (data & 0xffff_0000_ffff_ffffL) | (((long) spanX) << 32);
-    }
-
-    private void setVerticalSpan(int spanY) {
-        if (spanY < 0 || spanY > MAX_VERTICAL_SPAN) {
-            throw new IllegalArgumentException();
-        }
-
-        data = (data & 0xffff_ffff_0000_00ffL) | (((long) spanY) << 8);
-    }
-
-    void addedToMergedRegion(GenericCell logicalCell, int spanX, int spanY) {
-        if (getHorizontalSpan() != 1 || getVerticalSpan() != 1) {
-            throw new IllegalStateException("Cell is already merged.");
-        }
-
-        if (spanX > Short.MAX_VALUE) {
-            throw new IllegalArgumentException("Maximum horizontal span number is " + Short.MAX_VALUE + ".");
-        }
-
-        if (this == logicalCell) {
-            this.logicalCell = logicalCell;
-            setHorizontalSpan(spanX);
-            setVerticalSpan(spanY);
-        } else {
-            clear();
-            this.logicalCell = logicalCell;
-            setHorizontalSpan(0);
-            setVerticalSpan(0);
-        }
-    }
-
-    void removedFromMergedRegion() {
-        this.logicalCell = this;
-        setHorizontalSpan(1);
-        setVerticalSpan(1);
     }
 
 }

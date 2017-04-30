@@ -45,13 +45,19 @@ public class CsvReader extends Csv
     // the bytes sequence the UTF-8 BOM
     private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
+    static CsvReader create(RowBuilder builder, BufferedReader reader, Options options) throws IOException {
+        CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
+        return csvReader;
+    }
+
     public static CsvReader create(RowBuilder builder, File file, Options options) throws IOException {
         Charset cs = getCharset(options);
         return create(builder, Files.newBufferedReader(file.toPath(), cs), options);
     }
 
     public static CsvReader create(RowBuilder builder, InputStream in, Options options) throws IOException {
-        // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet selection in options)
+        // auto-detect UTF-8 with BOM (BOM marker overrides the CharSet
+        // selection in options)
         Charset charset = getCharset(options);
         if (in.markSupported()) {
             int bomLength = UTF8_BOM_BYTES.length;
@@ -66,11 +72,6 @@ public class CsvReader extends Csv
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(in, charset));
         return create(builder, reader, options);
-    }
-
-    static CsvReader create(RowBuilder builder, BufferedReader reader, Options options) throws IOException {
-        CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
-        return csvReader;
     }
 
     private RowBuilder rowBuilder;
@@ -189,6 +190,10 @@ public class CsvReader extends Csv
         return rowsRead;
     }
 
+    private String getSource() {
+        return source;
+    }
+
     @Override
     public int ignoreRows(int rowsToIgnore) throws IOException {
         int ignored = 0;
@@ -214,48 +219,6 @@ public class CsvReader extends Csv
         RowBuilder.ListRowBuilder rb = new RowBuilder.ListRowBuilder();
         readRow(rb);
         columnNames = rb.getRow();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.dua3.data.DataReader#read(int)
-     */
-    @Override
-    public int readSome(int rowsToRead) throws IOException {
-        if (rowsToRead > 0) {
-            return readRows(rowsToRead);
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * @param columnNames
-     *            the columnNames to set
-     */
-    public void setColumnNames(List<String> columnNames) {
-        this.columnNames = columnNames;
-    }
-
-    /**
-     * @param ignoreExcessFields
-     *            the ignoreExcessFields to set
-     */
-    public void setIgnoreExcessFields(boolean ignoreExcessFields) {
-        this.ignoreExcessFields = ignoreExcessFields;
-    }
-
-    /**
-     * @param ignoreMissingFields
-     *            the ignoreMissingFields to set
-     */
-    public void setIgnoreMissingFields(boolean ignoreMissingFields) {
-        this.ignoreMissingFields = ignoreMissingFields;
-    }
-
-    private String getSource() {
-        return source;
     }
 
     /**
@@ -350,6 +313,44 @@ public class CsvReader extends Csv
             read++;
         }
         return read;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.dua3.data.DataReader#read(int)
+     */
+    @Override
+    public int readSome(int rowsToRead) throws IOException {
+        if (rowsToRead > 0) {
+            return readRows(rowsToRead);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * @param columnNames
+     *            the columnNames to set
+     */
+    public void setColumnNames(List<String> columnNames) {
+        this.columnNames = columnNames;
+    }
+
+    /**
+     * @param ignoreExcessFields
+     *            the ignoreExcessFields to set
+     */
+    public void setIgnoreExcessFields(boolean ignoreExcessFields) {
+        this.ignoreExcessFields = ignoreExcessFields;
+    }
+
+    /**
+     * @param ignoreMissingFields
+     *            the ignoreMissingFields to set
+     */
+    public void setIgnoreMissingFields(boolean ignoreMissingFields) {
+        this.ignoreMissingFields = ignoreMissingFields;
     }
 
 }

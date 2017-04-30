@@ -43,7 +43,7 @@ public class JfxWorkbookView extends BorderPane
 
     /**
      * Get the {@link JfxSheetView} that is currently visible.
-     * 
+     *
      * @return the {@link JfxSheetView} displayed on the visible tab of this
      *         view
      */
@@ -74,7 +74,7 @@ public class JfxWorkbookView extends BorderPane
 
     /**
      * Get view for sheet.
-     * 
+     *
      * @param sheetName
      *            name of the sheet
      * @return the view for the requested sheet or {@code null} if not found
@@ -97,7 +97,7 @@ public class JfxWorkbookView extends BorderPane
 
     /**
      * Get Workbook.
-     * 
+     *
      * @return the workbook displayed
      */
     @Override
@@ -107,7 +107,7 @@ public class JfxWorkbookView extends BorderPane
 
     /**
      * Set editable state.
-     * 
+     *
      * @param editable
      *            set to {@code true} to allow editing of the displayed workbook
      */
@@ -128,7 +128,7 @@ public class JfxWorkbookView extends BorderPane
 
     /**
      * Set the workbook.
-     * 
+     *
      * @param workbook
      *            the workbook to display
      */

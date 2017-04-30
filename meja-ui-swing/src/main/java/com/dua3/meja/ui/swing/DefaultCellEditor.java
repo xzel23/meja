@@ -72,7 +72,7 @@ public class DefaultCellEditor
             public Action getAction(final DefaultCellEditor editor) {
                 return new AbstractAction("ABORT") {
                     /**
-                     * 
+                     *
                      */
                     private static final long serialVersionUID = 1L;
 

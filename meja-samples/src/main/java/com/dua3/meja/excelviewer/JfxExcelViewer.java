@@ -57,73 +57,6 @@ public class JfxExcelViewer extends Application {
 
     private final JfxWorkbookView view = new JfxWorkbookView();
 
-    @Override
-    public void start(Stage primaryStage) {
-        BorderPane root = new BorderPane();
-        Scene scene = new Scene(root, 800, 600);
-
-        // File menu
-        final Menu mFile = new Menu("File");
-
-        final MenuItem miOpen = new MenuItem("Open...");
-        miOpen.setOnAction((e) -> showOpenDialog(primaryStage));
-
-        final MenuItem miSave = new MenuItem("Save");
-        miSave.setOnAction((e) -> saveWorkbook());
-        miSave.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook() == null));
-
-        final MenuItem miSaveAs = new MenuItem("Save");
-        miSaveAs.setOnAction((e) -> showSaveAsDialog());
-        miSaveAs.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook() == null));
-
-        final MenuItem miExit = new MenuItem("Exit");
-        miExit.setOnAction(e -> closeApplication());
-        mFile.getItems().addAll(miOpen, miSave, miSaveAs, new SeparatorMenuItem(), miExit);
-
-        // Edit menu
-        final Menu mEdit = new Menu("Edit");
-
-        final MenuItem miAdjustColumns = new MenuItem("Adjust all column widths");
-        miAdjustColumns.setOnAction((e) -> model.adjustColumns(getCurrentView()));
-
-        mEdit.getItems().addAll(miAdjustColumns);
-
-        // Options menu
-        final Menu mOptions = new Menu("Options");
-
-        final Menu mZoom = new Menu("Zoom");
-        for (final int zoom : new int[] { 25, 50, 75, 100, 125, 150, 200, 400 }) {
-            final MenuItem miZoom = new MenuItem(zoom + "%");
-            miZoom.setOnAction((e) -> setZoom(zoom / 100.0f));
-            mZoom.getItems().add(miZoom);
-        }
-
-        final MenuItem miFreeze = new MenuItem("Freeze");
-        miFreeze.setOnAction((e) -> model.freezeAtCurrentCell(getCurrentView()));
-
-        mOptions.getItems().addAll(mZoom, new SeparatorMenuItem(), miFreeze);
-
-        // Help menu
-        final Menu mHelp = new Menu("Help");
-        final MenuItem miAbout = new MenuItem("About...");
-        miAbout.setOnAction((e) -> showAboutDialog());
-        mHelp.getItems().addAll(miAbout);
-
-        // create and add the menubar
-        MenuBar mb = new MenuBar(mFile, mEdit, mOptions, mHelp);
-
-        root.setTop(mb);
-
-        // create workbook view
-        view.setMaxWidth(Double.MAX_VALUE);
-        view.setMaxHeight(Double.MAX_VALUE);
-        root.setCenter(view);
-
-        primaryStage.setTitle(APPLICATION_NAME);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
     private void closeApplication() {
         Platform.exit();
     }
@@ -197,6 +130,73 @@ public class JfxExcelViewer extends Application {
                                                                        // Tools
                                                                        // |
                                                                        // Templates.
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        BorderPane root = new BorderPane();
+        Scene scene = new Scene(root, 800, 600);
+
+        // File menu
+        final Menu mFile = new Menu("File");
+
+        final MenuItem miOpen = new MenuItem("Open...");
+        miOpen.setOnAction((e) -> showOpenDialog(primaryStage));
+
+        final MenuItem miSave = new MenuItem("Save");
+        miSave.setOnAction((e) -> saveWorkbook());
+        miSave.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook() == null));
+
+        final MenuItem miSaveAs = new MenuItem("Save");
+        miSaveAs.setOnAction((e) -> showSaveAsDialog());
+        miSaveAs.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook() == null));
+
+        final MenuItem miExit = new MenuItem("Exit");
+        miExit.setOnAction(e -> closeApplication());
+        mFile.getItems().addAll(miOpen, miSave, miSaveAs, new SeparatorMenuItem(), miExit);
+
+        // Edit menu
+        final Menu mEdit = new Menu("Edit");
+
+        final MenuItem miAdjustColumns = new MenuItem("Adjust all column widths");
+        miAdjustColumns.setOnAction((e) -> model.adjustColumns(getCurrentView()));
+
+        mEdit.getItems().addAll(miAdjustColumns);
+
+        // Options menu
+        final Menu mOptions = new Menu("Options");
+
+        final Menu mZoom = new Menu("Zoom");
+        for (final int zoom : new int[] { 25, 50, 75, 100, 125, 150, 200, 400 }) {
+            final MenuItem miZoom = new MenuItem(zoom + "%");
+            miZoom.setOnAction((e) -> setZoom(zoom / 100.0f));
+            mZoom.getItems().add(miZoom);
+        }
+
+        final MenuItem miFreeze = new MenuItem("Freeze");
+        miFreeze.setOnAction((e) -> model.freezeAtCurrentCell(getCurrentView()));
+
+        mOptions.getItems().addAll(mZoom, new SeparatorMenuItem(), miFreeze);
+
+        // Help menu
+        final Menu mHelp = new Menu("Help");
+        final MenuItem miAbout = new MenuItem("About...");
+        miAbout.setOnAction((e) -> showAboutDialog());
+        mHelp.getItems().addAll(miAbout);
+
+        // create and add the menubar
+        MenuBar mb = new MenuBar(mFile, mEdit, mOptions, mHelp);
+
+        root.setTop(mb);
+
+        // create workbook view
+        view.setMaxWidth(Double.MAX_VALUE);
+        view.setMaxHeight(Double.MAX_VALUE);
+        root.setCenter(view);
+
+        primaryStage.setTitle(APPLICATION_NAME);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     private void workbookChanged(URI oldUri, URI newUri) {

@@ -34,15 +34,6 @@ public interface Cell {
     public final String ERROR_TEXT = "#ERROR";
 
     /**
-     * Set formula
-     *
-     * @param value
-     *            the formula as a string
-     * @return this cell
-     */
-    public Cell setFormula(String value);
-
-    /**
      * Clear the cell`s content.
      */
     void clear();
@@ -311,6 +302,15 @@ public interface Cell {
      *            cell style
      */
     void setCellStyle(CellStyle cellStyle);
+
+    /**
+     * Set formula
+     *
+     * @param value
+     *            the formula as a string
+     * @return this cell
+     */
+    public Cell setFormula(String value);
 
     /**
      * Sets the cell style registered under name in the workbook.
