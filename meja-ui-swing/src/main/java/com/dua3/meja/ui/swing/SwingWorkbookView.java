@@ -57,7 +57,7 @@ public class SwingWorkbookView extends JComponent
      */
     @Override
     public SwingSheetView getCurrentView() {
-        Component component = content.getSelectedComponent();
+        Component component = content != null ? content.getSelectedComponent() : null;
         return component instanceof SwingSheetView ? (SwingSheetView) component : null;
     }
 
