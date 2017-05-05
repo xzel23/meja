@@ -240,7 +240,6 @@ public final class PoiCell
 
     @Override
     public CellType getCellType() {
-        @SuppressWarnings("deprecation")
         CellType type = translateCellType(poiCell.getCellTypeEnum());
         // since formulas returning dates should return CellType.FORMULA
         // rather than CellType.DATE, only test for dates if cell is numeric.
@@ -306,7 +305,6 @@ public final class PoiCell
         return poiCell.getNumericCellValue();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public CellType getResultType() {
         org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
@@ -355,7 +353,6 @@ public final class PoiCell
         return poiCell.hashCode();
     }
 
-    @SuppressWarnings("deprecation")
     private boolean isCellDateFormatted() {
         /*
          * DateUtil.isCellDateFormatted() throws IllegalStateException when cell
@@ -377,7 +374,6 @@ public final class PoiCell
         return DateUtil.isADateFormat(i, f);
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public boolean isEmpty() {
         switch (poiCell.getCellTypeEnum()) {

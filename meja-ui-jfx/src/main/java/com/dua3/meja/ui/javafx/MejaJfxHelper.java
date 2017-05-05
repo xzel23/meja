@@ -84,7 +84,7 @@ public class MejaJfxHelper {
 
         if (type.isPresent()) {
             // load workbook using the factory from the used filter definition
-            final WorkbookFactory factory = type.get().getFactory();
+            final WorkbookFactory<?> factory = type.get().getFactory();
             return Optional.of(factory.open(file));
         } else {
             // another filter was used (ie. "all files")

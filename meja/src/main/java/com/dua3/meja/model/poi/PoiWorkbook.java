@@ -34,6 +34,7 @@ import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -115,7 +116,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
         @Override
         Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
-            if (poiColor == null || poiColor == HSSFColor.AUTOMATIC.getInstance()) {
+            if (poiColor == null || poiColor == HSSFColorPredefined.AUTOMATIC.getColor()) {
                 return defaultColor;
             }
 

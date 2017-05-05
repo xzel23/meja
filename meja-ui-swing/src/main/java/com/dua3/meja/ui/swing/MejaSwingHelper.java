@@ -53,7 +53,6 @@ import com.dua3.meja.util.Options;
  */
 public class MejaSwingHelper {
 
-    @SuppressWarnings("serial")
     public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
         return new AbstractAction(name) {
             /**
@@ -68,7 +67,6 @@ public class MejaSwingHelper {
         };
     }
 
-    @SuppressWarnings("serial")
     public static Action createAction(String name, Runnable onActionPerformed) {
         return new AbstractAction(name) {
             /**
@@ -90,7 +88,6 @@ public class MejaSwingHelper {
      *            the sheet to create a model for
      * @return table model instance of {@code JTableModel} for the sheet
      */
-    @SuppressWarnings("serial")
     public static TableModel getTableModel(final Sheet sheet) {
         return new AbstractTableModel() {
 
@@ -170,7 +167,7 @@ public class MejaSwingHelper {
             // get factory from the used filter definition
             final SwingFileFilter swingFileFilter = (SwingFileFilter) filter;
             final FileType fileType = swingFileFilter.getFileType();
-            final WorkbookFactory factory = swingFileFilter.getFactory();
+            final WorkbookFactory<?> factory = swingFileFilter.getFactory();
 
             // ask user for file type specific settings
             List<Option<?>> settings = fileType.getSettings();

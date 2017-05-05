@@ -49,7 +49,6 @@ import com.dua3.meja.ui.swing.SwingWorkbookView;
  *
  * @author axel
  */
-@SuppressWarnings("serial")
 public class SwingExcelViewer extends JFrame
         implements ExcelViewerModel.ExcelViewer {
 

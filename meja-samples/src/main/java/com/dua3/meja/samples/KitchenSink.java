@@ -21,7 +21,6 @@ import com.dua3.meja.ui.swing.SwingWorkbookView;
  *
  * @author a5xysq1
  */
-@SuppressWarnings("serial")
 public class KitchenSink extends JFrame {
 
     /**
@@ -63,7 +62,7 @@ public class KitchenSink extends JFrame {
         }
     }
 
-    private static Workbook createWorkbook(WorkbookFactory factory) {
+    private static Workbook createWorkbook(WorkbookFactory<?> factory) {
         Workbook wb = factory.create();
 
         addColorSheet(wb);

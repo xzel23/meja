@@ -98,14 +98,14 @@ public enum FileType {
     }
 
     private final String description;
-    private final WorkbookFactory factory;
+    private final WorkbookFactory<?> factory;
     private final Supplier<WorkbookWriter> writer;
 
     private final Supplier<WorkbookReader> reader;
 
     private final String[] extensions;
 
-    private FileType(String description, WorkbookFactory factory, Supplier<WorkbookReader> reader,
+    private FileType(String description, WorkbookFactory<?> factory, Supplier<WorkbookReader> reader,
             Supplier<WorkbookWriter> writer, String... extensions) {
         this.description = description;
         this.factory = factory;
@@ -142,7 +142,7 @@ public enum FileType {
      *
      * @return instance of {@link WorkbookFactory}
      */
-    public WorkbookFactory getFactory() {
+    public WorkbookFactory<?> getFactory() {
         return factory;
     }
 

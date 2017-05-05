@@ -50,7 +50,6 @@ public class DefaultCellEditor
     static enum Actions {
 
         COMMIT {
-            @SuppressWarnings("serial")
             @Override
             public Action getAction(final DefaultCellEditor editor) {
                 return new AbstractAction("COMMIT") {
@@ -67,7 +66,6 @@ public class DefaultCellEditor
             }
         },
         ABORT {
-            @SuppressWarnings("serial")
             @Override
             public Action getAction(final DefaultCellEditor editor) {
                 return new AbstractAction("ABORT") {

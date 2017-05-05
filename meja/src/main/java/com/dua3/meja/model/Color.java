@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * Color in ARGB format.
  */
-@SuppressWarnings("serial")
 public final class Color
         implements Serializable {
     /**

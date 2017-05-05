@@ -72,7 +72,7 @@ public class SwingFileFilter extends javax.swing.filechooser.FileFilter
      *
      * @return an instance of {@link WorkbookFactory} to use this filter with
      */
-    public WorkbookFactory getFactory() {
+    public WorkbookFactory<?> getFactory() {
         return fileType.getFactory();
     }
 
