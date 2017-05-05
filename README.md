@@ -8,7 +8,11 @@ Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 ## Requirements
 - JDK 8
  
-Required libraries will be downloaded by gradle.
+Other required libraries (Apache POI) will be automatically downloaded by gradle.
+
+## Installation
+
+Clone the repository and run gradlew build.
 
 ## Documentation
 More information is available on the project`s [github pages](http://xzel23.github.io/meja/) where you will also find the [API docs](http://xzel23.github.io/meja/doc/index.html).
@@ -26,8 +30,8 @@ Meja is released under the [Apache License 2.0](http://www.apache.org/licenses/L
 ## Questions?
 *So why not just use Apache POI?* While it's a great library (and it is used for processing excel files by Meja), there is no support for other file types, and while newer versions introduced interfaces that make using the same code for old and new file types (.xls and .xlsx) much easier, this goal has not yet been fully reached.
 
-*Why a custom component instead of a just a table model to be used together with JTable?* Because of JTable limitations. In fact, I started with JTable and abandoned that path when I tried to render merged cells correctly.
+*Why a custom Swing component instead of a just a table model to be used together with JTable?* Because of JTable limitations. In fact, I started with JTable and abandoned that path when I tried to render merged cells correctly.
 
 *But my table still doesn't look the same as in Excel!* Just grab the code, I am looking forward to your contribution.
 
-*And what about the name?* This library is about tables, and it's about working with tables in Java. So I called it after the javanese word for the furniture. (Normally, it is written without accent, but found it to look more interesting like this...)
+*And what about the name?* This library is about tables, and it's about working with tables in Java. So I called it after the javanese word for the furniture.
