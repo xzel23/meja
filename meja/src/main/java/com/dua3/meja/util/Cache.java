@@ -26,7 +26,7 @@ import java.util.function.Function;
  * <p>
  * This class is not intended as a replacement for {@code JCache} (JSR 107).
  * </p>
- * 
+ *
  * @param <KEY>
  *            key class
  * @param <VALUE>
@@ -73,7 +73,7 @@ public class Cache<KEY, VALUE> {
 
     private final Map<KEY, SoftReference<VALUE>> items;
 
-    protected Cache(Type type, Function<KEY, VALUE> compute) {
+    public Cache(Type type, Function<KEY, VALUE> compute) {
         this.compute = compute;
         switch (type) {
         case STRONG_KEYS:
@@ -108,5 +108,10 @@ public class Cache<KEY, VALUE> {
         }
 
         return item;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Cache backed by %s [%d entries]", items.getClass().getSimpleName(), items.size());
     }
 }
