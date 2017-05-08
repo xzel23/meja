@@ -62,6 +62,8 @@ import com.dua3.meja.util.MejaHelper;
 public class SwingExcelViewer extends JFrame
         implements ExcelViewerModel.ExcelViewer, DropTargetListener {
 
+    private static final Logger LOG = Logger.getLogger(SwingExcelViewer.class.getName());
+
     /**
      *
      */
@@ -92,7 +94,7 @@ public class SwingExcelViewer extends JFrame
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         }
 
         ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
@@ -115,7 +117,7 @@ public class SwingExcelViewer extends JFrame
                 Workbook workbook = MejaHelper.openWorkbook(file);
                 model.setWorkbook(workbook);
             } catch (IOException ex) {
-                Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE,
+                LOG.log(Level.SEVERE,
                         "Could not load workbook from " + file.getAbsolutePath(), ex);
             }
         }
@@ -144,7 +146,7 @@ public class SwingExcelViewer extends JFrame
      * Close the application window.
      */
     protected void closeApplication() {
-        Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Closing.");
+        LOG.log(Level.INFO, "Closing.");
         dispose();
     }
 
@@ -367,7 +369,7 @@ public class SwingExcelViewer extends JFrame
                 model.saveWorkbook(uri.get());
             }
         } catch (IOException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "IO-Error saving workbook", ex);
+            LOG.log(Level.SEVERE, "IO-Error saving workbook", ex);
             JOptionPane.showMessageDialog(
                     this,
                     "IO-Error saving workbook.",
@@ -386,7 +388,7 @@ public class SwingExcelViewer extends JFrame
             UIManager.setLookAndFeel(lookAndFeelClassName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         }
         SwingUtilities.updateComponentTreeUI(this);
     }
@@ -409,7 +411,7 @@ public class SwingExcelViewer extends JFrame
                 workbookChanged(oldUri.orElse(null), newUri.orElse(null));
             }
         } catch (IOException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
+            LOG.log(Level.SEVERE, "Exception loading workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -425,10 +427,10 @@ public class SwingExcelViewer extends JFrame
             if (uri.isPresent()) {
                 workbook.setUri(uri.get());
                 updateUri(uri.get());
-                Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.INFO, "Successfully saved ''{0}''.", uri);
+                LOG.log(Level.INFO, "Successfully saved ''{0}''.", uri);
             }
         } catch (IOException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception saving workbook.", ex);
+            LOG.log(Level.SEVERE, "Exception saving workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -490,16 +492,16 @@ public class SwingExcelViewer extends JFrame
                     workbookChanged(oldUri.orElse(null), newUri.orElse(null));
                     dtde.getDropTargetContext().dropComplete(true);
                 } else {
+                    LOG.log(Level.WARNING, "Could not process dropped item '{0}'.", String.valueOf(file));
                     dtde.getDropTargetContext().dropComplete(false);
                 }
               }
             } else {
-              System.err.println("DataFlavor.javaFileListFlavor is not supported, rejected");
+              LOG.log(Level.WARNING, "DataFlavor.javaFileListFlavor is not supported, drop rejected.");
               dtde.rejectDrop();
             }
           } catch (Exception ex) {
-            System.err.println("Exception: ");
-            ex.printStackTrace();
+            LOG.log(Level.SEVERE, "Exception when processing dropped item, rejecting drop.", ex);
             dtde.rejectDrop();
           }
     }
