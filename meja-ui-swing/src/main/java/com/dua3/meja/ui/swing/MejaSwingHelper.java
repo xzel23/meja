@@ -167,24 +167,36 @@ public class MejaSwingHelper {
             // get factory from the used filter definition
             final SwingFileFilter swingFileFilter = (SwingFileFilter) filter;
             final FileType fileType = swingFileFilter.getFileType();
-            final WorkbookFactory<?> factory = swingFileFilter.getFactory();
-
-            // ask user for file type specific settings
-            List<Option<?>> settings = fileType.getSettings();
-            Options importSettings = Options.empty(); // default is empty
-            if (!settings.isEmpty()) {
-                SettingsDialog dialog = new SettingsDialog(parent, fileType.name() + " - Settings",
-                        "Please verify the import settings:", settings);
-                dialog.setVisible(true);
-                importSettings = dialog.getResult();
-            }
-
-            // load
-            return Optional.of(factory.open(file, importSettings));
+            return openWorkbook(parent, file, fileType);
         } else {
             // another filter was used (ie. "all files")
             return Optional.of(MejaHelper.openWorkbook(file));
         }
+    }
+
+    public static Optional<Workbook> openWorkbook(Component parent, File file) throws IOException {
+        return openWorkbook(parent, file, FileType.forFile(file));
+    }
+
+    public static Optional<Workbook> openWorkbook(Component parent, File file, final FileType fileType) throws IOException {
+        if (fileType==null) {
+            return Optional.empty();
+        }
+
+        final WorkbookFactory<?> factory = fileType.getFactory();
+
+        // ask user for file type specific settings
+        List<Option<?>> settings = fileType.getSettings();
+        Options importSettings = Options.empty(); // default is empty
+        if (!settings.isEmpty()) {
+            SettingsDialog dialog = new SettingsDialog(parent, fileType.name() + " - Settings",
+                    "Please verify the import settings:", settings);
+            dialog.setVisible(true);
+            importSettings = dialog.getResult();
+        }
+
+        // load
+        return Optional.of(factory.open(file, importSettings));
     }
 
     /**

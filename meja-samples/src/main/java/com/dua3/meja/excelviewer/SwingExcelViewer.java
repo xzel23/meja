@@ -16,12 +16,21 @@
 package com.dua3.meja.excelviewer;
 
 import java.awt.BorderLayout;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -42,6 +51,7 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.ui.swing.MejaSwingHelper;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
+import com.dua3.meja.util.MejaHelper;
 
 /**
  * A sample Swing application that uses the Meja library to load and display
@@ -50,7 +60,7 @@ import com.dua3.meja.ui.swing.SwingWorkbookView;
  * @author axel
  */
 public class SwingExcelViewer extends JFrame
-        implements ExcelViewerModel.ExcelViewer {
+        implements ExcelViewerModel.ExcelViewer, DropTargetListener {
 
     /**
      *
@@ -102,7 +112,8 @@ public class SwingExcelViewer extends JFrame
         if (file != null) {
             try {
                 model.setCurrentDir(file.getParentFile());
-                model.openWorkbook(file);
+                Workbook workbook = MejaHelper.openWorkbook(file);
+                model.setWorkbook(workbook);
             } catch (IOException ex) {
                 Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE,
                         "Could not load workbook from " + file.getAbsolutePath(), ex);
@@ -126,6 +137,7 @@ public class SwingExcelViewer extends JFrame
         createMenu();
         createContent();
         pack();
+        setDropTarget(new DropTarget(this, this));
     }
 
     /**
@@ -438,6 +450,58 @@ public class SwingExcelViewer extends JFrame
         firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
         workbookView.setWorkbook(model.getWorkbook());
         updateUri(newUri);
+    }
+
+    @Override
+    public void dragEnter(DropTargetDragEvent dtde) {
+        // nop
+    }
+
+    @Override
+    public void dragOver(DropTargetDragEvent dtde) {
+        // nop
+    }
+
+    @Override
+    public void dropActionChanged(DropTargetDragEvent dtde) {
+        // nop
+    }
+
+    @Override
+    public void dragExit(DropTargetEvent dte) {
+        // nop
+    }
+
+    @Override
+    public void drop(DropTargetDropEvent dtde) {
+        try {
+            Transferable tr = dtde.getTransferable();
+            if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+              dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+              @SuppressWarnings("unchecked")
+              List<File> files = (List<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
+              if (files.size() == 1) {
+                final Optional<URI> oldUri = model.getUri();
+                File file = files.get(0);
+                Optional<Workbook> workbook = MejaSwingHelper.openWorkbook(this, file);
+                if (workbook.isPresent()) {
+                    model.setWorkbook(workbook.get());
+                    final Optional<URI> newUri = model.getUri();
+                    workbookChanged(oldUri.orElse(null), newUri.orElse(null));
+                    dtde.getDropTargetContext().dropComplete(true);
+                } else {
+                    dtde.getDropTargetContext().dropComplete(false);
+                }
+              }
+            } else {
+              System.err.println("DataFlavor.javaFileListFlavor is not supported, rejected");
+              dtde.rejectDrop();
+            }
+          } catch (Exception ex) {
+            System.err.println("Exception: ");
+            ex.printStackTrace();
+            dtde.rejectDrop();
+          }
     }
 
 }

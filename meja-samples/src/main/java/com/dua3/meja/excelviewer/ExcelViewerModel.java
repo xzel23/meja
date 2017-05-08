@@ -14,7 +14,6 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -119,10 +118,6 @@ public class ExcelViewerModel {
 
     public Workbook getWorkbook() {
         return workbook;
-    }
-
-    void openWorkbook(File file) throws IOException {
-        setWorkbook(MejaHelper.openWorkbook(file));
     }
 
     public void saveWorkbook(URI uri) throws IOException {
