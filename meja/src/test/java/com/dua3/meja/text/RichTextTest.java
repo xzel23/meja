@@ -15,8 +15,9 @@
  */
 package com.dua3.meja.text;
 
-// FIXME JDK 8 import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
+
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -40,8 +41,7 @@ public class RichTextTest {
 
         RichText rt = builder.toRichText();
         assertEquals("Hello world!", rt.toString());
-        // FIXME Java 8 assertEquals("Hello world!",
-        // rt.stream().collect(Collectors.joining()));
+        assertEquals("Hello world!", rt.stream().collect(Collectors.joining()));
     }
 
 }
