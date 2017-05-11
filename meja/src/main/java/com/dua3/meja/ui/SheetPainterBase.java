@@ -512,7 +512,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * @return the columnPos
      */
     public double getColumnPos(int j) {
-        return columnPos[j];
+        return columnPos[Math.min(columnPos.length-1, j)];
     }
 
     protected Color getGridColor() {
@@ -585,7 +585,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * @return the rowPos
      */
     public double getRowPos(int i) {
-        return rowPos[i];
+        return rowPos[Math.min(rowPos.length-1, i)];
     }
 
     protected Color getSelectionColor() {
