@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import java.awt.font.FontRenderContext;
 import java.util.Objects;
 
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -24,6 +25,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Font;
+import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -157,6 +159,13 @@ public class PoiFont
     @Override
     public boolean isUnderlined() {
         return getPoiFont().getUnderline() != org.apache.poi.ss.usermodel.Font.U_NONE;
+    }
+
+    @Override
+    public float getTextWidth(String text) {
+        java.awt.Font awtFont = MejaHelper.getAwtFont(this);
+        FontRenderContext fontRenderContext = new FontRenderContext(awtFont.getTransform(), false, false);
+        return (float) awtFont.getStringBounds(text, fontRenderContext).getWidth();
     }
 
 }

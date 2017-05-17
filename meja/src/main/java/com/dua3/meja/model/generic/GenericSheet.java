@@ -29,6 +29,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.Font;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaHelper;
@@ -113,10 +114,10 @@ public class GenericSheet
         for (Row row : this) {
             Cell cell = row.getCellIfExists(j);
             if (cell != null && cell.getCellType() != CellType.BLANK) {
-                float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
-                float aspect = DEFAULT_FONT_ASPECT_RATIO;
-                int chars = cell.toString().length();
-                colWidth = Math.max(colWidth, fontSize * chars * aspect);
+                String text = cell.toString();
+                Font font = cell.getCellStyle().getFont();
+                float width = font.getTextWidth(text);
+                colWidth = Math.max(colWidth, width);
             }
         }
         setColumnWidth(j, colWidth);

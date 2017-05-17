@@ -37,6 +37,7 @@ import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import com.dua3.meja.text.RichText;
+import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -137,11 +138,6 @@ public class CellEditorPane extends JTextPane {
 
     private static final long serialVersionUID = 1L;
 
-    static java.awt.Font getAwtFont(Font font, double scale) {
-        int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-        return new java.awt.Font(font.getFamily(), style, (int) Math.round(scale * font.getSizeInPoints()));
-    }
-
     /**
      * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell
      * type.
@@ -225,7 +221,7 @@ public class CellEditorPane extends JTextPane {
     public void setContent(Cell cell, double scale, boolean eval) {
         CellStyle cellStyle = cell.getCellStyle();
         final Font font = cellStyle.getFont();
-        setFont(getAwtFont(font, scale));
+        setFont(MejaHelper.getAwtFont(font, scale));
         setBackground(MejaSwingHelper.toAwtColor(cellStyle.getFillBgColor()));
         setForeground(MejaSwingHelper.toAwtColor(font.getColor()));
 

@@ -15,8 +15,11 @@
  */
 package com.dua3.meja.model.generic;
 
+import java.awt.font.FontRenderContext;
+
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Font;
+import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -32,6 +35,30 @@ public class GenericFont
     private final Boolean italic;
     private final Boolean underline;
     private final Boolean strikeThrough;
+
+    private Measurer measurer;
+
+    private static class Measurer {
+        private final java.awt.Font awtFont;
+        private final java.awt.font.FontRenderContext awtFontRenderContext;
+
+        Measurer (Font font) {
+            this.awtFont = MejaHelper.getAwtFont(font);
+            this.awtFontRenderContext = new FontRenderContext(awtFont.getTransform(), true, true);
+        }
+
+        float getTextWidth(String text) {
+            return (float) awtFont.getStringBounds(text, awtFontRenderContext).getWidth();
+        }
+    }
+
+    private Measurer getMeasurer() {
+        // we do not need AtomicReference - worst case is an unnecessary object created and GCed again
+        if (measurer==null) {
+            measurer = new Measurer(this);
+        }
+        return measurer;
+    }
 
     /**
      * Construct a new {@code GenericFont}.
@@ -144,4 +171,8 @@ public class GenericFont
         return underline;
     }
 
+    @Override
+    public float getTextWidth(String text) {
+        return getMeasurer().getTextWidth(text);
+    }
 }

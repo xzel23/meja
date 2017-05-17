@@ -246,4 +246,11 @@ public interface Font {
      */
     boolean isUnderlined();
 
+    /**
+     * Calculate width of text.
+     * @param text the text
+     * @return width in points
+     */
+    float getTextWidth(String text);
+
 }
