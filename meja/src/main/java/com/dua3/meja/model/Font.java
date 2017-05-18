@@ -253,6 +253,11 @@ public interface Font {
      */
     float getTextWidth(String text);
 
+    /**
+     * Get the corresponding AWT font instance.
+     * @return instance of java.awt.Font for this font
+     */
+    java.awt.Font toAwtFont();
 
     /**
      * Get a description of the font.

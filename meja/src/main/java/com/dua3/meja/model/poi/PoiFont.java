@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.awt.font.FontRenderContext;
 import java.util.Objects;
 
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -25,14 +24,13 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Font;
-import com.dua3.meja.util.MejaHelper;
+import com.dua3.meja.model.generic.AbstractFont;
 
 /**
  *
  * @author axel
  */
-public class PoiFont
-        implements Font {
+public class PoiFont extends AbstractFont {
 
     /**
      *
@@ -53,27 +51,32 @@ public class PoiFont
      *            the font to copy
      */
     public PoiFont(PoiWorkbook workbook, Font other) {
-        this.workbook = workbook;
-        this.poiFont = workbook.getPoiWorkbook().createFont();
-        this.poiFont.setFontHeightInPoints((short) Math.round(other.getSizeInPoints()));
-        this.poiFont.setFontName(other.getFamily());
+        this(workbook, createPoiFont(workbook, other));
+    }
+
+    private static org.apache.poi.ss.usermodel.Font createPoiFont(PoiWorkbook workbook, Font other) {
+        org.apache.poi.ss.usermodel.Font poiFont = workbook.getPoiWorkbook().createFont();
+        poiFont.setFontHeightInPoints((short) Math.round(other.getSizeInPoints()));
+        poiFont.setFontName(other.getFamily());
 
         final org.apache.poi.ss.usermodel.Color poiTextColor = workbook.getPoiColor(other.getColor());
         if (poiFont instanceof HSSFFont && poiTextColor instanceof HSSFColor) {
-            this.poiFont.setColor(((HSSFColor) poiTextColor).getIndex());
+            poiFont.setColor(((HSSFColor) poiTextColor).getIndex());
         } else if (poiFont instanceof XSSFFont && poiTextColor instanceof XSSFColor) {
-            ((XSSFFont) this.poiFont).setColor((XSSFColor) poiTextColor);
+            ((XSSFFont) poiFont).setColor((XSSFColor) poiTextColor);
         } else {
             // it should both either be XSSF _or_ HSSF implementations so this
             // line should never be reached.
             throw new IllegalStateException();
         }
 
-        this.poiFont.setBold(other.isBold());
-        this.poiFont.setItalic(other.isItalic());
-        this.poiFont.setStrikeout(other.isStrikeThrough());
-        this.poiFont.setUnderline(other.isUnderlined() ? org.apache.poi.ss.usermodel.Font.U_SINGLE
+        poiFont.setBold(other.isBold());
+        poiFont.setItalic(other.isItalic());
+        poiFont.setStrikeout(other.isStrikeThrough());
+        poiFont.setUnderline(other.isUnderlined() ? org.apache.poi.ss.usermodel.Font.U_SINGLE
                 : org.apache.poi.ss.usermodel.Font.U_NONE);
+
+        return poiFont;
     }
 
     /**
@@ -85,6 +88,8 @@ public class PoiFont
      *            the POI font instance
      */
     public PoiFont(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Font poiFont) {
+        super(poiFont.getFontName(), poiFont.getFontHeightInPoints(), workbook.getColor(poiFont, Color.BLACK),
+                poiFont.getBold(), poiFont.getItalic(), poiFont.getUnderline()!= org.apache.poi.ss.usermodel.Font.U_NONE, poiFont.getStrikeout());
         this.workbook = workbook;
         this.poiFont = poiFont;
     }
@@ -160,14 +165,6 @@ public class PoiFont
     public boolean isUnderlined() {
         return getPoiFont().getUnderline() != org.apache.poi.ss.usermodel.Font.U_NONE;
     }
-
-    @Override
-    public float getTextWidth(String text) {
-        java.awt.Font awtFont = MejaHelper.getAwtFont(this);
-        FontRenderContext fontRenderContext = new FontRenderContext(awtFont.getTransform(), false, false);
-        return (float) awtFont.getStringBounds(text, fontRenderContext).getWidth();
-    }
-
 
     @Override
     public String toString() {

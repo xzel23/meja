@@ -15,18 +15,14 @@
  */
 package com.dua3.meja.model.generic;
 
-import java.awt.font.FontRenderContext;
-
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Font;
-import com.dua3.meja.util.MejaHelper;
 
 /**
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class GenericFont
-        implements Font {
+public class GenericFont extends AbstractFont {
 
     private final Color color;
     private final Float size;
@@ -36,41 +32,15 @@ public class GenericFont
     private final Boolean underline;
     private final Boolean strikeThrough;
 
-    private Measurer measurer;
-
-    private static class Measurer {
-        private final java.awt.Font awtFont;
-        private final java.awt.font.FontRenderContext awtFontRenderContext;
-
-        Measurer (Font font) {
-            this.awtFont = MejaHelper.getAwtFont(font);
-            this.awtFontRenderContext = new FontRenderContext(awtFont.getTransform(), true, true);
-        }
-
-        float getTextWidth(String text) {
-            return (float) awtFont.getStringBounds(text, awtFontRenderContext).getWidth();
-        }
-    }
-
-    private Measurer getMeasurer() {
-        // we do not need AtomicReference - worst case is an unnecessary object created and GCed again
-        if (measurer==null) {
-            measurer = new Measurer(this);
-        }
-        return measurer;
+    public static GenericFont copyOf(Font other) {
+        return other instanceof GenericFont ? (GenericFont) other: new GenericFont(other);
     }
 
     /**
      * Construct a new {@code GenericFont}.
      */
     public GenericFont() {
-        this.color = Color.BLACK;
-        this.size = 10f;
-        this.family = "Helvetica";
-        this.bold = false;
-        this.italic = false;
-        this.underline = false;
-        this.strikeThrough = false;
+        this("Helvetica",10f,Color.BLACK,false,false,false,false);
     }
 
     /**
@@ -84,13 +54,7 @@ public class GenericFont
      *            the font to copy
      */
     public GenericFont(Font other) {
-        this.color = other.getColor();
-        this.size = other.getSizeInPoints();
-        this.family = other.getFamily();
-        this.bold = other.isBold();
-        this.italic = other.isItalic();
-        this.underline = other.isUnderlined();
-        this.strikeThrough = other.isStrikeThrough();
+        this(other.getFamily(), other.getSizeInPoints(), other.getColor(), other.isBold(), other.isItalic(), other.isUnderlined(), other.isStrikeThrough());
     }
 
     /**
@@ -113,6 +77,7 @@ public class GenericFont
      */
     public GenericFont(String family, float size, Color color, boolean bold, boolean italic, boolean underlined,
             boolean strikeThrough) {
+        super(family, size, color, bold, italic, underlined, strikeThrough);
         this.color = color;
         this.size = size;
         this.family = family;
@@ -169,15 +134,5 @@ public class GenericFont
     @Override
     public boolean isUnderlined() {
         return underline;
-    }
-
-    @Override
-    public float getTextWidth(String text) {
-        return getMeasurer().getTextWidth(text);
-    }
-
-    @Override
-    public String toString() {
-        return fontspec();
     }
 }

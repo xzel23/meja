@@ -34,7 +34,6 @@ import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.Font;
 import com.dua3.meja.model.RefOption;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.SearchOptions;
@@ -530,11 +529,6 @@ public class MejaHelper {
         } else {
             cell.set(String.valueOf(arg));
         }
-    }
-
-    public static java.awt.Font getAwtFont(Font font) {
-        int style = (font.isBold() ? java.awt.Font.BOLD : 0) | (font.isItalic() ? java.awt.Font.ITALIC : 0);
-        return new java.awt.Font(font.getFamily(), style, Math.round(font.getSizeInPoints()));
     }
 
     private MejaHelper() {

@@ -46,7 +46,7 @@ public class GenericCellStyle
 
     private final GenericWorkbook workbook;
 
-    private Font font;
+    private GenericFont font;
     private Color fillBgColor;
     private Color fillFgColor;
     private FillPattern fillPattern;
@@ -95,7 +95,6 @@ public class GenericCellStyle
         setFillPattern(other.getFillPattern());
         setFont(other.getFont());
         setWrap(other.isWrap());
-        setFont(new GenericFont(other.getFont()));
     }
 
     /**
@@ -172,7 +171,7 @@ public class GenericCellStyle
     }
 
     @Override
-    public Font getFont() {
+    public GenericFont getFont() {
         return font;
     }
 
@@ -230,7 +229,7 @@ public class GenericCellStyle
 
     @Override
     public void setFont(Font font) {
-        this.font = font;
+        this.font = GenericFont.copyOf(font);
     }
 
     @Override

@@ -39,7 +39,6 @@ import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import com.dua3.meja.text.RichText;
-import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -225,7 +224,7 @@ public class CellEditorPane extends JTextPane {
 
         Font font = cellStyle.getFont();
         AffineTransform transform = AffineTransform.getScaleInstance(scale, scale);
-        final java.awt.Font awtFont = MejaHelper.getAwtFont(font).deriveFont(transform);
+        final java.awt.Font awtFont = font.toAwtFont().deriveFont(transform);
 
         setFont(awtFont);
         setBackground(MejaSwingHelper.toAwtColor(cellStyle.getFillBgColor()));
