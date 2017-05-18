@@ -253,4 +253,33 @@ public interface Font {
      */
     float getTextWidth(String text);
 
+
+    /**
+     * Get a description of the font.
+     * @return font description
+     */
+    default String fontspec() {
+        StringBuilder sb = new StringBuilder(32);
+
+        sb.append(getFamily());
+
+        if (isBold()) {
+            sb.append('-').append("bold");
+        }
+        if (isItalic()) {
+            sb.append('-').append("italic");
+        }
+        if (isUnderlined()) {
+            sb.append('-').append("underline");
+        }
+        if (isStrikeThrough()) {
+            sb.append('-').append("strikethrough");
+        }
+        sb.append('-');
+        sb.append(getSizeInPoints());
+        sb.append('-');
+        sb.append(getColor());
+
+        return sb.toString();
+    }
 }

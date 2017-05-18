@@ -168,4 +168,9 @@ public class PoiFont
         return (float) awtFont.getStringBounds(text, fontRenderContext).getWidth();
     }
 
+
+    @Override
+    public String toString() {
+        return fontspec();
+    }
 }

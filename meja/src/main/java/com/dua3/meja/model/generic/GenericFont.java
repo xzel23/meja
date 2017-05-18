@@ -175,4 +175,9 @@ public class GenericFont
     public float getTextWidth(String text) {
         return getMeasurer().getTextWidth(text);
     }
+
+    @Override
+    public String toString() {
+        return fontspec();
+    }
 }

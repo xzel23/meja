@@ -114,9 +114,7 @@ public class GenericSheet
         for (Row row : this) {
             Cell cell = row.getCellIfExists(j);
             if (cell != null && cell.getCellType() != CellType.BLANK) {
-                String text = cell.toString();
-                Font font = cell.getCellStyle().getFont();
-                float width = font.getTextWidth(text);
+                float width = calcCellWidth(cell);
                 colWidth = Math.max(colWidth, width);
             }
         }
@@ -134,10 +132,8 @@ public class GenericSheet
             for (int j = 0; j < n; j++) {
                 Cell cell = row.getCellIfExists(j);
                 if (cell != null && cell.getCellType() != CellType.BLANK) {
-                    float fontSize = cell.getCellStyle().getFont().getSizeInPoints();
-                    float aspect = DEFAULT_FONT_ASPECT_RATIO;
-                    int chars = cell.toString().length();
-                    colWidth[j] = Math.max(colWidth[j], fontSize * chars * aspect);
+                    float width = calcCellWidth(cell);
+                    colWidth[j] = Math.max(colWidth[j], width);
                 }
             }
         }
@@ -145,6 +141,19 @@ public class GenericSheet
         for (int j = 0; j < n; j++) {
             setColumnWidth(j, colWidth[j]);
         }
+    }
+
+    // helper method used to calculate a cell's width
+    private float calcCellWidth(Cell cell) {
+        // calculate the exact width
+        String text = cell.toString();
+        Font font = cell.getCellStyle().getFont();
+        float width = font.getTextWidth(text);
+
+        // add half the font size as spacing on the sides
+        width += font.getSizeInPoints()/2;
+
+        return width;
     }
 
     void cellStyleChanged(GenericCell cell, Object old, Object arg) {

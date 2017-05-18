@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.ui.swing;
 
+import java.awt.geom.AffineTransform;
+
 import javax.swing.JTextPane;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -220,8 +222,12 @@ public class CellEditorPane extends JTextPane {
      */
     public void setContent(Cell cell, double scale, boolean eval) {
         CellStyle cellStyle = cell.getCellStyle();
-        final Font font = cellStyle.getFont();
-        setFont(MejaHelper.getAwtFont(font, scale));
+
+        Font font = cellStyle.getFont();
+        AffineTransform transform = AffineTransform.getScaleInstance(scale, scale);
+        final java.awt.Font awtFont = MejaHelper.getAwtFont(font).deriveFont(transform);
+
+        setFont(awtFont);
         setBackground(MejaSwingHelper.toAwtColor(cellStyle.getFillBgColor()));
         setForeground(MejaSwingHelper.toAwtColor(font.getColor()));
 
