@@ -41,11 +41,6 @@ import com.dua3.meja.util.RectangularRegion;
 public class GenericSheet
         implements Sheet {
 
-    /**
-     * The aspect ratio to use when adjusting cell widths.
-     */
-    private static final float DEFAULT_FONT_ASPECT_RATIO = 0.52f;
-
     private static final float DEFAULT_COLUMN_WIDTH = 80f;
     private static final float DEFAULT_ROW_HEIGHT = 12f;
 
