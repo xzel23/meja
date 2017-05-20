@@ -223,8 +223,7 @@ public class CellEditorPane extends JTextPane {
         CellStyle cellStyle = cell.getCellStyle();
 
         Font font = cellStyle.getFont();
-        AffineTransform transform = AffineTransform.getScaleInstance(scale, scale);
-        final java.awt.Font awtFont = font.toAwtFont().deriveFont(transform);
+        final java.awt.Font awtFont = font.toAwtFont().deriveFont((float)scale*font.getSizeInPoints());
 
         setFont(awtFont);
         setBackground(MejaSwingHelper.toAwtColor(cellStyle.getFillBgColor()));
