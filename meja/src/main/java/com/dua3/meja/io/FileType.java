@@ -16,11 +16,13 @@
 package com.dua3.meja.io;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.dua3.meja.model.WorkbookFactory;
@@ -68,16 +70,33 @@ public enum FileType {
      * @return matching instance of {@link FileType} or {@code null} if none
      *         found
      */
-    public static FileType forFile(File file) {
+    public static Optional<FileType> forFile(File file) {
         String fileNameLower = file.getName().toLowerCase(Locale.ROOT);
+        return findFileType(fileNameLower);
+    }
+
+    /**
+     * Tries to determine the FileType instance matching the given path.
+     *
+     * @param path
+     *            the path to determine the FileType for
+     * @return matching instance of {@link FileType} or {@code null} if none
+     *         found
+     */
+    public static Optional<FileType> forPath(Path path) {
+        String fileNameLower = path.toString().toLowerCase(Locale.ROOT);
+        return findFileType(fileNameLower);
+    }
+
+    private static Optional<FileType> findFileType(String fileNameLower) {
         for (FileType type : values()) {
             for (String ext : type.extensions) {
                 if (fileNameLower.endsWith(ext.substring(1).toLowerCase(Locale.ROOT))) {
-                    return type;
+                    return Optional.of(type);
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**

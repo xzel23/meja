@@ -17,10 +17,11 @@ package com.dua3.meja.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.File;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -207,16 +208,16 @@ public interface Workbook
     }
 
     /**
-     * Get the URI for this workbook.
+     * Get the Path for this workbook.
      *
      * <p>
-     * When a workbook is opened, the URI is set so that it can be used to later
-     * save the file back to the same location.
+     * When a workbook is opened, the Path is set so that it can be used to later
+     * save the workbook back to the same location.
      * </p>
      *
-     * @return the URI for this workbook
+     * @return the Path for this workbook
      */
-    Optional<URI> getUri();
+    Optional<Path> getPath();
 
     /**
      * Check if a style with this name is defined.
@@ -291,53 +292,52 @@ public interface Workbook
     void setObjectCaching(boolean enabled);
 
     /**
-     * Set URI for this workbook. See {@link #getUri}.
+     * Set Path for this workbook. See {@link #getPath}.
      *
-     * @param uri
-     *            the URI to set.
+     * @param path
+     *            the Path to set.
      */
-    void setUri(URI uri);
+    void setPath(Path path);
 
     /**
-     * Writes the workbook to a file using standard options.
+     * Writes the workbook to a path using standard options.
      *
-     * @param file
-     *            the file to write to.
+     * @param path
+     *            the path to write to.
      *            <p>
      *            The file format to used is determined by the extension of
-     *            {@code file} which must be one of the extensions defined in
+     *            {@code path} which must be one of the extensions defined in
      *            {@link FileType}.
      *            </p>
-     * @param overwriteIfExists
-     *            set to true if an existing file should be overwritten
-     * @return true if workbook was written to file, otherwise false
      * @throws java.io.IOException
      *             if an I/O error occurs
      */
-    default boolean write(File file, boolean overwriteIfExists) throws IOException {
-        return write(file, overwriteIfExists, Options.empty());
+    default void write(Path path) throws IOException {
+        write(path, Options.empty());
     }
 
     /**
      * Writes the workbook to a file.
      *
-     * @param file
-     *            the file to write to.
+     * @param path
+     *            the path to write to.
      *            <p>
      *            The file format to used is determined by the extension of
-     *            {@code file} which must be one of the extensions defined in
+     *            {@code path} which must be one of the extensions defined in
      *            {@link FileType}.
      *            </p>
-     * @param overwriteIfExists
-     *            set to true if an existing file should be overwritten
      * @param options
      *            special options to use (supported options depend on the file
      *            type)
-     * @return true if workbook was written to file, otherwise false
      * @throws java.io.IOException
      *             if an I/O error occurs
      */
-    boolean write(File file, boolean overwriteIfExists, Options options) throws IOException;
+    default void write(Path path, Options options) throws IOException {
+        FileType type = FileType.forPath(path).orElse(FileType.CSV);
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
+            write(type, out, options);
+        }
+    }
 
     /**
      * Writes the workbook to a stream using default options.

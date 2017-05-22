@@ -16,18 +16,13 @@
 package com.dua3.meja.model.poi;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -52,8 +47,6 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
 
-    private static final Logger LOGGER = Logger.getLogger(PoiWorkbookFactory.class.getName());
-
     private static final OptionSet OPTIONS = new OptionSet();
 
     public static final String OPTION_LOCALE = "Locale";
@@ -66,11 +59,11 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     private static PoiWorkbook createWorkbook(
-            final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
+            final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, Path path) {
         if (poiWorkbook instanceof HSSFWorkbook) {
-            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, locale, uri);
+            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, locale, path);
         } else {
-            return new PoiXssfWorkbook(poiWorkbook, locale, uri);
+            return new PoiXssfWorkbook(poiWorkbook, locale, path);
         }
     }
 
@@ -89,16 +82,16 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      *
      * @param in
      * @param locale
-     * @param uri
+     * @param path
      * @return the workbook
      * @throws IOException
      */
-    private static PoiWorkbook open(InputStream in, Locale locale, URI uri)
+    private static PoiWorkbook open(InputStream in, Locale locale, Path path)
             throws IOException {
         try {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
                     .create(in);
-            return createWorkbook(poiWorkbook, locale, uri);
+            return createWorkbook(poiWorkbook, locale, path);
         } catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException
                 | org.apache.poi.util.RecordFormatException ex) {
             throw new FileFormatException("Invalid file format or corrupted data", ex);
@@ -182,21 +175,18 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     @Override
-    public PoiWorkbook open(File file, Options importSettings) throws IOException {
-        FileType type = FileType.forFile(file);
+    public PoiWorkbook open(Path path, Options importSettings) throws IOException {
+        FileType type = FileType.forPath(path).orElse(FileType.CSV);
 
         if (type == FileType.XLS || type == FileType.XLSX) {
             // Read Excel files directly using POI methods
             // Do not use the create(File) method to avoid exception when trying
             // to
             // save the workbook again to the same file.
-            try (InputStream in = Files.newInputStream(file.toPath())) {
+            try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
                 Locale locale = (Locale) importSettings.get(OPTIONS.getOption(OPTION_LOCALE).get()).getValue();
-                return open(in, locale, file.toURI());
+                return open(in, locale, path);
             }
-        } else if (type == null) {
-            // if type could not be determined, try to open as CSV
-            type = FileType.CSV;
         }
 
         if (!type.isSupported(OpenMode.READ)) {
@@ -204,70 +194,37 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
                     "Reading is not supported for files of type '" + type.getDescription() + "'.");
         }
 
-        return type.getReader().read(PoiWorkbookFactory.instance(), file);
+        return type.getReader().read(PoiWorkbookFactory.instance(), path);
     }
 
     /**
      *
-     * @param uri
-     *            URI of the workbook to open
+     * @param path
+     *            Path of the workbook to open
      * @return the workbook the workbook
      * @throws IOException
      *             if an error occurs
      */
-    public Workbook open(URI uri) throws IOException {
-        return open(uri, Locale.getDefault());
-    }
-
-    /**
-     *
-     * @param uri
-     *            URI of the workbook to open
-     * @param locale
-     *            locale to use
-     * @return the workbook the workbook
-     * @throws IOException
-     *             if an error occurs
-     */
-    public Workbook open(URI uri, Locale locale)
-            throws IOException {
-        return open(uri.toURL(), locale);
-    }
-
-    /**
-     *
-     * @param url
-     *            URL of the workbook to open
-     * @return the workbook the workbook
-     * @throws IOException
-     *             if an error occurs
-     */
-    public Workbook open(URL url) throws IOException {
-        return open(url, Locale.getDefault());
+    @Override
+    public PoiWorkbook open(Path path) throws IOException {
+        return open(path, Locale.getDefault());
     }
 
     /**
      * Open workbook from URL.
      *
-     * @param url
-     *            URL of the workbook to open
+     * @param path
+     *            Path of the workbook to open
      * @param locale
      *            the locale to use
      * @return the workbook the workbook
      * @throws IOException
      *             if an error occurs
      */
-    public Workbook open(URL url, Locale locale)
+    public PoiWorkbook open(Path path, Locale locale)
             throws IOException {
-        try (InputStream in = new BufferedInputStream(url.openStream())) {
-            URI uri;
-            try {
-                uri = url.toURI();
-            } catch (URISyntaxException ex) {
-                LOGGER.log(Level.WARNING, "Could not get URI from URL.", ex);
-                uri = null;
-            }
-            return open(in, locale, uri);
+        try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
+            return open(in, locale, path);
         }
     }
 

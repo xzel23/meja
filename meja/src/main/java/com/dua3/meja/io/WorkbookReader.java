@@ -15,10 +15,11 @@
  */
 package com.dua3.meja.io;
 
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
@@ -30,23 +31,6 @@ import com.dua3.meja.util.Options;
 public abstract class WorkbookReader {
 
     /**
-     * Read workbook from file.
-     *
-     * @param <WORKBOOK>
-     *            workbook class
-     * @param factory
-     *            the WorkbookFactory to use
-     * @param file
-     *            the file to read from
-     * @return the workbook read
-     * @throws IOException
-     *             if the workbook could not be read
-     */
-    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, File file) throws IOException {
-        return read(factory, file.toURI());
-    }
-
-    /**
      * Read workbook from stream.
      *
      * @param <WORKBOOK>
@@ -55,14 +39,14 @@ public abstract class WorkbookReader {
      *            the WorkbookFactory to use
      * @param in
      *            the stream to read from
-     * @param uri
-     *            the uri to set in the workbook
+     * @param path
+     *            the path to set in the workbook
      * @return the workbook read
      * @throws IOException
      *             if the workbook could not be read
      */
-    public abstract <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in,
-            URI uri)
+    protected abstract <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in,
+            Path path)
             throws IOException;
 
     /**
@@ -72,15 +56,15 @@ public abstract class WorkbookReader {
      *            workbook class
      * @param factory
      *            the WorkbookFactory to use
-     * @param uri
-     *            the uri to set in the workbook
+     * @param path
+     *            the path to set in the workbook from
      * @return the workbook read
      * @throws IOException
      *             if the workbook could not be read
      */
-    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, URI uri) throws IOException {
-        try (InputStream in = uri.toURL().openStream()) {
-            return read(factory, in, uri);
+    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, Path path) throws IOException {
+        try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
+            return read(factory, in, path);
         }
     }
 

@@ -15,11 +15,9 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,11 +77,11 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          *            the POI workbook instance
          * @param locale
          *            the locale to use
-         * @param uri
-         *            the URI of the workbook
+         * @param path
+         *            the Path of the workbook
          */
-        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Locale locale, URI uri) {
-            super(poiWorkbook, locale, uri);
+        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Locale locale, Path path) {
+            super(poiWorkbook, locale, path);
             this.defaultCellStyle = new PoiHssfCellStyle(this, poiWorkbook.getCellStyleAt((short) 0));
             cellStyles.put("", (short) 0);
             init();
@@ -187,11 +185,11 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          *            the POI workbook instance
          * @param locale
          *            the locale to use
-         * @param uri
-         *            the URI of the workbook
+         * @param path
+         *            the Path of the workbook
          */
-        public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
-            super(poiWorkbook, locale, uri);
+        public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, Path path) {
+            super(poiWorkbook, locale, path);
             assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt((short) 0));
             init();
@@ -311,11 +309,11 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      *            the POI workbook instance
      * @param locale
      *            the locale to use
-     * @param uri
-     *            the URI of this workbook
+     * @param path
+     *            the Path of this workbook
      */
-    protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, URI uri) {
-        super(locale, uri);
+    protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, Path path) {
+        super(locale, path);
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
         this.dataFormatter = new org.apache.poi.ss.usermodel.DataFormatter(locale);
@@ -646,23 +644,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         if (idx != oldIdx) {
             poiWorkbook.setActiveSheet(idx);
             pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
-        }
-    }
-
-    @Override
-    public boolean write(File file, boolean overwriteIfExists, Options options) throws IOException {
-        boolean exists = file.createNewFile();
-        if (!exists || overwriteIfExists) {
-            FileType type = FileType.forFile(file);
-            if (type == null) {
-                throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
-            }
-            try (OutputStream out = Files.newOutputStream(file.toPath())) {
-                write(type, out, options);
-            }
-            return true;
-        } else {
-            return false;
         }
     }
 

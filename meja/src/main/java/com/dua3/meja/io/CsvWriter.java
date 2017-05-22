@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.dua3.meja.util.Options;
 
@@ -40,8 +41,12 @@ public class CsvWriter extends Csv
     }
 
     public static CsvWriter create(File file, Options options) throws IOException {
+        return create(file.toPath(), options);
+    }
+
+    public static CsvWriter create(Path path, Options options) throws IOException {
         Charset cs = getCharset(options);
-        return create(Files.newBufferedWriter(file.toPath(), cs), options);
+        return create(Files.newBufferedWriter(path, cs), options);
     }
 
     public static CsvWriter create(OutputStream out, Options options) {

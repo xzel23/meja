@@ -20,7 +20,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -141,13 +142,16 @@ public class MejaSwingHelper {
      *
      * @param parent
      *            the parent component to use for the dialog
-     * @param file
-     *            the directory to set in the open dialog or the default file
+     * @param path
+     *            the directory to set in the open dialog or the default path
      * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException
      *             if a workbook was selected but could not be loaded
      */
-    public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, File file) throws IOException {
+    public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, Path path) throws IOException {
+        boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
+        File file = defaultFS ? path.toFile() : new File(".");
+
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         for (FileFilter filter : SwingFileFilter.getFilters(OpenMode.READ)) {
@@ -160,25 +164,25 @@ public class MejaSwingHelper {
             return Optional.empty();
         }
 
-        file = jfc.getSelectedFile();
+        path = jfc.getSelectedFile().toPath();
         FileFilter filter = jfc.getFileFilter();
 
         if (filter instanceof SwingFileFilter) {
             // get factory from the used filter definition
             final SwingFileFilter swingFileFilter = (SwingFileFilter) filter;
             final FileType fileType = swingFileFilter.getFileType();
-            return openWorkbook(parent, file, fileType);
+            return openWorkbook(parent, path, fileType);
         } else {
             // another filter was used (ie. "all files")
-            return Optional.of(MejaHelper.openWorkbook(file));
+            return Optional.of(MejaHelper.openWorkbook(path));
         }
     }
 
-    public static Optional<Workbook> openWorkbook(Component parent, File file) throws IOException {
-        return openWorkbook(parent, file, FileType.forFile(file));
+    public static Optional<Workbook> openWorkbook(Component parent, Path path) throws IOException {
+        return openWorkbook(parent, path, FileType.forPath(path).orElse(FileType.CSV));
     }
 
-    public static Optional<Workbook> openWorkbook(Component parent, File file, final FileType fileType) throws IOException {
+    public static Optional<Workbook> openWorkbook(Component parent, Path path, final FileType fileType) throws IOException {
         if (fileType==null) {
             return Optional.empty();
         }
@@ -196,7 +200,7 @@ public class MejaSwingHelper {
         }
 
         // load
-        return Optional.of(factory.open(file, importSettings));
+        return Optional.of(factory.open(path, importSettings));
     }
 
     /**
@@ -211,15 +215,18 @@ public class MejaSwingHelper {
      *            the parent component for the dialog
      * @param workbook
      *            the workbook to save
-     * @param file
-     *            the file to set the default path in the dialog
+     * @param path
+     *            the path to set the default path in the dialog
      * @return the URI the file was saved to or {@code null} if the user
      *         canceled the dialog
      * @throws IOException
      *             if an exception occurs while saving
      */
-    public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file)
+    public static Optional<Path> showDialogAndSaveWorkbook(Component parent, Workbook workbook, Path path)
             throws IOException {
+        boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
+        File file = defaultFS ? path.toFile() : new File(".");
+
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         int rc = jfc.showSaveDialog(parent);
@@ -242,14 +249,14 @@ public class MejaSwingHelper {
             }
         }
 
-        FileType type = FileType.forFile(file);
-        if (type != null) {
-            type.getWriter().write(workbook, file);
+        Optional<FileType> type = FileType.forFile(file);
+        if (type.isPresent()) {
+            type.get().getWriter().write(workbook, file.toPath());
         } else {
-            workbook.write(file, true);
+            workbook.write(file.toPath());
         }
 
-        return Optional.of(file.toURI());
+        return Optional.of(file.toPath());
     }
 
     public static Color toAwtColor(com.dua3.meja.model.Color color) {

@@ -3,9 +3,9 @@
  */
 package com.dua3.meja.excelviewer;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +28,7 @@ public class ExcelViewerModel {
 
         public void setEditable(boolean b);
 
-        public void workbookChanged(URI oldUri, URI newUri);
+        public void workbookChanged(Path oldPath, Path newPath);
     }
 
     enum MessageType {
@@ -51,8 +51,8 @@ public class ExcelViewerModel {
             + "See the License for the specific language governing permissions and%n"
             + "limitations under the License.%n";
 
-    private static Optional<URI> getUri(Workbook workbook) {
-        return workbook == null ? Optional.empty() : workbook.getUri();
+    private static Optional<Path> getPath(Workbook workbook) {
+        return workbook == null ? Optional.empty() : workbook.getPath();
     }
 
     private final String appName;
@@ -71,7 +71,7 @@ public class ExcelViewerModel {
      *
      * This is the default directory selected in the Open and Save To dialogs.
      */
-    private File currentDir = new File(".");
+    private Path currentPath = Paths.get("");
 
     ExcelViewerModel(String appName, int year, String author) {
         this.appName = appName;
@@ -104,41 +104,40 @@ public class ExcelViewerModel {
      *
      * @return current directory
      */
-    public File getCurrentDir() {
-        return currentDir;
+    public Path getCurrentPath() {
+        return currentPath;
     }
 
     public String getLicenseText() {
         return String.format(LICENSE, year, author);
     }
 
-    Optional<URI> getUri() {
-        return getUri(workbook);
+    Optional<Path> getPath() {
+        return getPath(workbook);
     }
 
     public Workbook getWorkbook() {
         return workbook;
     }
 
-    public void saveWorkbook(URI uri) throws IOException {
+    public void saveWorkbook(Path path) throws IOException {
         if (workbook == null) {
             LOGGER.log(Level.WARNING, "No Workbook open.");
             return;
         }
 
-        final File file = new File(uri);
-        workbook.write(file, true);
-        LOGGER.log(Level.INFO, "Workbook written to {0}.", file.getAbsolutePath());
+        workbook.write(path);
+        LOGGER.log(Level.INFO, "Workbook written to {0}.", path);
     }
 
     /**
      * Sets the current directory for this window.
      *
-     * @param currentDir
+     * @param path
      *            directory to set as current directory
      */
-    public void setCurrentDir(File currentDir) {
-        this.currentDir = currentDir;
+    public void setPath(Path path) {
+        this.currentPath = path;
     }
 
     /**
@@ -156,7 +155,7 @@ public class ExcelViewerModel {
             }
         }
         this.workbook = workbook;
-        LOGGER.log(Level.INFO, "Workbook changed to {0}.", getUri(this.workbook));
+        LOGGER.log(Level.INFO, "Workbook changed to {0}.", getPath(this.workbook));
     }
 
     protected void setZoom(float zoom) {

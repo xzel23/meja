@@ -29,7 +29,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -113,8 +113,9 @@ public class SwingExcelViewer extends JFrame
 
         if (file != null) {
             try {
-                model.setCurrentDir(file.getParentFile());
-                Workbook workbook = MejaHelper.openWorkbook(file);
+                Path path = file.toPath();
+                model.setPath(path);
+                Workbook workbook = MejaHelper.openWorkbook(path);
                 model.setWorkbook(workbook);
             } catch (IOException ex) {
                 LOG.log(Level.SEVERE,
@@ -355,18 +356,18 @@ public class SwingExcelViewer extends JFrame
             return;
         }
 
-        Optional<URI> uri = workbook.getUri();
+        Optional<Path> path = workbook.getPath();
         try {
-            if (!uri.isPresent()) {
-                final Optional<URI> newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
-                        model.getCurrentDir());
-                if (!newUri.isPresent()) {
+            if (!path.isPresent()) {
+                final Optional<Path> newPath = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
+                        model.getCurrentPath());
+                if (!newPath.isPresent()) {
                     // user cancelled the dialog
                     return;
                 }
-                workbookChanged(null /* uri */, newUri.get());
+                workbookChanged(null /* uri */, newPath.get());
             } else {
-                model.saveWorkbook(uri.get());
+                model.saveWorkbook(path.get());
             }
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "IO-Error saving workbook", ex);
@@ -402,18 +403,23 @@ public class SwingExcelViewer extends JFrame
      */
     private void showOpenDialog() {
         try {
-            final Optional<URI> oldUri = model.getUri();
+            final Optional<Path> oldPath = model.getPath();
             final Optional<Workbook> newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this,
-                    model.getCurrentDir());
+                    model.getCurrentPath());
             if (newWorkbook.isPresent()) {
                 model.setWorkbook(newWorkbook.get());
-                final Optional<URI> newUri = model.getUri();
-                workbookChanged(oldUri.orElse(null), newUri.orElse(null));
+                final Optional<Path> newPath = model.getPath();
+                workbookChanged(oldPath.orElse(null), newPath.orElse(null));
             }
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Exception loading workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Unknown Exception caught, will be rethrown after message dialog: "+ ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw ex; //rethrow
         }
     }
 
@@ -423,35 +429,38 @@ public class SwingExcelViewer extends JFrame
     private void showSaveAsDialog() {
         try {
             Workbook workbook = model.getWorkbook();
-            final Optional<URI> uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentDir());
-            if (uri.isPresent()) {
-                workbook.setUri(uri.get());
-                updateUri(uri.get());
-                LOG.log(Level.INFO, "Successfully saved ''{0}''.", uri);
+            final Optional<Path> path = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentPath());
+            if (path.isPresent()) {
+                workbook.setPath(path.get());
+                updatePath(path.get());
+                LOG.log(Level.INFO, "Successfully saved ''{0}''.", path.get());
             }
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Exception saving workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Unknown Exception caught, will be rethrown after message dialog: "+ ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            throw ex; //rethrow
         }
     }
 
-    private void updateUri(URI uri) {
-        if (uri != null) {
-            setTitle(APPLICATION_NAME + " - " + uri.getPath());
-            if (uri.getScheme().equalsIgnoreCase("file")) {
-                model.setCurrentDir(new File(uri).getParentFile());
-            }
+    private void updatePath(Path path) {
+        if (path != null) {
+            setTitle(APPLICATION_NAME + " - " + path.toString());
+            model.setPath(path);
         } else {
             setTitle(APPLICATION_NAME);
         }
     }
 
     @Override
-    public void workbookChanged(URI oldUri, URI newUri) {
-        firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
+    public void workbookChanged(Path oldPath, Path newPath) {
+        firePropertyChange(PROPERTY_FILE_CHANGED, oldPath, newPath);
         workbookView.setWorkbook(model.getWorkbook());
-        updateUri(newUri);
+        updatePath(newPath);
     }
 
     @Override
@@ -483,16 +492,16 @@ public class SwingExcelViewer extends JFrame
               @SuppressWarnings("unchecked")
               List<File> files = (List<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
               if (files.size() == 1) {
-                final Optional<URI> oldUri = model.getUri();
-                File file = files.get(0);
-                Optional<Workbook> workbook = MejaSwingHelper.openWorkbook(this, file);
+                final Optional<Path> oldPath = model.getPath();
+                Path path = files.get(0).toPath();
+                Optional<Workbook> workbook = MejaSwingHelper.openWorkbook(this, path);
                 if (workbook.isPresent()) {
                     model.setWorkbook(workbook.get());
-                    final Optional<URI> newUri = model.getUri();
-                    workbookChanged(oldUri.orElse(null), newUri.orElse(null));
+                    final Optional<Path> newPath = model.getPath();
+                    workbookChanged(oldPath.orElse(null), newPath.orElse(null));
                     dtde.getDropTargetContext().dropComplete(true);
                 } else {
-                    LOG.log(Level.WARNING, "Could not process dropped item '{0}'.", String.valueOf(file));
+                    LOG.log(Level.WARNING, "Could not process dropped item '{0}'.", String.valueOf(path));
                     dtde.getDropTargetContext().dropComplete(false);
                 }
               }

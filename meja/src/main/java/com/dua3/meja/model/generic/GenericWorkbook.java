@@ -15,11 +15,9 @@
  */
 package com.dua3.meja.model.generic;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,20 +42,16 @@ public class GenericWorkbook extends AbstractWorkbook {
     private final GenericCellStyle defaultCellStyle;
     private int currentSheetIdx = 0;
 
-    public GenericWorkbook(Locale locale) {
-        this(locale, URI.create(""));
-    }
-
     /**
      * Construct a new {@code GenericWorkbook}.
      *
      * @param locale
      *            the locale to use
-     * @param uri
-     *            the URI to set
+     * @param path
+     *            the Path to set
      */
-    public GenericWorkbook(Locale locale, URI uri) {
-        super(locale, uri);
+    public GenericWorkbook(Locale locale, Path path) {
+        super(locale, path);
         this.defaultCellStyle = new GenericCellStyle(this);
         this.cellStyles.put("", defaultCellStyle);
     }
@@ -191,23 +185,6 @@ public class GenericWorkbook extends AbstractWorkbook {
         if (idx != oldIdx) {
             currentSheetIdx = idx;
             pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
-        }
-    }
-
-    @Override
-    public boolean write(File file, boolean overwriteIfExists, Options options) throws IOException {
-        boolean exists = file.createNewFile();
-        if (!exists || overwriteIfExists) {
-            FileType type = FileType.forFile(file);
-            if (type == null) {
-                throw new IllegalArgumentException("No matching FileType for file '" + file.getAbsolutePath() + ".");
-            }
-            try (OutputStream out = Files.newOutputStream(file.toPath())) {
-                write(type, out, options);
-            }
-            return true;
-        } else {
-            return false;
         }
     }
 

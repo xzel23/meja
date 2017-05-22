@@ -18,6 +18,7 @@ package com.dua3.meja.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
@@ -485,18 +486,17 @@ public class MejaHelper {
      * for the extension, the matching factories are tried in sequential order.
      * If loading succeeds, the workbook is returned.
      *
-     * @param file
-     *            the workbook file
+     * @param path
+     *            the workbook path
      * @return the workbook loaded from file
      * @throws IOException
      *             if workbook could not be loaded
      */
-    public static Workbook openWorkbook(File file) throws IOException {
-        FileType fileType = FileType.forFile(file);
-
-        if (fileType == null) {
-            throw new IllegalArgumentException("Could not determine type of file '" + file.getPath() + ".");
-        }
+    public static Workbook openWorkbook(Path path) throws IOException {
+        FileType fileType = FileType.forPath(path)
+                .orElseThrow(() ->
+                    new IllegalArgumentException("Could not determine type of file '" + path.toString() + ".")
+                );
 
         if (!fileType.isSupported(OpenMode.READ)) {
             throw new IllegalArgumentException(
@@ -504,10 +504,10 @@ public class MejaHelper {
         }
 
         try {
-            return fileType.getFactory().open(file);
+            return fileType.getFactory().open(path);
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, null, ex);
-            throw new IOException("Could not load '" + file.getPath() + "'.", ex);
+            throw new IOException("Could not load '" + path.toString() + "'.", ex);
         }
     }
 

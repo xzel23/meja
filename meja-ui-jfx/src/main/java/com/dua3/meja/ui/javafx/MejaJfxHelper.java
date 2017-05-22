@@ -19,7 +19,8 @@ package com.dua3.meja.ui.javafx;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -58,13 +59,16 @@ public class MejaJfxHelper {
      *
      * @param parent
      *            the parent component to use for the dialog
-     * @param file
+     * @param path
      *            the directory to set in the open dialog or the default file
      * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException
      *             if a workbook was selected but could not be loaded
      */
-    public static Optional<Workbook> showDialogAndOpenWorkbook(Window parent, File file) throws IOException {
+    public static Optional<Workbook> showDialogAndOpenWorkbook(Window parent, Path path) throws IOException {
+        boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
+        File file = defaultFS ? path.toFile() : new File(".");
+
         FileChooser fc = new FileChooser();
         fc.setInitialDirectory(file == null || file.isDirectory() ? file : file.getParentFile());
         fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("All files", "*.*"));
@@ -76,6 +80,8 @@ public class MejaJfxHelper {
             return Optional.empty();
         }
 
+        path = file.toPath();
+
         FileChooser.ExtensionFilter ef = fc.getSelectedExtensionFilter();
         Optional<FileType> type = Arrays.stream(FileType.values())
                 .filter((ft) -> ft.getDescription().equals(ef.getDescription())
@@ -85,10 +91,10 @@ public class MejaJfxHelper {
         if (type.isPresent()) {
             // load workbook using the factory from the used filter definition
             final WorkbookFactory<?> factory = type.get().getFactory();
-            return Optional.of(factory.open(file));
+            return Optional.of(factory.open(path));
         } else {
             // another filter was used (ie. "all files")
-            return Optional.of(MejaHelper.openWorkbook(file));
+            return Optional.of(MejaHelper.openWorkbook(path));
         }
     }
 
@@ -104,15 +110,18 @@ public class MejaJfxHelper {
      *            the parent component for the dialog
      * @param workbook
      *            the workbook to save
-     * @param file
+     * @param path
      *            the file to set the default path in the dialog
      * @return the URI the file was saved to or {@code null} if the user
      *         canceled the dialog
      * @throws IOException
      *             if an exception occurs while saving
      */
-    public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, File file)
+    public static Optional<Path> showDialogAndSaveWorkbook(Component parent, Workbook workbook, Path path)
             throws IOException {
+        boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
+        File file = defaultFS ? path.toFile() : new File(".");
+
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
         int rc = jfc.showSaveDialog(parent);
@@ -135,14 +144,14 @@ public class MejaJfxHelper {
             }
         }
 
-        FileType type = FileType.forFile(file);
-        if (type != null) {
-            type.getWriter().write(workbook, file);
+        Optional<FileType> type = FileType.forFile(file);
+        if (type.isPresent()) {
+            type.get().getWriter().write(workbook, file.toPath());
         } else {
-            workbook.write(file, true);
+            workbook.write(file.toPath());
         }
 
-        return Optional.of(file.toURI());
+        return Optional.of(file.toPath());
     }
 
     static Paint toJfxColor(Color c) {

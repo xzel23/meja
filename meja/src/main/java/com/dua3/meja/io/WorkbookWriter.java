@@ -16,12 +16,10 @@
 package com.dua3.meja.io;
 
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URLConnection;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.Options;
@@ -40,13 +38,13 @@ public abstract class WorkbookWriter {
      *
      * @param workbook
      *            the workbook to write
-     * @param file
-     *            the file to write to
+     * @param path
+     *            the path to write to
      * @throws IOException
      *             if an error occurs when writing out the workbook
      */
-    public void write(Workbook workbook, File file) throws IOException {
-        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(file.toPath()))) {
+    public void write(Workbook workbook, Path path) throws IOException {
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
             write(workbook, out);
         }
     }
@@ -62,23 +60,5 @@ public abstract class WorkbookWriter {
      *             if an error occurs when writing out the workbook
      */
     public abstract void write(Workbook workbook, OutputStream out) throws IOException;
-
-    /**
-     * Write workbook to URI.
-     *
-     * @param workbook
-     *            the workbook to write
-     * @param uri
-     *            the URI to write to
-     * @throws IOException
-     *             if an error occurs when writing out the workbook
-     */
-    public void write(Workbook workbook, URI uri) throws IOException {
-        URLConnection connection = uri.toURL().openConnection();
-        connection.connect();
-        try (OutputStream out = new BufferedOutputStream(connection.getOutputStream())) {
-            write(workbook, out);
-        }
-    }
 
 }

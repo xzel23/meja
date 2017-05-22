@@ -2,7 +2,7 @@ package com.dua3.meja.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.net.URI;
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -14,9 +14,9 @@ public abstract class AbstractWorkbook
     protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /**
-    *
+    * The path of this workbook.
     */
-    protected URI uri;
+    protected Path path;
 
     /**
      * The object cache used to reduce memory usage.
@@ -25,9 +25,9 @@ public abstract class AbstractWorkbook
 
     protected final Locale locale;
 
-    public AbstractWorkbook(Locale locale, URI uri) {
+    public AbstractWorkbook(Locale locale, Path path) {
         this.locale = locale;
-        this.uri = uri;
+        this.path = path;
     }
 
     @Override
@@ -61,13 +61,13 @@ public abstract class AbstractWorkbook
     }
 
     @Override
-    public Optional<URI> getUri() {
-        return Optional.ofNullable(uri);
+    public Optional<Path> getPath() {
+        return Optional.ofNullable(path);
     }
 
     /**
      * Check if object caching is enabled.
-     * 
+     *
      * @return true if object caching is enabled
      */
     @Override
@@ -87,7 +87,7 @@ public abstract class AbstractWorkbook
 
     /**
      * Enable or disable object caching.
-     * 
+     *
      * @param enabled
      *            true, if the object cache should be enabled false, if objects
      *            should not be cached anymore and the cash cleared
@@ -102,10 +102,10 @@ public abstract class AbstractWorkbook
     }
 
     @Override
-    public void setUri(URI uri) {
-        URI oldUri = this.uri;
-        this.uri = uri;
-        pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldUri, uri);
+    public void setPath(Path path) {
+        Path oldPath = this.path;
+        this.path = path;
+        pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldPath, path);
     }
 
 }

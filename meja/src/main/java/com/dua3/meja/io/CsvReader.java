@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,8 +52,12 @@ public class CsvReader extends Csv
     }
 
     public static CsvReader create(RowBuilder builder, File file, Options options) throws IOException {
+        return create(builder, file.toPath(), options);
+    }
+
+    public static CsvReader create(RowBuilder builder, Path path, Options options) throws IOException {
         Charset cs = getCharset(options);
-        return create(builder, Files.newBufferedReader(file.toPath(), cs), options);
+        return create(builder, Files.newBufferedReader(path, cs), options);
     }
 
     public static CsvReader create(RowBuilder builder, InputStream in, Options options) throws IOException {

@@ -15,8 +15,8 @@
  */
 package com.dua3.meja.model.generic;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Locale;
 
 import com.dua3.meja.io.FileType;
@@ -60,13 +60,8 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
     }
 
     @Override
-    public GenericWorkbook open(File file, Options importSettings) throws IOException {
-        FileType type = FileType.forFile(file);
-
-        if (type == null) {
-            // if type could not be determined, try to open as CSV
-            type = FileType.CSV;
-        }
+    public GenericWorkbook open(Path path, Options importSettings) throws IOException {
+        FileType type = FileType.forPath(path).orElse(FileType.CSV);
 
         if (!type.isSupported(OpenMode.READ)) {
             throw new IllegalArgumentException(
@@ -77,7 +72,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
 
         reader.setOptions(importSettings);
 
-        return reader.read(GenericWorkbookFactory.instance(), file);
+        return reader.read(GenericWorkbookFactory.instance(), path);
     }
 
 }

@@ -18,7 +18,7 @@ package com.dua3.meja.io;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
+import java.nio.file.Path;
 import java.util.Locale;
 
 import com.dua3.meja.model.Workbook;
@@ -56,18 +56,18 @@ public class CsvWorkbookReader extends WorkbookReader {
      *            the WorkbookFactory to use
      * @param in
      *            the reader to read from
-     * @param uri
+     * @param path
      *            the URI of the source (for creating meaningful error messages)
      * @return the workbook read
      * @throws IOException
      *             if an io-error occurs during reading
      */
-    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, BufferedReader in, URI uri)
+    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, BufferedReader in, Path path)
             throws IOException {
         Locale locale = Csv.getLocale(options);
         WORKBOOK workbook = factory.create(locale);
-        workbook.setUri(uri);
-        GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(uri.getPath()), options);
+        workbook.setPath(path);
+        GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(path.toString()), options);
         try (CsvReader reader = CsvReader.create(builder, in, options)) {
             workbook.setObjectCaching(true);
             reader.readAll();
@@ -78,11 +78,11 @@ public class CsvWorkbookReader extends WorkbookReader {
     }
 
     @Override
-    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in, URI uri)
+    protected <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in, Path path)
             throws IOException {
         Locale locale = Csv.getLocale(options);
         WORKBOOK workbook = factory.create(locale);
-        workbook.setUri(uri);
+        workbook.setPath(path);
         GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), options);
         try (CsvReader reader = CsvReader.create(builder, in, options)) {
             workbook.setObjectCaching(true);

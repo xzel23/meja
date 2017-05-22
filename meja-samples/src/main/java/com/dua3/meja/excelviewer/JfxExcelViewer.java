@@ -4,7 +4,8 @@
 package com.dua3.meja.excelviewer;
 
 import java.io.IOException;
-import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,16 +72,16 @@ public class JfxExcelViewer extends Application {
             return;
         }
 
-        Optional<URI> uri = workbook.getUri();
+        Optional<Path> path = workbook.getPath();
         try {
-            if (!uri.isPresent()) {
-                uri = MejaJfxHelper.showDialogAndSaveWorkbook(null, workbook, model.getCurrentDir());
-                if (uri == null) {
+            if (!path.isPresent()) {
+                path = MejaJfxHelper.showDialogAndSaveWorkbook(null, workbook, model.getPath().orElse(Paths.get("")));
+                if (path == null) {
                     // user cancelled the dialog
                     return;
                 }
             } else {
-                model.saveWorkbook(uri.get());
+                model.saveWorkbook(path.get());
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "IO-Error saving workbook", ex);
@@ -107,12 +108,12 @@ public class JfxExcelViewer extends Application {
 
     private void showOpenDialog(Window parent) {
         try {
-            final Optional<URI> oldUri = model.getUri();
-            final Workbook newWorkbook = MejaJfxHelper.showDialogAndOpenWorkbook(parent, model.getCurrentDir())
+            final Optional<Path> oldPath = model.getPath();
+            final Workbook newWorkbook = MejaJfxHelper.showDialogAndOpenWorkbook(parent, model.getPath().orElse(Paths.get("")))
                     .orElse(null);
             model.setWorkbook(newWorkbook);
-            final Optional<URI> newUri = model.getUri();
-            workbookChanged(oldUri.orElse(null), newUri.orElse(null));
+            final Optional<Path> newPath = model.getPath();
+            workbookChanged(oldPath.orElse(null), newPath.orElse(null));
         } catch (IOException ex) {
             Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
             new Alert(AlertType.ERROR, "Error loading workbook: " + ex.getMessage()).showAndWait();
@@ -199,7 +200,7 @@ public class JfxExcelViewer extends Application {
         primaryStage.show();
     }
 
-    private void workbookChanged(URI oldUri, URI newUri) {
+    private void workbookChanged(Path oldPath, Path newPath) {
         view.setWorkbook(model.getWorkbook());
     }
 }

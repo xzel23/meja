@@ -15,8 +15,6 @@
  */
 package com.dua3.meja.ui.swing;
 
-import java.awt.geom.AffineTransform;
-
 import javax.swing.JTextPane;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;

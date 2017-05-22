@@ -29,8 +29,12 @@ public class Converter {
         File in = new File(args[0]);
         File out = new File(args[1]);
 
-        try (Workbook workbook = GenericWorkbookFactory.instance().open(in)) {
-            workbook.write(out, false);
+        if (out.exists()) {
+            System.err.println("Outputfile already exists.");
+        }
+
+        try (Workbook workbook = GenericWorkbookFactory.instance().open(in.toPath())) {
+            workbook.write(out.toPath());
             System.out.println("Data written to " + out.getAbsolutePath());
         } catch (IOException ex) {
             System.err.println("I/O Error: " + ex.getMessage());
