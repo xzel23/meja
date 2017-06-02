@@ -88,15 +88,12 @@ public class CsvWorkbookWriter extends WorkbookWriter {
      *             if an input/output error occurs
      */
     public void write(Workbook workbook, BufferedWriter out) throws IOException {
-        try (CsvWriter writer = CsvWriter.create(out, getOptionsWithLocale(options, workbook))) {
-            writeSheets(workbook, writer);
-        }
+        // do not close the writer - it is the caller's responsibility
+        writeSheets(workbook, CsvWriter.create(out, getOptionsWithLocale(options, workbook)));
     }
 
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
-        try (CsvWriter writer = CsvWriter.create(out, getOptionsWithLocale(options, workbook))) {
-            writeSheets(workbook, writer);
-        }
+        writeSheets(workbook, CsvWriter.create(out, getOptionsWithLocale(options, workbook)));
     }
 }

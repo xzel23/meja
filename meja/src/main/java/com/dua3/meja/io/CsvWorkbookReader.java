@@ -68,9 +68,9 @@ public class CsvWorkbookReader extends WorkbookReader {
         WORKBOOK workbook = factory.create(locale);
         workbook.setPath(path);
         GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(path.toString()), options);
-        try (CsvReader reader = CsvReader.create(builder, in, options)) {
+        try {
             workbook.setObjectCaching(true);
-            reader.readAll();
+            CsvReader.create(builder, in, options).readAll();
         } finally {
             workbook.setObjectCaching(false);
         }
@@ -84,9 +84,9 @@ public class CsvWorkbookReader extends WorkbookReader {
         WORKBOOK workbook = factory.create(locale);
         workbook.setPath(path);
         GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), options);
-        try (CsvReader reader = CsvReader.create(builder, in, options)) {
+        try {
             workbook.setObjectCaching(true);
-            reader.readAll();
+            CsvReader.create(builder, in, options).readAll();
         } finally {
             workbook.setObjectCaching(false);
         }
