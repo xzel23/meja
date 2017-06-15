@@ -8,6 +8,8 @@ subprojects {
 
     repositories {
         mavenCentral()
+        // integration for dependencies on github
+        maven { url 'https://jitpack.io' }
     }
 
     dependencies {
@@ -15,6 +17,8 @@ subprojects {
 		compile "org.apache.poi:poi:${poiVersion}"
 		compile "org.apache.poi:poi-ooxml:${poiVersion}"
 		compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+
+        compile 'com.github.xzel23:utility:master-SNAPSHOT'
 		
         testCompile "junit:junit:4.12"
     }

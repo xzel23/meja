@@ -52,6 +52,7 @@ import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.ui.swing.MejaSwingHelper;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.utility.swing.SwingUtil;
 
 /**
  * A sample Swing application that uses the Meja library to load and display
@@ -89,13 +90,7 @@ public class SwingExcelViewer extends JFrame
      *            the command line arguments
      */
     public static void main(String[] args) {
-        try {
-            // Set system L&F
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
-                | IllegalAccessException ex) {
-            LOG.log(Level.SEVERE, null, ex);
-        }
+        SwingUtil.setNativeLookAndFeel();
 
         ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
         SwingExcelViewer viewer = new SwingExcelViewer(model);
