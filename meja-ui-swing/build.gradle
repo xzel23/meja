@@ -1,7 +1,0 @@
-repositories {
-    maven { url "https://jitpack.io" }
-}
-
-dependencies {
-    compile 'com.github.xzel23::Tag'
-}
