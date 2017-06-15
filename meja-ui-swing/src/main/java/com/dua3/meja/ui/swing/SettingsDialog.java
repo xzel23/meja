@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 import com.dua3.meja.util.Option;
 import com.dua3.meja.util.OptionSet.Value;
 import com.dua3.meja.util.Options;
+import com.dua3.utility.swing.SwingUtil;
 
 public class SettingsDialog extends JDialog {
 
@@ -48,7 +49,7 @@ public class SettingsDialog extends JDialog {
         }
         add(settingsPanel, BorderLayout.CENTER);
 
-        add(new JButton(MejaSwingHelper.createAction("OK", () -> {
+        add(new JButton(SwingUtil.createAction("OK", () -> {
             result = new Options();
             for (int i = 0; i < options.size(); i++) {
                 result.put((Option) options.get(i), (Value) inputs.get(i).getSelectedItem());

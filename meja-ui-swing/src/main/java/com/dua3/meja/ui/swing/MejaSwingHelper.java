@@ -54,34 +54,6 @@ import com.dua3.meja.util.Options;
  */
 public class MejaSwingHelper {
 
-    public static Action createAction(String name, Consumer<ActionEvent> onActionPerformed) {
-        return new AbstractAction(name) {
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onActionPerformed.accept(e);
-            }
-        };
-    }
-
-    public static Action createAction(String name, Runnable onActionPerformed) {
-        return new AbstractAction(name) {
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onActionPerformed.run();
-            }
-        };
-    }
-
     /**
      * Create a TableModel to be used with JTable.
      *
