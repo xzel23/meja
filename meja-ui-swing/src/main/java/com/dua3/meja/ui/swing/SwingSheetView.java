@@ -590,6 +590,10 @@ public class SwingSheetView extends JPanel
             // clear background by calling super method
             super.paintComponent(g2d);
 
+            if (sheet==null) {
+                return;
+            }
+
             // set transformation
             final int x = getXMinInViewCoordinates();
             final int y = getYMinInViewCoordinates();
