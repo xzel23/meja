@@ -19,9 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -522,10 +522,12 @@ public class MejaHelper {
             cell.set((Boolean) arg);
         } else if (arg instanceof LocalDateTime) {
             cell.set((LocalDateTime) arg);
-        } else if (arg instanceof Date) {
-            cell.set((Date) arg);
+        } else if (arg instanceof LocalDate) {
+            cell.set(((LocalDate) arg).atStartOfDay());
         } else if (arg instanceof RichText) {
             cell.set((RichText) arg);
+        } else if (arg instanceof java.util.Date) {
+            cell.set((java.util.Date) arg);
         } else {
             cell.set(String.valueOf(arg));
         }
