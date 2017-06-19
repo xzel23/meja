@@ -57,15 +57,21 @@ allprojects {
 project(':meja') {
 }
 
-project(':meja-ui-swing') {
+project(':meja-ui') {
     dependencies {
         compile project(':meja')
     }
 }
 
+project(':meja-ui-swing') {
+    dependencies {
+        compile project(':meja-ui')
+    }
+}
+
 project(':meja-ui-jfx') {
     dependencies {
-        compile project(':meja')
+        compile project(':meja-ui')
     }
 }
 
