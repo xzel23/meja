@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
@@ -409,31 +408,6 @@ public class MejaHelper {
     }
 
     /**
-     * Extract file extension.
-     * <p>
-     * The file extension is the part of the filename from the last dot to the
-     * end (including the dot). The extension of the file
-     * {@literal /foo/bar/file.txt} is ".txt".
-     * </p>
-     * <p>
-     * If the filename doesn't contain a dot, the extension is the empty string
-     * ("").
-     * </p>
-     *
-     * @param file
-     *            the file
-     * @return the file extension including the dot.
-     */
-    public static String getFileExtension(File file) {
-        String name = file.getName();
-        int lastIndexOf = name.lastIndexOf('.');
-        if (lastIndexOf == -1) {
-            return "";
-        }
-        return name.substring(lastIndexOf);
-    }
-
-    /**
      * Get row name as String.
      *
      * @param i
@@ -511,8 +485,15 @@ public class MejaHelper {
         }
     }
 
-    @SuppressWarnings("deprecation") // because of using
-                                     // cell.set(java.util.Date)
+    /**
+     * Set cell value.
+     * <p>
+     *
+     * </p>
+     * @param cell the cell
+     * @param arg the value
+     */
+    @SuppressWarnings("deprecation") // because of using cell.set(java.util.Date)
     public static void set(Cell cell, Object arg) {
         if (arg == null) {
             cell.clear();
