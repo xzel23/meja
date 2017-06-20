@@ -40,17 +40,7 @@ public abstract class AbstractWorkbook
         pcs.addPropertyChangeListener(propertyName, listener);
     }
 
-    /**
-     * Get cached instance of object.
-     *
-     * @param <T>
-     *            object type
-     * @param obj
-     *            the object to lookup
-     * @return the cached instance, if an instance equal to {@code obj} is
-     *         present in the cache, {@code obj} otherwise
-     *
-     */
+    @Override
     public <T> T cache(T obj) {
         return objectCache != null ? objectCache.get(obj) : obj;
     }

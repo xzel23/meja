@@ -21,7 +21,6 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
@@ -32,7 +31,6 @@ import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Font;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 
 /**
@@ -167,11 +165,6 @@ public class GenericSheet
     }
 
     @Override
-    public void copy(Sheet other) {
-        MejaHelper.copySheetData(this, other);
-    }
-
-    @Override
     public int getAutoFilterRow() {
         return autoFilterRow;
     }
@@ -262,11 +255,6 @@ public class GenericSheet
     @Override
     public float getZoom() {
         return zoom;
-    }
-
-    @Override
-    public Iterator<Row> iterator() {
-        return MejaHelper.createRowIterator(this);
     }
 
     @Override

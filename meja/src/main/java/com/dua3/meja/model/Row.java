@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.model;
 
+import java.util.Iterator;
+
 /**
  * A single row of a sheet.
  *
@@ -99,5 +101,33 @@ public interface Row
      * @return the workbook
      */
     Workbook getWorkbook();
+
+
+    /**
+     * Create cell iterator.
+     * @return cell iterator
+     */
+    @Override
+    default Iterator<Cell> iterator() {
+        return new Iterator<Cell>() {
+
+            private int colNum = getFirstCellNum();
+
+            @Override
+            public boolean hasNext() {
+                return colNum <= getLastCellNum();
+            }
+
+            @Override
+            public Cell next() {
+                return getCell(colNum++);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Removing of rows is not supported.");
+            }
+        };
+    }
 
 }

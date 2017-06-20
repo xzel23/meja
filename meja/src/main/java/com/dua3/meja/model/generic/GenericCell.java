@@ -318,12 +318,6 @@ public class GenericCell
         return set(arg, CellType.NUMERIC);
     }
 
-    @Override
-    public GenericCell set(Object arg) {
-        MejaHelper.set(this, arg);
-        return this;
-    }
-
     private GenericCell set(Object arg, CellType type) {
         GenericSheet sheet = getSheet();
         arg = sheet.getWorkbook().cache(arg);

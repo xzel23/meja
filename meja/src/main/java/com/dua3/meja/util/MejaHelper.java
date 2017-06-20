@@ -16,13 +16,9 @@
 package com.dua3.meja.util;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -39,7 +35,6 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.text.RichText;
 
 /**
  * Helper class.
@@ -49,105 +44,6 @@ import com.dua3.meja.text.RichText;
 public class MejaHelper {
 
     private static final Logger LOGGER = Logger.getLogger(MejaHelper.class.getName());
-
-    /**
-     * Copy sheet data.
-     * <p>
-     * Copies all data from one sheet to another. Sheets may be instances of
-     * different implementation classes.
-     * </p>
-     *
-     * @param dst
-     *            the destination sheet
-     * @param src
-     *            the source sheet
-     */
-    public static void copySheetData(Sheet dst, Sheet src) {
-        // copy split
-        dst.splitAt(src.getSplitRow(), src.getSplitColumn());
-        // set autofilter
-        dst.setAutofilterRow(src.getAutoFilterRow());
-        // copy column widths
-        for (int j = src.getFirstColNum(); j <= src.getLastColNum(); j++) {
-            dst.setColumnWidth(j, src.getColumnWidth(j));
-        }
-        // copy merged regions
-        for (RectangularRegion rr : src.getMergedRegions()) {
-            dst.addMergedRegion(rr);
-        }
-        // copy row data
-        for (Row row : src) {
-            final int i = row.getRowNumber();
-            dst.getRow(i).copy(row);
-            dst.setRowHeight(i, src.getRowHeight(i));
-        }
-    }
-
-    /**
-     * Create cell iterator.
-     *
-     * @param row
-     *            the row for which to create a cell iterator
-     * @return cell iterator for {@code row}
-     */
-    public static Iterator<Cell> createCellIterator(final Row row) {
-        return new Iterator<Cell>() {
-
-            private int colNum = row.getFirstCellNum();
-
-            @Override
-            public boolean hasNext() {
-                return colNum <= row.getLastCellNum();
-            }
-
-            @Override
-            public Cell next() {
-                return row.getCell(colNum++);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Removing of rows is not supported.");
-            }
-        };
-    }
-
-    /**
-     * Create row iterator.
-     *
-     * @param sheet
-     *            the sheet for which to create a row iterator
-     * @return row iterator for {@code sheet}
-     */
-    public static Iterator<Row> createRowIterator(final Sheet sheet) {
-        return new Iterator<Row>() {
-
-            private int rowNum = sheet.getFirstRowNum();
-
-            @Override
-            public boolean hasNext() {
-                return rowNum <= sheet.getLastRowNum();
-            }
-
-            @Override
-            public Row next() {
-                return sheet.getRow(rowNum++);
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Removing of rows is not supported.");
-            }
-        };
-    }
-
-    public static Writer createWriter(Appendable app) {
-        if (app instanceof Writer) {
-            return (Writer) app;
-        } else {
-            return new AppendableWriter(app);
-        }
-    }
 
     public static float decodeFontSize(String s) throws NumberFormatException {
         float factor = 1f;
@@ -459,7 +355,7 @@ public class MejaHelper {
      * should be used for loading. If there are multiple factories registered
      * for the extension, the matching factories are tried in sequential order.
      * If loading succeeds, the workbook is returned.
-     *
+     * </p>
      * @param path
      *            the workbook path
      * @return the workbook loaded from file
@@ -482,35 +378,6 @@ public class MejaHelper {
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, null, ex);
             throw new IOException("Could not load '" + path.toString() + "'.", ex);
-        }
-    }
-
-    /**
-     * Set cell value.
-     * <p>
-     *
-     * </p>
-     * @param cell the cell
-     * @param arg the value
-     */
-    @SuppressWarnings("deprecation") // because of using cell.set(java.util.Date)
-    public static void set(Cell cell, Object arg) {
-        if (arg == null) {
-            cell.clear();
-        } else if (arg instanceof Number) {
-            cell.set((Number) arg);
-        } else if (arg instanceof Boolean) {
-            cell.set((Boolean) arg);
-        } else if (arg instanceof LocalDateTime) {
-            cell.set((LocalDateTime) arg);
-        } else if (arg instanceof LocalDate) {
-            cell.set(((LocalDate) arg).atStartOfDay());
-        } else if (arg instanceof RichText) {
-            cell.set((RichText) arg);
-        } else if (arg instanceof java.util.Date) {
-            cell.set((java.util.Date) arg);
-        } else {
-            cell.set(String.valueOf(arg));
         }
     }
 

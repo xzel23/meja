@@ -15,13 +15,10 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.util.Iterator;
-
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
-import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -114,11 +111,6 @@ public final class PoiRow
     @Override
     public int hashCode() {
         return poiRow.hashCode();
-    }
-
-    @Override
-    public Iterator<Cell> iterator() {
-        return MejaHelper.createCellIterator(this);
     }
 
     /**

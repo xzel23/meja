@@ -466,13 +466,6 @@ public final class PoiCell
     }
 
     @Override
-    public PoiCell set(Object arg) {
-        arg = getWorkbook().cache(arg);
-        MejaHelper.set(this, arg);
-        return this;
-    }
-
-    @Override
     public Cell set(RichText s) {
         s = getWorkbook().cache(s);
         Object old = get();

@@ -16,6 +16,7 @@
  */
 package com.dua3.meja.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -270,12 +271,48 @@ public interface Cell {
 
     /**
      * Set cell value.
-     *
-     * @param b
-     *            value
+     * <p>
+     * Use this method when the exact type of the value object is not known at compile time.
+     * Depending on the runtime-type, the corresponding overload of {@code Cell.set(...)} is called. if {@code value}
+     * is {@code null}, the cell is cleared. If no overload of {@code Cell.set(...)}  matches the runtime type of
+     * {@code value}, the cell value is set to {@code String.valueOf(value)}.
+     * </p>
+     * The following types are supported:
+     * <ul>
+     * <li> {@link java.lang.Number}
+     * <li> {@link java.lang.Boolean}
+     * <li> {@link java.time.LocalDateTime}
+     * <li> {@link java.time.LocalDate}
+     * <li> {@link java.util.Date} (deprecated)
+     * <li> {@link java.lang.String}
+     * <li> {@link RichText}
+     * </ul>
+     * @param arg the value
      * @return this cell
      */
-    Cell set(Object b);
+    default Cell set(Object arg) {
+        arg = getWorkbook().cache(arg);
+
+        if (arg == null) {
+            clear();
+        } else if (arg instanceof Number) {
+            set((Number) arg);
+        } else if (arg instanceof Boolean) {
+            set((Boolean) arg);
+        } else if (arg instanceof LocalDateTime) {
+            set((LocalDateTime) arg);
+        } else if (arg instanceof LocalDate) {
+            set(((LocalDate) arg).atStartOfDay());
+        } else if (arg instanceof RichText) {
+            set((RichText) arg);
+        } else if (arg instanceof java.util.Date) {
+            set((java.util.Date) arg);
+        } else {
+            set(String.valueOf(arg));
+        }
+
+        return this;
+    }
 
     /**
      * Set cell value to string with markup.

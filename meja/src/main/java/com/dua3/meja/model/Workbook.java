@@ -368,4 +368,16 @@ public interface Workbook
      */
     void write(FileType fileType, OutputStream out, Options options) throws IOException;
 
+    /**
+     * Get cached instance of object.
+     *
+     * @param <T>
+     *            object type
+     * @param obj
+     *            the object to lookup
+     * @return the cached instance, if an instance equal to {@code obj} is
+     *         present in the cache, {@code obj} otherwise
+     *
+     */
+    <T> T cache(T obj);
 }

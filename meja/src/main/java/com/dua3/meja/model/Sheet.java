@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import java.beans.PropertyChangeListener;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 
@@ -67,14 +68,6 @@ public interface Sheet
      * Remove all content from sheet.
      */
     void clear();
-
-    /**
-     * Copy sheet data from another sheet.
-     *
-     * @param other
-     *            sheet to copy data from
-     */
-    void copy(Sheet other);
 
     /**
      * Get auto filter row number.
@@ -287,4 +280,57 @@ public interface Sheet
      */
     void splitAt(int i, int j);
 
+    /**
+     * Create row iterator.
+     * @return row iterator
+     */
+    @Override
+    default Iterator<Row> iterator() {
+        return new Iterator<Row>() {
+
+            private int rowNum = getFirstRowNum();
+
+            @Override
+            public boolean hasNext() {
+                return rowNum <= getLastRowNum();
+            }
+
+            @Override
+            public Row next() {
+                return getRow(rowNum++);
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Removing of rows is not supported.");
+            }
+        };
+    }
+
+    /**
+     * Copy sheet data from another sheet.
+     *
+     * @param other
+     *            sheet to copy data from
+     */
+    default void copy(Sheet other) {
+        // copy split
+        splitAt(other.getSplitRow(), other.getSplitColumn());
+        // set autofilter
+        setAutofilterRow(other.getAutoFilterRow());
+        // copy column widths
+        for (int j = other.getFirstColNum(); j <= other.getLastColNum(); j++) {
+            setColumnWidth(j, other.getColumnWidth(j));
+        }
+        // copy merged regions
+        for (RectangularRegion rr : other.getMergedRegions()) {
+            addMergedRegion(rr);
+        }
+        // copy row data
+        for (Row row : other) {
+            final int i = row.getRowNumber();
+            getRow(i).copy(row);
+            setRowHeight(i, other.getRowHeight(i));
+        }
+    }
 }

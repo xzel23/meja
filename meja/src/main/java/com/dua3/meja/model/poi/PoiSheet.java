@@ -20,7 +20,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
@@ -32,9 +31,7 @@ import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 
 /**
@@ -162,11 +159,6 @@ public class PoiSheet
         workbook.poiWorkbook.setSheetOrder(sheetName, sheetNr);
 
         update();
-    }
-
-    @Override
-    public void copy(Sheet other) {
-        MejaHelper.copySheetData(this, other);
     }
 
     @Override
@@ -301,11 +293,6 @@ public class PoiSheet
     @Override
     public int hashCode() {
         return poiSheet.hashCode();
-    }
-
-    @Override
-    public Iterator<Row> iterator() {
-        return MejaHelper.createRowIterator(this);
     }
 
     private float poiColumnWidthToPoints(int poiWidth) {
