@@ -29,6 +29,18 @@ public class FormatTest {
         workbook = null;
     }
 
+    /**
+     * Test formatting.
+     * <p>
+     * The workboook 'FormatTest.xlsx' is read from the classpath. Each sheet contains for columns used for testing:
+     * <ul>
+     * <li> description of what is being tested in the current row
+     * <li> value with an applied format to be tested
+     * <li> the expected result as a {@code String}
+     * <li> an optional remark - if it contains the text {@literal #IGNORE#}, the row is skipped
+     * </ul>
+     * </p>
+     */
     @Test
     public void testFormat() {
         System.out.format("Testing Workbook %s (workbook locale is %s)%n", workbook.getPath(), workbook.getLocale());
