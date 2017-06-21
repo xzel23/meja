@@ -114,23 +114,19 @@ public abstract class Csv {
     }
 
     public static Charset getCharset(Options options) {
-        Charset charset = (Charset) getOptionValue(OPTION_CHARSET, options);
-        return charset;
+        return (Charset) getOptionValue(OPTION_CHARSET, options);
     }
 
     public static PredefinedDateFormat getDateFormat(Options options) {
-        PredefinedDateFormat dateFormat = (PredefinedDateFormat) Csv.getOptionValue(Csv.OPTION_DATEFORMAT, options);
-        return dateFormat;
+        return (PredefinedDateFormat) Csv.getOptionValue(Csv.OPTION_DATEFORMAT, options);
     }
 
     public static Character getDelimiter(Options options) {
-        Character delimiter = (Character) getOptionValue(OPTION_DELIMITER, options);
-        return delimiter;
+        return (Character) getOptionValue(OPTION_DELIMITER, options);
     }
 
     public static Locale getLocale(Options options) {
-        Locale locale = (Locale) getOptionValue(OPTION_LOCALE, options);
-        return locale;
+        return (Locale) getOptionValue(OPTION_LOCALE, options);
     }
 
     public static Optional<Option<?>> getOption(String name) {

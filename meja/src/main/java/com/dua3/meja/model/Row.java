@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * A single row of a sheet.
@@ -119,7 +120,11 @@ public interface Row
             }
 
             @Override
-            public Cell next() {
+            public Cell next() throws NoSuchElementException {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
                 return getCell(colNum++);
             }
 

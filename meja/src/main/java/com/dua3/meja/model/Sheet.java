@@ -18,6 +18,7 @@ package com.dua3.meja.model;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.locks.ReadWriteLock;
 
 import com.dua3.meja.util.RectangularRegion;
@@ -296,7 +297,11 @@ public interface Sheet
             }
 
             @Override
-            public Row next() {
+            public Row next() throws NoSuchElementException {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+
                 return getRow(rowNum++);
             }
 

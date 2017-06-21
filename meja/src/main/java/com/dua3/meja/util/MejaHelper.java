@@ -255,11 +255,9 @@ public class MejaHelper {
             }
         }
 
-        String ref = sheet
+        return sheet
                 + prefixColumn + getColumnName(cell.getColumnNumber())
                 + prefixRow + (cell.getRowNumber() + 1);
-
-        return ref;
     }
 
     /**
