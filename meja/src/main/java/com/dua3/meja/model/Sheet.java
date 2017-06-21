@@ -19,7 +19,11 @@ import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.dua3.meja.util.RectangularRegion;
 
@@ -338,4 +342,13 @@ public interface Sheet
             setRowHeight(i, other.getRowHeight(i));
         }
     }
+
+    /**
+     * Create a stream of the rows in this sheet.
+     * @return stream of rows
+     */
+    default Stream<Row> rows() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
+    }
+
 }

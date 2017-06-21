@@ -25,6 +25,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.util.Options;
@@ -380,4 +384,13 @@ public interface Workbook
      *
      */
     <T> T cache(T obj);
+
+    /**
+     * Create a stream of the rows in this sheet.
+     * @return stream of rows
+     */
+    default Stream<Sheet> sheets() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
+    }
+
 }

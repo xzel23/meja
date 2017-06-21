@@ -17,6 +17,10 @@ package com.dua3.meja.model;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * A single row of a sheet.
@@ -135,4 +139,11 @@ public interface Row
         };
     }
 
+    /**
+     * Create a stream of the cells in this row.
+     * @return stream of cells
+     */
+    default Stream<Cell> cells() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
+    }
 }
