@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.chrono.IsoChronology;
@@ -374,6 +375,18 @@ public final class PoiCell
         return DateUtil.isADateFormat(i, f);
     }
 
+    DateFormat getLocaleAwareDateFormat(PoiCellStyle cellStyle) {
+        org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
+        switch (style.getDataFormat()) {
+        case 0x0e:
+            return  DateFormat.getDateInstance(DateFormat.MEDIUM, getWorkbook().getLocale());
+        case 0xa4:
+            return  DateFormat.getDateInstance(DateFormat.FULL, getWorkbook().getLocale());
+        default:
+            return null;
+        }
+    }
+
     @Override
     public boolean isEmpty() {
         switch (poiCell.getCellTypeEnum()) {
@@ -601,12 +614,18 @@ public final class PoiCell
                 return "";
             }
 
-            DataFormatter dataFormatter = getWorkbook().getDataFormatter();
-            try {
+            DateFormat df = getLocaleAwareDateFormat(getCellStyle());
+            if (df != null) {
+                return df.format(getDate());
+            } else {
+                // let POI do the formatting
                 FormulaEvaluator evaluator = getWorkbook().evaluator;
-                return dataFormatter.formatCellValue(poiCell, evaluator);
-            } catch (Exception ex) {
-                return Cell.ERROR_TEXT;
+                DataFormatter dataFormatter = getWorkbook().getDataFormatter();
+                try {
+                    return dataFormatter.formatCellValue(poiCell, evaluator);
+                } catch (Exception ex) {
+                    return Cell.ERROR_TEXT;
+                }
             }
         }
     }
