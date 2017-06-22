@@ -1,18 +1,19 @@
 package com.dua3.meja.util;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.dua3.meja.util.Cache.Type;
 
 public class CacheTest {
 
-    @Test
+    @Test @Ignore
     public void testCacheWithWeakKeys() {
         System.out.format("%ntestCacheWithWeakKeys()%n");
         testCacheHelper(Type.WEAK_KEYS);
     }
 
-    @Test
+    @Test @Ignore
     public void testCacheWithStrongKeys() {
         System.out.format("%ntestCacheWithStrongKeys()%n");
         testCacheHelper(Type.STRONG_KEYS);
