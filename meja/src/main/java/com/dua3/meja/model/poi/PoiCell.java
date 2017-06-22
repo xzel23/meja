@@ -210,14 +210,7 @@ public final class PoiCell
                 return RichText.emptyText();
             }
 
-            DataFormatter dataFormatter = getWorkbook().getDataFormatter();
-
-            try {
-                FormulaEvaluator evaluator = getWorkbook().evaluator;
-                return RichText.valueOf(dataFormatter.formatCellValue(poiCell, evaluator));
-            } catch (Exception ex) {
-                return RichText.valueOf(Cell.ERROR_TEXT);
-            }
+            return RichText.valueOf(getFormattedText());
         }
     }
 
@@ -614,18 +607,26 @@ public final class PoiCell
                 return "";
             }
 
-            DateFormat df = getLocaleAwareDateFormat(getCellStyle());
-            if (df != null) {
-                return df.format(getDate());
-            } else {
-                // let POI do the formatting
-                FormulaEvaluator evaluator = getWorkbook().evaluator;
-                DataFormatter dataFormatter = getWorkbook().getDataFormatter();
-                try {
-                    return dataFormatter.formatCellValue(poiCell, evaluator);
-                } catch (Exception ex) {
-                    return Cell.ERROR_TEXT;
-                }
+            return getFormattedText();
+        }
+    }
+
+    /**
+     * Format the cell content as a String, with number and date format applied.
+     * @return cell content with format applied
+     */
+    private String getFormattedText() {
+        DateFormat df = getLocaleAwareDateFormat(getCellStyle());
+        if (df != null) {
+            return df.format(getDate());
+        } else {
+            // let POI do the formatting
+            FormulaEvaluator evaluator = getWorkbook().evaluator;
+            DataFormatter dataFormatter = getWorkbook().getDataFormatter();
+            try {
+                return dataFormatter.formatCellValue(poiCell, evaluator);
+            } catch (Exception ex) {
+                return Cell.ERROR_TEXT;
             }
         }
     }
