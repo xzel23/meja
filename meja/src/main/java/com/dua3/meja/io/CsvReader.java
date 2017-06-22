@@ -47,8 +47,7 @@ public class CsvReader extends Csv
     private static final byte[] UTF8_BOM_BYTES = { (byte) 0xef, (byte) 0xbb, (byte) 0xbf };
 
     static CsvReader create(RowBuilder builder, BufferedReader reader, Options options) throws IOException {
-        CsvReader csvReader = new CsvReader(builder, reader, "[stream]", options);
-        return csvReader;
+        return new CsvReader(builder, reader, "[stream]", options);
     }
 
     public static CsvReader create(RowBuilder builder, File file, Options options) throws IOException {

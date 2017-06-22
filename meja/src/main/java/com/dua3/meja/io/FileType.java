@@ -39,7 +39,7 @@ public enum FileType {
     /**
      * File type for CSV files.
      */
-    CSV("CSV-Data", GenericWorkbookFactory.instance(), () -> CsvWorkbookReader.create(), () -> CsvWorkbookWriter.create(), "*.csv", "*.txt") {
+    CSV("CSV-Data", GenericWorkbookFactory.instance(), CsvWorkbookReader::create, CsvWorkbookWriter::create, "*.csv", "*.txt") {
         @Override
         public List<Option<?>> getSettings() {
             return Csv.getOptions();
@@ -49,13 +49,13 @@ public enum FileType {
     /**
      * File type for the old Excel format that uses the '.xls' extension.
      */
-    XLS("Excel 97-2003", PoiWorkbookFactory.instance(), null, () -> XlsWorkbookWriter.instance(), "*.xls"),
+    XLS("Excel 97-2003", PoiWorkbookFactory.instance(), null, XlsWorkbookWriter::instance, "*.xls"),
 
     /**
      * File type for the new XML-based Excel format that uses the '.xlsx'
      * extension.
      */
-    XLSX("Excel 2007", PoiWorkbookFactory.instance(), null, () -> XlsxWorkbookWriter.instance(), "*.xlsx", "*.xlsm"),
+    XLSX("Excel 2007", PoiWorkbookFactory.instance(), null, XlsxWorkbookWriter::instance, "*.xlsx", "*.xlsm"),
 
     /**
      * All supported Excel files.
