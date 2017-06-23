@@ -83,6 +83,7 @@ public class FormatTest {
      * <li> an optional remark
      * </ul>
      * </p>
+     * @param extract a lambda expression maps (Cell, Locale) -> (formatted cell content)
      */
     public void testHelper(BiFunction<Cell,Locale,String> extract) {
         workbook.sheets()

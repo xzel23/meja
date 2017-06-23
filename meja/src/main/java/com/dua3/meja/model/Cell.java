@@ -58,6 +58,7 @@ public interface Cell {
     /**
      * Return text representation of value.
      *
+     * @param locale the locale to use during formatting
      * @return cell value as R, as it would be displayed
      */
     RichText getAsText(Locale locale);

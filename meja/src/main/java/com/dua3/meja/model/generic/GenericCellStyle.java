@@ -101,8 +101,10 @@ public class GenericCellStyle
     /**
      * Format date for output.
      *
+     * @param locale 
+     *              the locale to use during formatting
      * @param date
-     *            the date to format
+     *              the date to format
      * @return text representation of {@code date}
      */
     public String format(LocalDateTime date, Locale locale) {
@@ -128,6 +130,8 @@ public class GenericCellStyle
      *
      * @param n
      *            the number to format
+     * @param locale 
+     *            the locale to use during formatting
      * @return text representation of {@code n}
      */
     public String format(Number n, Locale locale) {
