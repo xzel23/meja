@@ -23,10 +23,8 @@ import java.util.Locale;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.RefOption;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.text.RichText;
-import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -174,11 +172,6 @@ public class GenericCell
             return (boolean) value;
         }
         throw new IllegalStateException("Cannot get boolean value from cell of type " + getCellType().name() + ".");
-    }
-
-    @Override
-    public String getCellRef(RefOption... options) {
-        return MejaHelper.getCellRef(this, options);
     }
 
     @Override

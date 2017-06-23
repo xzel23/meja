@@ -77,7 +77,7 @@ public class MejaSwingHelper {
 
             @Override
             public String getColumnName(int columnIndex) {
-                return MejaHelper.getColumnName(columnIndex);
+                return Sheet.getColumnName(columnIndex);
             }
 
             @Override

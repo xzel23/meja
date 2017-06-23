@@ -30,7 +30,6 @@ import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.RefOption;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
@@ -224,92 +223,6 @@ public class MejaHelper {
         } finally {
             lock.unlock();
         }
-    }
-
-    /**
-     * Get cell reference as string.
-     *
-     * @param cell
-     *            the Cell
-     * @param options
-     *            the Options to use
-     * @return the cell reference in Excel conventions, ie "A1" for the first
-     *         cell.
-     */
-    public static String getCellRef(Cell cell, RefOption... options) {
-        String prefixRow = "";
-        String prefixColumn = "";
-        String sheet = "";
-
-        for (RefOption o : options) {
-            switch (o) {
-            case FIX_COLUMN:
-                prefixColumn = "$";
-                break;
-            case FIX_ROW:
-                prefixRow = "$";
-                break;
-            case WITH_SHEET:
-                sheet = "'" + cell.getSheet().getSheetName() + "'!";
-                break;
-            }
-        }
-
-        return sheet
-                + prefixColumn + getColumnName(cell.getColumnNumber())
-                + prefixRow + (cell.getRowNumber() + 1);
-    }
-
-    /**
-     * Translate column number to column name.
-     *
-     * @param j
-     *            the column number
-     * @return the column name
-     */
-    public static String getColumnName(int j) {
-        StringBuilder sb = new StringBuilder();
-        sb.append((char) ('A' + j % 26));
-        j /= 26;
-        while (j > 0) {
-            sb.insert(0, (char) ('A' + j % 26 - 1));
-            j /= 26;
-        }
-        return new String(sb);
-    }
-
-    /**
-     * Translate column name to column number.
-     *
-     * @param colName
-     *            the name of the column, ie. "A", "B",... , "AA", "AB",...
-     * @return the column number
-     * @throws IllegalArgumentException
-     *             if {@code colName} is not a valid column name
-     */
-    public static int getColumnNumber(String colName) {
-        final int stride = 'z' - 'a' + 1;
-        int col = 0;
-        for (char c : colName.toLowerCase(Locale.ROOT).toCharArray()) {
-            if (c < 'a' || 'z' < c) {
-                throw new IllegalArgumentException("'" + colName + "' ist no valid column name.");
-            }
-
-            int d = c - 'a' + 1;
-            col = col * stride + d;
-        }
-        return col - 1;
-    }
-
-    /**
-     * Get row name as String.
-     *
-     * @param i
-     *            the row number as used in Excel spreadsheets
-     * @return the row name ("1" for row number 0)
-     */
-    public static String getRowName(int i) {
-        return Integer.toString(i + 1);
     }
 
     /**

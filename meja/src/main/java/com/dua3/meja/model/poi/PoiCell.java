@@ -36,12 +36,10 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.RefOption;
 import com.dua3.meja.text.RichText;
 import com.dua3.meja.text.RichTextBuilder;
 import com.dua3.meja.text.Run;
 import com.dua3.meja.text.Style;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 
 /**
@@ -220,11 +218,6 @@ public final class PoiCell
             throw new IllegalStateException("Cell does not contain a boolean value.");
         }
         return poiCell.getBooleanCellValue();
-    }
-
-    @Override
-    public String getCellRef(RefOption... options) {
-        return MejaHelper.getCellRef(this, options);
     }
 
     @Override

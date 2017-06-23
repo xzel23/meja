@@ -78,7 +78,29 @@ public interface Cell {
      *            options to be used
      * @return cell reference as String
      */
-    String getCellRef(RefOption... options);
+    default String getCellRef(RefOption... options) {
+        String prefixRow = "";
+        String prefixColumn = "";
+        String sheet = "";
+
+        for (RefOption o : options) {
+            switch (o) {
+            case FIX_COLUMN:
+                prefixColumn = "$";
+                break;
+            case FIX_ROW:
+                prefixRow = "$";
+                break;
+            case WITH_SHEET:
+                sheet = "'" + getSheet().getSheetName() + "'!";
+                break;
+            }
+        }
+
+        return sheet
+                + prefixColumn + Sheet.getColumnName(getColumnNumber())
+                + prefixRow + (getRowNumber() + 1);
+    }
 
     /**
      * Return the cell style.

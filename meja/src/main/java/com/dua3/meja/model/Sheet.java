@@ -18,6 +18,7 @@ package com.dua3.meja.model;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -349,6 +350,58 @@ public interface Sheet
      */
     default Stream<Row> rows() {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
+    }
+
+    /**
+     * Translate column number to column name.
+     *
+     * @param j
+     *            the column number
+     * @return the column name
+     */
+    static String getColumnName(int j) {
+        StringBuilder sb = new StringBuilder();
+        sb.append((char) ('A' + j % 26));
+        j /= 26;
+        while (j > 0) {
+            sb.insert(0, (char) ('A' + j % 26 - 1));
+            j /= 26;
+        }
+        return new String(sb);
+    }
+
+    /**
+     * Translate column name to column number.
+     *
+     * @param colName
+     *            the name of the column, ie. "A", "B",... , "AA", "AB",...
+     * @return the column number
+     * @throws IllegalArgumentException
+     *             if {@code colName} is not a valid column name
+     */
+    static int getColumnNumber(String colName) {
+        final int stride = 'z' - 'a' + 1;
+        int col = 0;
+        for (char c : colName.toLowerCase(Locale.ROOT).toCharArray()) {
+            if (c < 'a' || 'z' < c) {
+                throw new IllegalArgumentException("'" + colName + "' ist no valid column name.");
+            }
+
+            int d = c - 'a' + 1;
+            col = col * stride + d;
+        }
+        return col - 1;
+    }
+
+    /**
+     * Get row name as String.
+     *
+     * @param i
+     *            the row number as used in Excel spreadsheets
+     * @return the row name ("1" for row number 0)
+     */
+    static String getRowName(int i) {
+        return Integer.toString(i + 1);
     }
 
 }

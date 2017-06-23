@@ -708,17 +708,6 @@ public class SwingSheetView extends JPanel
         SwingUtil.setClipboardText(text);
     }
 
-    /**
-     * Get column name.
-     *
-     * @param j
-     *            the column number
-     * @return name of column
-     */
-    public String getColumnName(int j) {
-        return MejaHelper.getColumnName(j);
-    }
-
     private Cell getCurrentCell() {
         return sheet == null ? null : sheet.getCurrentCell();
     }
