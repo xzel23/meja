@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.function.BiFunction;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.RefOption;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.io.FileSystemView;
@@ -58,56 +61,51 @@ public class FormatTest {
      * </p>
      */
     @Test
+    public void testFormat_getAsText() {
+        testHelper((cell,locale) -> cell.getAsText(locale).toString());
+    }
+
+    @Test
     public void testFormat_toString() {
-        workbook.sheets()
-            .peek(s -> System.out.format("Processing sheet '%s'%n", s.getSheetName()))
-            .forEach(s -> {
-                s.rows()
-                    .skip(1)
-                    .forEach(r -> {
-                        if (r.getCell(3).toString().contains("#IGNORE#")) {
-                            System.out.format("line %d ignored%n", r.getRowNumber()+1);
-                        } else {
-                            String description = r.getCell(0).toString();
-                            String actual = r.getCell(1).toString();
-                            String expected = r.getCell(2).toString();
-                            Assert.assertEquals(String.format("in line %d: %s - expected '%s', actual '%s'",
-                                    r.getRowNumber()+1, description,
-                                    expected, actual),
-                                    expected, actual);
-                        }
-                    });
-            });
+        testHelper((cell,locale) -> cell.toString(locale));
     }
 
     /**
-     * Test formatting applied when calling Cell.toString().
+     * Test formatting.
      * <p>
      * The workboook 'FormatTest.xlsx' is read from the classpath. Each sheet contains for columns used for testing:
      * <ul>
+     * <li> A Flag to indicate ignored test cases
      * <li> description of what is being tested in the current row
+     * <li> the locale to use
      * <li> value with an applied format to be tested
      * <li> the expected result as a {@code String}
-     * <li> an optional remark - if it contains the text {@literal #IGNORE#}, the row is skipped
+     * <li> an optional remark
      * </ul>
      * </p>
      */
-    @Test
-    public void testFormat_asText() {
-        Locale locale = Locale.GERMAN;
-
+    public void testHelper(BiFunction<Cell,Locale,String> extract) {
         workbook.sheets()
             .peek(s -> System.out.format("Processing sheet '%s'%n", s.getSheetName()))
             .forEach(s -> {
                 s.rows()
                     .skip(1)
                     .forEach(r -> {
-                        if (r.getCell(3).toString().contains("#IGNORE#")) {
+                        boolean ignored = r.getCell(0).toString().equalsIgnoreCase("x");
+                        if (ignored) {
                             System.out.format("line %d ignored%n", r.getRowNumber()+1);
                         } else {
-                            String description = r.getCell(0).toString();
-                            String actual = r.getCell(1).getAsText(locale).toString();
-                            String expected = r.getCell(2).toString();
+                            String description = r.getCell(1).toString();
+
+                            Cell languageCell = r.getCell(2);
+                            String languageTag = languageCell.toString();
+                            Locale locale = Locale.forLanguageTag(languageTag);
+                            if (!languageTag.equals(locale.toLanguageTag())) {
+                                throw new IllegalStateException("Check language tag in cell "+languageCell.getCellRef(RefOption.WITH_SHEET));
+                            }
+
+                            String actual = extract.apply(r.getCell(3), locale);
+                            String expected = r.getCell(4).toString();
                             Assert.assertEquals(String.format("in line %d: %s - expected '%s', actual '%s'",
                                     r.getRowNumber()+1, description,
                                     expected, actual),
