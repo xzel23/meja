@@ -134,7 +134,7 @@ public class GenericSheet
     }
 
     // helper method used to calculate a cell's width
-    private float calcCellWidth(Cell cell) {
+    private static float calcCellWidth(Cell cell) {
         // calculate the exact width
         String text = cell.toString();
         Font font = cell.getCellStyle().getFont();

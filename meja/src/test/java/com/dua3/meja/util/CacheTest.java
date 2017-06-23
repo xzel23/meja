@@ -40,7 +40,7 @@ public class CacheTest {
 
     }
 
-    private byte[] allocate(int size) {
+    private static byte[] allocate(int size) {
         return new byte[size];
     }
 }
