@@ -18,14 +18,11 @@ package com.dua3.meja.io;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Locale;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.util.OptionSet;
-import com.dua3.meja.util.OptionSet.Value;
 import com.dua3.meja.util.Options;
 
 /**
@@ -60,17 +57,6 @@ public class CsvWorkbookWriter extends WorkbookWriter {
     private CsvWorkbookWriter() {
     }
 
-    private Options getOptionsWithLocale(Options options, Workbook workbook) {
-        if (options.hasOption(Csv.getOption(Csv.OPTION_LOCALE).get())) {
-            return options;
-        }
-
-        Options options2 = new Options(options);
-        Value<Locale> value = OptionSet.value("Locale from Workbook", workbook.getLocale());
-        options2.put(Csv.getOption(Csv.OPTION_LOCALE).get(), value);
-        return options2;
-    }
-
     @Override
     public void setOptions(Options importSettings) {
         this.options = new Options(importSettings);
@@ -89,14 +75,14 @@ public class CsvWorkbookWriter extends WorkbookWriter {
      */
     public void write(Workbook workbook, BufferedWriter out) throws IOException {
         // do not close the writer - it is the caller's responsibility
-        CsvWriter csvWriter = CsvWriter.create(out, getOptionsWithLocale(options, workbook));
+        CsvWriter csvWriter = CsvWriter.create(out, options);
         writeSheets(workbook, csvWriter);
         csvWriter.flush();
     }
 
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
-        CsvWriter csvWriter = CsvWriter.create(out, getOptionsWithLocale(options, workbook));
+        CsvWriter csvWriter = CsvWriter.create(out, options);
         writeSheets(workbook, csvWriter);
         csvWriter.flush();
     }

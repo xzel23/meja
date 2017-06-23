@@ -3,6 +3,7 @@ package com.dua3.meja.text;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -25,7 +26,6 @@ public class FormatTest {
         // the FileSystemView is needed in case the test is run from a jar file
         try (FileSystemView fsv = FileSystemView.create(clazz)) {
             Path wbPath = fsv.resolve(fileName);
-            System.out.println("HERE: "+wbPath);
             workbook = MejaHelper.openWorkbook(wbPath);
         } catch (IOException e) {
             // XXX when run from within gradle, resources are placed in another location
@@ -34,7 +34,6 @@ public class FormatTest {
             Path path = Paths.get(s);
             try (FileSystemView fsv = FileSystemView.create(path)) {
                 Path wbPath = fsv.resolve(fileName);
-                System.out.println("HERE: "+wbPath);
                 workbook = MejaHelper.openWorkbook(wbPath);
             }
         }
@@ -60,8 +59,6 @@ public class FormatTest {
      */
     @Test
     public void testFormat_toString() {
-        System.out.format("Testing Workbook %s (workbook locale is %s)%n", workbook.getPath(), workbook.getLocale());
-
         workbook.sheets()
             .peek(s -> System.out.format("Processing sheet '%s'%n", s.getSheetName()))
             .forEach(s -> {
@@ -71,10 +68,11 @@ public class FormatTest {
                         if (r.getCell(3).toString().contains("#IGNORE#")) {
                             System.out.format("line %d ignored%n", r.getRowNumber()+1);
                         } else {
+                            String description = r.getCell(0).toString();
                             String actual = r.getCell(1).toString();
                             String expected = r.getCell(2).toString();
                             Assert.assertEquals(String.format("in line %d: %s - expected '%s', actual '%s'",
-                                    r.getRowNumber()+1, r.getCell(0).get(),
+                                    r.getRowNumber()+1, description,
                                     expected, actual),
                                     expected, actual);
                         }
@@ -96,7 +94,7 @@ public class FormatTest {
      */
     @Test
     public void testFormat_asText() {
-        System.out.format("Testing Workbook %s (workbook locale is %s)%n", workbook.getPath(), workbook.getLocale());
+        Locale locale = Locale.GERMAN;
 
         workbook.sheets()
             .peek(s -> System.out.format("Processing sheet '%s'%n", s.getSheetName()))
@@ -107,10 +105,11 @@ public class FormatTest {
                         if (r.getCell(3).toString().contains("#IGNORE#")) {
                             System.out.format("line %d ignored%n", r.getRowNumber()+1);
                         } else {
-                            String actual = r.getCell(1).getAsText().toString();
+                            String description = r.getCell(0).toString();
+                            String actual = r.getCell(1).getAsText(locale).toString();
                             String expected = r.getCell(2).toString();
                             Assert.assertEquals(String.format("in line %d: %s - expected '%s', actual '%s'",
-                                    r.getRowNumber()+1, r.getCell(0).get(),
+                                    r.getRowNumber()+1, description,
                                     expected, actual),
                                     expected, actual);
                         }

@@ -3,7 +3,6 @@ package com.dua3.meja.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.nio.file.Path;
-import java.util.Locale;
 import java.util.Optional;
 
 import com.dua3.meja.util.ObjectCache;
@@ -23,10 +22,7 @@ public abstract class AbstractWorkbook
      */
     private ObjectCache objectCache = null;
 
-    protected final Locale locale;
-
-    public AbstractWorkbook(Locale locale, Path path) {
-        this.locale = locale;
+    public AbstractWorkbook(Path path) {
         this.path = path;
     }
 
@@ -43,11 +39,6 @@ public abstract class AbstractWorkbook
     @Override
     public <T> T cache(T obj) {
         return objectCache != null ? objectCache.get(obj) : obj;
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
     }
 
     @Override

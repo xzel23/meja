@@ -19,6 +19,7 @@ package com.dua3.meja.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Locale;
 
 import com.dua3.meja.text.RichText;
 
@@ -59,7 +60,7 @@ public interface Cell {
      *
      * @return cell value as R, as it would be displayed
      */
-    RichText getAsText();
+    RichText getAsText(Locale locale);
 
     /**
      * Return boolean cell value.
@@ -364,6 +365,14 @@ public interface Cell {
      */
     @Override
     String toString();
+
+    /**
+     * Return string representation of cell content.
+     *
+     * @param locale locale for formatting
+     * @return string representation of cell content
+     */
+    String toString(Locale locale);
 
     /**
      * Unmerge cell.

@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Locale;
 import java.util.Optional;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -51,19 +49,12 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     public static final String OPTION_LOCALE = "Locale";
 
-    static {
-        Locale[] locales = Locale.getAvailableLocales();
-        Arrays.sort(locales, (a, b) -> a.toString().compareTo(b.toString()));
-        OPTIONS.addOption(OPTION_LOCALE, Locale.class, OptionSet.value("default", Locale.ROOT),
-                OptionSet.wrap(locales));
-    }
-
     private static PoiWorkbook createWorkbook(
-            final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, Path path) {
+            final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
         if (poiWorkbook instanceof HSSFWorkbook) {
-            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, locale, path);
+            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, path);
         } else {
-            return new PoiXssfWorkbook(poiWorkbook, locale, path);
+            return new PoiXssfWorkbook(poiWorkbook, path);
         }
     }
 
@@ -86,12 +77,12 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @return the workbook
      * @throws IOException
      */
-    private static PoiWorkbook open(InputStream in, Locale locale, Path path)
+    private static PoiWorkbook open(InputStream in, Path path)
             throws IOException {
         try {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
                     .create(in);
-            return createWorkbook(poiWorkbook, locale, path);
+            return createWorkbook(poiWorkbook, path);
         } catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException
                 | org.apache.poi.util.RecordFormatException ex) {
             throw new FileFormatException("Invalid file format or corrupted data", ex);
@@ -103,22 +94,12 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     @Override
     public PoiWorkbook create() {
-        return create(Locale.getDefault());
-    }
-
-    @Override
-    public PoiWorkbook create(Locale locale) {
-        return createXlsx(locale);
+        return createXlsx();
     }
 
     @Override
     public PoiWorkbook createStreaming() {
-        return createStreaming(Locale.getDefault());
-    }
-
-    @Override
-    public PoiWorkbook createStreaming(Locale locale) {
-        return createXlsxStreaming(locale);
+        return createXlsxStreaming();
     }
 
     /**
@@ -127,19 +108,8 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @return the newly created Workbook
      */
     public Workbook createXls() {
-        return createXls(Locale.getDefault());
-    }
-
-    /**
-     * Create a new Xls-Workbook with the given Locale settings.
-     *
-     * @param locale
-     *            the locale to use
-     * @return the newly created Workbook
-     */
-    public Workbook createXls(Locale locale) {
         return new PoiHssfWorkbook(
-                new org.apache.poi.hssf.usermodel.HSSFWorkbook(), locale, null);
+                new org.apache.poi.hssf.usermodel.HSSFWorkbook(), null);
     }
 
     /**
@@ -148,30 +118,16 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @return the newly created Workbook
      */
     public PoiWorkbook createXlsx() {
-        return createXlsx(Locale.getDefault());
-    }
-
-    /**
-     * Create a new Xlsx-Workbook in streaming mode (write only) with the given
-     * Locale settings.
-     *
-     * @param locale
-     *            the locale to use
-     * @return the newly created Workbook
-     */
-    public PoiWorkbook createXlsx(Locale locale) {
-        return new PoiXssfWorkbook(new XSSFWorkbook(), locale, null);
+        return new PoiXssfWorkbook(new XSSFWorkbook(), null);
     }
 
     /**
      * Create a new Xlsx-Workbook in streaming mode (write only).
      *
-     * @param locale
-     *            the {@link Locale} to use
      * @return the newly created Workbook
      */
-    public PoiWorkbook createXlsxStreaming(Locale locale) {
-        return new PoiXssfWorkbook(new SXSSFWorkbook(), locale, null);
+    public PoiWorkbook createXlsxStreaming() {
+        return new PoiXssfWorkbook(new SXSSFWorkbook(), null);
     }
 
     @Override
@@ -184,8 +140,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
             // to
             // save the workbook again to the same file.
             try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
-                Locale locale = (Locale) importSettings.get(OPTIONS.getOption(OPTION_LOCALE).get()).getValue();
-                return open(in, locale, path);
+                return open(in, path);
             }
         }
 
@@ -206,25 +161,10 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      *             if an error occurs
      */
     @Override
-    public PoiWorkbook open(Path path) throws IOException {
-        return open(path, Locale.getDefault());
-    }
-
-    /**
-     * Open workbook from URL.
-     *
-     * @param path
-     *            Path of the workbook to open
-     * @param locale
-     *            the locale to use
-     * @return the workbook the workbook
-     * @throws IOException
-     *             if an error occurs
-     */
-    public PoiWorkbook open(Path path, Locale locale)
+    public PoiWorkbook open(Path path)
             throws IOException {
         try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
-            return open(in, locale, path);
+            return open(in, path);
         }
     }
 

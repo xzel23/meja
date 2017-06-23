@@ -47,7 +47,7 @@ public class XlsWorkbookWriter extends WorkbookWriter {
         if (workbook instanceof PoiWorkbook.PoiHssfWorkbook) {
             workbook.write(FileType.XLS, out);
         } else {
-            try (Workbook xlsWorkbook = PoiWorkbookFactory.instance().createXls(workbook.getLocale())) {
+            try (Workbook xlsWorkbook = PoiWorkbookFactory.instance().createXls()) {
                 xlsWorkbook.copy(workbook);
                 xlsWorkbook.write(FileType.XLS, out);
                 out.flush();

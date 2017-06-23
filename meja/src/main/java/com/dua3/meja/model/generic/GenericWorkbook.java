@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import com.dua3.meja.io.FileType;
@@ -45,13 +44,11 @@ public class GenericWorkbook extends AbstractWorkbook {
     /**
      * Construct a new {@code GenericWorkbook}.
      *
-     * @param locale
-     *            the locale to use
      * @param path
      *            the Path to set
      */
-    public GenericWorkbook(Locale locale, Path path) {
-        super(locale, path);
+    public GenericWorkbook(Path path) {
+        super(path);
         this.defaultCellStyle = new GenericCellStyle(this);
         this.cellStyles.put("", defaultCellStyle);
     }
@@ -87,7 +84,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public GenericSheet createSheet(String sheetName) {
-        final GenericSheet sheet = new GenericSheet(this, sheetName, locale);
+        final GenericSheet sheet = new GenericSheet(this, sheetName);
         sheets.add(sheet);
         pcs.firePropertyChange(PROPERTY_SHEET_ADDED, null, sheets.size() - 1);
         return sheet;

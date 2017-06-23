@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -46,7 +45,6 @@ public class GenericSheet
 
     private final GenericWorkbook workbook;
     private final String sheetName;
-    private final Locale locale;
     private final List<GenericRow> rows = new ArrayList<>(4_000);
     private final List<RectangularRegion> mergedRegions = new ArrayList<>();
     private final ArrayList<Float> columnWidth = new ArrayList<>(200);
@@ -60,10 +58,9 @@ public class GenericSheet
     private float zoom = 1.0f;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public GenericSheet(GenericWorkbook workbook, String sheetName, Locale locale) {
+    public GenericSheet(GenericWorkbook workbook, String sheetName) {
         this.workbook = workbook;
         this.sheetName = sheetName;
-        this.locale = locale;
         this.numberOfColumns = 0;
     }
 
@@ -161,7 +158,7 @@ public class GenericSheet
 
     @Override
     public void clear() {
-        copy(new GenericSheet(workbook, sheetName, locale));
+        copy(new GenericSheet(workbook, sheetName));
     }
 
     @Override

@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -148,13 +147,6 @@ public interface Workbook
      * @return the default cell style
      */
     CellStyle getDefaultCellStyle();
-
-    /**
-     * Get the locale for this workbook.
-     *
-     * @return the workbook`s locale
-     */
-    Locale getLocale();
 
     /**
      * Get sheet by number.

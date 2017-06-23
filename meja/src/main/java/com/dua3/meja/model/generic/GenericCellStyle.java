@@ -21,6 +21,7 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,8 +58,8 @@ public class GenericCellStyle
     private String dataFormat = "";
 
     // formatting helper
-    transient private DateTimeFormatter dateFormatter = null;
-    transient private NumberFormat numberFormatter = null;
+    private DateTimeFormatter dateFormatter = null;
+    private NumberFormat numberFormatter = null;
 
     /**
      * Construct a new {@code GenericCellStyle}.
@@ -104,18 +105,18 @@ public class GenericCellStyle
      *            the date to format
      * @return text representation of {@code date}
      */
-    public String format(LocalDateTime date) {
+    public String format(LocalDateTime date, Locale locale) {
         if (dateFormatter == null) {
             try {
                 if (dataFormat == null || dataFormat.isEmpty()) {
                     dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                            .withLocale(workbook.getLocale());
+                            .withLocale(locale);
                 } else {
-                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat, workbook.getLocale());
+                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
                 }
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
-                dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(workbook.getLocale());
+                dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
             }
         }
 
@@ -129,15 +130,15 @@ public class GenericCellStyle
      *            the number to format
      * @return text representation of {@code n}
      */
-    public String format(Number n) {
+    public String format(Number n, Locale locale) {
         if (numberFormatter == null) {
             try {
                 String fmt = dataFormat == null || dataFormat.isEmpty() ? "0.##########" : dataFormat;
-                DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(workbook.getLocale());
+                DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
                 numberFormatter = new DecimalFormat(fmt, symbols);
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
-                numberFormatter = NumberFormat.getInstance(workbook.getLocale());
+                numberFormatter = NumberFormat.getInstance(locale);
                 numberFormatter.setGroupingUsed(false);
             }
         }

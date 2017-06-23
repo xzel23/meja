@@ -17,7 +17,6 @@ package com.dua3.meja.model.generic;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Locale;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -41,22 +40,12 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
 
     @Override
     public GenericWorkbook create() {
-        return create(Locale.getDefault());
-    }
-
-    @Override
-    public GenericWorkbook create(Locale locale) {
-        return new GenericWorkbook(locale, null);
+        return new GenericWorkbook(null);
     }
 
     @Override
     public GenericWorkbook createStreaming() {
         return create();
-    }
-
-    @Override
-    public GenericWorkbook createStreaming(Locale locale) {
-        return create(locale);
     }
 
     @Override

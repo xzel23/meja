@@ -700,9 +700,14 @@ public class SwingSheetView extends JPanel
     }
 
     private void copyToClipboard() {
+        String text = getCurrentCell().getAsText(getLocale()).toString();
+        setClipboardText(text);
+    }
+
+    void setClipboardText(String text) {
+        StringSelection selection = new StringSelection(text);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        StringSelection text = new StringSelection(getCurrentCell().getAsText().toString());
-        clipboard.setContents(text, text);
+        clipboard.setContents(selection, selection);
     }
 
     /**
