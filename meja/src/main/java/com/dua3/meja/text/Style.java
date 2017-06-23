@@ -61,10 +61,7 @@ public class Style {
     }
 
     String getOrDefault(String property, String def) {
-        // FIXME JDK 8
-        // return properties.getOrDefault(property, def);
-        String s = properties.get(property);
-        return s != null ? s : def;
+        return properties.getOrDefault(property, def);
     }
 
     @Override
