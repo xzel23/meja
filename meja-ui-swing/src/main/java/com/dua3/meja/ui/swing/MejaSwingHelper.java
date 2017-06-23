@@ -88,8 +88,7 @@ public class MejaSwingHelper {
             @Override
             public Object getValueAt(int i, int j) {
                 Row row = sheet.getRow(i);
-                Cell cell = row == null ? null : row.getCell(j);
-                return cell;
+                return row == null ? null : row.getCell(j);
             }
 
             @Override

@@ -79,7 +79,7 @@ public class SwingSheetView extends JPanel
     /**
      * Actions for key bindings.
      */
-    static enum Actions {
+    enum Actions {
         MOVE_UP(view -> view.move(Direction.NORTH)),
         MOVE_DOWN(view -> view.move(Direction.SOUTH)),
         MOVE_LEFT(view -> view.move(Direction.WEST)),
@@ -282,12 +282,12 @@ public class SwingSheetView extends JPanel
         SheetPane() {
             // define row and column ranges and set up segments
             final IntSupplier startColumn = () -> 0;
-            final IntSupplier splitColumn = () -> getSplitColumn();
-            final IntSupplier endColumn = () -> getColumnCount();
+            final IntSupplier splitColumn = this::getSplitColumn;
+            final IntSupplier endColumn = this::getColumnCount;
 
             final IntSupplier startRow = () -> 0;
-            final IntSupplier splitRow = () -> getSplitRow();
-            final IntSupplier endRow = () -> getRowCount();
+            final IntSupplier splitRow = this::getSplitRow;
+            final IntSupplier endRow = this::getRowCount;
 
             topLeftQuadrant = new SwingSegmentView(startRow, splitRow, startColumn, splitColumn);
             topRightQuadrant = new SwingSegmentView(startRow, splitRow, splitColumn, endColumn);
@@ -304,6 +304,10 @@ public class SwingSheetView extends JPanel
          *            the cell to scroll to
          */
         public void ensureCellIsVisibile(Cell cell) {
+            if (cell==null) {
+                return;
+            }
+
             final Rectangle cellRect = sheetPainter.getCellRect(cell);
             boolean aboveSplit = getSplitY() >= cellRect.getBottom();
             boolean toLeftOfSplit = getSplitX() >= cellRect.getRight();
@@ -719,6 +723,10 @@ public class SwingSheetView extends JPanel
         return sheet == null ? null : sheet.getCurrentCell();
     }
 
+    private Cell getCurrentLogicalCell() {
+        return sheet == null ? null : sheet.getCurrentCell().getLogicalCell();
+    }
+
     /**
      * Get the current column number.
      *
@@ -842,7 +850,7 @@ public class SwingSheetView extends JPanel
         });
         // make focusable
         setFocusable(true);
-        SwingUtilities.invokeLater(() -> requestFocusInWindow());
+        SwingUtilities.invokeLater(this::requestFocusInWindow);
         setSheet(sheet1);
     }
 
@@ -873,7 +881,11 @@ public class SwingSheetView extends JPanel
      *            direction
      */
     private void move(Direction d) {
-        Cell cell = getCurrentCell().getLogicalCell();
+        Cell cell = getCurrentLogicalCell();
+
+        if (cell==null) {
+            return;
+        }
 
         switch (d) {
         case NORTH:
@@ -924,7 +936,11 @@ public class SwingSheetView extends JPanel
      *            direction
      */
     private void movePage(Direction d) {
-        Cell cell = getCurrentCell().getLogicalCell();
+        Cell cell = getCurrentLogicalCell();
+
+        if (cell==null) {
+            return;
+        }
 
         java.awt.Rectangle cellRect = rectS2D(sheetPainter.getCellRect(cell));
         switch (d) {
@@ -1030,7 +1046,7 @@ public class SwingSheetView extends JPanel
      */
     @Override
     public void scrollToCurrentCell() {
-        sheetPane.ensureCellIsVisibile(getCurrentCell().getLogicalCell());
+        sheetPane.ensureCellIsVisibile(getCurrentLogicalCell());
     }
 
     /**
@@ -1132,7 +1148,11 @@ public class SwingSheetView extends JPanel
             return;
         }
 
-        final Cell cell = getCurrentCell().getLogicalCell();
+        final Cell cell = getCurrentLogicalCell();
+
+        if (cell==null) {
+            return;
+        }
 
         sheetPane.ensureCellIsVisibile(cell);
         sheetPane.setScrollable(false);

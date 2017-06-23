@@ -46,7 +46,7 @@ public class DefaultCellEditor
     /**
      * Actions for key bindings.
      */
-    static enum Actions {
+    enum Actions {
 
         COMMIT {
             @Override
