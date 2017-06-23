@@ -36,8 +36,7 @@ public class CsvWriter extends Csv
     private static final String allowedChars = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
     public static CsvWriter create(BufferedWriter writer, Options options) {
-        CsvWriter csvWriter = new CsvWriter(writer, options);
-        return csvWriter;
+        return new CsvWriter(writer, options);
     }
 
     public static CsvWriter create(File file, Options options) throws IOException {
