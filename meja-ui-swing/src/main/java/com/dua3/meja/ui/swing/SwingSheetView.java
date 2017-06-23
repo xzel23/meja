@@ -25,8 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -70,6 +68,7 @@ import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.utility.swing.SwingUtil;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -700,14 +699,9 @@ public class SwingSheetView extends JPanel
     }
 
     private void copyToClipboard() {
-        String text = getCurrentCell().getAsText(getLocale()).toString();
-        setClipboardText(text);
-    }
-
-    void setClipboardText(String text) {
-        StringSelection selection = new StringSelection(text);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(selection, selection);
+        Cell cell = getCurrentCell();
+        String text = cell==null ? "" : cell.getAsText(getLocale()).toString();
+        SwingUtil.setClipboardText(text);
     }
 
     /**
