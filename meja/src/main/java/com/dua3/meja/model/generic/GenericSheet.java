@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -46,7 +45,6 @@ public class GenericSheet
 
     private final GenericWorkbook workbook;
     private final String sheetName;
-    private final Locale locale;
     private final List<GenericRow> rows = new ArrayList<>(4_000);
     private final List<RectangularRegion> mergedRegions = new ArrayList<>();
     private final ArrayList<Float> columnWidth = new ArrayList<>(200);
@@ -60,10 +58,9 @@ public class GenericSheet
     private float zoom = 1.0f;
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public GenericSheet(GenericWorkbook workbook, String sheetName, Locale locale) {
+    public GenericSheet(GenericWorkbook workbook, String sheetName) {
         this.workbook = workbook;
         this.sheetName = sheetName;
-        this.locale = locale;
         this.numberOfColumns = 0;
     }
 
@@ -150,18 +147,18 @@ public class GenericSheet
     }
 
     void cellStyleChanged(GenericCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_STYLE, old, arg);
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, Property.CELL_STYLE.name(), old, arg);
         pcs.firePropertyChange(evt);
     }
 
     void cellValueChanged(GenericCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_CONTENT, old, arg);
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, Property.CELL_CONTENT.name(), old, arg);
         pcs.firePropertyChange(evt);
     }
 
     @Override
     public void clear() {
-        copy(new GenericSheet(workbook, sheetName, locale));
+        copy(new GenericSheet(workbook, sheetName));
     }
 
     @Override
@@ -309,7 +306,7 @@ public class GenericSheet
     public void setColumnWidth(int j, float width) {
         if (j < columnWidth.size()) {
             if (columnWidth.set(j, width) != width) {
-                pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
+                firePropertyChange(Property.LAYOUT_CHANGED, null, null);
             }
         } else {
             columnWidth.ensureCapacity(j + 1);
@@ -317,7 +314,7 @@ public class GenericSheet
                 columnWidth.add(null); // use default width
             }
             columnWidth.add(width);
-            pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
+            firePropertyChange(Property.LAYOUT_CHANGED, null, null);
         }
     }
 
@@ -332,7 +329,7 @@ public class GenericSheet
         currentRow = cell.getRowNumber();
         currentColumn = cell.getColumnNumber();
 
-        pcs.firePropertyChange(PROPERTY_ACTIVE_CELL, old, cell);
+        firePropertyChange(Property.ACTIVE_CELL, old, cell);
     }
 
     @Override
@@ -346,7 +343,7 @@ public class GenericSheet
             }
             rowHeight.add(height);
         }
-        pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
+        firePropertyChange(Property.LAYOUT_CHANGED, null, null);
     }
 
     @Override
@@ -358,7 +355,7 @@ public class GenericSheet
         if (zoom != this.zoom) {
             float oldZoom = this.zoom;
             this.zoom = zoom;
-            pcs.firePropertyChange(PROPERTY_ZOOM, oldZoom, zoom);
+            firePropertyChange(Property.ZOOM, oldZoom, zoom);
         }
     }
 
@@ -366,12 +363,16 @@ public class GenericSheet
     public void splitAt(int i, int j) {
         freezeRow = i;
         freezeColumn = j;
-        pcs.firePropertyChange(PROPERTY_FREEZE, null, null);
+        firePropertyChange(Property.SPLIT, null, null);
     }
 
     @Override
     public Lock writeLock() {
         return lock.writeLock();
+    }
+
+    private <T> void firePropertyChange(Property property, T oldValue, T newValue) {
+        pcs.firePropertyChange(property.name(), oldValue, newValue);
     }
 
 }

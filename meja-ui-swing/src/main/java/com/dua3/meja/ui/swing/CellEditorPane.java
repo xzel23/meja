@@ -231,7 +231,7 @@ public class CellEditorPane extends JTextPane {
         if (!eval && cell.getCellType() == CellType.FORMULA) {
             text = RichText.valueOf("=" + cell.getFormula());
         } else {
-            text = cell.getAsText();
+            text = cell.getAsText(getLocale());
         }
 
         AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);

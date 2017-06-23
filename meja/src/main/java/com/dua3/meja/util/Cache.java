@@ -56,7 +56,7 @@ public class Cache<KEY, VALUE> {
      * no direct control over the lifetime of these instances.
      * </ul>
      */
-    public static enum Type {
+    public enum Type {
 
         /**
          * Use strong keys.

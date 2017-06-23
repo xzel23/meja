@@ -77,7 +77,7 @@ public class MejaSwingHelper {
 
             @Override
             public String getColumnName(int columnIndex) {
-                return MejaHelper.getColumnName(columnIndex);
+                return Sheet.getColumnName(columnIndex);
             }
 
             @Override
@@ -88,8 +88,7 @@ public class MejaSwingHelper {
             @Override
             public Object getValueAt(int i, int j) {
                 Row row = sheet.getRow(i);
-                Cell cell = row == null ? null : row.getCell(j);
-                return cell;
+                return row == null ? null : row.getCell(j);
             }
 
             @Override

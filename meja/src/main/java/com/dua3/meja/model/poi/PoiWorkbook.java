@@ -75,13 +75,11 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          *
          * @param poiWorkbook
          *            the POI workbook instance
-         * @param locale
-         *            the locale to use
          * @param path
          *            the Path of the workbook
          */
-        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Locale locale, Path path) {
-            super(poiWorkbook, locale, path);
+        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Path path) {
+            super(poiWorkbook, path);
             this.defaultCellStyle = new PoiHssfCellStyle(this, poiWorkbook.getCellStyleAt((short) 0));
             cellStyles.put("", (short) 0);
             init();
@@ -183,13 +181,11 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          *
          * @param poiWorkbook
          *            the POI workbook instance
-         * @param locale
-         *            the locale to use
          * @param path
          *            the Path of the workbook
          */
-        public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, Path path) {
-            super(poiWorkbook, locale, path);
+        public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
+            super(poiWorkbook, path);
             assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt((short) 0));
             init();
@@ -298,11 +294,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     protected final Map<String, Short> cellStyles = new HashMap<>();
 
     /**
-     *
-     */
-    protected final org.apache.poi.ss.usermodel.DataFormatter dataFormatter;
-
-    /**
      * Construct a new instance.
      *
      * @param poiWorkbook
@@ -312,11 +303,10 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * @param path
      *            the Path of this workbook
      */
-    protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Locale locale, Path path) {
-        super(locale, path);
+    protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
+        super(path);
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
-        this.dataFormatter = new org.apache.poi.ss.usermodel.DataFormatter(locale);
 
         // init cell style map
         for (short i = 0; i < poiWorkbook.getNumCellStyles(); i++) {
@@ -405,7 +395,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         org.apache.poi.ss.usermodel.Sheet poiSheet = poiWorkbook.createSheet(sheetName);
         PoiSheet sheet = new PoiSheet(this, poiSheet);
         sheets.add(sheet);
-        pcs.firePropertyChange(PROPERTY_SHEET_ADDED, null, sheets.size() - 1);
+        firePropertyChange(Property.SHEET_ADDED, null, sheets.size() - 1);
         return sheet;
     }
 
@@ -470,8 +460,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         return poiWorkbook.getActiveSheetIndex();
     }
 
-    org.apache.poi.ss.usermodel.DataFormatter getDataFormatter() {
-        return dataFormatter;
+    org.apache.poi.ss.usermodel.DataFormatter getDataFormatter(Locale locale) {
+        return new org.apache.poi.ss.usermodel.DataFormatter(locale);
     }
 
     @Override
@@ -486,11 +476,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      */
     public PoiFont getFont(org.apache.poi.ss.usermodel.Font poiFont) {
         return poiFont == null ? getDefaultCellStyle().getFont() : new PoiFont(this, poiFont);
-    }
-
-    @Override
-    public Locale getLocale() {
-        return locale;
     }
 
     /**
@@ -631,7 +616,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     public void removeSheet(int sheetNr) {
         sheets.remove(sheetNr);
         poiWorkbook.removeSheetAt(sheetNr);
-        pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
+        firePropertyChange(Property.SHEET_REMOVED, sheetNr, null);
     }
 
     @Override
@@ -643,7 +628,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         int oldIdx = getCurrentSheetIndex();
         if (idx != oldIdx) {
             poiWorkbook.setActiveSheet(idx);
-            pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
+            firePropertyChange(Property.ACTIVE_SHEET, oldIdx, idx);
         }
     }
 

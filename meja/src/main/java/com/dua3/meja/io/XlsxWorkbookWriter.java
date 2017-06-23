@@ -47,7 +47,7 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
         if (workbook instanceof PoiWorkbook.PoiXssfWorkbook) {
             workbook.write(FileType.XLSX, out);
         } else {
-            try (Workbook xlsxWorkbook = PoiWorkbookFactory.instance().createXlsxStreaming(workbook.getLocale())) {
+            try (Workbook xlsxWorkbook = PoiWorkbookFactory.instance().createXlsxStreaming()) {
                 xlsxWorkbook.copy(workbook);
                 xlsxWorkbook.write(FileType.XLSX, out);
                 out.flush();

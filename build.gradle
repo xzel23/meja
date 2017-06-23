@@ -18,7 +18,7 @@ subprojects {
 		compile "org.apache.poi:poi-ooxml:${poiVersion}"
 		compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
-        def utilityVersion = "0.1"
+        def utilityVersion = "0.1.1"
         compile "com.github.xzel23:utility:${utilityVersion}"
 		
         testCompile "junit:junit:4.12"

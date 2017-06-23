@@ -19,6 +19,7 @@ package com.dua3.meja.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Locale;
 
 import com.dua3.meja.text.RichText;
 
@@ -59,7 +60,7 @@ public interface Cell {
      *
      * @return cell value as R, as it would be displayed
      */
-    RichText getAsText();
+    RichText getAsText(Locale locale);
 
     /**
      * Return boolean cell value.
@@ -77,7 +78,29 @@ public interface Cell {
      *            options to be used
      * @return cell reference as String
      */
-    String getCellRef(RefOption... options);
+    default String getCellRef(RefOption... options) {
+        String prefixRow = "";
+        String prefixColumn = "";
+        String sheet = "";
+
+        for (RefOption o : options) {
+            switch (o) {
+            case FIX_COLUMN:
+                prefixColumn = "$";
+                break;
+            case FIX_ROW:
+                prefixRow = "$";
+                break;
+            case WITH_SHEET:
+                sheet = "'" + getSheet().getSheetName() + "'!";
+                break;
+            }
+        }
+
+        return sheet
+                + prefixColumn + Sheet.getColumnName(getColumnNumber())
+                + prefixRow + (getRowNumber() + 1);
+    }
 
     /**
      * Return the cell style.
@@ -364,6 +387,14 @@ public interface Cell {
      */
     @Override
     String toString();
+
+    /**
+     * Return string representation of cell content.
+     *
+     * @param locale locale for formatting
+     * @return string representation of cell content
+     */
+    String toString(Locale locale);
 
     /**
      * Unmerge cell.

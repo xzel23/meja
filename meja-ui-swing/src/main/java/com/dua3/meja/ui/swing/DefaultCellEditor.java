@@ -35,7 +35,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.CellValueHelper;
 
 /**
@@ -47,7 +46,7 @@ public class DefaultCellEditor
     /**
      * Actions for key bindings.
      */
-    static enum Actions {
+    enum Actions {
 
         COMMIT {
             @Override
@@ -163,12 +162,14 @@ public class DefaultCellEditor
             text = "#ERROR";
             Logger.getLogger(DefaultCellEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Sheet sheet = sheetView.getSheet();
-        Locale locale = sheet.getWorkbook().getLocale();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
-        NumberFormat numberFormat = NumberFormat.getInstance(locale);
+        NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
         CellValueHelper helper = new CellValueHelper(numberFormat, dateFormatter);
         helper.setCellValue(cell, text);
+    }
+
+    private Locale getLocale() {
+        return component.getLocale();
     }
 
 }

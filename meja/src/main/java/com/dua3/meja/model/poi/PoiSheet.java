@@ -50,8 +50,6 @@ public class PoiSheet
     private List<RectangularRegion> mergedRegions;
     private float zoom = 1.0f;
     private int autoFilterRow = -1;
-    /** the default font size, used to calculate column widths */
-    private float fontSize = 1;
     private float factorWidth = 1;
 
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -102,7 +100,7 @@ public class PoiSheet
         }
 
         poiSheet.autoSizeColumn(j);
-        pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
+        firePropertyChange(Property.LAYOUT_CHANGED, null, null);
     }
 
     @Override
@@ -127,17 +125,17 @@ public class PoiSheet
 
         // inform listeners
         if (layoutChanged) {
-            pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
+            firePropertyChange(Property.LAYOUT_CHANGED, null, null);
         }
     }
 
     void cellStyleChanged(PoiCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_STYLE, old, arg);
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, Property.CELL_STYLE.name(), old, arg);
         pcs.firePropertyChange(evt);
     }
 
     void cellValueChanged(PoiCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_CONTENT, old, arg);
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, Property.CELL_CONTENT.name(), old, arg);
         pcs.firePropertyChange(evt);
     }
 
@@ -374,7 +372,7 @@ public class PoiSheet
     @Override
     public void setColumnWidth(int j, float width) {
         poiSheet.setColumnWidth(j, pointsToPoiColumnWidth(width));
-        pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
+        firePropertyChange(Property.LAYOUT_CHANGED, null, null);
     }
 
     @Override
@@ -387,7 +385,7 @@ public class PoiSheet
 
         ((PoiCell) cell).poiCell.setAsActiveCell();
 
-        pcs.firePropertyChange(PROPERTY_ACTIVE_CELL, old, cell);
+        firePropertyChange(Property.ACTIVE_CELL, old, cell);
     }
 
     @Override
@@ -397,7 +395,7 @@ public class PoiSheet
             poiRow = poiSheet.createRow(i);
         }
         poiRow.setHeightInPoints(height);
-        pcs.firePropertyChange(Sheet.PROPERTY_LAYOUT, null, null);
+        firePropertyChange(Property.LAYOUT_CHANGED, null, null);
     }
 
     @Override
@@ -412,14 +410,14 @@ public class PoiSheet
             // translate zoom factor into percent
             int pmZoom = Math.max(1, Math.round(zoom * 100));
             poiSheet.setZoom(pmZoom);
-            pcs.firePropertyChange(Sheet.PROPERTY_ZOOM, oldZoom, zoom);
+            firePropertyChange(Property.ZOOM, oldZoom, zoom);
         }
     }
 
     @Override
     public void splitAt(int i, int j) {
         poiSheet.createFreezePane(j, i);
-        pcs.firePropertyChange(PROPERTY_FREEZE, null, null);
+        firePropertyChange(Property.SPLIT, null, null);
     }
 
     private void update() {
@@ -459,13 +457,17 @@ public class PoiSheet
         }
 
         // determine default font size
-        fontSize = getWorkbook().poiWorkbook.getFontAt((short) 0).getFontHeightInPoints();
+        short fontSize = getWorkbook().poiWorkbook.getFontAt((short) 0).getFontHeightInPoints();
         factorWidth = fontSize * 0.525f / 256;
     }
 
     @Override
     public Lock writeLock() {
         return lock.writeLock();
+    }
+
+    private <T> void firePropertyChange(Property property, T oldValue, T newValue) {
+        pcs.firePropertyChange(property.name(), oldValue, newValue);
     }
 
 }

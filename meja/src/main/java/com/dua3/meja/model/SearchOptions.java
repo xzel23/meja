@@ -22,9 +22,6 @@ public enum SearchOptions {
     /**
      * Ignore text case when searching,
      */
-    /**
-     * Ignore text case when searching,
-     */
     IGNORE_CASE,
     /**
      * Compare complete cell content when searching.

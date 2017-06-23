@@ -18,14 +18,13 @@ package com.dua3.meja.model.generic;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Locale;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.RefOption;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.text.RichText;
-import com.dua3.meja.util.MejaHelper;
 
 /**
  *
@@ -152,16 +151,16 @@ public class GenericCell
     }
 
     @Override
-    public RichText getAsText() {
+    public RichText getAsText(Locale locale) {
         switch (getCellType()) {
         case BLANK:
             return RichText.emptyText();
         case TEXT:
             return getText();
         case NUMERIC:
-            return RichText.valueOf(getCellStyle().format((Number) value));
+            return RichText.valueOf(getCellStyle().format((Number) value, locale));
         case DATE:
-            return RichText.valueOf(getCellStyle().format((LocalDateTime) value));
+            return RichText.valueOf(getCellStyle().format((LocalDateTime) value, locale));
         default:
             return RichText.valueOf(value);
         }
@@ -173,11 +172,6 @@ public class GenericCell
             return (boolean) value;
         }
         throw new IllegalStateException("Cannot get boolean value from cell of type " + getCellType().name() + ".");
-    }
-
-    @Override
-    public String getCellRef(RefOption... options) {
-        return MejaHelper.getCellRef(this, options);
     }
 
     @Override
@@ -397,14 +391,14 @@ public class GenericCell
     }
 
     @Override
-    public String toString() {
+    public String toString(Locale locale) {
         switch (getCellType()) {
         case BLANK:
             return "";
         case NUMERIC:
-            return getCellStyle().format((Number) value);
+            return getCellStyle().format((Number) value, locale);
         case DATE:
-            return getCellStyle().format((LocalDateTime) value);
+            return getCellStyle().format((LocalDateTime) value, locale);
         default:
             return String.valueOf(value);
         }

@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -46,9 +45,11 @@ import com.dua3.meja.util.Options;
 public interface Workbook
         extends AutoCloseable, Iterable<Sheet> {
 
-    public static final String PROPERTY_ACTIVE_SHEET = "active sheet";
-    public static final String PROPERTY_SHEET_ADDED = "sheet added";
-    public static final String PROPERTY_SHEET_REMOVED = "sheet removed";
+    public enum Property {
+        ACTIVE_SHEET,
+        SHEET_ADDED,
+        SHEET_REMOVED;
+    }
 
     /**
      * Add property change listener.
@@ -148,13 +149,6 @@ public interface Workbook
      * @return the default cell style
      */
     CellStyle getDefaultCellStyle();
-
-    /**
-     * Get the locale for this workbook.
-     *
-     * @return the workbook`s locale
-     */
-    Locale getLocale();
 
     /**
      * Get sheet by number.

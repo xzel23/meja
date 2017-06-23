@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 public class RichText
         implements Iterable<Run> {
 
-    private static RichText EMPTY_TEXT = RichText.valueOf("");
+    private static final RichText EMPTY_TEXT = RichText.valueOf("");
 
     private static final Comparator<RichText> COMPARATOR = (RichText o1, RichText o2) -> o1.text.compareTo(o2.text);
 

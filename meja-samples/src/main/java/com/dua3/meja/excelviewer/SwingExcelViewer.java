@@ -90,7 +90,7 @@ public class SwingExcelViewer extends JFrame
      *            the command line arguments
      */
     public static void main(String[] args) {
-        SwingUtil.setNativeLookAndFeel();
+        SwingUtil.setNativeLookAndFeel(APPLICATION_NAME);
 
         ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
         SwingExcelViewer viewer = new SwingExcelViewer(model);

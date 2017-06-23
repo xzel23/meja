@@ -26,7 +26,6 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaConfig;
-import com.dua3.meja.util.MejaHelper;
 
 /**
  * A helper class that implements the actual drawing algorithm.
@@ -369,7 +368,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         for (int i = startRow; i < endRow; i++) {
             r.setY(getRowPos(i));
             r.setH(getRowPos(i + 1) - r.getY());
-            String text = MejaHelper.getRowName(i);
+            String text = Sheet.getRowName(i);
             drawLabel(gc, r, text);
         }
 
@@ -378,7 +377,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         for (int j = startColumn; j < endColumn; j++) {
             r.setX(getColumnPos(j));
             r.setW(getColumnPos(j + 1) - r.getX());
-            String text = MejaHelper.getColumnName(j);
+            String text = Sheet.getColumnName(j);
             drawLabel(gc, r, text);
         }
     }

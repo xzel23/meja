@@ -36,12 +36,10 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.RefOption;
 import com.dua3.meja.text.RichText;
 import com.dua3.meja.text.RichTextBuilder;
 import com.dua3.meja.text.Run;
 import com.dua3.meja.text.Style;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 
 /**
@@ -202,7 +200,7 @@ public final class PoiCell
     }
 
     @Override
-    public RichText getAsText() {
+    public RichText getAsText(Locale locale) {
         if (getCellType() == CellType.TEXT) {
             return toRichText(poiCell.getRichStringCellValue());
         } else {
@@ -210,7 +208,7 @@ public final class PoiCell
                 return RichText.emptyText();
             }
 
-            return RichText.valueOf(getFormattedText());
+            return RichText.valueOf(getFormattedText(locale));
         }
     }
 
@@ -220,11 +218,6 @@ public final class PoiCell
             throw new IllegalStateException("Cell does not contain a boolean value.");
         }
         return poiCell.getBooleanCellValue();
-    }
-
-    @Override
-    public String getCellRef(RefOption... options) {
-        return MejaHelper.getCellRef(this, options);
     }
 
     @Override
@@ -368,13 +361,13 @@ public final class PoiCell
         return DateUtil.isADateFormat(i, f);
     }
 
-    DateFormat getLocaleAwareDateFormat(PoiCellStyle cellStyle) {
+    DateFormat getLocaleAwareDateFormat(PoiCellStyle cellStyle, Locale locale) {
         org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
         switch (style.getDataFormat()) {
         case 0x0e:
-            return  DateFormat.getDateInstance(DateFormat.MEDIUM, getWorkbook().getLocale());
+            return  DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
         case 0xa4:
-            return  DateFormat.getDateInstance(DateFormat.FULL, getWorkbook().getLocale());
+            return  DateFormat.getDateInstance(DateFormat.FULL, locale);
         default:
             return null;
         }
@@ -523,9 +516,8 @@ public final class PoiCell
             // if that doesn't exist, create a new format
             PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
             dateStyle.copyStyle(cellStyle);
-            Locale locale = getWorkbook().getLocale();
             String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, null,
-                    IsoChronology.INSTANCE, locale);
+                    IsoChronology.INSTANCE, Locale.ROOT);
             dateStyle.setDataFormat(pattern);
         }
         setCellStyle(getWorkbook().getCellStyle(dateStyleName));
@@ -600,6 +592,11 @@ public final class PoiCell
 
     @Override
     public String toString() {
+        return toString(Locale.ROOT);
+    }
+
+    @Override
+    public String toString(Locale locale) {
         if (getCellType() == CellType.TEXT) {
             return poiCell.getStringCellValue();
         } else {
@@ -607,7 +604,7 @@ public final class PoiCell
                 return "";
             }
 
-            return getFormattedText();
+            return getFormattedText(locale);
         }
     }
 
@@ -615,14 +612,14 @@ public final class PoiCell
      * Format the cell content as a String, with number and date format applied.
      * @return cell content with format applied
      */
-    private String getFormattedText() {
-        DateFormat df = getLocaleAwareDateFormat(getCellStyle());
+    private String getFormattedText(Locale locale) {
+        DateFormat df = getLocaleAwareDateFormat(getCellStyle(), locale);
         if (df != null) {
             return df.format(getDate());
         } else {
             // let POI do the formatting
             FormulaEvaluator evaluator = getWorkbook().evaluator;
-            DataFormatter dataFormatter = getWorkbook().getDataFormatter();
+            DataFormatter dataFormatter = getWorkbook().getDataFormatter(locale);
             try {
                 return dataFormatter.formatCellValue(poiCell, evaluator);
             } catch (Exception ex) {

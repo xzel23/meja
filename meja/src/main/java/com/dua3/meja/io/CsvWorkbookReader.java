@@ -19,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Locale;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
@@ -64,8 +63,7 @@ public class CsvWorkbookReader extends WorkbookReader {
      */
     public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, BufferedReader in, Path path)
             throws IOException {
-        Locale locale = Csv.getLocale(options);
-        WORKBOOK workbook = factory.create(locale);
+        WORKBOOK workbook = factory.create();
         workbook.setPath(path);
         GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(path.toString()), options);
         try {
@@ -80,8 +78,7 @@ public class CsvWorkbookReader extends WorkbookReader {
     @Override
     protected <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in, Path path)
             throws IOException {
-        Locale locale = Csv.getLocale(options);
-        WORKBOOK workbook = factory.create(locale);
+        WORKBOOK workbook = factory.create();
         workbook.setPath(path);
         GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), options);
         try {

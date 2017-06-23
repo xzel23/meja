@@ -25,8 +25,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -66,10 +64,12 @@ import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Sheet.Property;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.utility.swing.SwingUtil;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -80,7 +80,7 @@ public class SwingSheetView extends JPanel
     /**
      * Actions for key bindings.
      */
-    static enum Actions {
+    enum Actions {
         MOVE_UP(view -> view.move(Direction.NORTH)),
         MOVE_DOWN(view -> view.move(Direction.SOUTH)),
         MOVE_LEFT(view -> view.move(Direction.WEST)),
@@ -283,12 +283,12 @@ public class SwingSheetView extends JPanel
         SheetPane() {
             // define row and column ranges and set up segments
             final IntSupplier startColumn = () -> 0;
-            final IntSupplier splitColumn = () -> getSplitColumn();
-            final IntSupplier endColumn = () -> getColumnCount();
+            final IntSupplier splitColumn = this::getSplitColumn;
+            final IntSupplier endColumn = this::getColumnCount;
 
             final IntSupplier startRow = () -> 0;
-            final IntSupplier splitRow = () -> getSplitRow();
-            final IntSupplier endRow = () -> getRowCount();
+            final IntSupplier splitRow = this::getSplitRow;
+            final IntSupplier endRow = this::getRowCount;
 
             topLeftQuadrant = new SwingSegmentView(startRow, splitRow, startColumn, splitColumn);
             topRightQuadrant = new SwingSegmentView(startRow, splitRow, splitColumn, endColumn);
@@ -305,6 +305,10 @@ public class SwingSheetView extends JPanel
          *            the cell to scroll to
          */
         public void ensureCellIsVisibile(Cell cell) {
+            if (cell==null) {
+                return;
+            }
+
             final Rectangle cellRect = sheetPainter.getCellRect(cell);
             boolean aboveSplit = getSplitY() >= cellRect.getBottom();
             boolean toLeftOfSplit = getSplitX() >= cellRect.getRight();
@@ -700,24 +704,17 @@ public class SwingSheetView extends JPanel
     }
 
     private void copyToClipboard() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        StringSelection text = new StringSelection(getCurrentCell().getAsText().toString());
-        clipboard.setContents(text, text);
-    }
-
-    /**
-     * Get column name.
-     *
-     * @param j
-     *            the column number
-     * @return name of column
-     */
-    public String getColumnName(int j) {
-        return MejaHelper.getColumnName(j);
+        Cell cell = getCurrentCell();
+        String text = cell==null ? "" : cell.getAsText(getLocale()).toString();
+        SwingUtil.setClipboardText(text);
     }
 
     private Cell getCurrentCell() {
         return sheet == null ? null : sheet.getCurrentCell();
+    }
+
+    private Cell getCurrentLogicalCell() {
+        return sheet == null ? null : sheet.getCurrentCell().getLogicalCell();
     }
 
     /**
@@ -843,7 +840,7 @@ public class SwingSheetView extends JPanel
         });
         // make focusable
         setFocusable(true);
-        SwingUtilities.invokeLater(() -> requestFocusInWindow());
+        SwingUtilities.invokeLater(this::requestFocusInWindow);
         setSheet(sheet1);
     }
 
@@ -874,7 +871,11 @@ public class SwingSheetView extends JPanel
      *            direction
      */
     private void move(Direction d) {
-        Cell cell = getCurrentCell().getLogicalCell();
+        Cell cell = getCurrentLogicalCell();
+
+        if (cell==null) {
+            return;
+        }
 
         switch (d) {
         case NORTH:
@@ -925,7 +926,11 @@ public class SwingSheetView extends JPanel
      *            direction
      */
     private void movePage(Direction d) {
-        Cell cell = getCurrentCell().getLogicalCell();
+        Cell cell = getCurrentLogicalCell();
+
+        if (cell==null) {
+            return;
+        }
 
         java.awt.Rectangle cellRect = rectS2D(sheetPainter.getCellRect(cell));
         switch (d) {
@@ -976,27 +981,31 @@ public class SwingSheetView extends JPanel
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        switch (evt.getPropertyName()) {
-        case Sheet.PROPERTY_ZOOM:
-        case Sheet.PROPERTY_LAYOUT:
-            updateContent();
-            break;
-        case Sheet.PROPERTY_FREEZE:
-            updateContent();
-            scrollToCurrentCell();
-            break;
-        case Sheet.PROPERTY_ACTIVE_CELL:
-            scrollToCurrentCell();
-            repaintCell((Cell) evt.getOldValue());
-            repaintCell((Cell) evt.getNewValue());
-            break;
-        case Sheet.PROPERTY_CELL_CONTENT:
-        case Sheet.PROPERTY_CELL_STYLE:
-            repaintCell((Cell) evt.getSource());
-            break;
-        default:
-            // nop
-            break;
+        if (evt.getSource() == sheet) {
+            // Sheet does only fire properties of this enum type
+            Property property = Property.valueOf(evt.getPropertyName());
+            switch (property) {
+            case ZOOM:
+            case LAYOUT_CHANGED:
+                updateContent();
+                break;
+            case SPLIT:
+                updateContent();
+                scrollToCurrentCell();
+                break;
+            case ACTIVE_CELL:
+                scrollToCurrentCell();
+                repaintCell((Cell) evt.getOldValue());
+                repaintCell((Cell) evt.getNewValue());
+                break;
+            case CELL_CONTENT:
+            case CELL_STYLE:
+                repaintCell((Cell) evt.getSource());
+                break;
+            default:
+                // nop
+                break;
+            }
         }
     }
 
@@ -1031,7 +1040,7 @@ public class SwingSheetView extends JPanel
      */
     @Override
     public void scrollToCurrentCell() {
-        sheetPane.ensureCellIsVisibile(getCurrentCell().getLogicalCell());
+        sheetPane.ensureCellIsVisibile(getCurrentLogicalCell());
     }
 
     /**
@@ -1133,7 +1142,11 @@ public class SwingSheetView extends JPanel
             return;
         }
 
-        final Cell cell = getCurrentCell().getLogicalCell();
+        final Cell cell = getCurrentLogicalCell();
+
+        if (cell==null) {
+            return;
+        }
 
         sheetPane.ensureCellIsVisibile(cell);
         sheetPane.setScrollable(false);

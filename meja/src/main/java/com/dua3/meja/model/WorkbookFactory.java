@@ -17,7 +17,6 @@ package com.dua3.meja.model;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Locale;
 
 import com.dua3.meja.util.Options;
 
@@ -40,7 +39,7 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      *         {@code workbook}
      */
     public WORKBOOK copyOf(Workbook other) {
-        WORKBOOK workbook = create(other.getLocale());
+        WORKBOOK workbook = create();
         workbook.setPath(other.getPath().orElse(null));
 
         // copy styles
@@ -67,30 +66,11 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
     public abstract WORKBOOK create();
 
     /**
-     * Create a new Workbook instance with the given locale.
-     *
-     * @param locale
-     *            the locale to use
-     * @return workbook
-     */
-    public abstract WORKBOOK create(Locale locale);
-
-    /**
      * Create a new Workbook instance, use streaming if available.
      *
      * @return workbook
      */
     public abstract WORKBOOK createStreaming();
-
-    /**
-     * Create a new Workbook instance with the given locale, use streaming if
-     * available.
-     *
-     * @param locale
-     *            the locale to use
-     * @return workbook
-     */
-    public abstract WORKBOOK createStreaming(Locale locale);
 
     /**
      * Load workbook from file.
