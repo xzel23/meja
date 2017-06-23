@@ -322,14 +322,14 @@ public class SwingSheetView extends JPanel
                 // only scroll x
                 java.awt.Rectangle r = new java.awt.Rectangle(
                         xS2D(cellRect.getX()),
-                        yS2D(cellRect.getY()) - getY(),
+                        1,
                         wS2D(cellRect.getW()),
                         1);
                 bottomRightQuadrant.scrollRectToVisible(r);
             } else if (toLeftOfSplit) {
                 // only scroll y
                 java.awt.Rectangle r = new java.awt.Rectangle(
-                        xS2D(cellRect.getX()) - getX(),
+                        1,
                         yS2D(cellRect.getY()),
                         1,
                         hS2D(cellRect.getH()));
