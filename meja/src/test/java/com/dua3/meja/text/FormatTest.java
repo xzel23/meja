@@ -31,9 +31,23 @@ public class FormatTest {
             Path wbPath = fsv.resolve(fileName);
             workbook = MejaHelper.openWorkbook(wbPath);
         } catch (IOException e) {
-            // XXX when run from within gradle, resources are placed in another location
+            // WORKAROUND - If anyone knows a less hackish solution for this, please send a pull request!
+            
+            // When tests are run from within gradle, resources are placed in another location (outside of classpath).
+            // In that case, we try to guess the correct location of the resource files to be able to perform the tests.
             System.err.println("Resource not found! "+e.getMessage());
-            String s = clazz.getResource(".").getPath().replaceFirst("^/", "").replaceAll("/build/classes/java/test/", "/build/resources/test/");
+            String pathStr = clazz.getResource(".").getPath();
+            
+            // When started from within Bash on windows, a slash is prepended to the path returned by getResource.
+            // We have to remove it again. 
+            if (pathStr.matches("^/[a-zA-Z]:/")) {
+                pathStr = pathStr.replaceFirst("^/", "");
+            }
+            
+            // Change the path so that it points to the probable resource dir.
+            String s = pathStr.replaceAll("/build/classes/java/test/", "/build/resources/test/");
+            
+            // Then try to load the workbook from there.
             Path path = Paths.get(s);
             try (FileSystemView fsv = FileSystemView.create(path)) {
                 Path wbPath = fsv.resolve(fileName);
