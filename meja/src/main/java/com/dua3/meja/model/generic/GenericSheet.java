@@ -147,12 +147,12 @@ public class GenericSheet
     }
 
     void cellStyleChanged(GenericCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_STYLE, old, arg);
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, Property.CELL_STYLE.name(), old, arg);
         pcs.firePropertyChange(evt);
     }
 
     void cellValueChanged(GenericCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_CONTENT, old, arg);
+        PropertyChangeEvent evt = new PropertyChangeEvent(cell, Property.CELL_CONTENT.name(), old, arg);
         pcs.firePropertyChange(evt);
     }
 
@@ -306,7 +306,7 @@ public class GenericSheet
     public void setColumnWidth(int j, float width) {
         if (j < columnWidth.size()) {
             if (columnWidth.set(j, width) != width) {
-                pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
+                firePropertyChange(Property.LAYOUT_CHANGED, null, null);
             }
         } else {
             columnWidth.ensureCapacity(j + 1);
@@ -314,7 +314,7 @@ public class GenericSheet
                 columnWidth.add(null); // use default width
             }
             columnWidth.add(width);
-            pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
+            firePropertyChange(Property.LAYOUT_CHANGED, null, null);
         }
     }
 
@@ -329,7 +329,7 @@ public class GenericSheet
         currentRow = cell.getRowNumber();
         currentColumn = cell.getColumnNumber();
 
-        pcs.firePropertyChange(PROPERTY_ACTIVE_CELL, old, cell);
+        firePropertyChange(Property.ACTIVE_CELL, old, cell);
     }
 
     @Override
@@ -343,7 +343,7 @@ public class GenericSheet
             }
             rowHeight.add(height);
         }
-        pcs.firePropertyChange(PROPERTY_LAYOUT, null, null);
+        firePropertyChange(Property.LAYOUT_CHANGED, null, null);
     }
 
     @Override
@@ -355,7 +355,7 @@ public class GenericSheet
         if (zoom != this.zoom) {
             float oldZoom = this.zoom;
             this.zoom = zoom;
-            pcs.firePropertyChange(PROPERTY_ZOOM, oldZoom, zoom);
+            firePropertyChange(Property.ZOOM, oldZoom, zoom);
         }
     }
 
@@ -363,12 +363,16 @@ public class GenericSheet
     public void splitAt(int i, int j) {
         freezeRow = i;
         freezeColumn = j;
-        pcs.firePropertyChange(PROPERTY_FREEZE, null, null);
+        firePropertyChange(Property.SPLIT, null, null);
     }
 
     @Override
     public Lock writeLock() {
         return lock.writeLock();
+    }
+
+    private <T> void firePropertyChange(Property property, T oldValue, T newValue) {
+        pcs.firePropertyChange(property.name(), oldValue, newValue);
     }
 
 }

@@ -86,7 +86,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     public GenericSheet createSheet(String sheetName) {
         final GenericSheet sheet = new GenericSheet(this, sheetName);
         sheets.add(sheet);
-        pcs.firePropertyChange(PROPERTY_SHEET_ADDED, null, sheets.size() - 1);
+        firePropertyChange(Property.SHEET_ADDED, null, sheets.size() - 1);
         return sheet;
     }
 
@@ -169,7 +169,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     @Override
     public void removeSheet(int sheetNr) {
         sheets.remove(sheetNr);
-        pcs.firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
+        firePropertyChange(Property.SHEET_REMOVED, sheetNr, null);
     }
 
     @Override
@@ -181,7 +181,7 @@ public class GenericWorkbook extends AbstractWorkbook {
         int oldIdx = getCurrentSheetIndex();
         if (idx != oldIdx) {
             currentSheetIdx = idx;
-            pcs.firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
+            firePropertyChange(Property.ACTIVE_SHEET, oldIdx, idx);
         }
     }
 

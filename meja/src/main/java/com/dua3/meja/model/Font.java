@@ -75,6 +75,7 @@ public interface Font {
         private Boolean strikeThrough;
 
         public FontDef() {
+            // nop - everything being initialized to null is just fine
         }
 
         /**

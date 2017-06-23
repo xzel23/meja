@@ -36,12 +36,14 @@ import com.dua3.meja.util.RectangularRegion;
 public interface Sheet
         extends Iterable<Row>, ReadWriteLock {
 
-    static final String PROPERTY_ZOOM = "zoom";
-    static final String PROPERTY_LAYOUT = "layout";
-    static final String PROPERTY_FREEZE = "freeze";
-    static final String PROPERTY_ACTIVE_CELL = "active cell";
-    static final String PROPERTY_CELL_CONTENT = "cell content";
-    static final String PROPERTY_CELL_STYLE = "cell style";
+    enum Property {
+        ZOOM,
+        LAYOUT_CHANGED,
+        SPLIT,
+        ACTIVE_CELL,
+        CELL_CONTENT,
+        CELL_STYLE;
+    }
 
     /**
      * Add new merged region.

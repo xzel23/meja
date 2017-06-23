@@ -363,10 +363,9 @@ public final class Color
     }
 
     public byte[] toByteArray() {
-        byte[] arr = {
+        return new byte[] {
                 (byte) a(), (byte) r(), (byte) g(), (byte) b()
         };
-        return arr;
     }
 
     @Override
