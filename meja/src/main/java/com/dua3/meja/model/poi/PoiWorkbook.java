@@ -298,8 +298,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      *
      * @param poiWorkbook
      *            the POI workbook instance
-     * @param locale
-     *            the locale to use
      * @param path
      *            the Path of this workbook
      */
