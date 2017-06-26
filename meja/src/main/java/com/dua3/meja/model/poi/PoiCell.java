@@ -201,7 +201,7 @@ public final class PoiCell
 
     @Override
     public RichText getAsText(Locale locale) {
-        if (getCellType() == CellType.TEXT) {
+        if (getResultType() == CellType.TEXT) {
             return toRichText(poiCell.getRichStringCellValue());
         } else {
             if (isEmpty()) {
