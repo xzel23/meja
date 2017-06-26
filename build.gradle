@@ -20,9 +20,13 @@ subprojects {
 		compile "org.apache.poi:poi-ooxml:${poiVersion}"
 		compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
-        def utilityVersion = "0.1.3"
-        compile "com.github.xzel23:utility:${utilityVersion}"
-//        compile 'com.dua3.utility:utility:+'
+        // use local project if 'localBuild' was set
+        if (project.hasProperty('localBuild')) {
+            compile 'com.dua3.utility:utility:+'
+        } else {
+            def utilityVersion = "0.1.3"
+            compile "com.github.xzel23:utility:${utilityVersion}"
+        }
 		
         testCompile "junit:junit:4.12"
     }
