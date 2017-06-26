@@ -31,22 +31,28 @@ public class FormatTest {
             Path wbPath = fsv.resolve(fileName);
             workbook = MejaHelper.openWorkbook(wbPath);
         } catch (IOException e) {
+            System.out.format("--- WORKAROUND --- caught IOException, trying to fix path%n");
             // WORKAROUND - If anyone knows a less hackish solution for this, please send a pull request!
-            
+
             // When tests are run from within gradle, resources are placed in another location (outside of classpath).
             // In that case, we try to guess the correct location of the resource files to be able to perform the tests.
             System.err.println("Resource not found! "+e.getMessage());
             String pathStr = clazz.getResource(".").getPath();
-            
+
+            System.out.format("--- WORKAROUND --- current path is %s%n", pathStr);
+
             // When started from within Bash on windows, a slash is prepended to the path returned by getResource.
-            // We have to remove it again. 
-            if (pathStr.matches("^/[a-zA-Z]:/")) {
+            // We have to remove it again.
+            if (pathStr.matches("^/[a-zA-Z]:/.*")) {
+                System.out.format("FIXING PATH%n");
                 pathStr = pathStr.replaceFirst("^/", "");
+                System.out.format("--- WORKAROUND --- fix windows bash path to %s%n", pathStr);
             }
-            
+
             // Change the path so that it points to the probable resource dir.
             String s = pathStr.replaceAll("/build/classes/java/test/", "/build/resources/test/");
-            
+            System.out.format("--- WORKAROUND --- path to resources is now %s%n", pathStr);
+
             // Then try to load the workbook from there.
             Path path = Paths.get(s);
             try (FileSystemView fsv = FileSystemView.create(path)) {
