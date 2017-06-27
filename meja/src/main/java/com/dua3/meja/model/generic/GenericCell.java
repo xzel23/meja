@@ -20,6 +20,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
+import com.dua3.meja.model.AbstractCell;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
@@ -30,8 +31,7 @@ import com.dua3.meja.text.RichText;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class GenericCell
-        implements Cell {
+public class GenericCell extends AbstractCell {
     public static final int MAX_HORIZONTAL_SPAN = 0xefff;
     public static final int MAX_VERTICAL_SPAN = 0xef_ffff;
     public static final int MAX_COLUMN_NUMBER = 0xef_ffff;
@@ -46,8 +46,6 @@ public class GenericCell
     private final GenericRow row;
     private Object value;
     private GenericCellStyle cellStyle;
-
-    private GenericCell logicalCell;
 
     /**
      * A single long storing meta information.
@@ -79,32 +77,10 @@ public class GenericCell
         }
 
         this.row = row;
-        this.logicalCell = this;
         this.cellStyle = cellStyle;
         this.value = null;
 
         initData(colNumber);
-    }
-
-    void addedToMergedRegion(GenericCell logicalCell, int spanX, int spanY) {
-        if (getHorizontalSpan() != 1 || getVerticalSpan() != 1) {
-            throw new IllegalStateException("Cell is already merged.");
-        }
-
-        if (spanX > Short.MAX_VALUE) {
-            throw new IllegalArgumentException("Maximum horizontal span number is " + Short.MAX_VALUE + ".");
-        }
-
-        if (this == logicalCell) {
-            this.logicalCell = logicalCell;
-            setHorizontalSpan(spanX);
-            setVerticalSpan(spanY);
-        } else {
-            clear();
-            this.logicalCell = logicalCell;
-            setHorizontalSpan(0);
-            setVerticalSpan(0);
-        }
     }
 
     @Override
@@ -112,7 +88,7 @@ public class GenericCell
         Object old = value;
         setCellType(CellType.BLANK);
         this.value = null;
-        getSheet().cellValueChanged(this, old, null);
+        valueChanged(old, this.value);
     }
 
     @Override
@@ -217,11 +193,6 @@ public class GenericCell
     }
 
     @Override
-    public Cell getLogicalCell() {
-        return logicalCell;
-    }
-
-    @Override
     public Number getNumber() {
         if (getCellType() == CellType.NUMERIC) {
             return (Number) value;
@@ -284,12 +255,6 @@ public class GenericCell
         return getCellType() == CellType.BLANK;
     }
 
-    void removedFromMergedRegion() {
-        this.logicalCell = this;
-        setHorizontalSpan(1);
-        setVerticalSpan(1);
-    }
-
     @Override
     public GenericCell set(Boolean arg) {
         return set(arg, CellType.BOOLEAN);
@@ -323,7 +288,7 @@ public class GenericCell
                 setCellType(type);
                 value = arg;
             }
-            sheet.cellValueChanged(this, old, arg);
+            valueChanged(old, arg);
         }
         return this;
     }
@@ -355,7 +320,7 @@ public class GenericCell
         if (cellStyle != this.cellStyle) {
             GenericCellStyle old = this.cellStyle;
             this.cellStyle = (GenericCellStyle) cellStyle;
-            getSheet().cellStyleChanged(this, old, cellStyle);
+            styleChanged(old, this.cellStyle);
         }
     }
 
@@ -369,7 +334,8 @@ public class GenericCell
         return this;
     }
 
-    private void setHorizontalSpan(int spanX) {
+    @Override
+    protected void setHorizontalSpan(int spanX) {
         if (spanX < 0 || spanX > MAX_HORIZONTAL_SPAN) {
             throw new IllegalArgumentException();
         }
@@ -382,7 +348,8 @@ public class GenericCell
         this.cellStyle = getSheet().getWorkbook().getCellStyle(cellStyleName);
     }
 
-    private void setVerticalSpan(int spanY) {
+    @Override
+    protected void setVerticalSpan(int spanY) {
         if (spanY < 0 || spanY > MAX_VERTICAL_SPAN) {
             throw new IllegalArgumentException();
         }
@@ -406,13 +373,8 @@ public class GenericCell
 
     @Override
     public void unMerge() {
-        if (logicalCell != this) {
-            // this should never happen because we checked for this cell being
-            // the top left cell of the merged region
-            throw new IllegalArgumentException("Cell is not top left cell of a merged region");
-        }
+        super.unMerge();
 
-        getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
         int originalSpanX = getHorizontalSpan();
         int originalSpanY = getVerticalSpan();
         for (int i = getRowNumber(); i < getRowNumber() + originalSpanY; i++) {

@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
+import com.dua3.meja.model.AbstractCell;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
@@ -47,7 +48,7 @@ import com.dua3.meja.util.RectangularRegion;
  * @author axel
  */
 public final class PoiCell
-        implements Cell {
+        extends AbstractCell {
 
     private static final Logger LOGGER = Logger.getLogger(PoiCell.class.getName());
 
@@ -74,20 +75,17 @@ public final class PoiCell
     final org.apache.poi.ss.usermodel.Cell poiCell;
     int spanX;
     int spanY;
-    PoiCell logicalCell;
 
     public PoiCell(PoiRow row, org.apache.poi.ss.usermodel.Cell cell) {
         this.row = row;
         this.poiCell = cell;
+        this.spanX = 1;
+        this.spanY = 1;
 
         RectangularRegion mergedRegion = row.getSheet().getMergedRegion(cell.getRowIndex(), cell.getColumnIndex());
 
-        if (mergedRegion == null) {
-            // cell is not merged
-            this.spanX = 1;
-            this.spanY = 1;
-            this.logicalCell = this;
-        } else {
+        if (mergedRegion != null) {
+            // cell is merged
             boolean isTop = getRowNumber() == mergedRegion.getFirstRow();
             boolean isTopLeft = isTop && getColumnNumber() == mergedRegion.getFirstColumn();
             PoiCell topLeftCell;
@@ -106,27 +104,13 @@ public final class PoiCell
 
     }
 
-    void addedToMergedRegion(PoiCell topLeftCell, int spanX, int spanY) {
-        if (this.getRowNumber() == topLeftCell.getRowNumber()
-                && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
-            this.logicalCell = topLeftCell;
-            this.spanX = spanX;
-            this.spanY = spanY;
-        } else {
-            clear();
-            this.logicalCell = topLeftCell;
-            this.spanX = 0;
-            this.spanY = 0;
-        }
-    }
-
     @Override
     public void clear() {
         if (!isEmpty()) {
             Object old = get();
             poiCell.setCellType(org.apache.poi.ss.usermodel.CellType.BLANK);
             updateRow();
-            getSheet().cellValueChanged(this, old, null);
+            valueChanged(old, null);
         }
     }
 
@@ -280,11 +264,6 @@ public final class PoiCell
     }
 
     @Override
-    public Cell getLogicalCell() {
-        return logicalCell;
-    }
-
-    @Override
     public Number getNumber() {
         if (getCellType() != CellType.NUMERIC) {
             throw new IllegalStateException("Cell does not contain a numeric value.");
@@ -385,12 +364,6 @@ public final class PoiCell
         }
     }
 
-    void removedFromMergedRegion() {
-        this.logicalCell = this;
-        this.spanX = 1;
-        this.spanY = 1;
-    }
-
     @Override
     public PoiCell set(Boolean arg) {
         arg = getWorkbook().cache(arg);
@@ -401,7 +374,7 @@ public final class PoiCell
             poiCell.setCellValue(arg);
         }
         updateRow();
-        getSheet().cellValueChanged(this, old, arg);
+        valueChanged(old, arg);
         return this;
     }
 
@@ -421,7 +394,7 @@ public final class PoiCell
             }
         }
         updateRow();
-        getSheet().cellValueChanged(this, old, arg);
+        valueChanged(old, arg);
         return this;
     }
 
@@ -441,7 +414,7 @@ public final class PoiCell
             }
         }
         updateRow();
-        getSheet().cellValueChanged(this, old, arg);
+        valueChanged(old, arg);
         return this;
     }
 
@@ -460,7 +433,7 @@ public final class PoiCell
             }
         }
         updateRow();
-        getSheet().cellValueChanged(this, old, null);
+        valueChanged(old, null);
         return this;
     }
 
@@ -478,7 +451,7 @@ public final class PoiCell
 
         updateRow();
 
-        getSheet().cellValueChanged(this, old, s);
+        valueChanged(old, s);
 
         return this;
     }
@@ -489,7 +462,7 @@ public final class PoiCell
         Object old = get();
         poiCell.setCellValue(arg);
         updateRow();
-        getSheet().cellValueChanged(this, old, null);
+        valueChanged(old, null);
         return this;
     }
 
@@ -501,7 +474,7 @@ public final class PoiCell
 
         Object old = getCellStyle();
         poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
-        getSheet().cellStyleChanged(this, old, cellStyle);
+        styleChanged(old, cellStyle);
     }
 
     private void setCellStyleDate(PoiCellStyle cellStyle) {
@@ -538,7 +511,7 @@ public final class PoiCell
             }
         }
         updateRow();
-        getSheet().cellValueChanged(this, old, null);
+        valueChanged(old, null);
         return this;
     }
 
@@ -628,17 +601,6 @@ public final class PoiCell
         }
     }
 
-    @Override
-    public void unMerge() {
-        if (logicalCell != this) {
-            // this should never happen because we checked for this cell being
-            // the top left cell of the merged region
-            throw new IllegalArgumentException("Cell is not top left cell of a merged region");
-        }
-
-        getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
-    }
-
     /**
      * Update sheet data, ie. first and last cell numbers.
      */
@@ -646,6 +608,16 @@ public final class PoiCell
         if (getCellType() != CellType.BLANK) {
             getRow().setColumnUsed(getColumnNumber());
         }
+    }
+
+    @Override
+    protected void setVerticalSpan(int spanY) {
+        this.spanY=spanY;
+    }
+
+    @Override
+    protected void setHorizontalSpan(int spanX) {
+        this.spanX=spanX;
     }
 
 }

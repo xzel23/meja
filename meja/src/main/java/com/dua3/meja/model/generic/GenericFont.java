@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.meja.model.AbstractFont;
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Font;
 

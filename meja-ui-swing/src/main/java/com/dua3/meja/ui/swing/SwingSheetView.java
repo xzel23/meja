@@ -64,7 +64,6 @@ import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Sheet.Property;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
@@ -981,31 +980,25 @@ public class SwingSheetView extends JPanel
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource() == sheet) {
-            // Sheet does only fire properties of this enum type
-            Property property = Property.valueOf(evt.getPropertyName());
-            switch (property) {
-            case ZOOM:
-            case LAYOUT_CHANGED:
-                updateContent();
-                break;
-            case SPLIT:
-                updateContent();
-                scrollToCurrentCell();
-                break;
-            case ACTIVE_CELL:
-                scrollToCurrentCell();
-                repaintCell((Cell) evt.getOldValue());
-                repaintCell((Cell) evt.getNewValue());
-                break;
-            case CELL_CONTENT:
-            case CELL_STYLE:
-                repaintCell((Cell) evt.getSource());
-                break;
-            default:
-                // nop
-                break;
-            }
+        String property = evt.getPropertyName();
+        switch (property) {
+        case Sheet.PROPERTY_ZOOM:
+        case Sheet.PROPERTY_LAYOUT_CHANGED:
+            updateContent();
+            break;
+        case Sheet.PROPERTY_SPLIT:
+            updateContent();
+            scrollToCurrentCell();
+            break;
+        case Sheet.PROPERTY_ACTIVE_CELL:
+            scrollToCurrentCell();
+            repaintCell((Cell) evt.getOldValue());
+            repaintCell((Cell) evt.getNewValue());
+            break;
+        case Sheet.PROPERTY_CELL_CONTENT:
+        case Sheet.PROPERTY_CELL_STYLE:
+            repaintCell((Cell) evt.getSource());
+            break;
         }
     }
 

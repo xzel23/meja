@@ -22,9 +22,9 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
+import com.dua3.meja.model.AbstractFont;
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Font;
-import com.dua3.meja.model.generic.AbstractFont;
 
 /**
  *

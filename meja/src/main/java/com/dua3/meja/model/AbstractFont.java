@@ -1,9 +1,8 @@
-package com.dua3.meja.model.generic;
+package com.dua3.meja.model;
 
 import java.awt.font.FontRenderContext;
 
-import com.dua3.meja.model.Color;
-import com.dua3.meja.model.Font;
+import com.dua3.meja.model.generic.GenericFont;
 
 public abstract class AbstractFont implements Font {
 

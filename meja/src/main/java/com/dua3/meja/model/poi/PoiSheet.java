@@ -15,78 +15,47 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 
+import com.dua3.meja.model.AbstractSheet;
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.RectangularRegion;
 
 /**
  *
  * @author axel
  */
-public class PoiSheet
-        implements Sheet {
-
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+public class PoiSheet extends AbstractSheet {
 
     protected final PoiWorkbook workbook;
     protected org.apache.poi.ss.usermodel.Sheet poiSheet;
     private int firstColumn;
     private int lastColumn;
-    private List<RectangularRegion> mergedRegions;
     private float zoom = 1.0f;
     private int autoFilterRow = -1;
     private float factorWidth = 1;
 
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-
     protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
         this.workbook = workbook;
         this.poiSheet = poiSheet;
-        update();
+        init();
     }
 
     @Override
     public void addMergedRegion(RectangularRegion cells) {
+        super.addMergedRegion(cells);
+        addMergedRegionToPoiSheet(cells);
+    }
+
+    void addMergedRegionToPoiSheet(RectangularRegion cells) {
         CellRangeAddress cra = new CellRangeAddress(cells.getFirstRow(), cells.getLastRow(), cells.getFirstColumn(),
                 cells.getLastColumn());
         poiSheet.addMergedRegion(cra);
-        mergedRegions.add(cells);
-
-        // update cell data
-        int spanX = cells.getLastColumn() - cells.getFirstColumn() + 1;
-        int spanY = cells.getLastRow() - cells.getFirstRow() + 1;
-        PoiCell topLeftCell = getCell(cells.getFirstRow(), cells.getFirstColumn());
-        for (int i = 0; i < spanY; i++) {
-            for (int j = 0; j < spanX; j++) {
-                PoiCell cell = getCell(cells.getFirstRow() + i, cells.getFirstColumn() + j);
-                cell.addedToMergedRegion(topLeftCell, spanX, spanY);
-            }
-        }
-    }
-
-    @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(propertyName, listener);
     }
 
     @Override
@@ -100,7 +69,7 @@ public class PoiSheet
         }
 
         poiSheet.autoSizeColumn(j);
-        firePropertyChange(Property.LAYOUT_CHANGED, null, null);
+        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
     }
 
     @Override
@@ -125,18 +94,8 @@ public class PoiSheet
 
         // inform listeners
         if (layoutChanged) {
-            firePropertyChange(Property.LAYOUT_CHANGED, null, null);
+            firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
         }
-    }
-
-    void cellStyleChanged(PoiCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, Property.CELL_STYLE.name(), old, arg);
-        pcs.firePropertyChange(evt);
-    }
-
-    void cellValueChanged(PoiCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, Property.CELL_CONTENT.name(), old, arg);
-        pcs.firePropertyChange(evt);
     }
 
     @Override
@@ -156,7 +115,7 @@ public class PoiSheet
         poiSheet = workbook.poiWorkbook.createSheet(sheetName);
         workbook.poiWorkbook.setSheetOrder(sheetName, sheetNr);
 
-        update();
+        init();
     }
 
     @Override
@@ -220,20 +179,6 @@ public class PoiSheet
     @Override
     public int getLastRowNum() {
         return poiSheet.getLastRowNum();
-    }
-
-    public RectangularRegion getMergedRegion(int rowNum, int colNum) {
-        for (RectangularRegion rr : mergedRegions) {
-            if (rr.contains(rowNum, colNum)) {
-                return rr;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public List<RectangularRegion> getMergedRegions() {
-        return Collections.unmodifiableList(mergedRegions);
     }
 
     public org.apache.poi.ss.usermodel.Sheet getPoiSheet() {
@@ -302,43 +247,15 @@ public class PoiSheet
     }
 
     @Override
-    public Lock readLock() {
-        return lock.readLock();
-    }
+    protected void removeMergedRegion(int rowNumber, int columnNumber) {
+        super.removeMergedRegion(rowNumber, columnNumber);
 
-    void removeMergedRegion(int rowNumber, int columnNumber) {
         for (int idx = 0; idx < poiSheet.getNumMergedRegions(); idx++) {
             CellRangeAddress cra = poiSheet.getMergedRegion(idx);
             if (cra.isInRange(rowNumber, columnNumber)) {
                 poiSheet.removeMergedRegion(idx);
-                for (int i = cra.getFirstRow(); i <= cra.getLastRow(); i++) {
-                    PoiRow row = getRow(i);
-                    for (int j = cra.getFirstColumn(); j <= cra.getLastColumn(); j++) {
-                        PoiCell cell = row.getCellIfExists(j);
-                        if (cell != null) {
-                            cell.removedFromMergedRegion();
-                        }
-                    }
-                }
             }
         }
-
-        for (int idx = 0; idx < mergedRegions.size(); idx++) {
-            RectangularRegion rr = mergedRegions.get(idx);
-            if (rr.getFirstRow() == rowNumber && rr.getFirstColumn() == columnNumber) {
-                mergedRegions.remove(idx);
-            }
-        }
-    }
-
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(propertyName, listener);
     }
 
     private void setAutoFilterForPoiRow(org.apache.poi.ss.usermodel.Row poiRow) {
@@ -372,7 +289,7 @@ public class PoiSheet
     @Override
     public void setColumnWidth(int j, float width) {
         poiSheet.setColumnWidth(j, pointsToPoiColumnWidth(width));
-        firePropertyChange(Property.LAYOUT_CHANGED, null, null);
+        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
     }
 
     @Override
@@ -385,7 +302,7 @@ public class PoiSheet
 
         ((PoiCell) cell).poiCell.setAsActiveCell();
 
-        firePropertyChange(Property.ACTIVE_CELL, old, cell);
+        firePropertyChange(PROPERTY_ACTIVE_CELL, old, cell);
     }
 
     @Override
@@ -395,7 +312,7 @@ public class PoiSheet
             poiRow = poiSheet.createRow(i);
         }
         poiRow.setHeightInPoints(height);
-        firePropertyChange(Property.LAYOUT_CHANGED, null, null);
+        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
     }
 
     @Override
@@ -410,17 +327,17 @@ public class PoiSheet
             // translate zoom factor into percent
             int pmZoom = Math.max(1, Math.round(zoom * 100));
             poiSheet.setZoom(pmZoom);
-            firePropertyChange(Property.ZOOM, oldZoom, zoom);
+            firePropertyChange(PROPERTY_ZOOM, oldZoom, zoom);
         }
     }
 
     @Override
     public void splitAt(int i, int j) {
         poiSheet.createFreezePane(j, i);
-        firePropertyChange(Property.SPLIT, null, null);
+        firePropertyChange(PROPERTY_SPLIT, null, null);
     }
 
-    private void update() {
+    private void init() {
         // update row and column information
         firstColumn = Integer.MAX_VALUE;
         lastColumn = 0;
@@ -444,30 +361,18 @@ public class PoiSheet
         }
 
         // extract merged regions
-        final int numMergedRegions = poiSheet.getNumMergedRegions(); // SLOW in
-                                                                     // XssfSheet
-                                                                     // (poi
-                                                                     // 3.11)
-        mergedRegions = new ArrayList<>(numMergedRegions);
+        final int numMergedRegions = poiSheet.getNumMergedRegions(); // SLOW in XssfSheet (poi 3.11)
         for (int i = 0; i < numMergedRegions; i++) {
             CellRangeAddress r = poiSheet.getMergedRegion(i);
             final RectangularRegion rr = new RectangularRegion(r.getFirstRow(), r.getLastRow(), r.getFirstColumn(),
                     r.getLastColumn());
-            mergedRegions.add(rr);
+            // the merged region is already present in the POI file
+            super.addMergedRegion(rr);
         }
 
         // determine default font size
         short fontSize = getWorkbook().poiWorkbook.getFontAt((short) 0).getFontHeightInPoints();
         factorWidth = fontSize * 0.525f / 256;
-    }
-
-    @Override
-    public Lock writeLock() {
-        return lock.writeLock();
-    }
-
-    private <T> void firePropertyChange(Property property, T oldValue, T newValue) {
-        pcs.firePropertyChange(property.name(), oldValue, newValue);
     }
 
 }

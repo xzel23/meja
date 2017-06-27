@@ -18,6 +18,7 @@ package com.dua3.meja.model.generic;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.util.IteratorAdapter;
@@ -26,10 +27,8 @@ import com.dua3.meja.util.IteratorAdapter;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class GenericRow
-        implements Row {
+public class GenericRow extends AbstractRow {
 
-    private final GenericSheet sheet;
     private final ArrayList<GenericCell> cells;
     private final int rowNumber;
 
@@ -42,7 +41,7 @@ public class GenericRow
      *            the row number
      */
     public GenericRow(GenericSheet sheet, int rowNumber) {
-        this.sheet = sheet;
+        super(sheet);
         this.rowNumber = rowNumber;
         this.cells = new ArrayList<>(sheet.getColumnCount());
     }
@@ -81,16 +80,6 @@ public class GenericRow
     }
 
     @Override
-    public GenericSheet getSheet() {
-        return sheet;
-    }
-
-    @Override
-    public GenericWorkbook getWorkbook() {
-        return sheet.getWorkbook();
-    }
-
-    @Override
     public Iterator<Cell> iterator() {
         return new IteratorAdapter<>(cells.iterator());
     }
@@ -102,8 +91,17 @@ public class GenericRow
             for (int colNum = cells.size(); colNum <= col; colNum++) {
                 cells.add(new GenericCell(this, colNum, cellStyle));
             }
-            sheet.reserveColumn(col);
+            getSheet().reserveColumn(col);
         }
     }
 
+    @Override
+    public GenericSheet getSheet() {
+        return (GenericSheet) super.getSheet();
+    }
+
+    @Override
+    public GenericWorkbook getWorkbook() {
+        return getSheet().getWorkbook();
+    }
 }

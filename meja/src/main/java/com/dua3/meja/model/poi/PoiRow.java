@@ -17,6 +17,7 @@ package com.dua3.meja.model.poi;
 
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
+import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 
@@ -24,13 +25,7 @@ import com.dua3.meja.model.Row;
  *
  * @author axel
  */
-public final class PoiRow
-        implements Row {
-
-    /**
-     *
-     */
-    final PoiSheet sheet;
+public final class PoiRow extends AbstractRow {
 
     /**
      *
@@ -51,7 +46,7 @@ public final class PoiRow
      *            the row
      */
     public PoiRow(PoiSheet sheet, org.apache.poi.ss.usermodel.Row row) {
-        this.sheet = sheet;
+        super(sheet);
         this.poiRow = row;
         this.rowNumber = poiRow.getRowNum();
     }
@@ -99,16 +94,6 @@ public final class PoiRow
     }
 
     @Override
-    public PoiSheet getSheet() {
-        return sheet;
-    }
-
-    @Override
-    public PoiWorkbook getWorkbook() {
-        return sheet.getWorkbook();
-    }
-
-    @Override
     public int hashCode() {
         return poiRow.hashCode();
     }
@@ -119,7 +104,16 @@ public final class PoiRow
      * @param columnNumber
      */
     void setColumnUsed(int columnNumber) {
-        sheet.setColumnUsed(columnNumber);
+        getSheet().setColumnUsed(columnNumber);
     }
 
+    @Override
+    public PoiSheet getSheet() {
+        return (PoiSheet) (super.getSheet());
+    }
+
+    @Override
+    public PoiWorkbook getWorkbook() {
+        return getSheet().getWorkbook();
+    }
 }

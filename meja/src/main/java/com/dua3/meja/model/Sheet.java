@@ -36,14 +36,12 @@ import com.dua3.meja.util.RectangularRegion;
 public interface Sheet
         extends Iterable<Row>, ReadWriteLock {
 
-    enum Property {
-        ZOOM,
-        LAYOUT_CHANGED,
-        SPLIT,
-        ACTIVE_CELL,
-        CELL_CONTENT,
-        CELL_STYLE;
-    }
+    public final String PROPERTY_ZOOM = "ZOOM";
+    public final String PROPERTY_LAYOUT_CHANGED = "LAYOUT_CHANGED";
+    public final String PROPERTY_SPLIT = "SPLIT";
+    public final String PROPERTY_ACTIVE_CELL = "ACTIVE_CELL";
+    public final String PROPERTY_CELL_CONTENT = "CELL_CONTENT";
+    public final String PROPERTY_CELL_STYLE = "CELL_STYLE";
 
     /**
      * Add new merged region.
@@ -152,6 +150,14 @@ public interface Sheet
      * @return list of merged regions
      */
     List<RectangularRegion> getMergedRegions();
+
+    /**
+     * Get merged region at position.
+     * @param rowNum the row number
+     * @param colNum the column number
+     * @return the merged region or null if the cell does not belong to a merged region
+     */
+    RectangularRegion getMergedRegion(int rowNum, int colNum);
 
     /**
      * Get row.
