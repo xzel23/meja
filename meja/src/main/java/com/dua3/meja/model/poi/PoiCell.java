@@ -71,13 +71,12 @@ public final class PoiCell
         }
     }
 
-    final PoiRow row;
     final org.apache.poi.ss.usermodel.Cell poiCell;
     int spanX;
     int spanY;
 
     public PoiCell(PoiRow row, org.apache.poi.ss.usermodel.Cell cell) {
-        this.row = row;
+        super(row);
         this.poiCell = cell;
         this.spanX = 1;
         this.spanY = 1;
@@ -286,17 +285,17 @@ public final class PoiCell
 
     @Override
     public PoiRow getRow() {
-        return row;
+        return (PoiRow) super.getRow();
     }
 
     @Override
     public int getRowNumber() {
-        return poiCell.getRowIndex();
+        return getRow().getRowNumber();
     }
 
     @Override
     public PoiSheet getSheet() {
-        return row.getSheet();
+        return getRow().getSheet();
     }
 
     @Override
@@ -311,7 +310,7 @@ public final class PoiCell
 
     @Override
     public PoiWorkbook getWorkbook() {
-        return row.getWorkbook();
+        return getRow().getWorkbook();
     }
 
     @Override
@@ -515,11 +514,6 @@ public final class PoiCell
         return this;
     }
 
-    @Override
-    public void setStyle(String cellStyleName) {
-        setCellStyle(getWorkbook().getCellStyle(cellStyleName));
-    }
-
     public RichText toRichText(RichTextString rts) {
         String text = rts.getString();
         // TODO: properly process tabs
@@ -561,11 +555,6 @@ public final class PoiCell
         rtb.append(text, start, text.length());
 
         return rtb.toRichText();
-    }
-
-    @Override
-    public String toString() {
-        return toString(Locale.ROOT);
     }
 
     @Override

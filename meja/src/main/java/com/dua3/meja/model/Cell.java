@@ -365,6 +365,16 @@ public interface Cell {
     void setCellStyle(CellStyle cellStyle);
 
     /**
+     * Sets the cell style registered under name in the workbook.
+     *
+     * @param cellStyleName
+     *            cell style name
+     */
+    default void setCellStyle(String cellStyleName) {
+        setCellStyle(getWorkbook().getCellStyle(cellStyleName));
+    }
+
+    /**
      * Set formula
      *
      * @param value
@@ -372,14 +382,6 @@ public interface Cell {
      * @return this cell
      */
     public Cell setFormula(String value);
-
-    /**
-     * Sets the cell style registered under name in the workbook.
-     *
-     * @param cellStyleName
-     *            cell style name
-     */
-    void setStyle(String cellStyleName);
 
     /**
      * Return string representation of cell content.

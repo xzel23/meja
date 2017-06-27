@@ -21,10 +21,10 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.dua3.meja.model.AbstractCell;
+import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.Row;
 import com.dua3.meja.text.RichText;
 
 /**
@@ -43,7 +43,6 @@ public class GenericCell extends AbstractCell {
     private static final long INITIAL_DATA = ((/* spanX */ 1L) << 32)
             | ((/* spanY */ 1L) << 8)
             | CellType.BLANK.ordinal();
-    private final GenericRow row;
     private Object value;
     private GenericCellStyle cellStyle;
 
@@ -71,12 +70,13 @@ public class GenericCell extends AbstractCell {
      * @param cellStyle
      *            the cell style to use
      */
-    public GenericCell(GenericRow row, int colNumber, GenericCellStyle cellStyle) {
+    public GenericCell(AbstractRow row, int colNumber, GenericCellStyle cellStyle) {
+        super(row);
+
         if (colNumber > Short.MAX_VALUE) {
             throw new IllegalArgumentException("Maximum column number is " + Short.MAX_VALUE + ".");
         }
 
-        this.row = row;
         this.cellStyle = cellStyle;
         this.value = null;
 
@@ -93,7 +93,7 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public void copy(Cell other) {
-        setStyle(other.getCellStyle().getName());
+        setCellStyle(other.getCellStyle().getName());
         switch (other.getCellType()) {
         case BLANK:
             clear();
@@ -206,18 +206,18 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public Row getRow() {
-        return row;
+    public GenericRow getRow() {
+        return (GenericRow) super.getRow();
     }
 
     @Override
     public int getRowNumber() {
-        return row.getRowNumber();
+        return getRow().getRowNumber();
     }
 
     @Override
     public GenericSheet getSheet() {
-        return row.getSheet();
+        return getRow().getSheet();
     }
 
     @Override
@@ -239,7 +239,7 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public GenericWorkbook getWorkbook() {
-        return row.getWorkbook();
+        return getRow().getWorkbook();
     }
 
     private void initData(int colNr) {
@@ -344,11 +344,6 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public void setStyle(String cellStyleName) {
-        this.cellStyle = getSheet().getWorkbook().getCellStyle(cellStyleName);
-    }
-
-    @Override
     protected void setVerticalSpan(int spanY) {
         if (spanY < 0 || spanY > MAX_VERTICAL_SPAN) {
             throw new IllegalArgumentException();
@@ -368,22 +363,6 @@ public class GenericCell extends AbstractCell {
             return getCellStyle().format((LocalDateTime) value, locale);
         default:
             return String.valueOf(value);
-        }
-    }
-
-    @Override
-    public void unMerge() {
-        super.unMerge();
-
-        int originalSpanX = getHorizontalSpan();
-        int originalSpanY = getVerticalSpan();
-        for (int i = getRowNumber(); i < getRowNumber() + originalSpanY; i++) {
-            for (int j = getColumnNumber(); j < getColumnNumber() + originalSpanX; j++) {
-                GenericCell cell = row.getCellIfExists(j);
-                if (cell != null) {
-                    cell.removedFromMergedRegion();
-                }
-            }
         }
     }
 

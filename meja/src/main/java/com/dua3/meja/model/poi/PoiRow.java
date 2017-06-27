@@ -33,11 +33,6 @@ public final class PoiRow extends AbstractRow {
     final org.apache.poi.ss.usermodel.Row poiRow;
 
     /**
-     *
-     */
-    final int rowNumber;
-
-    /**
      * Construct row from existing POI row instance.
      *
      * @param sheet
@@ -46,9 +41,8 @@ public final class PoiRow extends AbstractRow {
      *            the row
      */
     public PoiRow(PoiSheet sheet, org.apache.poi.ss.usermodel.Row row) {
-        super(sheet);
+        super(sheet, row.getRowNum());
         this.poiRow = row;
-        this.rowNumber = poiRow.getRowNum();
     }
 
     @Override
@@ -86,11 +80,6 @@ public final class PoiRow extends AbstractRow {
     @Override
     public int getLastCellNum() {
         return poiRow.getLastCellNum() - 1;
-    }
-
-    @Override
-    public int getRowNumber() {
-        return rowNumber;
     }
 
     @Override

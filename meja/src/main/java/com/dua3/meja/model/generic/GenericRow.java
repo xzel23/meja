@@ -30,8 +30,6 @@ import com.dua3.meja.util.IteratorAdapter;
 public class GenericRow extends AbstractRow {
 
     private final ArrayList<GenericCell> cells;
-    private final int rowNumber;
-
     /**
      * Construct a new {@code GenericRow}.
      *
@@ -41,8 +39,7 @@ public class GenericRow extends AbstractRow {
      *            the row number
      */
     public GenericRow(GenericSheet sheet, int rowNumber) {
-        super(sheet);
-        this.rowNumber = rowNumber;
+        super(sheet, rowNumber);
         this.cells = new ArrayList<>(sheet.getColumnCount());
     }
 
@@ -72,11 +69,6 @@ public class GenericRow extends AbstractRow {
     @Override
     public int getLastCellNum() {
         return cells.size() - 1;
-    }
-
-    @Override
-    public int getRowNumber() {
-        return rowNumber;
     }
 
     @Override

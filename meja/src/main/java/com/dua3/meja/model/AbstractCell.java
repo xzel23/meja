@@ -1,10 +1,14 @@
 package com.dua3.meja.model;
 
+import java.util.Locale;
+
 public abstract class AbstractCell implements Cell {
 
+    private final AbstractRow row;
     private AbstractCell logicalCell;
 
-    public AbstractCell() {
+    public AbstractCell(AbstractRow row) {
+        this.row = row;
         this.logicalCell = this;
     }
 
@@ -66,9 +70,29 @@ public abstract class AbstractCell implements Cell {
         }
 
         getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
+
+        int originalSpanX = getHorizontalSpan();
+        int originalSpanY = getVerticalSpan();
+        for (int i = getRowNumber(); i < getRowNumber() + originalSpanY; i++) {
+            for (int j = getColumnNumber(); j < getColumnNumber() + originalSpanX; j++) {
+                AbstractCell cell = getRow().getCellIfExists(j);
+                if (cell != null) {
+                    cell.removedFromMergedRegion();
+                }
+            }
+        }
     }
 
     @Override
     public abstract AbstractSheet getSheet();
 
+    @Override
+    public AbstractRow getRow() {
+        return row;
+    }
+
+    @Override
+    public String toString() {
+        return toString(Locale.ROOT);
+    }
 }
