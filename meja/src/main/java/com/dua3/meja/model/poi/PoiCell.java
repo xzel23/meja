@@ -166,7 +166,7 @@ public final class PoiCell
         case BLANK:
             return null;
         case DATE:
-            return poiCell.getDateCellValue();
+            return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
         case NUMERIC:
             return poiCell.getNumericCellValue();
         case FORMULA:
