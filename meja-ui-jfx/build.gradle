@@ -1,0 +1,14 @@
+// add access rules for javafx and javascript
+import org.gradle.plugins.ide.eclipse.model.AccessRule
+apply plugin: 'eclipse'
+
+eclipse {
+    classpath {
+        file {
+            whenMerged {
+                def jre = entries.find { it.path.contains 'org.eclipse.jdt.launching.JRE_CONTAINER' }
+                jre.accessRules.add(new AccessRule('0', 'javafx/**'))
+            }
+        }
+    }
+}
