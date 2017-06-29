@@ -124,7 +124,7 @@ public interface Row
             }
 
             @Override
-            public Cell next() throws NoSuchElementException {
+            public Cell next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }

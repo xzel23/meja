@@ -77,9 +77,9 @@ public class SwingExcelViewer extends JFrame
     /**
      * The application name to show in title bar.
      */
-    public final static String APPLICATION_NAME = "Meja ExcelViewer";
+    public static final String APPLICATION_NAME = "Meja ExcelViewer";
 
-    public final static String AUTHOR = "Axel Howind";
+    public static final String AUTHOR = "Axel Howind";
 
     public static final int YEAR = 2015;
 

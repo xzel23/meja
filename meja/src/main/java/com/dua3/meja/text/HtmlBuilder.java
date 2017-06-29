@@ -48,7 +48,7 @@ public class HtmlBuilder extends TextBuilder<String> {
             appendChar(run.charAt(idx));
         }
 
-        // add end tag;
+        // add end tag
         buffer.append(endTag);
     }
 

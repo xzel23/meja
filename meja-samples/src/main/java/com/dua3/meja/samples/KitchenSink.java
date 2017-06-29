@@ -1,6 +1,5 @@
 package com.dua3.meja.samples;
 
-import java.awt.HeadlessException;
 import java.io.IOException;
 import java.util.Map;
 
@@ -80,7 +79,7 @@ public class KitchenSink extends JFrame {
 
     private Workbook wb;
 
-    public KitchenSink() throws HeadlessException {
+    public KitchenSink() {
         super("Méja Kitchensink demo");
         init();
     }

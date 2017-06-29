@@ -44,7 +44,7 @@ public class MejaHelper {
 
     private static final Logger LOGGER = Logger.getLogger(MejaHelper.class.getName());
 
-    public static float decodeFontSize(String s) throws NumberFormatException {
+    public static float decodeFontSize(String s) {
         float factor = 1f;
         if (s.endsWith("pt")) {
             s = s.substring(0, s.length() - 2);

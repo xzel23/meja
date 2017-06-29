@@ -33,7 +33,7 @@ import com.dua3.meja.util.Options;
  */
 public class CsvWriter extends Csv
         implements AutoCloseable, Flushable {
-    private static final String allowedChars = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
+    private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
     public static CsvWriter create(BufferedWriter writer, Options options) {
         return new CsvWriter(writer, options);
@@ -96,7 +96,7 @@ public class CsvWriter extends Csv
 
         // also quote if unusual characters are present
         for (char c : text.toCharArray()) {
-            if (!Character.isLetterOrDigit(c) && allowedChars.indexOf(c) == -1) {
+            if (!Character.isLetterOrDigit(c) && ALLOWED_CHARS.indexOf(c) == -1) {
                 return true;
             }
         }

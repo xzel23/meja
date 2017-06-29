@@ -40,9 +40,9 @@ public class JfxExcelViewer extends Application {
     /**
      * The application name to show in title bar.
      */
-    public final static String APPLICATION_NAME = "Méja ExcelViewer";
+    public static final String APPLICATION_NAME = "Méja ExcelViewer";
 
-    public final static String AUTHOR = "Axel Howind";
+    public static final String AUTHOR = "Axel Howind";
 
     public static final int YEAR = 2015;
 
@@ -76,7 +76,7 @@ public class JfxExcelViewer extends Application {
         try {
             if (!path.isPresent()) {
                 path = MejaJfxHelper.showDialogAndSaveWorkbook(null, workbook, model.getPath().orElse(Paths.get("")));
-                if (path == null) {
+                if (!path.isPresent()) {
                     // user cancelled the dialog
                     return;
                 }
@@ -142,15 +142,15 @@ public class JfxExcelViewer extends Application {
         final Menu mFile = new Menu("File");
 
         final MenuItem miOpen = new MenuItem("Open...");
-        miOpen.setOnAction((e) -> showOpenDialog(primaryStage));
+        miOpen.setOnAction(e -> showOpenDialog(primaryStage));
 
         final MenuItem miSave = new MenuItem("Save");
-        miSave.setOnAction((e) -> saveWorkbook());
-        miSave.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook() == null));
+        miSave.setOnAction(e -> saveWorkbook());
+        miSave.setOnMenuValidation(e -> miSave.setDisable(model.getWorkbook() == null));
 
         final MenuItem miSaveAs = new MenuItem("Save");
-        miSaveAs.setOnAction((e) -> showSaveAsDialog());
-        miSaveAs.setOnMenuValidation((e) -> miSave.setDisable(model.getWorkbook() == null));
+        miSaveAs.setOnAction(e -> showSaveAsDialog());
+        miSaveAs.setOnMenuValidation(e -> miSave.setDisable(model.getWorkbook() == null));
 
         final MenuItem miExit = new MenuItem("Exit");
         miExit.setOnAction(e -> closeApplication());
@@ -160,7 +160,7 @@ public class JfxExcelViewer extends Application {
         final Menu mEdit = new Menu("Edit");
 
         final MenuItem miAdjustColumns = new MenuItem("Adjust all column widths");
-        miAdjustColumns.setOnAction((e) -> model.adjustColumns(getCurrentView()));
+        miAdjustColumns.setOnAction(e -> model.adjustColumns(getCurrentView()));
 
         mEdit.getItems().addAll(miAdjustColumns);
 
@@ -170,19 +170,19 @@ public class JfxExcelViewer extends Application {
         final Menu mZoom = new Menu("Zoom");
         for (final int zoom : new int[] { 25, 50, 75, 100, 125, 150, 200, 400 }) {
             final MenuItem miZoom = new MenuItem(zoom + "%");
-            miZoom.setOnAction((e) -> setZoom(zoom / 100.0f));
+            miZoom.setOnAction(e -> setZoom(zoom / 100.0f));
             mZoom.getItems().add(miZoom);
         }
 
         final MenuItem miFreeze = new MenuItem("Freeze");
-        miFreeze.setOnAction((e) -> model.freezeAtCurrentCell(getCurrentView()));
+        miFreeze.setOnAction(e -> model.freezeAtCurrentCell(getCurrentView()));
 
         mOptions.getItems().addAll(mZoom, new SeparatorMenuItem(), miFreeze);
 
         // Help menu
         final Menu mHelp = new Menu("Help");
         final MenuItem miAbout = new MenuItem("About...");
-        miAbout.setOnAction((e) -> showAboutDialog());
+        miAbout.setOnAction(e -> showAboutDialog());
         mHelp.getItems().addAll(miAbout);
 
         // create and add the menubar

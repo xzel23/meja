@@ -310,7 +310,7 @@ public interface Sheet
             }
 
             @Override
-            public Row next() throws NoSuchElementException {
+            public Row next() {
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }

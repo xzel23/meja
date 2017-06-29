@@ -37,7 +37,7 @@ import com.dua3.meja.util.MejaConfig;
  */
 public abstract class SheetPainterBase<SV extends SheetView, GC extends GraphicsContext> {
 
-    static enum CellDrawMode {
+    enum CellDrawMode {
         /**
          *
          */

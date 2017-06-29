@@ -8,7 +8,7 @@ import com.dua3.meja.util.OptionSet.Value;
 
 public class Options {
 
-    private static Options EMPTY_OPTIONS = new Options(Collections.emptyMap());
+    private static final Options EMPTY_OPTIONS = new Options(Collections.emptyMap());
 
     public static Options empty() {
         return EMPTY_OPTIONS;
