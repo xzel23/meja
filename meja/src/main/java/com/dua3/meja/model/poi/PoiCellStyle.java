@@ -15,7 +15,8 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Locale;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -404,12 +405,12 @@ public abstract class PoiCellStyle
         poiCellStyle.setWrapText(wrap);
     }
 
-    public DateFormat getLocaleAwareDateFormat(Locale locale) {
+    DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
         switch (poiCellStyle.getDataFormat()) {
         case 0x0e:
-            return  DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+            return  DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
         case 0xa4:
-            return  DateFormat.getDateInstance(DateFormat.FULL, locale);
+            return  DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
         default:
             return null;
         }

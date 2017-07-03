@@ -15,10 +15,10 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.chrono.IsoChronology;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
 import java.util.Date;
@@ -563,9 +563,9 @@ public final class PoiCell
      * @return cell content with format applied
      */
     private String getFormattedText(Locale locale) {
-        DateFormat df = getCellStyle().getLocaleAwareDateFormat(locale);
+        DateTimeFormatter df = getCellStyle().getLocaleAwareDateFormat(locale);
         if (df != null) {
-            return df.format(getDate());
+            return df.format(getDateTime());
         } else {
             // let POI do the formatting
             FormulaEvaluator evaluator = getWorkbook().evaluator;
