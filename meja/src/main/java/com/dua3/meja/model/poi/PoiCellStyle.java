@@ -15,6 +15,9 @@
  */
 package com.dua3.meja.model.poi;
 
+import java.text.DateFormat;
+import java.util.Locale;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -294,7 +297,8 @@ public abstract class PoiCellStyle
 
     @Override
     public String getDataFormat() {
-        return poiCellStyle.getDataFormatString();
+        String fmt = poiCellStyle.getDataFormatString();
+        return fmt.equals("general") ? "0.##########" : fmt;
     }
 
     @Override
@@ -398,6 +402,17 @@ public abstract class PoiCellStyle
     @Override
     public void setWrap(boolean wrap) {
         poiCellStyle.setWrapText(wrap);
+    }
+
+    public DateFormat getLocaleAwareDateFormat(Locale locale) {
+        switch (poiCellStyle.getDataFormat()) {
+        case 0x0e:
+            return  DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+        case 0xa4:
+            return  DateFormat.getDateInstance(DateFormat.FULL, locale);
+        default:
+            return null;
+        }
     }
 
 }

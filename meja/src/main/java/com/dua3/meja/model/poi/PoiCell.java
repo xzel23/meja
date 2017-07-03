@@ -339,18 +339,6 @@ public final class PoiCell
         return DateUtil.isADateFormat(i, f);
     }
 
-    DateFormat getLocaleAwareDateFormat(PoiCellStyle cellStyle, Locale locale) {
-        org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
-        switch (style.getDataFormat()) {
-        case 0x0e:
-            return  DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-        case 0xa4:
-            return  DateFormat.getDateInstance(DateFormat.FULL, locale);
-        default:
-            return null;
-        }
-    }
-
     @Override
     public boolean isEmpty() {
         switch (poiCell.getCellTypeEnum()) {
@@ -575,7 +563,7 @@ public final class PoiCell
      * @return cell content with format applied
      */
     private String getFormattedText(Locale locale) {
-        DateFormat df = getLocaleAwareDateFormat(getCellStyle(), locale);
+        DateFormat df = getCellStyle().getLocaleAwareDateFormat(locale);
         if (df != null) {
             return df.format(getDate());
         } else {
