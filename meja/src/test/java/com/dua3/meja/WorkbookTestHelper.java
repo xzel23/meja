@@ -129,8 +129,11 @@ public class WorkbookTestHelper {
                                 throw new IllegalStateException("Check language tag in cell "+languageCell.getCellRef(RefOption.WITH_SHEET));
                             }
 
-                            String actual = extract.apply(r.getCell(3), locale);
-                            String expected = r.getCell(4).toString();
+                            Cell actualCell = r.getCell(3);
+                            Cell expectedCell = r.getCell(4);
+
+                            String actual = extract.apply(actualCell, locale);
+                            String expected = expectedCell.toString();
                             Assert.assertEquals(String.format("in line %d: %s - expected '%s', actual '%s'",
                                     r.getRowNumber()+1, description,
                                     expected, actual),
