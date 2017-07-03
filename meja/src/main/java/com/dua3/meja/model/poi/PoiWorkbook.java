@@ -49,7 +49,6 @@ import com.dua3.meja.model.AbstractWorkbook;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.text.Style;
@@ -317,23 +316,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         poiWorkbook.close();
         if (poiWorkbook instanceof SXSSFWorkbook) {
             ((SXSSFWorkbook) poiWorkbook).dispose();
-        }
-    }
-
-    @Override
-    public void copy(Workbook other) {
-        // copy styles
-        for (String styleName : other.getCellStyleNames()) {
-            CellStyle cellStyle = other.getCellStyle(styleName);
-            CellStyle newCellStyle = getCellStyle(styleName);
-            newCellStyle.copyStyle(cellStyle);
-        }
-
-        // copy sheets
-        for (int sheetNr = 0; sheetNr < other.getSheetCount(); sheetNr++) {
-            Sheet sheet = other.getSheet(sheetNr);
-            Sheet newSheet = createSheet(sheet.getSheetName());
-            newSheet.copy(sheet);
         }
     }
 

@@ -59,23 +59,6 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void copy(Workbook other) {
-        // copy styles
-        for (String styleName : other.getCellStyleNames()) {
-            CellStyle cellStyle = other.getCellStyle(styleName);
-            CellStyle newCellStyle = getCellStyle(styleName);
-            newCellStyle.copyStyle(cellStyle);
-        }
-
-        // copy sheets
-        for (int sheetNr = 0; sheetNr < other.getSheetCount(); sheetNr++) {
-            Sheet sheet = other.getSheet(sheetNr);
-            Sheet newSheet = createSheet(sheet.getSheetName());
-            newSheet.copy(sheet);
-        }
-    }
-
-    @Override
     public GenericCellStyle copyCellStyle(String styleName, CellStyle style) {
         GenericCellStyle cellStyle = getCellStyle(styleName);
         cellStyle.copyStyle(style);
