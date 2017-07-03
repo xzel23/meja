@@ -1,4 +1,4 @@
-package com.dua3.meja.text;
+package com.dua3.meja;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -6,10 +6,7 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.function.BiFunction;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.RefOption;
@@ -17,14 +14,13 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.io.FileSystemView;
 
-public class FormatTest {
+public class WorkbookTestHelper {
 
-    private Workbook workbook;
-
-    @Before
-    public void initialize() throws Exception {
-        Class<? extends FormatTest> clazz = getClass();
+    public static Workbook loadWorkbook() throws Exception {
+        Class<? extends WorkbookTestHelper> clazz = WorkbookTestHelper.class;
         String fileName = clazz.getSimpleName()+".xlsx";
+
+        Workbook workbook;
 
         // the FileSystemView is needed in case the test is run from a jar file
         try (FileSystemView fsv = FileSystemView.create(clazz)) {
@@ -60,12 +56,25 @@ public class FormatTest {
                 workbook = MejaHelper.openWorkbook(wbPath);
             }
         }
+
+        return workbook;
     }
 
-    @After
-    public void cleanup() throws IOException {
-        workbook.close();
-        workbook = null;
+    /**
+     * Test formatting applied when calling Cell.getAsText().
+     * <p>
+     * The workboook 'FormatTest.xlsx' is read from the classpath. Each sheet contains for columns used for testing:
+     * <ul>
+     * <li> description of what is being tested in the current row
+     * <li> value with an applied format to be tested
+     * <li> the expected result as a {@code String}
+     * <li> an optional remark - if it contains the text {@literal #IGNORE#}, the row is skipped
+     * </ul>
+     * </p>
+     * @param workbook the workbook under test
+     */
+    public static void testFormat_getAsText(Workbook workbook) {
+        testFormatHelper(workbook, (cell,locale) -> cell.getAsText(locale).toString());
     }
 
     /**
@@ -79,15 +88,10 @@ public class FormatTest {
      * <li> an optional remark - if it contains the text {@literal #IGNORE#}, the row is skipped
      * </ul>
      * </p>
+     * @param workbook the workbook under test
      */
-    @Test
-    public void testFormat_getAsText() {
-        testHelper((cell,locale) -> cell.getAsText(locale).toString());
-    }
-
-    @Test
-    public void testFormat_toString() {
-        testHelper((cell,locale) -> cell.toString(locale));
+    static public void testFormat_toString(Workbook workbook) {
+        testFormatHelper(workbook, (cell,locale) -> cell.toString(locale));
     }
 
     /**
@@ -105,7 +109,7 @@ public class FormatTest {
      * </p>
      * @param extract a lambda expression maps (Cell, Locale) -> (formatted cell content)
      */
-    public void testHelper(BiFunction<Cell,Locale,String> extract) {
+    public static void testFormatHelper(Workbook workbook, BiFunction<Cell,Locale,String> extract) {
         workbook.sheets()
             .peek(s -> System.out.format("Processing sheet '%s'%n", s.getSheetName()))
             .forEach(s -> {
