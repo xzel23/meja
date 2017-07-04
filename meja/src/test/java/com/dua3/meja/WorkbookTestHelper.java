@@ -139,17 +139,13 @@ public class WorkbookTestHelper {
                             String expected = expectedCell.toString();
                             String alternative = alternativeCell.toString();
 
-                            // We have an expected result, and an accepted alternative form. JUnit should report
-                            // - SUCCESS: if actual.equals(expected)
-                            // - IGNORED: if actual.equals(alternative)
-                            // - FAILED:  for any other result
+                            // accept both forms
                             if (!alternative.isEmpty() && !actual.equals(expected)) {
                                 Assert.assertEquals(String.format("in line %d [style=%s]: %s - alternative '%s', actual '%s'",
                                         r.getRowNumber()+1, styleName, description,
                                         expected, alternative),
                                         expected, alternative);
-                                // let the test be ignored
-                                org.junit.Assume.assumeTrue(false);
+                                System.err.format("Cell %s matches alternative result!%n", alternativeCell.getCellRef(RefOption.WITH_SHEET));
                             } else {
                                 Assert.assertEquals(String.format("in line %d [style=%s]: %s - expected '%s', actual '%s'",
                                         r.getRowNumber()+1, styleName, description,
