@@ -298,8 +298,13 @@ public abstract class PoiCellStyle
 
     @Override
     public String getDataFormat() {
-        String fmt = poiCellStyle.getDataFormatString();
-        return fmt.equals("general") ? "0.##########" : fmt;
+        switch (poiCellStyle.getDataFormat()) {
+        case 0x0e:
+            return StandardDataFormats.MEDIUM.name();
+        default:
+            String fmt = poiCellStyle.getDataFormatString();
+            return fmt.equals("general") ? "0.##########" : fmt;
+        }
     }
 
     @Override
@@ -368,7 +373,14 @@ public abstract class PoiCellStyle
 
     @Override
     public void setDataFormat(String format) {
-        poiCellStyle.setDataFormat(getWorkbook().poiWorkbook.createDataFormat().getFormat(format));
+        if (StandardDataFormats.MEDIUM.name().equals(format)) {
+            poiCellStyle.setDataFormat((short) 0x0e);
+        } else if (StandardDataFormats.FULL.name().equals(format)) {
+            poiCellStyle.setDataFormat((short) 0xa4);
+            return ;
+        } else {
+            poiCellStyle.setDataFormat(getWorkbook().poiWorkbook.createDataFormat().getFormat(format));
+        }
     }
 
     @Override

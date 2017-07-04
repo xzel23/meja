@@ -22,6 +22,11 @@ package com.dua3.meja.model;
  */
 public interface CellStyle {
 
+    enum StandardDataFormats {
+        FULL,
+        MEDIUM;
+    }
+
     /**
      * Copy style from another cell style.
      *

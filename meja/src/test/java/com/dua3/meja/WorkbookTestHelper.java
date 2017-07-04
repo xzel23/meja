@@ -131,13 +131,31 @@ public class WorkbookTestHelper {
 
                             Cell actualCell = r.getCell(3);
                             Cell expectedCell = r.getCell(4);
+                            Cell alternativeCell = r.getCell(4);
+
+                            String styleName = actualCell.getCellStyle().getName();
 
                             String actual = extract.apply(actualCell, locale);
                             String expected = expectedCell.toString();
-                            Assert.assertEquals(String.format("in line %d: %s - expected '%s', actual '%s'",
-                                    r.getRowNumber()+1, description,
-                                    expected, actual),
-                                    expected, actual);
+                            String alternative = alternativeCell.toString();
+
+                            // We have an expected result, and an accepted alternative form. JUnit should report
+                            // - SUCCESS: if actual.equals(expected)
+                            // - IGNORED: if actual.equals(alternative)
+                            // - FAILED:  for any other result
+                            if (!alternative.isEmpty() && !actual.equals(expected)) {
+                                Assert.assertEquals(String.format("in line %d [style=%s]: %s - alternative '%s', actual '%s'",
+                                        r.getRowNumber()+1, styleName, description,
+                                        expected, alternative),
+                                        expected, alternative);
+                                // let the test be ignored
+                                org.junit.Assume.assumeTrue(false);
+                            } else {
+                                Assert.assertEquals(String.format("in line %d [style=%s]: %s - expected '%s', actual '%s'",
+                                        r.getRowNumber()+1, styleName, description,
+                                        expected, actual),
+                                        expected, actual);
+                            }
                         }
                     });
             });
