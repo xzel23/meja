@@ -10,9 +10,12 @@ import org.junit.Assert;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.RefOption;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.io.FileSystemView;
+
 
 public class WorkbookTestHelper {
 
@@ -155,5 +158,100 @@ public class WorkbookTestHelper {
                         }
                     });
             });
+    }
+
+    private static String[][] mergeData = {
+            { "1:1", "2:1", null,  "2:3", null },
+            { "2:4", null,  "1:1", null,  null },
+            { null,  null,  "1:2", null,  null },
+            { null,  null,  null,  "2:2", null },
+            { null,  null,  "1:1", null,  null }
+    };
+
+    public static void testMergeUnmerge(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("merge test");
+
+        // merge cells
+        for (int i=0;i<mergeData.length; i++) {
+            Row row = sheet.getRow(i);
+            String[] mergeDataRow = mergeData[i];
+            for (int j=0; j<mergeDataRow.length; j++) {
+                Cell cell = row.getCell(j);
+                String content = mergeDataRow[j];
+                if (content==null) {
+                    // null => cell should already be merged
+                    Assert.assertTrue(cell.isMerged());
+                    Assert.assertTrue(cell.getLogicalCell()!=cell);
+                } else {
+                    // merge the cell
+                    Assert.assertFalse(cell.isMerged());
+
+                    if (content.equals("1:1")) {
+                        // do not merge solitary cell
+                        continue;
+                    }
+
+                    String[] parts = content.split(":");
+                    if (parts.length!=2) {
+                        throw new IllegalStateException();
+                    }
+
+                    int spanX = Integer.valueOf(parts[0]);
+                    int spanY = Integer.valueOf(parts[1]);
+
+                    cell.merge(spanX, spanY);
+                }
+            }
+        }
+
+        // check that cells are merged
+        for (int i=0;i<mergeData.length; i++) {
+            Row row = sheet.getRow(i);
+            String[] mergeDataRow = mergeData[i];
+            for (int j=0; j<mergeDataRow.length; j++) {
+                Cell cell = row.getCell(j);
+                String content = mergeDataRow[j];
+
+                if (content==null) {
+                    Assert.assertTrue(cell.isMerged());
+                } else if (content.equals("1:1")) {
+                    Assert.assertTrue(!cell.isMerged());
+                } else {
+                    String[] parts = content.split(":");
+                    if (parts.length!=2) {
+                        throw new IllegalStateException();
+                    }
+
+                    int spanX = Integer.valueOf(parts[0]);
+                    int spanY = Integer.valueOf(parts[1]);
+
+                    Assert.assertEquals(spanX, cell.getHorizontalSpan());
+                    Assert.assertEquals(spanY, cell.getVerticalSpan());
+                }
+            }
+        }
+
+        // unmerge cells again
+        for (int i=0;i<mergeData.length; i++) {
+            Row row = sheet.getRow(i);
+            String[] mergeDataRow = mergeData[i];
+            for (int j=0; j<mergeDataRow.length; j++) {
+                Cell cell = row.getCell(j);
+                String content = mergeDataRow[j];
+                if (content!=null && !content.equals("1:1")) {
+                    cell.unMerge();
+                }
+            }
+        }
+
+        // check that all cells are unmerged
+        for (int i=0;i<mergeData.length; i++) {
+            Row row = sheet.getRow(i);
+            String[] mergeDataRow = mergeData[i];
+            for (int j=0; j<mergeDataRow.length; j++) {
+                Cell cell = row.getCell(j);
+                Assert.assertFalse(cell.isMerged());
+            }
+        }
     }
 }

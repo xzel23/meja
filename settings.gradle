@@ -1,3 +1,6 @@
 include 'meja', 'meja-ui', 'meja-ui-swing', 'meja-ui-jfx', 'meja-samples'
 
 rootProject.name = 'meja-root'
+
+include ":util"
+project(":util").projectDir = file("../util")

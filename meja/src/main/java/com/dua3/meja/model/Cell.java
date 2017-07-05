@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.dua3.meja.text.RichText;
+import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  * A single cell of a sheet.
@@ -406,4 +408,32 @@ public interface Cell {
      *             if this cell is not the top left cell of a merged region
      */
     void unMerge();
+
+    /**
+     * Test if cell is merged.
+     * @return true if cell is merged
+     */
+    default boolean isMerged() {
+        return getHorizontalSpan()!=1 || getVerticalSpan()!=1;
+    }
+
+    /**
+     * Merge cell with neighbouring cells.
+     * @param spanX the horizontal span
+     * @param spanY the vertical span
+     */
+    default void merge(int spanX, int spanY) {
+        LangUtil.check(!isMerged(), "Cell is already merged.");
+        LangUtil.check(spanX>=1);
+        LangUtil.check(spanY>=1);
+        LangUtil.check(spanX>1||spanY>1, "At least 2 cells must be merged.");
+
+        int iMin = getRowNumber();
+        int iMax = iMin + spanY-1;
+        int jMin = getColumnNumber();
+        int jMax = jMin + spanX-1;
+
+        RectangularRegion region = new RectangularRegion(iMin, iMax, jMin, jMax);
+        getSheet().addMergedRegion(region );
+    }
 }

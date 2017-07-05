@@ -41,4 +41,11 @@ public class XlsxWorkbookTest {
         WorkbookTestHelper.testFormat_toString(workbook);
     }
 
+    /**
+     * @see WorkbookTestHelper#testMergeUnmerge(Workbook)
+     */
+    @Test
+    public void testMergeUnmerge() {
+        WorkbookTestHelper.testMergeUnmerge(workbook);
+    }
 }

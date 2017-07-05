@@ -34,10 +34,6 @@ public abstract class AbstractCell implements Cell {
         this.logicalCell = topLeftCell;
     }
 
-    private boolean isMerged() {
-        return getHorizontalSpan() != 1 || getVerticalSpan() != 1;
-    }
-
     protected abstract void setVerticalSpan(int spanY);
 
     protected abstract void setHorizontalSpan(int spanX);
