@@ -82,3 +82,71 @@ project(':meja-samples') {
         compile project(':meja-ui-jfx')
     }
 }
+
+// create a jar with the dependencies
+task depJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+    baseName = 'meja'
+    classifier = 'dependencies'
+    
+    from rootProject.configurations.compile.collect { 
+        it.isDirectory() ? it : zipTree(it) 
+    }
+}
+
+// create a jar with sources
+task srcJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+    baseName = 'meja'
+    classifier = 'sources'
+    
+    from rootProject.sourceSets.main.java.srcDirs
+        
+    subprojects.each { project ->
+        from project.sourceSets.main.java.srcDirs
+    }
+}
+
+// create a jar with javadoc
+task docJar(type: Jar, dependsOn: javadoc) {
+    baseName = 'meja'    
+    classifier = 'javadoc'
+
+    from file("$buildDir/docs/javadoc")    
+}
+
+// collect all javadoc documentation in one location
+task alljavadoc(type: Javadoc, description: 'Generate javadocs from all child projects as if it was a single project', group: 'Documentation') {
+    destinationDir = file("$buildDir/docs/javadoc")
+    title = "$project.name $version API"
+    options.author true
+    
+    allprojects.each { proj ->
+        proj.tasks.withType(Javadoc).each { javadocTask ->
+            source += javadocTask.source
+            classpath += javadocTask.classpath
+            excludes += javadocTask.excludes
+            includes += javadocTask.includes
+        }
+    }
+}
+
+// create a jar with classes from all subprojects
+task allJar(type: Jar, dependsOn: [subprojects.tasks['classes'], alljavadoc]) {
+    baseName = 'meja'
+    classifier = 'all'
+    
+    from rootProject.sourceSets.main.output
+    from rootProject.sourceSets.main.java.srcDirs
+    
+    subprojects.each { project ->
+        // classes
+        from project.sourceSets.main.output
+        // sources
+        from project.sourceSets.main.java.srcDirs
+    }
+    // javadoc
+    from file("$buildDir/docs/javadoc")    
+}
+
+task dist(dependsOn: [depJar, srcJar, docJar, allJar]) {
+    println "creating distribution files"
+}
