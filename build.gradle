@@ -1,4 +1,4 @@
-subprojects {
+allprojects {
     apply plugin: 'maven'
     apply plugin: 'java'
     apply plugin: 'findbugs'
@@ -15,10 +15,10 @@ subprojects {
     }
 
     dependencies {
-		def poiVersion = "3.16"
-		compile "org.apache.poi:poi:${poiVersion}"
-		compile "org.apache.poi:poi-ooxml:${poiVersion}"
-		compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+        def poiVersion = "3.16"
+        compile "org.apache.poi:poi:${poiVersion}"
+        compile "org.apache.poi:poi-ooxml:${poiVersion}"
+        compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
         // use local project if 'localBuild' was set
         def utilityVersion = "0.1.5"
@@ -35,16 +35,6 @@ subprojects {
         resolutionStrategy {
             cacheChangingModulesFor 0, 'seconds'
         }
-    }
-}
-
-allprojects {
-    tasks.withType(Jar) {
-        destinationDir = file("$rootDir/dist")
-    }
-
-    tasks.withType(Javadoc) {
-        destinationDir = file("$rootDir/doc")
     }
 
     tasks.withType(FindBugs) {
@@ -68,12 +58,15 @@ allprojects {
     }
 }
 
-project(':meja') {
+subprojects {
+    dependencies {
+        compile rootProject
+    }    
 }
 
-project(':meja-ui') {
+project(':meja-ui-jfx') {
     dependencies {
-        compile project(':meja')
+        compile project(':meja-ui')
     }
 }
 
@@ -83,69 +76,9 @@ project(':meja-ui-swing') {
     }
 }
 
-project(':meja-ui-jfx') {
-    dependencies {
-        compile project(':meja-ui')
-    }
-}
-
 project(':meja-samples') {
     dependencies {
-        compile project(':meja')
         compile project(':meja-ui-swing')
         compile project(':meja-ui-jfx')
     }
-}
-
-// create javadoc
-task javadoc(type: Javadoc) {
-    source subprojects.collect {project -> project.sourceSets.main.allJava } 
-    classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath}) 
-}
-
-// create a jar with the dependencies
-task depJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
-    baseName = 'meja'
-    classifier = 'dependencies'
-    
-    from project(':meja').configurations.compile.collect { 
-		it.isDirectory() ? it : zipTree(it) 
-    }
-}
-
-// create a jar with sources
-task srcJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
-    baseName = 'meja'
-    classifier = 'sources'
-    
-    subprojects.each { project ->
-        from project.sourceSets.main.java.srcDirs
-    }
-}
-
-// create a jar with javadoc
-task docJar(type: Jar, dependsOn: javadoc) {
-    baseName = 'meja'    
-    classifier = 'javadoc'
-
-    from file("$rootDir/doc")    
-}
-
-// create a jar with classes from all subprojects
-task allJar(type: Jar, dependsOn: [subprojects.tasks['classes'], javadoc]) {
-    baseName = 'meja'
-    classifier = 'all'
-    
-    subprojects.each { project ->
-        // classes
-        from project.sourceSets.main.output
-        // sources
-        from project.sourceSets.main.java.srcDirs
-    }
-    // javadoc
-    from file("$rootDir/doc")    
-}
-
-task dist(dependsOn: [depJar, srcJar, docJar, allJar]) {
-    println "creating distribution files"
 }
