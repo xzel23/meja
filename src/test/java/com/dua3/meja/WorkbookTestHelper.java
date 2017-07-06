@@ -196,8 +196,8 @@ public class WorkbookTestHelper {
                         throw new IllegalStateException();
                     }
 
-                    int spanX = Integer.valueOf(parts[0]);
-                    int spanY = Integer.valueOf(parts[1]);
+                    int spanX = Integer.parseInt(parts[0]);
+                    int spanY = Integer.parseInt(parts[1]);
 
                     cell.merge(spanX, spanY);
                 }
@@ -222,8 +222,8 @@ public class WorkbookTestHelper {
                         throw new IllegalStateException();
                     }
 
-                    int spanX = Integer.valueOf(parts[0]);
-                    int spanY = Integer.valueOf(parts[1]);
+                    int spanX = Integer.parseInt(parts[0]);
+                    int spanY = Integer.parseInt(parts[1]);
 
                     Assert.assertEquals(spanX, cell.getHorizontalSpan());
                     Assert.assertEquals(spanY, cell.getVerticalSpan());
