@@ -23,8 +23,9 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -42,7 +43,7 @@ import com.dua3.meja.model.Workbook;
  */
 public class MejaHelper {
 
-    private static final Logger LOGGER = Logger.getLogger(MejaHelper.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MejaHelper.class);
 
     public static float decodeFontSize(String s) {
         float factor = 1f;
@@ -287,8 +288,9 @@ public class MejaHelper {
         try {
             return fileType.getFactory().open(path);
         } catch (IOException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-            throw new IOException("Could not load '" + path.toString() + "'.", ex);
+            String msg = "Could not load workbook '"+path+"'.";
+			LOGGER.error(msg, ex);
+            throw new IOException(msg, ex);
         }
     }
 

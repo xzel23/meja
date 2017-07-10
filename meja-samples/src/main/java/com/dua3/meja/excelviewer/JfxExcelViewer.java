@@ -7,10 +7,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
@@ -36,7 +37,8 @@ import javafx.stage.Window;
  */
 public class JfxExcelViewer extends Application {
 
-    private static final Logger LOGGER = Logger.getLogger(JfxExcelViewer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(JfxExcelViewer.class);
+    
     /**
      * The application name to show in title bar.
      */
@@ -84,7 +86,7 @@ public class JfxExcelViewer extends Application {
                 model.saveWorkbook(path.get());
             }
         } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "IO-Error saving workbook", ex);
+            LOGGER.error("IO-Error saving workbook.", ex);
             JOptionPane.showMessageDialog(
                     null,
                     "IO-Error saving workbook.",
@@ -115,7 +117,7 @@ public class JfxExcelViewer extends Application {
             final Optional<Path> newPath = model.getPath();
             workbookChanged(oldPath.orElse(null), newPath.orElse(null));
         } catch (IOException ex) {
-            Logger.getLogger(SwingExcelViewer.class.getName()).log(Level.SEVERE, "Exception loading workbook.", ex);
+            LOGGER.error("Exception loading workbook.", ex);
             new Alert(AlertType.ERROR, "Error loading workbook: " + ex.getMessage()).showAndWait();
         }
     }

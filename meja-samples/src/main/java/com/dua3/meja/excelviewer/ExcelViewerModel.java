@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
@@ -36,7 +37,8 @@ public class ExcelViewerModel {
         INFO;
     }
 
-    private static final Logger LOGGER = Logger.getLogger(ExcelViewer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelViewer.class);
+    
     private static final String LICENSE = "Copyright %d %s%n"
             + "%n"
             + "Licensed under the Apache License, Version 2.0 (the \"License\");%n"
@@ -122,12 +124,12 @@ public class ExcelViewerModel {
 
     public void saveWorkbook(Path path) throws IOException {
         if (workbook == null) {
-            LOGGER.log(Level.WARNING, "No Workbook open.");
+            LOGGER.warn("No Workbook open.");
             return;
         }
 
         workbook.write(path);
-        LOGGER.log(Level.INFO, "Workbook written to {0}.", path);
+        LOGGER.info("Workbook written to {}.", path);
     }
 
     /**
@@ -151,11 +153,11 @@ public class ExcelViewerModel {
             try {
                 this.workbook.close();
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, "IOException when closing workbook.", ex);
+                LOGGER.error("IOException when closing workbook.", ex);
             }
         }
         this.workbook = workbook;
-        LOGGER.log(Level.INFO, "Workbook changed to {0}.", getPath(this.workbook));
+        LOGGER.info("Workbook changed to {}.", getPath(this.workbook));
     }
 
     protected void setZoom(float zoom) {

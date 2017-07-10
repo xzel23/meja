@@ -23,11 +23,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -46,12 +47,13 @@ import javafx.stage.Window;
  * @author Axel Howind (axel@dua3.com)
  */
 public class MejaJfxHelper {
-
+    private static final Logger LOGGER =LoggerFactory.getLogger(MejaJfxHelper.class);
+    
     public static FileChooser.ExtensionFilter[] getExtensionFilters(OpenMode mode) {
         return Arrays.stream(FileType.values())
                 .filter(ft -> ft.isSupported(mode))
                 .map(ft -> new FileChooser.ExtensionFilter(ft.getDescription(), ft.getExtensions()))
-                .toArray((size) -> new FileChooser.ExtensionFilter[size]);
+                .toArray(size -> new FileChooser.ExtensionFilter[size]);
     }
 
     /**
@@ -84,7 +86,7 @@ public class MejaJfxHelper {
 
         FileChooser.ExtensionFilter ef = fc.getSelectedExtensionFilter();
         Optional<FileType> type = Arrays.stream(FileType.values())
-                .filter((ft) -> ft.getDescription().equals(ef.getDescription())
+                .filter(ft -> ft.getDescription().equals(ef.getDescription())
                         && Arrays.asList(ft.getExtensions()).equals(ef.getExtensions()))
                 .findFirst();
 
@@ -139,7 +141,7 @@ public class MejaJfxHelper {
                     "File exists",
                     JOptionPane.YES_NO_OPTION);
             if (rc != JOptionPane.YES_OPTION) {
-                Logger.getLogger(MejaHelper.class.getName()).log(Level.INFO, "User selected not to overwrite file.");
+                LOGGER.info("User chose not to overwrite file.");
                 return Optional.empty();
             }
         }

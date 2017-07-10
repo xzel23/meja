@@ -16,8 +16,6 @@
 package com.dua3.meja.ui.swing;
 
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -25,6 +23,9 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.text.RichText;
 import com.dua3.meja.text.Run;
@@ -39,7 +40,7 @@ import com.dua3.meja.util.MejaHelper;
  * @author Axel Howind (axel@dua3.com)
  */
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
-    private static final Logger LOGGER = Logger.getLogger(StyledDocumentBuilder.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(StyledDocumentBuilder.class);
 
     /**
      * Convert {@code RichText} to {@code StyledDocument} conserving text
@@ -99,7 +100,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                     StyleConstants.setItalic(as, true);
                     break;
                 default:
-                    LOGGER.warning("Unknown value for FONT_STYLE: " + e.getValue());
+                    LOGGER.warn("Unknown value for FONT_STYLE: {}", e.getValue());
                     break;
                 }
                 break;
@@ -112,7 +113,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                     StyleConstants.setUnderline(as, true);
                     break;
                 default:
-                    LOGGER.warning("Unknown value for TEXT_DECORATION: " + e.getValue());
+                    LOGGER.warn("Unknown value for TEXT_DECORATION: {}", e.getValue());
                     break;
                 }
                 break;
@@ -122,7 +123,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         try {
             doc.insertString(doc.getLength(), run.toString(), as);
         } catch (BadLocationException ex) {
-            LOGGER.log(Level.SEVERE, "Exception in StyledDocumentBuilder.append()", ex);
+            LOGGER.error("Exception in StyledDocumentBuilder.append()", ex);
         }
     }
 

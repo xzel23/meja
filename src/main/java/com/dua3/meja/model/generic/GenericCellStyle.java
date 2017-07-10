@@ -22,8 +22,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.CellStyle;
@@ -43,7 +44,7 @@ public class GenericCellStyle
 
     private static final BorderStyle defaultBorderStyle = new BorderStyle(0.0f, Color.BLACK);
 
-    private static final Logger LOGGER = Logger.getLogger(GenericCellStyle.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenericCellStyle.class);
 
     private final GenericWorkbook workbook;
 
@@ -117,7 +118,7 @@ public class GenericCellStyle
                     dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
                 }
             } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
+                LOGGER.warn("Not a date pattern: '{}'", dataFormat);
                 dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
             }
         }
@@ -141,7 +142,7 @@ public class GenericCellStyle
                 DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
                 numberFormatter = new DecimalFormat(fmt, symbols);
             } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
+                LOGGER.warn("Not a number pattern: '{}'", dataFormat);
                 numberFormatter = NumberFormat.getInstance(locale);
                 numberFormatter.setGroupingUsed(false);
             }
