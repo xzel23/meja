@@ -23,14 +23,15 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -50,6 +51,7 @@ import com.dua3.meja.util.Options;
  */
 public class MejaSwingHelper {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(MejaSwingHelper.class);
     /**
      * Create a TableModel to be used with JTable.
      *
@@ -211,7 +213,7 @@ public class MejaSwingHelper {
                     "File exists",
                     JOptionPane.YES_NO_OPTION);
             if (rc != JOptionPane.YES_OPTION) {
-                Logger.getLogger(MejaHelper.class.getName()).log(Level.INFO, "User selected not to overwrite file.");
+                LOGGER.info("User chose not to overwrite file.");
                 return Optional.empty();
             }
         }
