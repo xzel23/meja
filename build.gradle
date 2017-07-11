@@ -21,7 +21,7 @@ allprojects {
         compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
         // use local project if 'localBuild' was set
-        def utilityVersion = "0.1.5"
+        def utilityVersion = "0.1.6"
         if (project.hasProperty('localBuild')) {
             compile 'com.dua3.utility:utility:+'
         } else {
