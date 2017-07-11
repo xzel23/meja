@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.function.BiFunction;
 
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.RefOption;
@@ -19,6 +21,8 @@ import com.dua3.utility.io.FileSystemView;
 
 public class WorkbookTestHelper {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkbookTestHelper.class);
+
     public static Workbook loadWorkbook() throws Exception {
         Class<? extends WorkbookTestHelper> clazz = WorkbookTestHelper.class;
         String fileName = clazz.getSimpleName()+".xlsx";
@@ -30,27 +34,22 @@ public class WorkbookTestHelper {
             Path wbPath = fsv.resolve(fileName);
             workbook = MejaHelper.openWorkbook(wbPath);
         } catch (IOException e) {
-            System.out.format("--- WORKAROUND --- caught IOException, trying to fix path%n");
             // WORKAROUND - If anyone knows a less hackish solution for this, please send a pull request!
 
             // When tests are run from within gradle, resources are placed in another location (outside of classpath).
             // In that case, we try to guess the correct location of the resource files to be able to perform the tests.
-            System.err.println("Resource not found! "+e.getMessage());
             String pathStr = clazz.getResource(".").getPath();
-
-            System.out.format("--- WORKAROUND --- current path is %s%n", pathStr);
 
             // When started from within Bash on windows, a slash is prepended to the path returned by getResource.
             // We have to remove it again.
             if (pathStr.matches("^/[a-zA-Z]:/.*")) {
-                System.out.format("FIXING PATH%n");
                 pathStr = pathStr.replaceFirst("^/", "");
-                System.out.format("--- WORKAROUND --- fix windows bash path to %s%n", pathStr);
             }
 
             // Change the path so that it points to the probable resource dir.
             String s = pathStr.replaceAll("/build/classes/java/test/", "/build/resources/test/");
-            System.out.format("--- WORKAROUND --- path to resources is now %s%n", pathStr);
+
+            LOGGER.warn("Resource not found! Trying to load from '{}'.", pathStr);
 
             // Then try to load the workbook from there.
             Path path = Paths.get(s);
@@ -114,14 +113,14 @@ public class WorkbookTestHelper {
      */
     public static void testFormatHelper(Workbook workbook, BiFunction<Cell,Locale,String> extract) {
         workbook.sheets()
-            .peek(s -> System.out.format("Processing sheet '%s'%n", s.getSheetName()))
+            .peek(s -> LOGGER.info("Processing sheet '{}'", s.getSheetName()))
             .forEach(s -> {
                 s.rows()
                     .skip(1)
                     .forEach(r -> {
                         boolean ignored = r.getCell(0).toString().equalsIgnoreCase("x");
                         if (ignored) {
-                            System.out.format("line %d ignored%n", r.getRowNumber()+1);
+                            LOGGER.debug("line {} ignored", r.getRowNumber()+1);
                         } else {
                             String description = r.getCell(1).toString();
 
@@ -129,6 +128,7 @@ public class WorkbookTestHelper {
                             String languageTag = languageCell.toString();
                             Locale locale = Locale.forLanguageTag(languageTag);
                             if (!languageTag.equals(locale.toLanguageTag())) {
+                                LOGGER.error("Language tag does not match for cell {}.", languageCell.getCellRef(RefOption.WITH_SHEET));
                                 throw new IllegalStateException("Check language tag in cell "+languageCell.getCellRef(RefOption.WITH_SHEET));
                             }
 
@@ -148,7 +148,7 @@ public class WorkbookTestHelper {
                                         r.getRowNumber()+1, styleName, description,
                                         expected, alternative),
                                         expected, alternative);
-                                System.err.format("Cell %s matches alternative result!%n", alternativeCell.getCellRef(RefOption.WITH_SHEET));
+                                LOGGER.info("Cell {} matches alternative result.", alternativeCell.getCellRef(RefOption.WITH_SHEET));
                             } else {
                                 Assert.assertEquals(String.format("in line %d [style=%s]: %s - expected '%s', actual '%s'",
                                         r.getRowNumber()+1, styleName, description,
