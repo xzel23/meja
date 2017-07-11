@@ -152,6 +152,10 @@ public enum FileType {
         return description;
     }
 
+    /**
+     * Get list of file extensions for this file type.
+     * @return list of file extensions
+     */
     public List<String> getExtensions() {
         return Collections.unmodifiableList(Arrays.asList(extensions));
     }
