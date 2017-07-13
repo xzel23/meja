@@ -133,6 +133,8 @@ public interface Cell {
      * @throws IllegalStateException
      *             if cell is not of date value
      * @deprecated
+     * Use the new Date and Time API introduced in Java 8 and the corresponding {@link Cell#getDateTime()}
+     * method.
      */
     @Deprecated
     Date getDate();
@@ -273,6 +275,8 @@ public interface Cell {
      *            date
      * @return this cell
      * @deprecated
+     * Use the new Date and Time API introduced in Java 8 and the corresponding methods
+     * {@link #set(LocalDateTime)} and {@link #set(LocalDate)}.
      */
     @Deprecated
     Cell set(Date arg);
@@ -285,6 +289,18 @@ public interface Cell {
      * @return this cell
      */
     Cell set(LocalDateTime arg);
+
+    /**
+     * Set cell value to date.
+     *
+     * @param arg
+     *            date
+     * @return this cell
+     */
+    default Cell set(LocalDate arg) {
+        set(arg.atStartOfDay());
+        return this;
+    }
 
     /**
      * Set cell value to number.
@@ -328,7 +344,7 @@ public interface Cell {
         } else if (arg instanceof LocalDateTime) {
             set((LocalDateTime) arg);
         } else if (arg instanceof LocalDate) {
-            set(((LocalDate) arg).atStartOfDay());
+            set((LocalDate) arg);
         } else if (arg instanceof RichText) {
             set((RichText) arg);
         } else if (arg instanceof java.util.Date) {

@@ -26,12 +26,12 @@ import com.dua3.meja.model.Font;
 public class GenericFont extends AbstractFont {
 
     private final Color color;
-    private final Float size;
+    private final float size;
     private final String family;
-    private final Boolean bold;
-    private final Boolean italic;
-    private final Boolean underline;
-    private final Boolean strikeThrough;
+    private final boolean bold;
+    private final boolean italic;
+    private final boolean underline;
+    private final boolean strikeThrough;
 
     public static GenericFont copyOf(Font other) {
         return other instanceof GenericFont ? (GenericFont) other: new GenericFont(other);

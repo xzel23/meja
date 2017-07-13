@@ -6,6 +6,9 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Color;
 import com.dua3.meja.model.FillPattern;
@@ -23,9 +26,8 @@ import com.dua3.utility.swing.SwingUtil;
  */
 public class KitchenSink extends JFrame {
 
-    /**
-     *
-     */
+    private static final Logger logger = LoggerFactory.getLogger(KitchenSink.class);
+
     private static final long serialVersionUID = 1L;
 
     private static void addColorSheet(Workbook wb) {
@@ -89,7 +91,7 @@ public class KitchenSink extends JFrame {
         try {
             wb.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Exception occured while closing workbook.", e);
         }
         super.dispose();
     }
