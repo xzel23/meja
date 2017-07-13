@@ -40,12 +40,12 @@ public class JfxSheetView extends Pane
 
         // define row and column ranges
         final IntSupplier startColumn = () -> 0;
-        final IntSupplier splitColumn = () -> getSplitColumn();
-        final IntSupplier endColumn = () -> getColumnCount();
+        final IntSupplier splitColumn = this::getSplitColumn;
+        final IntSupplier endColumn = this::getColumnCount;
 
         final IntSupplier startRow = () -> 0;
-        final IntSupplier splitRow = () -> getSplitRow();
-        final IntSupplier endRow = () -> getRowCount();
+        final IntSupplier splitRow = this::getSplitRow;
+        final IntSupplier endRow = this::getRowCount;
 
         leftTopChart = new JfxSegmentView(this, startRow, splitRow, startColumn, splitColumn);
         rightTopChart = new JfxSegmentView(this, startRow, splitRow, splitColumn, endColumn);

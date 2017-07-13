@@ -179,7 +179,7 @@ public class CellEditorPane extends JTextPane {
         setEditorKit(new CellEditorKit());
     }
 
-    public SimpleAttributeSet getCellAttributes(final CellStyle cellStyle, Cell cell) throws IllegalStateException {
+    public SimpleAttributeSet getCellAttributes(final CellStyle cellStyle, Cell cell) {
         SimpleAttributeSet dfltAttr = new SimpleAttributeSet();
         switch (getHAlign(cellStyle.getHAlign(), cell.getResultType())) {
         case ALIGN_LEFT:

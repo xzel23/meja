@@ -116,7 +116,7 @@ public class RichTextBuilder
             start = end;
             style = e.getValue();
         }
-        runs[runIdx++] = new Run(text, start, text.length() - start, style);
+        runs[runIdx] = new Run(text, start, text.length() - start, style);
 
         return new RichText(text, runs);
     }
