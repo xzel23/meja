@@ -2,8 +2,6 @@ package com.dua3.meja.model;
 
 import java.awt.font.FontRenderContext;
 
-import com.dua3.meja.model.generic.GenericFont;
-
 public abstract class AbstractFont implements Font {
 
     private final java.awt.Font awtFont;
@@ -45,7 +43,10 @@ public abstract class AbstractFont implements Font {
     @Override
     public boolean equals(Object obj) {
         // important: compare the actual classes using getClass()
-        return obj!=null && obj.getClass()==getClass() && toAwtFont().equals(((GenericFont)obj).toAwtFont());
+        return obj!=null
+                && obj.getClass()==getClass()
+                && toAwtFont().equals(((AbstractFont)obj).toAwtFont())
+                && getColor().equals(((AbstractFont)obj).getColor());
     }
 
 }
