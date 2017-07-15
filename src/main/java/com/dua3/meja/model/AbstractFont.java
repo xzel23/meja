@@ -1,12 +1,24 @@
 package com.dua3.meja.model;
 
 import java.awt.font.FontRenderContext;
-
+/**
+ * Abstract base class for fonts.
+ */
 public abstract class AbstractFont implements Font {
 
     private final java.awt.Font awtFont;
     private final java.awt.font.FontRenderContext awtFontRenderContext;
 
+    /**
+     * Create a new font.
+     * @param family the font family
+     * @param size the size in points
+     * @param color the color
+     * @param bold bold flag
+     * @param italic italic flag 
+     * @param underlined underline flag
+     * @param strikeThrough strike through flag
+     */
     public AbstractFont(String family, float size, Color color, boolean bold, boolean italic, boolean underlined,
             boolean strikeThrough) {
         this.awtFont = getAwtFont(family, size, color, bold, italic, underlined, strikeThrough);

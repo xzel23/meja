@@ -175,10 +175,19 @@ public class CellEditorPane extends JTextPane {
 
     private VAlign vAlign = VAlign.ALIGN_TOP;
 
+    /**
+     * Construct a new CellEditorPane.
+     */
     public CellEditorPane() {
         setEditorKit(new CellEditorKit());
     }
 
+    /**
+     * Get a {@link SimpleAttributeSet} corresponding to the cellstyle.
+     * @param cellStyle the cell style
+     * @param cell the cell (because cell tye influences the style attributes)
+     * @return a SimpleAttributeSet
+     */
     public SimpleAttributeSet getCellAttributes(final CellStyle cellStyle, Cell cell) {
         SimpleAttributeSet dfltAttr = new SimpleAttributeSet();
         switch (getHAlign(cellStyle.getHAlign(), cell.getResultType())) {

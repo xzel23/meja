@@ -2,11 +2,18 @@ package com.dua3.meja.model;
 
 import java.util.Locale;
 
+/**
+ * Abstract base class for sheet cells.
+ */
 public abstract class AbstractCell implements Cell {
 
     private final AbstractRow row;
     private AbstractCell logicalCell;
 
+    /**
+     * Create a new Abstract cell that belongs to a row.
+     * @param row the row the new cell belongs to
+     */
     public AbstractCell(AbstractRow row) {
         this.row = row;
         this.logicalCell = this;
