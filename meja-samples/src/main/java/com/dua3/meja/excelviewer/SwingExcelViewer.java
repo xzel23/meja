@@ -358,9 +358,10 @@ public class SwingExcelViewer extends JFrame
                         model.getCurrentPath());
                 if (!newPath.isPresent()) {
                     // user cancelled the dialog
+                    LOG.info("save-dialog was cancelled.");
                     return;
                 }
-                workbookChanged(null /* uri */, newPath.get());
+                workbookChanged(null /* old path was not set */, newPath.get());
             } else {
                 model.saveWorkbook(path.get());
             }

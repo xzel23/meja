@@ -108,7 +108,10 @@ public abstract class Csv {
                             return ds != ',' ? ',' : ';';
                         }),
                 NamedFunction.create(",", locale -> ','),
-                NamedFunction.create(";", locale -> ';'));
+                NamedFunction.create(";", locale -> ';'),
+                NamedFunction.create("|", locale -> '|'),
+                NamedFunction.create("TAB", locale -> '\t')
+                );
 
         OPTIONS.addOption(OPTION_DELIMITER, Character.class, OptionSet.value("\"", '"'), OptionSet.value("'", '\''));
     }

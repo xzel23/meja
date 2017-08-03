@@ -38,7 +38,7 @@ public class ExcelViewerModel {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExcelViewer.class);
-    
+
     private static final String LICENSE = "Copyright %d %s%n"
             + "%n"
             + "Licensed under the Apache License, Version 2.0 (the \"License\");%n"
@@ -128,6 +128,7 @@ public class ExcelViewerModel {
             return;
         }
 
+        LOGGER.info("Writing workbook to {}.", path);
         workbook.write(path);
         LOGGER.info("Workbook written to {}.", path);
     }
