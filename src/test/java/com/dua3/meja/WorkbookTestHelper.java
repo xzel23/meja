@@ -23,7 +23,7 @@ public class WorkbookTestHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkbookTestHelper.class);
 
-    public static Workbook loadWorkbook() throws Exception {
+    public static Workbook loadWorkbook() throws IOException {
         Class<? extends WorkbookTestHelper> clazz = WorkbookTestHelper.class;
         String fileName = clazz.getSimpleName()+".xlsx";
 

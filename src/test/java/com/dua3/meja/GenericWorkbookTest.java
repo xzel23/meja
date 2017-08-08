@@ -14,7 +14,7 @@ public class GenericWorkbookTest {
     private Workbook workbook;
 
     @Before
-    public void initialize() throws Exception {
+    public void initialize() throws IOException {
         workbook = PoiWorkbookFactory.instance().createXls();
         workbook.copy(WorkbookTestHelper.loadWorkbook());
     }

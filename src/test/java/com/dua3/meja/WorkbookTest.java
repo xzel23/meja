@@ -13,7 +13,7 @@ public class WorkbookTest {
     private Workbook workbook;
 
     @Before
-    public void initialize() throws Exception {
+    public void initialize() throws IOException {
         workbook = WorkbookTestHelper.loadWorkbook();
     }
 

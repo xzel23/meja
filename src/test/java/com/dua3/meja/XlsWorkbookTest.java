@@ -14,7 +14,7 @@ public class XlsWorkbookTest {
     private Workbook workbook;
 
     @Before
-    public void initialize() throws Exception {
+    public void initialize() throws IOException {
         workbook = GenericWorkbookFactory.instance().create();
         workbook.copy(WorkbookTestHelper.loadWorkbook());
     }
