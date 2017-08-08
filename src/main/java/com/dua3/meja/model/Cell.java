@@ -298,7 +298,7 @@ public interface Cell {
      * @return this cell
      */
     default Cell set(LocalDate arg) {
-        set(arg.atStartOfDay());
+        set(arg == null ? null : arg.atStartOfDay());
         return this;
     }
 
