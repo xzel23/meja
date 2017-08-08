@@ -12,7 +12,11 @@ Other required libraries (Apache POI) will be automatically downloaded by gradle
 
 ## Installation
 
-Clone the repository and run gradlew build.
+You can either clone and compile Meja yourself or use precompiled packages.
+
+- Read how to use prebuilt packages in your build on [Jitpack.io/#xzel23/meja](https://jitpack.io/#xzel23/meja).
+
+- If you want to **build Meja from source**: clone the repository and run `gradlew build`.
 
 ## Documentation
 More information is available on the project`s [github pages](http://xzel23.github.io/meja/) where you will also find the [API docs](http://xzel23.github.io/meja/doc/index.html).
