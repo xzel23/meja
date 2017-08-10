@@ -20,12 +20,12 @@ import java.util.concurrent.locks.Lock;
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaConfig;
+import com.dua3.utility.Color;
 
 /**
  * A helper class that implements the actual drawing algorithm.

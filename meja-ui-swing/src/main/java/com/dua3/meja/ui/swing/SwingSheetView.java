@@ -60,7 +60,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
@@ -69,6 +68,7 @@ import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.swing.SwingUtil;
+import com.dua3.utility.Color;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -610,7 +610,7 @@ public class SwingSheetView extends JPanel
             sheetPainter.drawSheet(new SwingGraphicsContext(g2d, SwingSheetView.this));
 
             // draw split lines
-            g2d.setColor(MejaSwingHelper.toAwtColor(Color.BLACK));
+            g2d.setColor(SwingUtil.toAwtColor(Color.BLACK));
             g2d.setStroke(new BasicStroke());
             if (hasHLine()) {
                 g2d.drawLine(x, height + y - 1, width + x - 1, height + y - 1);

@@ -3,9 +3,9 @@
  */
 package com.dua3.meja.ui.javafx;
 
-import com.dua3.meja.model.Color;
 import com.dua3.meja.ui.GraphicsContext;
 import com.dua3.meja.ui.Rectangle;
+import com.dua3.utility.Color;
 
 import javafx.geometry.Bounds;
 

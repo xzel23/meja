@@ -21,9 +21,9 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Locale;
 
-import com.dua3.meja.text.RichText;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.RichText;
 
 /**
  * A single cell of a sheet.

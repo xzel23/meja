@@ -32,10 +32,10 @@ import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
-import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.utility.Color;
 
 import javafx.scene.paint.Paint;
 import javafx.stage.FileChooser;

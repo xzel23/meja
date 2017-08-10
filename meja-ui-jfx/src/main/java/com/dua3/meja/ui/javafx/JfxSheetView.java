@@ -8,9 +8,9 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.function.IntSupplier;
 
-import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
+import com.dua3.utility.Color;
 
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;

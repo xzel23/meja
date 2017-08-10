@@ -45,18 +45,6 @@ public class MejaHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MejaHelper.class);
 
-    public static float decodeFontSize(String s) {
-        float factor = 1f;
-        if (s.endsWith("pt")) {
-            s = s.substring(0, s.length() - 2);
-            factor = 1f;
-        } else if (s.endsWith("px")) {
-            s = s.substring(0, s.length() - 2);
-            factor = 96f / 72f;
-        }
-        return factor * Float.parseFloat(s);
-    }
-
     /**
      * Find cell containing text in row.
      *

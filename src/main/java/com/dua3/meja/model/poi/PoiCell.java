@@ -38,11 +38,11 @@ import com.dua3.meja.model.AbstractCell;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.text.RichText;
-import com.dua3.meja.text.RichTextBuilder;
-import com.dua3.meja.text.Run;
-import com.dua3.meja.text.Style;
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.Run;
+import com.dua3.utility.text.Style;
 
 /**
  *

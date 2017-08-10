@@ -7,9 +7,10 @@ import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import com.dua3.meja.model.Color;
 import com.dua3.meja.ui.GraphicsContext;
 import com.dua3.meja.ui.Rectangle;
+import com.dua3.utility.Color;
+import com.dua3.utility.swing.SwingUtil;
 
 public final class SwingGraphicsContext
         implements GraphicsContext {
@@ -60,19 +61,19 @@ public final class SwingGraphicsContext
 
     @Override
     public void setColor(Color color) {
-        g.setColor(MejaSwingHelper.toAwtColor(color));
+        g.setColor(SwingUtil.toAwtColor(color));
     }
 
     @Override
     public void setStroke(Color color, double width) {
-        g.setColor(MejaSwingHelper.toAwtColor(color));
+        g.setColor(SwingUtil.toAwtColor(color));
         g.setStroke(new BasicStroke((float) width));
     }
 
     @Override
     public void setXOR(boolean on) {
         if (on) {
-            g.setXORMode(MejaSwingHelper.toAwtColor(Color.WHITE));
+            g.setXORMode(SwingUtil.toAwtColor(Color.WHITE));
         } else {
             g.setPaintMode();
         }

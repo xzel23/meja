@@ -1,6 +1,9 @@
 package com.dua3.meja.model;
 
 import java.awt.font.FontRenderContext;
+
+import com.dua3.utility.Color;
+
 /**
  * Abstract base class for fonts.
  */

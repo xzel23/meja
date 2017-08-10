@@ -47,13 +47,14 @@ import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.AbstractWorkbook;
 import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
-import com.dua3.meja.text.Style;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.Options;
+import com.dua3.utility.Color;
+import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextBuilder;
 
 /**
  *
@@ -487,7 +488,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
 
         String sSize = properties.get(Style.FONT_SIZE);
-        short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : MejaHelper.decodeFontSize(sSize));
+        short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : TextBuilder.decodeFontSize(sSize));
 
         final String sStyle = properties.get(Style.FONT_STYLE);
         boolean italic = sStyle == null ? font.isItalic() : "italic".equals(sStyle);
