@@ -40,7 +40,7 @@ import com.dua3.meja.util.MejaHelper;
  * @author Axel Howind (axel@dua3.com)
  */
 public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(StyledDocumentBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StyledDocumentBuilder.class);
 
     /**
      * Convert {@code RichText} to {@code StyledDocument} conserving text
@@ -100,7 +100,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                     StyleConstants.setItalic(as, true);
                     break;
                 default:
-                    LOGGER.warn("Unknown value for FONT_STYLE: {}", e.getValue());
+                    LOG.warn("Unknown value for FONT_STYLE: {}", e.getValue());
                     break;
                 }
                 break;
@@ -113,9 +113,12 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
                     StyleConstants.setUnderline(as, true);
                     break;
                 default:
-                    LOGGER.warn("Unknown value for TEXT_DECORATION: {}", e.getValue());
+                    LOG.warn("Unknown value for TEXT_DECORATION: {}", e.getValue());
                     break;
                 }
+                break;
+            default:
+                LOG.warn("Unknown Style: {}", e.getKey());
                 break;
             }
         }
@@ -123,7 +126,7 @@ public class StyledDocumentBuilder extends TextBuilder<StyledDocument> {
         try {
             doc.insertString(doc.getLength(), run.toString(), as);
         } catch (BadLocationException ex) {
-            LOGGER.error("Exception in StyledDocumentBuilder.append()", ex);
+            LOG.error("Exception in StyledDocumentBuilder.append()", ex);
         }
     }
 
