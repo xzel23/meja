@@ -4,10 +4,10 @@
 package com.dua3.meja.ui.javafx;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SheetPainterBase;
+import com.dua3.utility.Color;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;

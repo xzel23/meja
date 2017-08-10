@@ -21,6 +21,10 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.RichTextBuilder;
+import com.dua3.utility.text.Style;
+
 /**
  *
  * @author Axel Howind

@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Color;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
@@ -19,6 +18,7 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.utility.swing.SwingUtil;
+import com.dua3.utility.Color;
 
 /**
  *

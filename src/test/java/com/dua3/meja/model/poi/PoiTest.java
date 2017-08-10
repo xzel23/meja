@@ -21,7 +21,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.junit.Test;
 
-import com.dua3.meja.model.Color;
+import com.dua3.utility.Color;
 
 /**
  *

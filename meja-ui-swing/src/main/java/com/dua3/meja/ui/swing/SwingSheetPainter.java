@@ -14,6 +14,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SheetPainterBase;
+import com.dua3.utility.swing.SwingUtil;
 
 public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, SwingGraphicsContext> {
 
@@ -32,7 +33,7 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, SwingGra
         labelPainter.setOpaque(true);
         labelPainter.setHorizontalAlignment(SwingConstants.CENTER);
         labelPainter.setVerticalAlignment(SwingConstants.CENTER);
-        labelPainter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, MejaSwingHelper.toAwtColor(getGridColor())));
+        labelPainter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, SwingUtil.toAwtColor(getGridColor())));
     }
 
     @Override

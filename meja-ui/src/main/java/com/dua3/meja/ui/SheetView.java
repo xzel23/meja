@@ -17,8 +17,8 @@ package com.dua3.meja.ui;
 
 import java.beans.PropertyChangeListener;
 
-import com.dua3.meja.model.Color;
 import com.dua3.meja.model.Sheet;
+import com.dua3.utility.Color;
 
 /**
  *

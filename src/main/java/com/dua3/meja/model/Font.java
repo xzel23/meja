@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.utility.Color;
+
 /**
  * Interface describing fonts used in workbooks.
  *

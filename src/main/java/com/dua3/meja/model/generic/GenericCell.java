@@ -25,7 +25,7 @@ import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.text.RichText;
+import com.dua3.utility.text.RichText;
 
 /**
  *
