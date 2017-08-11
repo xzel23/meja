@@ -42,7 +42,7 @@ import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
-import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextAttributes;
 
 /**
  *
@@ -522,20 +522,20 @@ public final class PoiCell
 
             // apply font attributes for formatting run
             PoiFont runFont = getFontForFormattingRun(rts, i);
-            rtb.push(Style.FONT_FAMILY, runFont.getFamily());
-            rtb.push(Style.FONT_SIZE, runFont.getSizeInPoints() + "pt");
-            rtb.push(Style.COLOR, runFont.getColor().toString());
+            rtb.push(TextAttributes.FONT_FAMILY, runFont.getFamily());
+            rtb.push(TextAttributes.FONT_SIZE, runFont.getSizeInPoints() + "pt");
+            rtb.push(TextAttributes.COLOR, runFont.getColor().toString());
             if (runFont.isBold()) {
-                rtb.push(Style.FONT_WEIGHT, "bold");
+                rtb.push(TextAttributes.FONT_WEIGHT, "bold");
             }
             if (runFont.isItalic()) {
-                rtb.push(Style.FONT_STYLE, "italic");
+                rtb.push(TextAttributes.FONT_STYLE, "italic");
             }
             if (runFont.isUnderlined()) {
-                rtb.push(Style.TEXT_DECORATION, "underline");
+                rtb.push(TextAttributes.TEXT_DECORATION, "underline");
             }
             if (runFont.isStrikeThrough()) {
-                rtb.push(Style.TEXT_DECORATION, "line-through");
+                rtb.push(TextAttributes.TEXT_DECORATION, "line-through");
             }
 
             rtb.append(text, start, end);

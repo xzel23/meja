@@ -33,7 +33,7 @@ import com.dua3.meja.model.VAlign;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.utility.Color;
-import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextAttributes;
 
 /**
  *
@@ -399,7 +399,7 @@ public abstract class PoiCellStyle
 
     @Override
     public void setFont(Font font) {
-        poiCellStyle.setFont(workbook.getPoiFont(font, Style.none()).getPoiFont());
+        poiCellStyle.setFont(workbook.getPoiFont(font, TextAttributes.none()).getPoiFont());
     }
 
     @Override

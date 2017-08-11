@@ -50,10 +50,9 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.Options;
 import com.dua3.utility.Color;
-import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.TextBuilder;
 
 /**
@@ -306,7 +305,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
 
-        // init cell style map
+        // init cell TextAttributes map
         for (short i = 0; i < poiWorkbook.getNumCellStyles(); i++) {
             cellStyles.put("style#" + i, i);
         }
@@ -478,30 +477,30 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      */
     public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
 
-    PoiFont getPoiFont(com.dua3.meja.model.Font font, Style style) {
-        Map<String, String> properties = style.properties();
+    PoiFont getPoiFont(com.dua3.meja.model.Font font, TextAttributes style) {
+        Map<String, Object> properties = style.properties();
 
         if (properties.isEmpty() && font instanceof PoiFont && ((PoiFont) font).workbook == this) {
             return (PoiFont) font;
         }
 
-        String name = properties.getOrDefault(Style.FONT_FAMILY, font.getFamily());
+        String name = String.valueOf(properties.getOrDefault(TextAttributes.FONT_FAMILY, font.getFamily()));
 
-        String sSize = properties.get(Style.FONT_SIZE);
-        short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : TextBuilder.decodeFontSize(sSize));
+        Object sSize = properties.get(TextAttributes.FONT_SIZE);
+        short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : TextBuilder.decodeFontSize(sSize.toString()));
 
-        final String sStyle = properties.get(Style.FONT_STYLE);
+        final Object sStyle = properties.get(TextAttributes.FONT_STYLE);
         boolean italic = sStyle == null ? font.isItalic() : "italic".equals(sStyle);
 
-        final String sWeight = properties.get(Style.FONT_WEIGHT);
+        final Object sWeight = properties.get(TextAttributes.FONT_WEIGHT);
         boolean bold = sWeight == null ? font.isBold() : "bold".equals(sWeight);
 
-        String sDecoration = properties.get(Style.TEXT_DECORATION);
+        Object sDecoration = properties.get(TextAttributes.TEXT_DECORATION);
         boolean underline = sDecoration == null ? font.isUnderlined() : "underline".equals(sDecoration);
         boolean strikethrough = sDecoration == null ? font.isStrikeThrough() : "line-through".equals(sDecoration);
 
-        String sColor = properties.get(Style.COLOR);
-        Color color = sColor == null ? font.getColor() : Color.valueOf(sColor);
+        Object sColor = properties.get(TextAttributes.COLOR);
+        Color color = sColor == null ? font.getColor() : Color.valueOf(sColor.toString());
 
         // try to find existing font
         for (short i = 0; i < poiWorkbook.getNumberOfFonts(); i++) {
