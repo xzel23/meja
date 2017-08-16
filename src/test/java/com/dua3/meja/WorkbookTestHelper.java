@@ -30,7 +30,7 @@ public class WorkbookTestHelper {
         Workbook workbook;
 
         // the FileSystemView is needed in case the test is run from a jar file
-        try (FileSystemView fsv = FileSystemView.create(clazz)) {
+        try (FileSystemView fsv = FileSystemView.forClass(clazz)) {
             Path wbPath = fsv.resolve(fileName);
             workbook = MejaHelper.openWorkbook(wbPath);
         } catch (IOException e) {

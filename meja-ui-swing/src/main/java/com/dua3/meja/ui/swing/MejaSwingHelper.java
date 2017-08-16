@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.ui.swing;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
