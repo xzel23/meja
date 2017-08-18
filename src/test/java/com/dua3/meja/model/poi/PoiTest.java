@@ -16,6 +16,10 @@
 package com.dua3.meja.model.poi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -41,19 +45,17 @@ public class PoiTest {
     @Test
     public void testColorConversionHssf() {
         PoiWorkbook.PoiHssfWorkbook wb = (PoiWorkbook.PoiHssfWorkbook) PoiWorkbookFactory.instance().createXls();
-        // HSSF seems to map colors to more or less matching nearest colors.
-        // The first 16 entries seem to be exact.
-        int n = 0;
+        // HSSF maps colors to more or less matching nearest colors.
+        Set<String> used = new HashSet<>();
         for (Color col : Color.values()) {
-            if (++n > 16) {
-                break;
-            }
-
             HSSFColor poiColor = wb.getPoiColor(col);
-            Color expected = col;
+            short[] t = poiColor.getTriplet();
+            Color expected = new Color(t[0], t[1], t[2]);
             Color actual = wb.getColor(poiColor, Color.BLACK);
             assertEquals(expected, actual);
+            used.add(expected.toString());
         }
+        assertTrue(used.size()>20);
     }
 
     /**
