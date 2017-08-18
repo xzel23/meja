@@ -49,7 +49,7 @@ public class CsvWorkbookReader extends WorkbookReader {
      * Read from a BufferedReader. This is implemented because CSV is a
      * character format. The Encoding must be set correctly in the reader.
      *
-     * @param <WORKBOOK>
+     * @param <W>
      *            the Workbook implementation class to use
      * @param factory
      *            the WorkbookFactory to use
@@ -61,14 +61,13 @@ public class CsvWorkbookReader extends WorkbookReader {
      * @throws IOException
      *             if an io-error occurs during reading
      */
-    public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, BufferedReader in, Path path)
-            throws IOException {
-        WORKBOOK workbook = factory.create();
+    public <W extends Workbook> W read(WorkbookFactory<W> factory, BufferedReader in, Path path) throws IOException {
+        W workbook = factory.create();
         workbook.setPath(path);
         GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet(path.toString()), options);
-        try {
-            workbook.setObjectCaching(true);
-            CsvReader.create(builder, in, options).readAll();
+        workbook.setObjectCaching(true);
+        try (CsvReader reader = CsvReader.create(builder, in, options)) {
+            reader.readAll();
         } finally {
             workbook.setObjectCaching(false);
         }
@@ -76,14 +75,13 @@ public class CsvWorkbookReader extends WorkbookReader {
     }
 
     @Override
-    protected <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in, Path path)
-            throws IOException {
-        WORKBOOK workbook = factory.create();
+    protected <W extends Workbook> W read(WorkbookFactory<W> factory, InputStream in, Path path) throws IOException {
+        W workbook = factory.create();
         workbook.setPath(path);
         GenericRowBuilder builder = new GenericRowBuilder(workbook.createSheet("Sheet 1"), options);
-        try {
-            workbook.setObjectCaching(true);
-            CsvReader.create(builder, in, options).readAll();
+        workbook.setObjectCaching(true);
+        try (CsvReader reader = CsvReader.create(builder, in, options)) {
+            reader.readAll();
         } finally {
             workbook.setObjectCaching(false);
         }

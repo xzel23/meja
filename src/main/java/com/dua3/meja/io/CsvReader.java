@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.dua3.meja.util.Options;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  * @author axel TODO: see below number of fields require fixed number of columns
@@ -202,7 +203,7 @@ public class CsvReader extends Csv
     public int ignoreRows(int rowsToIgnore) throws IOException {
         int ignored = 0;
         while (ignored < rowsToIgnore) {
-            reader.readLine();
+            LangUtil.ignore(reader.readLine());
             lineNumber++;
             ignored++;
         }

@@ -27,12 +27,12 @@ import java.util.function.Function;
  * This class is not intended as a replacement for {@code JCache} (JSR 107).
  * </p>
  *
- * @param <KEY>
+ * @param <K>
  *            key class
- * @param <VALUE>
+ * @param <V>
  *            value class
  */
-public class Cache<KEY, VALUE> {
+public class Cache<K, V> {
 
     /**
      * Type controlling how keys should be treated in a cache.
@@ -69,11 +69,11 @@ public class Cache<KEY, VALUE> {
         WEAK_KEYS
     }
 
-    private final Function<KEY, VALUE> compute;
+    private final Function<K, V> compute;
 
-    private final Map<KEY, SoftReference<VALUE>> items;
+    private final Map<K, SoftReference<V>> items;
 
-    public Cache(Type type, Function<KEY, VALUE> compute) {
+    public Cache(Type type, Function<K, V> compute) {
         this.compute = compute;
         switch (type) {
         case STRONG_KEYS:
@@ -94,13 +94,13 @@ public class Cache<KEY, VALUE> {
         items.clear();
     }
 
-    public VALUE get(KEY key) {
+    public V get(K key) {
         if (key == null) {
             return null;
         }
 
-        SoftReference<VALUE> weak = items.get(key);
-        VALUE item = weak == null ? null : weak.get();
+        SoftReference<V> weak = items.get(key);
+        V item = weak == null ? null : weak.get();
 
         if (item == null) {
             item = compute.apply(key);
