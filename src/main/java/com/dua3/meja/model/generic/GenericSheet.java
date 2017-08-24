@@ -22,9 +22,9 @@ import java.util.List;
 import com.dua3.meja.model.AbstractSheet;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.Font;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.utility.text.Font;
 
 /**
  * A generic implementation of {@link Sheet}.

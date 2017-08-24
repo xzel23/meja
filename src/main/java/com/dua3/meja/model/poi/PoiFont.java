@@ -22,20 +22,22 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
-import com.dua3.meja.model.AbstractFont;
-import com.dua3.meja.model.Font;
 import com.dua3.utility.Color;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.Font.FontDef;
 
 /**
  *
  * @author axel
  */
-public class PoiFont extends AbstractFont {
+public class PoiFont {
 
     /**
      *
      */
     protected final PoiWorkbook workbook;
+
+    protected final com.dua3.utility.text.Font font;
 
     /**
      *
@@ -88,24 +90,15 @@ public class PoiFont extends AbstractFont {
      *            the POI font instance
      */
     public PoiFont(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Font poiFont) {
-        super(poiFont.getFontName(), poiFont.getFontHeightInPoints(), workbook.getColor(poiFont, Color.BLACK),
+        this.font = new Font(poiFont.getFontName(), poiFont.getFontHeightInPoints(), workbook.getColor(poiFont, Color.BLACK),
                 poiFont.getBold(), poiFont.getItalic(), poiFont.getUnderline()!= org.apache.poi.ss.usermodel.Font.U_NONE, poiFont.getStrikeout());
         this.workbook = workbook;
         this.poiFont = poiFont;
     }
 
-    @Override
     public PoiFont deriveFont(FontDef fd) {
-        String fontFamily = fd.getFamily() != null ? fd.getFamily() : this.getFamily();
-        float fontSize = fd.getSize() != null ? fd.getSize() : this.getSizeInPoints();
-        Color fontColor = fd.getColor() != null ? fd.getColor() : this.getColor();
-        boolean fontBold = fd.getBold() != null ? fd.getBold() : this.isBold();
-        boolean fontItalic = fd.getItalic() != null ? fd.getItalic() : this.isItalic();
-        boolean fontUnderlined = fd.getUnderline() != null ? fd.getUnderline() : this.isUnderlined();
-        boolean fontStrikeThrough = fd.getStrikeThrough() != null ? fd.getStrikeThrough() : this.isStrikeThrough();
-
-        return workbook.createFont(fontFamily, fontSize, fontColor, fontBold, fontItalic, fontUnderlined,
-                fontStrikeThrough);
+        Font derivedFont = this.font.deriveFont(fd);
+        return workbook.createFont(derivedFont);
     }
 
     @Override
@@ -117,14 +110,8 @@ public class PoiFont extends AbstractFont {
         }
     }
 
-    @Override
-    public Color getColor() {
-        return workbook.getColor(poiFont, Color.BLACK);
-    }
-
-    @Override
-    public String getFamily() {
-        return getPoiFont().getFontName();
+    public com.dua3.utility.text.Font getFont() {
+        return font;
     }
 
     /**
@@ -137,37 +124,12 @@ public class PoiFont extends AbstractFont {
     }
 
     @Override
-    public float getSizeInPoints() {
-        return getPoiFont().getFontHeightInPoints();
-    }
-
-    @Override
     public int hashCode() {
-        return getPoiFont().hashCode();
-    }
-
-    @Override
-    public boolean isBold() {
-        return getPoiFont().getBold();
-    }
-
-    @Override
-    public boolean isItalic() {
-        return getPoiFont().getItalic();
-    }
-
-    @Override
-    public boolean isStrikeThrough() {
-        return getPoiFont().getStrikeout();
-    }
-
-    @Override
-    public boolean isUnderlined() {
-        return getPoiFont().getUnderline() != org.apache.poi.ss.usermodel.Font.U_NONE;
+        return font.hashCode() + 37*getPoiFont().hashCode();
     }
 
     @Override
     public String toString() {
-        return fontspec();
+        return font.fontspec();
     }
 }

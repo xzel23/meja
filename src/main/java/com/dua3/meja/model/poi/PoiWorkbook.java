@@ -85,17 +85,16 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        public PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold,
-                boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough) {
+        public PoiFont createFont(com.dua3.utility.text.Font font) {
             Font poiFont = poiWorkbook.createFont();
-            poiFont.setFontName(fontFamily);
-            poiFont.setFontHeightInPoints((short) Math.round(fontSize));
-            poiFont.setColor(getPoiColor(fontColor).getIndex());
-            poiFont.setBold(fontBold);
-            poiFont.setItalic(fontItalic);
-            poiFont.setUnderline(fontUnderlined ? org.apache.poi.ss.usermodel.Font.U_SINGLE
+            poiFont.setFontName(font.getFamily());
+            poiFont.setFontHeight(((short) Math.round(20*font.getSizeInPoints())));
+            poiFont.setColor(getPoiColor(font.getColor()).getIndex());
+            poiFont.setBold(font.isBold());
+            poiFont.setItalic(font.isItalic());
+            poiFont.setUnderline(font.isUnderlined() ? org.apache.poi.ss.usermodel.Font.U_SINGLE
                     : org.apache.poi.ss.usermodel.Font.U_NONE);
-            poiFont.setStrikeout(fontStrikeThrough);
+            poiFont.setStrikeout(font.isStrikeThrough());
             return new PoiFont(this, poiFont);
         }
 
@@ -191,17 +190,16 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        public PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold,
-                boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough) {
+        public PoiFont createFont(com.dua3.utility.text.Font font) {
             XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();
-            poiFont.setFontName(fontFamily);
-            poiFont.setFontHeightInPoints((short) Math.round(fontSize));
-            poiFont.setColor(getPoiColor(fontColor));
-            poiFont.setBold(fontBold);
-            poiFont.setItalic(fontItalic);
-            poiFont.setUnderline(fontUnderlined ? org.apache.poi.ss.usermodel.Font.U_SINGLE
+            poiFont.setFontName(font.getFamily());
+            poiFont.setFontHeight(((short) Math.round(20*font.getSizeInPoints())));
+            poiFont.setColor(getPoiColor(font.getColor()).getIndex());
+            poiFont.setBold(font.isBold());
+            poiFont.setItalic(font.isItalic());
+            poiFont.setUnderline(font.isUnderlined() ? org.apache.poi.ss.usermodel.Font.U_SINGLE
                     : org.apache.poi.ss.usermodel.Font.U_NONE);
-            poiFont.setStrikeout(fontStrikeThrough);
+            poiFont.setStrikeout(font.isStrikeThrough());
             return new PoiFont(this, poiFont);
         }
 
@@ -329,24 +327,11 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     /**
      * Create a new font.
      *
-     * @param fontFamily
-     *            the font family
-     * @param fontSize
-     *            the font size in points
-     * @param fontColor
-     *            the font color
-     * @param fontBold
-     *            whether font should be bold
-     * @param fontItalic
-     *            whether font should be italic
-     * @param fontUnderlined
-     *            whether font should be underlined
-     * @param fontStrikeThrough
-     *            whether font should be strikethrough
+     * @param font
+     *            the font to create a POI version of
      * @return an instance of {@link PoiFont}
      */
-    public abstract PoiFont createFont(String fontFamily, float fontSize, Color fontColor, boolean fontBold,
-            boolean fontItalic, boolean fontUnderlined, boolean fontStrikeThrough);
+    protected abstract PoiFont createFont(com.dua3.utility.text.Font font);
 
     /**
      * Convert {@link String} to {@link RichTextString}.
@@ -455,7 +440,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * @return instance of {@link PoiFont} for the given font
      */
     public PoiFont getFont(org.apache.poi.ss.usermodel.Font poiFont) {
-        return poiFont == null ? getDefaultCellStyle().getFont() : new PoiFont(this, poiFont);
+        return poiFont == null ? getDefaultCellStyle().getPoiFont() : new PoiFont(this, poiFont);
     }
 
     /**
@@ -477,12 +462,12 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      */
     public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
 
-    PoiFont getPoiFont(com.dua3.meja.model.Font font, TextAttributes style) {
-        Map<String, Object> properties = style.properties();
+    PoiFont getPoiFont(com.dua3.utility.text.Font font) {
+        return getPoiFont(font, TextAttributes.none());
+    }
 
-        if (properties.isEmpty() && font instanceof PoiFont && ((PoiFont) font).workbook == this) {
-            return (PoiFont) font;
-        }
+    PoiFont getPoiFont(com.dua3.utility.text.Font font, TextAttributes style) {
+        Map<String, Object> properties = style.properties();
 
         String name = String.valueOf(properties.getOrDefault(TextAttributes.FONT_FAMILY, font.getFamily()));
 
@@ -519,7 +504,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         // if not found, create it
-        return createFont(name, height, font.getColor(), bold, italic, underline, strikethrough);
+        return createFont(font);
     }
 
     org.apache.poi.ss.usermodel.Workbook getPoiWorkbook() {

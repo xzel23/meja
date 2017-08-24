@@ -27,12 +27,12 @@ import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.utility.Color;
+import com.dua3.utility.text.Font;
 import com.dua3.utility.text.TextAttributes;
 
 /**
@@ -318,7 +318,11 @@ public abstract class PoiCellStyle
     }
 
     @Override
-    public PoiFont getFont() {
+    public Font getFont() {
+        return font.getFont();
+    }
+
+    public PoiFont getPoiFont() {
         return font;
     }
 

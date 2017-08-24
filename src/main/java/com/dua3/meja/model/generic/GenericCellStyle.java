@@ -30,10 +30,10 @@ import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.model.Font;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import com.dua3.utility.Color;
+import com.dua3.utility.text.Font;
 
 /**
  *
@@ -48,7 +48,7 @@ public class GenericCellStyle
 
     private final GenericWorkbook workbook;
 
-    private GenericFont font;
+    private Font font;
     private Color fillBgColor;
     private Color fillFgColor;
     private FillPattern fillPattern;
@@ -70,7 +70,7 @@ public class GenericCellStyle
      */
     public GenericCellStyle(GenericWorkbook workbook) {
         this.workbook = workbook;
-        this.font = new GenericFont();
+        this.font = new Font();
         this.fillPattern = FillPattern.NONE;
         this.fillBgColor = Color.WHITE;
         this.fillFgColor = Color.WHITE;
@@ -102,7 +102,7 @@ public class GenericCellStyle
     /**
      * Format date for output.
      *
-     * @param locale 
+     * @param locale
      *              the locale to use during formatting
      * @param date
      *              the date to format
@@ -131,7 +131,7 @@ public class GenericCellStyle
      *
      * @param n
      *            the number to format
-     * @param locale 
+     * @param locale
      *            the locale to use during formatting
      * @return text representation of {@code n}
      */
@@ -177,7 +177,7 @@ public class GenericCellStyle
     }
 
     @Override
-    public GenericFont getFont() {
+    public Font getFont() {
         return font;
     }
 
@@ -235,7 +235,7 @@ public class GenericCellStyle
 
     @Override
     public void setFont(Font font) {
-        this.font = GenericFont.copyOf(font);
+        this.font = font;
     }
 
     @Override
