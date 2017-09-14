@@ -15,7 +15,7 @@ allprojects {
     }
 
     dependencies {
-        def poiVersion = "3.16"
+        def poiVersion = "3.17"
         compile "org.apache.poi:poi:${poiVersion}"
         compile "org.apache.poi:poi-ooxml:${poiVersion}"
         compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
