@@ -1,9 +1,13 @@
 allprojects {
     apply plugin: 'maven'
+    apply plugin: 'maven-publish'
     apply plugin: 'java'
     apply plugin: 'findbugs'
     apply plugin: 'pmd'
     apply plugin: 'jacoco'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
     
     group = 'com.dua3.meja'
 
@@ -21,7 +25,7 @@ allprojects {
         compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
         // use local project if 'localBuild' was set
-        def utilityVersion = "0.1.11"
+        def utilityVersion = "0.2"
         if (project.hasProperty('localBuild')) {
             compile 'com.dua3.utility:utility:+'
         } else {
@@ -155,3 +159,5 @@ task allJar(type: Jar, dependsOn: [subprojects.tasks['classes'], alljavadoc]) {
 task dist(dependsOn: [depJar, srcJar, docJar, allJar]) {
     println "creating distribution files"
 }
+
+defaultTasks 'build', 'publishToMavenLocal', 'install'
