@@ -42,6 +42,7 @@ public interface Sheet
     public final String PROPERTY_ACTIVE_CELL = "ACTIVE_CELL";
     public final String PROPERTY_CELL_CONTENT = "CELL_CONTENT";
     public final String PROPERTY_CELL_STYLE = "CELL_STYLE";
+    public final String PROPERTY_ROW_ADDED = "ROW_ADDED";
 
     /**
      * Add new merged region.

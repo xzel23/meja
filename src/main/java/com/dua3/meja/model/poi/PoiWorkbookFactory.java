@@ -36,6 +36,7 @@ import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.util.Option;
 import com.dua3.meja.util.OptionSet;
 import com.dua3.meja.util.Options;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  *
@@ -144,10 +145,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
             }
         }
 
-        if (!type.isSupported(OpenMode.READ)) {
-            throw new IllegalArgumentException(
-                    "Reading is not supported for files of type '" + type.getDescription() + "'.");
-        }
+        LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.", type.getDescription());
 
         return type.getReader().read(PoiWorkbookFactory.instance(), path);
     }

@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.ui;
 
+import com.dua3.utility.lang.LangUtil;
+
 public final class Rectangle {
 
     private double x;
@@ -28,9 +30,8 @@ public final class Rectangle {
         this.w = w;
         this.h = h;
 
-        if (w < 0 || h < 0) {
-            throw new IllegalArgumentException("negative width or height");
-        }
+        LangUtil.check(w>=0, "negative with: ", w);
+        LangUtil.check(h>=0, "negative height: ", h);
     }
 
     public Rectangle(Rectangle r) {

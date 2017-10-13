@@ -23,6 +23,7 @@ import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookReader;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.Options;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  * A Factory for creating instances of {@link GenericWorkbook}.
@@ -52,10 +53,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
     public GenericWorkbook open(Path path, Options importSettings) throws IOException {
         FileType type = FileType.forPath(path).orElse(FileType.CSV);
 
-        if (!type.isSupported(OpenMode.READ)) {
-            throw new IllegalArgumentException(
-                    "Reading is not supported for files of type '" + type.getDescription() + "'.");
-        }
+        LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.", type.getDescription());
 
         WorkbookReader reader = type.getReader();
 

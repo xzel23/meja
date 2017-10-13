@@ -35,6 +35,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  * Helper class.
@@ -268,10 +269,7 @@ public class MejaHelper {
                     new IllegalArgumentException("Could not determine type of file '" + path.toString() + ".")
                 );
 
-        if (!fileType.isSupported(OpenMode.READ)) {
-            throw new IllegalArgumentException(
-                    "Reading is not supported for files of type '" + fileType.getDescription() + ".");
-        }
+        LangUtil.check(fileType.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.", fileType.getDescription());
 
         try {
             return fileType.getFactory().open(path);

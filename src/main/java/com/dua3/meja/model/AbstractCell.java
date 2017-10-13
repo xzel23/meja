@@ -2,6 +2,8 @@ package com.dua3.meja.model;
 
 import java.util.Locale;
 
+import com.dua3.utility.lang.LangUtil;
+
 /**
  * Abstract base class for sheet cells.
  */
@@ -20,13 +22,8 @@ public abstract class AbstractCell implements Cell {
     }
 
     protected void addedToMergedRegion(AbstractCell topLeftCell, int spanX, int spanY) {
-        if (isMerged()) {
-            throw new IllegalStateException("Cell is already merged.");
-        }
-
-        if (spanX > Short.MAX_VALUE) {
-            throw new IllegalArgumentException("Maximum horizontal span number is " + Short.MAX_VALUE + ".");
-        }
+        LangUtil.check(!isMerged(), "Cell is already merged.");
+        LangUtil.check(spanX <= Short.MAX_VALUE, "Maximum horizontal span number is %d.", Short.MAX_VALUE);
 
         if (this.getRowNumber() == topLeftCell.getRowNumber()
             && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
@@ -66,11 +63,7 @@ public abstract class AbstractCell implements Cell {
 
     @Override
     public void unMerge() {
-        if (logicalCell != this) {
-            // this should never happen because we checked for this cell being
-            // the top left cell of the merged region
-            throw new IllegalArgumentException("Cell is not top left cell of a merged region");
-        }
+        LangUtil.check(logicalCell == this, "Cell is not top left cell of a merged region");
 
         getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
 

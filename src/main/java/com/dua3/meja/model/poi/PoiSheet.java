@@ -25,6 +25,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import com.dua3.meja.model.AbstractSheet;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  *
@@ -190,6 +191,7 @@ public class PoiSheet extends AbstractSheet {
         org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
             poiRow = poiSheet.createRow(i);
+            firePropertyChange(PROPERTY_ROW_ADDED, null, i);
         }
         return new PoiRow(this, poiRow);
     }
@@ -294,9 +296,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void setCurrentCell(Cell cell) {
-        if (cell.getSheet() != this) {
-            throw new IllegalArgumentException("Cannot set cell from another sheet as current cell.");
-        }
+        LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
         Cell old = getCurrentCell();
 
@@ -317,9 +317,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void setZoom(float zoom) {
-        if (zoom <= 0) {
-            throw new IllegalArgumentException("Invalid zoom factor: " + zoom);
-        }
+        LangUtil.check(zoom>0, "Invalid zoom factor: %f", zoom);
 
         if (zoom != this.zoom) {
             float oldZoom = this.zoom;

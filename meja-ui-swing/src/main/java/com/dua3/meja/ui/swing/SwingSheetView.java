@@ -67,8 +67,8 @@ import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.MejaHelper;
-import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.Color;
+import com.dua3.utility.swing.SwingUtil;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -984,6 +984,7 @@ public class SwingSheetView extends JPanel
         switch (property) {
         case Sheet.PROPERTY_ZOOM:
         case Sheet.PROPERTY_LAYOUT_CHANGED:
+        case Sheet.PROPERTY_ROW_ADDED:
             updateContent();
             break;
         case Sheet.PROPERTY_SPLIT:

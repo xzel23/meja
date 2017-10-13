@@ -25,6 +25,7 @@ import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
 /**
@@ -73,9 +74,7 @@ public class GenericCell extends AbstractCell {
     public GenericCell(AbstractRow row, int colNumber, GenericCellStyle cellStyle) {
         super(row);
 
-        if (colNumber > Short.MAX_VALUE) {
-            throw new IllegalArgumentException("Maximum column number is " + Short.MAX_VALUE + ".");
-        }
+        LangUtil.check(colNumber<=Short.MAX_VALUE, "Column number out of range.");
 
         this.cellStyle = cellStyle;
         this.value = null;
@@ -243,10 +242,7 @@ public class GenericCell extends AbstractCell {
     }
 
     private void initData(int colNr) {
-        if (colNr < 0 || colNr > MAX_COLUMN_NUMBER) {
-            throw new IllegalArgumentException();
-        }
-
+        LangUtil.check(colNr>=0 && colNr<= MAX_COLUMN_NUMBER);
         data = (((long) colNr) << 48) | INITIAL_DATA;
     }
 

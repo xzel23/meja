@@ -24,6 +24,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 
 /**
@@ -194,8 +195,14 @@ public class GenericSheet extends AbstractSheet {
     }
 
     private void reserve(int row) {
+        int lastAddedRow = -1;
         for (int rowNum = rows.size(); rowNum <= row; rowNum++) {
             rows.add(new GenericRow(this, rowNum));
+            lastAddedRow = rowNum;
+        }
+
+        if (lastAddedRow>=0) {
+            firePropertyChange(PROPERTY_ROW_ADDED, null, lastAddedRow);
         }
     }
 
@@ -226,9 +233,7 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void setCurrentCell(Cell cell) {
-        if (cell.getSheet() != this) {
-            throw new IllegalArgumentException("Cannot set cell from another sheet as current cell.");
-        }
+        LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
         Cell old = getCurrentCell();
 
@@ -254,9 +259,7 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void setZoom(float zoom) {
-        if (zoom <= 0) {
-            throw new IllegalArgumentException("Invalid zoom factor: " + zoom);
-        }
+        LangUtil.check(zoom>0, "Invalid zoom factor: %f", zoom);
 
         if (zoom != this.zoom) {
             float oldZoom = this.zoom;

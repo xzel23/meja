@@ -39,6 +39,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
@@ -457,9 +458,7 @@ public final class PoiCell
 
     @Override
     public void setCellStyle(CellStyle cellStyle) {
-        if (!(cellStyle instanceof PoiCellStyle)) {
-            throw new IllegalArgumentException("Incompatible implementation.");
-        }
+        LangUtil.check((cellStyle instanceof PoiCellStyle), "Incompatible implementation.");
 
         Object old = getCellStyle();
         poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
