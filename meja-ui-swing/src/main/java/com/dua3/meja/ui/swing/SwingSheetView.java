@@ -59,6 +59,9 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.SearchOptions;
@@ -75,6 +78,8 @@ import com.dua3.utility.swing.SwingUtil;
  */
 public class SwingSheetView extends JPanel
         implements SheetView, PropertyChangeListener {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SwingSheetView.class);
 
     /**
      * Actions for key bindings.
@@ -1111,6 +1116,8 @@ public class SwingSheetView extends JPanel
             Sheet oldSheet = this.sheet;
             this.sheet = sheet;
 
+            LOG.debug("sheet changed.");
+            
             if (this.sheet != null) {
                 sheet.addPropertyChangeListener(this);
             }
@@ -1180,6 +1187,8 @@ public class SwingSheetView extends JPanel
     }
 
     private void updateContent() {
+        LOG.debug("updating content");
+        
         if (sheet == null) {
             return;
         }
