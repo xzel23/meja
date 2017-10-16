@@ -22,7 +22,9 @@ import javafx.scene.layout.Pane;
  * @author axel
  */
 public class JfxSheetView extends Pane
-        implements SheetView, PropertyChangeListener {
+        implements
+        SheetView,
+        PropertyChangeListener {
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Sheet sheet = null;
@@ -31,7 +33,7 @@ public class JfxSheetView extends Pane
 
     private IntFunction<String> columnNames = Sheet::getColumnName;
     private IntFunction<String> rowNames = Sheet::getRowName;
-    
+
     /**
      * The color to use for the grid lines.
      */
@@ -72,8 +74,9 @@ public class JfxSheetView extends Pane
         pcs.addPropertyChangeListener(propertyName, listener);
     }
 
-    private int getColumnCount() {
-        return sheet == null ? 0 : sheet.getColumnCount();
+    @Override
+    public String getColumnName(int j) {
+        return columnNames.apply(j);
     }
 
     @Override
@@ -81,25 +84,14 @@ public class JfxSheetView extends Pane
         return gridColor;
     }
 
-    private int getRowCount() {
-        return sheet == null ? 0 : sheet.getRowCount();
+    @Override
+    public String getRowName(int i) {
+        return rowNames.apply(i);
     }
 
     @Override
     public Sheet getSheet() {
         return sheet;
-    }
-
-    JfxSheetPainter getSheetPainter() {
-        return sheetPainter;
-    }
-
-    private int getSplitColumn() {
-        return sheet == null ? 0 : sheet.getSplitColumn();
-    }
-
-    private int getSplitRow() {
-        return sheet == null ? 0 : sheet.getSplitRow();
     }
 
     @Override
@@ -164,6 +156,11 @@ public class JfxSheetView extends Pane
     }
 
     @Override
+    public void setColumnNames(IntFunction<String> columnNames) {
+        this.columnNames = columnNames;
+    }
+
+    @Override
     public boolean setCurrentCell(int rowNum, int colNum) {
         throw new UnsupportedOperationException("Not supported yet."); // To
                                                                        // change
@@ -194,6 +191,11 @@ public class JfxSheetView extends Pane
     @Override
     public void setGridColor(Color gridColor) {
         this.gridColor = gridColor;
+    }
+
+    @Override
+    public void setRowNames(IntFunction<String> rowNames) {
+        this.rowNames = rowNames;
     }
 
     @Override
@@ -230,23 +232,23 @@ public class JfxSheetView extends Pane
                                                                        // Templates.
     }
 
-    @Override
-    public String getColumnName(int j) {
-        return columnNames.apply(j);
+    private int getColumnCount() {
+        return sheet == null ? 0 : sheet.getColumnCount();
     }
 
-    @Override
-    public String getRowName(int i) {
-        return rowNames.apply(i);
-    }
-    
-    @Override
-    public void setColumnNames(IntFunction<String> columnNames) {
-        this.columnNames = columnNames;
+    private int getRowCount() {
+        return sheet == null ? 0 : sheet.getRowCount();
     }
 
-    @Override
-    public void setRowNames(IntFunction<String> rowNames) {
-        this.rowNames = rowNames;
+    private int getSplitColumn() {
+        return sheet == null ? 0 : sheet.getSplitColumn();
+    }
+
+    private int getSplitRow() {
+        return sheet == null ? 0 : sheet.getSplitRow();
+    }
+
+    JfxSheetPainter getSheetPainter() {
+        return sheetPainter;
     }
 }

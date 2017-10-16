@@ -78,50 +78,10 @@ import com.dua3.utility.swing.SwingUtil;
  * Swing component for displaying instances of {@link Sheet}.
  */
 public class SwingSheetView extends JPanel
-        implements SheetView, PropertyChangeListener {
+        implements
+        SheetView,
+        PropertyChangeListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SwingSheetView.class);
-
-    /**
-     * Actions for key bindings.
-     */
-    enum Actions {
-        MOVE_UP(view -> view.move(Direction.NORTH)),
-        MOVE_DOWN(view -> view.move(Direction.SOUTH)),
-        MOVE_LEFT(view -> view.move(Direction.WEST)),
-        MOVE_RIGHT(view -> view.move(Direction.EAST)),
-        PAGE_UP(view -> view.movePage(Direction.NORTH)),
-        PAGE_DOWN(view -> view.movePage(Direction.SOUTH)),
-        MOVE_HOME(view -> view.moveHome()),
-        MOVE_END(view -> view.moveEnd()),
-        START_EDITING(view -> view.startEditing()),
-        SHOW_SEARCH_DIALOG(view -> view.showSearchDialog()),
-        COPY(view -> view.copyToClipboard());
-
-        private final Consumer<SwingSheetView> action;
-
-        private Actions(Consumer<SwingSheetView> action) {
-            this.action = action;
-        }
-
-        Action getAction(SwingSheetView view) {
-            return new AbstractAction(name()) {
-                /**
-                 *
-                 */
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    action.accept(view);
-                }
-            };
-        }
-    }
-
-    private IntFunction<String> columnNames = Sheet::getColumnName;
-    private IntFunction<String> rowNames = Sheet::getRowName;
-    
     private class SearchDialog extends JDialog {
 
         private static final long serialVersionUID = 1L;
@@ -134,32 +94,14 @@ public class SwingSheetView extends JPanel
             init();
         }
 
-        void doSearch() {
-            if (sheet == null) {
-                return;
+        @Override
+        public void setVisible(boolean visible) {
+            super.setVisible(visible);
+
+            if (visible) {
+                jtfText.requestFocusInWindow();
+                jtfText.selectAll();
             }
-
-            EnumSet<SearchOptions> options = EnumSet.of(SearchOptions.SEARCH_FROM_CURRENT);
-
-            if (jcbIgnoreCase.isSelected()) {
-                options.add(SearchOptions.IGNORE_CASE);
-            }
-
-            if (jcbMatchCompleteText.isSelected()) {
-                options.add(SearchOptions.MATCH_COMPLETE_TEXT);
-            }
-
-            Optional<Cell> oc = MejaHelper.find(sheet, getText(), options);
-            if (!oc.isPresent()) {
-                JOptionPane.showMessageDialog(this, "Text was not found.");
-            } else {
-                Cell cell = oc.get();
-                setCurrentCell(cell.getRowNumber(), cell.getColumnNumber());
-            }
-        }
-
-        String getText() {
-            return jtfText.getText();
         }
 
         private void init() {
@@ -265,14 +207,32 @@ public class SwingSheetView extends JPanel
             pack();
         }
 
-        @Override
-        public void setVisible(boolean visible) {
-            super.setVisible(visible);
-
-            if (visible) {
-                jtfText.requestFocusInWindow();
-                jtfText.selectAll();
+        void doSearch() {
+            if (sheet == null) {
+                return;
             }
+
+            EnumSet<SearchOptions> options = EnumSet.of(SearchOptions.SEARCH_FROM_CURRENT);
+
+            if (jcbIgnoreCase.isSelected()) {
+                options.add(SearchOptions.IGNORE_CASE);
+            }
+
+            if (jcbMatchCompleteText.isSelected()) {
+                options.add(SearchOptions.MATCH_COMPLETE_TEXT);
+            }
+
+            Optional<Cell> oc = MejaHelper.find(sheet, getText(), options);
+            if (!oc.isPresent()) {
+                JOptionPane.showMessageDialog(this, "Text was not found.");
+            } else {
+                Cell cell = oc.get();
+                setCurrentCell(cell.getRowNumber(), cell.getColumnNumber());
+            }
+        }
+
+        String getText() {
+            return jtfText.getText();
         }
 
     }
@@ -313,7 +273,7 @@ public class SwingSheetView extends JPanel
          *            the cell to scroll to
          */
         public void ensureCellIsVisibile(Cell cell) {
-            if (cell==null) {
+            if (cell == null) {
                 return;
             }
 
@@ -345,6 +305,18 @@ public class SwingSheetView extends JPanel
             } else {
                 bottomRightQuadrant.scrollRectToVisible(rectS2D(cellRect));
             }
+        }
+
+        @Override
+        public void validate() {
+            if (sheet != null) {
+                topLeftQuadrant.validate();
+                topRightQuadrant.validate();
+                bottomLeftQuadrant.validate();
+                bottomRightQuadrant.validate();
+            }
+
+            super.validate();
         }
 
         private Rectangle getCellRectInViewCoordinates(Cell cell) {
@@ -424,22 +396,49 @@ public class SwingSheetView extends JPanel
             getViewport().getView().setEnabled(b);
         }
 
-        @Override
-        public void validate() {
-            if (sheet != null) {
-                topLeftQuadrant.validate();
-                topRightQuadrant.validate();
-                bottomLeftQuadrant.validate();
-                bottomRightQuadrant.validate();
-            }
+    }
 
-            super.validate();
+    /**
+     * Actions for key bindings.
+     */
+    enum Actions {
+        MOVE_UP(view -> view.move(Direction.NORTH)),
+        MOVE_DOWN(view -> view.move(Direction.SOUTH)),
+        MOVE_LEFT(view -> view.move(Direction.WEST)),
+        MOVE_RIGHT(view -> view.move(Direction.EAST)),
+        PAGE_UP(view -> view.movePage(Direction.NORTH)),
+        PAGE_DOWN(view -> view.movePage(Direction.SOUTH)),
+        MOVE_HOME(view -> view.moveHome()),
+        MOVE_END(view -> view.moveEnd()),
+        START_EDITING(view -> view.startEditing()),
+        SHOW_SEARCH_DIALOG(view -> view.showSearchDialog()),
+        COPY(view -> view.copyToClipboard());
+
+        private final Consumer<SwingSheetView> action;
+
+        private Actions(Consumer<SwingSheetView> action) {
+            this.action = action;
         }
 
+        Action getAction(SwingSheetView view) {
+            return new AbstractAction(name()) {
+                /**
+                 *
+                 */
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    action.accept(view);
+                }
+            };
+        }
     }
 
     class SwingSegmentView extends JPanel
-            implements Scrollable, SegmentView<SwingSheetView, SwingGraphicsContext> {
+            implements
+            Scrollable,
+            SegmentView<SwingSheetView, SwingGraphicsContext> {
 
         /**
          *
@@ -560,20 +559,24 @@ public class SwingSheetView extends JPanel
             return sheetPainter;
         }
 
-        int getXMinInViewCoordinates() {
-            double x = sheetPainter.getColumnPos(getBeginColumn());
-            if (hasRowHeaders()) {
-                x -= sheetPainter.getRowLabelWidth();
-            }
-            return xS2D(x);
+        @Override
+        public boolean isOptimizedDrawingEnabled() {
+            return true;
         }
 
-        int getYMinInViewCoordinates() {
-            double y = sheetPainter.getRowPos(getBeginRow());
-            if (hasColumnHeaders()) {
-                y -= sheetPainter.getColumnLabelHeight();
-            }
-            return yS2D(y);
+        @Override
+        public void setViewSize(double wd, double hd) {
+            int w = wS2D(wd);
+            int h = hS2D(hd);
+            Dimension d = new Dimension(w, h);
+            setSize(d);
+            setPreferredSize(d);
+        }
+
+        @Override
+        public void validate() {
+            updateLayout();
+            super.validate();
         }
 
         private void init() {
@@ -591,18 +594,13 @@ public class SwingSheetView extends JPanel
         }
 
         @Override
-        public boolean isOptimizedDrawingEnabled() {
-            return true;
-        }
-
-        @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
 
             // clear background by calling super method
             super.paintComponent(g2d);
 
-            if (sheet==null) {
+            if (sheet == null) {
                 return;
             }
 
@@ -629,33 +627,40 @@ public class SwingSheetView extends JPanel
             }
         }
 
+        int getXMinInViewCoordinates() {
+            double x = sheetPainter.getColumnPos(getBeginColumn());
+            if (hasRowHeaders()) {
+                x -= sheetPainter.getRowLabelWidth();
+            }
+            return xS2D(x);
+        }
+
+        int getYMinInViewCoordinates() {
+            double y = sheetPainter.getRowPos(getBeginRow());
+            if (hasColumnHeaders()) {
+                y -= sheetPainter.getColumnLabelHeight();
+            }
+            return yS2D(y);
+        }
+
         void repaintSheet(Rectangle rect) {
             java.awt.Rectangle rect2 = rectS2D(rect);
             rect2.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
             repaint(rect2);
         }
 
-        @Override
-        public void setViewSize(double wd, double hd) {
-            int w = wS2D(wd);
-            int h = hS2D(hd);
-            Dimension d = new Dimension(w, h);
-            setSize(d);
-            setPreferredSize(d);
-        }
-
         void translateMousePosition(Point p) {
             p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
         }
-
-        @Override
-        public void validate() {
-            updateLayout();
-            super.validate();
-        }
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(SwingSheetView.class);
+
     private static final long serialVersionUID = 1L;
+
+    private IntFunction<String> columnNames = Sheet::getColumnName;
+
+    private IntFunction<String> rowNames = Sheet::getRowName;
 
     private final transient SwingSheetPainter sheetPainter;
 
@@ -711,18 +716,9 @@ public class SwingSheetView extends JPanel
         init(sheet);
     }
 
-    private void copyToClipboard() {
-        Cell cell = getCurrentCell();
-        String text = cell==null ? "" : cell.getAsText(getLocale()).toString();
-        SwingUtil.setClipboardText(text);
-    }
-
-    private Cell getCurrentCell() {
-        return sheet == null ? null : sheet.getCurrentCell();
-    }
-
-    private Cell getCurrentLogicalCell() {
-        return sheet == null ? null : sheet.getCurrentCell().getLogicalCell();
+    @Override
+    public String getColumnName(int j) {
+        return columnNames.apply(j);
     }
 
     /**
@@ -748,8 +744,9 @@ public class SwingSheetView extends JPanel
         return gridColor;
     }
 
-    double getScale() {
-        return scale;
+    @Override
+    public String getRowName(int i) {
+        return rowNames.apply(i);
     }
 
     @Override
@@ -776,72 +773,6 @@ public class SwingSheetView extends JPanel
     }
 
     /**
-     * Get x-coordinate of split.
-     *
-     * @return x coordinate of split
-     */
-    double getSplitX() {
-        return sheet == null ? 0 : sheetPainter.getColumnPos(sheet.getSplitColumn());
-    }
-
-    /**
-     * Get y-coordinate of split.
-     *
-     * @return y coordinate of split
-     */
-    double getSplitY() {
-        return sheet == null ? 0 : sheetPainter.getRowPos(sheet.getSplitRow());
-    }
-
-    double hD2S(int h) {
-        return h / scale;
-    }
-
-    int hS2D(double h) {
-        return (int) Math.round(scale * h);
-    }
-
-    private void init(Sheet sheet1) {
-        add(sheetPane);
-        // setup input map for ...
-        final InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        // ... keyboard navigation
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_UP, 0), Actions.MOVE_UP);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, 0), Actions.MOVE_DOWN);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_DOWN, 0), Actions.MOVE_DOWN);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, 0), Actions.MOVE_LEFT);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_LEFT, 0), Actions.MOVE_LEFT);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK),
-                Actions.MOVE_HOME);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK),
-                Actions.MOVE_END);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
-        // ... other stuff
-        inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
-        inputMap.put(KeyStroke.getKeyStroke('C', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.COPY);
-        final ActionMap actionMap = getActionMap();
-        for (Actions action : Actions.values()) {
-            actionMap.put(action, action.getAction(this));
-        }
-        // listen to mouse events
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                onMousePressed(e.getX() + xS2D(getSplitX()), e.getY() + yS2D(getSplitY()));
-            }
-        });
-        // make focusable
-        setFocusable(true);
-        SwingUtilities.invokeLater(this::requestFocusInWindow);
-        setSheet(sheet1);
-    }
-
-    /**
      * Check whether editing is enabled.
      *
      * @return true if this SwingSheetView allows editing.
@@ -859,121 +790,6 @@ public class SwingSheetView extends JPanel
     @Override
     public boolean isEditing() {
         return editing;
-    }
-
-    /**
-     * Move the selection rectangle to an adjacent cell.
-     *
-     * @param d
-     *            direction
-     */
-    private void move(Direction d) {
-        Cell cell = getCurrentLogicalCell();
-
-        if (cell==null) {
-            return;
-        }
-
-        switch (d) {
-        case NORTH:
-            setCurrentRowNum(cell.getRowNumber() - 1);
-            break;
-        case SOUTH:
-            setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
-            break;
-        case WEST:
-            setCurrentColNum(cell.getColumnNumber() - 1);
-            break;
-        case EAST:
-            setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
-            break;
-        }
-    }
-
-    /**
-     * Move the selection rectangle to the bottom right cell.
-     */
-    private void moveEnd() {
-        if (sheet == null) {
-            return;
-        }
-
-        int row = sheet.getLastRowNum();
-        int col = sheet.getLastColNum();
-        setCurrentCell(row, col);
-    }
-
-    /**
-     * Move the selection rectangle to the top left cell.
-     */
-    private void moveHome() {
-        if (sheet == null) {
-            return;
-        }
-
-        int row = sheet.getFirstRowNum();
-        int col = sheet.getFirstColNum();
-        setCurrentCell(row, col);
-    }
-
-    /**
-     * Move the selection rectangle to an adjacent cell.
-     *
-     * @param d
-     *            direction
-     */
-    private void movePage(Direction d) {
-        Cell cell = getCurrentLogicalCell();
-
-        if (cell==null) {
-            return;
-        }
-
-        java.awt.Rectangle cellRect = rectS2D(sheetPainter.getCellRect(cell));
-        switch (d) {
-        case NORTH: {
-            int y = Math.max(0, cellRect.y - getVisibleRect().height);
-            setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
-            break;
-        }
-        case SOUTH: {
-            int y = Math.min(getSheetHeight() - 1, cellRect.y + getVisibleRect().height);
-            setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
-            break;
-        }
-        case WEST: {
-            int x = Math.max(0, cellRect.x - getVisibleRect().width);
-            setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
-            break;
-        }
-        case EAST: {
-            int x = Math.min(getSheetWidth() - 1, cellRect.x + getVisibleRect().width);
-            setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
-            break;
-        }
-        }
-    }
-
-    void onMousePressed(int x, int y) {
-        // make the cell under pointer the current cell
-        int row = sheetPainter.getRowNumberFromY(yD2S(y));
-        int col = sheetPainter.getColumnNumberFromX(xD2S(x));
-        boolean currentCellChanged = setCurrentCell(row, col);
-        requestFocusInWindow();
-
-        if (!currentCellChanged) {
-            // if it already was the current cell, start cell editing
-            if (isEditable()) {
-                startEditing();
-                editing = true;
-            }
-        } else // otherwise stop cell editing
-        {
-            if (editing) {
-                stopEditing(true);
-                editing = false;
-            }
-        }
     }
 
     @Override
@@ -1001,22 +817,6 @@ public class SwingSheetView extends JPanel
         }
     }
 
-    Rectangle rectD2S(java.awt.Rectangle r) {
-        final double x1 = xD2S(r.x);
-        final double y1 = yD2S(r.y);
-        final double x2 = xD2S(r.x + r.width);
-        final double y2 = yD2S(r.y + r.height);
-        return new Rectangle(x1, y1, x2 - x1, y2 - y1);
-    }
-
-    java.awt.Rectangle rectS2D(Rectangle r) {
-        final int x1 = xS2D(r.getLeft());
-        final int y1 = yS2D(r.getTop());
-        final int x2 = xS2D(r.getRight());
-        final int y2 = yS2D(r.getBottom());
-        return new java.awt.Rectangle(x1, y1, x2 - x1, y2 - y1);
-    }
-
     @Override
     public void removeNotify() {
         searchDialog.dispose();
@@ -1033,6 +833,11 @@ public class SwingSheetView extends JPanel
     @Override
     public void scrollToCurrentCell() {
         sheetPane.ensureCellIsVisibile(getCurrentLogicalCell());
+    }
+
+    @Override
+    public void setColumnNames(IntFunction<String> columnNames) {
+        this.columnNames = columnNames;
     }
 
     /**
@@ -1093,6 +898,11 @@ public class SwingSheetView extends JPanel
         this.gridColor = Objects.requireNonNull(gridColor);
     }
 
+    @Override
+    public void setRowNames(IntFunction<String> rowNames) {
+        this.rowNames = rowNames;
+    }
+
     /**
      * Set sheet to display.
      *
@@ -1110,7 +920,7 @@ public class SwingSheetView extends JPanel
             this.sheet = sheet;
 
             LOG.debug("sheet changed.");
-            
+
             if (this.sheet != null) {
                 sheet.addPropertyChangeListener(this);
             }
@@ -1118,6 +928,174 @@ public class SwingSheetView extends JPanel
             updateContent();
 
             firePropertyChange(PROPERTY_SHEET, oldSheet, sheet);
+        }
+    }
+
+    /**
+     * End edit mode for the current cell.
+     *
+     * @param commit
+     *            true if the content of the edited cell is to be updated
+     */
+    @Override
+    public void stopEditing(boolean commit) {
+        editor.stopEditing(commit);
+    }
+
+    /**
+     * Reset editing state when finished editing. This method should only be called
+     * from the {@link CellEditor#stopEditing} method of {@link CellEditor}
+     * subclasses.
+     */
+    public void stoppedEditing() {
+        editing = false;
+        sheetPane.setScrollable(true);
+    }
+
+    private void copyToClipboard() {
+        Cell cell = getCurrentCell();
+        String text = cell == null ? "" : cell.getAsText(getLocale()).toString();
+        SwingUtil.setClipboardText(text);
+    }
+
+    private Cell getCurrentCell() {
+        return sheet == null ? null : sheet.getCurrentCell();
+    }
+
+    private Cell getCurrentLogicalCell() {
+        return sheet == null ? null : sheet.getCurrentCell().getLogicalCell();
+    }
+
+    private void init(Sheet sheet1) {
+        add(sheetPane);
+        // setup input map for ...
+        final InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        // ... keyboard navigation
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_UP, 0), Actions.MOVE_UP);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, 0), Actions.MOVE_DOWN);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_DOWN, 0), Actions.MOVE_DOWN);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, 0), Actions.MOVE_LEFT);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_LEFT, 0), Actions.MOVE_LEFT);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK),
+                Actions.MOVE_HOME);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK),
+                Actions.MOVE_END);
+        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
+        // ... other stuff
+        inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
+        inputMap.put(KeyStroke.getKeyStroke('C', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.COPY);
+        final ActionMap actionMap = getActionMap();
+        for (Actions action : Actions.values()) {
+            actionMap.put(action, action.getAction(this));
+        }
+        // listen to mouse events
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                onMousePressed(e.getX() + xS2D(getSplitX()), e.getY() + yS2D(getSplitY()));
+            }
+        });
+        // make focusable
+        setFocusable(true);
+        SwingUtilities.invokeLater(this::requestFocusInWindow);
+        setSheet(sheet1);
+    }
+
+    /**
+     * Move the selection rectangle to an adjacent cell.
+     *
+     * @param d
+     *            direction
+     */
+    private void move(Direction d) {
+        Cell cell = getCurrentLogicalCell();
+
+        if (cell == null) {
+            return;
+        }
+
+        switch (d) {
+        case NORTH:
+            setCurrentRowNum(cell.getRowNumber() - 1);
+            break;
+        case SOUTH:
+            setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
+            break;
+        case WEST:
+            setCurrentColNum(cell.getColumnNumber() - 1);
+            break;
+        case EAST:
+            setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
+            break;
+        }
+    }
+
+    /**
+     * Move the selection rectangle to the bottom right cell.
+     */
+    private void moveEnd() {
+        if (sheet == null) {
+            return;
+        }
+
+        int row = sheet.getLastRowNum();
+        int col = sheet.getLastColNum();
+        setCurrentCell(row, col);
+    }
+
+    /**
+     * Move the selection rectangle to the top left cell.
+     */
+    private void moveHome() {
+        if (sheet == null) {
+            return;
+        }
+
+        int row = sheet.getFirstRowNum();
+        int col = sheet.getFirstColNum();
+        setCurrentCell(row, col);
+    }
+
+    /**
+     * Move the selection rectangle to an adjacent cell.
+     *
+     * @param d
+     *            direction
+     */
+    private void movePage(Direction d) {
+        Cell cell = getCurrentLogicalCell();
+
+        if (cell == null) {
+            return;
+        }
+
+        java.awt.Rectangle cellRect = rectS2D(sheetPainter.getCellRect(cell));
+        switch (d) {
+        case NORTH: {
+            int y = Math.max(0, cellRect.y - getVisibleRect().height);
+            setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
+            break;
+        }
+        case SOUTH: {
+            int y = Math.min(getSheetHeight() - 1, cellRect.y + getVisibleRect().height);
+            setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
+            break;
+        }
+        case WEST: {
+            int x = Math.max(0, cellRect.x - getVisibleRect().width);
+            setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
+            break;
+        }
+        case EAST: {
+            int x = Math.min(getSheetWidth() - 1, cellRect.x + getVisibleRect().width);
+            setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
+            break;
+        }
         }
     }
 
@@ -1138,7 +1116,7 @@ public class SwingSheetView extends JPanel
 
         final Cell cell = getCurrentLogicalCell();
 
-        if (cell==null) {
+        if (cell == null) {
             return;
         }
 
@@ -1158,30 +1136,9 @@ public class SwingSheetView extends JPanel
         editing = true;
     }
 
-    /**
-     * End edit mode for the current cell.
-     *
-     * @param commit
-     *            true if the content of the edited cell is to be updated
-     */
-    @Override
-    public void stopEditing(boolean commit) {
-        editor.stopEditing(commit);
-    }
-
-    /**
-     * Reset editing state when finished editing. This method should only be
-     * called from the {@link CellEditor#stopEditing} method of
-     * {@link CellEditor} subclasses.
-     */
-    public void stoppedEditing() {
-        editing = false;
-        sheetPane.setScrollable(true);
-    }
-
     private void updateContent() {
         LOG.debug("updating content");
-        
+
         if (sheet == null) {
             return;
         }
@@ -1195,6 +1152,74 @@ public class SwingSheetView extends JPanel
 
         revalidate();
         repaint();
+    }
+
+    double getScale() {
+        return scale;
+    }
+
+    /**
+     * Get x-coordinate of split.
+     *
+     * @return x coordinate of split
+     */
+    double getSplitX() {
+        return sheet == null ? 0 : sheetPainter.getColumnPos(sheet.getSplitColumn());
+    }
+
+    /**
+     * Get y-coordinate of split.
+     *
+     * @return y coordinate of split
+     */
+    double getSplitY() {
+        return sheet == null ? 0 : sheetPainter.getRowPos(sheet.getSplitRow());
+    }
+
+    double hD2S(int h) {
+        return h / scale;
+    }
+
+    int hS2D(double h) {
+        return (int) Math.round(scale * h);
+    }
+
+    void onMousePressed(int x, int y) {
+        // make the cell under pointer the current cell
+        int row = sheetPainter.getRowNumberFromY(yD2S(y));
+        int col = sheetPainter.getColumnNumberFromX(xD2S(x));
+        boolean currentCellChanged = setCurrentCell(row, col);
+        requestFocusInWindow();
+
+        if (!currentCellChanged) {
+            // if it already was the current cell, start cell editing
+            if (isEditable()) {
+                startEditing();
+                editing = true;
+            }
+        } else // otherwise stop cell editing
+        {
+            if (editing) {
+                stopEditing(true);
+                editing = false;
+            }
+        }
+    }
+
+    Rectangle rectD2S(java.awt.Rectangle r) {
+        final double x1 = xD2S(r.x);
+        final double y1 = yD2S(r.y);
+        final double x2 = xD2S(r.x + r.width);
+        final double y2 = yD2S(r.y + r.height);
+        return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+    }
+
+    java.awt.Rectangle rectS2D(Rectangle r) {
+        final int x1 = xS2D(r.getLeft());
+        final int y1 = yS2D(r.getTop());
+        final int x2 = xS2D(r.getRight());
+        final int y2 = yS2D(r.getBottom());
+        return new java.awt.Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
     double wD2S(int w) {
@@ -1219,25 +1244,5 @@ public class SwingSheetView extends JPanel
 
     int yS2D(double y) {
         return (int) Math.round(scale * y);
-    }
-
-    @Override
-    public String getColumnName(int j) {
-        return columnNames.apply(j);
-    }
-
-    @Override
-    public String getRowName(int i) {
-        return rowNames.apply(i);
-    }
-    
-    @Override
-    public void setColumnNames(IntFunction<String> columnNames) {
-        this.columnNames = columnNames;
-    }
-
-    @Override
-    public void setRowNames(IntFunction<String> rowNames) {
-        this.rowNames = rowNames;
     }
 }

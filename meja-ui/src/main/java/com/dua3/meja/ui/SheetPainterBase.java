@@ -36,7 +36,7 @@ import com.dua3.utility.Color;
  *            the concrete class implementing GraphicsContext
  */
 public abstract class SheetPainterBase<SV extends SheetView, GC extends GraphicsContext> {
-
+    
     enum CellDrawMode {
         /**
          *
@@ -51,27 +51,27 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
          */
         DRAW_CELL_FOREGROUND
     }
-
+    
     /**
      * Horizontal padding.
      */
     protected static final int PADDING_X = 2;
-
+    
     /**
      * Vertical padding.
      */
     protected static final int PADDING_Y = 1;
-
+    
     /**
      * Color used to draw the selection rectangle.
      */
     protected static final Color SELECTION_COLOR = Color.BLACK;
-
+    
     /**
      * Width of the selection rectangle borders.
      */
     protected static final int SELECTION_STROKE_WIDTH = 4;
-
+    
     /**
      * Test whether style uses text wrapping. While there is a property for text
      * wrapping, the alignment settings have to be taken into account too.
@@ -83,37 +83,264 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     static boolean isWrapping(CellStyle style) {
         return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
     }
-
+    
     protected final SV sheetView;
-
+    
     /**
      * Reference to the sheet.
      */
     private Sheet sheet = null;
-
+    
     /**
      * Array with column positions (x-axis) in pixels.
      */
     private double[] columnPos;
-
+    
     /**
      * Array with column positions (y-axis) in pixels.
      */
     private double[] rowPos;
     private double sheetHeightInPoints = 0;
-
+    
     private double sheetWidthInPoints = 0;
-
+    
     protected SheetPainterBase(SV sheetView) {
         this.sheetView = sheetView;
     }
-
-    protected void beginDraw(GC gc) {
-        // nop
+    
+    public void drawSheet(GC gc) {
+        if (sheet == null) {
+            return;
+        }
+        
+        Lock readLock = sheet.readLock();
+        readLock.lock();
+        try {
+            beginDraw(gc);
+            
+            drawBackground(gc);
+            
+            drawLabels(gc);
+            
+            drawCells(gc, CellDrawMode.DRAW_CELL_BACKGROUND);
+            drawCells(gc, CellDrawMode.DRAW_CELL_BORDER);
+            drawCells(gc, CellDrawMode.DRAW_CELL_FOREGROUND);
+            drawSelection(gc);
+            
+            endDraw(gc);
+        } finally {
+            readLock.unlock();
+        }
     }
-
-    protected abstract void drawBackground(GC gc);
-
+    
+    /**
+     * Calculate the rectangle the cell occupies on screen.
+     *
+     * @param cell
+     *            the cell whose area is requested
+     * @return rectangle the rectangle the cell takes up in screen coordinates
+     */
+    public Rectangle getCellRect(Cell cell) {
+        final int i = cell.getRowNumber();
+        final int j = cell.getColumnNumber();
+        
+        final double x = getColumnPos(j);
+        final double w = getColumnPos(j + cell.getHorizontalSpan()) - x;
+        final double y = getRowPos(i);
+        final double h = getRowPos(i + cell.getVerticalSpan()) - y;
+        
+        return new Rectangle(x, y, w, h);
+    }
+    
+    /**
+     * Get number of columns for the currently loaded sheet.
+     *
+     * @return number of columns
+     */
+    public int getColumnCount() {
+        return columnPos.length - 1;
+    }
+    
+    /**
+     * Get the column number that the given x-coordinate belongs to.
+     *
+     * @param x
+     *            x-coordinate
+     *
+     * @return
+     *         <ul>
+     *         <li>-1, if the first column is displayed to the right of the
+     *         given coordinate
+     *         <li>number of columns, if the right edge of the last column is
+     *         displayed to the left of the given coordinate
+     *         <li>the number of the column that belongs to the given coordinate
+     *         </ul>
+     */
+    public int getColumnNumberFromX(double x) {
+        if (columnPos.length == 0) {
+            return 0;
+        }
+        
+        // guess position
+        int j = (int) (columnPos.length * x / sheetWidthInPoints);
+        if (j < 0) {
+            j = 0;
+        } else if (j >= columnPos.length) {
+            j = columnPos.length - 1;
+        }
+        
+        // linear search from here
+        if (getColumnPos(j) > x) {
+            while (j > 0 && getColumnPos(j - 1) > x) {
+                j--;
+            }
+        } else {
+            while (j < columnPos.length && getColumnPos(j) <= x) {
+                j++;
+            }
+        }
+        
+        return j - 1;
+    }
+    
+    /**
+     * @param j
+     *            the column number
+     * @return the columnPos
+     */
+    public double getColumnPos(int j) {
+        return columnPos[Math.min(columnPos.length - 1, j)];
+    }
+    
+    /**
+     * Get number of rows for the currently loaded sheet.
+     *
+     * @return number of rows
+     */
+    public int getRowCount() {
+        return rowPos.length - 1;
+    }
+    
+    /**
+     * Get the row number that the given y-coordinate belongs to.
+     *
+     * @param y
+     *            y-coordinate
+     *
+     * @return
+     *         <ul>
+     *         <li>-1, if the first row is displayed below the given coordinate
+     *         <li>number of rows, if the lower edge of the last row is
+     *         displayed above the given coordinate
+     *         <li>the number of the row that belongs to the given coordinate
+     *         </ul>
+     */
+    public int getRowNumberFromY(double y) {
+        if (rowPos.length == 0) {
+            return 0;
+        }
+        
+        // guess position
+        int i = (int) (rowPos.length * y / sheetHeightInPoints);
+        if (i < 0) {
+            i = 0;
+        } else if (i >= rowPos.length) {
+            i = rowPos.length - 1;
+        }
+        
+        // linear search from here
+        if (getRowPos(i) > y) {
+            while (i > 0 && getRowPos(i - 1) > y) {
+                i--;
+            }
+        } else {
+            while (i < rowPos.length && getRowPos(i) <= y) {
+                i++;
+            }
+        }
+        
+        return i - 1;
+    }
+    
+    /**
+     * @param i
+     *            the row number
+     * @return the rowPos
+     */
+    public double getRowPos(int i) {
+        return rowPos[Math.min(rowPos.length - 1, i)];
+    }
+    
+    /**
+     * Get display coordinates of selection rectangle.
+     *
+     * @param cell
+     *            the selected cell
+     * @return selection rectangle in display coordinates
+     */
+    public Rectangle getSelectionRect(Cell cell) {
+        Rectangle cellRect = getCellRect(cell.getLogicalCell());
+        double extra = (getSelectionStrokeWidth() + 1) / 2;
+        return new Rectangle(
+                cellRect.getX() - extra,
+                cellRect.getY() - extra,
+                cellRect.getW() + 2 * extra,
+                cellRect.getH() + 2 * extra);
+    }
+    
+    public double getSheetHeightInPoints() {
+        return sheetHeightInPoints;
+    }
+    
+    public double getSheetWidthInPoints() {
+        return sheetWidthInPoints;
+    }
+    
+    public double getSplitX() {
+        return getColumnPos(sheet.getSplitColumn());
+    }
+    
+    public double getSplitY() {
+        return getRowPos(sheet.getSplitRow());
+    }
+    
+    public void update(Sheet sheet) {
+        if (sheet != this.sheet) {
+            this.sheet = sheet;
+        }
+        
+        // determine sheet dimensions
+        if (sheet == null) {
+            sheetWidthInPoints = 0;
+            sheetHeightInPoints = 0;
+            rowPos = new double[] { 0 };
+            columnPos = new double[] { 0 };
+            return;
+        }
+        
+        Lock readLock = sheet.readLock();
+        readLock.lock();
+        try {
+            sheetHeightInPoints = 0;
+            rowPos = new double[2 + sheet.getLastRowNum()];
+            rowPos[0] = 0;
+            for (int i = 1; i < rowPos.length; i++) {
+                sheetHeightInPoints += sheet.getRowHeight(i - 1);
+                rowPos[i] = sheetHeightInPoints;
+            }
+            
+            sheetWidthInPoints = 0;
+            columnPos = new double[2 + sheet.getLastColNum()];
+            columnPos[0] = 0;
+            for (int j = 1; j < columnPos.length; j++) {
+                sheetWidthInPoints += sheet.getColumnWidth(j - 1);
+                columnPos[j] = sheetWidthInPoints;
+            }
+        } finally {
+            readLock.unlock();
+        }
+    }
+    
     /**
      * Draw cell background.
      *
@@ -124,18 +351,18 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      */
     private void drawCellBackground(GC g, Cell cell) {
         Rectangle cr = getCellRect(cell);
-
+        
         // draw grid lines
         g.setColor(getGridColor());
         g.drawRect(cr.getX(), cr.getY(), cr.getW(), cr.getH());
-
+        
         CellStyle style = cell.getCellStyle();
         FillPattern pattern = style.getFillPattern();
-
+        
         if (pattern == FillPattern.NONE) {
             return;
         }
-
+        
         if (pattern != FillPattern.SOLID) {
             Color fillBgColor = style.getFillBgColor();
             if (fillBgColor != null) {
@@ -143,7 +370,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                 g.fillRect(cr.getX(), cr.getY(), cr.getW(), cr.getH());
             }
         }
-
+        
         if (pattern != FillPattern.NONE) {
             Color fillFgColor = style.getFillFgColor();
             if (fillFgColor != null) {
@@ -152,7 +379,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             }
         }
     }
-
+    
     /**
      * Draw cell border.
      *
@@ -163,29 +390,29 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      */
     private void drawCellBorder(GC g, Cell cell) {
         CellStyle styleTopLeft = cell.getCellStyle();
-
+        
         Cell cellBottomRight = sheet.getRow(cell.getRowNumber() + cell.getVerticalSpan() - 1)
                 .getCell(cell.getColumnNumber() + cell.getHorizontalSpan() - 1);
         CellStyle styleBottomRight = cellBottomRight.getCellStyle();
-
+        
         Rectangle cr = getCellRect(cell);
-
+        
         // draw border
         for (Direction d : Direction.values()) {
             boolean isTopLeft = d == Direction.NORTH || d == Direction.WEST;
             CellStyle style = isTopLeft ? styleTopLeft : styleBottomRight;
-
+            
             BorderStyle b = style.getBorderStyle(d);
             if (b.getWidth() == 0) {
                 continue;
             }
-
+            
             Color color = b.getColor();
             if (color == null) {
                 color = Color.BLACK;
             }
             g.setStroke(color, b.getWidth());
-
+            
             switch (d) {
             case NORTH:
                 g.drawLine(cr.getLeft(), cr.getTop(), cr.getRight(), cr.getTop());
@@ -202,7 +429,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             }
         }
     }
-
+    
     /**
      * Draw cell foreground.
      *
@@ -215,10 +442,10 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         if (cell.isEmpty()) {
             return;
         }
-
+        
         double paddingX = getPaddingX();
         double paddingY = getPaddingY();
-
+        
         // the rectangle used for positioning the text
         Rectangle textRect = getCellRect(cell);
         textRect = new Rectangle(
@@ -226,7 +453,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                 textRect.getY() + paddingY,
                 textRect.getW() - 2 * paddingX,
                 textRect.getH() - 2 * paddingY);
-
+        
         // the clipping rectangle
         final Rectangle clipRect;
         final CellStyle style = cell.getCellStyle();
@@ -250,10 +477,105 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             }
             clipRect = new Rectangle(clipXMin, textRect.getY(), clipXMax - clipXMin, textRect.getH());
         }
-
+        
         render(g, cell, textRect, clipRect);
     }
-
+    
+    /**
+     * Draw frame around current selection.
+     *
+     * @param gc
+     *            graphics object used for drawing
+     */
+    private void drawSelection(GC gc) {
+        // no sheet, no drawing
+        if (sheet == null) {
+            return;
+        }
+        
+        Cell logicalCell = sheet.getCurrentCell().getLogicalCell();
+        Rectangle rect = getCellRect(logicalCell);
+        
+        gc.setXOR(MejaConfig.isXorDrawModeEnabled());
+        
+        gc.setStroke(getSelectionColor(), getSelectionStrokeWidth());
+        gc.drawRect(rect.getX(), rect.getY(), rect.getW(), rect.getH());
+        gc.setXOR(false);
+    }
+    
+    private String getColumnName(int j) {
+        return sheetView.getColumnName(j);
+    }
+    
+    private String getRowName(int i) {
+        return sheetView.getRowName(i);
+    }
+    
+    protected void beginDraw(GC gc) {
+        // nop
+    }
+    
+    protected abstract void drawBackground(GC gc);
+    
+    protected abstract void drawLabel(GC gc, Rectangle rect, String text);
+    
+    protected void drawLabels(GC gc) {
+        // determine visible rows and columns
+        Rectangle clipBounds = gc.getClipBounds();
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.getTop()));
+        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.getBottom()));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.getLeft()));
+        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.getRight()));
+        
+        // draw row labels
+        Rectangle r = new Rectangle(-getRowLabelWidth(), 0, getRowLabelWidth(), 0);
+        for (int i = startRow; i < endRow; i++) {
+            r.setY(getRowPos(i));
+            r.setH(getRowPos(i + 1) - r.getY());
+            String text = getRowName(i);
+            drawLabel(gc, r, text);
+        }
+        
+        // draw column labels
+        r = new Rectangle(0, -getColumnLabelHeight(), 0, getColumnLabelHeight());
+        for (int j = startColumn; j < endColumn; j++) {
+            r.setX(getColumnPos(j));
+            r.setW(getColumnPos(j + 1) - r.getX());
+            String text = getColumnName(j);
+            drawLabel(gc, r, text);
+        }
+    }
+    
+    protected void endDraw(GC gc) {
+        // nop
+    }
+    
+    protected abstract double getColumnLabelHeight();
+    
+    protected Color getGridColor() {
+        return sheetView.getGridColor();
+    }
+    
+    protected double getPaddingX() {
+        return PADDING_X;
+    }
+    
+    protected double getPaddingY() {
+        return PADDING_Y;
+    }
+    
+    protected abstract double getRowLabelWidth();
+    
+    protected Color getSelectionColor() {
+        return SELECTION_COLOR;
+    }
+    
+    protected double getSelectionStrokeWidth() {
+        return SELECTION_STROKE_WIDTH;
+    }
+    
+    protected abstract void render(GC g, Cell cell, Rectangle textRect, Rectangle clipRect);
+    
     /**
      * Draw cells.
      *
@@ -276,25 +598,25 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         if (sheet == null) {
             return;
         }
-
+        
         double maxWidth = SheetView.MAX_COLUMN_WIDTH;
-
+        
         Rectangle clipBounds = g.getClipBounds();
-
+        
         // determine visible rows and columns
         int startRow = Math.max(0, getRowNumberFromY(clipBounds.getTop()));
         int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.getBottom()));
         int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.getLeft()));
         int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.getRight()));
-
+        
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
             Row row = sheet.getRow(i);
-
+            
             if (row == null) {
                 continue;
             }
-
+            
             // if first/last displayed cell of row is empty, start drawing at
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
@@ -302,17 +624,17 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             while (first > 0 && getColumnPos(first) + maxWidth > clipBounds.getLeft() && row.getCell(first).isEmpty()) {
                 first--;
             }
-
+            
             int end = endColumn;
             while (end < getColumnCount() && getColumnPos(end) - maxWidth < clipBounds.getRight()
                     && (end <= 0 || row.getCell(end - 1).isEmpty())) {
                 end++;
             }
-
+            
             for (int j = first; j < end; j++) {
                 Cell cell = row.getCell(j);
                 Cell logicalCell = cell.getLogicalCell();
-
+                
                 final boolean visible;
                 if (cell == logicalCell) {
                     // if cell is not merged or the topleft cell of the
@@ -333,7 +655,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                         continue;
                     }
                 }
-
+                
                 // draw cell
                 if (visible) {
                     switch (cellDrawMode) {
@@ -348,330 +670,8 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                         break;
                     }
                 }
-
+                
             }
-        }
-    }
-
-    protected abstract void drawLabel(GC gc, Rectangle rect, String text);
-
-    protected void drawLabels(GC gc) {
-        // determine visible rows and columns
-        Rectangle clipBounds = gc.getClipBounds();
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.getTop()));
-        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.getBottom()));
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.getLeft()));
-        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.getRight()));
-
-        // draw row labels
-        Rectangle r = new Rectangle(-getRowLabelWidth(), 0, getRowLabelWidth(), 0);
-        for (int i = startRow; i < endRow; i++) {
-            r.setY(getRowPos(i));
-            r.setH(getRowPos(i + 1) - r.getY());
-            String text = getRowName(i);
-            drawLabel(gc, r, text);
-        }
-
-        // draw column labels
-        r = new Rectangle(0, -getColumnLabelHeight(), 0, getColumnLabelHeight());
-        for (int j = startColumn; j < endColumn; j++) {
-            r.setX(getColumnPos(j));
-            r.setW(getColumnPos(j + 1) - r.getX());
-            String text = getColumnName(j);
-            drawLabel(gc, r, text);
-        }
-    }
-
-    private String getColumnName(int j) {
-        return sheetView.getColumnName(j);
-    }
-
-    private String getRowName(int i) {
-        return sheetView.getRowName(i);
-    }
-
-    /**
-     * Draw frame around current selection.
-     *
-     * @param gc
-     *            graphics object used for drawing
-     */
-    private void drawSelection(GC gc) {
-        // no sheet, no drawing
-        if (sheet == null) {
-            return;
-        }
-
-        Cell logicalCell = sheet.getCurrentCell().getLogicalCell();
-        Rectangle rect = getCellRect(logicalCell);
-
-        gc.setXOR(MejaConfig.isXorDrawModeEnabled());
-
-        gc.setStroke(getSelectionColor(), getSelectionStrokeWidth());
-        gc.drawRect(rect.getX(), rect.getY(), rect.getW(), rect.getH());
-        gc.setXOR(false);
-    }
-
-    public void drawSheet(GC gc) {
-        if (sheet == null) {
-            return;
-        }
-
-        Lock readLock = sheet.readLock();
-        readLock.lock();
-        try {
-            beginDraw(gc);
-
-            drawBackground(gc);
-
-            drawLabels(gc);
-
-            drawCells(gc, CellDrawMode.DRAW_CELL_BACKGROUND);
-            drawCells(gc, CellDrawMode.DRAW_CELL_BORDER);
-            drawCells(gc, CellDrawMode.DRAW_CELL_FOREGROUND);
-            drawSelection(gc);
-
-            endDraw(gc);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    protected void endDraw(GC gc) {
-        // nop
-    }
-
-    /**
-     * Calculate the rectangle the cell occupies on screen.
-     *
-     * @param cell
-     *            the cell whose area is requested
-     * @return rectangle the rectangle the cell takes up in screen coordinates
-     */
-    public Rectangle getCellRect(Cell cell) {
-        final int i = cell.getRowNumber();
-        final int j = cell.getColumnNumber();
-
-        final double x = getColumnPos(j);
-        final double w = getColumnPos(j + cell.getHorizontalSpan()) - x;
-        final double y = getRowPos(i);
-        final double h = getRowPos(i + cell.getVerticalSpan()) - y;
-
-        return new Rectangle(x, y, w, h);
-    }
-
-    /**
-     * Get number of columns for the currently loaded sheet.
-     *
-     * @return number of columns
-     */
-    public int getColumnCount() {
-        return columnPos.length - 1;
-    }
-
-    protected abstract double getColumnLabelHeight();
-
-    /**
-     * Get the column number that the given x-coordinate belongs to.
-     *
-     * @param x
-     *            x-coordinate
-     *
-     * @return
-     *         <ul>
-     *         <li>-1, if the first column is displayed to the right of the
-     *         given coordinate
-     *         <li>number of columns, if the right edge of the last column is
-     *         displayed to the left of the given coordinate
-     *         <li>the number of the column that belongs to the given coordinate
-     *         </ul>
-     */
-    public int getColumnNumberFromX(double x) {
-        if (columnPos.length == 0) {
-            return 0;
-        }
-
-        // guess position
-        int j = (int) (columnPos.length * x / sheetWidthInPoints);
-        if (j < 0) {
-            j = 0;
-        } else if (j >= columnPos.length) {
-            j = columnPos.length - 1;
-        }
-
-        // linear search from here
-        if (getColumnPos(j) > x) {
-            while (j > 0 && getColumnPos(j - 1) > x) {
-                j--;
-            }
-        } else {
-            while (j < columnPos.length && getColumnPos(j) <= x) {
-                j++;
-            }
-        }
-
-        return j - 1;
-    }
-
-    /**
-     * @param j
-     *            the column number
-     * @return the columnPos
-     */
-    public double getColumnPos(int j) {
-        return columnPos[Math.min(columnPos.length-1, j)];
-    }
-
-    protected Color getGridColor() {
-        return sheetView.getGridColor();
-    }
-
-    protected double getPaddingX() {
-        return PADDING_X;
-    }
-
-    protected double getPaddingY() {
-        return PADDING_Y;
-    }
-
-    /**
-     * Get number of rows for the currently loaded sheet.
-     *
-     * @return number of rows
-     */
-    public int getRowCount() {
-        return rowPos.length - 1;
-    }
-
-    protected abstract double getRowLabelWidth();
-
-    /**
-     * Get the row number that the given y-coordinate belongs to.
-     *
-     * @param y
-     *            y-coordinate
-     *
-     * @return
-     *         <ul>
-     *         <li>-1, if the first row is displayed below the given coordinate
-     *         <li>number of rows, if the lower edge of the last row is
-     *         displayed above the given coordinate
-     *         <li>the number of the row that belongs to the given coordinate
-     *         </ul>
-     */
-    public int getRowNumberFromY(double y) {
-        if (rowPos.length == 0) {
-            return 0;
-        }
-
-        // guess position
-        int i = (int) (rowPos.length * y / sheetHeightInPoints);
-        if (i < 0) {
-            i = 0;
-        } else if (i >= rowPos.length) {
-            i = rowPos.length - 1;
-        }
-
-        // linear search from here
-        if (getRowPos(i) > y) {
-            while (i > 0 && getRowPos(i - 1) > y) {
-                i--;
-            }
-        } else {
-            while (i < rowPos.length && getRowPos(i) <= y) {
-                i++;
-            }
-        }
-
-        return i - 1;
-    }
-
-    /**
-     * @param i
-     *            the row number
-     * @return the rowPos
-     */
-    public double getRowPos(int i) {
-        return rowPos[Math.min(rowPos.length-1, i)];
-    }
-
-    protected Color getSelectionColor() {
-        return SELECTION_COLOR;
-    }
-
-    /**
-     * Get display coordinates of selection rectangle.
-     *
-     * @param cell
-     *            the selected cell
-     * @return selection rectangle in display coordinates
-     */
-    public Rectangle getSelectionRect(Cell cell) {
-        Rectangle cellRect = getCellRect(cell.getLogicalCell());
-        double extra = (getSelectionStrokeWidth() + 1) / 2;
-        return new Rectangle(
-                cellRect.getX() - extra,
-                cellRect.getY() - extra,
-                cellRect.getW() + 2 * extra,
-                cellRect.getH() + 2 * extra);
-    }
-
-    protected double getSelectionStrokeWidth() {
-        return SELECTION_STROKE_WIDTH;
-    }
-
-    public double getSheetHeightInPoints() {
-        return sheetHeightInPoints;
-    }
-
-    public double getSheetWidthInPoints() {
-        return sheetWidthInPoints;
-    }
-
-    public double getSplitX() {
-        return getColumnPos(sheet.getSplitColumn());
-    }
-
-    public double getSplitY() {
-        return getRowPos(sheet.getSplitRow());
-    }
-
-    protected abstract void render(GC g, Cell cell, Rectangle textRect, Rectangle clipRect);
-
-    public void update(Sheet sheet) {
-        if (sheet != this.sheet) {
-            this.sheet = sheet;
-        }
-
-        // determine sheet dimensions
-        if (sheet == null) {
-            sheetWidthInPoints = 0;
-            sheetHeightInPoints = 0;
-            rowPos = new double[] { 0 };
-            columnPos = new double[] { 0 };
-            return;
-        }
-
-        Lock readLock = sheet.readLock();
-        readLock.lock();
-        try {
-            sheetHeightInPoints = 0;
-            rowPos = new double[2 + sheet.getLastRowNum()];
-            rowPos[0] = 0;
-            for (int i = 1; i < rowPos.length; i++) {
-                sheetHeightInPoints += sheet.getRowHeight(i - 1);
-                rowPos[i] = sheetHeightInPoints;
-            }
-
-            sheetWidthInPoints = 0;
-            columnPos = new double[2 + sheet.getLastColNum()];
-            columnPos[0] = 0;
-            for (int j = 1; j < columnPos.length; j++) {
-                sheetWidthInPoints += sheet.getColumnWidth(j - 1);
-                columnPos[j] = sheetWidthInPoints;
-            }
-        } finally {
-            readLock.unlock();
         }
     }
 }
