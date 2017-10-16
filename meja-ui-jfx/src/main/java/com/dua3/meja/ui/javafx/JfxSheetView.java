@@ -6,6 +6,7 @@ package com.dua3.meja.ui.javafx;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 
 import com.dua3.meja.model.Sheet;
@@ -28,6 +29,9 @@ public class JfxSheetView extends Pane
     private final JfxSheetPainter sheetPainter = new JfxSheetPainter(this);
     private final Node leftTopChart, rightTopChart, leftBottomChart, rightBottomChart;
 
+    private IntFunction<String> columnNames = Sheet::getColumnName;
+    private IntFunction<String> rowNames = Sheet::getRowName;
+    
     /**
      * The color to use for the grid lines.
      */
@@ -226,4 +230,23 @@ public class JfxSheetView extends Pane
                                                                        // Templates.
     }
 
+    @Override
+    public String getColumnName(int j) {
+        return columnNames.apply(j);
+    }
+
+    @Override
+    public String getRowName(int i) {
+        return rowNames.apply(i);
+    }
+    
+    @Override
+    public void setColumnNames(IntFunction<String> columnNames) {
+        this.columnNames = columnNames;
+    }
+
+    @Override
+    public void setRowNames(IntFunction<String> rowNames) {
+        this.rowNames = rowNames;
+    }
 }

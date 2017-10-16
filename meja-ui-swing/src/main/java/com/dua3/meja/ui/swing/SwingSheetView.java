@@ -36,6 +36,7 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 
 import javax.swing.AbstractAction;
@@ -118,6 +119,9 @@ public class SwingSheetView extends JPanel
         }
     }
 
+    private IntFunction<String> columnNames = Sheet::getColumnName;
+    private IntFunction<String> rowNames = Sheet::getRowName;
+    
     private class SearchDialog extends JDialog {
 
         private static final long serialVersionUID = 1L;
@@ -744,17 +748,6 @@ public class SwingSheetView extends JPanel
         return gridColor;
     }
 
-    /**
-     * Get row name.
-     *
-     * @param i
-     *            the row number
-     * @return name of row
-     */
-    public String getRowName(int i) {
-        return Integer.toString(i + 1);
-    }
-
     double getScale() {
         return scale;
     }
@@ -1226,5 +1219,25 @@ public class SwingSheetView extends JPanel
 
     int yS2D(double y) {
         return (int) Math.round(scale * y);
+    }
+
+    @Override
+    public String getColumnName(int j) {
+        return columnNames.apply(j);
+    }
+
+    @Override
+    public String getRowName(int i) {
+        return rowNames.apply(i);
+    }
+    
+    @Override
+    public void setColumnNames(IntFunction<String> columnNames) {
+        this.columnNames = columnNames;
+    }
+
+    @Override
+    public void setRowNames(IntFunction<String> rowNames) {
+        this.rowNames = rowNames;
     }
 }
