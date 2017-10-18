@@ -53,7 +53,92 @@ import com.dua3.meja.util.Options;
  */
 public class MejaSwingHelper {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MejaSwingHelper.class);
+	private static final class SheetTableModel extends AbstractTableModel {
+        private final Sheet sheet;
+        private final boolean firstRowIsHeader;
+        private static final long serialVersionUID = 1L;
+        private SheetListener sl;
+
+        private SheetTableModel(Sheet sheet, boolean firstRowIsHeader) {
+            this.sheet = sheet;
+            this.firstRowIsHeader = firstRowIsHeader;
+            sl = new SheetListener();
+        }
+
+        class SheetListener implements PropertyChangeListener {
+
+            private final Logger LOG = LoggerFactory.getLogger(SheetListener.class);
+
+            public SheetListener() {
+                sheet.addPropertyChangeListener(this);
+            }
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                switch (evt.getPropertyName()) {
+                case Sheet.PROPERTY_ROWS_ADDED: {
+                        RowInfo ri = (RowInfo) evt.getNewValue();
+                        fireTableRowsInserted(getRowNumber(ri.getFirstRow()), getRowNumber(ri.getLastRow()));
+                        LOG.debug("forwarded event {}", evt);
+                    }
+                    break;
+                case Sheet.PROPERTY_CELL_CONTENT:
+                    fireTableDataChanged();
+                    break;
+                case Sheet.PROPERTY_COLUMNS_ADDED:
+                    fireTableStructureChanged();
+                    break;
+                }
+            }
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return Cell.class;
+        }
+
+        @Override
+        public int getColumnCount() {
+            return sheet.getColumnCount();
+        }
+
+        @Override
+        public String getColumnName(int columnIndex) {
+            if (firstRowIsHeader) {
+                return sheet.getRow(0).getCell(columnIndex).toString();
+            } else {
+                return Sheet.getColumnName(columnIndex);
+            }
+        }
+
+        @Override
+        public int getRowCount() {
+            int n = sheet.getRowCount();
+            return firstRowIsHeader && n>0 ? n -1 : n;
+        }
+
+        @Override
+        public Object getValueAt(int i, int j) {
+            Row row = sheet.getRow(getRowNumber(i));
+            return row == null ? null : row.getCell(j);
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return false;
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        
+        private int getRowNumber(int i) {
+            return firstRowIsHeader ? i+1 : i;
+        }
+    }
+
+    private static final Logger LOG = LoggerFactory.getLogger(MejaSwingHelper.class);
 
     /**
      * Create a TableModel to be used with JTable.
@@ -62,75 +147,8 @@ public class MejaSwingHelper {
      *            the sheet to create a model for
      * @return table model instance of {@code JTableModel} for the sheet
      */
-    public static TableModel getTableModel(final Sheet sheet) {
-        return new AbstractTableModel() {
-            private static final long serialVersionUID = 1L;
-
-            class SheetListener implements PropertyChangeListener {
-
-                private final Logger LOG = LoggerFactory.getLogger(SheetListener.class);
-
-                public SheetListener() {
-                    sheet.addPropertyChangeListener(this);
-                }
-
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    switch (evt.getPropertyName()) {
-                    case Sheet.PROPERTY_ROWS_ADDED: {
-                            RowInfo ri = (RowInfo) evt.getNewValue();
-                            fireTableRowsInserted(ri.getFirstRow(), ri.getLastRow());
-                            LOG.debug("forwarded event {}", evt);
-                        }
-                        break;
-                    case Sheet.PROPERTY_CELL_CONTENT:
-                        fireTableDataChanged();
-                        break;
-                    case Sheet.PROPERTY_COLUMNS_ADDED:
-                        fireTableStructureChanged();
-                        break;
-                    }
-                }
-            }
-
-            private SheetListener sl = new SheetListener();
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return Cell.class;
-            }
-
-            @Override
-            public int getColumnCount() {
-                return sheet.getColumnCount();
-            }
-
-            @Override
-            public String getColumnName(int columnIndex) {
-                return Sheet.getColumnName(columnIndex);
-            }
-
-            @Override
-            public int getRowCount() {
-                return sheet.getRowCount();
-            }
-
-            @Override
-            public Object getValueAt(int i, int j) {
-                Row row = sheet.getRow(i);
-                return row == null ? null : row.getCell(j);
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return false;
-            }
-
-            @Override
-            public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        };
+    public static TableModel getTableModel(final Sheet sheet, boolean firstRowIsHeader) {
+        return new SheetTableModel(sheet, firstRowIsHeader);
     }
 
     /**
