@@ -191,7 +191,7 @@ public class PoiSheet extends AbstractSheet {
         org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
             poiRow = poiSheet.createRow(i);
-            firePropertyChange(PROPERTY_ROW_ADDED, null, i);
+            firePropertyChange(PROPERTY_ROWS_ADDED, RowInfo.none(), new RowInfo(i, i));
         }
         return new PoiRow(this, poiRow);
     }
@@ -284,8 +284,14 @@ public class PoiSheet extends AbstractSheet {
      * @param columnNumber
      */
     void setColumnUsed(int columnNumber) {
+        int oldValue = lastColumn;
+
         firstColumn = Math.min(firstColumn, columnNumber);
         lastColumn = Math.max(lastColumn, columnNumber);
+
+        if (lastColumn!= oldValue) {
+            firePropertyChange(PROPERTY_COLUMNS_ADDED, oldValue, lastColumn);
+        }
     }
 
     @Override

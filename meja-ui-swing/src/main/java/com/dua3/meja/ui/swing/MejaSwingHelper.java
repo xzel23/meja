@@ -16,6 +16,8 @@
 package com.dua3.meja.ui.swing;
 
 import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -37,6 +39,7 @@ import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Sheet.RowInfo;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
@@ -50,7 +53,8 @@ import com.dua3.meja.util.Options;
  */
 public class MejaSwingHelper {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MejaSwingHelper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MejaSwingHelper.class);
+
     /**
      * Create a TableModel to be used with JTable.
      *
@@ -60,11 +64,36 @@ public class MejaSwingHelper {
      */
     public static TableModel getTableModel(final Sheet sheet) {
         return new AbstractTableModel() {
-
-            /**
-             *
-             */
             private static final long serialVersionUID = 1L;
+
+            class SheetListener implements PropertyChangeListener {
+
+                private final Logger LOG = LoggerFactory.getLogger(SheetListener.class);
+
+                public SheetListener() {
+                    sheet.addPropertyChangeListener(this);
+                }
+
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    switch (evt.getPropertyName()) {
+                    case Sheet.PROPERTY_ROWS_ADDED: {
+                            RowInfo ri = (RowInfo) evt.getNewValue();
+                            fireTableRowsInserted(ri.getFirstRow(), ri.getLastRow());
+                            LOG.debug("forwarded event {}", evt);
+                        }
+                        break;
+                    case Sheet.PROPERTY_CELL_CONTENT:
+                        fireTableDataChanged();
+                        break;
+                    case Sheet.PROPERTY_COLUMNS_ADDED:
+                        fireTableStructureChanged();
+                        break;
+                    }
+                }
+            }
+
+            private SheetListener sl = new SheetListener();
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -102,7 +131,6 @@ public class MejaSwingHelper {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };
-
     }
 
     /**
@@ -212,7 +240,7 @@ public class MejaSwingHelper {
                     "File exists",
                     JOptionPane.YES_NO_OPTION);
             if (rc != JOptionPane.YES_OPTION) {
-                LOGGER.info("User chose not to overwrite file.");
+                LOG.info("User chose not to overwrite file.");
                 return Optional.empty();
             }
         }

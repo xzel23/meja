@@ -9,9 +9,14 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dua3.meja.util.RectangularRegion;
 
 public abstract class AbstractSheet implements Sheet {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractSheet.class);
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
@@ -87,6 +92,8 @@ public abstract class AbstractSheet implements Sheet {
 
         // add to list
         mergedRegions.add(cells);
+
+        LOG.debug("added merged region: {}", cells);
     }
 
     @Override
@@ -120,6 +127,7 @@ public abstract class AbstractSheet implements Sheet {
                 }
             }
         }
+        LOG.debug("removed merged region at [{}, {}]", rowNumber, columnNumber);
     }
 
     @Override

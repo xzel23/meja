@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.text.ToStringBuilder;
 
 /**
  * An interface representing a single sheet of a workbook.
@@ -42,7 +43,40 @@ public interface Sheet
     public final String PROPERTY_ACTIVE_CELL = "ACTIVE_CELL";
     public final String PROPERTY_CELL_CONTENT = "CELL_CONTENT";
     public final String PROPERTY_CELL_STYLE = "CELL_STYLE";
-    public final String PROPERTY_ROW_ADDED = "ROW_ADDED";
+    public final String PROPERTY_ROWS_ADDED = "ROWS_ADDED";
+    public final String PROPERTY_COLUMNS_ADDED = "COLUMNS_ADDED";
+
+    public static class RowInfo {
+        private static final RowInfo NONE = new RowInfo(0,-1);
+
+        private final int firstRow;
+        private final int lastRow;
+
+        public RowInfo(int firstRow, int lastRow) {
+            this.firstRow=firstRow;
+            this.lastRow=lastRow;
+        }
+
+        public int getFirstRow() {
+            return firstRow;
+        }
+
+        public int getLastRow() {
+            return lastRow;
+        }
+
+        public static Object none() {
+            return NONE;
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder()
+                    .add("firstRow", firstRow)
+                    .add("lastRow", lastRow)
+                    .toString();
+        }
+    }
 
     /**
      * Add new merged region.

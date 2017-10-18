@@ -195,19 +195,24 @@ public class GenericSheet extends AbstractSheet {
     }
 
     private void reserve(int row) {
+        int firstAddedRow = rows.size();
         int lastAddedRow = -1;
         for (int rowNum = rows.size(); rowNum <= row; rowNum++) {
             rows.add(new GenericRow(this, rowNum));
             lastAddedRow = rowNum;
         }
 
-        if (lastAddedRow>=0) {
-            firePropertyChange(PROPERTY_ROW_ADDED, null, lastAddedRow);
+        if (lastAddedRow>=firstAddedRow) {
+            firePropertyChange(PROPERTY_ROWS_ADDED, RowInfo.none(), new RowInfo(firstAddedRow, lastAddedRow));
         }
     }
 
     void reserveColumn(int col) {
+        int oldValue = numberOfColumns;
         numberOfColumns = Math.max(col + 1, numberOfColumns);
+        if (numberOfColumns != oldValue) {
+            firePropertyChange(PROPERTY_COLUMNS_ADDED, oldValue, numberOfColumns);
+        }
     }
 
     @Override

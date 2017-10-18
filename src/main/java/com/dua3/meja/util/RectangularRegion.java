@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.util;
 
+import com.dua3.utility.text.ToStringBuilder;
+
 /**
  *
  * @author a5xysq1
@@ -105,5 +107,15 @@ public class RectangularRegion {
     public boolean intersects(RectangularRegion other) {
         return Math.min(rowMax, other.rowMax) - Math.max(rowMin, other.rowMin) >= 0
                 && Math.min(colMax, other.colMax) - Math.max(colMin, other.colMin) >= 0;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder()
+        .add("rowMin", rowMin)
+        .add("rowMax", rowMax)
+        .add("colMin", colMin)
+        .add("colMax", colMax)
+        .toString();
     }
 }

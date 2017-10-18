@@ -798,7 +798,7 @@ public class SwingSheetView extends JPanel
         switch (property) {
         case Sheet.PROPERTY_ZOOM:
         case Sheet.PROPERTY_LAYOUT_CHANGED:
-        case Sheet.PROPERTY_ROW_ADDED:
+        case Sheet.PROPERTY_ROWS_ADDED:
             updateContent();
             break;
         case Sheet.PROPERTY_SPLIT:
