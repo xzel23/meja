@@ -44,6 +44,7 @@ import com.dua3.utility.text.RichText;
  *
  * @author Axel Howind (axel@dua3.com)
  */
+@SuppressWarnings("serial")
 public class CellEditorPane extends JTextPane {
 
     /**
@@ -100,8 +101,6 @@ public class CellEditorPane extends JTextPane {
      * A custom EditorKit to allow vertical alignment of text.
      */
     class CellEditorKit extends StyledEditorKit {
-        private static final long serialVersionUID = 1L;
-
         @Override
         public ViewFactory getViewFactory() {
             return new CellEditorViewFactory();
@@ -136,8 +135,6 @@ public class CellEditorPane extends JTextPane {
         }
 
     }
-
-    private static final long serialVersionUID = 1L;
 
     /**
      * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell

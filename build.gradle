@@ -57,15 +57,14 @@ allprojects {
         }
     }
 
+    spotbugs {
+        excludeFilter = file("$rootProject.projectDir/config/spotbugs-exclude.xml")
+    }
+    
     tasks.withType(com.github.spotbugs.SpotBugsTask) {
         reports {
             xml.enabled false
             html.enabled true
-        }
-
-        spotbugs {
-            effort = "max"
-            reportLevel = "high"
         }
     }
 

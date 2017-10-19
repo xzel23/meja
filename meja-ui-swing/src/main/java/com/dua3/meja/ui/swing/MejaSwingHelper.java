@@ -92,6 +92,9 @@ public class MejaSwingHelper {
                 case Sheet.PROPERTY_COLUMNS_ADDED:
                     fireTableStructureChanged();
                     break;
+                default:
+                    LOG.debug("ignored event {}", evt);
+                    break;
                 }
             }
 

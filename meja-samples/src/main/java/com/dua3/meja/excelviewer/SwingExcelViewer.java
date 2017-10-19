@@ -61,15 +61,11 @@ import com.dua3.utility.swing.SwingUtil;
  *
  * @author axel
  */
+@SuppressWarnings("serial")
 public class SwingExcelViewer extends JFrame
         implements ExcelViewerModel.ExcelViewer, DropTargetListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(SwingExcelViewer.class);
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
 
     private static final int STATUS_ERROR = 1;
 
@@ -161,25 +157,8 @@ public class SwingExcelViewer extends JFrame
 
         // File menu
         JMenu mnFile = new JMenu("File");
-        mnFile.add(new AbstractAction("Open...") {
-
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showOpenDialog();
-            }
-        });
+        mnFile.add(SwingUtil.createAction("Open...", this::showOpenDialog));
         mnFile.add(new AbstractAction("Save") {
-
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
             {
                 // enable when workbook is loaded
                 PropertyChangeListener listener = (PropertyChangeEvent evt) -> {
@@ -196,140 +175,52 @@ public class SwingExcelViewer extends JFrame
             }
 
         });
-        mnFile.add(new AbstractAction("Save as...") {
-
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showSaveAsDialog();
-            }
-        });
+        mnFile.add(SwingUtil.createAction("Save as...", this::showSaveAsDialog));
         mnFile.addSeparator();
-        mnFile.add(new AbstractAction("Exit") {
-
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                closeApplication();
-            }
-        });
+        mnFile.add(SwingUtil.createAction("Exit", this::closeApplication));
         menuBar.add(mnFile);
 
         // Edit menu
         JMenu mnEdit = new JMenu("Edit");
-        mnEdit.add(new AbstractAction("Adjust all column widths") {
-
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                model.adjustColumns(getCurrentView());
-            }
-        });
+        mnEdit.add(SwingUtil.createAction("Adjust all column widths", e -> model.adjustColumns(getCurrentView())));
         menuBar.add(mnEdit);
 
         // Options menu
         JMenu mnOptions = new JMenu("Options");
 
         JMenu mnLookAndFeel = new JMenu("Look & Feel");
-        mnLookAndFeel.add(new AbstractAction("System Default") {
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
-        });
-        mnLookAndFeel.add(new AbstractAction("Cross Platform") {
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            }
-        });
+        mnLookAndFeel.add(SwingUtil.createAction("System Default",
+                e -> setLookAndFeel(UIManager.getSystemLookAndFeelClassName())));
+        mnLookAndFeel.add(SwingUtil.createAction("Cross Platform",
+                e -> setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName())));
         mnLookAndFeel.addSeparator();
         for (final UIManager.LookAndFeelInfo lAF : UIManager.getInstalledLookAndFeels()) {
-            mnLookAndFeel.add(new AbstractAction(lAF.getName()) {
-                /**
-                 *
-                 */
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setLookAndFeel(lAF.getClassName());
-                }
-            });
+            mnLookAndFeel.add(SwingUtil.createAction(lAF.getName(), e ->
+                    setLookAndFeel(lAF.getClassName())));
         }
 
         mnOptions.add(mnLookAndFeel);
 
         JMenu mnZoom = new JMenu("Zoom");
         for (final int zoom : new int[] { 25, 50, 75, 100, 125, 150, 200, 400 }) {
-            mnZoom.add(new AbstractAction(zoom + "%") {
-                /**
-                 *
-                 */
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setZoom(zoom / 100.0f);
-                }
-            });
+            mnZoom.add(SwingUtil.createAction(zoom + "%", e -> setZoom(zoom / 100.0f)));
         }
         mnOptions.add(mnZoom);
 
         mnOptions.addSeparator();
 
-        mnOptions.add(new AbstractAction("Freeze") {
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                model.freezeAtCurrentCell(getCurrentView());
-            }
-        });
+        mnOptions.add(SwingUtil.createAction("Freeze", e -> model.freezeAtCurrentCell(getCurrentView())));
 
         menuBar.add(mnOptions);
 
         // Help menu
         JMenu mnHelp = new JMenu("Help");
-        mnHelp.add(new AbstractAction("About ...") {
-            /**
-             *
-             */
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        mnHelp.add(SwingUtil.createAction("About ...", e -> {
                 String title = "About " + APPLICATION_NAME;
                 String msg = model.getLicenseText();
                 JOptionPane.showMessageDialog(SwingExcelViewer.this, msg, title, JOptionPane.INFORMATION_MESSAGE, null);
                 setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            }
-        });
+        }));
         menuBar.add(mnHelp);
 
         setJMenuBar(menuBar);

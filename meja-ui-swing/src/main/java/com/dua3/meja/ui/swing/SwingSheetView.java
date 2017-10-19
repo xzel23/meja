@@ -77,14 +77,13 @@ import com.dua3.utility.swing.SwingUtil;
 /**
  * Swing component for displaying instances of {@link Sheet}.
  */
+@SuppressWarnings("serial")
 public class SwingSheetView extends JPanel
         implements
         SheetView,
         PropertyChangeListener {
 
     private class SearchDialog extends JDialog {
-
-        private static final long serialVersionUID = 1L;
 
         private final JTextField jtfText = new JTextField(40);
         private final JCheckBox jcbIgnoreCase = new JCheckBox("ignore case", true);
@@ -152,18 +151,7 @@ public class SwingSheetView extends JPanel
             c.gridy = 2;
             c.gridwidth = 1;
             c.gridheight = 1;
-            final JButton submitButton = new JButton(new AbstractAction("Search") {
-                /**
-                 *
-                 */
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    doSearch();
-                }
-
-            });
+            JButton submitButton = new JButton(SwingUtil.createAction("Search", this::doSearch));
             add(submitButton, c);
 
             // close button
@@ -171,28 +159,13 @@ public class SwingSheetView extends JPanel
             c.gridy = 2;
             c.gridwidth = 1;
             c.gridheight = 1;
-            add(new JButton(new AbstractAction("Close") {
-                /**
-                 *
-                 */
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setVisible(false);
-                }
-            }), c);
+            add(new JButton(SwingUtil.createAction("Close", e -> setVisible(false))), c);
 
             // Enter starts search
             SwingUtilities.getRootPane(submitButton).setDefaultButton(submitButton);
 
             // Escape closes dialog
             final AbstractAction escapeAction = new AbstractAction() {
-                /**
-                 *
-                 */
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void actionPerformed(ActionEvent ae) {
                     setVisible(false);
@@ -238,11 +211,6 @@ public class SwingSheetView extends JPanel
     }
 
     private class SheetPane extends JScrollPane {
-
-        /**
-         *
-         */
-        private static final long serialVersionUID = 1L;
         final SwingSegmentView topLeftQuadrant;
         final SwingSegmentView topRightQuadrant;
         final SwingSegmentView bottomLeftQuadrant;
@@ -421,17 +389,7 @@ public class SwingSheetView extends JPanel
         }
 
         Action getAction(SwingSheetView view) {
-            return new AbstractAction(name()) {
-                /**
-                 *
-                 */
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    action.accept(view);
-                }
-            };
+            return SwingUtil.createAction(name(), e-> action.accept(view));
         }
     }
 
@@ -439,11 +397,6 @@ public class SwingSheetView extends JPanel
             implements
             Scrollable,
             SegmentView<SwingSheetView, SwingGraphicsContext> {
-
-        /**
-         *
-         */
-        private static final long serialVersionUID = 1L;
         private final IntSupplier startRow;
         private final IntSupplier endRow;
         private final IntSupplier startColumn;
@@ -656,8 +609,6 @@ public class SwingSheetView extends JPanel
 
     private static final Logger LOG = LoggerFactory.getLogger(SwingSheetView.class);
 
-    private static final long serialVersionUID = 1L;
-
     private IntFunction<String> columnNames = Sheet::getColumnName;
 
     private IntFunction<String> rowNames = Sheet::getRowName;
@@ -813,6 +764,8 @@ public class SwingSheetView extends JPanel
         case Sheet.PROPERTY_CELL_CONTENT:
         case Sheet.PROPERTY_CELL_STYLE:
             repaintCell((Cell) evt.getSource());
+            break;
+        default:
             break;
         }
     }

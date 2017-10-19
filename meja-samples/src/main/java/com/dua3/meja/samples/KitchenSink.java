@@ -28,8 +28,6 @@ public class KitchenSink extends JFrame {
 
     private static final Logger logger = LoggerFactory.getLogger(KitchenSink.class);
 
-    private static final long serialVersionUID = 1L;
-
     private static void addColorSheet(Workbook wb) {
         Sheet sheet = wb.createSheet("colors");
 

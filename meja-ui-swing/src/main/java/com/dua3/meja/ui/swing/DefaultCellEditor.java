@@ -15,13 +15,11 @@
  */
 package com.dua3.meja.ui.swing;
 
-import java.awt.event.ActionEvent;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
@@ -37,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.CellValueHelper;
+import com.dua3.utility.swing.SwingUtil;
 
 /**
  * Default implementation for cell editor.
@@ -54,33 +53,13 @@ public class DefaultCellEditor
         COMMIT {
             @Override
             public Action getAction(final DefaultCellEditor editor) {
-                return new AbstractAction("COMMIT") {
-                    /**
-                     *
-                     */
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        editor.stopEditing(true);
-                    }
-                };
+                return SwingUtil.createAction("COMMIT", e -> editor.stopEditing(true));
             }
         },
         ABORT {
             @Override
             public Action getAction(final DefaultCellEditor editor) {
-                return new AbstractAction("ABORT") {
-                    /**
-                     *
-                     */
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        editor.stopEditing(false);
-                    }
-                };
+                return SwingUtil.createAction("ABORT", e -> editor.stopEditing(false));
             }
         };
 

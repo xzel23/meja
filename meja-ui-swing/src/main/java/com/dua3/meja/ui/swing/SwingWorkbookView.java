@@ -34,10 +34,9 @@ import com.dua3.meja.ui.WorkbookView;
  *
  * @author axel
  */
+@SuppressWarnings("serial")
 public class SwingWorkbookView extends JComponent
         implements WorkbookView, ChangeListener {
-
-    private static final long serialVersionUID = 1L;
 
     private Workbook workbook;
     private JTabbedPane content = null;

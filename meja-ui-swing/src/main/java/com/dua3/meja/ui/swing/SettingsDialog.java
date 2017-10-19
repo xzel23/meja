@@ -22,9 +22,8 @@ import com.dua3.meja.util.OptionSet.Value;
 import com.dua3.meja.util.Options;
 import com.dua3.utility.swing.SwingUtil;
 
+@SuppressWarnings("serial")
 public class SettingsDialog extends JDialog {
-
-    private static final long serialVersionUID = 1L;
 
     private final JPanel settingsPanel;
     private Options result = Options.empty();
