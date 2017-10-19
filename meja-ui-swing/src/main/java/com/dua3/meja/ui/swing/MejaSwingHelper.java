@@ -177,6 +177,17 @@ public class MejaSwingHelper {
      *
      * @param sheet
      *  the sheet to create a model for
+     * @return table model instance of {@code JTableModel} for the sheet
+     */
+    public static TableModel getTableModel(final Sheet sheet) {
+        return new SheetTableModel(sheet, false);
+    }
+
+    /**
+     * Create a TableModel to be used with JTable.
+     *
+     * @param sheet
+     *  the sheet to create a model for
      * @param firstRowIsHeader
      *  if set to true, the first row of the sheet will be displayed as the table header
      * @return table model instance of {@code JTableModel} for the sheet
