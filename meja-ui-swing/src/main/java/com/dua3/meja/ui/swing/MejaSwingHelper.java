@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
@@ -70,7 +71,6 @@ public class MejaSwingHelper {
             private final Logger LOG = LoggerFactory.getLogger(SheetListener.class);
 
             public SheetListener() {
-                sheet.addPropertyChangeListener(this);
             }
 
             @Override
@@ -93,6 +93,14 @@ public class MejaSwingHelper {
                     fireTableStructureChanged();
                     break;
                 }
+            }
+
+            public void detach() {
+                sheet.removePropertyChangeListener(this);
+            }
+
+            public void attach() {
+                sheet.addPropertyChangeListener(this);
             }
         }
 
@@ -139,6 +147,26 @@ public class MejaSwingHelper {
 
         private int getRowNumber(int i) {
             return firstRowIsHeader ? i+1 : i;
+        }
+
+        @Override
+        public void removeTableModelListener(TableModelListener l) {
+            super.removeTableModelListener(l);
+
+            if (listenerList.getListenerCount()==0) {
+                sl.detach();
+                LOG.debug("last TableModelListener was removed, detaching sheet listener from sheet");
+            }
+        }
+
+        @Override
+        public void addTableModelListener(TableModelListener l) {
+            super.addTableModelListener(l);
+
+            if (listenerList.getListenerCount()==1) {
+                sl.attach();
+                LOG.debug("first TableModelListener was added, attaching sheet listener to sheet");
+            }
         }
     }
 
