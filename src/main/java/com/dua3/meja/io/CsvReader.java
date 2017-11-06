@@ -250,7 +250,7 @@ public class CsvReader extends Csv
             // contains the field's value.
             String field = matcher.group(1);
             if (field != null) {
-                field = field.replaceAll("\"\"", "\"");
+                field = field.replace("\"\"", "\"");
             } else {
                 field = matcher.group(2);
             }

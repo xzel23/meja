@@ -109,7 +109,7 @@ public class CsvWriter extends Csv
     }
 
     private String quote(String text) {
-        return delimiter + text.replaceAll("\"", "\"\"") + delimiter;
+        return delimiter + text.replace("\"", "\"\"") + delimiter;
     }
 
     private String quoteIfNeeded(String text) {
