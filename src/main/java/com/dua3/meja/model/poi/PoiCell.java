@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -495,7 +496,16 @@ public final class PoiCell
             poiCell.setCellType(org.apache.poi.ss.usermodel.CellType.FORMULA);
             final PoiWorkbook wb = getWorkbook();
             if (wb.isFormulaEvaluationSupported()) {
-                wb.evaluator.evaluateFormulaCell(poiCell);
+                try {
+                    wb.evaluator.evaluateFormulaCell(poiCell);
+                } catch (NotImplementedException e) {
+                    if (wb.poiWorkbook.getForceFormulaRecalculation()) {
+                        LOGGER.info("An unsupported Excel function was used (workbook already flagged as needing recalculation).", e);
+                    } else {
+                        LOGGER.warn("An unsupported Excel function was used. Flagged workbook as needing recalculation.");
+                        wb.poiWorkbook.setForceFormulaRecalculation(true);
+                    }
+                }
             }
         }
         updateRow();
