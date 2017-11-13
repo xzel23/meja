@@ -33,6 +33,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -42,6 +43,8 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.WorkbookWriter;
@@ -60,6 +63,8 @@ import com.dua3.utility.text.TextAttributes;
  * @author axel
  */
 public abstract class PoiWorkbook extends AbstractWorkbook {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PoiWorkbook.class);
 
     /**
      * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks (the
@@ -163,7 +168,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         public boolean isFormulaEvaluationSupported() {
             return true;
         }
-
     }
 
     /**
@@ -556,6 +560,29 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * @return true if formula evaluation is supported
      */
     public abstract boolean isFormulaEvaluationSupported();
+
+    /**
+     * Try to evaluate all formula cells.
+     */
+    public void evaluateAllFormulaCells() {
+        if (isFormulaEvaluationSupported()) {
+            try {
+                evaluator.evaluateAll();
+            } catch (NotImplementedException e) {
+                LOGGER.warn("unsupported function in formula. Flagging workbook as needing recalculation.", e);
+                setForceFormulaRecalculation(true);
+            }
+        }
+    }
+
+    public boolean getForceFormulaRecalculation() {
+        return poiWorkbook.getForceFormulaRecalculation();
+    }
+
+    public void setForceFormulaRecalculation(boolean flag) {
+        poiWorkbook.setForceFormulaRecalculation(flag);
+        LOGGER.info("setForceFormulaRecalculation({})", flag);
+    }
 
     @Override
     public Iterator<Sheet> iterator() {

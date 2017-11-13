@@ -499,11 +499,11 @@ public final class PoiCell
                 try {
                     wb.evaluator.evaluateFormulaCell(poiCell);
                 } catch (NotImplementedException e) {
-                    if (wb.poiWorkbook.getForceFormulaRecalculation()) {
+                    if (wb.getForceFormulaRecalculation()) {
                         LOGGER.info("An unsupported Excel function was used (workbook already flagged as needing recalculation).", e);
                     } else {
                         LOGGER.warn("An unsupported Excel function was used. Flagged workbook as needing recalculation.");
-                        wb.poiWorkbook.setForceFormulaRecalculation(true);
+                        wb.setForceFormulaRecalculation(true);
                     }
                 }
             }
