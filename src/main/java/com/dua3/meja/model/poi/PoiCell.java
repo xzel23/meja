@@ -21,8 +21,13 @@ import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -40,11 +45,14 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
+import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
 
 /**
@@ -530,30 +538,44 @@ public final class PoiCell
                 continue;
             }
 
+            Map<String, Object> properties = new HashMap<>();
             // apply font attributes for formatting run
             Font runFont = getFontForFormattingRun(rts, i);
-            rtb.push(TextAttributes.FONT_FAMILY, runFont.getFamily());
-            rtb.push(TextAttributes.FONT_SIZE, runFont.getSizeInPoints() + "pt");
-            rtb.push(TextAttributes.COLOR, runFont.getColor().toString());
+            properties.put(TextAttributes.FONT_FAMILY, runFont.getFamily());
+            properties.put(TextAttributes.FONT_SIZE, runFont.getSizeInPoints() + "pt");
+            properties.put(TextAttributes.COLOR, runFont.getColor().toString());
             if (runFont.isBold()) {
-                rtb.push(TextAttributes.FONT_WEIGHT, "bold");
+                properties.put(TextAttributes.FONT_WEIGHT, "bold");
             }
             if (runFont.isItalic()) {
-                rtb.push(TextAttributes.FONT_STYLE, "italic");
+                properties.put(TextAttributes.FONT_STYLE, "italic");
             }
             if (runFont.isUnderlined()) {
-                rtb.push(TextAttributes.TEXT_DECORATION, "underline");
+                properties.put(TextAttributes.TEXT_DECORATION, "underline");
             }
             if (runFont.isStrikeThrough()) {
-                rtb.push(TextAttributes.TEXT_DECORATION, "line-through");
+                properties.put(TextAttributes.TEXT_DECORATION, "line-through");
             }
 
+            Style attr = Style.create("style", properties);
+            push(rtb, TextAttributes.STYLE_START_RUN, attr );
             rtb.append(text, start, end);
+            push(rtb, TextAttributes.STYLE_END_RUN, attr );
             start = end;
         }
         rtb.append(text, start, text.length());
 
         return rtb.toRichText();
+    }
+
+    private void push(RichTextBuilder app, String key, Style attr) {
+        @SuppressWarnings("unchecked")
+        List<Style> current = (List<Style>) app.pop(key);
+        if (current == null) {
+            current = new LinkedList<>();
+        }
+        current.add(attr);
+        app.push(key, current);
     }
 
     @Override
