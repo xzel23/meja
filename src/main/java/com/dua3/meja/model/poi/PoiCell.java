@@ -21,7 +21,6 @@ import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -45,10 +44,8 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.util.RectangularRegion;
-import com.dua3.utility.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
-import com.dua3.utility.text.MarkDownStyle;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
@@ -197,7 +194,7 @@ public final class PoiCell
     @Override
     public RichText getAsText(Locale locale) {
         if (getResultType() == CellType.TEXT) {
-            return toRichText(poiCell.getRichStringCellValue());
+            return getText();
         } else {
             if (isEmpty()) {
                 return RichText.emptyText();
@@ -209,9 +206,7 @@ public final class PoiCell
 
     @Override
     public boolean getBoolean() {
-        if (getCellType() != CellType.BOOLEAN) {
-            throw new IllegalStateException("Cell does not contain a boolean value.");
-        }
+        LangUtil.check(getCellType() == CellType.BOOLEAN, "Cell does not contain a boolean value.");
         return poiCell.getBooleanCellValue();
     }
 
@@ -266,6 +261,7 @@ public final class PoiCell
 
     @Override
     public String getFormula() {
+        LangUtil.check(getCellType() == CellType.FORMULA, "Cell does not contain a formula.");
         return poiCell.getCellFormula();
     }
 
@@ -276,9 +272,7 @@ public final class PoiCell
 
     @Override
     public Number getNumber() {
-        if (getCellType() != CellType.NUMERIC) {
-            throw new IllegalStateException("Cell does not contain a numeric value.");
-        }
+        LangUtil.check(getCellType() == CellType.NUMERIC, "Cell does not contain a number.");
         return poiCell.getNumericCellValue();
     }
 
@@ -312,7 +306,8 @@ public final class PoiCell
 
     @Override
     public RichText getText() {
-        return isEmpty() ? RichText.emptyText() : toRichText(poiCell.getRichStringCellValue());
+        LangUtil.check(getCellType() == CellType.TEXT, "Cell does not contain a text value.");
+        return toRichText(poiCell.getRichStringCellValue());
     }
 
     @Override
@@ -556,6 +551,7 @@ public final class PoiCell
             if (runFont.isStrikeThrough()) {
                 properties.put(TextAttributes.TEXT_DECORATION, "line-through");
             }
+            properties.put(TextAttributes.COLOR, runFont.getColor());
 
             Style attr = Style.create("style", properties);
             push(rtb, TextAttributes.STYLE_START_RUN, attr );
