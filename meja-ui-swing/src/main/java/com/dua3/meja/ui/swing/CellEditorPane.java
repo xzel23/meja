@@ -275,7 +275,13 @@ public class CellEditorPane extends JTextPane {
     private TextAttributes getTextAttributes(Style s) {
         Map<String,Object> attrs = new HashMap<>();
         copyAttribute(s, TextAttributes.COLOR, attrs);
-        // TODO handle eemaining style attributes
+        copyAttribute(s, TextAttributes.BACKGROUND_COLOR, attrs);
+        copyAttribute(s, TextAttributes.FONT_FAMILY, attrs);
+        copyAttribute(s, TextAttributes.FONT_SIZE, attrs);
+        copyAttribute(s, TextAttributes.FONT_STYLE, attrs);
+        copyAttribute(s, TextAttributes.FONT_VARIANT, attrs);
+        copyAttribute(s, TextAttributes.FONT_WEIGHT, attrs);
+        copyAttribute(s, TextAttributes.TEXT_DECORATION, attrs);
         return TextAttributes.of(attrs);
     }
 }
