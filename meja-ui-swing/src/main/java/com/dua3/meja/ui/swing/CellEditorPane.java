@@ -15,6 +15,10 @@
  */
 package com.dua3.meja.ui.swing;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+
 import javax.swing.JTextPane;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -39,6 +43,8 @@ import com.dua3.utility.swing.StyledDocumentBuilder;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.Style;
+import com.dua3.utility.text.TextAttributes;
 
 /**
  *
@@ -128,6 +134,7 @@ public class CellEditorPane extends JTextPane {
                     return new ComponentView(elem);
                 case StyleConstants.IconElementName:
                     return new IconView(elem);
+                default:
                 }
             }
 
@@ -243,11 +250,32 @@ public class CellEditorPane extends JTextPane {
         }
 
         AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
-        setDocument(StyledDocumentBuilder.toStyledDocument(text, dfltAttr, scale));
+        setDocument(StyledDocumentBuilder.toStyledDocument(text, this::getTextAttributes, dfltAttr, scale));
 
         this.vAlign = cellStyle.getVAlign();
 
         revalidate();
         repaint();
+    }
+    
+    private void translateAndStoreAttribute(Style s, String sourceProperty, Map<String,Object> targetAttributes, String targetProperty, Function<Object,Object> translator) {
+        Object sourceValue = s.get(sourceProperty);
+        if (sourceValue==null) {
+            return;
+        }
+        
+        Object targetValue = translator.apply(sourceValue);
+        targetAttributes.put(targetProperty, targetValue);
+    }
+    
+    private void copyAttribute(Style s, String sourceProperty, Map<String,Object> targetAttributes) {
+        translateAndStoreAttribute(s, sourceProperty, targetAttributes, sourceProperty, value -> value);
+    }
+    
+    private TextAttributes getTextAttributes(Style s) {
+        Map<String,Object> attrs = new HashMap<>();
+        copyAttribute(s, TextAttributes.COLOR, attrs);
+        // TODO handle eemaining style attributes
+        return TextAttributes.of(attrs);
     }
 }
