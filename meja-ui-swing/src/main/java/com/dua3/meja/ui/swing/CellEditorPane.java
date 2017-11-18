@@ -39,6 +39,7 @@ import com.dua3.utility.swing.StyledDocumentBuilder;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.TextAttributes;
 
 /**
  *
@@ -243,7 +244,7 @@ public class CellEditorPane extends JTextPane {
         }
 
         AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
-        setDocument(StyledDocumentBuilder.toStyledDocument(text, dfltAttr, scale));
+        setDocument(StyledDocumentBuilder.toStyledDocument(text, s -> TextAttributes.none(), dfltAttr, scale));
 
         this.vAlign = cellStyle.getVAlign();
 
