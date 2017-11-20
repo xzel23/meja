@@ -193,7 +193,7 @@ public final class PoiCell
 
     @Override
     public RichText getAsText(Locale locale) {
-        if (getResultType() == CellType.TEXT) {
+        if (getCellType() == CellType.TEXT) {
             return getText();
         } else {
             if (isEmpty()) {
