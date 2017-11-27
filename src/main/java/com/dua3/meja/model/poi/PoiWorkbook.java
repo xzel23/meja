@@ -55,8 +55,8 @@ import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.util.Options;
 import com.dua3.utility.Color;
-import com.dua3.utility.text.RichTextConverter;
 import com.dua3.utility.text.TextAttributes;
+import com.dua3.utility.text.TextUtil;
 
 /**
  *
@@ -478,7 +478,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         String name = String.valueOf(properties.getOrDefault(TextAttributes.FONT_FAMILY, font.getFamily()));
 
         Object sSize = properties.get(TextAttributes.FONT_SIZE);
-        short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : RichTextConverter.decodeFontSize(sSize.toString()));
+        short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : TextUtil.decodeFontSize(sSize.toString()));
 
         final Object sStyle = properties.get(TextAttributes.FONT_STYLE);
         boolean italic = sStyle == null ? font.isItalic() : "italic".equals(sStyle);
