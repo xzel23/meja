@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.ui.swing;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.swing.JTextPane;
@@ -258,8 +260,10 @@ public class CellEditorPane extends JTextPane {
     }
 
     private TextAttributes getTextAttributes(Style s) {
-        return TextAttributes.of(
-                TextAttributes.defaults().keySet().stream()
-                .collect(Collectors.toMap(k -> k, s::get)));
+        Map<String,Object> m = new HashMap<>();
+        for (String attr: TextAttributes.defaults().keySet()) {
+            m.put(attr, s.get(attr));
+        }
+        return TextAttributes.of(m);
     }
 }
