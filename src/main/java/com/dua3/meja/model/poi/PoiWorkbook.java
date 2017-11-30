@@ -472,25 +472,23 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         return getPoiFont(font, TextAttributes.none());
     }
 
-    PoiFont getPoiFont(com.dua3.utility.text.Font font, TextAttributes style) {
-        Map<String, Object> properties = style.properties();
+    PoiFont getPoiFont(com.dua3.utility.text.Font font, TextAttributes attributes) {
+        String name = String.valueOf(attributes.getOrDefault(TextAttributes.FONT_FAMILY, font.getFamily()));
 
-        String name = String.valueOf(properties.getOrDefault(TextAttributes.FONT_FAMILY, font.getFamily()));
-
-        Object sSize = properties.get(TextAttributes.FONT_SIZE);
+        Object sSize = attributes.get(TextAttributes.FONT_SIZE);
         short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : TextUtil.decodeFontSize(sSize.toString()));
 
-        final Object sStyle = properties.get(TextAttributes.FONT_STYLE);
+        final Object sStyle = attributes.get(TextAttributes.FONT_STYLE);
         boolean italic = sStyle == null ? font.isItalic() : "italic".equals(sStyle);
 
-        final Object sWeight = properties.get(TextAttributes.FONT_WEIGHT);
+        final Object sWeight = attributes.get(TextAttributes.FONT_WEIGHT);
         boolean bold = sWeight == null ? font.isBold() : "bold".equals(sWeight);
 
-        Object sDecoration = properties.get(TextAttributes.TEXT_DECORATION);
+        Object sDecoration = attributes.get(TextAttributes.TEXT_DECORATION);
         boolean underline = sDecoration == null ? font.isUnderlined() : "underline".equals(sDecoration);
         boolean strikethrough = sDecoration == null ? font.isStrikeThrough() : "line-through".equals(sDecoration);
 
-        Object sColor = properties.get(TextAttributes.COLOR);
+        Object sColor = attributes.get(TextAttributes.COLOR);
         Color color = sColor == null ? font.getColor() : Color.valueOf(sColor.toString());
 
         // try to find existing font

@@ -15,13 +15,10 @@
  */
 package com.dua3.meja.ui.swing;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.swing.JTextPane;
 import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BoxView;
 import javax.swing.text.ComponentView;
 import javax.swing.text.Element;
@@ -39,6 +36,7 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
+import com.dua3.utility.Pair;
 import com.dua3.utility.swing.StyledDocumentBuilder;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
@@ -249,39 +247,19 @@ public class CellEditorPane extends JTextPane {
             text = cell.getAsText(getLocale());
         }
 
-        AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
-        setDocument(StyledDocumentBuilder.toStyledDocument(text, this::getTextAttributes, dfltAttr, scale));
+        setDocument(StyledDocumentBuilder.toStyledDocument(text, this::getTextAttributes,
+                Pair.of(StyledDocumentBuilder.SCALE, scale),
+                Pair.of(StyledDocumentBuilder.ATTRIBUTE_SET, getCellAttributes(cellStyle, cell))));
 
         this.vAlign = cellStyle.getVAlign();
 
         revalidate();
         repaint();
     }
-    
-    private void translateAndStoreAttribute(Style s, String sourceProperty, Map<String,Object> targetAttributes, String targetProperty, Function<Object,Object> translator) {
-        Object sourceValue = s.get(sourceProperty);
-        if (sourceValue==null) {
-            return;
-        }
-        
-        Object targetValue = translator.apply(sourceValue);
-        targetAttributes.put(targetProperty, targetValue);
-    }
-    
-    private void copyAttribute(Style s, String sourceProperty, Map<String,Object> targetAttributes) {
-        translateAndStoreAttribute(s, sourceProperty, targetAttributes, sourceProperty, value -> value);
-    }
-    
+
     private TextAttributes getTextAttributes(Style s) {
-        Map<String,Object> attrs = new HashMap<>();
-        copyAttribute(s, TextAttributes.COLOR, attrs);
-        copyAttribute(s, TextAttributes.BACKGROUND_COLOR, attrs);
-        copyAttribute(s, TextAttributes.FONT_FAMILY, attrs);
-        copyAttribute(s, TextAttributes.FONT_SIZE, attrs);
-        copyAttribute(s, TextAttributes.FONT_STYLE, attrs);
-        copyAttribute(s, TextAttributes.FONT_VARIANT, attrs);
-        copyAttribute(s, TextAttributes.FONT_WEIGHT, attrs);
-        copyAttribute(s, TextAttributes.TEXT_DECORATION, attrs);
-        return TextAttributes.of(attrs);
+        return TextAttributes.of(
+                TextAttributes.defaults().keySet().stream()
+                .collect(Collectors.toMap(k -> k, s::get)));
     }
 }

@@ -438,7 +438,7 @@ public final class PoiCell
 
         RichTextString richText = getWorkbook().createRichTextString(s.toString());
         for (Run run : s) {
-            PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont(), run.getStyle());
+            PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont(), run.getAttributes());
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
         poiCell.setCellValue(richText);
