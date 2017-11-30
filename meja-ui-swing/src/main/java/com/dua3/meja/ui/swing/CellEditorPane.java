@@ -39,6 +39,7 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
+import com.dua3.utility.Pair;
 import com.dua3.utility.swing.StyledDocumentBuilder;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
@@ -250,28 +251,29 @@ public class CellEditorPane extends JTextPane {
         }
 
         AttributeSet dfltAttr = getCellAttributes(cellStyle, cell);
-        setDocument(StyledDocumentBuilder.toStyledDocument(text, this::getTextAttributes, dfltAttr, scale));
+        setDocument(StyledDocumentBuilder.toStyledDocument(text, this::getTextAttributes, dfltAttr,
+                Pair.of(StyledDocumentBuilder.SCALE, String.valueOf(scale))));
 
         this.vAlign = cellStyle.getVAlign();
 
         revalidate();
         repaint();
     }
-    
+
     private void translateAndStoreAttribute(Style s, String sourceProperty, Map<String,Object> targetAttributes, String targetProperty, Function<Object,Object> translator) {
         Object sourceValue = s.get(sourceProperty);
         if (sourceValue==null) {
             return;
         }
-        
+
         Object targetValue = translator.apply(sourceValue);
         targetAttributes.put(targetProperty, targetValue);
     }
-    
+
     private void copyAttribute(Style s, String sourceProperty, Map<String,Object> targetAttributes) {
         translateAndStoreAttribute(s, sourceProperty, targetAttributes, sourceProperty, value -> value);
     }
-    
+
     private TextAttributes getTextAttributes(Style s) {
         Map<String,Object> attrs = new HashMap<>();
         copyAttribute(s, TextAttributes.COLOR, attrs);
