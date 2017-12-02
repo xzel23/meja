@@ -106,9 +106,7 @@ public class SwingExcelViewer extends JFrame
         if (file != null) {
             try {
                 Path path = file.toPath();
-                model.setPath(path);
-                Workbook workbook = MejaHelper.openWorkbook(path);
-                model.setWorkbook(workbook);
+                viewer.setWorkbook(Optional.of(MejaHelper.openWorkbook(path)));
             } catch (IOException ex) {
                 LOG.error("Could not load workbook from " + file.getAbsolutePath(), ex);
             }
@@ -290,13 +288,10 @@ public class SwingExcelViewer extends JFrame
      */
     private void showOpenDialog() {
         try {
-            final Optional<Path> oldPath = model.getPath();
             final Optional<Workbook> newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this,
                     model.getCurrentPath());
             if (newWorkbook.isPresent()) {
-                model.setWorkbook(newWorkbook.get());
-                final Optional<Path> newPath = model.getPath();
-                workbookChanged(oldPath.orElse(null), newPath.orElse(null));
+                setWorkbook(newWorkbook);
             }
         } catch (IOException ex) {
             LOG.error("Exception loading workbook.", ex);
@@ -308,6 +303,13 @@ public class SwingExcelViewer extends JFrame
                     JOptionPane.ERROR_MESSAGE);
             throw ex; //rethrow
         }
+    }
+
+    private void setWorkbook(final Optional<Workbook> newWorkbook) {
+        final Optional<Path> oldPath = model.getPath();
+        model.setWorkbook(newWorkbook.get());
+        final Optional<Path> newPath = model.getPath();
+        workbookChanged(oldPath.orElse(null), newPath.orElse(null));
     }
 
     /**
@@ -379,13 +381,10 @@ public class SwingExcelViewer extends JFrame
               @SuppressWarnings("unchecked")
               List<File> files = (List<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
               if (files.size() == 1) {
-                final Optional<Path> oldPath = model.getPath();
                 Path path = files.get(0).toPath();
                 Optional<Workbook> workbook = MejaSwingHelper.openWorkbook(this, path);
                 if (workbook.isPresent()) {
-                    model.setWorkbook(workbook.get());
-                    final Optional<Path> newPath = model.getPath();
-                    workbookChanged(oldPath.orElse(null), newPath.orElse(null));
+                    setWorkbook(workbook);
                     dtde.getDropTargetContext().dropComplete(true);
                 } else {
                     LOG.warn("Could not process dropped item '{}'.", path);
