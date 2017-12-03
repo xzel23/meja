@@ -75,6 +75,8 @@ public class PoiHelper {
             return VAlign.ALIGN_BOTTOM;
         case JUSTIFY:
             return VAlign.ALIGN_JUSTIFY;
+        case DISTRIBUTED:
+            return VAlign.ALIGN_MIDDLE;
         default:
             LOGGER.warn("Unknown value for vertical algnment: {}", alignment);
             return VAlign.ALIGN_MIDDLE;

@@ -71,8 +71,7 @@ public class DefaultCellRenderer
                 canvas = new Rectangle(cr.x + (cr.width - maxWidthScaled) / 2, cr.y, maxWidthScaled, cr.height);
                 break;
             case ALIGN_JUSTIFY:   // ALIGN_JUSTIFY implies wrap
-            case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be mapped to
-                                  // another value
+            case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be mapped to another value
             default:
                 throw new IllegalStateException();
             }

@@ -17,7 +17,6 @@ package com.dua3.meja.ui.swing;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.swing.JTextPane;
 import javax.swing.text.AbstractDocument;
