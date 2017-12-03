@@ -80,13 +80,13 @@ public abstract class PoiCellStyle
         @Override
         public Color getFillBgColor() {
             return workbook.getColor(
-                    poiCellStyle.getFillBackgroundColorColor(), Color.WHITE);
+                    poiCellStyle.getFillBackgroundColorColor(), Color.TRANSPARENT_WHITE);
         }
 
         @Override
         public Color getFillFgColor() {
             return workbook.getColor(
-                    poiCellStyle.getFillForegroundColorColor(), null);
+                    poiCellStyle.getFillForegroundColorColor(), Color.TRANSPARENT_WHITE);
         }
 
         @Override
