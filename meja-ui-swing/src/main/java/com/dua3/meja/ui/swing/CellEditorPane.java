@@ -218,6 +218,9 @@ public class CellEditorPane extends JTextPane {
         StyleConstants.setUnderline(dfltAttr, cellStyle.getFont().isUnderlined());
         StyleConstants.setStrikeThrough(dfltAttr, cellStyle.getFont().isStrikeThrough());
 
+        StyleConstants.setForeground(dfltAttr, SwingUtil.toAwtColor(cellStyle.getFont().getColor()));
+        StyleConstants.setBackground(dfltAttr, SwingUtil.toAwtColor(cellStyle.getFillFgColor()));
+        
         return dfltAttr;
     }
 

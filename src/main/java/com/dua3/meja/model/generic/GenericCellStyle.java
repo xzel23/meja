@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +70,7 @@ public class GenericCellStyle
      *            the workbook the style is defined in
      */
     public GenericCellStyle(GenericWorkbook workbook) {
-        this.workbook = workbook;
+        this.workbook = Objects.requireNonNull(workbook);
         this.font = new Font();
         this.fillPattern = FillPattern.NONE;
         this.fillBgColor = Color.WHITE;
@@ -208,44 +209,44 @@ public class GenericCellStyle
 
     @Override
     public void setBorderStyle(Direction d, BorderStyle borderStyle) {
-        this.borderStyle[d.ordinal()] = borderStyle;
+        this.borderStyle[d.ordinal()] = Objects.requireNonNull(borderStyle);
     }
 
     @Override
     public void setDataFormat(String format) {
-        this.dataFormat = format;
+        this.dataFormat = Objects.requireNonNull(format);
         this.dateFormatter = null;
         this.numberFormatter = null;
     }
 
     @Override
     public void setFillBgColor(Color fillBgColor) {
-        this.fillBgColor = fillBgColor;
+        this.fillBgColor = Objects.requireNonNull(fillBgColor);
     }
 
     @Override
     public void setFillFgColor(Color fillFgColor) {
-        this.fillFgColor = fillFgColor;
+        this.fillFgColor = Objects.requireNonNull(fillFgColor);
     }
 
     @Override
     public void setFillPattern(FillPattern fillPattern) {
-        this.fillPattern = fillPattern;
+        this.fillPattern = Objects.requireNonNull(fillPattern);
     }
 
     @Override
     public void setFont(Font font) {
-        this.font = font;
+        this.font = Objects.requireNonNull(font);
     }
 
     @Override
     public void setHAlign(HAlign hAlign) {
-        this.hAlign = hAlign;
+        this.hAlign = Objects.requireNonNull(hAlign);
     }
 
     @Override
     public void setVAlign(VAlign vAlign) {
-        this.vAlign = vAlign;
+        this.vAlign = Objects.requireNonNull(vAlign);
     }
 
     @Override
