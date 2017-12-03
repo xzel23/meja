@@ -592,18 +592,21 @@ public final class PoiCell
      * @return cell content with format applied
      */
     private String getFormattedText(Locale locale) {
-        DateTimeFormatter df = getCellStyle().getLocaleAwareDateFormat(locale);
-        if (df != null) {
-            return df.format(getDateTime());
-        } else {
-            // let POI do the formatting
-            FormulaEvaluator evaluator = getWorkbook().evaluator;
-            DataFormatter dataFormatter = getWorkbook().getDataFormatter(locale);
-            try {
-                return dataFormatter.formatCellValue(poiCell, evaluator);
-            } catch (Exception ex) {
-                return Cell.ERROR_TEXT;
-            }
+    	// is there a special date format?
+    	if (getResultType()==CellType.DATE) {
+    		DateTimeFormatter df = getCellStyle().getLocaleAwareDateFormat(locale);
+    		if (df != null) {
+    			return df.format(getDateTime());
+    		}
+    	}
+
+        // if not, let POI do the formatting
+        FormulaEvaluator evaluator = getWorkbook().evaluator;
+        DataFormatter dataFormatter = getWorkbook().getDataFormatter(locale);
+        try {
+            return dataFormatter.formatCellValue(poiCell, evaluator);
+        } catch (Exception ex) {
+            return Cell.ERROR_TEXT;
         }
     }
 
