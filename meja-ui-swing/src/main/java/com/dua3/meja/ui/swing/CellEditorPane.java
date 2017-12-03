@@ -38,6 +38,7 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
+import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.swing.StyledDocumentBuilder;
 import com.dua3.utility.swing.SwingUtil;
@@ -219,7 +220,7 @@ public class CellEditorPane extends JTextPane {
         StyleConstants.setStrikeThrough(dfltAttr, cellStyle.getFont().isStrikeThrough());
 
         StyleConstants.setForeground(dfltAttr, SwingUtil.toAwtColor(cellStyle.getFont().getColor()));
-        StyleConstants.setBackground(dfltAttr, SwingUtil.toAwtColor(cellStyle.getFillFgColor()));
+        StyleConstants.setBackground(dfltAttr, SwingUtil.toAwtColor(Color.TRANSPARENT_WHITE));
         
         return dfltAttr;
     }
@@ -242,7 +243,7 @@ public class CellEditorPane extends JTextPane {
         final java.awt.Font awtFont = font.toAwtFont().deriveFont((float)scale*font.getSizeInPoints());
 
         setFont(awtFont);
-        setBackground(SwingUtil.toAwtColor(cellStyle.getFillBgColor()));
+        setBackground(SwingUtil.toAwtColor(cellStyle.getFillFgColor()));
         setForeground(SwingUtil.toAwtColor(font.getColor()));
 
         final RichText text;
