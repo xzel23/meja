@@ -1,6 +1,7 @@
 package com.dua3.meja.util;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ public class CacheTest {
         testCacheHelper(Type.WEAK_KEYS);
     }
 
-    @Test
+    @Test @Ignore
     public void testCacheWithStrongKeys() {
         LOGGER.info("testCacheWithStrongKeys()");
         testCacheHelper(Type.STRONG_KEYS);
