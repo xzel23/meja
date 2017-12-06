@@ -20,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Optional;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
@@ -55,6 +57,8 @@ import com.dua3.meja.util.Options;
 public class MejaSwingHelper {
 
 	private static final class SheetTableModel extends AbstractTableModel {
+        private static final Logger LOG = LoggerFactory.getLogger(SheetListener.class);
+
         private final Sheet sheet;
         private final boolean firstRowIsHeader;
         private static final long serialVersionUID = 1L;
@@ -68,33 +72,41 @@ public class MejaSwingHelper {
 
         class SheetListener implements PropertyChangeListener {
 
-            private final Logger LOG = LoggerFactory.getLogger(SheetListener.class);
-
             public SheetListener() {
             }
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
+                final Runnable dispatcher;
                 switch (evt.getPropertyName()) {
                 case Sheet.PROPERTY_ROWS_ADDED: {
                         RowInfo ri = (RowInfo) evt.getNewValue();
-                        fireTableRowsInserted(getRowNumber(ri.getFirstRow()), getRowNumber(ri.getLastRow()));
-                        LOG.debug("forwarded event {}", evt);
+                        dispatcher = () -> fireTableRowsInserted(getRowNumber(ri.getFirstRow()), getRowNumber(ri.getLastRow()));
                     }
                     break;
                 case Sheet.PROPERTY_CELL_CONTENT:
                     if (firstRowIsHeader && ((Cell)evt.getSource()).getRowNumber()==0) {
-                        fireTableStructureChanged();
+                        dispatcher = SheetTableModel.this::fireTableStructureChanged;
                     } else {
-                        fireTableDataChanged();
+                        assert evt.getSource() instanceof Cell;
+                        Cell cell = (Cell) evt.getSource();
+                        int i = cell.getRowNumber();
+                        int j = cell.getColumnNumber();
+                        dispatcher = () -> fireTableCellUpdated(i, j);
                     }
                     break;
+                case Sheet.PROPERTY_LAYOUT_CHANGED:
                 case Sheet.PROPERTY_COLUMNS_ADDED:
-                    fireTableStructureChanged();
+                    dispatcher = SheetTableModel.this::fireTableStructureChanged;
                     break;
                 default:
-                    LOG.debug("ignored event {}", evt);
+                    dispatcher = () -> LOG.debug("ignored event {}", evt);
                     break;
+                }
+                try {
+                    SwingUtilities.invokeAndWait(dispatcher);
+                } catch (InvocationTargetException | InterruptedException e) {
+                    LOG.warn("interrupted", e);
                 }
             }
 
