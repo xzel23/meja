@@ -75,12 +75,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public GenericCellStyle getCellStyle(String name) {
-        GenericCellStyle cellStyle = cellStyles.get(name);
-        if (cellStyle == null) {
-            cellStyle = new GenericCellStyle(this);
-            cellStyles.put(name, cellStyle);
-        }
-        return cellStyle;
+        return cellStyles.computeIfAbsent(name, n -> new GenericCellStyle(this));
     }
 
     String getCellStyleName(GenericCellStyle cellStyle) {
