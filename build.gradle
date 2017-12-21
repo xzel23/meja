@@ -5,105 +5,106 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.com.github.spotbugs:gradlePlugin:1.5"
+    classpath "gradle.plugin.com.github.spotbugs:gradlePlugin:1.6.0"
   }
 }
 
-allprojects {
-    
-    apply plugin: 'maven'
-    apply plugin: 'maven-publish'
-    apply plugin: 'java'
-    apply plugin: "com.github.spotbugs"
-    apply plugin: 'jacoco'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'java'
+apply plugin: "com.github.spotbugs"
+apply plugin: 'jacoco'
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    
-    group = 'com.dua3.meja'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
-    repositories {
-        mavenLocal()
-        jcenter()
-        // integration for dependencies on github
-        maven { url 'https://jitpack.io' }
+group = 'com.dua3.meja'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    // integration for dependencies on github
+    maven { url 'https://jitpack.io' }
+}
+
+sourceSets {
+	main {
+		java.srcDirs 'src/main/java'
+	}
+
+	swing {
+		java.srcDirs 'src/swing/java'
+	}
+	
+	javafx {
+		java.srcDirs 'src/javafx/java'
+	}
+	
+	samples {
+		java.srcDirs 'src/samples/java'
+	}
+}
+
+dependencies {
+    def poiVersion = "3.17"
+    compile "org.apache.poi:poi:${poiVersion}"
+    compile "org.apache.poi:poi-ooxml:${poiVersion}"
+    compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+
+    // use local project if 'localBuild' was set
+    def utilityVersion = "0.4"
+    if (project.hasProperty('localBuild')) {
+        compile 'com.dua3.utility:utility:+'
+        swingCompile 'com.dua3.utility:utility:+'
+        javafxCompile 'com.dua3.utility:utility:+'
+        samplesCompile 'com.dua3.utility:utility:+'
+    } else {
+        compile "com.github.xzel23:utility:${utilityVersion}"
+        swingCompile "com.github.xzel23:utility:${utilityVersion}"
+        javafxCompile "com.github.xzel23:utility:${utilityVersion}"
+        samplesCompile "com.github.xzel23:utility:${utilityVersion}"
     }
+	
+	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    def sl4jVersion = "1.7.25"
+	compile "org.slf4j:slf4j-api:${sl4jVersion}"
+	testRuntime "org.slf4j:slf4j-simple:${sl4jVersion}"
+	samplesRuntime "org.slf4j:slf4j-simple:${sl4jVersion}"
+	
+    testCompile "junit:junit:4.12"
 
-    dependencies {
-        def poiVersion = "3.17"
-        compile "org.apache.poi:poi:${poiVersion}"
-        compile "org.apache.poi:poi-ooxml:${poiVersion}"
-        compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+  	swingCompile sourceSets.main.output
+  	javafxCompile sourceSets.main.output
+  	samplesCompile sourceSets.main.output, sourceSets.swing.output, sourceSets.javafx.output
+}
 
-        // use local project if 'localBuild' was set
-        def utilityVersion = "0.4"
-        if (project.hasProperty('localBuild')) {
-            compile 'com.dua3.utility:utility:+'
-        } else {
-            compile "com.github.xzel23:utility:${utilityVersion}"
-        }
-		
-		// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-        def sl4jVersion = "1.7.25"
-		compile "org.slf4j:slf4j-api:${sl4jVersion}"
-		testRuntime "org.slf4j:slf4j-simple:${sl4jVersion}"
-		
-        testCompile "junit:junit:4.12"
-    }
-
-    configurations.all {
-        resolutionStrategy {
-            cacheChangingModulesFor 0, 'seconds'
-        }
-    }
-
-    spotbugs {
-        excludeFilter = file("$rootProject.projectDir/config/spotbugs-exclude.xml")
-    }
-    
-    tasks.withType(com.github.spotbugs.SpotBugsTask) {
-        reports {
-            xml.enabled false
-            html.enabled true
-        }
-    }
-
-    tasks.withType(JacocoReport) {
-        reports {
-            xml.enabled false
-            csv.enabled false
-            html.enabled true
-        }
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, 'seconds'
     }
 }
 
-subprojects {
-    dependencies {
-        compile rootProject
-    }    
+spotbugs {
+    excludeFilter = file("$rootProject.projectDir/config/spotbugs-exclude.xml")
 }
 
-project(':meja-ui-jfx') {
-    dependencies {
-        compile project(':meja-ui')
+tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    reports {
+        xml.enabled false
+        html.enabled true
     }
 }
 
-project(':meja-ui-swing') {
-    dependencies {
-        compile project(':meja-ui')
-    }
-}
-
-project(':meja-samples') {
-    dependencies {
-        compile project(':meja-ui-swing')
-        compile project(':meja-ui-jfx')
+tasks.withType(JacocoReport) {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.enabled true
     }
 }
 
 // create a jar with the dependencies
-task depJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+task depJar(type: Jar, dependsOn: tasks['classes']) {
     baseName = 'meja'
     classifier = 'dependencies'
     
@@ -113,7 +114,7 @@ task depJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
 }
 
 // create a jar with sources
-task srcJar(type: Jar, dependsOn: subprojects.tasks['classes']) {
+task srcJar(type: Jar, dependsOn: tasks['classes']) {
     baseName = 'meja'
     classifier = 'sources'
     
@@ -149,19 +150,14 @@ task alljavadoc(type: Javadoc, description: 'Generate javadocs from all child pr
 }
 
 // create a jar with classes from all subprojects
-task allJar(type: Jar, dependsOn: [subprojects.tasks['classes'], alljavadoc]) {
+task allJar(type: Jar, dependsOn: [tasks['classes'], alljavadoc]) {
     baseName = 'meja'
     classifier = 'all'
     
-    from rootProject.sourceSets.main.output
-    from rootProject.sourceSets.main.java.srcDirs
+    from sourceSets.main.output
+    from sourceSets.swing.output
+    from sourceSets.javafx.output
     
-    subprojects.each { project ->
-        // classes
-        from project.sourceSets.main.output
-        // sources
-        from project.sourceSets.main.java.srcDirs
-    }
     // javadoc
     from file("$buildDir/docs/javadoc")    
 }
@@ -181,8 +177,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts {
+    archives allJar
     archives sourcesJar
     archives javadocJar
+    archives depJar
 }
 
 defaultTasks 'build', 'publishToMavenLocal', 'install'
