@@ -12,13 +12,13 @@ public class CacheTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheTest.class);
 
-    @Test
+    @Test @Ignore // test is too time consuming
     public void testCacheWithWeakKeys() {
         LOGGER.info("testCacheWithWeakKeys()");
         testCacheHelper(Type.WEAK_KEYS);
     }
 
-    @Test @Ignore
+    @Test @Ignore // test is too time consuming
     public void testCacheWithStrongKeys() {
         LOGGER.info("testCacheWithStrongKeys()");
         testCacheHelper(Type.STRONG_KEYS);
