@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.slf4j.Logger;
@@ -17,8 +18,8 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
-import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.Color;
+import com.dua3.utility.swing.SwingUtil;
 
 /**
  *
@@ -72,10 +73,12 @@ public class KitchenSink extends JFrame {
     }
 
     public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
         SwingUtil.setNativeLookAndFeel();
-        KitchenSink instance = new KitchenSink();
-        instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        instance.setVisible(true);
+            KitchenSink instance = new KitchenSink();
+            instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            instance.setVisible(true);
+        });
     }
 
     private Workbook wb;

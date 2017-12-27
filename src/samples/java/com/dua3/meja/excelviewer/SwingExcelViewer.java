@@ -89,28 +89,30 @@ public class SwingExcelViewer extends JFrame
     public static void main(String[] args) {
         SwingUtil.setNativeLookAndFeel(APPLICATION_NAME);
 
-        ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
-        SwingExcelViewer viewer = new SwingExcelViewer(model);
+        SwingUtilities.invokeLater(() -> {
+            ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
+            SwingExcelViewer viewer = new SwingExcelViewer(model);
 
-        if (args.length > 1) {
-            model.showInfo();
-            System.exit(STATUS_ERROR);
-        }
-
-        File file = args.length == 1 ? new File(args[0]) : null;
-
-        viewer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        viewer.setSize(600, 400);
-        viewer.setVisible(true);
-
-        if (file != null) {
-            try {
-                Path path = file.toPath();
-                viewer.setWorkbook(Optional.of(MejaHelper.openWorkbook(path)));
-            } catch (IOException ex) {
-                LOG.error("Could not load workbook from " + file.getAbsolutePath(), ex);
+            if (args.length > 1) {
+                model.showInfo();
+                System.exit(STATUS_ERROR);
             }
-        }
+
+            File file = args.length == 1 ? new File(args[0]) : null;
+
+            viewer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            viewer.setSize(600, 400);
+            viewer.setVisible(true);
+
+            if (file != null) {
+                try {
+                    Path path = file.toPath();
+                    viewer.setWorkbook(Optional.of(MejaHelper.openWorkbook(path)));
+                } catch (IOException ex) {
+                    LOG.error("Could not load workbook from " + file.getAbsolutePath(), ex);
+                }
+            }
+        });
     }
 
     private final ExcelViewerModel model;
