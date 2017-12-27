@@ -57,7 +57,7 @@ import com.dua3.meja.util.Options;
 public class MejaSwingHelper {
 
 	private static final class SheetTableModel extends AbstractTableModel {
-        private static final Logger LOG = LoggerFactory.getLogger(SheetListener.class);
+        private static final Logger LOG = LoggerFactory.getLogger(SheetTableModel.class);
 
         private final Sheet sheet;
         private final boolean firstRowIsHeader;
