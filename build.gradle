@@ -67,7 +67,7 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // use local project if 'localBuild' was set
-    def utilityVersion = "0.6"
+    def utilityVersion = "0.7.1"
     if (project.hasProperty('localBuild')) {
         compile 'com.dua3.utility:utility:+'
         swingCompile 'com.dua3.utility:utility:+'
@@ -222,6 +222,5 @@ publishing {
         }
     }
 }
-
 
 defaultTasks 'build', 'publishToMavenLocal'
