@@ -60,8 +60,8 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
@@ -607,7 +607,7 @@ public class SwingSheetView extends JPanel
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(SwingSheetView.class);
+    private static final Logger LOG = LogManager.getLogger(SwingSheetView.class);
 
     private IntFunction<String> columnNames = Sheet::getColumnName;
 

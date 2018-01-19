@@ -7,8 +7,8 @@ import java.util.Locale;
 import java.util.function.BiFunction;
 
 import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.RefOption;
@@ -21,7 +21,7 @@ import com.dua3.utility.io.FileSystemView;
 
 public class WorkbookTestHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorkbookTestHelper.class);
+    private static final Logger LOGGER = LogManager.getLogger(WorkbookTestHelper.class);
 
     public static Workbook loadWorkbook() throws IOException {
         Class<? extends WorkbookTestHelper> clazz = WorkbookTestHelper.class;

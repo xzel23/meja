@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.util.RectangularRegion;
 
 public abstract class AbstractSheet implements Sheet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractSheet.class);
+    private static final Logger LOG = LogManager.getLogger(AbstractSheet.class);
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();

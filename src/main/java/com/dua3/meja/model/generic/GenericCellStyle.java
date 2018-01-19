@@ -24,8 +24,8 @@ import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.CellStyle;
@@ -45,7 +45,7 @@ public class GenericCellStyle
 
     private static final BorderStyle defaultBorderStyle = new BorderStyle(0.0f, Color.BLACK);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenericCellStyle.class);
+    private static final Logger LOGGER = LogManager.getLogger(GenericCellStyle.class);
 
     private final GenericWorkbook workbook;
 

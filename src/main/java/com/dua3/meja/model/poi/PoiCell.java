@@ -36,8 +36,8 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.AbstractCell;
 import com.dua3.meja.model.Cell;
@@ -59,7 +59,7 @@ import com.dua3.utility.text.TextAttributes;
 public final class PoiCell
         extends AbstractCell {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PoiCell.class);
+    private static final Logger LOGGER = LogManager.getLogger(PoiCell.class);
 
     private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
         switch (poiType) {

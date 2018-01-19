@@ -3,14 +3,14 @@ package com.dua3.meja.util;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.util.Cache.Type;
 
 public class CacheTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheTest.class);
+    private static final Logger LOGGER = LogManager.getLogger(CacheTest.class);
 
     @Test @Ignore // test is too time consuming
     public void testCacheWithWeakKeys() {

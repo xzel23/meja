@@ -34,8 +34,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -57,7 +57,7 @@ import com.dua3.meja.util.Options;
 public class MejaSwingHelper {
 
 	private static final class SheetTableModel extends AbstractTableModel {
-        private static final Logger LOG = LoggerFactory.getLogger(SheetTableModel.class);
+        private static final Logger LOG = LogManager.getLogger(SheetTableModel.class);
 
         private final Sheet sheet;
         private final boolean firstRowIsHeader;
@@ -185,7 +185,7 @@ public class MejaSwingHelper {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(MejaSwingHelper.class);
+    private static final Logger LOG = LogManager.getLogger(MejaSwingHelper.class);
 
     /**
      * Create a TableModel to be used with JTable.

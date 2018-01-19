@@ -67,7 +67,7 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // use local project if 'localBuild' was set
-    def utilityVersion = "0.7.1"
+    def utilityVersion = "0.8"
     if (project.hasProperty('localBuild')) {
         compile 'com.dua3.utility:utility:+'
         swingCompile 'com.dua3.utility:utility:+'
@@ -80,11 +80,10 @@ dependencies {
         samplesCompile "com.github.xzel23:utility:${utilityVersion}"
     }
 	
-	// https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    def sl4jVersion = "1.7.25"
-	compile "org.slf4j:slf4j-api:${sl4jVersion}"
-	testRuntime "org.slf4j:slf4j-simple:${sl4jVersion}"
-	samplesRuntime "org.slf4j:slf4j-simple:${sl4jVersion}"
+    // Log4j2
+    compile        group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
+    testRuntime    group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
+    samplesRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
 	
     testCompile "junit:junit:4.12"
 

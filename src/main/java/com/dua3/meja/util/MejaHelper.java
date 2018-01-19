@@ -24,8 +24,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -44,7 +44,7 @@ import com.dua3.utility.lang.LangUtil;
  */
 public class MejaHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MejaHelper.class);
+    private static final Logger LOGGER = LogManager.getLogger(MejaHelper.class);
 
     /**
      * Find cell containing text in row.

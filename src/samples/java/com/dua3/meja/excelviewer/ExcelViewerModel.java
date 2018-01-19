@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
@@ -37,7 +37,7 @@ public class ExcelViewerModel {
         INFO;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelViewer.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExcelViewer.class);
 
     private static final String LICENSE = "Copyright %d %s%n"
             + "%n"

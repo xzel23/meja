@@ -18,8 +18,8 @@ package com.dua3.meja.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook;
@@ -31,7 +31,7 @@ import com.dua3.meja.model.poi.PoiWorkbookFactory;
  */
 public class XlsWorkbookWriter extends WorkbookWriter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XlsWorkbookWriter.class);
+    private static final Logger LOGGER = LogManager.getLogger(XlsWorkbookWriter.class);
 
     private static final XlsWorkbookWriter INSTANCE = new XlsWorkbookWriter();
 

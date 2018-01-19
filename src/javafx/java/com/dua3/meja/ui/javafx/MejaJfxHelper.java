@@ -27,8 +27,8 @@ import java.util.Optional;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -47,7 +47,7 @@ import javafx.stage.Window;
  * @author Axel Howind (axel@dua3.com)
  */
 public class MejaJfxHelper {
-    private static final Logger LOGGER =LoggerFactory.getLogger(MejaJfxHelper.class);
+    private static final Logger LOGGER =LogManager.getLogger(MejaJfxHelper.class);
     
     public static FileChooser.ExtensionFilter[] getExtensionFilters(OpenMode mode) {
         return Arrays.stream(FileType.values())

@@ -43,8 +43,8 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.WorkbookWriter;
@@ -64,7 +64,7 @@ import com.dua3.utility.text.TextUtil;
  */
 public abstract class PoiWorkbook extends AbstractWorkbook {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PoiWorkbook.class);
+    private static final Logger LOGGER = LogManager.getLogger(PoiWorkbook.class);
 
     /**
      * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks (the

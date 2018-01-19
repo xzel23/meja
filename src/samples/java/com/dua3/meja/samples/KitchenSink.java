@@ -7,8 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.FillPattern;
@@ -28,7 +28,7 @@ import com.dua3.utility.swing.SwingUtil;
 public class KitchenSink extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LoggerFactory.getLogger(KitchenSink.class);
+	private static final Logger logger = LogManager.getLogger(KitchenSink.class);
 
     private static void addColorSheet(Workbook wb) {
         Sheet sheet = wb.createSheet("colors");

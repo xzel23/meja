@@ -44,8 +44,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
@@ -65,7 +65,7 @@ import com.dua3.utility.swing.SwingUtil;
 public class SwingExcelViewer extends JFrame
         implements ExcelViewerModel.ExcelViewer, DropTargetListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SwingExcelViewer.class);
+    private static final Logger LOG = LogManager.getLogger(SwingExcelViewer.class);
 
     private static final int STATUS_ERROR = 1;
 

@@ -10,8 +10,8 @@ import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
@@ -37,7 +37,7 @@ import javafx.stage.Window;
  */
 public class JfxExcelViewer extends Application {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JfxExcelViewer.class);
+    private static final Logger LOGGER = LogManager.getLogger(JfxExcelViewer.class);
     
     /**
      * The application name to show in title bar.
