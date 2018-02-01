@@ -18,9 +18,6 @@ You can either clone and compile Meja yourself or use precompiled packages.
 
 - If you want to **build Meja from source**: clone the repository and run `gradlew build`.
 
-## Documentation
-More information is available on the project`s [github pages](http://xzel23.github.io/meja/) where you will also find the [API docs](http://xzel23.github.io/meja/doc/index.html).
-
 ## License
 Meja is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
@@ -30,6 +27,10 @@ Meja is released under the [Apache License 2.0](http://www.apache.org/licenses/L
 - Rendering a workbook or single sheets (Swing component, supported features: merged cells, freeze panes, fonts and colors)
 - Formula Evaluation in Excel files.
 - Basic editing support.
+
+## GUI components
+- A GUI component to display spreadsheets in Swing applications is included.
+- I removed the work-in-progress code for a JavaFX component. I plan to instead provide a way to easily set up a [ControlsFX SpreadSheetView](http://fxexperience.com/controlsfx/features/#spreadsheetview) for workbooks/spreadsheets.  
 
 ## Questions?
 *So why not just use Apache POI?* While it's a great library (and it is used for processing excel files by Meja), there is no support for other file types, and while newer versions introduced interfaces that make using the same code for old and new file types (.xls and .xlsx) much easier, this goal has not yet been fully reached.
