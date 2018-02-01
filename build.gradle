@@ -51,10 +51,6 @@ sourceSets {
 		java.srcDirs 'src/swing/java'
 	}
 	
-	javafx {
-		java.srcDirs 'src/javafx/java'
-	}
-	
 	samples {
 		java.srcDirs 'src/samples/java'
 	}
