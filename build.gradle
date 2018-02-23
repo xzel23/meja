@@ -21,19 +21,6 @@ targetCompatibility = 1.8
 
 group = 'com.dua3.meja'
 
-// make JavaFX classes accessible in eclipse
-import org.gradle.plugins.ide.eclipse.model.AccessRule
-eclipse {
-    classpath {
-        file {
-            whenMerged {
-                def jre = entries.find { it.path.contains 'org.eclipse.jdt.launching.JRE_CONTAINER' }
-                jre.accessRules.add(new AccessRule('0', 'javafx/**'))
-            }
-        }
-    }
-}
-
 repositories {
     mavenLocal()
     
@@ -63,16 +50,14 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // use local project if 'localBuild' was set
-    def utilityVersion = "0.8"
+    def utilityVersion = "f68d50ebb75dba7bef65e087714c746b5ddf5061"
     if (project.hasProperty('localBuild')) {
         compile 'com.dua3.utility:utility:+'
         swingCompile 'com.dua3.utility:utility:+'
-        javafxCompile 'com.dua3.utility:utility:+'
         samplesCompile 'com.dua3.utility:utility:+'
     } else {
         compile "com.github.xzel23:utility:${utilityVersion}"
         swingCompile "com.github.xzel23:utility:${utilityVersion}"
-        javafxCompile "com.github.xzel23:utility:${utilityVersion}"
         samplesCompile "com.github.xzel23:utility:${utilityVersion}"
     }
 	
@@ -84,8 +69,7 @@ dependencies {
     testCompile "junit:junit:4.12"
 
   	swingCompile sourceSets.main.output
-  	javafxCompile sourceSets.main.output
-  	samplesCompile sourceSets.main.output, sourceSets.swing.output, sourceSets.javafx.output
+  	samplesCompile sourceSets.main.output, sourceSets.swing.output
 }
 
 configurations.all {
@@ -127,11 +111,9 @@ task depJar(type: Jar, dependsOn: tasks['classes']) {
 task allJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.output
     from sourceSets.swing.output
-    from sourceSets.javafx.output
     
     from sourceSets.main.allJava
     from sourceSets.swing.allJava
-    from sourceSets.javafx.allJava
 
     // javadoc
     from javadoc.destinationDir
@@ -153,11 +135,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 task swingJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.output
     from sourceSets.swing.output
-}
-
-task javafxJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.output
-    from sourceSets.javafx.output
 }
 
 publishing {
@@ -209,10 +186,6 @@ publishing {
             
             artifact swingJar {
                 classifier 'swing'
-            }
-        
-            artifact javafxJar {
-                classifier 'javafx'
             }
         }
     }
