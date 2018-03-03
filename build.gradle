@@ -23,10 +23,8 @@ group = 'com.dua3.meja'
 
 repositories {
     mavenLocal()
-    
     jcenter()
-    // integration for dependencies on github
-    maven { url 'https://jitpack.io' }
+    maven { url  "https://dl.bintray.com/dua3/public" }
 }
 
 sourceSets {
@@ -50,15 +48,14 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // use local project if 'localBuild' was set
-    def utilityVersion = "f68d50ebb75dba7bef65e087714c746b5ddf5061"
     if (project.hasProperty('localBuild')) {
         compile 'com.dua3.utility:utility:+'
         swingCompile 'com.dua3.utility:utility:+'
         samplesCompile 'com.dua3.utility:utility:+'
     } else {
-        compile "com.github.xzel23:utility:${utilityVersion}"
-        swingCompile "com.github.xzel23:utility:${utilityVersion}"
-        samplesCompile "com.github.xzel23:utility:${utilityVersion}"
+        compile group: 'com.dua3', name: 'utility', version: '0.11.0'
+        swingCompile group: 'com.dua3', name: 'utility', version: '0.11.0'
+        samplesCompile group: 'com.dua3', name: 'utility', version: '0.11.0'
     }
 	
     // Log4j2
