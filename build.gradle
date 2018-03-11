@@ -53,9 +53,9 @@ dependencies {
         swingCompile 'com.dua3.utility:utility:+'
         samplesCompile 'com.dua3.utility:utility:+'
     } else {
-        compile group: 'com.dua3', name: 'utility', version: '0.11.0'
-        swingCompile group: 'com.dua3', name: 'utility', version: '0.11.0'
-        samplesCompile group: 'com.dua3', name: 'utility', version: '0.11.0'
+        compile group: 'com.dua3', name: 'utility', version: '0.11.2'
+        swingCompile group: 'com.dua3', name: 'utility', version: '0.11.2'
+        samplesCompile group: 'com.dua3', name: 'utility', version: '0.11.2'
     }
 	
     // Log4j2
