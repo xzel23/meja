@@ -14,7 +14,6 @@ apply plugin: 'maven-publish'
 apply plugin: 'java'
 apply plugin: 'com.github.spotbugs'
 apply plugin: 'jacoco'
-apply plugin: 'eclipse'
 
 sourceCompatibility = 8
 targetCompatibility = 8
