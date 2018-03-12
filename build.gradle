@@ -16,8 +16,8 @@ apply plugin: 'com.github.spotbugs'
 apply plugin: 'jacoco'
 apply plugin: 'eclipse'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 8
+targetCompatibility = 8
 
 group = 'com.dua3.meja'
 
