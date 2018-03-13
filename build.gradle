@@ -1,24 +1,35 @@
-buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
-  }
-  dependencies {
-    classpath "gradle.plugin.com.github.spotbugs:gradlePlugin:1.6.0"
-  }
+plugins {
+  id "com.github.spotbugs" version "1.6.0"
+  id "com.jfrog.bintray" version "1.8.0"
 }
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'com.github.spotbugs'
-apply plugin: 'jacoco'
 
-sourceCompatibility = 8
-targetCompatibility = 8
+/////////////////////////////////////////////////////////////////////////////
+    group              = 'com.dua3.meja'
+    version            = '1.0-SNAPSHOT'
+    
+    ext.moduleName     = project.group 
+    ext.scm            = 'https://github.com/xzel23/meja.git'
+    ext.repo           = 'public'
+    ext.description    = 'meja spreadsheet library'
+    
+    ext.developerId    = 'xzel23'
+    ext.developerName  = 'Axel Howind'
+    ext.developerEmail = 'axel@dua3.com'
 
-group = 'com.dua3.meja'
+    sourceSets {
+        main    { java.srcDirs 'src/main/java'    }
+        
+        swing   { java.srcDirs 'src/swing/java'   }
+        
+        samples { java.srcDirs 'src/samples/java' }
+    }
+    
+/////////////////////////////////////////////////////////////////////////////
 
 repositories {
     mavenLocal()
@@ -26,100 +37,174 @@ repositories {
     maven { url  "https://dl.bintray.com/dua3/public" }
 }
 
-sourceSets {
-	main {
-		java.srcDirs 'src/main/java'
-	}
-
-	swing {
-		java.srcDirs 'src/swing/java'
-	}
-	
-	samples {
-		java.srcDirs 'src/samples/java'
-	}
-}
-
 dependencies {
+    // Apache POI
     def poiVersion = "3.17"
     compile "org.apache.poi:poi:${poiVersion}"
     compile "org.apache.poi:poi-ooxml:${poiVersion}"
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
-    // use local project if 'localBuild' was set
-    if (project.hasProperty('localBuild')) {
-        compile 'com.dua3.utility:utility:+'
-        swingCompile 'com.dua3.utility:utility:+'
-        samplesCompile 'com.dua3.utility:utility:+'
-    } else {
-        compile group: 'com.dua3', name: 'utility', version: '0.11.2'
-        swingCompile group: 'com.dua3', name: 'utility', version: '0.11.2'
-        samplesCompile group: 'com.dua3', name: 'utility', version: '0.11.2'
-    }
-	
+    // dua3 utility
+    compile        group: 'com.dua3.utility', name: 'utility', version: '0.11.2'
+    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '0.11.2'
+    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '0.11.2'
+    
     // Log4j2
     compile        group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
     testRuntime    group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
     samplesRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
-	
+
+    // JUnit    
     testCompile "junit:junit:4.12"
 
-  	swingCompile sourceSets.main.output
-  	samplesCompile sourceSets.main.output, sourceSets.swing.output
+    
+    swingCompile   sourceSets.main.output
+    samplesCompile sourceSets.main.output, sourceSets.swing.output
 }
 
-/*
- * --- Jigsaw --- 
- */
- 
-def jigsaw = JavaVersion.current().isJava9Compatible()
+sourceCompatibility = 8
+targetCompatibility = 8
 
-if (jigsaw) {
-    println("Creating a module-info")
+// === BINTRAY === >
+
+bintray {
+    user = findProperty('BINTRAY_USER') ?: 'NONE'
+    key = findProperty('BINTRAY_KEY') ?: 'NONE'
+
+    configurations = ['archives']
+
+    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+    publish = false //[Default: false] Whether version should be auto published after an upload    
+    override = false //[Default: false] Whether to override version artifacts already published    
+
+    pkg {
+        repo = project.repo
+        name = project.group
+        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
+        licenses = ['Apache-2.0']
+        vcsUrl = project.scm
+
+        version {
+            name = project.version
+            desc = project.name+version
+            released  = new Date()
+            vcsTag = project.version
+        }
+    }
+}
+
+// === JIGSAW === >
+
+for (SourceSet sourceSet: sourceSets) {
+    if (!sourceSet.allJava.matching { include '**/module-info.java'}.isEmpty()) {
+        println "$sourceSet has a module-info.java"
+        
+        // check Java version
+        if (!JavaVersion.current().isJava9Compatible()) {
+            logger.warn('At least Java 9 is needed if a module-info.java file is present. Build will probably fail!')
+        }
+        
+        // if sourceCompatibility is < Java9, exclude module-info.java from the
+        // main sourceSet and compile it seperately with compatibility set to Java9
+        if (!sourceCompatibility.isJava9Compatible()) {
+            // define task names
+            def compileJavaSources = 'compileJavaSources_'+sourceSet.name
+            def compileModuleInfo = 'compileModuleInfo_'+sourceSet.name
+            
+            // define directories
+            def name = sourceSet.name
+            def sources = sourceSet.java.srcDirs
+            def classes = sourceSet.compileClasspath
+            def destination = sourceSet.output.classesDir
+            def modulepath = sourceSet.compileClasspath
+            
+            task "$compileJavaSources" (type: JavaCompile) {
+                source = sources
+                classpath = classes
+                exclude '**/module-info.java'
+                destinationDir = destination
+            }
+            
+            task "$compileModuleInfo" (type: JavaCompile) {
+                doFirst {
+                    println "Compiling module-info.java for source set '$name' in Java 9 compatibility mode."
     
-    ext.moduleName = 'com.dua3.meja' 
+                    options.compilerArgs = [
+                        '--module-path', modulepath.asPath,
+                        '--add-modules', 'ALL-SYSTEM',
+                        '-d', destination
+                    ]
+                }
+                
+                inputs.property("moduleName", project.moduleName)
     
-    sourceSets {
-        moduleInfo {
-            java {
-                srcDir 'src/module-info/java'            
+                sourceCompatibility = 9
+                targetCompatibility = 9
+    
+                source = sources
+                include '**/module-info.java'                
+                classpath = classes                 
+                destinationDir = destination
+                
+                dependsOn {
+                    "$compileJavaSources"
+                }
+            }
+            
+            sourceSet.java { 
+                exclude '**/module-info.java'
+            }
+         
+            assemble.dependsOn "$compileModuleInfo"
+        }         
+    }
+}
+
+// === MAVEN publication === >
+
+// Create the pom configuration:
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+    }
+    developers {
+        developer {
+            id    project.developerId
+            name  project.developerName
+            email project.developerEmail
+        }
+    }
+    
+    scm {
+       url project.scm
+    }
+}
+
+// Create the publication with the pom configuration:
+publishing {
+    publications {
+        UtilityPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId project.group
+            artifactId project.name
+            version version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', project.description)
+                root.appendNode('name', project.group)
+                root.appendNode('url', project.scm)
+                root.children().last() + pomConfig
             }
         }
     }
-    
-    compileModuleInfoJava {
-        sourceCompatibility = 9
-        targetCompatibility = 9
-    
-        inputs.property("moduleName", moduleName)
-    
-        doFirst {
-            classpath += sourceSets.main.compileClasspath
-            classpath += sourceSets.swing.compileClasspath
-            
-            options.compilerArgs = [
-                '--module-path', classpath.asPath,
-                '--add-modules', 'ALL-SYSTEM',
-                '-d', sourceSets.main.output.classesDirs.asPath
-            ]
-        }
-    }
-    
-    jar 
-    {
-        from sourceSets.main.output
-        from sourceSets.swing.output
-        from sourceSets.moduleInfo.output
-    }
 }
 
-spotbugs {
-    sourceSets = [sourceSets.main, sourceSets.swing, sourceSets.samples]
-}
-
-spotbugs {
-    excludeFilter = file("$rootProject.projectDir/config/spotbugs-exclude.xml")
-}
+// === SPOTBUGS === >
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
@@ -128,42 +213,11 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
     }
 }
 
-tasks.withType(JacocoReport) {
-    reports {
-        xml.enabled false
-        csv.enabled false
-        html.enabled true
-    }
-}
+// === ARTIFACTS === >
 
-// create a jar with the dependencies
-task depJar(type: Jar, dependsOn: tasks['classes']) {
-    baseName = 'meja'
-    classifier = 'dependencies'
-    
-    from rootProject.configurations.compile.collect { 
-        it.isDirectory() ? it : zipTree(it) 
-    }
-}
-
-// create a jar with classes from all subprojects
-task allJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.output
-    from sourceSets.swing.output
-    
-    from sourceSets.main.allJava
-    from sourceSets.swing.allJava
-
-    // javadoc
-    from javadoc.destinationDir
-}
-
-task coreJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.output
-}
-
-task sourceJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.allJava
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -171,63 +225,12 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-task swingJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.output
-    from sourceSets.swing.output
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
 }
 
-publishing {
+// === DEFAULT TASKS === >
 
-    publications {
-
-        mavenJava(MavenPublication) {
-
-            pom.withXml {
-                asNode().children().last() + {
-                    resolveStrategy = Closure.DELEGATE_FIRST
-                    name 'meja'
-                    description 'spreadsheet library'
-                    url 'https://github.com/xzel23/meja'
-                    scm {
-                        url 'https://github.com/xzel23/meja.git'
-                    }
-                    licenses {
-                        license {
-                            name 'The Apache Software License, Version 2.0'
-                            url 'http://www.apache.org/license/LICENSE-2.0.txt'
-                            distribution 'repo'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id 'xzel23'
-                            name 'Axel Howind'
-                            email 'axel@dua3.com'
-                        }
-                    }
-                }
-            }
-            
-            artifact allJar {
-            }
-            
-            artifact coreJar {
-                classifier "core"
-            }
-        
-            artifact sourceJar {
-                classifier "sources"
-            }
-
-            artifact javadocJar {
-                classifier "javadoc"
-            }
-            
-            artifact swingJar {
-                classifier 'swing'
-            }
-        }
-    }
-}
-
-defaultTasks 'build', 'publishToMavenLocal'
+defaultTasks 'build', 'publishToMavenLocal', 'install'
