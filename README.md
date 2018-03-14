@@ -1,4 +1,4 @@
-# Meja soreadsheet library
+# Meja spreadsheet library
 
 [ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.0-beta13) ](https://bintray.com/dua3/public/com.dua3.meja/1.0-beta13/link)
 
