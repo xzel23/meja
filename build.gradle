@@ -64,34 +64,6 @@ dependencies {
 sourceCompatibility = 8
 targetCompatibility = 8
 
-// === BINTRAY === >
-
-bintray {
-    user = findProperty('BINTRAY_USER') ?: 'NONE'
-    key = findProperty('BINTRAY_KEY') ?: 'NONE'
-
-    configurations = ['archives']
-
-    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-    publish = false //[Default: false] Whether version should be auto published after an upload    
-    override = false //[Default: false] Whether to override version artifacts already published    
-
-    pkg {
-        repo = project.repo
-        name = project.group
-        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
-        licenses = ['Apache-2.0']
-        vcsUrl = project.scm
-
-        version {
-            name = project.version
-            desc = project.name+version
-            released  = new Date()
-            vcsTag = project.version
-        }
-    }
-}
-
 // === JIGSAW === >
 
 for (SourceSet sourceSet: sourceSets) {
@@ -162,6 +134,44 @@ for (SourceSet sourceSet: sourceSets) {
     }
 }
 
+// === SPOTBUGS === >
+
+tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+}
+
+// === ARTIFACTS === >
+
+for (SourceSet sourceSet: sourceSets) {
+    def name = sourceSet.name
+    
+    def jarName = "jar_$name"
+    def sourcesJarName = "sourcesJar_$name"
+                
+    def suffix = name.equals("main") ? "" : "-$name"
+    def base= "meja$suffix" 
+        
+    task "$jarName"(type: Jar, dependsOn: classes) {
+        classifier null
+        baseName base
+        from sourceSet.output
+    }
+    
+    task "$sourcesJarName"(type: Jar, dependsOn: classes) {
+        classifier 'sources'
+        baseName base
+        from sourceSet.allSource
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier 'javadoc'
+    from javadoc.destinationDir
+}    
+
 // === MAVEN publication === >
 
 // Create the pom configuration:
@@ -223,43 +233,48 @@ publishing {
     }
 }
 
-// === SPOTBUGS === >
+// === BINTRAY === >
 
-tasks.withType(com.github.spotbugs.SpotBugsTask) {
-    reports {
-        xml.enabled false
-        html.enabled true
+bintray {
+    user = findProperty('BINTRAY_USER') ?: 'NONE'
+    key = findProperty('BINTRAY_KEY') ?: 'NONE'
+
+    configurations = ['archives']
+
+    dryRun = true //[Default: false] Whether to run this as dry-run, without deploying
+    publish = false //[Default: false] Whether version should be auto published after an upload    
+    override = false //[Default: false] Whether to override version artifacts already published    
+
+    pkg {
+        repo = project.repo
+        name = project.group
+        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
+        licenses = ['Apache-2.0']
+        vcsUrl = project.scm
+
+        version {
+            name = project.version
+            desc = project.name+version
+            released  = new Date()
+            vcsTag = project.version
+        }
     }
-}
 
-// === ARTIFACTS === >
-
-for (SourceSet sourceSet: sourceSets) {
-    def name = sourceSet.name
-    
-    def jarName = "jar_$name"
-    def sourcesJarName = "sourcesJar_$name"
-                
-    def suffix = name.equals("main") ? "" : "-$name"
-    def base= "meja$suffix" 
+    // publish everything    
+    def publicationList = []
+    for (SourceSet sourceSet: sourceSets) {
+        def name = sourceSet.name
         
-    task "$jarName"(type: Jar, dependsOn: classes) {
-        classifier null
-        baseName base
-        from sourceSet.output
-    }
+        if (name.equals("test"))
+            break
     
-    task "$sourcesJarName"(type: Jar, dependsOn: classes) {
-        classifier 'sources'
-        baseName base
-        from sourceSet.allSource
+        def suffix = name.equals("main") ? "" : "-$name"
+        def pubName= "meja$suffix"
+         
+        publicationList.add("$pubName")
     }
+    publications = publicationList
 }
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier 'javadoc'
-    from javadoc.destinationDir
-}    
 
 // === DEFAULT TASKS === >
 
