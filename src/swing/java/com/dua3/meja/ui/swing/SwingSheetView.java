@@ -60,8 +60,8 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
@@ -609,9 +609,9 @@ public class SwingSheetView extends JPanel
 
     private static final Logger LOG = LogManager.getLogger(SwingSheetView.class);
 
-    private IntFunction<String> columnNames = Sheet::getColumnName;
+    private transient IntFunction<String> columnNames = Sheet::getColumnName;
 
-    private IntFunction<String> rowNames = Sheet::getRowName;
+    private transient IntFunction<String> rowNames = Sheet::getRowName;
 
     private final transient SwingSheetPainter sheetPainter;
 
@@ -629,12 +629,12 @@ public class SwingSheetView extends JPanel
     /**
      * The sheet displayed.
      */
-    private Sheet sheet;
+    private transient Sheet sheet;
 
     /**
      * The color to use for the grid lines.
      */
-    private Color gridColor = Color.LIGHTGRAY;
+    private transient Color gridColor = Color.LIGHTGRAY;
 
     /**
      * Read-only mode.
