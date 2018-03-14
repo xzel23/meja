@@ -1,3 +1,7 @@
+# Meja soreadsheet library
+
+[ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.0-beta13) ](https://bintray.com/dua3/public/com.dua3.meja/1.0-beta13/link)
+
 Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
 ## Design goals
@@ -7,16 +11,33 @@ Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
 ## Requirements
 - JDK 8
- 
-Other required libraries (Apache POI) will be automatically downloaded by gradle.
 
 ## Installation
 
-You can either clone and compile Meja yourself or use precompiled packages.
+You can either clone and compile Meja yourself or add dependencies to your project's build file.
 
-- Read how to use prebuilt packages in your build on [Jitpack.io/#xzel23/meja](https://jitpack.io/#xzel23/meja).
+### Gradle
 
-- If you want to **build Meja from source**: clone the repository and run `gradlew build`.
+    compile 'com.dua3.meja:meja:1.0-beta13'
+    compile 'com.dua3.meja:meja-swing:1.0-beta13'
+
+### Maven
+
+    <dependency>
+        <groupId>com.dua3.meja</groupId>
+        <artifactId>meja</artifactId>
+        <version>1.0-beta13</version>
+        <type>pom</type>
+    </dependency>
+    <dependency>
+        <groupId>com.dua3.meja</groupId>
+        <artifactId>meja-swing</artifactId>
+        <version>1.0-beta13</version>
+        <type>pom</type>
+    </dependency>
+
+### Building from source
+Clone the repository and run `gradlew`. This will also install meja into your local maven repository.
 
 ## License
 Meja is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
@@ -26,17 +47,7 @@ Meja is released under the [Apache License 2.0](http://www.apache.org/licenses/L
 - Reading workbook in Excel format and writing as CSV and vice versa.
 - Rendering a workbook or single sheets (Swing component, supported features: merged cells, freeze panes, fonts and colors)
 - Formula Evaluation in Excel files.
-- Basic editing support.
 
 ## GUI components
 - A GUI component to display spreadsheets in Swing applications is included.
 - I removed the work-in-progress code for a JavaFX component. I plan to instead provide a way to easily set up a [ControlsFX SpreadSheetView](http://fxexperience.com/controlsfx/features/#spreadsheetview) for workbooks/spreadsheets.  
-
-## Questions?
-*So why not just use Apache POI?* While it's a great library (and it is used for processing excel files by Meja), there is no support for other file types, and while newer versions introduced interfaces that make using the same code for old and new file types (.xls and .xlsx) much easier, this goal has not yet been fully reached.
-
-*Why a custom Swing component instead of a just a table model to be used together with JTable?* Because of JTable limitations. In fact, I started with JTable and abandoned that path when I tried to render merged cells correctly.
-
-*But my table still doesn't look the same as in Excel!* Just grab the code, I am looking forward to your contribution.
-
-*And what about the name?* This library is about tables, and it's about working with tables in Java. So I called it after the javanese word for the furniture.
