@@ -14,14 +14,28 @@ Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
 ## Installation
 
-You can either clone and compile Meja yourself or add dependencies to your project's build file.
+You can either clone and compile Meja yourself or add dependencies to your project's build file. The Maven repository is loacated at [https://dl.bintray.com/dua3/public](https://dl.bintray.com/dua3/public).
 
 ### Gradle
 
-    compile 'com.dua3.meja:meja:1.0-beta13'
-    compile 'com.dua3.meja:meja-swing:1.0-beta13'
+Add the repostiory:
+
+    repositories {
+        ...
+        maven { url  "https://dl.bintray.com/dua3/public" }
+    }
+
+Add dependencies:
+
+    dependencies {
+        ...
+        compile 'com.dua3.meja:meja:1.0-beta13'
+        compile 'com.dua3.meja:meja-swing:1.0-beta13'
+    }
 
 ### Maven
+
+Add the repository [https://dl.bintray.com/dua3/public](https://dl.bintray.com/dua3/public), then add the dependencies:
 
     <dependency>
         <groupId>com.dua3.meja</groupId>
