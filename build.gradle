@@ -57,7 +57,6 @@ dependencies {
     // JUnit    
     testCompile "junit:junit:4.12"
 
-    
     swingCompile   sourceSets.main.output
     samplesCompile sourceSets.main.output, sourceSets.swing.output
 }
@@ -97,7 +96,7 @@ bintray {
 
 for (SourceSet sourceSet: sourceSets) {
     if (!sourceSet.allJava.matching { include '**/module-info.java'}.isEmpty()) {
-        println "$sourceSet has a module-info.java"
+        logger.info "{} has a module-info.java", sourceSet
         
         // check Java version
         if (!JavaVersion.current().isJava9Compatible()) {
@@ -114,10 +113,10 @@ for (SourceSet sourceSet: sourceSets) {
             // define directories
             def name = sourceSet.name
             def sources = sourceSet.java.srcDirs
-            def classes = sourceSet.compileClasspath
-            def destination = sourceSet.output.classesDir
-            def modulepath = sourceSet.compileClasspath
-            
+            def destination = sourceSet.output.classesDirs.singleFile
+            def classes = sourceSet.compileClasspath + sourceSet.output
+            def modulepath = classes.asPath+";"+destination
+
             task "$compileJavaSources" (type: JavaCompile) {
                 source = sources
                 classpath = classes
@@ -127,10 +126,13 @@ for (SourceSet sourceSet: sourceSets) {
             
             task "$compileModuleInfo" (type: JavaCompile) {
                 doFirst {
-                    println "Compiling module-info.java for source set '$name' in Java 9 compatibility mode."
+                    logger.info "Compiling module-info.java for source set '{}' in Java 9 compatibility mode.", name
+                    
+                    logger.debug("module-path:\n{}", modulepath.replaceAll(";", "\n"))
+                    logger.debug("class-path:\n{}", classpath.asPath.replaceAll(";", "\n"))
     
                     options.compilerArgs = [
-                        '--module-path', modulepath.asPath,
+                        '--module-path', modulepath,
                         '--add-modules', 'ALL-SYSTEM',
                         '-d', destination
                     ]
@@ -186,19 +188,35 @@ def pomConfig = {
 // Create the publication with the pom configuration:
 publishing {
     publications {
-        UtilityPublication(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            groupId project.group
-            artifactId project.name
-            version version
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', project.description)
-                root.appendNode('name', project.group)
-                root.appendNode('url', project.scm)
-                root.children().last() + pomConfig
+        for (SourceSet sourceSet: sourceSets) {
+            def name = sourceSet.name
+            
+            if (name.equals("test"))
+                break
+        
+            def pubName = "Publication_$sourceSet.name"
+            
+            "$pubName"(MavenPublication) {
+                def jarName = "jar_$name"
+                def sourcesJarName = "sourcesJar_$name"
+                def javadocJarName = "javadocJar_$name"
+                                                    
+                artifact tasks."$jarName"      
+                artifact tasks."$sourcesJarName"
+                
+                if (name.equals("main"))  
+                    artifact javadocJar       
+
+                groupId project.group
+                artifactId project.name+name
+                version version
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', project.description)
+                    root.appendNode('name', project.group)
+                    root.appendNode('url', project.scm)
+                    root.children().last() + pomConfig
+                }
             }
         }
     }
@@ -215,21 +233,32 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
 
 // === ARTIFACTS === >
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
+for (SourceSet sourceSet: sourceSets) {
+    def name = sourceSet.name
+    
+    def jarName = "jar_$name"
+    def sourcesJarName = "sourcesJar_$name"
+                
+    def suffix = name.equals("main") ? "" : "-$name"
+    def base= "meja$suffix" 
+        
+    task "$jarName"(type: Jar, dependsOn: classes) {
+        classifier null
+        baseName base
+        from sourceSet.output
+    }
+    
+    task "$sourcesJarName"(type: Jar, dependsOn: classes) {
+        classifier 'sources'
+        baseName base
+        from sourceSet.allSource
+    }
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    classifier 'javadoc'
     from javadoc.destinationDir
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-}
+}    
 
 // === DEFAULT TASKS === >
 
