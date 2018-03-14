@@ -10,7 +10,7 @@ apply plugin: 'com.github.spotbugs'
 
 /////////////////////////////////////////////////////////////////////////////
     group              = 'com.dua3.meja'
-    version            = '1.0-SNAPSHOT'
+    version            = '1.0-beta13'
     
     ext.moduleName     = project.group 
     ext.scm            = 'https://github.com/xzel23/meja.git'
@@ -194,8 +194,9 @@ publishing {
             if (name.equals("test"))
                 break
         
-            def pubName = "Publication_$sourceSet.name"
-            
+            def suffix = name.equals("main") ? "" : "-$name"
+            def pubName= "meja$suffix"
+             
             "$pubName"(MavenPublication) {
                 def jarName = "jar_$name"
                 def sourcesJarName = "sourcesJar_$name"
@@ -208,7 +209,7 @@ publishing {
                     artifact javadocJar       
 
                 groupId project.group
-                artifactId project.name+name
+                artifactId pubName
                 version version
                 pom.withXml {
                     def root = asNode()
