@@ -224,7 +224,7 @@ publishing {
                 pom.withXml {
                     def root = asNode()
                     root.appendNode('description', project.description)
-                    root.appendNode('name', project.group)
+                    root.appendNode('name', pubName)
                     root.appendNode('url', project.scm)
                     root.children().last() + pomConfig
                 }
@@ -241,7 +241,7 @@ bintray {
 
     configurations = ['archives']
 
-    dryRun = true //[Default: false] Whether to run this as dry-run, without deploying
+    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
     publish = false //[Default: false] Whether version should be auto published after an upload    
     override = false //[Default: false] Whether to override version artifacts already published    
 
