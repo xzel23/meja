@@ -1,10 +1,9 @@
 buildscript {
   repositories {
-    mavenLocal()
-//    maven { url  "https://dl.bintray.com/dua3/public" }
+    maven { url  "https://dl.bintray.com/dua3/public" }
   }  
   dependencies {
-    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.1.2'
+    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.2.1'
   }
 }
 
@@ -21,7 +20,7 @@ apply plugin: 'com.dua3.gradle.jpms'
 
 /////////////////////////////////////////////////////////////////////////////
     group              = 'com.dua3.meja'
-    version            = '1.0-beta13-jpms'
+    version            = '1.0-beta14'
     
     ext.moduleName     = project.group 
     ext.scm            = 'https://github.com/xzel23/meja.git'
@@ -43,8 +42,8 @@ apply plugin: 'com.dua3.gradle.jpms'
 /////////////////////////////////////////////////////////////////////////////
 
 repositories {
-    mavenLocal()
     jcenter()
+    mavenLocal()
     maven { url  "https://dl.bintray.com/dua3/public" }
 }
 
@@ -56,14 +55,14 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    compile        group: 'com.dua3.utility', name: 'utility', version: '0.11.2-jpms'
-    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '0.11.2-jpms'
-    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '0.11.2-jpms'
+    compile        group: 'com.dua3.utility', name: 'utility', version: '0.11.3'
+    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '0.11.3'
+    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '0.11.3'
     
     // Log4j2
-    compile        group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
-    testRuntime    group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
-    samplesRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
+    compile        group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'
+    testRuntime    group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
+    samplesRuntime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
 
     // JUnit    
     testCompile "junit:junit:4.12"
