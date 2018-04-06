@@ -43,7 +43,6 @@ apply plugin: 'com.dua3.gradle.jpms'
 
 repositories {
     jcenter()
-    mavenLocal()
     maven { url  "https://dl.bintray.com/dua3/public" }
 }
 
