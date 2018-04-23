@@ -20,7 +20,7 @@ apply plugin: 'com.dua3.gradle.jpms'
 
 /////////////////////////////////////////////////////////////////////////////
     group              = 'com.dua3.meja'
-    version            = '1.0-beta14'
+    version            = '1.0-SNAPSHOT'
     
     ext.moduleName     = project.group 
     ext.scm            = 'https://github.com/xzel23/meja.git'
