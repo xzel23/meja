@@ -1,21 +1,14 @@
-/meja-samples/nbproject/private/
-/meja/nbproject/private/
-/meja/build/
-/meja/dist/
-/meja/lib/*.jar
-/meja-samples/build/
-/meja-samples/dist/
-/meja-ui-swing/nbproject/private/
-/meja-ui-swing/build/
-/meja-ui-swing/dist/
-/meja-ui-jfx/nbproject/private/
-/meja-ui-jfx/dist/
-/meja-ui-jfx/build/
-.gradle/
-build
-*.jar
-bin
-doc
+/.gradle/
 /dist/
-.DS_Store
 /gradle.properties
+
+# Netbeans files
+**/nbproject
+
+# eclipse files
+**/.classpath
+**/.settings/
+**/.project
+
+# Mac OS files
+**/.DS_Store
