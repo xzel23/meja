@@ -33,6 +33,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -43,9 +45,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
@@ -65,7 +64,7 @@ import com.dua3.utility.swing.SwingUtil;
 public class SwingExcelViewer extends JFrame
         implements ExcelViewerModel.ExcelViewer, DropTargetListener {
 
-    private static final Logger LOG = LogManager.getLogger(SwingExcelViewer.class);
+    private static final Logger LOG = Logger.getLogger(SwingExcelViewer.class.getName());
 
     private static final int STATUS_ERROR = 1;
 
@@ -109,7 +108,7 @@ public class SwingExcelViewer extends JFrame
                     Path path = file.toPath();
                     viewer.setWorkbook(Optional.of(MejaHelper.openWorkbook(path)));
                 } catch (IOException ex) {
-                    LOG.error("Could not load workbook from " + file.getAbsolutePath(), ex);
+                    LOG.log(Level.SEVERE, "Could not load workbook from " + file.getAbsolutePath(), ex);
                 }
             }
         });
@@ -257,7 +256,7 @@ public class SwingExcelViewer extends JFrame
                 model.saveWorkbook(path.get());
             }
         } catch (IOException ex) {
-            LOG.error("IO-Error saving workbook.", ex);
+            LOG.log(Level.SEVERE, "IO-Error saving workbook.", ex);
             JOptionPane.showMessageDialog(
                     this,
                     "IO-Error saving workbook.",
@@ -276,7 +275,7 @@ public class SwingExcelViewer extends JFrame
             UIManager.setLookAndFeel(lookAndFeelClassName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
-            LOG.error("Could not set Look&Feel.", ex);
+            LOG.log(Level.SEVERE, "Could not set Look&Feel.", ex);
         }
         SwingUtilities.updateComponentTreeUI(this);
     }
@@ -296,11 +295,12 @@ public class SwingExcelViewer extends JFrame
                 setWorkbook(newWorkbook);
             }
         } catch (IOException ex) {
-            LOG.error("Exception loading workbook.", ex);
+            LOG.log(Level.SEVERE, "Exception loading workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            LOG.error("Unknown Exception caught, will be rethrown after message dialog: {}", ex.getMessage());
+            LOG.log(Level.SEVERE, 
+            "Unknown Exception caught, will be rethrown after message dialog: {}", ex.getMessage());
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
             throw ex; //rethrow
@@ -324,14 +324,14 @@ public class SwingExcelViewer extends JFrame
             if (path.isPresent()) {
                 workbook.setPath(path.get());
                 updatePath(path.get());
-                LOG.info("Saved workbook to '{}'.", path.get());
+                LOG.info("Saved workbook to '"+ path.get()+"'.'");
             }
         } catch (IOException ex) {
-            LOG.error("Exception saving workbook.", ex);
+            LOG.log(Level.SEVERE, "Exception saving workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            LOG.error("Unknown Exception caught, will be rethrown after message dialog: "+ ex.getMessage());
+            LOG.log(Level.SEVERE, "Unknown Exception caught, will be rethrown after message dialog: "+ ex.getMessage());
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
             throw ex; //rethrow
@@ -389,16 +389,16 @@ public class SwingExcelViewer extends JFrame
                     setWorkbook(workbook);
                     dtde.getDropTargetContext().dropComplete(true);
                 } else {
-                    LOG.warn("Could not process dropped item '{}'.", path);
+                    LOG.log(Level.WARNING, "Could not process dropped item '"+path+"'.");
                     dtde.getDropTargetContext().dropComplete(false);
                 }
               }
             } else {
-              LOG.warn("DataFlavor.javaFileListFlavor is not supported, drop rejected.");
+              LOG.warning("DataFlavor.javaFileListFlavor is not supported, drop rejected.");
               dtde.rejectDrop();
             }
           } catch (Exception ex) {
-              LOG.error("Exception when processing dropped item, rejecting drop.", ex);
+              LOG.log(Level.WARNING, "Exception when processing dropped item, rejecting drop.", ex);
             dtde.rejectDrop();
           }
     }

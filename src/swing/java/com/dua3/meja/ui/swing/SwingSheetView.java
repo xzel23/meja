@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -59,9 +60,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
@@ -607,7 +605,7 @@ public class SwingSheetView extends JPanel
         }
     }
 
-    private static final Logger LOG = LogManager.getLogger(SwingSheetView.class);
+    private static final Logger LOG = Logger.getLogger(SwingSheetView.class.getName());
 
     private transient IntFunction<String> columnNames = Sheet::getColumnName;
 
@@ -872,7 +870,7 @@ public class SwingSheetView extends JPanel
             Sheet oldSheet = this.sheet;
             this.sheet = sheet;
 
-            LOG.debug("sheet changed.");
+            LOG.fine("sheet changed.");
 
             if (this.sheet != null) {
                 sheet.addPropertyChangeListener(this);
@@ -1090,7 +1088,7 @@ public class SwingSheetView extends JPanel
     }
 
     private void updateContent() {
-        LOG.debug("updating content");
+        LOG.fine("updating content");
 
         if (sheet == null) {
             return;

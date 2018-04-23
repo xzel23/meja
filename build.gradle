@@ -3,7 +3,7 @@ buildscript {
     maven { url  "https://dl.bintray.com/dua3/public" }
   }  
   dependencies {
-    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.2.3'
+    classpath group: 'com.dua3.gradle.jpms', name: 'JpmsGradlePlugin', version: '0.2.4'
   }
 }
 
@@ -42,6 +42,7 @@ apply plugin: 'com.dua3.gradle.jpms'
 /////////////////////////////////////////////////////////////////////////////
 
 repositories {
+    mavenLocal()
     jcenter()
     maven { url  "https://dl.bintray.com/dua3/public" }
 }
@@ -54,9 +55,9 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    compile        group: 'com.dua3.utility', name: 'utility', version: '0.12'
-    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '0.12'
-    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '0.12'
+    compile        group: 'com.dua3.utility', name: 'utility', version: '0.15.0'
+    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '0.15.0'
+    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '0.15.0'
     
     // Log4j2
     compile        group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.0'

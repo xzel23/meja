@@ -25,6 +25,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -33,9 +35,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -48,6 +47,7 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.Option;
 import com.dua3.meja.util.Options;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  * Helper class.
@@ -57,7 +57,7 @@ import com.dua3.meja.util.Options;
 public class MejaSwingHelper {
 
 	private static final class SheetTableModel extends AbstractTableModel {
-        private static final Logger LOG = LogManager.getLogger(SheetTableModel.class);
+        private static final Logger LOG = Logger.getLogger(SheetTableModel.class.getName());
 
         private final Sheet sheet;
         private final boolean firstRowIsHeader;
@@ -100,13 +100,13 @@ public class MejaSwingHelper {
                     dispatcher = SheetTableModel.this::fireTableStructureChanged;
                     break;
                 default:
-                    dispatcher = () -> LOG.debug("ignored event {}", evt);
+                    dispatcher = () -> LOG.fine(LangUtil.msgs("ignored event: %s", evt));
                     break;
                 }
                 try {
                     SwingUtilities.invokeAndWait(dispatcher);
                 } catch (InvocationTargetException | InterruptedException e) {
-                    LOG.warn("interrupted", e);
+                    LOG.log(Level.WARNING, "interrupted", e);
                 }
             }
 
@@ -170,7 +170,7 @@ public class MejaSwingHelper {
 
             if (listenerList.getListenerCount()==0) {
                 sl.detach();
-                LOG.debug("last TableModelListener was removed, detaching sheet listener from sheet");
+                LOG.fine("last TableModelListener was removed, detaching sheet listener from sheet");
             }
         }
 
@@ -180,12 +180,12 @@ public class MejaSwingHelper {
 
             if (listenerList.getListenerCount()==1) {
                 sl.attach();
-                LOG.debug("first TableModelListener was added, attaching sheet listener to sheet");
+                LOG.fine("first TableModelListener was added, attaching sheet listener to sheet");
             }
         }
     }
 
-    private static final Logger LOG = LogManager.getLogger(MejaSwingHelper.class);
+    private static final Logger LOG = Logger.getLogger(MejaSwingHelper.class.getName());
 
     /**
      * Create a TableModel to be used with JTable.

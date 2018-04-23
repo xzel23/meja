@@ -19,6 +19,8 @@ import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -30,9 +32,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.CellValueHelper;
 import com.dua3.utility.swing.SwingUtil;
@@ -43,7 +42,7 @@ import com.dua3.utility.swing.SwingUtil;
 public class DefaultCellEditor
         implements CellEditor {
 
-    private static final Logger LOGGER = LogManager.getLogger(DefaultCellEditor.class);
+    private static final Logger LOGGER = Logger.getLogger(DefaultCellEditor.class.getName());
 
     /**
      * Actions for key bindings.
@@ -142,7 +141,7 @@ public class DefaultCellEditor
             text = doc.getText(0, doc.getLength());
         } catch (BadLocationException ex) {
             text = "#ERROR";
-            LOGGER.error("Could not get text from document.", ex);
+            LOGGER.log(Level.WARNING, "Could not get text from document.", ex);
         }
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
         NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
