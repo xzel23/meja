@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -43,8 +45,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.WorkbookWriter;
@@ -64,7 +64,7 @@ import com.dua3.utility.text.TextUtil;
  */
 public abstract class PoiWorkbook extends AbstractWorkbook {
 
-    private static final Logger LOGGER = LogManager.getLogger(PoiWorkbook.class);
+    private static final Logger LOGGER = Logger.getLogger(PoiWorkbook.class.getName());
 
     /**
      * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks (the
@@ -567,7 +567,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             try {
                 evaluator.evaluateAll();
             } catch (NotImplementedException e) {
-                LOGGER.warn("unsupported function in formula. Flagging workbook as needing recalculation.", e);
+                LOGGER.log(Level.WARNING, "unsupported function in formula. Flagging workbook as needing recalculation.", e);
                 setForceFormulaRecalculation(true);
             }
         }
@@ -579,7 +579,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     public void setForceFormulaRecalculation(boolean flag) {
         poiWorkbook.setForceFormulaRecalculation(flag);
-        LOGGER.info("setForceFormulaRecalculation({})", flag);
+        LOGGER.log(Level.INFO, "setForceFormulaRecalculation({})", flag);
     }
 
     @Override

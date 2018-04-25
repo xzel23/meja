@@ -23,9 +23,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -44,7 +43,7 @@ import com.dua3.utility.lang.LangUtil;
  */
 public class MejaHelper {
 
-    private static final Logger LOGGER = LogManager.getLogger(MejaHelper.class);
+    private static final Logger LOGGER = Logger.getLogger(MejaHelper.class.getName());
 
     /**
      * Find cell containing text in row.
@@ -275,7 +274,7 @@ public class MejaHelper {
             return fileType.getFactory().open(path);
         } catch (IOException ex) {
             String msg = "Could not load workbook '"+path+"'.";
-			LOGGER.error(msg, ex);
+			LOGGER.log(Level.SEVERE, msg, ex);
             throw new IOException(msg, ex);
         }
     }

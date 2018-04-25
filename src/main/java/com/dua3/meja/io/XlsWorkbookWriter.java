@@ -17,9 +17,8 @@ package com.dua3.meja.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook;
@@ -31,7 +30,7 @@ import com.dua3.meja.model.poi.PoiWorkbookFactory;
  */
 public class XlsWorkbookWriter extends WorkbookWriter {
 
-    private static final Logger LOGGER = LogManager.getLogger(XlsWorkbookWriter.class);
+    private static final Logger LOGGER = Logger.getLogger(XlsWorkbookWriter.class.getName());
 
     private static final XlsWorkbookWriter INSTANCE = new XlsWorkbookWriter();
 
@@ -50,17 +49,17 @@ public class XlsWorkbookWriter extends WorkbookWriter {
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
         if (workbook instanceof PoiWorkbook.PoiHssfWorkbook) {
-            LOGGER.debug("writing XLS workbook using POI.");
+            LOGGER.log(Level.FINE, "writing XLS workbook using POI.");
             workbook.write(FileType.XLS, out);
         } else {
             try (Workbook xlsWorkbook = PoiWorkbookFactory.instance().createXls()) {
-                LOGGER.debug("copying workbook data ...");
+                LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsWorkbook.copy(workbook);
-                LOGGER.debug("writing workbook ...");
+                LOGGER.log(Level.FINE, "writing workbook ...");
                 xlsWorkbook.write(FileType.XLS, out);
-                LOGGER.debug("flushing buffers ...");
+                LOGGER.log(Level.FINE, "flushing buffers ...");
                 out.flush();
-                LOGGER.debug("done.");
+                LOGGER.log(Level.FINE, "done.");
             }
         }
     }

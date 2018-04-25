@@ -17,9 +17,8 @@ package com.dua3.meja.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook;
@@ -31,7 +30,7 @@ import com.dua3.meja.model.poi.PoiWorkbookFactory;
  */
 public class XlsxWorkbookWriter extends WorkbookWriter {
 
-    private static final Logger LOGGER = LogManager.getLogger(XlsxWorkbookWriter.class);
+    private static final Logger LOGGER = Logger.getLogger(XlsxWorkbookWriter.class.getName());
 
     private static final XlsxWorkbookWriter INSTANCE = new XlsxWorkbookWriter();
 
@@ -50,18 +49,18 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
     @Override
     public void write(Workbook workbook, OutputStream out) throws IOException {
         if (workbook instanceof PoiWorkbook.PoiXssfWorkbook) {
-            LOGGER.debug("writing XLSX workbook using POI.");
+            LOGGER.log(Level.FINE, "writing XLSX workbook using POI.");
             workbook.write(FileType.XLSX, out);
         } else {
-            LOGGER.debug("writing {} using streaming API in XLSX format.", workbook.getClass().getSimpleName());
+            LOGGER.log(Level.FINE, "writing {} using streaming API in XLSX format.", workbook.getClass().getSimpleName());
             try (Workbook xlsxWorkbook = PoiWorkbookFactory.instance().createXlsxStreaming()) {
-                LOGGER.debug("copying workbook data ...");
+                LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsxWorkbook.copy(workbook);
-                LOGGER.debug("writing workbook ...");
+                LOGGER.log(Level.FINE, "writing workbook ...");
                 xlsxWorkbook.write(FileType.XLSX, out);
-                LOGGER.debug("flushing buffers ...");
+                LOGGER.log(Level.FINE, "flushing buffers ...");
                 out.flush();
-                LOGGER.debug("done.");
+                LOGGER.log(Level.FINE, "done.");
             }
         }
     }

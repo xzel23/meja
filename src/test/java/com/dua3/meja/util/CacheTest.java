@@ -3,14 +3,15 @@ package com.dua3.meja.util;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.dua3.meja.util.Cache.Type;
 
 public class CacheTest {
 
-    private static final Logger LOGGER = LogManager.getLogger(CacheTest.class);
+    private static final Logger LOGGER = Logger.getLogger(CacheTest.class.getName());
 
     @Test @Ignore // test is too time consuming
     public void testCacheWithWeakKeys() {
@@ -28,19 +29,19 @@ public class CacheTest {
         int chunkSize = 10_000_000; // 10 MB
         int n = 1000; // try to allocate 1000 chunks, totalling 10 GB
 
-        LOGGER.debug("chunk size:  {}", chunkSize);
-        LOGGER.debug("number of chunks: {}", n);
+        LOGGER.log(Level.FINE, "chunk size:  {}", chunkSize);
+        LOGGER.log(Level.FINE, "number of chunks: {}", n);
 
         try {
             Cache<Object,byte[]> cache = new Cache<>(type, o -> allocate(chunkSize));
             for (int i=1;i<=n; i++) {
-                LOGGER.debug("allocating chunk #{}", i);
+                LOGGER.log(Level.FINE, "allocating chunk #{}", i);
                 cache.get(i);
-                LOGGER.debug("total memory: {}", Runtime.getRuntime().totalMemory());
+                LOGGER.log(Level.FINE, "total memory: {}", Runtime.getRuntime().totalMemory());
             }
-            LOGGER.debug("Test completed without OOM, cache: {}", cache);
+            LOGGER.log(Level.FINE, "Test completed without OOM, cache: {}", cache);
         } catch(OutOfMemoryError e) {
-            LOGGER.error("Test failed with OOM.");
+            LOGGER.severe("Test failed with OOM.");
             Assert.fail("Test failed with OOM.");
         }
     }

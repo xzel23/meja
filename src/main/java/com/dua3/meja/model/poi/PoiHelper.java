@@ -17,8 +17,9 @@ package com.dua3.meja.model.poi;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
@@ -29,7 +30,7 @@ import com.dua3.meja.model.VAlign;
  */
 public class PoiHelper {
 
-    private static final Logger LOGGER = LogManager.getLogger(PoiHelper.class);
+    private static final Logger LOGGER = Logger.getLogger(PoiHelper.class.getName());
 
     public static HorizontalAlignment hAlignToPoi(HAlign hAlign) {
         switch (hAlign) {
@@ -78,7 +79,7 @@ public class PoiHelper {
         case DISTRIBUTED:
             return VAlign.ALIGN_MIDDLE;
         default:
-            LOGGER.warn("Unknown value for vertical algnment: {}", alignment);
+            LOGGER.log(Level.WARNING, "Unknown value for vertical algnment: {}", alignment);
             return VAlign.ALIGN_MIDDLE;
         }
     }

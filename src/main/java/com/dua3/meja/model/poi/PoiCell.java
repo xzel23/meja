@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -36,8 +38,6 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import com.dua3.meja.model.AbstractCell;
 import com.dua3.meja.model.Cell;
@@ -59,7 +59,7 @@ import com.dua3.utility.text.TextAttributes;
 public final class PoiCell
         extends AbstractCell {
 
-    private static final Logger LOGGER = LogManager.getLogger(PoiCell.class);
+    private static final Logger LOGGER = Logger.getLogger(PoiCell.class.getName());
 
     private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
         switch (poiType) {
@@ -384,7 +384,7 @@ public final class PoiCell
             if (!isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is not date formatted
-                LOGGER.warn("Cell is not date formatted!");
+                LOGGER.log(Level.WARNING, "Cell is not date formatted!");
             }
         }
         updateRow();
@@ -404,7 +404,7 @@ public final class PoiCell
             if (!isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is not date formatted
-                LOGGER.warn("Cell is not date formatted!");
+                LOGGER.log(Level.WARNING, "Cell is not date formatted!");
             }
         }
         updateRow();
@@ -423,7 +423,7 @@ public final class PoiCell
             if (isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is date formatted, but a plain number is stored
-                LOGGER.warn("Cell is date formatted, but plain number written!");
+                LOGGER.log(Level.WARNING, "Cell is date formatted, but plain number written!");
             }
         }
         updateRow();
@@ -503,9 +503,9 @@ public final class PoiCell
                     wb.evaluator.evaluateFormulaCell(poiCell);
                 } catch (NotImplementedException e) {
                     if (wb.getForceFormulaRecalculation()) {
-                        LOGGER.info("An unsupported Excel function was used (workbook already flagged as needing recalculation).", e);
+                        LOGGER.log(Level.INFO, "An unsupported Excel function was used (workbook already flagged as needing recalculation).", e);
                     } else {
-                        LOGGER.warn("An unsupported Excel function was used. Flagged workbook as needing recalculation.");
+                        LOGGER.log(Level.WARNING, "An unsupported Excel function was used. Flagged workbook as needing recalculation.");
                         wb.setForceFormulaRecalculation(true);
                     }
                 }
