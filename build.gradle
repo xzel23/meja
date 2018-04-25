@@ -9,6 +9,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'java-library'
 apply plugin: 'com.github.spotbugs'
 apply plugin: 'com.dua3.gradle.jpms'
+apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
     group              = 'com.dua3.meja'
@@ -32,6 +33,11 @@ apply plugin: 'com.dua3.gradle.jpms'
     }
     
 /////////////////////////////////////////////////////////////////////////////
+
+// remove module-info.java from eclipse source folder
+eclipse.classpath.file.whenMerged {
+    entries.find { it.path.matches('src/[^/]+/java') }.excludes += 'module-info.java'
+}
 
 repositories {
     mavenLocal()
