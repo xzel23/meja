@@ -214,6 +214,24 @@ bintray {
     publications = publicationList
 }
 
+// === collect all dependencies in one place, in case anyone needs it ===
+
+task collectDependencies(dependsOn: assemble) {
+    // project files
+    copy {
+        from configurations.runtime
+        into rootProject.libsDir
+    }
+    
+    // subproject files
+    subprojects { p ->
+        copy {
+            from p.configurations.runtime
+            into rootProject.libsDir
+        }
+    }
+}
+  
 // === DEFAULT TASKS === >
 
 defaultTasks 'build', 'publishToMavenLocal', 'install'
