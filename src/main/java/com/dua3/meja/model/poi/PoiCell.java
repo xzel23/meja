@@ -217,7 +217,7 @@ public final class PoiCell
 
     @Override
     public CellType getCellType() {
-        CellType type = translateCellType(poiCell.getCellTypeEnum());
+        CellType type = translateCellType(poiCell.getCellType());
         // since formulas returning dates should return CellType.FORMULA
         // rather than CellType.DATE, only test for dates if cell is numeric.
         if (type == CellType.NUMERIC && isCellDateFormatted()) {
@@ -278,9 +278,9 @@ public final class PoiCell
 
     @Override
     public CellType getResultType() {
-        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
+        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellType();
         if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
-            poiType = poiCell.getCachedFormulaResultTypeEnum();
+            poiType = poiCell.getCachedFormulaResultType();
         }
         CellType type = translateCellType(poiType);
         if (type == CellType.NUMERIC && isCellDateFormatted()) {
@@ -331,9 +331,9 @@ public final class PoiCell
          * is not numeric, so we have to work around this. TODO create SCCSE and
          * report bug against POI
          */
-        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellTypeEnum();
+        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellType();
         if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
-            poiType = poiCell.getCachedFormulaResultTypeEnum();
+            poiType = poiCell.getCachedFormulaResultType();
         }
         return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC
                 && DateUtil.isCellDateFormatted(poiCell);
@@ -348,7 +348,7 @@ public final class PoiCell
 
     @Override
     public boolean isEmpty() {
-        switch (poiCell.getCellTypeEnum()) {
+        switch (poiCell.getCellType()) {
         case BLANK:
             return true;
         case STRING:

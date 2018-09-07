@@ -57,19 +57,19 @@ public abstract class PoiCellStyle
             switch (d) {
             case NORTH:
                 color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getTopBorderColor());
-                width = getBorderWidth(poiCellStyle.getBorderTopEnum());
+                width = getBorderWidth(poiCellStyle.getBorderTop());
                 break;
             case EAST:
                 color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getRightBorderColor());
-                width = getBorderWidth(poiCellStyle.getBorderRightEnum());
+                width = getBorderWidth(poiCellStyle.getBorderRight());
                 break;
             case SOUTH:
                 color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getBottomBorderColor());
-                width = getBorderWidth(poiCellStyle.getBorderBottomEnum());
+                width = getBorderWidth(poiCellStyle.getBorderBottom());
                 break;
             case WEST:
                 color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getLeftBorderColor());
-                width = getBorderWidth(poiCellStyle.getBorderLeftEnum());
+                width = getBorderWidth(poiCellStyle.getBorderLeft());
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -143,22 +143,22 @@ public abstract class PoiCellStyle
             final float width;
             switch (d) {
             case NORTH:
-                width = getBorderWidth(poiCellStyle.getBorderTopEnum());
+                width = getBorderWidth(poiCellStyle.getBorderTop());
                 color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getTopBorderXSSFColor(),
                         Color.BLACK);
                 break;
             case EAST:
-                width = getBorderWidth(poiCellStyle.getBorderRightEnum());
+                width = getBorderWidth(poiCellStyle.getBorderRight());
                 color = workbook.getColor(
                         ((XSSFCellStyle) poiCellStyle).getRightBorderXSSFColor(), Color.BLACK);
                 break;
             case SOUTH:
-                width = getBorderWidth(poiCellStyle.getBorderBottomEnum());
+                width = getBorderWidth(poiCellStyle.getBorderBottom());
                 color = workbook.getColor(
                         ((XSSFCellStyle) poiCellStyle).getBottomBorderXSSFColor(), Color.BLACK);
                 break;
             case WEST:
-                width = getBorderWidth(poiCellStyle.getBorderLeftEnum());
+                width = getBorderWidth(poiCellStyle.getBorderLeft());
                 color = workbook.getColor(
                         ((XSSFCellStyle) poiCellStyle).getLeftBorderXSSFColor(), Color.BLACK);
                 break;
@@ -309,7 +309,7 @@ public abstract class PoiCellStyle
 
     @Override
     public FillPattern getFillPattern() {
-        switch (poiCellStyle.getFillPatternEnum()) {
+        switch (poiCellStyle.getFillPattern()) {
         case SOLID_FOREGROUND:
             return FillPattern.SOLID;
         default:
@@ -328,7 +328,7 @@ public abstract class PoiCellStyle
 
     @Override
     public HAlign getHAlign() {
-        return PoiHelper.poiToHAlign(poiCellStyle.getAlignmentEnum());
+        return PoiHelper.poiToHAlign(poiCellStyle.getAlignment());
     }
 
     @Override
@@ -362,7 +362,7 @@ public abstract class PoiCellStyle
 
     @Override
     public VAlign getVAlign() {
-        return PoiHelper.poiToVAlign(poiCellStyle.getVerticalAlignmentEnum());
+        return PoiHelper.poiToVAlign(poiCellStyle.getVerticalAlignment());
     }
 
     @Override

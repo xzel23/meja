@@ -84,8 +84,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
                     .create(in);
             return createWorkbook(poiWorkbook, path);
-        } catch (org.apache.poi.openxml4j.exceptions.InvalidFormatException
-                | org.apache.poi.util.RecordFormatException ex) {
+        } catch (org.apache.poi.util.RecordFormatException ex) {
             throw new FileFormatException("Invalid file format or corrupted data", ex);
         }
     }

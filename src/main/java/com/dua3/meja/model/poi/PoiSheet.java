@@ -375,7 +375,7 @@ public class PoiSheet extends AbstractSheet {
         }
 
         // determine default font size
-        short fontSize = getWorkbook().poiWorkbook.getFontAt((short) 0).getFontHeightInPoints();
+        short fontSize = getWorkbook().poiWorkbook.getFontAt(0).getFontHeightInPoints();
         factorWidth = fontSize * 0.525f / 256;
     }
 

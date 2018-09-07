@@ -141,7 +141,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             return defaultCellStyle;
         }
 
-        public PoiFont getFont(short idx) {
+        public PoiFont getFont(int idx) {
             return getFont(poiWorkbook.getFontAt(idx));
         }
 
@@ -492,7 +492,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         Color color = sColor == null ? font.getColor() : Color.valueOf(sColor.toString());
 
         // try to find existing font
-        for (short i = 0; i < poiWorkbook.getNumberOfFonts(); i++) {
+        for (int i = 0; i < poiWorkbook.getNumberOfFontsAsInt(); i++) {
             Font poiFont = poiWorkbook.getFontAt(i);
 
             if (poiFont.getFontName().equalsIgnoreCase(name)
