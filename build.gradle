@@ -55,9 +55,9 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    compile        group: 'com.dua3.utility', name: 'utility', version: '0.16.0'
-    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '0.16.0'
-    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '0.16.0'
+    compile        group: 'com.dua3.utility', name: 'utility', version: '1.0'
+    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '1.0'
+    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '1.0'
     
     // JUnit    
     testCompile "junit:junit:4.12"
