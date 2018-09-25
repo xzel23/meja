@@ -1,8 +1,10 @@
 # Meja spreadsheet library
 
-[ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.0-beta13) ](https://bintray.com/dua3/public/com.dua3.meja/1.0-beta13/link)
+[ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.0) ](https://bintray.com/dua3/public/com.dua3.meja/1.0/link)
 
 Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
+
+I just released version 1.0 of the library. On the 1.0-branch I will provide bugfixes if needed and keep it Java 8 compatible.  For future development, I will switch to Java 11.
 
 ## Design goals
 - ease of use
@@ -29,8 +31,8 @@ Add dependencies:
 
     dependencies {
         ...
-        compile 'com.dua3.meja:meja:1.0-beta13'
-        compile 'com.dua3.meja:meja-swing:1.0-beta13'
+        compile 'com.dua3.meja:meja:1.0'
+        compile 'com.dua3.meja:meja-swing:1.0'
     }
 
 ### Maven
@@ -40,13 +42,13 @@ Add the repository [https://dl.bintray.com/dua3/public](https://dl.bintray.com/d
     <dependency>
         <groupId>com.dua3.meja</groupId>
         <artifactId>meja</artifactId>
-        <version>1.0-beta13</version>
+        <version>1.0</version>
         <type>pom</type>
     </dependency>
     <dependency>
         <groupId>com.dua3.meja</groupId>
         <artifactId>meja-swing</artifactId>
-        <version>1.0-beta13</version>
+        <version>1.0</version>
         <type>pom</type>
     </dependency>
 
