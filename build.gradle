@@ -34,13 +34,6 @@ apply plugin: 'eclipse'
     
 /////////////////////////////////////////////////////////////////////////////
 
-// remove module-info.java from eclipse source folder
-eclipse.classpath.file.whenMerged {
-    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
-    	item.excludes += 'module-info.java'
-    }
-}
-
 repositories {
     mavenLocal()
     jcenter()
@@ -55,9 +48,9 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    compile        group: 'com.dua3.utility', name: 'utility', version: '1.1'
-    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '1.1'
-    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '1.1'
+    compile        group: 'com.dua3.utility', name: 'utility', version: '1.0'
+    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '1.0'
+    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '1.0'
     
     // JUnit    
     testCompile "junit:junit:4.12"
