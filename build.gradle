@@ -48,9 +48,9 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    compile        group: 'com.dua3.utility', name: 'utility', version: '1.0'
-    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '1.0'
-    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '1.0'
+    compile        group: 'com.dua3.utility', name: 'utility', version: '1.1'
+    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '1.1'
+    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '1.1'
     
     // JUnit    
     testCompile "junit:junit:4.12"
@@ -77,6 +77,8 @@ tasks.withType(com.github.spotbugs.SpotBugsTask) {
         xml.enabled false
         html.enabled true
     }
+    // ignore failures until spotbugs bug is fixed: https://github.com/spotbugs/spotbugs/issues/756
+    ignoreFailures = true
 }
 
 // === ARTIFACTS === >
