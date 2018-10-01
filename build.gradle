@@ -7,13 +7,11 @@ plugins {
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java-library'
-apply plugin: 'com.github.spotbugs'
-apply plugin: 'com.dua3.gradle.jpms'
 apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
     group              = 'com.dua3.meja'
-    version            = '1.1.0'
+    version            = '1.1-SNAPSHOT'
     
     ext.moduleName     = project.group 
     ext.scm            = 'https://github.com/xzel23/meja.git'
@@ -48,7 +46,7 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    def utilityVersion = "1.1"
+    def utilityVersion = "1.1-SNAPSHOT"
     compile        "com.dua3.utility:utility:${utilityVersion}"
     swingCompile   "com.dua3.utility:utility:${utilityVersion}"
     samplesCompile "com.dua3.utility:utility:${utilityVersion}"

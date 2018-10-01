@@ -114,7 +114,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
+        public Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
             if (poiColor == null || poiColor == HSSFColorPredefined.AUTOMATIC.getColor()) {
                 return defaultColor;
             }
@@ -218,7 +218,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
+        public Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
             org.apache.poi.xssf.usermodel.XSSFColor xssfColor = (org.apache.poi.xssf.usermodel.XSSFColor) poiColor;
             if (poiColor == null || xssfColor.isAuto()) {
                 return defaultColor;
@@ -408,7 +408,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         return new ArrayList<>(cellStyles.keySet());
     }
 
-    abstract Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor);
+    public abstract Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor);
 
     /**
      * Get font color.
