@@ -1,4 +1,4 @@
-package com.dua3.meja;
+package com.dua3.meja.test;
 
 import java.io.IOException;
 
