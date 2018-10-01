@@ -61,6 +61,14 @@ dependencies {
     runtime sourceSets.main.output, sourceSets.swing.output, sourceSets.samples.output
 }
 
+test {
+    useJUnitPlatform()
+
+    filter {
+        exclude '**/module-info.class'
+    }
+}
+
 sourceCompatibility = 11
 targetCompatibility = 11
 
