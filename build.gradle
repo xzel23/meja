@@ -48,12 +48,15 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    compile        group: 'com.dua3.utility', name: 'utility', version: '1.1'
-    swingCompile   group: 'com.dua3.utility', name: 'utility', version: '1.1'
-    samplesCompile group: 'com.dua3.utility', name: 'utility', version: '1.1'
+    def utilityVersion = "1.1"
+    compile        "com.dua3.utility:utility:${utilityVersion}"
+    swingCompile   "com.dua3.utility:utility:${utilityVersion}"
+    samplesCompile "com.dua3.utility:utility:${utilityVersion}"
     
-    // JUnit    
-    testCompile "junit:junit:4.12"
+    // JUnit
+    def junitVersion = "5.3.1"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
 
     swingCompile   sourceSets.main.output
     samplesCompile sourceSets.main.output, sourceSets.swing.output
