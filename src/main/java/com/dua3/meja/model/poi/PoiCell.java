@@ -488,7 +488,6 @@ public final class PoiCell
         setCellStyle(getWorkbook().getCellStyle(dateStyleName));
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public PoiCell setFormula(String arg) {
         Object old = get();
