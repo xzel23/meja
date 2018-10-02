@@ -300,7 +300,7 @@ public class SwingExcelViewer extends JFrame
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, 
-            "Unknown Exception caught, will be rethrown after message dialog: {}", ex.getMessage());
+            "Unknown Exception caught, will be rethrown after message dialog: {0}", ex.getMessage());
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
             throw ex; //rethrow

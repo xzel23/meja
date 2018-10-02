@@ -79,7 +79,7 @@ public class PoiHelper {
         case DISTRIBUTED:
             return VAlign.ALIGN_MIDDLE;
         default:
-            LOGGER.log(Level.WARNING, "Unknown value for vertical algnment: {}", alignment);
+            LOGGER.log(Level.WARNING, "Unknown value for vertical algnment: {0}", alignment);
             return VAlign.ALIGN_MIDDLE;
         }
     }

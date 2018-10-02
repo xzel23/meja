@@ -92,7 +92,7 @@ public abstract class AbstractSheet implements Sheet {
         // add to list
         mergedRegions.add(cells);
 
-        LOG.log(Level.FINE, "added merged region: {}", cells);
+        LOG.log(Level.FINE, "added merged region: {0}", cells);
     }
 
     @Override
@@ -126,7 +126,7 @@ public abstract class AbstractSheet implements Sheet {
                 }
             }
         }
-        LOG.log(Level.FINE, "removed merged region at [{}]", rowNumber +","+ columnNumber);
+        LOG.log(Level.FINE, "removed merged region at [{0}]", rowNumber +","+ columnNumber);
     }
 
     @Override

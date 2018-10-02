@@ -579,7 +579,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     public void setForceFormulaRecalculation(boolean flag) {
         poiWorkbook.setForceFormulaRecalculation(flag);
-        LOGGER.log(Level.INFO, "setForceFormulaRecalculation({})", flag);
+        LOGGER.log(Level.INFO, "setForceFormulaRecalculation({0})", flag);
     }
 
     @Override

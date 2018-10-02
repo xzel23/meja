@@ -50,7 +50,7 @@ public class WorkbookTestHelper {
             // Change the path so that it points to the probable resource dir.
             String s = pathStr.replaceAll("/build/classes/java/test/", "/build/resources/test/");
 
-            LOGGER.log(Level.WARNING, "Resource not found! Trying to load from '{}'.", pathStr);
+            LOGGER.log(Level.WARNING, "Resource not found! Trying to load from ''{0}''.", pathStr);
 
             // Then try to load the workbook from there.
             Path path = Paths.get(s);
@@ -114,14 +114,14 @@ public class WorkbookTestHelper {
      */
     public static void testFormatHelper(Workbook workbook, BiFunction<Cell,Locale,String> extract) {
         workbook.sheets()
-            .peek(s -> LOGGER.log(Level.INFO, "Processing sheet '{}'", s.getSheetName()))
+            .peek(s -> LOGGER.log(Level.INFO, "Processing sheet ''{0}''", s.getSheetName()))
             .forEach(s -> {
                 s.rows()
                     .skip(1)
                     .forEach(r -> {
                         boolean ignored = r.getCell(0).toString().equalsIgnoreCase("x");
                         if (ignored) {
-                            LOGGER.log(Level.FINE, "line {} ignored", r.getRowNumber()+1);
+                            LOGGER.log(Level.FINE, "line {0} ignored", r.getRowNumber()+1);
                         } else {
                             String description = r.getCell(1).toString();
 
@@ -129,7 +129,7 @@ public class WorkbookTestHelper {
                             String languageTag = languageCell.toString();
                             Locale locale = Locale.forLanguageTag(languageTag);
                             if (!languageTag.equals(locale.toLanguageTag())) {
-                                LOGGER.log(Level.SEVERE, "Language tag does not match for cell {}.", languageCell.getCellRef(RefOption.WITH_SHEET));
+                                LOGGER.log(Level.SEVERE, "Language tag does not match for cell {0}.", languageCell.getCellRef(RefOption.WITH_SHEET));
                                 throw new IllegalStateException("Check language tag in cell "+languageCell.getCellRef(RefOption.WITH_SHEET));
                             }
 
@@ -149,7 +149,7 @@ public class WorkbookTestHelper {
                                         r.getRowNumber()+1, styleName, description,
                                         expected, alternative),
                                         expected, alternative);
-                                LOGGER.log(Level.INFO, "Cell {} matches alternative result.", alternativeCell.getCellRef(RefOption.WITH_SHEET));
+                                LOGGER.log(Level.INFO, "Cell {0} matches alternative result.", alternativeCell.getCellRef(RefOption.WITH_SHEET));
                             } else {
                                 assertEquals(String.format("in line %d [style=%s]: %s - expected '%s', actual '%s'",
                                         r.getRowNumber()+1, styleName, description,
