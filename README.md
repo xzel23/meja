@@ -12,7 +12,7 @@ I just released version 1.0 of the library. On the 1.0-branch I will provide bug
 - provide ui elements for rendering tables
 
 ## Requirements
-- JDK 8
+- JDK 11
 
 ## Installation
 
@@ -31,8 +31,8 @@ Add dependencies:
 
     dependencies {
         ...
-        compile 'com.dua3.meja:meja:1.0'
-        compile 'com.dua3.meja:meja-swing:1.0'
+        compile 'com.dua3.meja:meja:1.1'
+        compile 'com.dua3.meja:meja-swing:1.1'
     }
 
 ### Maven
@@ -42,13 +42,13 @@ Add the repository [https://dl.bintray.com/dua3/public](https://dl.bintray.com/d
     <dependency>
         <groupId>com.dua3.meja</groupId>
         <artifactId>meja</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
         <type>pom</type>
     </dependency>
     <dependency>
         <groupId>com.dua3.meja</groupId>
         <artifactId>meja-swing</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
         <type>pom</type>
     </dependency>
 
