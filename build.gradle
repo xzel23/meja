@@ -46,7 +46,7 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    def utilityVersion = "1.1-SNAPSHOT"
+    def utilityVersion = "1.2.0"
     compile        "com.dua3.utility:utility:${utilityVersion}"
     swingCompile   "com.dua3.utility:utility:${utilityVersion}"
     samplesCompile "com.dua3.utility:utility:${utilityVersion}"
