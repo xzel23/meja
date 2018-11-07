@@ -11,7 +11,7 @@ apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
     group              = 'com.dua3.meja'
-    version            = '1.1-SNAPSHOT'
+    version            = '1.1-rc1'
     
     ext.moduleName     = project.group 
     ext.scm            = 'https://github.com/xzel23/meja.git'
