@@ -69,8 +69,8 @@ test {
     }
 }
 
-sourceCompatibility = 11
-targetCompatibility = 11
+sourceCompatibility = 8
+targetCompatibility = 8
 
 compileJava {
     options.encoding = 'UTF-8'
@@ -149,7 +149,7 @@ publishing {
             def name = sourceSet.name
             
             if (name.equals("test"))
-                break
+                continue
         
             def suffix = name.equals("main") ? "" : "-$name"
             def pubName= "meja$suffix"
