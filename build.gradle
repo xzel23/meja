@@ -1,7 +1,7 @@
 plugins {
-  id "com.github.spotbugs" version "1.6.3"
+  id "com.github.spotbugs" version "1.6.5"
   id "com.jfrog.bintray" version "1.8.3"
-  id "com.dua3.gradle.jpms" version "0.4.1"
+  id "com.dua3.gradle.jpms" version "0.5"
 }
 
 apply plugin: 'maven'
@@ -46,7 +46,7 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    def utilityVersion = "1.2.0"
+    def utilityVersion = "1.2.1"
     compile        "com.dua3.utility:utility:${utilityVersion}"
     swingCompile   "com.dua3.utility:utility:${utilityVersion}"
     samplesCompile "com.dua3.utility:utility:${utilityVersion}"
@@ -79,7 +79,7 @@ compileJava {
 
 // === SPOTBUGS === >
 
-spotbugs.toolVersion = '3.1.7'
+spotbugs.toolVersion = '3.1.8'
 
 tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
