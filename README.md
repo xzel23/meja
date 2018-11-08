@@ -4,7 +4,14 @@
 
 Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
-I just released version 1.0 of the library. On the 1.0-branch I will provide bugfixes if needed and keep it Java 8 compatible.  For future development, I will switch to Java 11.
+Version 1.0 of the library is the stable one. On the 1.0-branch I will provide bugfixes if needed and keep it Java 8 compatible.
+
+Versions 1.1.x are development releases.
+
+## Changes in 1.1.x
+- Updated Apache POI to version 4.0.0.
+- Java compatibility may change to 11 in a future release. Since no Java 11 features are used at the moment, I reverted the compatibility settings to 8 for the time being.
+- Updated gradle to version 5.
 
 ## Design goals
 - ease of use
@@ -12,7 +19,7 @@ I just released version 1.0 of the library. On the 1.0-branch I will provide bug
 - provide ui elements for rendering tables
 
 ## Requirements
-- JDK 11
+- JDK 8
 
 ## Installation
 
