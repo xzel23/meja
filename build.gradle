@@ -38,6 +38,13 @@ repositories {
     maven { url  "https://dl.bintray.com/dua3/public" }
 }
 
+// remove module-info.java from eclipse source folder
+eclipse.classpath.file.whenMerged {
+    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
+    	item.excludes += 'module-info.java'
+    }
+}
+
 dependencies {
     // Apache POI
     def poiVersion = "4.0.0"
