@@ -1,6 +1,7 @@
 # Meja spreadsheet library
 
-[ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.1) ](https://bintray.com/dua3/public/com.dua3.meja/1.1/link)
+[ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.0) ](https://bintray.com/dua3/public/com.dua3.meja/1.0/link)(stable)
+[ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.1) ](https://bintray.com/dua3/public/com.dua3.meja/1.1/link)(development)
 
 Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
