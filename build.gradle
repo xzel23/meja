@@ -11,7 +11,7 @@ apply plugin: 'eclipse'
 
 /////////////////////////////////////////////////////////////////////////////
     group              = 'com.dua3.meja'
-    version            = '1.1'
+    version            = '1.1.1'
     
     ext.moduleName     = project.group 
     ext.scm            = 'https://github.com/xzel23/meja.git'
@@ -47,7 +47,7 @@ eclipse.classpath.file.whenMerged {
 
 dependencies {
     // Apache POI
-    def poiVersion = "4.0.0"
+    def poiVersion = "4.0.1"
     compile "org.apache.poi:poi:${poiVersion}"
     compile "org.apache.poi:poi-ooxml:${poiVersion}"
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
