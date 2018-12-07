@@ -86,11 +86,11 @@ public abstract class AbstractWorkbook
     public void setPath(Path path) {
         Path oldPath = this.path;
         this.path = path;
-        firePropertyChange(Property.ACTIVE_SHEET, oldPath, path);
+        firePropertyChange(PROPERTY_ACTIVE_SHEET, oldPath, path);
     }
 
-    protected void firePropertyChange(Property property, Object oldValue, Object newValue) {
-        pcs.firePropertyChange(property.name(), oldValue, newValue);
+    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        pcs.firePropertyChange(propertyName, oldValue, newValue);
     }
 
 }

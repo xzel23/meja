@@ -17,6 +17,8 @@ package com.dua3.meja.ui.swing;
 
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -36,7 +38,7 @@ import com.dua3.meja.ui.WorkbookView;
  */
 @SuppressWarnings("serial")
 public class SwingWorkbookView extends JComponent
-        implements WorkbookView, ChangeListener {
+        implements WorkbookView, ChangeListener, PropertyChangeListener {
 
     private Workbook workbook;
     private JTabbedPane content = null;
@@ -166,4 +168,14 @@ public class SwingWorkbookView extends JComponent
         }
     }
 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        String property = evt.getPropertyName();
+        switch (property) {
+            case Workbook.PROPERTY_SHEET_ADDED:
+            case Workbook.PROPERTY_SHEET_REMOVED:
+                setWorkbook(getWorkbook());
+                break;
+        }
+    }
 }

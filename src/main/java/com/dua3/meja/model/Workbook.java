@@ -45,11 +45,9 @@ import com.dua3.meja.util.Options;
 public interface Workbook
         extends AutoCloseable, Iterable<Sheet> {
 
-    public enum Property {
-        ACTIVE_SHEET,
-        SHEET_ADDED,
-        SHEET_REMOVED;
-    }
+    public final String PROPERTY_ACTIVE_SHEET = "ACTIVE_SHEET";
+    public final String PROPERTY_SHEET_ADDED = "SHEET_ADDED";
+    public final String PROPERTY_SHEET_REMOVED = "SHEET_REMOVED";
 
     /**
      * Add property change listener.
