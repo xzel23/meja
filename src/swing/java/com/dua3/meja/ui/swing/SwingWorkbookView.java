@@ -158,6 +158,9 @@ public class SwingWorkbookView extends JComponent
             content.addChangeListener(this);
             add(content);
             revalidate();
+            
+            workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
+            workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_REMOVED, this);
         }
     }
 
