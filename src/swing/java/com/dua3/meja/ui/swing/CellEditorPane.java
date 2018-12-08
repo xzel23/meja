@@ -116,8 +116,7 @@ public class CellEditorPane extends JTextPane {
     /**
      * A ViewFactory for the custom EditorKit.
      */
-    class CellEditorViewFactory
-            implements ViewFactory {
+    class CellEditorViewFactory implements ViewFactory {
 
         @Override
         public View create(Element elem) {
@@ -147,16 +146,13 @@ public class CellEditorPane extends JTextPane {
      * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell
      * type.
      *
-     * @param hAlign
-     *            the horizontal alignment
-     * @param type
-     *            the cell type
+     * @param hAlign the horizontal alignment
+     * @param type   the cell type
      * @return
      *         <ul>
-     *         <li>{@code hAlign}, if
-     *         {@code hAlign!=HAlign.ALIGN_AUTOMATIC}</li>
-     *         <li>otherwise the horizontal alignment to apply to cells of the
-     *         given type</li>
+     *         <li>{@code hAlign}, if {@code hAlign!=HAlign.ALIGN_AUTOMATIC}</li>
+     *         <li>otherwise the horizontal alignment to apply to cells of the given
+     *         type</li>
      *         </ul>
      */
     public static HAlign getHAlign(HAlign hAlign, CellType type) {
@@ -190,8 +186,9 @@ public class CellEditorPane extends JTextPane {
 
     /**
      * Get a {@link SimpleAttributeSet} corresponding to the cellstyle.
+     * 
      * @param cellStyle the cell style
-     * @param cell the cell (because cell tye influences the style attributes)
+     * @param cell      the cell (because cell tye influences the style attributes)
      * @return a SimpleAttributeSet
      */
     public SimpleAttributeSet getCellAttributes(final CellStyle cellStyle, Cell cell) {
@@ -220,26 +217,23 @@ public class CellEditorPane extends JTextPane {
 
         StyleConstants.setForeground(dfltAttr, SwingUtil.toAwtColor(cellStyle.getFont().getColor()));
         StyleConstants.setBackground(dfltAttr, SwingUtil.toAwtColor(Color.TRANSPARENT_WHITE));
-        
+
         return dfltAttr;
     }
 
     /**
      * Set the editor content to the content of given cell.
      *
-     * @param cell
-     *            the cell to display
-     * @param scale
-     *            the scale to apply
-     * @param eval
-     *            set to true to display formula results instead of the formula
-     *            itself
+     * @param cell  the cell to display
+     * @param scale the scale to apply
+     * @param eval  set to true to display formula results instead of the formula
+     *              itself
      */
     public void setContent(Cell cell, double scale, boolean eval) {
         CellStyle cellStyle = cell.getCellStyle();
 
         Font font = cellStyle.getFont();
-        final java.awt.Font awtFont = font.toAwtFont().deriveFont((float)scale*font.getSizeInPoints());
+        final java.awt.Font awtFont = font.toAwtFont().deriveFont((float) scale * font.getSizeInPoints());
 
         setFont(awtFont);
         setBackground(SwingUtil.toAwtColor(cellStyle.getFillFgColor()));
@@ -263,8 +257,8 @@ public class CellEditorPane extends JTextPane {
     }
 
     private TextAttributes getTextAttributes(Style s) {
-        Map<String,Object> m = new HashMap<>();
-        for (String attr: TextAttributes.defaults().keySet()) {
+        Map<String, Object> m = new HashMap<>();
+        for (String attr : TextAttributes.defaults().keySet()) {
             m.put(attr, s.get(attr));
         }
         return TextAttributes.of(m);

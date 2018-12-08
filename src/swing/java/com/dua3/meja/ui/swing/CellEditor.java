@@ -35,8 +35,7 @@ public interface CellEditor {
     /**
      * Start editing.
      *
-     * @param cell
-     *            the cell to be edited
+     * @param cell the cell to be edited
      * @return the component that is used for editing
      */
     JComponent startEditing(Cell cell);
@@ -44,8 +43,7 @@ public interface CellEditor {
     /**
      * Stop editing.
      *
-     * @param commit
-     *            if true, changes will be applied to the edited cell
+     * @param commit if true, changes will be applied to the edited cell
      */
     void stopEditing(boolean commit);
 

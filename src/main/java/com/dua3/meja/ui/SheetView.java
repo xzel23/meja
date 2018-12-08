@@ -37,18 +37,15 @@ public interface SheetView {
     /**
      * Add a new listener.
      *
-     * @param listener
-     *            listener to be added
+     * @param listener listener to be added
      */
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * Add a new listener for the given property.
      *
-     * @param propertyName
-     *            the property
-     * @param listener
-     *            the listener
+     * @param propertyName the property
+     * @param listener     the listener
      */
     void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
@@ -83,18 +80,15 @@ public interface SheetView {
     /**
      * Remove a listener.
      *
-     * @param listener
-     *            the listener
+     * @param listener the listener
      */
     void removePropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * Remove a listener.
      *
-     * @param propertyName
-     *            the property
-     * @param listener
-     *            the listener
+     * @param propertyName the property
+     * @param listener     the listener
      */
     void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
@@ -106,10 +100,8 @@ public interface SheetView {
     /**
      * Set current row and column.
      *
-     * @param rowNum
-     *            number of row to be set
-     * @param colNum
-     *            number of column to be set
+     * @param rowNum number of row to be set
+     * @param colNum number of column to be set
      * @return true if the current logical cell changed
      */
     boolean setCurrentCell(int rowNum, int colNum);
@@ -117,44 +109,42 @@ public interface SheetView {
     /**
      * Enable/disable sheet editing.
      *
-     * @param editable
-     *            true to allow editing
+     * @param editable true to allow editing
      */
     void setEditable(boolean editable);
 
     /**
      * Set the grid color.
      *
-     * @param gridColor
-     *            the color for th grid
+     * @param gridColor the color for th grid
      */
     public void setGridColor(Color gridColor);
 
     /**
      * Set sheet to display.
      *
-     * @param sheet
-     *            the sheet to display
+     * @param sheet the sheet to display
      */
     void setSheet(Sheet sheet);
 
     /**
      * End edit mode for the current cell.
      *
-     * @param commit
-     *            true if the content of the edited cell is to be updated
+     * @param commit true if the content of the edited cell is to be updated
      */
     void stopEditing(boolean commit);
-    
+
     /**
-     * Get name for column. 
+     * Get name for column.
+     * 
      * @param j the column number
      * @return the label text
      */
     public String getColumnName(int j);
-    
+
     /**
-     * Get name for row. 
+     * Get name for row.
+     * 
      * @param i the row number
      * @return the label text
      */
@@ -162,12 +152,14 @@ public interface SheetView {
 
     /**
      * Set the column name provider.
+     * 
      * @param columnNames a function that maps column numbers to column names
      */
     public void setColumnNames(IntFunction<String> columnNames);
-    
+
     /**
      * Set the row name provider.
+     * 
      * @param rowNames a function that maps row numbers to row names
      */
     public void setRowNames(IntFunction<String> rowNames);

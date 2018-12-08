@@ -29,12 +29,9 @@ public class CsvFormatException extends FileFormatException {
     /**
      * Construct a new CsvFormatException.
      *
-     * @param message
-     *            the message to report
-     * @param source
-     *            a text describing the source (preferably the filename)
-     * @param line
-     *            the line number of the CSV file where the error occurred
+     * @param message the message to report
+     * @param source  a text describing the source (preferably the filename)
+     * @param line    the line number of the CSV file where the error occurred
      */
     public CsvFormatException(String message, String source, int line) {
         super(message);

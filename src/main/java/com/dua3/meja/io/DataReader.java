@@ -29,19 +29,17 @@ public interface DataReader {
     public int getRowNumber();
 
     /**
-     * @return the number of rows read. Unless ignore was called, this will be
-     *         equal to the value returned by getRowNumber().
+     * @return the number of rows read. Unless ignore was called, this will be equal
+     *         to the value returned by getRowNumber().
      */
     public int getRowsRead();
 
     /**
      * Ignore the given number of rows.
      *
-     * @param rowsToIgnore
-     *            maximum number of Rows to be read.
+     * @param rowsToIgnore maximum number of Rows to be read.
      * @return the number of rows ignored.
-     * @throws java.io.IOException
-     *             if an I/O error occurs
+     * @throws java.io.IOException if an I/O error occurs
      */
     public int ignoreRows(int rowsToIgnore) throws IOException;
 
@@ -49,20 +47,17 @@ public interface DataReader {
      * Read rows till end of input is reached.
      *
      * @return the number of rows read.
-     * @throws java.io.IOException
-     *             if an I/O error occurs
+     * @throws java.io.IOException if an I/O error occurs
      */
     public int readAll() throws IOException;
 
     /**
-     * Read the given number of rows from input. Reading stops when rowsToRead
-     * rows are read, EOF is reached, or an exception occurs.
+     * Read the given number of rows from input. Reading stops when rowsToRead rows
+     * are read, EOF is reached, or an exception occurs.
      *
-     * @param rowsToRead
-     *            maximum number of Rows to be read
+     * @param rowsToRead maximum number of Rows to be read
      * @return the number of rows read.
-     * @throws java.io.IOException
-     *             if an I/O error occurs
+     * @throws java.io.IOException if an I/O error occurs
      */
     public int readSome(int rowsToRead) throws IOException;
 }

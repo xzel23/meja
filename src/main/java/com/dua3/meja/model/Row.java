@@ -27,34 +27,29 @@ import java.util.stream.StreamSupport;
  *
  * @author axel
  */
-public interface Row
-        extends Iterable<Cell> {
+public interface Row extends Iterable<Cell> {
 
     /**
      * Copy row data.
      *
-     * @param other
-     *            row to copy data from
+     * @param other row to copy data from
      */
     void copy(Row other);
 
     /**
      * Get cell.
      *
-     * @param j
-     *            the column number
-     * @return this row`s cell for the given column, missing cells are created
-     *         on the fly
+     * @param j the column number
+     * @return this row`s cell for the given column, missing cells are created on
+     *         the fly
      */
     Cell getCell(int j);
 
     /**
      * Get cell.
      *
-     * @param j
-     *            the column number
-     * @return this row`s cell for the given column or null if cell doesn't
-     *         exist
+     * @param j the column number
+     * @return this row`s cell for the given column or null if cell doesn't exist
      */
     Cell getCellIfExists(int j);
 
@@ -62,11 +57,10 @@ public interface Row
      * Get column number of first cell.
      *
      * Workbooks have an area of used cells. All cells outside of that area are
-     * blank. If the value returned by this method is greater than 0 that means
-     * that all the cells to the left of the column returned are blank. The
-     * opposite is not necessarily true, since the area of used cells might not
-     * be updated when a cell is cleared (because that would require a full
-     * sweep of all rows).
+     * blank. If the value returned by this method is greater than 0 that means that
+     * all the cells to the left of the column returned are blank. The opposite is
+     * not necessarily true, since the area of used cells might not be updated when
+     * a cell is cleared (because that would require a full sweep of all rows).
      *
      * @return number of first cell that potentially contains a value.
      */
@@ -77,10 +71,10 @@ public interface Row
      *
      * Workbooks have an area of used cells. All cells outside of that area are
      * blank. If the value returned by this method is less than the number of
-     * columns-1 that means that all the cells to the right of the column
-     * returned are blank. The opposite is not necessarily true, since the area
-     * of used cells might not be updated when a cell is cleared (because that
-     * would require a full sweep of all rows).
+     * columns-1 that means that all the cells to the right of the column returned
+     * are blank. The opposite is not necessarily true, since the area of used cells
+     * might not be updated when a cell is cleared (because that would require a
+     * full sweep of all rows).
      *
      * @return number of last cell that potentially contains a value.
      */
@@ -107,9 +101,9 @@ public interface Row
      */
     Workbook getWorkbook();
 
-
     /**
      * Create cell iterator.
+     * 
      * @return cell iterator
      */
     @Override
@@ -141,6 +135,7 @@ public interface Row
 
     /**
      * Create a stream of the cells in this row.
+     * 
      * @return stream of cells
      */
     default Stream<Cell> cells() {

@@ -53,7 +53,8 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
     public GenericWorkbook open(Path path, Options importSettings) throws IOException {
         FileType type = FileType.forPath(path).orElse(FileType.CSV);
 
-        LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.", type.getDescription());
+        LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
+                type.getDescription());
 
         WorkbookReader reader = type.getReader();
 

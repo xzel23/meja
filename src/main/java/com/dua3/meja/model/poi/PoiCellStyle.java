@@ -40,13 +40,11 @@ import com.dua3.utility.text.TextAttributes;
  *
  * @author axel
  */
-public abstract class PoiCellStyle
-        implements CellStyle {
+public abstract class PoiCellStyle implements CellStyle {
 
     static class PoiHssfCellStyle extends PoiCellStyle {
 
-        PoiHssfCellStyle(PoiHssfWorkbook workbook,
-                HSSFCellStyle poiCellStyle) {
+        PoiHssfCellStyle(PoiHssfWorkbook workbook, HSSFCellStyle poiCellStyle) {
             super(workbook, workbook.getFont(poiCellStyle.getFont(workbook.poiWorkbook)), poiCellStyle);
         }
 
@@ -79,14 +77,12 @@ public abstract class PoiCellStyle
 
         @Override
         public Color getFillBgColor() {
-            return workbook.getColor(
-                    poiCellStyle.getFillBackgroundColorColor(), Color.TRANSPARENT_WHITE);
+            return workbook.getColor(poiCellStyle.getFillBackgroundColorColor(), Color.TRANSPARENT_WHITE);
         }
 
         @Override
         public Color getFillFgColor() {
-            return workbook.getColor(
-                    poiCellStyle.getFillForegroundColorColor(), Color.TRANSPARENT_WHITE);
+            return workbook.getColor(poiCellStyle.getFillForegroundColorColor(), Color.TRANSPARENT_WHITE);
         }
 
         @Override
@@ -129,11 +125,9 @@ public abstract class PoiCellStyle
 
     }
 
-    static class PoiXssfCellStyle
-            extends PoiCellStyle {
+    static class PoiXssfCellStyle extends PoiCellStyle {
 
-        PoiXssfCellStyle(PoiXssfWorkbook workbook,
-                XSSFCellStyle poiCellStyle) {
+        PoiXssfCellStyle(PoiXssfWorkbook workbook, XSSFCellStyle poiCellStyle) {
             super(workbook, new PoiFont(workbook, poiCellStyle.getFont()), poiCellStyle);
         }
 
@@ -144,23 +138,19 @@ public abstract class PoiCellStyle
             switch (d) {
             case NORTH:
                 width = getBorderWidth(poiCellStyle.getBorderTop());
-                color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getTopBorderXSSFColor(),
-                        Color.BLACK);
+                color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getTopBorderXSSFColor(), Color.BLACK);
                 break;
             case EAST:
                 width = getBorderWidth(poiCellStyle.getBorderRight());
-                color = workbook.getColor(
-                        ((XSSFCellStyle) poiCellStyle).getRightBorderXSSFColor(), Color.BLACK);
+                color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getRightBorderXSSFColor(), Color.BLACK);
                 break;
             case SOUTH:
                 width = getBorderWidth(poiCellStyle.getBorderBottom());
-                color = workbook.getColor(
-                        ((XSSFCellStyle) poiCellStyle).getBottomBorderXSSFColor(), Color.BLACK);
+                color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getBottomBorderXSSFColor(), Color.BLACK);
                 break;
             case WEST:
                 width = getBorderWidth(poiCellStyle.getBorderLeft());
-                color = workbook.getColor(
-                        ((XSSFCellStyle) poiCellStyle).getLeftBorderXSSFColor(), Color.BLACK);
+                color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getLeftBorderXSSFColor(), Color.BLACK);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -236,12 +226,9 @@ public abstract class PoiCellStyle
     /**
      * Construct new instance.
      *
-     * @param workbook
-     *            the workbook this style belings to
-     * @param font
-     *            the font
-     * @param poiCellStyle
-     *            the POI cell style
+     * @param workbook     the workbook this style belings to
+     * @param font         the font
+     * @param poiCellStyle the POI cell style
      */
     protected PoiCellStyle(PoiWorkbook workbook, PoiFont font, org.apache.poi.ss.usermodel.CellStyle poiCellStyle) {
         this.workbook = workbook;
@@ -267,8 +254,7 @@ public abstract class PoiCellStyle
     /**
      * Get width for a POI defined border.
      *
-     * @param poiBorder
-     *            the POI border value
+     * @param poiBorder the POI border value
      * @return the width of the border in points
      */
     protected float getBorderWidth(org.apache.poi.ss.usermodel.BorderStyle poiBorder) {
@@ -339,8 +325,7 @@ public abstract class PoiCellStyle
     /**
      * Translate border width to POI border.
      *
-     * @param borderStyle
-     *            the border style
+     * @param borderStyle the border style
      * @return the POI constant to use
      */
     protected org.apache.poi.ss.usermodel.BorderStyle getPoiBorder(BorderStyle borderStyle) {
@@ -382,7 +367,7 @@ public abstract class PoiCellStyle
             poiCellStyle.setDataFormat((short) 0x0e);
         } else if (StandardDataFormats.FULL.name().equals(format)) {
             poiCellStyle.setDataFormat((short) 0xa4);
-            return ;
+            return;
         } else {
             poiCellStyle.setDataFormat(getWorkbook().poiWorkbook.createDataFormat().getFormat(format));
         }
@@ -425,9 +410,9 @@ public abstract class PoiCellStyle
     DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
         switch (poiCellStyle.getDataFormat()) {
         case 0x0e:
-            return  DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+            return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
         case 0xa4:
-            return  DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
+            return DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
         default:
             return null;
         }

@@ -46,20 +46,15 @@ public class CsvWorkbookReader extends WorkbookReader {
     }
 
     /**
-     * Read from a BufferedReader. This is implemented because CSV is a
-     * character format. The Encoding must be set correctly in the reader.
+     * Read from a BufferedReader. This is implemented because CSV is a character
+     * format. The Encoding must be set correctly in the reader.
      *
-     * @param <W>
-     *            the Workbook implementation class to use
-     * @param factory
-     *            the WorkbookFactory to use
-     * @param in
-     *            the reader to read from
-     * @param path
-     *            the URI of the source (for creating meaningful error messages)
+     * @param         <W> the Workbook implementation class to use
+     * @param factory the WorkbookFactory to use
+     * @param in      the reader to read from
+     * @param path    the URI of the source (for creating meaningful error messages)
      * @return the workbook read
-     * @throws IOException
-     *             if an io-error occurs during reading
+     * @throws IOException if an io-error occurs during reading
      */
     public <W extends Workbook> W read(WorkbookFactory<W> factory, BufferedReader in, Path path) throws IOException {
         W workbook = factory.create();

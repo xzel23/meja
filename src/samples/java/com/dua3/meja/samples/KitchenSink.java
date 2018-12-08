@@ -25,9 +25,9 @@ import com.dua3.utility.swing.SwingUtil;
  * @author a5xysq1
  */
 public class KitchenSink extends JFrame {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = Logger.getLogger(KitchenSink.class.getName());
+    private static final Logger logger = Logger.getLogger(KitchenSink.class.getName());
 
     private static void addColorSheet(Workbook wb) {
         Sheet sheet = wb.createSheet("colors");
@@ -73,7 +73,7 @@ public class KitchenSink extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-        SwingUtil.setNativeLookAndFeel();
+            SwingUtil.setNativeLookAndFeel();
             KitchenSink instance = new KitchenSink();
             instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             instance.setVisible(true);

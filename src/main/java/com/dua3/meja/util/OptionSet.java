@@ -11,8 +11,7 @@ import java.util.Set;
  */
 public class OptionSet {
 
-    private static class StaticValue<T>
-            implements Value<T> {
+    private static class StaticValue<T> implements Value<T> {
 
         private final String name;
         private final T value;

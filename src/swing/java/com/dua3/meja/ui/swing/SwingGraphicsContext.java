@@ -12,8 +12,7 @@ import com.dua3.meja.ui.Rectangle;
 import com.dua3.utility.Color;
 import com.dua3.utility.swing.SwingUtil;
 
-public final class SwingGraphicsContext
-        implements GraphicsContext {
+public final class SwingGraphicsContext implements GraphicsContext {
 
     private final Graphics2D g;
     private final SwingSheetView view;

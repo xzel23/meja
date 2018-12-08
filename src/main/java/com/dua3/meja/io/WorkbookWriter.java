@@ -36,12 +36,9 @@ public abstract class WorkbookWriter {
     /**
      * Write workbook to file.
      *
-     * @param workbook
-     *            the workbook to write
-     * @param path
-     *            the path to write to
-     * @throws IOException
-     *             if an error occurs when writing out the workbook
+     * @param workbook the workbook to write
+     * @param path     the path to write to
+     * @throws IOException if an error occurs when writing out the workbook
      */
     public void write(Workbook workbook, Path path) throws IOException {
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
@@ -52,12 +49,9 @@ public abstract class WorkbookWriter {
     /**
      * Write workbook to a stream.
      *
-     * @param workbook
-     *            the workbook to write
-     * @param out
-     *            the stream to write to
-     * @throws IOException
-     *             if an error occurs when writing out the workbook
+     * @param workbook the workbook to write
+     * @param out      the stream to write to
+     * @throws IOException if an error occurs when writing out the workbook
      */
     public abstract void write(Workbook workbook, OutputStream out) throws IOException;
 

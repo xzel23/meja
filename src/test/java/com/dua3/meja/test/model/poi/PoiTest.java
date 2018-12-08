@@ -15,19 +15,19 @@
  */
 package com.dua3.meja.test.model.poi;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
-
-import com.dua3.utility.Color;
+import org.junit.jupiter.api.Test;
 
 import com.dua3.meja.model.poi.PoiWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
+import com.dua3.utility.Color;
 
 /**
  *
@@ -39,8 +39,8 @@ public class PoiTest {
     }
 
     /**
-     * Test converting color from Meja to POI color and back again does not
-     * change the color value.
+     * Test converting color from Meja to POI color and back again does not change
+     * the color value.
      *
      * This test checks the implementation for HSSF.
      */
@@ -57,12 +57,12 @@ public class PoiTest {
             assertEquals(expected, actual);
             used.add(expected.toString());
         }
-        assertTrue(used.size()>20);
+        assertTrue(used.size() > 20);
     }
 
     /**
-     * Test converting color from Meja to POI color and back again does not
-     * change the color value.
+     * Test converting color from Meja to POI color and back again does not change
+     * the color value.
      *
      * This test checks the implementation for XSSF.
      */

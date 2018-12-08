@@ -29,8 +29,7 @@ import com.dua3.meja.ui.SheetView;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class DefaultCellRenderer
-        implements CellRenderer {
+public class DefaultCellRenderer implements CellRenderer {
 
     private final CellEditorPane component;
 
@@ -70,7 +69,7 @@ public class DefaultCellRenderer
             case ALIGN_CENTER:
                 canvas = new Rectangle(cr.x + (cr.width - maxWidthScaled) / 2, cr.y, maxWidthScaled, cr.height);
                 break;
-            case ALIGN_JUSTIFY:   // ALIGN_JUSTIFY implies wrap
+            case ALIGN_JUSTIFY: // ALIGN_JUSTIFY implies wrap
             case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be mapped to another value
             default:
                 throw new IllegalStateException();

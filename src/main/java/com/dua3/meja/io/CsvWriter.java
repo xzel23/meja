@@ -31,8 +31,7 @@ import com.dua3.meja.util.Options;
  *
  * @author axel@dua3.com
  */
-public class CsvWriter extends Csv
-        implements AutoCloseable, Flushable {
+public class CsvWriter extends Csv implements AutoCloseable, Flushable {
     private static final String ALLOWED_CHARS = "!§$%&/()=?`°^'.,:;-_#'+~*<>|@ \t";
 
     public static CsvWriter create(BufferedWriter writer, Options options) {

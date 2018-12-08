@@ -44,8 +44,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     /**
      * Construct a new {@code GenericWorkbook}.
      *
-     * @param path
-     *            the Path to set
+     * @param path the Path to set
      */
     public GenericWorkbook(Path path) {
         super(path);

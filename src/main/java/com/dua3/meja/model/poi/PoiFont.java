@@ -47,10 +47,8 @@ public class PoiFont {
     /**
      * Copy constructor.
      *
-     * @param workbook
-     *            the workbook the font belongs to
-     * @param other
-     *            the font to copy
+     * @param workbook the workbook the font belongs to
+     * @param other    the font to copy
      */
     public PoiFont(PoiWorkbook workbook, Font other) {
         this(workbook, createPoiFont(workbook, other));
@@ -84,14 +82,13 @@ public class PoiFont {
     /**
      * Construct instance from POI font.
      *
-     * @param workbook
-     *            the workbook the font belongs to
-     * @param poiFont
-     *            the POI font instance
+     * @param workbook the workbook the font belongs to
+     * @param poiFont  the POI font instance
      */
     public PoiFont(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Font poiFont) {
-        this.font = new Font(poiFont.getFontName(), poiFont.getFontHeightInPoints(), workbook.getColor(poiFont, Color.BLACK),
-                poiFont.getBold(), poiFont.getItalic(), poiFont.getUnderline()!= org.apache.poi.ss.usermodel.Font.U_NONE, poiFont.getStrikeout());
+        this.font = new Font(poiFont.getFontName(), poiFont.getFontHeightInPoints(),
+                workbook.getColor(poiFont, Color.BLACK), poiFont.getBold(), poiFont.getItalic(),
+                poiFont.getUnderline() != org.apache.poi.ss.usermodel.Font.U_NONE, poiFont.getStrikeout());
         this.workbook = workbook;
         this.poiFont = poiFont;
     }
@@ -125,7 +122,7 @@ public class PoiFont {
 
     @Override
     public int hashCode() {
-        return font.hashCode() + 37*getPoiFont().hashCode();
+        return font.hashCode() + 37 * getPoiFont().hashCode();
     }
 
     @Override

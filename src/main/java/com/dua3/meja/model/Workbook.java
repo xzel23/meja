@@ -42,8 +42,7 @@ import com.dua3.meja.util.Options;
  *
  * @author axel
  */
-public interface Workbook
-        extends AutoCloseable, Iterable<Sheet> {
+public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     public final String PROPERTY_ACTIVE_SHEET = "ACTIVE_SHEET";
     public final String PROPERTY_SHEET_ADDED = "SHEET_ADDED";
@@ -53,8 +52,7 @@ public interface Workbook
      * Add property change listener.
      *
      * @see PropertyChangeSupport#addPropertyChangeListener(PropertyChangeListener)
-     * @param listener
-     *            the listener
+     * @param listener the listener
      */
     public void addPropertyChangeListener(PropertyChangeListener listener);
 
@@ -63,18 +61,15 @@ public interface Workbook
      *
      * @see PropertyChangeSupport#addPropertyChangeListener(String,
      *      PropertyChangeListener)
-     * @param propertyName
-     *            the property name
-     * @param listener
-     *            the listener
+     * @param propertyName the property name
+     * @param listener     the listener
      */
     public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Close workbook.
      *
-     * @throws IOException
-     *             if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     void close() throws IOException;
@@ -82,8 +77,7 @@ public interface Workbook
     /**
      * Copy workbook data from another workbook.
      *
-     * @param other
-     *            workbook to copy
+     * @param other workbook to copy
      */
     default void copy(Workbook other) {
         // copy styles
@@ -104,10 +98,8 @@ public interface Workbook
     /**
      * Register a copy of a cell style.
      *
-     * @param styleName
-     *            name for this cell style.
-     * @param style
-     *            the style to copy
+     * @param styleName name for this cell style.
+     * @param style     the style to copy
      * @return the new cell style
      */
     CellStyle copyCellStyle(String styleName, CellStyle style);
@@ -115,18 +107,16 @@ public interface Workbook
     /**
      * Add a new sheet as last sheet of this workbook.
      *
-     * @param sheetName
-     *            the name of the sheet
+     * @param sheetName the name of the sheet
      * @return the new sheet
      */
     Sheet createSheet(String sheetName);
 
     /**
-     * Get registered cell style. If no style is registered under {@code name},
-     * a new one is created.
+     * Get registered cell style. If no style is registered under {@code name}, a
+     * new one is created.
      *
-     * @param name
-     *            cell style name
+     * @param name cell style name
      * @return the registered cell style for {@code name}
      */
     CellStyle getCellStyle(String name);
@@ -142,9 +132,8 @@ public interface Workbook
      * Get the current sheet.
      *
      * @return the current sheet.
-     * @throws IllegalArgumentException
-     *             if the current sheet does not exist (i.e. the workbook does
-     *             not contain any sheets)
+     * @throws IllegalArgumentException if the current sheet does not exist (i.e.
+     *                                  the workbook does not contain any sheets)
      */
     Sheet getCurrentSheet();
 
@@ -165,22 +154,18 @@ public interface Workbook
     /**
      * Get sheet by number.
      *
-     * @param sheetNr
-     *            number of sheet
+     * @param sheetNr number of sheet
      * @return sheet
-     * @throws IndexOutOfBoundsException
-     *             if no sheet exists at the given index
+     * @throws IndexOutOfBoundsException if no sheet exists at the given index
      */
     Sheet getSheet(int sheetNr);
 
     /**
      * Get sheet by name.
      *
-     * @param sheetName
-     *            name of sheet
+     * @param sheetName name of sheet
      * @return sheet
-     * @throws IllegalArgumentException
-     *             if no sheet exists with the given name
+     * @throws IllegalArgumentException if no sheet exists with the given name
      */
     default Sheet getSheetByName(String sheetName) {
         int idx = getSheetIndexByName(sheetName);
@@ -202,8 +187,7 @@ public interface Workbook
     /**
      * Get index of sheet by name.
      *
-     * @param sheetName
-     *            name of sheet
+     * @param sheetName name of sheet
      * @return index of sheet or -1 if no sheet with this name exists
      */
     default int getSheetIndexByName(String sheetName) {
@@ -232,8 +216,7 @@ public interface Workbook
     /**
      * Check if a style with this name is defined.
      *
-     * @param name
-     *            the name of the cell style
+     * @param name the name of the cell style
      * @return true, if style is present
      */
     boolean hasCellStyle(String name);
@@ -244,8 +227,7 @@ public interface Workbook
      * Remove property change listener.
      *
      * @see PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
-     * @param listener
-     *            the listener
+     * @param listener the listener
      */
     public void removePropertyChangeListener(PropertyChangeListener listener);
 
@@ -254,30 +236,24 @@ public interface Workbook
      *
      * @see PropertyChangeSupport#removePropertyChangeListener(String,
      *      PropertyChangeListener)
-     * @param propertyName
-     *            the name of the property
-     * @param listener
-     *            the listener
+     * @param propertyName the name of the property
+     * @param listener     the listener
      */
     public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Remove sheet by number.
      *
-     * @param idx
-     *            number of sheet
-     * @throws IndexOutOfBoundsException
-     *             if no sheet exists at the given index
+     * @param idx number of sheet
+     * @throws IndexOutOfBoundsException if no sheet exists at the given index
      */
     void removeSheet(int idx);
 
     /**
      * Remove sheet by name.
      *
-     * @param sheetName
-     *            name of sheet
-     * @throws IllegalArgumentException
-     *             if no sheet exists with the given name
+     * @param sheetName name of sheet
+     * @throws IllegalArgumentException if no sheet exists with the given name
      */
     default void removeSheetByName(String sheetName) {
         int idx = getSheetIndexByName(sheetName);
@@ -292,10 +268,8 @@ public interface Workbook
     /**
      * Set the current sheet.
      *
-     * @param idx
-     *            index of the sheet to make current
-     * @throws IndexOutOfBoundsException
-     *             if no sheet exists at the given index
+     * @param idx index of the sheet to make current
+     * @throws IndexOutOfBoundsException if no sheet exists at the given index
      */
     void setCurrentSheet(int idx);
 
@@ -304,23 +278,20 @@ public interface Workbook
     /**
      * Set Path for this workbook. See {@link #getPath}.
      *
-     * @param path
-     *            the Path to set.
+     * @param path the Path to set.
      */
     void setPath(Path path);
 
     /**
      * Writes the workbook to a path using standard options.
      *
-     * @param path
-     *            the path to write to.
-     *            <p>
-     *            The file format to used is determined by the extension of
-     *            {@code path} which must be one of the extensions defined in
-     *            {@link FileType}.
-     *            </p>
-     * @throws java.io.IOException
-     *             if an I/O error occurs
+     * @param path the path to write to.
+     *             <p>
+     *             The file format to used is determined by the extension of
+     *             {@code path} which must be one of the extensions defined in
+     *             {@link FileType}.
+     *             </p>
+     * @throws java.io.IOException if an I/O error occurs
      */
     default void write(Path path) throws IOException {
         write(path, Options.empty());
@@ -329,18 +300,15 @@ public interface Workbook
     /**
      * Writes the workbook to a file.
      *
-     * @param path
-     *            the path to write to.
-     *            <p>
-     *            The file format to used is determined by the extension of
-     *            {@code path} which must be one of the extensions defined in
-     *            {@link FileType}.
-     *            </p>
-     * @param options
-     *            special options to use (supported options depend on the file
-     *            type)
-     * @throws java.io.IOException
-     *             if an I/O error occurs
+     * @param path    the path to write to.
+     *                <p>
+     *                The file format to used is determined by the extension of
+     *                {@code path} which must be one of the extensions defined in
+     *                {@link FileType}.
+     *                </p>
+     * @param options special options to use (supported options depend on the file
+     *                type)
+     * @throws java.io.IOException if an I/O error occurs
      */
     default void write(Path path, Options options) throws IOException {
         FileType type = FileType.forPath(path).orElse(FileType.CSV);
@@ -352,12 +320,9 @@ public interface Workbook
     /**
      * Writes the workbook to a stream using default options.
      *
-     * @param fileType
-     *            the file type to use
-     * @param out
-     *            output stream to write to
-     * @throws java.io.IOException
-     *             if an I/O error occurs
+     * @param fileType the file type to use
+     * @param out      output stream to write to
+     * @throws java.io.IOException if an I/O error occurs
      */
     default void write(FileType fileType, OutputStream out) throws IOException {
         write(fileType, out, Options.empty());
@@ -366,33 +331,28 @@ public interface Workbook
     /**
      * Writes the workbook to a stream.
      *
-     * @param fileType
-     *            the file type to use
-     * @param out
-     *            output stream to write to
-     * @param options
-     *            special options to use (supported options depend on the file
-     *            type)
-     * @throws java.io.IOException
-     *             if an I/O error occurs
+     * @param fileType the file type to use
+     * @param out      output stream to write to
+     * @param options  special options to use (supported options depend on the file
+     *                 type)
+     * @throws java.io.IOException if an I/O error occurs
      */
     void write(FileType fileType, OutputStream out, Options options) throws IOException;
 
     /**
      * Get cached instance of object.
      *
-     * @param <T>
-     *            object type
-     * @param obj
-     *            the object to lookup
-     * @return the cached instance, if an instance equal to {@code obj} is
-     *         present in the cache, {@code obj} otherwise
+     * @param     <T> object type
+     * @param obj the object to lookup
+     * @return the cached instance, if an instance equal to {@code obj} is present
+     *         in the cache, {@code obj} otherwise
      *
      */
     <T> T cache(T obj);
 
     /**
      * Create a stream of the rows in this sheet.
+     * 
      * @return stream of rows
      */
     default Stream<Sheet> sheets() {

@@ -76,10 +76,7 @@ import com.dua3.utility.swing.SwingUtil;
  * Swing component for displaying instances of {@link Sheet}.
  */
 @SuppressWarnings("serial")
-public class SwingSheetView extends JPanel
-        implements
-        SheetView,
-        PropertyChangeListener {
+public class SwingSheetView extends JPanel implements SheetView, PropertyChangeListener {
 
     private class SearchDialog extends JDialog {
 
@@ -170,8 +167,8 @@ public class SwingSheetView extends JPanel
                 }
             };
 
-            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                    .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ESCAPE_KEY");
+            rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                    "ESCAPE_KEY");
             rootPane.getActionMap().put("ESCAPE_KEY", escapeAction);
 
             // pack layout
@@ -235,8 +232,7 @@ public class SwingSheetView extends JPanel
         /**
          * Scroll cell into view.
          *
-         * @param cell
-         *            the cell to scroll to
+         * @param cell the cell to scroll to
          */
         public void ensureCellIsVisibile(Cell cell) {
             if (cell == null) {
@@ -254,19 +250,11 @@ public class SwingSheetView extends JPanel
                 // nop: cell is always visible!
             } else if (aboveSplit) {
                 // only scroll x
-                java.awt.Rectangle r = new java.awt.Rectangle(
-                        xS2D(cellRect.getX()),
-                        1,
-                        wS2D(cellRect.getW()),
-                        1);
+                java.awt.Rectangle r = new java.awt.Rectangle(xS2D(cellRect.getX()), 1, wS2D(cellRect.getW()), 1);
                 bottomRightQuadrant.scrollRectToVisible(r);
             } else if (toLeftOfSplit) {
                 // only scroll y
-                java.awt.Rectangle r = new java.awt.Rectangle(
-                        1,
-                        yS2D(cellRect.getY()),
-                        1,
-                        hS2D(cellRect.getH()));
+                java.awt.Rectangle r = new java.awt.Rectangle(1, yS2D(cellRect.getY()), 1, hS2D(cellRect.getH()));
                 bottomRightQuadrant.scrollRectToVisible(r);
             } else {
                 bottomRightQuadrant.scrollRectToVisible(rectS2D(cellRect));
@@ -368,16 +356,11 @@ public class SwingSheetView extends JPanel
      * Actions for key bindings.
      */
     enum Actions {
-        MOVE_UP(view -> view.move(Direction.NORTH)),
-        MOVE_DOWN(view -> view.move(Direction.SOUTH)),
-        MOVE_LEFT(view -> view.move(Direction.WEST)),
-        MOVE_RIGHT(view -> view.move(Direction.EAST)),
-        PAGE_UP(view -> view.movePage(Direction.NORTH)),
-        PAGE_DOWN(view -> view.movePage(Direction.SOUTH)),
-        MOVE_HOME(view -> view.moveHome()),
-        MOVE_END(view -> view.moveEnd()),
-        START_EDITING(view -> view.startEditing()),
-        SHOW_SEARCH_DIALOG(view -> view.showSearchDialog()),
+        MOVE_UP(view -> view.move(Direction.NORTH)), MOVE_DOWN(view -> view.move(Direction.SOUTH)),
+        MOVE_LEFT(view -> view.move(Direction.WEST)), MOVE_RIGHT(view -> view.move(Direction.EAST)),
+        PAGE_UP(view -> view.movePage(Direction.NORTH)), PAGE_DOWN(view -> view.movePage(Direction.SOUTH)),
+        MOVE_HOME(view -> view.moveHome()), MOVE_END(view -> view.moveEnd()),
+        START_EDITING(view -> view.startEditing()), SHOW_SEARCH_DIALOG(view -> view.showSearchDialog()),
         COPY(view -> view.copyToClipboard());
 
         private final Consumer<SwingSheetView> action;
@@ -387,14 +370,11 @@ public class SwingSheetView extends JPanel
         }
 
         Action getAction(SwingSheetView view) {
-            return SwingUtil.createAction(name(), e-> action.accept(view));
+            return SwingUtil.createAction(name(), e -> action.accept(view));
         }
     }
 
-    class SwingSegmentView extends JPanel
-            implements
-            Scrollable,
-            SegmentView<SwingSheetView, SwingGraphicsContext> {
+    class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, SwingGraphicsContext> {
         private final IntSupplier startRow;
         private final IntSupplier endRow;
         private final IntSupplier startColumn;
@@ -656,8 +636,7 @@ public class SwingSheetView extends JPanel
     /**
      * Construct a new SheetView for the given sheet.
      *
-     * @param sheet
-     *            the sheet to display
+     * @param sheet the sheet to display
      */
     public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
@@ -794,10 +773,8 @@ public class SwingSheetView extends JPanel
     /**
      * Set current row and column.
      *
-     * @param rowNum
-     *            number of row to be set
-     * @param colNum
-     *            number of column to be set
+     * @param rowNum number of row to be set
+     * @param colNum number of column to be set
      * @return true if the current logical cell changed
      */
     @Override
@@ -816,8 +793,7 @@ public class SwingSheetView extends JPanel
     /**
      * Set the current column number.
      *
-     * @param colNum
-     *            number of column to be set
+     * @param colNum number of column to be set
      */
     public void setCurrentColNum(int colNum) {
         setCurrentCell(getCurrentRowNum(), colNum);
@@ -826,8 +802,7 @@ public class SwingSheetView extends JPanel
     /**
      * Set the current row number.
      *
-     * @param rowNum
-     *            number of row to be set
+     * @param rowNum number of row to be set
      */
     public void setCurrentRowNum(int rowNum) {
         setCurrentCell(rowNum, getCurrentColNum());
@@ -836,8 +811,7 @@ public class SwingSheetView extends JPanel
     /**
      * Enable/disable sheet editing.
      *
-     * @param editable
-     *            true to allow editing
+     * @param editable true to allow editing
      */
     @Override
     public void setEditable(boolean editable) {
@@ -857,8 +831,7 @@ public class SwingSheetView extends JPanel
     /**
      * Set sheet to display.
      *
-     * @param sheet
-     *            the sheet to display
+     * @param sheet the sheet to display
      */
     @Override
     public final void setSheet(Sheet sheet) {
@@ -885,8 +858,7 @@ public class SwingSheetView extends JPanel
     /**
      * End edit mode for the current cell.
      *
-     * @param commit
-     *            true if the content of the edited cell is to be updated
+     * @param commit true if the content of the edited cell is to be updated
      */
     @Override
     public void stopEditing(boolean commit) {
@@ -960,8 +932,7 @@ public class SwingSheetView extends JPanel
     /**
      * Move the selection rectangle to an adjacent cell.
      *
-     * @param d
-     *            direction
+     * @param d direction
      */
     private void move(Direction d) {
         Cell cell = getCurrentLogicalCell();
@@ -1015,8 +986,7 @@ public class SwingSheetView extends JPanel
     /**
      * Move the selection rectangle to an adjacent cell.
      *
-     * @param d
-     *            direction
+     * @param d direction
      */
     private void movePage(Direction d) {
         Cell cell = getCurrentLogicalCell();

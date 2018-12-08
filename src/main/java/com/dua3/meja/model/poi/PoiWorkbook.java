@@ -67,8 +67,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     private static final Logger LOGGER = Logger.getLogger(PoiWorkbook.class.getName());
 
     /**
-     * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks (the
-     * old Excel format).
+     * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks (the old
+     * Excel format).
      */
     public static class PoiHssfWorkbook extends PoiWorkbook {
 
@@ -77,10 +77,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         /**
          * Construct instance from existing POI workbook.
          *
-         * @param poiWorkbook
-         *            the POI workbook instance
-         * @param path
-         *            the Path of the workbook
+         * @param poiWorkbook the POI workbook instance
+         * @param path        the Path of the workbook
          */
         public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Path path) {
             super(poiWorkbook, path);
@@ -93,7 +91,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         public PoiFont createFont(com.dua3.utility.text.Font font) {
             Font poiFont = poiWorkbook.createFont();
             poiFont.setFontName(font.getFamily());
-            poiFont.setFontHeight(((short) Math.round(20*font.getSizeInPoints())));
+            poiFont.setFontHeight(((short) Math.round(20 * font.getSizeInPoints())));
             poiFont.setColor(getPoiColor(font.getColor()).getIndex());
             poiFont.setBold(font.isBold());
             poiFont.setItalic(font.isItalic());
@@ -173,18 +171,15 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     /**
      *
      */
-    public static class PoiXssfWorkbook
-            extends PoiWorkbook {
+    public static class PoiXssfWorkbook extends PoiWorkbook {
 
         private final PoiXssfCellStyle defaultCellStyle;
 
         /**
          * Construct instance from existing POI workbook.
          *
-         * @param poiWorkbook
-         *            the POI workbook instance
-         * @param path
-         *            the Path of the workbook
+         * @param poiWorkbook the POI workbook instance
+         * @param path        the Path of the workbook
          */
         public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
             super(poiWorkbook, path);
@@ -197,7 +192,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         public PoiFont createFont(com.dua3.utility.text.Font font) {
             XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();
             poiFont.setFontName(font.getFamily());
-            poiFont.setFontHeight(((short) Math.round(20*font.getSizeInPoints())));
+            poiFont.setFontHeight(((short) Math.round(20 * font.getSizeInPoints())));
             poiFont.setColor(getPoiColor(font.getColor()).getIndex());
             poiFont.setBold(font.isBold());
             poiFont.setItalic(font.isItalic());
@@ -226,8 +221,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
             // try to get RGB values
             byte[] rgb = xssfColor.hasAlpha() ? xssfColor.getARGB()
-                    : xssfColor.hasTint() ? xssfColor.getRGBWithTint()
-                            : xssfColor.getRGB();
+                    : xssfColor.hasTint() ? xssfColor.getRGBWithTint() : xssfColor.getRGB();
 
             if (rgb != null) {
                 if (rgb.length == 4) {
@@ -299,10 +293,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     /**
      * Construct a new instance.
      *
-     * @param poiWorkbook
-     *            the POI workbook instance
-     * @param path
-     *            the Path of this workbook
+     * @param poiWorkbook the POI workbook instance
+     * @param path        the Path of this workbook
      */
     protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
         super(path);
@@ -333,8 +325,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     /**
      * Create a new font.
      *
-     * @param font
-     *            the font to create a POI version of
+     * @param font the font to create a POI version of
      * @return an instance of {@link PoiFont}
      */
     protected abstract PoiFont createFont(com.dua3.utility.text.Font font);
@@ -342,8 +333,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     /**
      * Convert {@link String} to {@link RichTextString}.
      *
-     * @param s
-     *            the {@link String} to convert
+     * @param s the {@link String} to convert
      * @return {@link RichTextString} with the same text as {@code s}
      */
     public abstract RichTextString createRichTextString(String s);
@@ -351,8 +341,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     /**
      * Create instance of {@link PoiSheet} for the given POI sheet.
      *
-     * @param poiSheet
-     *            the POI sheet
+     * @param poiSheet the POI sheet
      * @return instance of {@link PoiSheet}
      */
     protected PoiSheet createSheet(org.apache.poi.ss.usermodel.Sheet poiSheet) {
@@ -413,10 +402,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     /**
      * Get font color.
      *
-     * @param poiFont
-     *            instance of POI font
-     * @param dfltColor
-     *            color return if none is set
+     * @param poiFont   instance of POI font
+     * @param dfltColor color return if none is set
      * @return the color for the given font
      */
     public abstract Color getColor(org.apache.poi.ss.usermodel.Font poiFont, Color dfltColor);
@@ -441,8 +428,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     /**
      * Get instance of {@link PoiFont}.
      *
-     * @param poiFont
-     *            the POI font instance
+     * @param poiFont the POI font instance
      * @return instance of {@link PoiFont} for the given font
      */
     public PoiFont getFont(org.apache.poi.ss.usermodel.Font poiFont) {
@@ -450,11 +436,9 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     }
 
     /**
-     * Get {@link PoiCellStyle} from
-     * {@link org.apache.poi.ss.usermodel.CellStyle}.
+     * Get {@link PoiCellStyle} from {@link org.apache.poi.ss.usermodel.CellStyle}.
      *
-     * @param cellStyle
-     *            POI cell style
+     * @param cellStyle POI cell style
      * @return instance of {@link PoiCellStyle}
      */
     public abstract PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle cellStyle);
@@ -462,8 +446,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     /**
      * Get POI color.
      *
-     * @param color
-     *            the color
+     * @param color the color
      * @return POI color
      */
     public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
@@ -476,7 +459,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         String name = String.valueOf(attributes.getOrDefault(TextAttributes.FONT_FAMILY, font.getFamily()));
 
         Object sSize = attributes.get(TextAttributes.FONT_SIZE);
-        short height = (short) Math.round(sSize == null ? font.getSizeInPoints() : TextUtil.decodeFontSize(sSize.toString()));
+        short height = (short) Math
+                .round(sSize == null ? font.getSizeInPoints() : TextUtil.decodeFontSize(sSize.toString()));
 
         final Object sStyle = attributes.get(TextAttributes.FONT_STYLE);
         boolean italic = sStyle == null ? font.isItalic() : "italic".equals(sStyle);
@@ -495,14 +479,10 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         for (int i = 0; i < poiWorkbook.getNumberOfFontsAsInt(); i++) {
             Font poiFont = poiWorkbook.getFontAt(i);
 
-            if (poiFont.getFontName().equalsIgnoreCase(name)
-                    && poiFont.getFontHeightInPoints() == height
-                    && poiFont.getBold() == bold
-                    && poiFont.getItalic() == italic
-                    && (poiFont.getUnderline() != Font.U_NONE) == underline
-                    && poiFont.getStrikeout() == strikethrough
-                    && getColor(poiFont, Color.BLACK).equals(color)
-                    && poiFont.getTypeOffset() == Font.SS_NONE) {
+            if (poiFont.getFontName().equalsIgnoreCase(name) && poiFont.getFontHeightInPoints() == height
+                    && poiFont.getBold() == bold && poiFont.getItalic() == italic
+                    && (poiFont.getUnderline() != Font.U_NONE) == underline && poiFont.getStrikeout() == strikethrough
+                    && getColor(poiFont, Color.BLACK).equals(color) && poiFont.getTypeOffset() == Font.SS_NONE) {
                 return new PoiFont(this, poiFont);
             }
         }
@@ -567,7 +547,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             try {
                 evaluator.evaluateAll();
             } catch (NotImplementedException e) {
-                LOGGER.log(Level.WARNING, "unsupported function in formula. Flagging workbook as needing recalculation.", e);
+                LOGGER.log(Level.WARNING,
+                        "unsupported function in formula. Flagging workbook as needing recalculation.", e);
                 setForceFormulaRecalculation(true);
             }
         }

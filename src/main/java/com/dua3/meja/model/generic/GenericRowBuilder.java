@@ -31,8 +31,7 @@ import com.dua3.meja.util.Options;
  * Implementation of the {@link RowBuilder} interface that builds instances of
  * {@link GenericRow}.
  */
-public class GenericRowBuilder
-        implements RowBuilder {
+public class GenericRowBuilder implements RowBuilder {
 
     private final Sheet sheet;
     private final CellValueHelper helper;
@@ -42,10 +41,8 @@ public class GenericRowBuilder
     /**
      * Construct a new {@code GenericRowBuilder}.
      *
-     * @param sheet
-     *            the sheet to build rows for
-     * @param options
-     *            the locale to use
+     * @param sheet   the sheet to build rows for
+     * @param options the locale to use
      */
     public GenericRowBuilder(Sheet sheet, Options options) {
         this.sheet = sheet;

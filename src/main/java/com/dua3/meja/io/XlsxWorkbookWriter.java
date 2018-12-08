@@ -52,7 +52,8 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
             LOGGER.log(Level.FINE, "writing XLSX workbook using POI.");
             workbook.write(FileType.XLSX, out);
         } else {
-            LOGGER.log(Level.FINE, "writing {0} using streaming API in XLSX format.", workbook.getClass().getSimpleName());
+            LOGGER.log(Level.FINE, "writing {0} using streaming API in XLSX format.",
+                    workbook.getClass().getSimpleName());
             try (Workbook xlsxWorkbook = PoiWorkbookFactory.instance().createXlsxStreaming()) {
                 LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsxWorkbook.copy(workbook);

@@ -39,8 +39,7 @@ import com.dua3.utility.lang.LangUtil;
  *
  *         optional: trim field values
  */
-public class CsvReader extends Csv
-        implements DataReader, AutoCloseable {
+public class CsvReader extends Csv implements DataReader, AutoCloseable {
 
     // the unicode codepoint for the UTF-8 BOM
     private static final int UTF8_BOM = 0xfeff;
@@ -129,11 +128,8 @@ public class CsvReader extends Csv
         // must contain delimiter!)
         String regexStartQuotedFieldWithLineBreak = "(" + del + "(?:[^" + del + "]*(?:" + del + del + ")?)*$)";
 
-        String regexField = "^(?:"
-                + regexQuotedField
-                + "|" + regexUnquotedField
-                + "|" + regexStartQuotedFieldWithLineBreak
-                + ")";
+        String regexField = "^(?:" + regexQuotedField + "|" + regexUnquotedField + "|"
+                + regexStartQuotedFieldWithLineBreak + ")";
         patternField = Pattern.compile(regexField);
     }
 
@@ -143,8 +139,7 @@ public class CsvReader extends Csv
     }
 
     /**
-     * @param columnNr
-     *            the column number
+     * @param columnNr the column number
      * @return name of column or columnNr as String if no name was set
      */
     public String getColumnName(int columnNr) {
@@ -302,9 +297,8 @@ public class CsvReader extends Csv
     /**
      * read some rows with CSV data.
      *
-     * @param maxRows
-     *            maximum number of rows to be read or 0 to read till end of
-     *            input
+     * @param maxRows maximum number of rows to be read or 0 to read till end of
+     *                input
      * @return number of rows read
      * @throws IOException
      * @throws CsvFormatException
@@ -335,24 +329,21 @@ public class CsvReader extends Csv
     }
 
     /**
-     * @param columnNames
-     *            the columnNames to set
+     * @param columnNames the columnNames to set
      */
     public void setColumnNames(List<String> columnNames) {
         this.columnNames = columnNames;
     }
 
     /**
-     * @param ignoreExcessFields
-     *            the ignoreExcessFields to set
+     * @param ignoreExcessFields the ignoreExcessFields to set
      */
     public void setIgnoreExcessFields(boolean ignoreExcessFields) {
         this.ignoreExcessFields = ignoreExcessFields;
     }
 
     /**
-     * @param ignoreMissingFields
-     *            the ignoreMissingFields to set
+     * @param ignoreMissingFields the ignoreMissingFields to set
      */
     public void setIgnoreMissingFields(boolean ignoreMissingFields) {
         this.ignoreMissingFields = ignoreMissingFields;

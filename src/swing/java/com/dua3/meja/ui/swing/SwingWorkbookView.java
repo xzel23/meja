@@ -17,8 +17,8 @@ package com.dua3.meja.ui.swing;
 
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -37,8 +37,7 @@ import com.dua3.meja.ui.WorkbookView;
  * @author axel
  */
 @SuppressWarnings("serial")
-public class SwingWorkbookView extends JComponent
-        implements WorkbookView, ChangeListener, PropertyChangeListener {
+public class SwingWorkbookView extends JComponent implements WorkbookView, ChangeListener, PropertyChangeListener {
 
     private Workbook workbook;
     private JTabbedPane content = null;
@@ -53,8 +52,7 @@ public class SwingWorkbookView extends JComponent
     /**
      * Get the {@link SwingSheetView} that is currently visible.
      *
-     * @return the {@link SwingSheetView} displayed on the visible tab of this
-     *         view
+     * @return the {@link SwingSheetView} displayed on the visible tab of this view
      */
     @Override
     public SwingSheetView getCurrentView() {
@@ -79,8 +77,7 @@ public class SwingWorkbookView extends JComponent
     /**
      * Get view for sheet.
      *
-     * @param sheetName
-     *            name of the sheet
+     * @param sheetName name of the sheet
      * @return the view for the requested sheet or {@code null} if not found
      */
     @Override
@@ -111,8 +108,8 @@ public class SwingWorkbookView extends JComponent
     /**
      * Set editable state.
      *
-     * @param editable
-     *            set to {@code true} to allow editing of the displayed workbook
+     * @param editable set to {@code true} to allow editing of the displayed
+     *                 workbook
      */
     @Override
     public void setEditable(boolean editable) {
@@ -132,8 +129,7 @@ public class SwingWorkbookView extends JComponent
     /**
      * Set the workbook.
      *
-     * @param workbook
-     *            the workbook to display
+     * @param workbook the workbook to display
      */
     @Override
     public void setWorkbook(Workbook workbook) {
@@ -152,13 +148,13 @@ public class SwingWorkbookView extends JComponent
                 final SwingSheetView sheetView = new SwingSheetView(sheet);
                 content.addTab(sheet.getSheetName(), sheetView);
             }
-            if (workbook.getSheetCount()>0) {
+            if (workbook.getSheetCount() > 0) {
                 content.setSelectedIndex(workbook.getCurrentSheetIndex());
             }
             content.addChangeListener(this);
             add(content);
             revalidate();
-            
+
             workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
             workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_REMOVED, this);
         }
@@ -175,10 +171,10 @@ public class SwingWorkbookView extends JComponent
     public void propertyChange(PropertyChangeEvent evt) {
         String property = evt.getPropertyName();
         switch (property) {
-            case Workbook.PROPERTY_SHEET_ADDED:
-            case Workbook.PROPERTY_SHEET_REMOVED:
-                setWorkbook(getWorkbook());
-                break;
+        case Workbook.PROPERTY_SHEET_ADDED:
+        case Workbook.PROPERTY_SHEET_REMOVED:
+            setWorkbook(getWorkbook());
+            break;
         }
     }
 }

@@ -28,8 +28,7 @@ public interface RowBuilder {
     /**
      * Create a row as {@code List<String>}.
      */
-    public class ListRowBuilder
-            implements RowBuilder {
+    public class ListRowBuilder implements RowBuilder {
 
         private List<String> row;
 
@@ -61,8 +60,7 @@ public interface RowBuilder {
     /**
      * Add a value.
      *
-     * @param value
-     *            the value to add
+     * @param value the value to add
      */
     public void add(String value);
 

@@ -23,8 +23,7 @@ import com.dua3.meja.util.Options;
 /**
  * Abstract base class for workbook factories.
  *
- * @param <WORKBOOK>
- *            the concrete workbook class
+ * @param <WORKBOOK> the concrete workbook class
  *
  * @author axel
  */
@@ -33,8 +32,7 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
     /**
      * Return copy of workbook in this factory`s implementation.
      *
-     * @param other
-     *            the source workbook
+     * @param other the source workbook
      * @return workbook instance of type {@code WORKBOOK} with the contents of
      *         {@code workbook}
      */
@@ -75,15 +73,13 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
     /**
      * Load workbook from file.
      * <p>
-     * The file type is determined automatically based on the extension so that
-     * it is possible to open a CSV file as Excel workbook.
+     * The file type is determined automatically based on the extension so that it
+     * is possible to open a CSV file as Excel workbook.
      * </p>
      *
-     * @param path
-     *            the workbook path
+     * @param path the workbook path
      * @return workbook
-     * @throws IOException
-     *             if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     public WORKBOOK open(Path path) throws IOException {
         return open(path, Options.empty());
@@ -92,17 +88,14 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
     /**
      * Load workbook from file.
      * <p>
-     * The file type is determined automatically based on the extension so that
-     * it is possible to open a CSV file as Excel workbook.
+     * The file type is determined automatically based on the extension so that it
+     * is possible to open a CSV file as Excel workbook.
      * </p>
      *
-     * @param path
-     *            the workbook path
-     * @param importSettings
-     *            settings to configure the input process
+     * @param path           the workbook path
+     * @param importSettings settings to configure the input process
      * @return workbook
-     * @throws IOException
-     *             if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     public abstract WORKBOOK open(Path path, Options importSettings) throws IOException;
 

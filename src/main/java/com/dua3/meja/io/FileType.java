@@ -39,7 +39,8 @@ public enum FileType {
     /**
      * File type for CSV files.
      */
-    CSV("CSV-Data", GenericWorkbookFactory.instance(), CsvWorkbookReader::create, CsvWorkbookWriter::create, "*.csv", "*.txt") {
+    CSV("CSV-Data", GenericWorkbookFactory.instance(), CsvWorkbookReader::create, CsvWorkbookWriter::create, "*.csv",
+            "*.txt") {
         @Override
         public List<Option<?>> getSettings() {
             return Csv.getOptions();
@@ -52,8 +53,7 @@ public enum FileType {
     XLS("Excel 97-2003", PoiWorkbookFactory.instance(), null, XlsWorkbookWriter::instance, "*.xls"),
 
     /**
-     * File type for the new XML-based Excel format that uses the '.xlsx'
-     * extension.
+     * File type for the new XML-based Excel format that uses the '.xlsx' extension.
      */
     XLSX("Excel 2007", PoiWorkbookFactory.instance(), null, XlsxWorkbookWriter::instance, "*.xlsx", "*.xlsm"),
 
@@ -65,10 +65,8 @@ public enum FileType {
     /**
      * Tries to determine the FileType instance matching the given file.
      *
-     * @param file
-     *            the file to determine the FileType for
-     * @return matching instance of {@link FileType} or {@code null} if none
-     *         found
+     * @param file the file to determine the FileType for
+     * @return matching instance of {@link FileType} or {@code null} if none found
      */
     public static Optional<FileType> forFile(File file) {
         String fileNameLower = file.getName().toLowerCase(Locale.ROOT);
@@ -78,10 +76,8 @@ public enum FileType {
     /**
      * Tries to determine the FileType instance matching the given path.
      *
-     * @param path
-     *            the path to determine the FileType for
-     * @return matching instance of {@link FileType} or {@code null} if none
-     *         found
+     * @param path the path to determine the FileType for
+     * @return matching instance of {@link FileType} or {@code null} if none found
      */
     public static Optional<FileType> forPath(Path path) {
         String fileNameLower = path.toString().toLowerCase(Locale.ROOT);
@@ -102,8 +98,7 @@ public enum FileType {
     /**
      * Return list of filters supporting the requested operation.
      *
-     * @param mode
-     *            the {@link OpenMode}
+     * @param mode the {@link OpenMode}
      * @return list of filters that support {@code mode}
      */
     public static List<FileType> getFileTypes(OpenMode mode) {
@@ -154,6 +149,7 @@ public enum FileType {
 
     /**
      * Get list of file extensions for this file type.
+     * 
      * @return list of file extensions
      */
     public List<String> getExtensions() {
@@ -207,8 +203,7 @@ public enum FileType {
     /**
      * Check if the requested operation is supported by this filter.
      *
-     * @param modeRequested
-     *            the {@link OpenMode}
+     * @param modeRequested the {@link OpenMode}
      * @return true if operation is supported
      */
     public boolean isSupported(OpenMode modeRequested) {

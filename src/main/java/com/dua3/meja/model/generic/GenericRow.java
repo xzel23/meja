@@ -30,13 +30,12 @@ import com.dua3.meja.util.IteratorAdapter;
 public class GenericRow extends AbstractRow {
 
     private final ArrayList<GenericCell> cells;
+
     /**
      * Construct a new {@code GenericRow}.
      *
-     * @param sheet
-     *            the sheet the row belongs to
-     * @param rowNumber
-     *            the row number
+     * @param sheet     the sheet the row belongs to
+     * @param rowNumber the row number
      */
     public GenericRow(GenericSheet sheet, int rowNumber) {
         super(sheet, rowNumber);

@@ -28,10 +28,8 @@ public class BorderStyle {
     /**
      * Construct a new {@code BorderStyle}.
      *
-     * @param width
-     *            the border width to use in points
-     * @param color
-     *            the border color to use
+     * @param width the border width to use in points
+     * @param color the border color to use
      */
     public BorderStyle(float width, Color color) {
         this.width = width;

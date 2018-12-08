@@ -45,8 +45,7 @@ public interface Cell {
     /**
      * Copy cell data.
      *
-     * @param other
-     *            cell to copy data from
+     * @param other cell to copy data from
      */
     void copy(Cell other);
 
@@ -69,16 +68,14 @@ public interface Cell {
      * Return boolean cell value.
      *
      * @return boolean cell value
-     * @throws IllegalStateException
-     *             if cell is not of boolean type
+     * @throws IllegalStateException if cell is not of boolean type
      */
     boolean getBoolean();
 
     /**
      * Get cell reference (ie. "Sheet!A1" for the top left cell).
      *
-     * @param options
-     *            options to be used
+     * @param options options to be used
      * @return cell reference as String
      */
     default String getCellRef(RefOption... options) {
@@ -100,9 +97,7 @@ public interface Cell {
             }
         }
 
-        return sheet
-                + prefixColumn + Sheet.getColumnName(getColumnNumber())
-                + prefixRow + (getRowNumber() + 1);
+        return sheet + prefixColumn + Sheet.getColumnName(getColumnNumber()) + prefixRow + (getRowNumber() + 1);
     }
 
     /**
@@ -130,11 +125,9 @@ public interface Cell {
      * Return date value.
      *
      * @return date cell value
-     * @throws IllegalStateException
-     *             if cell is not of date value
-     * @deprecated
-     * Use the new Date and Time API introduced in Java 8 and the corresponding {@link Cell#getDateTime()}
-     * method.
+     * @throws IllegalStateException if cell is not of date value
+     * @deprecated Use the new Date and Time API introduced in Java 8 and the
+     *             corresponding {@link Cell#getDateTime()} method.
      */
     @Deprecated
     Date getDate();
@@ -143,8 +136,7 @@ public interface Cell {
      * Return date value.
      *
      * @return date cell value
-     * @throws IllegalStateException
-     *             if cell is not of date value
+     * @throws IllegalStateException if cell is not of date value
      */
     LocalDateTime getDateTime();
 
@@ -152,8 +144,7 @@ public interface Cell {
      * Return formula.
      *
      * @return the cell`s formula
-     * @throws IllegalStateException
-     *             if no formula is set
+     * @throws IllegalStateException if no formula is set
      */
     String getFormula();
 
@@ -161,17 +152,17 @@ public interface Cell {
      * Get the horizontal span.
      *
      * The horizontal span of a merged cells is the horizontal number of merged
-     * cells for the top left cell of the merged cells and 0 for the other
-     * merged cells. For cells that are not merged, the span is 1.
+     * cells for the top left cell of the merged cells and 0 for the other merged
+     * cells. For cells that are not merged, the span is 1.
      *
      * @return horizontal span for this cell
      */
     int getHorizontalSpan();
 
     /**
-     * Get the logical cell. The logical cell for merged cells is the top left
-     * cell of the group of merged cells. For cells that are not merged, the
-     * logical cell is the cell itself.
+     * Get the logical cell. The logical cell for merged cells is the top left cell
+     * of the group of merged cells. For cells that are not merged, the logical cell
+     * is the cell itself.
      *
      * @return the logical cell
      */
@@ -181,8 +172,7 @@ public interface Cell {
      * Return numeric value.
      *
      * @return numeric cell value
-     * @throws IllegalStateException
-     *             if cell is not of numeric type
+     * @throws IllegalStateException if cell is not of numeric type
      */
     Number getNumber();
 
@@ -194,10 +184,10 @@ public interface Cell {
      * evaluation is returned.
      *
      * <p>
-     * <em>Note: Since excel doesn't know about dates internally and date cells
-     * are determined by looking at both cell type and format, the cell style
-     * has to be set before calling this method to make sure
-     * {@code CellType.DATE} is returned for formulas that return a date.</em>
+     * <em>Note: Since excel doesn't know about dates internally and date cells are
+     * determined by looking at both cell type and format, the cell style has to be
+     * set before calling this method to make sure {@code CellType.DATE} is returned
+     * for formulas that return a date.</em>
      * </p>
      *
      * @return cell type
@@ -229,17 +219,16 @@ public interface Cell {
      * Return string value.
      *
      * @return text cell value
-     * @throws IllegalStateException
-     *             if cell is not of text type
+     * @throws IllegalStateException if cell is not of text type
      */
     RichText getText();
 
     /**
      * Get the vertical span.
      *
-     * The vertical span of a merged cells is the vertical number of merged
-     * cells for the top left cell of the merged cells and 0 for the other
-     * merged cells. For cells that are not merged, the span is 1.
+     * The vertical span of a merged cells is the vertical number of merged cells
+     * for the top left cell of the merged cells and 0 for the other merged cells.
+     * For cells that are not merged, the span is 1.
      *
      * @return vertical span for this cell
      */
@@ -262,8 +251,7 @@ public interface Cell {
     /**
      * Set cell value to boolean value.
      *
-     * @param b
-     *            boolean value
+     * @param b boolean value
      * @return this cell
      */
     Cell set(Boolean b);
@@ -271,12 +259,11 @@ public interface Cell {
     /**
      * Set cell value to date.
      *
-     * @param arg
-     *            date
+     * @param arg date
      * @return this cell
-     * @deprecated
-     * Use the new Date and Time API introduced in Java 8 and the corresponding methods
-     * {@link #set(LocalDateTime)} and {@link #set(LocalDate)}.
+     * @deprecated Use the new Date and Time API introduced in Java 8 and the
+     *             corresponding methods {@link #set(LocalDateTime)} and
+     *             {@link #set(LocalDate)}.
      */
     @Deprecated
     Cell set(Date arg);
@@ -284,8 +271,7 @@ public interface Cell {
     /**
      * Set cell value to date.
      *
-     * @param arg
-     *            date
+     * @param arg date
      * @return this cell
      */
     Cell set(LocalDateTime arg);
@@ -293,8 +279,7 @@ public interface Cell {
     /**
      * Set cell value to date.
      *
-     * @param arg
-     *            date
+     * @param arg date
      * @return this cell
      */
     default Cell set(LocalDate arg) {
@@ -305,8 +290,7 @@ public interface Cell {
     /**
      * Set cell value to number.
      *
-     * @param arg
-     *            number
+     * @param arg number
      * @return this cell
      */
     Cell set(Number arg);
@@ -314,21 +298,23 @@ public interface Cell {
     /**
      * Set cell value.
      * <p>
-     * Use this method when the exact type of the value object is not known at compile time.
-     * Depending on the runtime-type, the corresponding overload of {@code Cell.set(...)} is called. if {@code value}
-     * is {@code null}, the cell is cleared. If no overload of {@code Cell.set(...)}  matches the runtime type of
-     * {@code value}, the cell value is set to {@code String.valueOf(value)}.
+     * Use this method when the exact type of the value object is not known at
+     * compile time. Depending on the runtime-type, the corresponding overload of
+     * {@code Cell.set(...)} is called. if {@code value} is {@code null}, the cell
+     * is cleared. If no overload of {@code Cell.set(...)} matches the runtime type
+     * of {@code value}, the cell value is set to {@code String.valueOf(value)}.
      * </p>
      * The following types are supported:
      * <ul>
-     * <li> {@link java.lang.Number}
-     * <li> {@link java.lang.Boolean}
-     * <li> {@link java.time.LocalDateTime}
-     * <li> {@link java.time.LocalDate}
-     * <li> {@link java.util.Date} (deprecated)
-     * <li> {@link java.lang.String}
-     * <li> {@link RichText}
+     * <li>{@link java.lang.Number}
+     * <li>{@link java.lang.Boolean}
+     * <li>{@link java.time.LocalDateTime}
+     * <li>{@link java.time.LocalDate}
+     * <li>{@link java.util.Date} (deprecated)
+     * <li>{@link java.lang.String}
+     * <li>{@link RichText}
      * </ul>
+     * 
      * @param arg the value
      * @return this cell
      */
@@ -359,8 +345,7 @@ public interface Cell {
     /**
      * Set cell value to string with markup.
      *
-     * @param s
-     *            rich text string
+     * @param s rich text string
      * @return this cell
      */
     Cell set(RichText s);
@@ -368,8 +353,7 @@ public interface Cell {
     /**
      * Set cell value to string.
      *
-     * @param s
-     *            string
+     * @param s string
      * @return this cell
      */
     Cell set(String s);
@@ -377,16 +361,14 @@ public interface Cell {
     /**
      * Set cell style.
      *
-     * @param cellStyle
-     *            cell style
+     * @param cellStyle cell style
      */
     void setCellStyle(CellStyle cellStyle);
 
     /**
      * Sets the cell style registered under name in the workbook.
      *
-     * @param cellStyleName
-     *            cell style name
+     * @param cellStyleName cell style name
      */
     default void setCellStyle(String cellStyleName) {
         setCellStyle(getWorkbook().getCellStyle(cellStyleName));
@@ -395,8 +377,7 @@ public interface Cell {
     /**
      * Set formula
      *
-     * @param value
-     *            the formula as a string
+     * @param value the formula as a string
      * @return this cell
      */
     public Cell setFormula(String value);
@@ -420,36 +401,38 @@ public interface Cell {
     /**
      * Unmerge cell.
      *
-     * @throws IllegalStateException
-     *             if this cell is not the top left cell of a merged region
+     * @throws IllegalStateException if this cell is not the top left cell of a
+     *                               merged region
      */
     void unMerge();
 
     /**
      * Test if cell is merged.
+     * 
      * @return true if cell is merged
      */
     default boolean isMerged() {
-        return getHorizontalSpan()!=1 || getVerticalSpan()!=1;
+        return getHorizontalSpan() != 1 || getVerticalSpan() != 1;
     }
 
     /**
      * Merge cell with neighbouring cells.
+     * 
      * @param spanX the horizontal span
      * @param spanY the vertical span
      */
     default void merge(int spanX, int spanY) {
         LangUtil.check(!isMerged(), "Cell is already merged.");
-        LangUtil.check(spanX>=1);
-        LangUtil.check(spanY>=1);
-        LangUtil.check(spanX>1||spanY>1, "At least 2 cells must be merged.");
+        LangUtil.check(spanX >= 1);
+        LangUtil.check(spanY >= 1);
+        LangUtil.check(spanX > 1 || spanY > 1, "At least 2 cells must be merged.");
 
         int iMin = getRowNumber();
-        int iMax = iMin + spanY-1;
+        int iMax = iMin + spanY - 1;
         int jMin = getColumnNumber();
-        int jMax = jMin + spanX-1;
+        int jMax = jMin + spanX - 1;
 
         RectangularRegion region = new RectangularRegion(iMin, iMax, jMin, jMax);
-        getSheet().addMergedRegion(region );
+        getSheet().addMergedRegion(region);
     }
 }

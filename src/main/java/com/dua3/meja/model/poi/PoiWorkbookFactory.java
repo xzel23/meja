@@ -50,8 +50,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     public static final String OPTION_LOCALE = "Locale";
 
-    private static PoiWorkbook createWorkbook(
-            final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
+    private static PoiWorkbook createWorkbook(final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
         if (poiWorkbook instanceof HSSFWorkbook) {
             return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, path);
         } else {
@@ -78,8 +77,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @return the workbook
      * @throws IOException
      */
-    private static PoiWorkbook open(InputStream in, Path path)
-            throws IOException {
+    private static PoiWorkbook open(InputStream in, Path path) throws IOException {
         try {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
                     .create(in);
@@ -108,8 +106,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @return the newly created Workbook
      */
     public Workbook createXls() {
-        return new PoiHssfWorkbook(
-                new org.apache.poi.hssf.usermodel.HSSFWorkbook(), null);
+        return new PoiHssfWorkbook(new org.apache.poi.hssf.usermodel.HSSFWorkbook(), null);
     }
 
     /**
@@ -144,22 +141,20 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
             }
         }
 
-        LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.", type.getDescription());
+        LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
+                type.getDescription());
 
         return type.getReader().read(PoiWorkbookFactory.instance(), path);
     }
 
     /**
      *
-     * @param path
-     *            Path of the workbook to open
+     * @param path Path of the workbook to open
      * @return the workbook the workbook
-     * @throws IOException
-     *             if an error occurs
+     * @throws IOException if an error occurs
      */
     @Override
-    public PoiWorkbook open(Path path)
-            throws IOException {
+    public PoiWorkbook open(Path path) throws IOException {
         try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
             return open(in, path);
         }

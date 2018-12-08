@@ -3,8 +3,7 @@ package com.dua3.meja.util;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class NamedFunction<T, R>
-        implements Function<T, R> {
+public class NamedFunction<T, R> implements Function<T, R> {
 
     public static <T, R> NamedFunction<T, R> create(String name, Function<T, R> f) {
         return new NamedFunction<>(name, f);

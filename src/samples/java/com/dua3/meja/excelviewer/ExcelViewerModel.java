@@ -33,21 +33,16 @@ public class ExcelViewerModel {
     }
 
     enum MessageType {
-        ERROR,
-        INFO;
+        ERROR, INFO;
     }
 
     private static final Logger LOGGER = Logger.getLogger(ExcelViewer.class.getName());
 
-    private static final String LICENSE = "Copyright %d %s%n"
-            + "%n"
+    private static final String LICENSE = "Copyright %d %s%n" + "%n"
             + "Licensed under the Apache License, Version 2.0 (the \"License\");%n"
             + "you may not use this file except in compliance with the License.%n"
-            + "You may obtain a copy of the License at%n"
-            + "%n"
-            + "    http://www.apache.org/licenses/LICENSE-2.0%n"
-            + "%n"
-            + "Unless required by applicable law or agreed to in writing, software%n"
+            + "You may obtain a copy of the License at%n" + "%n" + "    http://www.apache.org/licenses/LICENSE-2.0%n"
+            + "%n" + "Unless required by applicable law or agreed to in writing, software%n"
             + "distributed under the License is distributed on an \"AS IS\" BASIS,%n"
             + "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.%n"
             + "See the License for the specific language governing permissions and%n"
@@ -84,8 +79,7 @@ public class ExcelViewerModel {
     /**
      * Adjust all column sizes.
      *
-     * @param view
-     *            the view
+     * @param view the view
      */
     protected void adjustColumns(SheetView view) {
         if (view != null) {
@@ -136,8 +130,7 @@ public class ExcelViewerModel {
     /**
      * Sets the current directory for this window.
      *
-     * @param path
-     *            directory to set as current directory
+     * @param path directory to set as current directory
      */
     public void setPath(Path path) {
         this.currentPath = path;
@@ -146,8 +139,7 @@ public class ExcelViewerModel {
     /**
      * Set the current workbook.
      *
-     * @param workbook
-     *            the workbook
+     * @param workbook the workbook
      */
     public void setWorkbook(Workbook workbook) {
         if (this.workbook != null) {

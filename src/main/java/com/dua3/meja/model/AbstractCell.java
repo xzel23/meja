@@ -14,6 +14,7 @@ public abstract class AbstractCell implements Cell {
 
     /**
      * Create a new Abstract cell that belongs to a row.
+     * 
      * @param row the row the new cell belongs to
      */
     public AbstractCell(AbstractRow row) {
@@ -26,7 +27,7 @@ public abstract class AbstractCell implements Cell {
         LangUtil.check(spanX <= Short.MAX_VALUE, "Maximum horizontal span number is %d.", Short.MAX_VALUE);
 
         if (this.getRowNumber() == topLeftCell.getRowNumber()
-            && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
+                && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
             setHorizontalSpan(spanX);
             setVerticalSpan(spanY);
         } else {

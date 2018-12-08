@@ -26,25 +26,22 @@ import com.dua3.utility.text.Font;
 public interface CellStyle {
 
     enum StandardDataFormats {
-        FULL,
-        MEDIUM;
+        FULL, MEDIUM;
     }
 
     /**
      * Copy style from another cell style.
      *
-     * @param other
-     *            cell style
+     * @param other cell style
      */
     void copyStyle(CellStyle other);
 
     /**
      * Get border style.
      *
-     * @param d
-     *            specifies the edge the border style applies to
-     * @return the border style for the edge matching direction {@code d} used
-     *         in this cell style
+     * @param d specifies the edge the border style applies to
+     * @return the border style for the edge matching direction {@code d} used in
+     *         this cell style
      */
     BorderStyle getBorderStyle(Direction d);
 
@@ -121,74 +118,64 @@ public interface CellStyle {
     /**
      * Set border style
      *
-     * @param d
-     *            specifies the edge the border style is to be applied to
-     * @param borderStyle
-     *            the border style to set
+     * @param d           specifies the edge the border style is to be applied to
+     * @param borderStyle the border style to set
      */
     void setBorderStyle(Direction d, BorderStyle borderStyle);
 
     /**
      * Set data format.
      *
-     * @param format
-     *            the data format to set
+     * @param format the data format to set
      */
     void setDataFormat(String format);
 
     /**
      * Set background fill color.
      *
-     * @param color
-     *            the background fill color to set
+     * @param color the background fill color to set
      */
     void setFillBgColor(Color color);
 
     /**
      * Set foreground fill color.
      *
-     * @param color
-     *            the foreground fill color to set
+     * @param color the foreground fill color to set
      */
     void setFillFgColor(Color color);
 
     /**
      * Set fill pattern.
      *
-     * @param pattern
-     *            the fill pattern to set
+     * @param pattern the fill pattern to set
      */
     void setFillPattern(FillPattern pattern);
 
     /**
      * Set font.
      *
-     * @param font
-     *            the font to set
+     * @param font the font to set
      */
     void setFont(Font font);
 
     /**
      * Set horizontal alignment.
      *
-     * @param hAlign
-     *            the horizontal alignment to set
+     * @param hAlign the horizontal alignment to set
      */
     void setHAlign(HAlign hAlign);
 
     /**
      * Set vertical alignment.
      *
-     * @param vAlign
-     *            the vertical alignment to set
+     * @param vAlign the vertical alignment to set
      */
     void setVAlign(VAlign vAlign);
 
     /**
      * Set text wrapping.
      *
-     * @param wrap
-     *            true if text should be wrapped
+     * @param wrap true if text should be wrapped
      */
     void setWrap(boolean wrap);
 }

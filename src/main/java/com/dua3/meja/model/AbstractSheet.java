@@ -126,7 +126,7 @@ public abstract class AbstractSheet implements Sheet {
                 }
             }
         }
-        LOG.log(Level.FINE, "removed merged region at [{0}]", rowNumber +","+ columnNumber);
+        LOG.log(Level.FINE, "removed merged region at [{0}]", rowNumber + "," + columnNumber);
     }
 
     @Override

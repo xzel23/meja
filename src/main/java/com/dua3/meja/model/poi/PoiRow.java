@@ -35,10 +35,8 @@ public final class PoiRow extends AbstractRow {
     /**
      * Construct row from existing POI row instance.
      *
-     * @param sheet
-     *            the sheet
-     * @param row
-     *            the row
+     * @param sheet the sheet
+     * @param row   the row
      */
     public PoiRow(PoiSheet sheet, org.apache.poi.ss.usermodel.Row row) {
         super(sheet, row.getRowNum());

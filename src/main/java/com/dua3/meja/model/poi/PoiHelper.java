@@ -15,11 +15,11 @@
  */
 package com.dua3.meja.model.poi;
 
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;

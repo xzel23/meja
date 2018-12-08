@@ -7,14 +7,13 @@ import java.util.Optional;
 
 import com.dua3.meja.util.ObjectCache;
 
-public abstract class AbstractWorkbook
-        implements Workbook {
+public abstract class AbstractWorkbook implements Workbook {
 
     protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /**
-    * The path of this workbook.
-    */
+     * The path of this workbook.
+     */
     protected Path path;
 
     /**
@@ -69,9 +68,8 @@ public abstract class AbstractWorkbook
     /**
      * Enable or disable object caching.
      *
-     * @param enabled
-     *            true, if the object cache should be enabled false, if objects
-     *            should not be cached anymore and the cash cleared
+     * @param enabled true, if the object cache should be enabled false, if objects
+     *                should not be cached anymore and the cash cleared
      */
     @Override
     public void setObjectCaching(boolean enabled) {

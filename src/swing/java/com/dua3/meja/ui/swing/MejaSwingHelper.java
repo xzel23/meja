@@ -56,7 +56,7 @@ import com.dua3.utility.lang.LangUtil;
  */
 public class MejaSwingHelper {
 
-	private static final class SheetTableModel extends AbstractTableModel {
+    private static final class SheetTableModel extends AbstractTableModel {
         private static final Logger LOG = Logger.getLogger(SheetTableModel.class.getName());
 
         private final Sheet sheet;
@@ -80,12 +80,13 @@ public class MejaSwingHelper {
                 final Runnable dispatcher;
                 switch (evt.getPropertyName()) {
                 case Sheet.PROPERTY_ROWS_ADDED: {
-                        RowInfo ri = (RowInfo) evt.getNewValue();
-                        dispatcher = () -> fireTableRowsInserted(getRowNumber(ri.getFirstRow()), getRowNumber(ri.getLastRow()));
-                    }
+                    RowInfo ri = (RowInfo) evt.getNewValue();
+                    dispatcher = () -> fireTableRowsInserted(getRowNumber(ri.getFirstRow()),
+                            getRowNumber(ri.getLastRow()));
+                }
                     break;
                 case Sheet.PROPERTY_CELL_CONTENT:
-                    if (firstRowIsHeader && ((Cell)evt.getSource()).getRowNumber()==0) {
+                    if (firstRowIsHeader && ((Cell) evt.getSource()).getRowNumber() == 0) {
                         dispatcher = SheetTableModel.this::fireTableStructureChanged;
                     } else {
                         assert evt.getSource() instanceof Cell;
@@ -141,7 +142,7 @@ public class MejaSwingHelper {
         @Override
         public int getRowCount() {
             int n = sheet.getRowCount();
-            return firstRowIsHeader && n>0 ? n -1 : n;
+            return firstRowIsHeader && n > 0 ? n - 1 : n;
         }
 
         @Override
@@ -161,14 +162,14 @@ public class MejaSwingHelper {
         }
 
         private int getRowNumber(int i) {
-            return firstRowIsHeader ? i+1 : i;
+            return firstRowIsHeader ? i + 1 : i;
         }
 
         @Override
         public void removeTableModelListener(TableModelListener l) {
             super.removeTableModelListener(l);
 
-            if (listenerList.getListenerCount()==0) {
+            if (listenerList.getListenerCount() == 0) {
                 sl.detach();
                 LOG.fine("last TableModelListener was removed, detaching sheet listener from sheet");
             }
@@ -178,7 +179,7 @@ public class MejaSwingHelper {
         public void addTableModelListener(TableModelListener l) {
             super.addTableModelListener(l);
 
-            if (listenerList.getListenerCount()==1) {
+            if (listenerList.getListenerCount() == 1) {
                 sl.attach();
                 LOG.fine("first TableModelListener was added, attaching sheet listener to sheet");
             }
@@ -190,8 +191,7 @@ public class MejaSwingHelper {
     /**
      * Create a TableModel to be used with JTable.
      *
-     * @param sheet
-     *  the sheet to create a model for
+     * @param sheet the sheet to create a model for
      * @return table model instance of {@code JTableModel} for the sheet
      */
     public static TableModel getTableModel(final Sheet sheet) {
@@ -201,10 +201,9 @@ public class MejaSwingHelper {
     /**
      * Create a TableModel to be used with JTable.
      *
-     * @param sheet
-     *  the sheet to create a model for
-     * @param firstRowIsHeader
-     *  if set to true, the first row of the sheet will be displayed as the table header
+     * @param sheet            the sheet to create a model for
+     * @param firstRowIsHeader if set to true, the first row of the sheet will be
+     *                         displayed as the table header
      * @return table model instance of {@code JTableModel} for the sheet
      */
     public static TableModel getTableModel(final Sheet sheet, boolean firstRowIsHeader) {
@@ -214,13 +213,10 @@ public class MejaSwingHelper {
     /**
      * Show a file open dialog and load the selected workbook.
      *
-     * @param parent
-     *            the parent component to use for the dialog
-     * @param path
-     *            the directory to set in the open dialog or the default path
+     * @param parent the parent component to use for the dialog
+     * @param path   the directory to set in the open dialog or the default path
      * @return the workbook the user chose or null if dialog was canceled
-     * @throws IOException
-     *             if a workbook was selected but could not be loaded
+     * @throws IOException if a workbook was selected but could not be loaded
      */
     public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, Path path) throws IOException {
         boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
@@ -256,8 +252,9 @@ public class MejaSwingHelper {
         return openWorkbook(parent, path, FileType.forPath(path).orElse(FileType.CSV));
     }
 
-    public static Optional<Workbook> openWorkbook(Component parent, Path path, final FileType fileType) throws IOException {
-        if (fileType==null) {
+    public static Optional<Workbook> openWorkbook(Component parent, Path path, final FileType fileType)
+            throws IOException {
+        if (fileType == null) {
             return Optional.empty();
         }
 
@@ -280,21 +277,17 @@ public class MejaSwingHelper {
     /**
      * Show file selection dialog and save workbook.
      * <p>
-     * A file selection dialog is shown and the workbook is saved to the
-     * selected file. If the file already exists, a confirmation dialog is
-     * shown, asking the user whether to overwrite the file.
+     * A file selection dialog is shown and the workbook is saved to the selected
+     * file. If the file already exists, a confirmation dialog is shown, asking the
+     * user whether to overwrite the file.
      * </p>
      *
-     * @param parent
-     *            the parent component for the dialog
-     * @param workbook
-     *            the workbook to save
-     * @param path
-     *            the path to set the default path in the dialog
-     * @return the URI the file was saved to or {@code null} if the user
-     *         canceled the dialog
-     * @throws IOException
-     *             if an exception occurs while saving
+     * @param parent   the parent component for the dialog
+     * @param workbook the workbook to save
+     * @param path     the path to set the default path in the dialog
+     * @return the URI the file was saved to or {@code null} if the user canceled
+     *         the dialog
+     * @throws IOException if an exception occurs while saving
      */
     public static Optional<Path> showDialogAndSaveWorkbook(Component parent, Workbook workbook, Path path)
             throws IOException {
@@ -312,10 +305,8 @@ public class MejaSwingHelper {
         file = jfc.getSelectedFile();
 
         if (file.exists()) {
-            rc = JOptionPane.showConfirmDialog(
-                    parent,
-                    "File '" + file.getAbsolutePath() + "' already exists. Overwrite?",
-                    "File exists",
+            rc = JOptionPane.showConfirmDialog(parent,
+                    "File '" + file.getAbsolutePath() + "' already exists. Overwrite?", "File exists",
                     JOptionPane.YES_NO_OPTION);
             if (rc != JOptionPane.YES_OPTION) {
                 LOG.info("User chose not to overwrite file.");

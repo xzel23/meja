@@ -289,7 +289,7 @@ public class PoiSheet extends AbstractSheet {
         firstColumn = Math.min(firstColumn, columnNumber);
         lastColumn = Math.max(lastColumn, columnNumber);
 
-        if (lastColumn!= oldValue) {
+        if (lastColumn != oldValue) {
             firePropertyChange(PROPERTY_COLUMNS_ADDED, oldValue, lastColumn);
         }
     }
@@ -323,7 +323,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void setZoom(float zoom) {
-        LangUtil.check(zoom>0, "Invalid zoom factor: %f", zoom);
+        LangUtil.check(zoom > 0, "Invalid zoom factor: %f", zoom);
 
         if (zoom != this.zoom) {
             float oldZoom = this.zoom;

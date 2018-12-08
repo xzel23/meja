@@ -37,10 +37,8 @@ public class CellValueHelper {
     /**
      * Construct an instance of {@code CellValueHelper}.
      *
-     * @param numberFormat
-     *            the number format to use
-     * @param dateFormatter
-     *            the date format to use
+     * @param numberFormat  the number format to use
+     * @param dateFormatter the date format to use
      */
     public CellValueHelper(NumberFormat numberFormat, DateTimeFormatter dateFormatter) {
         this.numberFormat = numberFormat;
@@ -50,11 +48,10 @@ public class CellValueHelper {
     /**
      * Parse a boolean value.
      *
-     * @param text
-     *            string representation of a boolean value
-     * @return {code Boolean.TRUE} or {Boolean.FALSE} respectively,
-     *         if{@code text} is equal to either "true" or "false" (ignoring
-     *         case). {@code null} otherwise.
+     * @param text string representation of a boolean value
+     * @return {code Boolean.TRUE} or {Boolean.FALSE} respectively, if{@code text}
+     *         is equal to either "true" or "false" (ignoring case). {@code null}
+     *         otherwise.
      */
     protected Optional<Boolean> parseBoolean(String text) {
         text = text.trim();
@@ -70,10 +67,9 @@ public class CellValueHelper {
     /**
      * Parse a date value.
      *
-     * @param text
-     *            string representaion of a date
-     * @return instance of {@link Date} representing {@code value} or
-     *         {@code null}, if {@code value} could not be fully parsed
+     * @param text string representaion of a date
+     * @return instance of {@link Date} representing {@code value} or {@code null},
+     *         if {@code value} could not be fully parsed
      */
     protected Optional<LocalDateTime> parseDate(String text) {
         text = text.trim();
@@ -96,8 +92,7 @@ public class CellValueHelper {
     /**
      * Parse a numeric value.
      *
-     * @param text
-     *            string representaion of a numeric
+     * @param text string representaion of a numeric
      * @return instance of {@link Number} representing {@code value} or
      *         {@code null}, if {@code value} could not be fully parsed
      */
@@ -111,10 +106,8 @@ public class CellValueHelper {
     /**
      * Set cell value from {@link String} with automatic conversion.
      *
-     * @param cell
-     *            the cell whose value is to be set
-     * @param value
-     *            the value to set
+     * @param cell  the cell whose value is to be set
+     * @param value the value to set
      */
     public void setCellValue(Cell cell, String value) {
         // blank

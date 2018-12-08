@@ -39,8 +39,7 @@ import com.dua3.utility.text.Font;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class GenericCellStyle
-        implements CellStyle {
+public class GenericCellStyle implements CellStyle {
 
     private static final BorderStyle defaultBorderStyle = new BorderStyle(0.0f, Color.BLACK);
 
@@ -65,8 +64,7 @@ public class GenericCellStyle
     /**
      * Construct a new {@code GenericCellStyle}.
      *
-     * @param workbook
-     *            the workbook the style is defined in
+     * @param workbook the workbook the style is defined in
      */
     public GenericCellStyle(GenericWorkbook workbook) {
         this.workbook = Objects.requireNonNull(workbook);
@@ -102,18 +100,15 @@ public class GenericCellStyle
     /**
      * Format date for output.
      *
-     * @param locale
-     *              the locale to use during formatting
-     * @param date
-     *              the date to format
+     * @param locale the locale to use during formatting
+     * @param date   the date to format
      * @return text representation of {@code date}
      */
     public String format(LocalDateTime date, Locale locale) {
         if (dateFormatter == null) {
             try {
                 if (dataFormat == null || dataFormat.isEmpty()) {
-                    dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                            .withLocale(locale);
+                    dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
                 } else {
                     dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
                 }
@@ -129,10 +124,8 @@ public class GenericCellStyle
     /**
      * Format number for output.
      *
-     * @param n
-     *            the number to format
-     * @param locale
-     *            the locale to use during formatting
+     * @param n      the number to format
+     * @param locale the locale to use during formatting
      * @return text representation of {@code n}
      */
     public String format(Number n, Locale locale) {

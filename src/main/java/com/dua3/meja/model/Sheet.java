@@ -34,8 +34,7 @@ import com.dua3.utility.text.ToStringBuilder;
  *
  * @author axel
  */
-public interface Sheet
-        extends Iterable<Row>, ReadWriteLock {
+public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     public final String PROPERTY_ZOOM = "ZOOM";
     public final String PROPERTY_LAYOUT_CHANGED = "LAYOUT_CHANGED";
@@ -47,14 +46,14 @@ public interface Sheet
     public final String PROPERTY_COLUMNS_ADDED = "COLUMNS_ADDED";
 
     public static class RowInfo {
-        private static final RowInfo NONE = new RowInfo(0,-1);
+        private static final RowInfo NONE = new RowInfo(0, -1);
 
         private final int firstRow;
         private final int lastRow;
 
         public RowInfo(int firstRow, int lastRow) {
-            this.firstRow=firstRow;
-            this.lastRow=lastRow;
+            this.firstRow = firstRow;
+            this.lastRow = lastRow;
         }
 
         public int getFirstRow() {
@@ -71,20 +70,15 @@ public interface Sheet
 
         @Override
         public String toString() {
-            return new ToStringBuilder()
-                    .add("firstRow", firstRow)
-                    .add("lastRow", lastRow)
-                    .toString();
+            return new ToStringBuilder().add("firstRow", firstRow).add("lastRow", lastRow).toString();
         }
     }
 
     /**
      * Add new merged region.
      *
-     * @param cells
-     *            the region of cells to be merged
-     * @throws IllegalStateException
-     *             if the region already contains merged cells
+     * @param cells the region of cells to be merged
+     * @throws IllegalStateException if the region already contains merged cells
      */
     void addMergedRegion(RectangularRegion cells);
 
@@ -95,8 +89,7 @@ public interface Sheet
     /**
      * Adjusts the size of the column to its contents.
      *
-     * @param j
-     *            the column to resize
+     * @param j the column to resize
      */
     void autoSizeColumn(int j);
 
@@ -120,10 +113,8 @@ public interface Sheet
     /**
      * Get cell.
      *
-     * @param i
-     *            the row number
-     * @param j
-     *            the column number
+     * @param i the row number
+     * @param j the column number
      * @return the cell at row {@code i} and column {@code j}
      */
     Cell getCell(int i, int j);
@@ -138,8 +129,7 @@ public interface Sheet
     /**
      * Get column width.
      *
-     * @param j
-     *            the column number
+     * @param j the column number
      * @return width of the column with number {@code j} in points
      */
     float getColumnWidth(int j);
@@ -188,17 +178,18 @@ public interface Sheet
 
     /**
      * Get merged region at position.
+     * 
      * @param rowNum the row number
      * @param colNum the column number
-     * @return the merged region or null if the cell does not belong to a merged region
+     * @return the merged region or null if the cell does not belong to a merged
+     *         region
      */
     RectangularRegion getMergedRegion(int rowNum, int colNum);
 
     /**
      * Get row.
      *
-     * @param i
-     *            the row number
+     * @param i the row number
      * @return the row with row number {@code i}
      */
     Row getRow(int i);
@@ -213,8 +204,7 @@ public interface Sheet
     /**
      * Get row height.
      *
-     * @param i
-     *            the row number
+     * @param i the row number
      * @return height of the row with number {@code i} in points
      */
     float getRowHeight(int i);
@@ -237,8 +227,8 @@ public interface Sheet
     /**
      * Get the split row.
      *
-     * @return the number of the first row that will not remain at a fixed
-     *         position when scrolling
+     * @return the number of the first row that will not remain at a fixed position
+     *         when scrolling
      */
     int getSplitRow();
 
@@ -263,36 +253,30 @@ public interface Sheet
     /**
      * Sets an automatic filter on the given row (optional operation).
      *
-     * @param i
-     *            the row number
+     * @param i the row number
      */
     void setAutofilterRow(int i);
 
     /**
      * Set column width.
      *
-     * @param j
-     *            the column number
-     * @param width
-     *            the width of the column in points
+     * @param j     the column number
+     * @param width the width of the column in points
      */
     void setColumnWidth(int j, float width);
 
     /**
      * Set the current cell.
      *
-     * @param cell
-     *            the cell to set as current
+     * @param cell the cell to set as current
      */
     void setCurrentCell(Cell cell);
 
     /**
      * Set the current cell.
      *
-     * @param i
-     *            the row of the cell to set
-     * @param j
-     *            the column of the cell to set
+     * @param i the row of the cell to set
+     * @param j the column of the cell to set
      */
     default void setCurrentCell(int i, int j) {
         setCurrentCell(getCell(i, j));
@@ -301,18 +285,15 @@ public interface Sheet
     /**
      * Set row height.
      *
-     * @param i
-     *            the row number
-     * @param height
-     *            the height of the row in points
+     * @param i      the row number
+     * @param height the height of the row in points
      */
     void setRowHeight(int i, float height);
 
     /**
      * Set the zoom factor for this sheet.
      *
-     * @param zoom
-     *            zoom factor, 1.0f=100%
+     * @param zoom zoom factor, 1.0f=100%
      */
     void setZoom(float zoom);
 
@@ -322,15 +303,14 @@ public interface Sheet
      * Splits the sheet so that rows <em>above</em> i and columns <em>to the
      * left</em> of j remain in view when scrolling.
      *
-     * @param i
-     *            row number
-     * @param j
-     *            column number
+     * @param i row number
+     * @param j column number
      */
     void splitAt(int i, int j);
 
     /**
      * Create row iterator.
+     * 
      * @return row iterator
      */
     @Override
@@ -363,8 +343,7 @@ public interface Sheet
     /**
      * Copy sheet data from another sheet.
      *
-     * @param other
-     *            sheet to copy data from
+     * @param other sheet to copy data from
      */
     default void copy(Sheet other) {
         // copy split
@@ -389,6 +368,7 @@ public interface Sheet
 
     /**
      * Create a stream of the rows in this sheet.
+     * 
      * @return stream of rows
      */
     default Stream<Row> rows() {
@@ -398,8 +378,7 @@ public interface Sheet
     /**
      * Translate column number to column name.
      *
-     * @param j
-     *            the column number
+     * @param j the column number
      * @return the column name
      */
     static String getColumnName(int j) {
@@ -416,11 +395,10 @@ public interface Sheet
     /**
      * Translate column name to column number.
      *
-     * @param colName
-     *            the name of the column, ie. "A", "B",... , "AA", "AB",...
+     * @param colName the name of the column, ie. "A", "B",... , "AA", "AB",...
      * @return the column number
-     * @throws IllegalArgumentException
-     *             if {@code colName} is not a valid column name
+     * @throws IllegalArgumentException if {@code colName} is not a valid column
+     *                                  name
      */
     static int getColumnNumber(String colName) {
         final int stride = 'z' - 'a' + 1;
@@ -439,8 +417,7 @@ public interface Sheet
     /**
      * Get row name as String.
      *
-     * @param i
-     *            the row number as used in Excel spreadsheets
+     * @param i the row number as used in Excel spreadsheets
      * @return the row name ("1" for row number 0)
      */
     static String getRowName(int i) {

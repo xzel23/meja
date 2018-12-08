@@ -61,8 +61,7 @@ import com.dua3.utility.swing.SwingUtil;
  * @author axel
  */
 @SuppressWarnings("serial")
-public class SwingExcelViewer extends JFrame
-        implements ExcelViewerModel.ExcelViewer, DropTargetListener {
+public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelViewer, DropTargetListener {
 
     private static final Logger LOG = Logger.getLogger(SwingExcelViewer.class.getName());
 
@@ -82,8 +81,7 @@ public class SwingExcelViewer extends JFrame
     /**
      * Main method.
      *
-     * @param args
-     *            the command line arguments
+     * @param args the command line arguments
      */
     public static void main(String[] args) {
         SwingUtil.setNativeLookAndFeel(APPLICATION_NAME);
@@ -121,8 +119,7 @@ public class SwingExcelViewer extends JFrame
     /**
      * Constructor.
      *
-     * @param model
-     *            the model
+     * @param model the model
      */
     public SwingExcelViewer(ExcelViewerModel model) {
         super(APPLICATION_NAME);
@@ -194,8 +191,7 @@ public class SwingExcelViewer extends JFrame
                 e -> setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName())));
         mnLookAndFeel.addSeparator();
         for (final UIManager.LookAndFeelInfo lAF : UIManager.getInstalledLookAndFeels()) {
-            mnLookAndFeel.add(SwingUtil.createAction(lAF.getName(), e ->
-                    setLookAndFeel(lAF.getClassName())));
+            mnLookAndFeel.add(SwingUtil.createAction(lAF.getName(), e -> setLookAndFeel(lAF.getClassName())));
         }
 
         mnOptions.add(mnLookAndFeel);
@@ -215,10 +211,10 @@ public class SwingExcelViewer extends JFrame
         // Help menu
         JMenu mnHelp = new JMenu("Help");
         mnHelp.add(SwingUtil.createAction("About ...", e -> {
-                String title = "About " + APPLICATION_NAME;
-                String msg = model.getLicenseText();
-                JOptionPane.showMessageDialog(SwingExcelViewer.this, msg, title, JOptionPane.INFORMATION_MESSAGE, null);
-                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            String title = "About " + APPLICATION_NAME;
+            String msg = model.getLicenseText();
+            JOptionPane.showMessageDialog(SwingExcelViewer.this, msg, title, JOptionPane.INFORMATION_MESSAGE, null);
+            setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }));
         menuBar.add(mnHelp);
 
@@ -257,10 +253,7 @@ public class SwingExcelViewer extends JFrame
             }
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "IO-Error saving workbook.", ex);
-            JOptionPane.showMessageDialog(
-                    this,
-                    "IO-Error saving workbook.",
-                    "Workbook could not be saved.",
+            JOptionPane.showMessageDialog(this, "IO-Error saving workbook.", "Workbook could not be saved.",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -299,11 +292,11 @@ public class SwingExcelViewer extends JFrame
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            LOG.log(Level.SEVERE, 
-            "Unknown Exception caught, will be rethrown after message dialog: {0}", ex.getMessage());
+            LOG.log(Level.SEVERE, "Unknown Exception caught, will be rethrown after message dialog: {0}",
+                    ex.getMessage());
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
-            throw ex; //rethrow
+            throw ex; // rethrow
         }
     }
 
@@ -320,21 +313,23 @@ public class SwingExcelViewer extends JFrame
     private void showSaveAsDialog() {
         try {
             Workbook workbook = model.getWorkbook();
-            final Optional<Path> path = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook, model.getCurrentPath());
+            final Optional<Path> path = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
+                    model.getCurrentPath());
             if (path.isPresent()) {
                 workbook.setPath(path.get());
                 updatePath(path.get());
-                LOG.info("Saved workbook to '"+ path.get()+"'.'");
+                LOG.info("Saved workbook to '" + path.get() + "'.'");
             }
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Exception saving workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            LOG.log(Level.SEVERE, "Unknown Exception caught, will be rethrown after message dialog: "+ ex.getMessage());
+            LOG.log(Level.SEVERE,
+                    "Unknown Exception caught, will be rethrown after message dialog: " + ex.getMessage());
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
-            throw ex; //rethrow
+            throw ex; // rethrow
         }
     }
 
@@ -379,28 +374,28 @@ public class SwingExcelViewer extends JFrame
         try {
             Transferable tr = dtde.getTransferable();
             if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-              dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-              @SuppressWarnings("unchecked")
-              List<File> files = (List<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
-              if (files.size() == 1) {
-                Path path = files.get(0).toPath();
-                Optional<Workbook> workbook = MejaSwingHelper.openWorkbook(this, path);
-                if (workbook.isPresent()) {
-                    setWorkbook(workbook);
-                    dtde.getDropTargetContext().dropComplete(true);
-                } else {
-                    LOG.log(Level.WARNING, "Could not process dropped item '"+path+"'.");
-                    dtde.getDropTargetContext().dropComplete(false);
+                dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
+                @SuppressWarnings("unchecked")
+                List<File> files = (List<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
+                if (files.size() == 1) {
+                    Path path = files.get(0).toPath();
+                    Optional<Workbook> workbook = MejaSwingHelper.openWorkbook(this, path);
+                    if (workbook.isPresent()) {
+                        setWorkbook(workbook);
+                        dtde.getDropTargetContext().dropComplete(true);
+                    } else {
+                        LOG.log(Level.WARNING, "Could not process dropped item '" + path + "'.");
+                        dtde.getDropTargetContext().dropComplete(false);
+                    }
                 }
-              }
             } else {
-              LOG.warning("DataFlavor.javaFileListFlavor is not supported, drop rejected.");
-              dtde.rejectDrop();
+                LOG.warning("DataFlavor.javaFileListFlavor is not supported, drop rejected.");
+                dtde.rejectDrop();
             }
-          } catch (Exception ex) {
-              LOG.log(Level.WARNING, "Exception when processing dropped item, rejecting drop.", ex);
+        } catch (Exception ex) {
+            LOG.log(Level.WARNING, "Exception when processing dropped item, rejecting drop.", ex);
             dtde.rejectDrop();
-          }
+        }
     }
 
 }

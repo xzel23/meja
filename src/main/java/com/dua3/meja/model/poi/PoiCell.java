@@ -56,8 +56,7 @@ import com.dua3.utility.text.TextAttributes;
  *
  * @author axel
  */
-public final class PoiCell
-        extends AbstractCell {
+public final class PoiCell extends AbstractCell {
 
     private static final Logger LOGGER = Logger.getLogger(PoiCell.class.getName());
 
@@ -253,7 +252,8 @@ public final class PoiCell
     private Font getFontForFormattingRun(RichTextString richText, int i) {
         if (richText instanceof HSSFRichTextString) {
             HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
-            return ((PoiWorkbook.PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i)).getFont();
+            return ((PoiWorkbook.PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i))
+                    .getFont();
         } else {
             return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i)).getFont();
         }
@@ -327,16 +327,15 @@ public final class PoiCell
 
     private boolean isCellDateFormatted() {
         /*
-         * DateUtil.isCellDateFormatted() throws IllegalStateException when cell
-         * is not numeric, so we have to work around this. TODO create SCCSE and
-         * report bug against POI
+         * DateUtil.isCellDateFormatted() throws IllegalStateException when cell is not
+         * numeric, so we have to work around this. TODO create SCCSE and report bug
+         * against POI
          */
         org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellType();
         if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
             poiType = poiCell.getCachedFormulaResultType();
         }
-        return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC
-                && DateUtil.isCellDateFormatted(poiCell);
+        return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC && DateUtil.isCellDateFormatted(poiCell);
     }
 
     boolean isDateFormat(PoiCellStyle cellStyle) {
@@ -502,9 +501,12 @@ public final class PoiCell
                     wb.evaluator.evaluateFormulaCell(poiCell);
                 } catch (NotImplementedException e) {
                     if (wb.getForceFormulaRecalculation()) {
-                        LOGGER.log(Level.INFO, "An unsupported Excel function was used (workbook already flagged as needing recalculation).", e);
+                        LOGGER.log(Level.INFO,
+                                "An unsupported Excel function was used (workbook already flagged as needing recalculation).",
+                                e);
                     } else {
-                        LOGGER.log(Level.WARNING, "An unsupported Excel function was used. Flagged workbook as needing recalculation.");
+                        LOGGER.log(Level.WARNING,
+                                "An unsupported Excel function was used. Flagged workbook as needing recalculation.");
                         wb.setForceFormulaRecalculation(true);
                     }
                 }
@@ -553,9 +555,9 @@ public final class PoiCell
             properties.put(TextAttributes.COLOR, runFont.getColor());
 
             Style attr = Style.create("style", properties);
-            push(rtb, TextAttributes.STYLE_START_RUN, attr );
+            push(rtb, TextAttributes.STYLE_START_RUN, attr);
             rtb.append(text, start, end);
-            push(rtb, TextAttributes.STYLE_END_RUN, attr );
+            push(rtb, TextAttributes.STYLE_END_RUN, attr);
             start = end;
         }
         rtb.append(text, start, text.length());
@@ -588,16 +590,17 @@ public final class PoiCell
 
     /**
      * Format the cell content as a String, with number and date format applied.
+     * 
      * @return cell content with format applied
      */
     private String getFormattedText(Locale locale) {
-    	// is there a special date format?
-    	if (getResultType()==CellType.DATE) {
-    		DateTimeFormatter df = getCellStyle().getLocaleAwareDateFormat(locale);
-    		if (df != null) {
-    			return df.format(getDateTime());
-    		}
-    	}
+        // is there a special date format?
+        if (getResultType() == CellType.DATE) {
+            DateTimeFormatter df = getCellStyle().getLocaleAwareDateFormat(locale);
+            if (df != null) {
+                return df.format(getDateTime());
+            }
+        }
 
         // if not, let POI do the formatting
         FormulaEvaluator evaluator = getWorkbook().evaluator;
@@ -620,12 +623,12 @@ public final class PoiCell
 
     @Override
     protected void setVerticalSpan(int spanY) {
-        this.spanY=spanY;
+        this.spanY = spanY;
     }
 
     @Override
     protected void setHorizontalSpan(int spanX) {
-        this.spanX=spanX;
+        this.spanX = spanX;
     }
 
 }

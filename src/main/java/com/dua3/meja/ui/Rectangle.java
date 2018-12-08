@@ -30,8 +30,8 @@ public final class Rectangle {
         this.w = w;
         this.h = h;
 
-        LangUtil.check(w>=0, "negative with: ", w);
-        LangUtil.check(h>=0, "negative height: ", h);
+        LangUtil.check(w >= 0, "negative with: ", w);
+        LangUtil.check(h >= 0, "negative height: ", h);
     }
 
     public Rectangle(Rectangle r) {

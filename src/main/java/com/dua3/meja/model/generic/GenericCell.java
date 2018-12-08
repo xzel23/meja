@@ -38,11 +38,10 @@ public class GenericCell extends AbstractCell {
     public static final int MAX_COLUMN_NUMBER = 0xef_ffff;
 
     /**
-     * The precalculated initial value for the data field with rowspan=colspan=1
-     * and a cell type of blank.
+     * The precalculated initial value for the data field with rowspan=colspan=1 and
+     * a cell type of blank.
      */
-    private static final long INITIAL_DATA = ((/* spanX */ 1L) << 32)
-            | ((/* spanY */ 1L) << 8)
+    private static final long INITIAL_DATA = ((/* spanX */ 1L) << 32) | ((/* spanY */ 1L) << 8)
             | CellType.BLANK.ordinal();
     private Object value;
     private GenericCellStyle cellStyle;
@@ -64,17 +63,14 @@ public class GenericCell extends AbstractCell {
     /**
      * Construct a new {@code GenericCell}.
      *
-     * @param row
-     *            the row this cell belongs to
-     * @param colNumber
-     *            the column number
-     * @param cellStyle
-     *            the cell style to use
+     * @param row       the row this cell belongs to
+     * @param colNumber the column number
+     * @param cellStyle the cell style to use
      */
     public GenericCell(AbstractRow row, int colNumber, GenericCellStyle cellStyle) {
         super(row);
 
-        LangUtil.check(colNumber<=Short.MAX_VALUE, "Column number out of range.");
+        LangUtil.check(colNumber <= Short.MAX_VALUE, "Column number out of range.");
 
         this.cellStyle = cellStyle;
         this.value = null;
@@ -242,7 +238,7 @@ public class GenericCell extends AbstractCell {
     }
 
     private void initData(int colNr) {
-        LangUtil.check(colNr>=0 && colNr<= MAX_COLUMN_NUMBER);
+        LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER);
         data = (((long) colNr) << 48) | INITIAL_DATA;
     }
 

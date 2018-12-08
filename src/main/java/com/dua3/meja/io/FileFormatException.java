@@ -28,8 +28,7 @@ public class FileFormatException extends IOException {
     /**
      * Construct instance with message.
      *
-     * @param message
-     *            the message to use
+     * @param message the message to use
      */
     public FileFormatException(String message) {
         super(message);
@@ -38,10 +37,8 @@ public class FileFormatException extends IOException {
     /**
      * Construct instance with message and cause.
      *
-     * @param message
-     *            the message to use
-     * @param cause
-     *            the throwable that caused the exception
+     * @param message the message to use
+     * @param cause   the throwable that caused the exception
      */
     public FileFormatException(String message, Throwable cause) {
         super(message, cause);

@@ -47,6 +47,7 @@ public class GenericSheet extends AbstractSheet {
     private int currentRow = 0;
     private int currentColumn = 0;
     private float zoom = 1.0f;
+
     public GenericSheet(GenericWorkbook workbook, String sheetName) {
         this.workbook = workbook;
         this.sheetName = sheetName;
@@ -96,7 +97,7 @@ public class GenericSheet extends AbstractSheet {
         float width = font.getTextWidth(text);
 
         // add half the font size as spacing on the sides
-        width += font.getSizeInPoints()/2;
+        width += font.getSizeInPoints() / 2;
 
         return width;
     }
@@ -202,7 +203,7 @@ public class GenericSheet extends AbstractSheet {
             lastAddedRow = rowNum;
         }
 
-        if (lastAddedRow>=firstAddedRow) {
+        if (lastAddedRow >= firstAddedRow) {
             firePropertyChange(PROPERTY_ROWS_ADDED, RowInfo.none(), new RowInfo(firstAddedRow, lastAddedRow));
         }
     }
@@ -264,7 +265,7 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void setZoom(float zoom) {
-        LangUtil.check(zoom>0, "Invalid zoom factor: %f", zoom);
+        LangUtil.check(zoom > 0, "Invalid zoom factor: %f", zoom);
 
         if (zoom != this.zoom) {
             float oldZoom = this.zoom;

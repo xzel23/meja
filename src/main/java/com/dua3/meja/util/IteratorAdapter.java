@@ -22,20 +22,16 @@ import java.util.Iterator;
  * classes.
  *
  * @author Axel Howind (axel@dua3.com)
- * @param <T>
- *            the base class
- * @param <D>
- *            the derived class
+ * @param <T> the base class
+ * @param <D> the derived class
  */
-public class IteratorAdapter<T, D extends T>
-        implements Iterator<T> {
+public class IteratorAdapter<T, D extends T> implements Iterator<T> {
     private final Iterator<D> iter;
 
     /**
      * Create {@code Iterator<T>} from {@code Iterator<D>}.
      *
-     * @param iter
-     *            iterator for derived class
+     * @param iter iterator for derived class
      */
     public IteratorAdapter(Iterator<D> iter) {
         this.iter = iter;

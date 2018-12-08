@@ -33,34 +33,24 @@ public abstract class WorkbookReader {
     /**
      * Read workbook from stream.
      *
-     * @param <WORKBOOK>
-     *            workbook class
-     * @param factory
-     *            the WorkbookFactory to use
-     * @param in
-     *            the stream to read from
-     * @param path
-     *            the path to set in the workbook
+     * @param         <WORKBOOK> workbook class
+     * @param factory the WorkbookFactory to use
+     * @param in      the stream to read from
+     * @param path    the path to set in the workbook
      * @return the workbook read
-     * @throws IOException
-     *             if the workbook could not be read
+     * @throws IOException if the workbook could not be read
      */
     protected abstract <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, InputStream in,
-            Path path)
-            throws IOException;
+            Path path) throws IOException;
 
     /**
      * Read workbook from URI.
      *
-     * @param <WORKBOOK>
-     *            workbook class
-     * @param factory
-     *            the WorkbookFactory to use
-     * @param path
-     *            the path to set in the workbook from
+     * @param         <WORKBOOK> workbook class
+     * @param factory the WorkbookFactory to use
+     * @param path    the path to set in the workbook from
      * @return the workbook read
-     * @throws IOException
-     *             if the workbook could not be read
+     * @throws IOException if the workbook could not be read
      */
     public <WORKBOOK extends Workbook> WORKBOOK read(WorkbookFactory<WORKBOOK> factory, Path path) throws IOException {
         try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {

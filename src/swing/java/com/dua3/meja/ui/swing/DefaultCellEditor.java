@@ -39,8 +39,7 @@ import com.dua3.utility.swing.SwingUtil;
 /**
  * Default implementation for cell editor.
  */
-public class DefaultCellEditor
-        implements CellEditor {
+public class DefaultCellEditor implements CellEditor {
 
     private static final Logger LOGGER = Logger.getLogger(DefaultCellEditor.class.getName());
 

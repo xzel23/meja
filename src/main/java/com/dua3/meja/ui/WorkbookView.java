@@ -33,8 +33,7 @@ public interface WorkbookView {
     /**
      * Get view for sheet.
      *
-     * @param sheetName
-     *            name of the sheet
+     * @param sheetName name of the sheet
      * @return the view for the requested sheet or {@code null} if not found
      */
     SheetView getViewForSheet(String sheetName);
@@ -49,16 +48,15 @@ public interface WorkbookView {
     /**
      * Set editable state.
      *
-     * @param editable
-     *            set to {@code true} to allow editing of the displayed workbook
+     * @param editable set to {@code true} to allow editing of the displayed
+     *                 workbook
      */
     void setEditable(boolean editable);
 
     /**
      * Set the workbook.
      *
-     * @param workbook
-     *            the workbook to display
+     * @param workbook the workbook to display
      */
     void setWorkbook(Workbook workbook);
 

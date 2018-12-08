@@ -31,14 +31,10 @@ public class RectangularRegion {
     /**
      * Construct instance of {@code RectangularRegion}.
      *
-     * @param rowMin
-     *            first row
-     * @param rowMax
-     *            last row {inclusive}
-     * @param colMin
-     *            first column
-     * @param colMax
-     *            last column (inclusive)
+     * @param rowMin first row
+     * @param rowMax last row {inclusive}
+     * @param colMin first column
+     * @param colMax last column (inclusive)
      */
     public RectangularRegion(int rowMin, int rowMax, int colMin, int colMax) {
         this.rowMin = rowMin;
@@ -50,12 +46,10 @@ public class RectangularRegion {
     /**
      * Test if cell is contained in region.
      *
-     * @param i
-     *            the row number
-     * @param j
-     *            the column number
-     * @return true if the cell at row {@code i} and column {@code j} is
-     *         contained in this region
+     * @param i the row number
+     * @param j the column number
+     * @return true if the cell at row {@code i} and column {@code j} is contained
+     *         in this region
      */
     public boolean contains(int i, int j) {
         return rowMin <= i && i <= rowMax && colMin <= j && j <= colMax;
@@ -100,8 +94,7 @@ public class RectangularRegion {
     /**
      * Test for intersection of two regions.
      *
-     * @param other
-     *            the region to test against
+     * @param other the region to test against
      * @return true if both regions intersect
      */
     public boolean intersects(RectangularRegion other) {
@@ -111,11 +104,7 @@ public class RectangularRegion {
 
     @Override
     public String toString() {
-        return new ToStringBuilder()
-        .add("rowMin", rowMin)
-        .add("rowMax", rowMax)
-        .add("colMin", colMin)
-        .add("colMax", colMax)
-        .toString();
+        return new ToStringBuilder().add("rowMin", rowMin).add("rowMax", rowMax).add("colMin", colMin)
+                .add("colMax", colMax).toString();
     }
 }

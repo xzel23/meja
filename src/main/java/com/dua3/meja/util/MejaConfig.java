@@ -19,8 +19,8 @@ public class MejaConfig {
     }
 
     /**
-     * Flag to control whether or not XOR mode is used when drawing the
-     * selection rectangle.
+     * Flag to control whether or not XOR mode is used when drawing the selection
+     * rectangle.
      */
     private final boolean useXorDrawMode;
 

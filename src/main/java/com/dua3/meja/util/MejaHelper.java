@@ -48,12 +48,9 @@ public class MejaHelper {
     /**
      * Find cell containing text in row.
      *
-     * @param row
-     *            the row
-     * @param text
-     *            the text to search for
-     * @param options
-     *            the {@link SearchOptions} to use
+     * @param row     the row
+     * @param text    the text to search for
+     * @param options the {@link SearchOptions} to use
      * @return the cell found or {@code null} if nothing found
      */
     public static Cell find(Row row, String text, SearchOptions... options) {
@@ -65,12 +62,9 @@ public class MejaHelper {
     /**
      * Find cell containing text in row.
      *
-     * @param row
-     *            the row
-     * @param text
-     *            the text to search for
-     * @param options
-     *            the {@link SearchOptions} to use
+     * @param row     the row
+     * @param text    the text to search for
+     * @param options the {@link SearchOptions} to use
      * @return the cell found or {@code null} if nothing found
      */
     public static Cell find(Row row, String text, Set<SearchOptions> options) {
@@ -108,8 +102,7 @@ public class MejaHelper {
                 cellText = cellText.toLowerCase(Locale.ROOT);
             }
 
-            if (matchComplete && cellText.equals(text)
-                    || !matchComplete && cellText.contains(text)) {
+            if (matchComplete && cellText.equals(text) || !matchComplete && cellText.contains(text)) {
                 // found!
                 if (updateCurrent) {
                     row.getSheet().setCurrentCell(cell);
@@ -124,12 +117,9 @@ public class MejaHelper {
     /**
      * Find cell containing text in sheet.
      *
-     * @param sheet
-     *            the sheet
-     * @param text
-     *            the text to searcg for
-     * @param options
-     *            the {@link SearchOptions} to use
+     * @param sheet   the sheet
+     * @param text    the text to searcg for
+     * @param options the {@link SearchOptions} to use
      * @return the cell found or {@code null} if nothing found
      */
     public static Optional<Cell> find(Sheet sheet, String text, SearchOptions... options) {
@@ -141,12 +131,9 @@ public class MejaHelper {
     /**
      * Find cell containing text in sheet.
      *
-     * @param sheet
-     *            the sheet
-     * @param text
-     *            the text to searcg for
-     * @param options
-     *            the {@link SearchOptions} to use
+     * @param sheet   the sheet
+     * @param text    the text to searcg for
+     * @param options the {@link SearchOptions} to use
      * @return {@code Optional} holding the cell found or empty
      */
     public static Optional<Cell> find(Sheet sheet, String text, Set<SearchOptions> options) {
@@ -194,8 +181,7 @@ public class MejaHelper {
                     cellText = cellText.toLowerCase(Locale.ROOT);
                 }
 
-                if (matchComplete && cellText.equals(text)
-                        || !matchComplete && cellText.contains(text)) {
+                if (matchComplete && cellText.equals(text) || !matchComplete && cellText.contains(text)) {
                     // found!
                     if (updateCurrent) {
                         sheet.setCurrentCell(cell);
@@ -217,8 +203,7 @@ public class MejaHelper {
     /**
      * Test if sheet is empty.
      *
-     * @param sheet
-     *            the sheet to test
+     * @param sheet the sheet to test
      * @return true, if the sheet is empty
      */
     public static boolean isEmpty(Sheet sheet) {
@@ -252,29 +237,27 @@ public class MejaHelper {
      * Open workbook file.
      * <p>
      * This method inspects the file name extension to determine which factory
-     * should be used for loading. If there are multiple factories registered
-     * for the extension, the matching factories are tried in sequential order.
-     * If loading succeeds, the workbook is returned.
+     * should be used for loading. If there are multiple factories registered for
+     * the extension, the matching factories are tried in sequential order. If
+     * loading succeeds, the workbook is returned.
      * </p>
-     * @param path
-     *            the workbook path
+     * 
+     * @param path the workbook path
      * @return the workbook loaded from file
-     * @throws IOException
-     *             if workbook could not be loaded
+     * @throws IOException if workbook could not be loaded
      */
     public static Workbook openWorkbook(Path path) throws IOException {
-        FileType fileType = FileType.forPath(path)
-                .orElseThrow(() ->
-                    new IllegalArgumentException("Could not determine type of file '" + path.toString() + ".")
-                );
+        FileType fileType = FileType.forPath(path).orElseThrow(
+                () -> new IllegalArgumentException("Could not determine type of file '" + path.toString() + "."));
 
-        LangUtil.check(fileType.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.", fileType.getDescription());
+        LangUtil.check(fileType.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
+                fileType.getDescription());
 
         try {
             return fileType.getFactory().open(path);
         } catch (IOException ex) {
-            String msg = "Could not load workbook '"+path+"'.";
-			LOGGER.log(Level.SEVERE, msg, ex);
+            String msg = "Could not load workbook '" + path + "'.";
+            LOGGER.log(Level.SEVERE, msg, ex);
             throw new IOException(msg, ex);
         }
     }
