@@ -133,6 +133,10 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
      */
     @Override
     public void setWorkbook(Workbook workbook) {
+        if (workbook==this.workbook) {
+            return;
+        }
+        
         if (content != null) {
             remove(content);
             content = null;
