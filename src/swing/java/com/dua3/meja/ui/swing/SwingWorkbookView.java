@@ -23,6 +23,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -40,13 +41,17 @@ import com.dua3.meja.ui.WorkbookView;
 public class SwingWorkbookView extends JComponent implements WorkbookView, ChangeListener, PropertyChangeListener {
 
     private Workbook workbook;
-    private JTabbedPane content = null;
+    private final JTabbedPane content;
 
     /**
      * Construct a new {@code WorkbookView}.
      */
     public SwingWorkbookView() {
         setLayout(new CardLayout());
+        
+        content = new JTabbedPane(SwingConstants.BOTTOM);
+        content.addChangeListener(this);
+        add(content);
     }
 
     /**
@@ -133,20 +138,16 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
      */
     @Override
     public void setWorkbook(Workbook workbook) {
-        if (workbook==this.workbook) {
-            return;
-        }
-        
-        if (content != null) {
-            remove(content);
-            content = null;
+        content.removeAll();
+
+        if (this.workbook!=null) {
+            this.workbook.removePropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
+            this.workbook.removePropertyChangeListener(Workbook.PROPERTY_SHEET_REMOVED, this);
         }
 
         this.workbook = workbook;
 
         if (workbook != null) {
-            // Create a new JTabbedPane with one tab per sheet.
-            content = new JTabbedPane(SwingConstants.BOTTOM);
             for (int i = 0; i < workbook.getSheetCount(); i++) {
                 Sheet sheet = workbook.getSheet(i);
                 final SwingSheetView sheetView = new SwingSheetView(sheet);
@@ -155,8 +156,6 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
             if (workbook.getSheetCount() > 0) {
                 content.setSelectedIndex(workbook.getCurrentSheetIndex());
             }
-            content.addChangeListener(this);
-            add(content);
             revalidate();
 
             workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
@@ -167,7 +166,10 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
     @Override
     public void stateChanged(ChangeEvent evt) {
         if (evt.getSource() == content) {
-            workbook.setCurrentSheet(content.getSelectedIndex());
+            int idx = content.getSelectedIndex();
+            if (workbook != null && idx>=0) {
+                workbook.setCurrentSheet(idx);
+            }
         }
     }
 
@@ -177,7 +179,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
         switch (property) {
         case Workbook.PROPERTY_SHEET_ADDED:
         case Workbook.PROPERTY_SHEET_REMOVED:
-            setWorkbook(getWorkbook());
+            SwingUtilities.invokeLater(() -> setWorkbook(getWorkbook()));
             break;
         }
     }
