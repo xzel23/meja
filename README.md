@@ -1,7 +1,7 @@
 # Meja spreadsheet library
 
 [ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.0) ](https://bintray.com/dua3/public/com.dua3.meja/1.0/link)(stable)
-[ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.1.1) ](https://bintray.com/dua3/public/com.dua3.meja/1.1.1/link)(development)
+[ ![Download](https://api.bintray.com/packages/dua3/public/com.dua3.meja/images/download.svg?version=1.1.3) ](https://bintray.com/dua3/public/com.dua3.meja/1.1.3/link)(development)
 
 Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
@@ -13,6 +13,7 @@ Versions 1.1.x are development releases.
 - Updated Apache POI to version 4.0.1.
 - Java compatibility may change to 11 in a future release. Since no Java 11 features are used at the moment, I reverted the compatibility settings to 8 for the time being.
 - Updated gradle to version 5.
+- WorkbookView will update when sheets are added/removed.
 
 ## Design goals
 - ease of use
