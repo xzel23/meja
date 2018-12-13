@@ -14,6 +14,7 @@ Versions 1.1.x are development releases.
 - Java compatibility may change to 11 in a future release. Since no Java 11 features are used at the moment, I reverted the compatibility settings to 8 for the time being.
 - Updated gradle to version 5.
 - WorkbookView will update when sheets are added/removed.
+- fix NPE in SwingSheetView when switching tabs while drawing
 
 ## Design goals
 - ease of use
