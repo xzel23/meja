@@ -91,12 +91,12 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     /**
      * Array with column positions (x-axis) in pixels.
      */
-    private double[] columnPos;
+    private double[] columnPos = { 0 };
 
     /**
      * Array with column positions (y-axis) in pixels.
      */
-    private double[] rowPos;
+    private double[] rowPos = { 0 };
     private double sheetHeightInPoints = 0;
 
     private double sheetWidthInPoints = 0;
