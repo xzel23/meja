@@ -53,10 +53,13 @@ dependencies {
     compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
 
     // dua3 utility
-    def utilityVersion = "1.2.1"
+    def utilityVersion = "3.0"
     compile        "com.dua3.utility:utility:${utilityVersion}"
+    compile        "com.dua3.utility:utility.swing:${utilityVersion}"
     swingCompile   "com.dua3.utility:utility:${utilityVersion}"
+    swingCompile   "com.dua3.utility:utility.swing:${utilityVersion}"
     samplesCompile "com.dua3.utility:utility:${utilityVersion}"
+    samplesCompile "com.dua3.utility:utility.swing:${utilityVersion}"
     
     // JUnit
     def junitVersion = "5.3.1"

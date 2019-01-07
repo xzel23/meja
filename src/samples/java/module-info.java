@@ -4,4 +4,5 @@ module com.dua3.meja.samples {
     requires com.dua3.meja;
     requires com.dua3.meja.ui.swing;
     requires com.dua3.utility;
+    requires com.dua3.utility.swing;
 }

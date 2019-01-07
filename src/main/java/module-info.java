@@ -4,6 +4,7 @@ module com.dua3.meja {
 
     requires poi;
     requires com.dua3.utility;
+    requires com.dua3.utility.swing;
     
     exports com.dua3.meja.io;
     exports com.dua3.meja.model;

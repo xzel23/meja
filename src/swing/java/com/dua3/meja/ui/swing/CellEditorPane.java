@@ -233,7 +233,7 @@ public class CellEditorPane extends JTextPane {
         CellStyle cellStyle = cell.getCellStyle();
 
         Font font = cellStyle.getFont();
-        final java.awt.Font awtFont = font.toAwtFont().deriveFont((float) scale * font.getSizeInPoints());
+        final java.awt.Font awtFont = SwingUtil.getAwtFont(font).deriveFont((float) scale * font.getSizeInPoints());
 
         setFont(awtFont);
         setBackground(SwingUtil.toAwtColor(cellStyle.getFillFgColor()));
