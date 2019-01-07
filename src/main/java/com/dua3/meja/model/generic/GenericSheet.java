@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.model.generic;
 
-import java.awt.font.FontRenderContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,10 +24,9 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
-import com.dua3.utility.Color;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.Font;
 import com.dua3.utility.swing.SwingUtil;
+import com.dua3.utility.text.Font;
 
 /**
  * A generic implementation of {@link Sheet}.
