@@ -1,74 +1,90 @@
+// Copyright 2019 Axel Howind
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 plugins {
-  id "com.github.spotbugs" version "1.6.8"
-  id "com.jfrog.bintray" version "1.8.4"
-  id "com.dua3.gradle.jpms" version "0.7.1"
+  id 'com.dua3.gradle.jpms' version '0.8.2' apply false
+  id 'com.github.spotbugs'  version '1.6.9' apply false
+  id 'com.jfrog.bintray'    version '1.8.4' apply false
 }
 
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: 'java-library'
-apply plugin: 'eclipse'
+subprojects {
 
-/////////////////////////////////////////////////////////////////////////////
-    group              = 'com.dua3.meja'
-    version            = '2.0-SNAPSHOT'
-    
-    ext.moduleName     = project.group 
-    ext.scm            = 'https://github.com/xzel23/meja.git'
-    ext.repo           = 'public'
-    ext.description    = 'meja spreadsheet library'
-    
-    ext.developerId    = 'axh'
-    ext.developerName  = 'Axel Howind'
-    ext.developerEmail = 'axel@dua3.com'
+  apply plugin:  'java'
+  apply plugin:  'java-library'
+  apply plugin:  'maven-publish'
+  apply plugin:  'eclipse'
+  apply plugin:  'com.github.spotbugs'
+  apply plugin:  'com.dua3.gradle.jpms'
+  apply plugin:  'com.jfrog.bintray'
 
-    sourceSets {
-        main    { java.srcDirs 'src/main/java'    }
-        
-        swing   { java.srcDirs 'src/swing/java'   }
-        
-        samples { java.srcDirs 'src/samples/java' }
+  /////////////////////////////////////////////////////////////////////////////
+	group              = 'com.dua3.meja'
+	version            = '2.0-SNAPSHOT'
+		
+	ext.moduleName     = project.group 
+	ext.scm            = 'https://gitlab.com/com.dua3/lib/meja.git'
+	ext.repo           = 'public'
+	ext.description    = 'The Meja Spreadsheet Library'
+		
+	ext.developerId    = 'axh'
+	ext.developerName  = 'Axel Howind'
+	ext.developerEmail = 'axel@dua3.com'
+  ////////////////////////////////////////////////////////////////////////////
+
+  // remove module-info.java from eclipse source folder
+  eclipse.classpath.file.whenMerged {
+    for (item in entries.findAll{ it.path.matches('src/.*/java') }) {
+      item.excludes += 'module-info.java'
     }
-    
-/////////////////////////////////////////////////////////////////////////////
+  }
 
-repositories {
-    mavenLocal()
+  repositories {
     jcenter()
-    maven { url  "https://dl.bintray.com/dua3/public" }
-}
+    mavenLocal()
+  }
 
-// remove module-info.java from eclipse source folder
-eclipse.classpath.file.whenMerged {
-    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
-    	item.excludes += 'module-info.java'
-    }
-}
+  // get OS (because JavaFX packages are OS dependent)
+  def currentOS = org.gradle.internal.os.OperatingSystem.current()
+  def platform
+  if (currentOS.isWindows()) {
+    platform = 'win'
+  } else if (currentOS.isLinux()) {
+    platform = 'linux'
+  } else if (currentOS.isMacOsX()) {
+    platform = 'mac'
+  }
+
+  ext {
+    dua3UtilityVersion = "3.0.1"
+    javafxversion = '11.0.2'
+  }
 
 dependencies {
-    // Apache POI
-    def poiVersion = "4.0.1"
-    compile "org.apache.poi:poi:${poiVersion}"
-    compile "org.apache.poi:poi-ooxml:${poiVersion}"
-    compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+    implementation "com.dua3.utility:utility:${dua3UtilityVersion}"
 
-    // dua3 utility
-    def utilityVersion = "3.0"
-    compile        "com.dua3.utility:utility:${utilityVersion}"
-    compile        "com.dua3.utility:utility.swing:${utilityVersion}"
-    swingCompile   "com.dua3.utility:utility:${utilityVersion}"
-    swingCompile   "com.dua3.utility:utility.swing:${utilityVersion}"
-    samplesCompile "com.dua3.utility:utility:${utilityVersion}"
-    samplesCompile "com.dua3.utility:utility.swing:${utilityVersion}"
-    
+    // JavaFX
+    implementation "org.openjfx:javafx-base:${javafxversion}:${platform}"
+    implementation "org.openjfx:javafx-fxml:${javafxversion}:${platform}"
+    implementation "org.openjfx:javafx-graphics:${javafxversion}:${platform}"
+    implementation "org.openjfx:javafx-controls:${javafxversion}:${platform}"
+    implementation "org.openjfx:javafx-web:${javafxversion}:${platform}"
+    implementation "org.openjfx:javafx-media:${javafxversion}:${platform}"
+
     // JUnit
-    def junitVersion = "5.3.1"
+    def junitVersion = '5.3.1'
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-
-    swingCompile   sourceSets.main.output
-    samplesCompile sourceSets.main.output, sourceSets.swing.output
-    runtime sourceSets.main.output, sourceSets.swing.output, sourceSets.samples.output
 }
 
 test {
@@ -76,6 +92,12 @@ test {
 
     filter {
         exclude '**/module-info.class'
+    }
+}
+
+javadoc {
+    doFirst {
+        options.addStringOption('-module-path', classpath.asPath)
     }
 }
 
@@ -87,47 +109,51 @@ compileJava {
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
 }
 
-// === SPOTBUGS === >
+// === BINTRAY === >
 
-spotbugs.toolVersion = '3.1.10'
+bintray {
+    user = findProperty('BINTRAY_USER') ?: 'NONE'
+    key = findProperty('BINTRAY_KEY') ?: 'NONE'
 
-tasks.withType(com.github.spotbugs.SpotBugsTask) {
-    reports {
-        xml.enabled false
-        html.enabled true
+    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+    publish = true //[Default: false] Whether version should be auto published after an upload    
+    override = true //[Default: false] Whether to override version artifacts already published    
+
+    publications = ['projectPublication']
+
+    pkg {
+        repo = project.repo
+        name = project.group
+        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
+        licenses = ['Apache-2.0']
+        vcsUrl = project.scm
+
+	    version {
+	        name = project.version
+	        desc = project.name+version
+	        released  = new Date()
+	        vcsTag = project.version
+	    }
     }
-    // ignore failures until spotbugs bug is fixed: https://github.com/spotbugs/spotbugs/issues/756
-    ignoreFailures = true
 }
 
 // === ARTIFACTS === >
 
-for (SourceSet sourceSet: sourceSets) {
-    def name = sourceSet.name
-    
-    def jarName = "jar_$name"
-    def sourcesJarName = "sourcesJar_$name"
-                
-    def suffix = name.equals("main") ? "" : "-$name"
-    def base= "meja$suffix" 
-        
-    task "$jarName"(type: Jar, dependsOn: classes) {
-        classifier null
-        baseName base
-        from sourceSet.output
-    }
-    
-    task "$sourcesJarName"(type: Jar, dependsOn: classes) {
-        classifier 'sources'
-        baseName base
-        from sourceSet.allSource
-    }
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier 'javadoc'
+    classifier = 'javadoc'
     from javadoc.destinationDir
-}    
+}
+
+artifacts {
+	archives jar
+    archives sourcesJar
+    archives javadocJar
+}
 
 // === MAVEN publication === >
 
@@ -155,102 +181,38 @@ def pomConfig = {
 // Create the publication with the pom configuration:
 publishing {
     publications {
-        for (SourceSet sourceSet: sourceSets) {
-            def name = sourceSet.name
-            
-            if (name.equals("test"))
-                continue
-        
-            def suffix = name.equals("main") ? "" : "-$name"
-            def pubName= "meja$suffix"
-             
-            "$pubName"(MavenPublication) {
-                def jarName = "jar_$name"
-                def sourcesJarName = "sourcesJar_$name"
-                def javadocJarName = "javadocJar_$name"
-                                                    
-                artifact tasks."$jarName"      
-                artifact tasks."$sourcesJarName"
-                
-                if (name.equals("main"))  
-                    artifact javadocJar       
-
-                groupId project.group
-                artifactId pubName
-                version version
-                pom.withXml {
-                    def root = asNode()
-                    root.appendNode('description', project.description)
-                    root.appendNode('name', pubName)
-                    root.appendNode('url', project.scm)
-                    root.children().last() + pomConfig
-                }
+        projectPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId project.group
+            artifactId project.name
+            version version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', project.description)
+                root.appendNode('name', project.group)
+                root.appendNode('url', project.scm)
+                root.children().last() + pomConfig
             }
         }
     }
 }
 
-// === BINTRAY === >
+// === SPOTBUGS === >
 
-bintray {
-    user = findProperty('BINTRAY_USER') ?: 'NONE'
-    key = findProperty('BINTRAY_KEY') ?: 'NONE'
+spotbugs.toolVersion = '3.1.11'
 
-    configurations = ['archives']
-
-    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-    publish = true //[Default: false] Whether version should be auto published after an upload    
-    override = false //[Default: false] Whether to override version artifacts already published    
-
-    pkg {
-        repo = project.repo
-        name = project.group
-        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
-        licenses = ['Apache-2.0']
-        vcsUrl = project.scm
-
-        version {
-            name = project.version
-            desc = project.name+version
-            released  = new Date()
-            vcsTag = project.version
-        }
+tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    reports {
+        xml.enabled false
+        html.enabled true
     }
-
-    // publish everything    
-    def publicationList = []
-    for (SourceSet sourceSet: sourceSets) {
-        def name = sourceSet.name
-        
-        if (name.equals("test"))
-            break
-    
-        def suffix = name.equals("main") ? "" : "-$name"
-        def pubName= "meja$suffix"
-         
-        publicationList.add("$pubName")
-    }
-    publications = publicationList
+    // ignore failures until spotbugs bug is fixed: https://github.com/spotbugs/spotbugs/issues/756
+    ignoreFailures = true
 }
 
-// === collect all dependencies in one place, in case anyone needs it ===
-
-task collectDependencies(dependsOn: assemble) {
-    // project files
-    copy {
-        from configurations.runtime
-        into rootProject.libsDir
-    }
-    
-    // subproject files
-    subprojects { p ->
-        copy {
-            from p.configurations.runtime
-            into rootProject.libsDir
-        }
-    }
 }
-  
+
 // === DEFAULT TASKS === >
-
-defaultTasks 'build', 'publishToMavenLocal', 'install'
+defaultTasks 'build', 'publishToMavenLocal'

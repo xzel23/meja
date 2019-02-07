@@ -1,0 +1,256 @@
+plugins {
+  id "com.github.spotbugs" version "1.6.8"
+  id "com.jfrog.bintray" version "1.8.4"
+  id "com.dua3.gradle.jpms" version "0.7.1"
+}
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'java-library'
+apply plugin: 'eclipse'
+
+/////////////////////////////////////////////////////////////////////////////
+    group              = 'com.dua3.meja'
+    version            = '2.0-SNAPSHOT'
+    
+    ext.moduleName     = project.group 
+    ext.scm            = 'https://github.com/xzel23/meja.git'
+    ext.repo           = 'public'
+    ext.description    = 'meja spreadsheet library'
+    
+    ext.developerId    = 'axh'
+    ext.developerName  = 'Axel Howind'
+    ext.developerEmail = 'axel@dua3.com'
+
+    sourceSets {
+        main    { java.srcDirs 'src/main/java'    }
+        
+        swing   { java.srcDirs 'src/swing/java'   }
+        
+        samples { java.srcDirs 'src/samples/java' }
+    }
+    
+/////////////////////////////////////////////////////////////////////////////
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url  "https://dl.bintray.com/dua3/public" }
+}
+
+// remove module-info.java from eclipse source folder
+eclipse.classpath.file.whenMerged {
+    for (item in entries.findAll{ it.path.matches('src/[^/]+/java') }) {
+    	item.excludes += 'module-info.java'
+    }
+}
+
+dependencies {
+    // Apache POI
+    def poiVersion = "4.0.1"
+    compile "org.apache.poi:poi:${poiVersion}"
+    compile "org.apache.poi:poi-ooxml:${poiVersion}"
+    compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+
+    // dua3 utility
+    def utilityVersion = "3.0"
+    compile        "com.dua3.utility:utility:${utilityVersion}"
+    compile        "com.dua3.utility:utility.swing:${utilityVersion}"
+    swingCompile   "com.dua3.utility:utility:${utilityVersion}"
+    swingCompile   "com.dua3.utility:utility.swing:${utilityVersion}"
+    samplesCompile "com.dua3.utility:utility:${utilityVersion}"
+    samplesCompile "com.dua3.utility:utility.swing:${utilityVersion}"
+    
+    // JUnit
+    def junitVersion = "5.3.1"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+
+    swingCompile   sourceSets.main.output
+    samplesCompile sourceSets.main.output, sourceSets.swing.output
+    runtime sourceSets.main.output, sourceSets.swing.output, sourceSets.samples.output
+}
+
+test {
+    useJUnitPlatform()
+
+    filter {
+        exclude '**/module-info.class'
+    }
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}
+
+// === SPOTBUGS === >
+
+spotbugs.toolVersion = '3.1.10'
+
+tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    reports {
+        xml.enabled false
+        html.enabled true
+    }
+    // ignore failures until spotbugs bug is fixed: https://github.com/spotbugs/spotbugs/issues/756
+    ignoreFailures = true
+}
+
+// === ARTIFACTS === >
+
+for (SourceSet sourceSet: sourceSets) {
+    def name = sourceSet.name
+    
+    def jarName = "jar_$name"
+    def sourcesJarName = "sourcesJar_$name"
+                
+    def suffix = name.equals("main") ? "" : "-$name"
+    def base= "meja$suffix" 
+        
+    task "$jarName"(type: Jar, dependsOn: classes) {
+        classifier null
+        baseName base
+        from sourceSet.output
+    }
+    
+    task "$sourcesJarName"(type: Jar, dependsOn: classes) {
+        classifier 'sources'
+        baseName base
+        from sourceSet.allSource
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier 'javadoc'
+    from javadoc.destinationDir
+}    
+
+// === MAVEN publication === >
+
+// Create the pom configuration:
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+    }
+    developers {
+        developer {
+            id    project.developerId
+            name  project.developerName
+            email project.developerEmail
+        }
+    }
+    
+    scm {
+       url project.scm
+    }
+}
+
+// Create the publication with the pom configuration:
+publishing {
+    publications {
+        for (SourceSet sourceSet: sourceSets) {
+            def name = sourceSet.name
+            
+            if (name.equals("test"))
+                continue
+        
+            def suffix = name.equals("main") ? "" : "-$name"
+            def pubName= "meja$suffix"
+             
+            "$pubName"(MavenPublication) {
+                def jarName = "jar_$name"
+                def sourcesJarName = "sourcesJar_$name"
+                def javadocJarName = "javadocJar_$name"
+                                                    
+                artifact tasks."$jarName"      
+                artifact tasks."$sourcesJarName"
+                
+                if (name.equals("main"))  
+                    artifact javadocJar       
+
+                groupId project.group
+                artifactId pubName
+                version version
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', project.description)
+                    root.appendNode('name', pubName)
+                    root.appendNode('url', project.scm)
+                    root.children().last() + pomConfig
+                }
+            }
+        }
+    }
+}
+
+// === BINTRAY === >
+
+bintray {
+    user = findProperty('BINTRAY_USER') ?: 'NONE'
+    key = findProperty('BINTRAY_KEY') ?: 'NONE'
+
+    configurations = ['archives']
+
+    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+    publish = true //[Default: false] Whether version should be auto published after an upload    
+    override = false //[Default: false] Whether to override version artifacts already published    
+
+    pkg {
+        repo = project.repo
+        name = project.group
+        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
+        licenses = ['Apache-2.0']
+        vcsUrl = project.scm
+
+        version {
+            name = project.version
+            desc = project.name+version
+            released  = new Date()
+            vcsTag = project.version
+        }
+    }
+
+    // publish everything    
+    def publicationList = []
+    for (SourceSet sourceSet: sourceSets) {
+        def name = sourceSet.name
+        
+        if (name.equals("test"))
+            break
+    
+        def suffix = name.equals("main") ? "" : "-$name"
+        def pubName= "meja$suffix"
+         
+        publicationList.add("$pubName")
+    }
+    publications = publicationList
+}
+
+// === collect all dependencies in one place, in case anyone needs it ===
+
+task collectDependencies(dependsOn: assemble) {
+    // project files
+    copy {
+        from configurations.runtime
+        into rootProject.libsDir
+    }
+    
+    // subproject files
+    subprojects { p ->
+        copy {
+            from p.configurations.runtime
+            into rootProject.libsDir
+        }
+    }
+}
+  
+// === DEFAULT TASKS === >
+
+defaultTasks 'build', 'publishToMavenLocal', 'install'
