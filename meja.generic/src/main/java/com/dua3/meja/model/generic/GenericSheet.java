@@ -26,6 +26,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.TextUtil;
 
 /**
  * A generic implementation of {@link Sheet}.
@@ -94,7 +95,7 @@ public class GenericSheet extends AbstractSheet {
         // calculate the exact width
         String text = cell.toString();
         Font font = cell.getCellStyle().getFont();
-        float width = SwingUtil.getTextWidth(text, font);
+        float width = TextUtil.getTextWidth(text, font);
 
         // add half the font size as spacing on the sides
         width += font.getSizeInPoints() / 2;
