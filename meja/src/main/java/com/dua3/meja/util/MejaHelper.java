@@ -35,6 +35,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.utility.lang.LangUtil;
 
 /**
@@ -243,19 +244,22 @@ public class MejaHelper {
      * loading succeeds, the workbook is returned.
      * </p>
      * 
+     * @param <W> the workbook type
      * @param path the workbook path
      * @return the workbook loaded from file
      * @throws IOException if workbook could not be loaded
      */
-    public static Workbook openWorkbook(Path path) throws IOException {
+    public static <W extends Workbook> W openWorkbook(Path path) throws IOException {
         FileType fileType = FileType.forPath(path).orElseThrow(
                 () -> new IllegalArgumentException("Could not determine type of file '" + path.toString() + "."));
 
         LangUtil.check(fileType.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
                 fileType.getDescription());
 
-        try (WorkbookReader reader = fileType.newReader()) {
-            return reader.read(path);
+        try {
+            WorkbookFactory<W> factory = fileType.factory();
+            WorkbookReader reader = fileType.reader();
+            return reader.read(factory, path);
         } catch (IOException ex) {
             String msg = "Could not load workbook '" + path + "'.";
             LOGGER.log(Level.SEVERE, msg, ex);

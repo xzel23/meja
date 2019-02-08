@@ -26,8 +26,7 @@ import com.dua3.meja.util.CellValueHelper;
 import com.dua3.meja.util.Options;
 
 /**
- * Implementation of the {@link RowBuilder} interface that builds instances of
- * {@link GenericRow}.
+ * Implementation of the {@link RowBuilder} interface that appends new rows for an existing sheet.
  */
 public class RowBuilder implements IRowBuilder {
 
@@ -37,7 +36,7 @@ public class RowBuilder implements IRowBuilder {
     private int colNr;
 
     /**
-     * Construct a new {@code GenericRowBuilder}.
+     * Construct a new {@code RowBuilder}.
      *
      * @param sheet   the sheet to build rows for
      * @param options the locale to use

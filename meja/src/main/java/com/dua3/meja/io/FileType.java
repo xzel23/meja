@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.nio.file.Path;
 
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.utility.io.IOUtil;
 
 /**
@@ -93,8 +95,8 @@ public abstract class FileType {
         return false;
     }
 
-    public abstract WorkbookReader newReader(WorkbookFactory factory);
-    public abstract WorkbookReader newReader();
-    public abstract WorkbookWriter newWriter();
+    public abstract <W extends Workbook>  WorkbookFactory<W> factory();
+    public abstract WorkbookReader reader();
+    public abstract WorkbookWriter writer();
 
 }
