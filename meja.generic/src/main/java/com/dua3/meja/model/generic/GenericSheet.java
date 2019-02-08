@@ -25,7 +25,6 @@ import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
 
 /**

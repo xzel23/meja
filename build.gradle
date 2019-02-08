@@ -66,20 +66,12 @@ subprojects {
   }
 
   ext {
-    dua3UtilityVersion = "3.0.1"
+    dua3UtilityVersion = "3.1.1"
     javafxversion = '11.0.2'
   }
 
 dependencies {
     implementation "com.dua3.utility:utility:${dua3UtilityVersion}"
-
-    // JavaFX
-    implementation "org.openjfx:javafx-base:${javafxversion}:${platform}"
-    implementation "org.openjfx:javafx-fxml:${javafxversion}:${platform}"
-    implementation "org.openjfx:javafx-graphics:${javafxversion}:${platform}"
-    implementation "org.openjfx:javafx-controls:${javafxversion}:${platform}"
-    implementation "org.openjfx:javafx-web:${javafxversion}:${platform}"
-    implementation "org.openjfx:javafx-media:${javafxversion}:${platform}"
 
     // JUnit
     def junitVersion = '5.3.1'
