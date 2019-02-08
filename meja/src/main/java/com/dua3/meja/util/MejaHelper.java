@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
+import com.dua3.meja.io.WorkbookReader;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
@@ -253,8 +254,8 @@ public class MejaHelper {
         LangUtil.check(fileType.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
                 fileType.getDescription());
 
-        try {
-            return fileType.getFactory().open(path);
+        try (WorkbookReader reader = fileType.newReader()) {
+            return reader.read(path);
         } catch (IOException ex) {
             String msg = "Could not load workbook '" + path + "'.";
             LOGGER.log(Level.SEVERE, msg, ex);

@@ -16,7 +16,12 @@
 package com.dua3.meja.io;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.nio.file.Path;
+
+import com.dua3.utility.io.IOUtil;
 
 /**
  *
@@ -24,7 +29,7 @@ import java.util.Collections;
  */
 public abstract class FileType {
 
-    private static final List<FileType> types;
+    private static final List<FileType> types = new LinkedList<>();
 
     public static List<FileType> filetypes() {
         return Collections.unmodifiableList(types);
@@ -34,14 +39,26 @@ public abstract class FileType {
         types.add(type);
     }
 
+    public static Optional<FileType> forPath(Path p) {
+        String ext = IOUtil.getExtension(p);
+        for (FileType t: types) {
+            if (t.extensions.contains(ext)) {
+                return Optional.of(t);
+            }
+        }
+        return Optional.empty();
+    }
+
     private final String name;
     private final String description;
-    private final String[] extensions;
+    private final List<String> extensions; // unmodifiable!
+    private final OpenMode mode;
   
-    public FileType(String name, String description, String... extensions) {
+    public FileType(String name, String description, OpenMode mode, String... extensions) {
         this.name = name;
         this.description = description;
-        this.extensions = Arrays.copyOf(extensions, extensions.length);
+        this.extensions = List.of(extensions);
+        this.mode = mode;
     }
 
     /**
@@ -59,7 +76,11 @@ public abstract class FileType {
     }
 
     public List<String> getExtensions() {
-        return List.of(extensions);
+        return extensions;
+    }
+
+    public boolean isSupported(OpenMode mode) {
+        return (this.mode.n&mode.n) == mode.n;
     }
 
     public boolean matches(String filename) {
@@ -72,6 +93,7 @@ public abstract class FileType {
         return false;
     }
 
+    public abstract WorkbookReader newReader(WorkbookFactory factory);
     public abstract WorkbookReader newReader();
     public abstract WorkbookWriter newWriter();
 

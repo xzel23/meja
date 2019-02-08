@@ -227,7 +227,7 @@ public class CsvReader extends Csv implements DataReader, AutoCloseable {
      * @return number of fields in row or -1 when end of input is reached
      * @throws IOException
      */
-    private int readRow(RowBuilder rb) throws IOException {
+    private int readRow(IRowBuilder rb) throws IOException {
         String line = reader.readLine();
 
         if (line == null) {

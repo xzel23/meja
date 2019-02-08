@@ -20,19 +20,25 @@ package com.dua3.meja.io;
  */
 public enum OpenMode {
     /**
+     * None of reading and writing.
+     */
+    NONE(0),
+    /**
      * Open file for reading.
      */
-    READ,
+    READ(1),
     /**
      * Open file for writing.
      */
-    WRITE,
+    WRITE(2),
     /**
      * Open file for reading and/or writing.
      */
-    READ_AND_WRITE,
-    /**
-     * None of reading and writing.
-     */
-    NONE
+    READ_AND_WRITE(3);
+
+    int n;
+
+    private OpenMode(int n) {
+        this.n = n;
+    }
 }

@@ -1,8 +1,8 @@
 /.gradle/
 /gradle.properties
-/dist/
-/bin/
-/build/
+**/dist/
+**/bin/
+**/build/
 
 # Netbeans files
 **/nbproject

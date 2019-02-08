@@ -311,7 +311,9 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @throws java.io.IOException if an I/O error occurs
      */
     default void write(Path path, Options options) throws IOException {
-        FileType type = FileType.forPath(path).orElse(FileType.CSV);
+        FileType type = FileType
+            .forPath(path)
+            .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for "+path));
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
             write(type, out, options);
         }
