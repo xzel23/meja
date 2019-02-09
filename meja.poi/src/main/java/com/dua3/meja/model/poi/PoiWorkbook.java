@@ -93,11 +93,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
     };
 
-    static {
-        FileType.add(FILETYPE_XLS);
-        FileType.add(FILETYPE_XLSX);
-    }
-    
     /**
      * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks (the old
      * Excel format).

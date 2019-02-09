@@ -33,6 +33,8 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
+import com.dua3.meja.model.poi.io.FileTypeXlsx;
+import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.util.Option;
 import com.dua3.meja.util.OptionSet;
 import com.dua3.meja.util.Options;
@@ -87,7 +89,10 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
         }
     }
 
-    private PoiWorkbookFactory() {
+    public PoiWorkbookFactory() {
+        // force initialization of FileType instances
+        FileTypeXlsx.instance();
+        FileTypeXls.instance();
     }
 
     @Override

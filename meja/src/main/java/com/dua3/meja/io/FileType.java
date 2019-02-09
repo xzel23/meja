@@ -17,7 +17,11 @@ package com.dua3.meja.io;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.nio.file.Path;
 
@@ -32,14 +36,19 @@ import com.dua3.utility.io.IOUtil;
  */
 public abstract class FileType {
 
-    private static final List<FileType> types = new LinkedList<>();
+    private static final Set<FileType> types = new HashSet<>();
 
-    public static List<FileType> filetypes() {
-        return Collections.unmodifiableList(types);
+    static {
+        ServiceLoader.load(WorkbookFactory.class)
+            .forEach(factory -> factory.getClass());
     }
 
-    public static void add(FileType type) {
-        types.add(type);
+    protected final void addType(FileType ft) {
+        types.add(ft);
+    }
+
+    public static Collection<FileType> filetypes() {
+        return Collections.unmodifiableSet(types);
     }
 
     public static Optional<FileType> forPath(Path p) {
@@ -107,5 +116,17 @@ public abstract class FileType {
 
     public List<Option<?>> getSettings() {
         return Collections.emptyList();
+    }
+
+    // all instances of the same class are considered equal
+    @Override
+    public boolean equals(Object obj) {
+        return obj!=null && obj.getClass()==getClass();
+    }
+
+    // consistent with equals()
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

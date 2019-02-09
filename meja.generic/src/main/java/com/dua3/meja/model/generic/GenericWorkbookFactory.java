@@ -37,7 +37,9 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
         return INSTANCE;
     }
 
-    private GenericWorkbookFactory() {
+    public GenericWorkbookFactory() {
+        // force initialization of FileType instances
+        FileTypeCsv.instance();
     }
 
     @Override

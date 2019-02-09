@@ -41,26 +41,6 @@ import com.dua3.meja.util.Options;
  */
 public class GenericWorkbook extends AbstractWorkbook {
 
-    public static final FileType FILETYPE_CSV = new FileType("CSV", "CSV files", OpenMode.READ_AND_WRITE, "csv", "txt") {
-        @Override
-        public GenericWorkbookFactory factory() {
-            return GenericWorkbookFactory.instance();
-        }
-
-        @Override
-        public WorkbookWriter getWriter() {
-            return CsvWorkbookWriter.create();
-        }
-        @Override
-        public List<Option<?>> getSettings() {
-            return Csv.getOptions();
-        }
-    };
-
-    static {
-        FileType.add(FILETYPE_CSV);
-    }
-
     final List<GenericSheet> sheets = new ArrayList<>();
     final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
     private final GenericCellStyle defaultCellStyle;
