@@ -40,6 +40,7 @@ import com.dua3.meja.model.VAlign;
 import com.dua3.utility.Color;
 import com.dua3.utility.Pair;
 import com.dua3.utility.swing.StyledDocumentBuilder;
+import com.dua3.utility.swing.SwingFontUtil;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
@@ -221,6 +222,7 @@ public class CellEditorPane extends JTextPane {
         return dfltAttr;
     }
 
+    private static SwingFontUtil fontUtil = new SwingFontUtil();
     /**
      * Set the editor content to the content of given cell.
      *
@@ -233,7 +235,7 @@ public class CellEditorPane extends JTextPane {
         CellStyle cellStyle = cell.getCellStyle();
 
         Font font = cellStyle.getFont();
-        final java.awt.Font awtFont = SwingUtil.getAwtFont(font).deriveFont((float) scale * font.getSizeInPoints());
+        final java.awt.Font awtFont = fontUtil.convert(font).deriveFont((float) scale * font.getSizeInPoints());
 
         setFont(awtFont);
         setBackground(SwingUtil.toAwtColor(cellStyle.getFillFgColor()));

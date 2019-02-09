@@ -95,7 +95,7 @@ public class GenericSheet extends AbstractSheet {
         // calculate the exact width
         String text = cell.toString();
         Font font = cell.getCellStyle().getFont();
-        float width = TextUtil.getTextWidth(text, font);
+        float width = (float) TextUtil.getTextWidth(text, font);
 
         // add half the font size as spacing on the sides
         width += font.getSizeInPoints() / 2;
