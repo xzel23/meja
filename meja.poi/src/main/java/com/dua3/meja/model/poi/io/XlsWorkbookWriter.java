@@ -13,13 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.dua3.meja.io;
+package com.dua3.meja.model.poi.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
@@ -50,13 +51,13 @@ public class XlsWorkbookWriter extends WorkbookWriter {
     public void write(Workbook workbook, OutputStream out) throws IOException {
         if (workbook instanceof PoiWorkbook.PoiHssfWorkbook) {
             LOGGER.log(Level.FINE, "writing XLS workbook using POI.");
-            workbook.write(FileType.XLS, out);
+            workbook.write(PoiWorkbook.FILETYPE_XLS, out);
         } else {
             try (Workbook xlsWorkbook = PoiWorkbookFactory.instance().createXls()) {
                 LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsWorkbook.copy(workbook);
                 LOGGER.log(Level.FINE, "writing workbook ...");
-                xlsWorkbook.write(FileType.XLS, out);
+                xlsWorkbook.write(PoiWorkbook.FILETYPE_XLS, out);
                 LOGGER.log(Level.FINE, "flushing buffers ...");
                 out.flush();
                 LOGGER.log(Level.FINE, "done.");

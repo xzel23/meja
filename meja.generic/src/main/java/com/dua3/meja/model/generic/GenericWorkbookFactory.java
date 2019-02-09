@@ -18,6 +18,7 @@ package com.dua3.meja.model.generic;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import com.dua3.meja.io.CsvWorkbookReader;
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookReader;
@@ -56,8 +57,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
         LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
                 type.getDescription());
 
-        WorkbookReader reader = type.reader();
-
+        WorkbookReader reader = CsvWorkbookReader.create();
         reader.setOptions(importSettings);
 
         return reader.read(GenericWorkbookFactory.instance(), path);

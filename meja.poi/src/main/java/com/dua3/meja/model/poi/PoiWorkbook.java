@@ -28,6 +28,21 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
+import com.dua3.meja.io.WorkbookWriter;
+import com.dua3.meja.model.AbstractWorkbook;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
+import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
+import com.dua3.meja.model.poi.io.XlsWorkbookWriter;
+import com.dua3.meja.model.poi.io.XlsxWorkbookWriter;
+import com.dua3.meja.util.Options;
+import com.dua3.utility.Color;
+import com.dua3.utility.text.TextAttributes;
+import com.dua3.utility.text.TextUtil;
+
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
@@ -46,18 +61,6 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.io.WorkbookWriter;
-import com.dua3.meja.model.AbstractWorkbook;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
-import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
-import com.dua3.meja.util.Options;
-import com.dua3.utility.Color;
-import com.dua3.utility.text.TextAttributes;
-import com.dua3.utility.text.TextUtil;
-
 /**
  *
  * @author axel
@@ -65,6 +68,30 @@ import com.dua3.utility.text.TextUtil;
 public abstract class PoiWorkbook extends AbstractWorkbook {
 
     private static final Logger LOGGER = Logger.getLogger(PoiWorkbook.class.getName());
+
+    public static final FileType FILETYPE_XLS = new FileType("Excel", "Excel files", OpenMode.READ_AND_WRITE, "xls") {
+        @Override
+        public PoiWorkbookFactory factory() {
+            return PoiWorkbookFactory.instance();
+        }
+
+        @Override
+        public WorkbookWriter getWriter() {
+            return XlsWorkbookWriter.instance();
+        }
+    };
+
+    public static final FileType FILETYPE_XLSX = new FileType("Excel", "Excel files", OpenMode.READ_AND_WRITE, "xlsx") {
+        @Override
+        public PoiWorkbookFactory factory() {
+            return PoiWorkbookFactory.instance();
+        }
+
+        @Override
+        public WorkbookWriter getWriter() {
+            return XlsxWorkbookWriter.instance();
+        }
+    };
 
     /**
      * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks (the old
@@ -159,7 +186,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
         @Override
         protected FileType getStandardFileType() {
-            return FileType.XLS;
+            return FILETYPE_XLS;
         }
 
         @Override
@@ -261,7 +288,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
         @Override
         protected FileType getStandardFileType() {
-            return FileType.XLSX;
+            return FILETYPE_XLSX;
         }
 
         @Override

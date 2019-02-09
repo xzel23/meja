@@ -129,22 +129,12 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     @Override
     public PoiWorkbook open(Path path, Options importSettings) throws IOException {
-        FileType type = FileType.forPath(path).orElse(FileType.CSV);
-
-        if (type == FileType.XLS || type == FileType.XLSX) {
-            // Read Excel files directly using POI methods
-            // Do not use the create(File) method to avoid exception when trying
-            // to
-            // save the workbook again to the same file.
-            try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
-                return open(in, path);
-            }
+        // Read Excel files directly using POI methods
+        // Do not use the create(File) method to avoid exception when trying
+        // to save the workbook again to the same file.
+        try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
+            return open(in, path);
         }
-
-        LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
-                type.getDescription());
-
-        return type.getReader().read(PoiWorkbookFactory.instance(), path);
     }
 
     /**

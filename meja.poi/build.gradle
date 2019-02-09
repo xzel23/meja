@@ -1,0 +1,9 @@
+dependencies {
+    implementation project(':meja')
+
+    // Apache POI
+    def poiVersion = "4.0.1"
+    compile "org.apache.poi:poi:${poiVersion}"
+    compile "org.apache.poi:poi-ooxml:${poiVersion}"
+    compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+}

@@ -164,7 +164,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public void write(FileType type, OutputStream out, Options options) throws IOException {
-        WorkbookWriter writer = type.writer();
+        WorkbookWriter writer = type.getWriter();
         writer.setOptions(options);
         writer.write(this, out);
     }

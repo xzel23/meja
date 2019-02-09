@@ -244,12 +244,11 @@ public class MejaHelper {
      * loading succeeds, the workbook is returned.
      * </p>
      * 
-     * @param <W> the workbook type
      * @param path the workbook path
      * @return the workbook loaded from file
      * @throws IOException if workbook could not be loaded
      */
-    public static <W extends Workbook> W openWorkbook(Path path) throws IOException {
+    public static Workbook openWorkbook(Path path) throws IOException {
         FileType fileType = FileType.forPath(path).orElseThrow(
                 () -> new IllegalArgumentException("Could not determine type of file '" + path.toString() + "."));
 
@@ -257,9 +256,8 @@ public class MejaHelper {
                 fileType.getDescription());
 
         try {
-            WorkbookFactory<W> factory = fileType.factory();
-            WorkbookReader reader = fileType.reader();
-            return reader.read(factory, path);
+            WorkbookFactory<?> factory = fileType.factory();
+            return factory.open(path);
         } catch (IOException ex) {
             String msg = "Could not load workbook '" + path + "'.";
             LOGGER.log(Level.SEVERE, msg, ex);

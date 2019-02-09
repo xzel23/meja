@@ -95,8 +95,7 @@ public abstract class FileType {
         return false;
     }
 
-    public abstract <W extends Workbook>  WorkbookFactory<W> factory();
-    public abstract WorkbookReader reader();
-    public abstract WorkbookWriter writer();
+    public abstract WorkbookFactory<? extends Workbook> factory();
+    public abstract WorkbookWriter getWriter();
 
 }
