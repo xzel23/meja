@@ -23,6 +23,7 @@ import java.nio.file.Path;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.meja.util.Option;
 import com.dua3.utility.io.IOUtil;
 
 /**
@@ -98,4 +99,13 @@ public abstract class FileType {
     public abstract WorkbookFactory<? extends Workbook> factory();
     public abstract WorkbookWriter getWriter();
 
+	public static List<FileType> getFileTypes(OpenMode mode) {
+        List<FileType> list = new LinkedList<>(types);
+        list.removeIf(t -> (t.mode.n&mode.n)!=mode.n);
+		return list;
+	}
+
+    public List<Option<?>> getSettings() {
+        return Collections.emptyList();
+    }
 }

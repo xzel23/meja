@@ -24,18 +24,43 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.dua3.meja.io.Csv;
+import com.dua3.meja.io.CsvWorkbookWriter;
 import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.AbstractWorkbook;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.util.Option;
 import com.dua3.meja.util.Options;
 
 /**
  * Generic implementation of {@link Workbook}.
  */
 public class GenericWorkbook extends AbstractWorkbook {
+
+    public static final FileType FILETYPE_CSV = new FileType("CSV", "CSV files", OpenMode.READ_AND_WRITE, "csv", "txt") {
+        @Override
+        public GenericWorkbookFactory factory() {
+            return GenericWorkbookFactory.instance();
+        }
+
+        @Override
+        public WorkbookWriter getWriter() {
+            return CsvWorkbookWriter.create();
+        }
+        @Override
+        public List<Option<?>> getSettings() {
+            return Csv.getOptions();
+        }
+    };
+
+    static {
+        FileType.add(FILETYPE_CSV);
+    }
+
     final List<GenericSheet> sheets = new ArrayList<>();
     final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
     private final GenericCellStyle defaultCellStyle;

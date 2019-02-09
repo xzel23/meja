@@ -1,4 +1,5 @@
-module com.dua3.meja.ui.swing {
+module com.dua3.meja.swing {
+    exports com.dua3.meja.ui;
     exports com.dua3.meja.ui.swing;
 
     requires java.desktop;

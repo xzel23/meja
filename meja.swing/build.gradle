@@ -1,0 +1,4 @@
+dependencies {
+    implementation project(':meja')
+    implementation "com.dua3.utility:utility.swing:${dua3UtilityVersion}"
+}

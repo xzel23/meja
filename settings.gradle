@@ -1,2 +1,2 @@
 rootProject.name = 'meja'
-include 'meja', 'meja.generic', 'meja.poi'
+include 'meja', 'meja.generic', 'meja.poi', 'meja.swing', 'meja.samples'

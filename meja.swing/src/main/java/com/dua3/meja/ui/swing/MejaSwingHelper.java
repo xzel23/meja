@@ -249,7 +249,7 @@ public class MejaSwingHelper {
     }
 
     public static Optional<Workbook> openWorkbook(Component parent, Path path) throws IOException {
-        return openWorkbook(parent, path, FileType.forPath(path).orElse(FileType.CSV));
+        return openWorkbook(parent, path, FileType.forPath(path).orElseThrow());
     }
 
     public static Optional<Workbook> openWorkbook(Component parent, Path path, final FileType fileType)
@@ -258,13 +258,13 @@ public class MejaSwingHelper {
             return Optional.empty();
         }
 
-        final WorkbookFactory<?> factory = fileType.getFactory();
+        final WorkbookFactory<?> factory = fileType.factory();
 
         // ask user for file type specific settings
         List<Option<?>> settings = fileType.getSettings();
         Options importSettings = Options.empty(); // default is empty
         if (!settings.isEmpty()) {
-            SettingsDialog dialog = new SettingsDialog(parent, fileType.name() + " - Settings",
+            SettingsDialog dialog = new SettingsDialog(parent, fileType.getName() + " - Settings",
                     "Please verify the import settings:", settings);
             dialog.setVisible(true);
             importSettings = dialog.getResult();
@@ -314,7 +314,7 @@ public class MejaSwingHelper {
             }
         }
 
-        Optional<FileType> type = FileType.forFile(file);
+        Optional<FileType> type = FileType.forPath(file.toPath());
         if (type.isPresent()) {
             type.get().getWriter().write(workbook, file.toPath());
         } else {
