@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':meja')
+
+    compile "com.dua3.fx:fx.util:${dua3FxVersion}"
+}
