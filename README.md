@@ -42,8 +42,7 @@ Utilites for JavaFX.
 
 ### Version 2.0
 
-- Requires Java 11.
-- Provides Jigsaw modules. However Apache POI is not yet fully modularised.
-- WorkbookFactory implementations can be loaded by `ServiceProvider.load()`.
+- Meja requires Java 11 to compile and run.
+- Provides Jigsaw modules. However Apache POI is not yet fully modularised, so keep in mind when using jlink with meja.poi.
+- WorkbookFactory implementations can be loaded by `ServiceProvider.load()`. Loading is done automatically when using FileType.forPath(...).factory().
 - To run samples, run `./gradlew run` in the project directory
-
