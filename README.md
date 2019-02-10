@@ -34,6 +34,10 @@ Defines Swing controls for displaying Sheets and Workbooks.
 
 Several small samples to demonstrate how to use this library.
 
+### meja.fx (`com.dua3.meja.fx`)
+
+Utilites for JavaFX.
+
 ## Changes
 
 ### Version 2.0
@@ -42,3 +46,4 @@ Several small samples to demonstrate how to use this library.
 - Provides Jigsaw modules. However Apache POI is not yet fully modularised.
 - WorkbookFactory implementations can be loaded by `ServiceProvider.load()`.
 - To run samples, run `./gradlew run` in the project directory
+
