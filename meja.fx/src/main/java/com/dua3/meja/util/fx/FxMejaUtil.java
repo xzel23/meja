@@ -1,7 +1,15 @@
 package com.dua3.meja.util.fx;
 
 import javafx.scene.control.TableView;
+import javafx.stage.FileChooser;
+
 import com.dua3.meja.model.Sheet;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Row;
 
 public class FxMejaUtil {
@@ -50,7 +58,38 @@ public class FxMejaUtil {
     			row.getCell(posJ+(j++)).set(obj);        		
         	}
         }
-	}
+    }
+    
+    /**
+     * Get list of ExtensionFilters for supported file types.
+     * 
+     * @param mode
+     *  the mode requested (read/write)
+     * @return 
+     *  list of ExtensionFilters
+     */
+    public static List<FileChooser.ExtensionFilter> getExtensionFilters(OpenMode mode) {
+        List<FileChooser.ExtensionFilter> filters = new LinkedList<>();
+        FileType.filetypes()
+            .stream()
+            .filter(t -> t.isSupported(mode))
+            .forEach(t -> filters.add(new FileChooser.ExtensionFilter(t.getName(), t.getExtensions())));
+        return filters;
+    }
+
+    /**
+     * Get list of ExtensionFilters for supported file types.
+     * 
+     * @return 
+     *  list of ExtensionFilters
+     */
+    public static List<FileChooser.ExtensionFilter> getExtensionFilters() {
+        List<FileChooser.ExtensionFilter> filters = new LinkedList<>();
+        FileType.filetypes()
+            .stream()
+            .forEach(t -> filters.add(new FileChooser.ExtensionFilter(t.getName(), t.getExtensions())));
+        return filters;
+    }
 
     private FxMejaUtil() {
         // utility class
