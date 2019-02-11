@@ -16,7 +16,6 @@
 package com.dua3.meja.io;
 
 import java.nio.charset.Charset;
-import java.text.DecimalFormatSymbols;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Arrays;
@@ -102,11 +101,10 @@ public abstract class Csv {
                 PredefinedDateFormat.values());
 
         OPTIONS.addOption(OPTION_SEPARATOR, NamedFunction.class,
-                NamedFunction.create("Locale Dependent", (Locale locale) -> {
-                    char ds = DecimalFormatSymbols.getInstance(locale).getDecimalSeparator();
-                    return ds != ',' ? ',' : ';';
-                }), NamedFunction.create(",", locale -> ','), NamedFunction.create(";", locale -> ';'),
-                NamedFunction.create("|", locale -> '|'), NamedFunction.create("TAB", locale -> '\t'));
+            NamedFunction.create(";", locale -> ';'),
+            NamedFunction.create(",", locale -> ','), 
+            NamedFunction.create("|", locale -> '|'), 
+            NamedFunction.create("TAB", locale -> '\t'));
 
         OPTIONS.addOption(OPTION_DELIMITER, Character.class, OptionSet.value("\"", '"'), OptionSet.value("'", '\''));
     }
