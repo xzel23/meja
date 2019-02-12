@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2015 Axel Howind (axel@dua3.com).
  *
@@ -180,6 +181,8 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
         case Workbook.PROPERTY_SHEET_ADDED:
         case Workbook.PROPERTY_SHEET_REMOVED:
             SwingUtilities.invokeLater(() -> setWorkbook(getWorkbook()));
+            break;
+        default:
             break;
         }
     }
