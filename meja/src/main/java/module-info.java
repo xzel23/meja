@@ -23,4 +23,6 @@ module com.dua3.meja {
 	requires java.logging;
 	requires java.desktop;
     requires com.dua3.utility;
+
+	uses com.dua3.meja.model.WorkbookFactory;
 }

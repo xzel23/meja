@@ -22,4 +22,6 @@ module com.dua3.meja.generic {
 	requires java.logging;
     requires com.dua3.utility;
 	requires com.dua3.meja;
+
+	uses com.dua3.utility.text.FontUtil;
 }
