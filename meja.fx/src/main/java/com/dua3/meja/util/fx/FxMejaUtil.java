@@ -7,6 +7,7 @@ import com.dua3.meja.model.Sheet;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -73,7 +74,14 @@ public class FxMejaUtil {
         FileType.filetypes()
             .stream()
             .filter(t -> t.isSupported(mode))
-            .forEach(t -> filters.add(new FileChooser.ExtensionFilter(t.getName(), t.getExtensions())));
+            .forEach(t -> 
+                filters.add(
+                    new FileChooser.ExtensionFilter(
+                        t.getName(), 
+                        t.getExtensions()
+                            .stream()
+                            .map(ext -> "*."+ext)
+                            .collect(Collectors.toList()))));
         return filters;
     }
 
