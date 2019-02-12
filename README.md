@@ -52,3 +52,5 @@ __BETA1__:
 __BETA2__:
 
 - Removed the "locale dependent" setting from CSV.
+- Removed `FileType.getDescription()`. Use `FileType.getName()` instead.
+- Added `FileTypeExcel` that combines the old and new Excel formats (only for reading)
