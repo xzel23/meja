@@ -5,15 +5,22 @@ import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
 
-public class FileTypeXls extends FileType {
-    private static final FileType INSTANCE = new FileTypeXls();
+/**
+ * FileType for <em>reading</em> Excel files.
+ * 
+ * There are different file types for reading and writing because
+ * when reading, the user normally wants to have a filter that shows <em>all</em>
+ * Excel files.
+ */
+public class FileTypeExcel extends FileType {
+    private static final FileType INSTANCE = new FileTypeExcel();
     
     public static FileType instance() {
         return INSTANCE;
     }
 
-    private FileTypeXls() {
-        super("Excel (xls)", "Excel 97-2003", OpenMode.READ_AND_WRITE, "xls");
+    private FileTypeExcel() {
+        super("Excel", "Excel", OpenMode.READ, "xls", "xlsx");
         addType(this);
     }
     
