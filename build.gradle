@@ -42,6 +42,39 @@ subprojects {
 	ext.developerEmail = 'axel@dua3.com'
   ////////////////////////////////////////////////////////////////////////////
 
+
+  // repositories
+  repositories {
+    jcenter()
+    mavenLocal()
+  }
+
+  // library versions
+  def currentOS = org.gradle.internal.os.OperatingSystem.current()
+  ext {
+	dua3UtilityVersion = '3.1.4-SNAPSHOT'
+    dua3FxVersion = '0.3.4-SNAPSHOT'
+    javafxversion = '11.0.2'
+    junitVersion = '5.3.1'
+
+    if (currentOS.isWindows()) {
+      platform = 'win'
+    } else if (currentOS.isLinux()) {
+      platform = 'linux'
+    } else if (currentOS.isMacOsX()) {
+      platform = 'mac'
+    }
+  }
+
+  // dependencies
+  dependencies {
+    implementation "com.dua3.utility:utility:${dua3UtilityVersion}"
+
+    // JUnit
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+  }
+
   // remove module-info.java from eclipse source folder
   eclipse.classpath.file.whenMerged {
     for (item in entries.findAll{ it.path.matches('src/.*/java') }) {
@@ -49,61 +82,31 @@ subprojects {
     }
   }
 
-  repositories {
-    jcenter()
-    mavenLocal()
-  }
-
-  // get OS (because JavaFX packages are OS dependent)
-  def currentOS = org.gradle.internal.os.OperatingSystem.current()
-  def platform
-  if (currentOS.isWindows()) {
-    platform = 'win'
-  } else if (currentOS.isLinux()) {
-    platform = 'linux'
-  } else if (currentOS.isMacOsX()) {
-    platform = 'mac'
-  }
-
-  ext {
-	dua3UtilityVersion = '3.1.4-SNAPSHOT'
-    dua3FxVersion = '0.3.4-SNAPSHOT'
-  }
-
-dependencies {
-    implementation "com.dua3.utility:utility:${dua3UtilityVersion}"
-
-    // JUnit
-    def junitVersion = '5.3.1'
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-}
-
-test {
+  test {
     useJUnitPlatform()
 
     filter {
         exclude '**/module-info.class'
     }
-}
+  }
 
-javadoc {
+  javadoc {
     doFirst {
         options.addStringOption('-module-path', classpath.asPath)
     }
-}
+  }
 
-sourceCompatibility = 11
-targetCompatibility = 11
+  sourceCompatibility = 11
+  targetCompatibility = 11
 
-compileJava {
+  compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-}
+  }
 
-// === BINTRAY === >
+  // === BINTRAY === >
 
-bintray {
+  bintray {
     user = findProperty('BINTRAY_USER') ?: 'NONE'
     key = findProperty('BINTRAY_KEY') ?: 'NONE'
 
@@ -127,30 +130,30 @@ bintray {
 	        vcsTag = project.version
 	    }
     }
-}
+  }
 
-// === ARTIFACTS === >
+  // === ARTIFACTS === >
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+  task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
-}
+  }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+  task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
-}
+  }
 
-artifacts {
+  artifacts {
 	archives jar
     archives sourcesJar
     archives javadocJar
-}
+  }
 
-// === MAVEN publication === >
+  // === MAVEN publication === >
 
-// Create the pom configuration:
-def pomConfig = {
+  // Create the pom configuration:
+  def pomConfig = {
     licenses {
         license {
             name "The Apache Software License, Version 2.0"
@@ -168,10 +171,10 @@ def pomConfig = {
     scm {
        url project.scm
     }
-}
+  }
 
-// Create the publication with the pom configuration:
-publishing {
+  // Create the publication with the pom configuration:
+  publishing {
     publications {
         projectPublication(MavenPublication) {
             from components.java
@@ -189,20 +192,19 @@ publishing {
             }
         }
     }
-}
+  }
 
 // === SPOTBUGS === >
 
-spotbugs.toolVersion = '3.1.11'
-
-tasks.withType(com.github.spotbugs.SpotBugsTask) {
+  spotbugs.toolVersion = '3.1.11'
+  spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
+    
+  tasks.withType(com.github.spotbugs.SpotBugsTask) {
     reports {
-        xml.enabled false
-        html.enabled true
+      xml.enabled false
+      html.enabled true        
     }
-    // ignore failures until spotbugs bug is fixed: https://github.com/spotbugs/spotbugs/issues/756
-    ignoreFailures = true
-}
+  }
 
 }
 

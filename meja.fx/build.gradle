@@ -1,5 +1,7 @@
 dependencies {
     implementation project(':meja')
 
-    compile "com.dua3.fx:fx.util:${dua3FxVersion}"
+    api "org.openjfx:javafx-base:${javafxversion}:${platform}"
+    api "org.openjfx:javafx-graphics:${javafxversion}:${platform}"
+    api "org.openjfx:javafx-controls:${javafxversion}:${platform}"
 }
