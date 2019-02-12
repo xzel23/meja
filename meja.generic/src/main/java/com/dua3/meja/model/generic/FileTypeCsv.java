@@ -17,7 +17,7 @@ public class FileTypeCsv extends FileType {
     }
     
     private FileTypeCsv() {
-        super("CSV", "CSV files", OpenMode.READ_AND_WRITE, "csv", "txt");
+        super("CSV", OpenMode.READ_AND_WRITE, "csv", "txt");
         addType(this);
     }
     

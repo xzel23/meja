@@ -64,7 +64,7 @@ public class SwingFileFilter extends javax.swing.filechooser.FileFilter
 
     @Override
     public String getDescription() {
-        return fileType.getDescription();
+        return fileType.getName();
     }
 
     /**

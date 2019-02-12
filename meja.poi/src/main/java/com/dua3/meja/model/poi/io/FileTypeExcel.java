@@ -20,7 +20,7 @@ public class FileTypeExcel extends FileType {
     }
 
     private FileTypeExcel() {
-        super("Excel", "Excel", OpenMode.READ, "xls", "xlsx");
+        super("All Excel files", OpenMode.READ, "xls", "xlsx", "xlsm");
         addType(this);
     }
     

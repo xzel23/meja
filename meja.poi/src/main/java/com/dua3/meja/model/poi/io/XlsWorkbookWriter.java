@@ -51,13 +51,13 @@ public class XlsWorkbookWriter extends WorkbookWriter {
     public void write(Workbook workbook, OutputStream out) throws IOException {
         if (workbook instanceof PoiWorkbook.PoiHssfWorkbook) {
             LOGGER.log(Level.FINE, "writing XLS workbook using POI.");
-            workbook.write(PoiWorkbook.FILETYPE_XLS, out);
+            workbook.write(FileTypeXls.instance(), out);
         } else {
             try (Workbook xlsWorkbook = PoiWorkbookFactory.instance().createXls()) {
                 LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsWorkbook.copy(workbook);
                 LOGGER.log(Level.FINE, "writing workbook ...");
-                xlsWorkbook.write(PoiWorkbook.FILETYPE_XLS, out);
+                xlsWorkbook.write(FileTypeXls.instance(), out);
                 LOGGER.log(Level.FINE, "flushing buffers ...");
                 out.flush();
                 LOGGER.log(Level.FINE, "done.");

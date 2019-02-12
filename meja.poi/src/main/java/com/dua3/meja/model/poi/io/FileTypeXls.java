@@ -13,7 +13,7 @@ public class FileTypeXls extends FileType {
     }
 
     private FileTypeXls() {
-        super("Excel (xls)", "Excel 97-2003", OpenMode.READ_AND_WRITE, "xls");
+        super("Excel 97-2003", OpenMode.READ_AND_WRITE, "xls");
         addType(this);
     }
     

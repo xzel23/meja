@@ -62,13 +62,11 @@ public abstract class FileType {
     }
 
     private final String name;
-    private final String description;
     private final List<String> extensions; // unmodifiable!
     private final OpenMode mode;
   
-    public FileType(String name, String description, OpenMode mode, String... extensions) {
+    public FileType(String name, OpenMode mode, String... extensions) {
         this.name = name;
-        this.description = description;
         this.extensions = List.of(extensions);
         this.mode = mode;
     }
@@ -78,13 +76,6 @@ public abstract class FileType {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
     }
 
     public List<String> getExtensions() {

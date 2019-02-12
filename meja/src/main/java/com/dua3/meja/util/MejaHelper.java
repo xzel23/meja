@@ -253,7 +253,7 @@ public class MejaHelper {
                 () -> new IllegalArgumentException("Could not determine type of file '" + path.toString() + "."));
 
         LangUtil.check(fileType.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
-                fileType.getDescription());
+                fileType.getName());
 
         try {
             WorkbookFactory<?> factory = fileType.factory();

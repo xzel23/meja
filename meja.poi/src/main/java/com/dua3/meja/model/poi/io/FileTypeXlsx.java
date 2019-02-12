@@ -13,7 +13,7 @@ public class FileTypeXlsx extends FileType {
     }
     
     private FileTypeXlsx() {
-        super("Excel", "Excel files", OpenMode.READ_AND_WRITE, "xlsx");
+        super("Excel", OpenMode.READ_AND_WRITE, "xlsx");
         addType(this);
     }
     

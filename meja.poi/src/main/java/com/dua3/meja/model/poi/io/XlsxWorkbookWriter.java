@@ -51,7 +51,7 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
     public void write(Workbook workbook, OutputStream out) throws IOException {
         if (workbook instanceof PoiWorkbook.PoiXssfWorkbook) {
             LOGGER.log(Level.FINE, "writing XLSX workbook using POI.");
-            workbook.write(PoiWorkbook.FILETYPE_XLSX, out);
+            workbook.write(FileTypeXlsx.instance(), out);
         } else {
             LOGGER.log(Level.FINE, "writing {0} using streaming API in XLSX format.",
                     workbook.getClass().getSimpleName());
@@ -59,7 +59,7 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
                 LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsxWorkbook.copy(workbook);
                 LOGGER.log(Level.FINE, "writing workbook ...");
-                xlsxWorkbook.write(PoiWorkbook.FILETYPE_XLSX, out);
+                xlsxWorkbook.write(FileTypeXlsx.instance(), out);
                 LOGGER.log(Level.FINE, "flushing buffers ...");
                 out.flush();
                 LOGGER.log(Level.FINE, "done.");
