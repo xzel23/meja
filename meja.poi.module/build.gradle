@@ -8,9 +8,21 @@ dependencies {
     fetch_libs project(':meja.poi')
 }
 
-task copyDependenciesToResourceFolder (type: Copy) {
-    from new File(project(':meja.poi').buildDir, "/libs")
-    into "${projectDir}/src/main/resources/com/dua3/meja/loader/poi/lib"
+def dependencyLibDir = new File("${projectDir}/src/main/resources/com/dua3/meja/loader/poi/lib").absolutePath
+
+task cleanDependencyLibDir {
+    delete fileTree(dir: dependencyLibDir) 
 }
 
-build.dependsOn(copyDependenciesToResourceFolder)
+task copyDependenciesToResourceFolder(type: Copy) {
+    dependsOn(cleanDependencyLibDir)
+    from new File(project(':meja.poi').buildDir, "/libs")
+    into dependencyLibDir
+    exclude '**/*-sources.jar', '**/*-javadoc.jar'
+    doLast {
+        def files = fileTree(dir: dependencyLibDir).files.name
+        new File("$dependencyLibDir/files.properties").text = "files=${files}"
+    }
+}
+
+compileJava.dependsOn(copyDependenciesToResourceFolder)

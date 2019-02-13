@@ -1,27 +1,28 @@
 package com.dua3.meja.loader.poi;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
+import java.util.Properties;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
-import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.Options;
+import com.dua3.utility.lang.LangUtil;
 
 /**
  * Load and Provide the PoiWorkbookFactory.
  * <p>
- * This class creates a Classloader and loads the implementation from its own resource path.
- * This makes it possible to use the Apache POI implementation in a fully modularized project
- * although POI itself still uses automatic modules.
+ * This class creates a Classloader and loads the implementation from its own
+ * resource path. This makes it possible to use the Apache POI implementation in
+ * a fully modularized project although POI itself still uses automatic modules.
  */
 public class PoiLoader extends WorkbookFactory<Workbook> {
 
@@ -30,19 +31,43 @@ public class PoiLoader extends WorkbookFactory<Workbook> {
     private final WorkbookFactory<? extends Workbook> factory;
 
     public PoiLoader() {
-            LOG.fine("loading factory class");
+        try {
+            Properties properties = new Properties();
+            try (InputStream in = PoiLoader.class.getResourceAsStream("lib/files.properties")) {
+                System.out.println("in: "+in);
+                properties.load(in);
+            }
+
+            String filesStr = properties.getOrDefault("files", "[]").toString().trim();
+
+            LangUtil.check(filesStr.startsWith("[") && filesStr.endsWith("]"));
+            filesStr = filesStr.substring(1,filesStr.length()-1);
+            System.out.println("data2: "+filesStr);
+            
+            URL[] urls = Arrays.stream(filesStr.split(","))
+                .map(String::trim)
+                .map(file -> PoiLoader.class.getResource("lib/"+file))
+                .toArray(URL[]::new);
+
+            LOG.info(() -> "creating classloader with content: "+Arrays.toString(urls));
+
             URLClassLoader classloader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-            @Override
-            public URLClassLoader run() {
-                return new URLClassLoader(new URL[] { PoiLoader.class.getResource("lib/") });
-            }
+                @Override
+                public URLClassLoader run() {
+                    return new URLClassLoader(urls);
+                }
             });
-            try {
-                this.factory = (WorkbookFactory<? extends Workbook>) classloader.loadClass("com.dua3.meja.poi.PoiWorkbookFactory").getConstructor().newInstance();
-            } catch (ClassNotFoundException|NoSuchMethodException|InstantiationException|IllegalAccessException|InvocationTargetException e) {
-                throw new IllegalStateException(e);
-            }
+
+            this.factory = (WorkbookFactory<? extends Workbook>) classloader.loadClass("com.dua3.meja.model.poi.PoiWorkbookFactory").getConstructor().newInstance();
+        } catch (ClassNotFoundException
+            | NoSuchMethodException
+            | InstantiationException
+            | IllegalAccessException
+            | InvocationTargetException
+            | IOException e) {
+            throw new IllegalStateException(e);
         }
+    }
 
     @Override
     public Workbook create() {

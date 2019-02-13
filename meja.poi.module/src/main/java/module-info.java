@@ -19,6 +19,7 @@ module com.dua3.meja.poi.module {
 	provides com.dua3.meja.model.WorkbookFactory
 	with com.dua3.meja.loader.poi.PoiLoader;
 
+	requires com.dua3.utility;
 	requires com.dua3.meja;
 	requires java.logging;
 }
