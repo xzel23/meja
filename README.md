@@ -53,4 +53,5 @@ __BETA2__:
 
 - Removed the "locale dependent" setting from CSV.
 - Removed `FileType.getDescription()`. Use `FileType.getName()` instead.
-- Added `FileTypeExcel` that combines the old and new Excel formats (only for reading)
+- Added `FileTypeExcel` that combines the old and new Excel formats (only for reading).
+- new subproject `meja.poi.module` that wraps the Apache POI Excel implementation so that it cn be used in modular jlinked projects. Just include `meja.poi.module` instead of `meja.poi`.
