@@ -9,7 +9,6 @@ dependencies {
 }
 
 task copyDependenciesToResourceFolder (type: Copy) {
-  // new File("${project(':common:shared').projectDir}/run.sh")
     from new File(project(':meja.poi').buildDir, "/libs")
     into "${projectDir}/src/main/resources/com/dua3/meja/loader/poi/lib"
 }
