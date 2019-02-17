@@ -34,7 +34,7 @@ import com.dua3.utility.io.IOUtil;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public abstract class FileType {
+public abstract class FileType implements Comparable<FileType> {
 
     private static final Set<FileType> types = new HashSet<>();
 
@@ -119,5 +119,18 @@ public abstract class FileType {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    @Override
+    public int compareTo(FileType o) {
+        if (o==this) {
+            return 0;
+        }
+
+        if (o==null) {
+            return 1;
+        }
+        
+        return getName().compareTo(o.getName());
     }
 }
