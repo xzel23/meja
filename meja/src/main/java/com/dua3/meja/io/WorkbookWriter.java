@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.DoubleConsumer;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.Options;
@@ -27,9 +28,11 @@ import com.dua3.meja.util.Options;
 /**
  * Abstract base class for writing workbook data.
  */
-public abstract class WorkbookWriter {
+public interface WorkbookWriter {
 
-    public void setOptions(Options exportSettings) {
+    public static final double PROGRESS_INDETERMINATE = -1.0;
+
+	default void setOptions(Options exportSettings) {
         // empty implementation for writers not taking export options
     }
 
@@ -40,9 +43,33 @@ public abstract class WorkbookWriter {
      * @param path     the path to write to
      * @throws IOException if an error occurs when writing out the workbook
      */
-    public void write(Workbook workbook, Path path) throws IOException {
+    default void write(Workbook workbook, Path path) throws IOException {
+    	write(workbook, path, p -> {});
+    }
+    
+    /**
+     * Write workbook to a stream.
+     *
+     * @param workbook the workbook to write
+     * @param out      the stream to write to
+     * @throws IOException if an error occurs when writing out the workbook
+     */
+    default void write(Workbook workbook, OutputStream out) throws IOException {
+    	write(workbook, out, p -> {});
+    }
+
+    /**
+     * Write workbook to file.
+     *
+     * @param workbook the workbook to write
+     * @param path     the path to write to
+     * @param updateProgress 
+     * 					callback for progress updates
+     * @throws IOException if an error occurs when writing out the workbook
+     */
+    default void write(Workbook workbook, Path path, DoubleConsumer updateProgress) throws IOException {
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
-            write(workbook, out);
+            write(workbook, out, updateProgress);
         }
     }
 
@@ -51,8 +78,10 @@ public abstract class WorkbookWriter {
      *
      * @param workbook the workbook to write
      * @param out      the stream to write to
+     * @param updateProgress 
+     * 					callback for progress updates
      * @throws IOException if an error occurs when writing out the workbook
      */
-    public abstract void write(Workbook workbook, OutputStream out) throws IOException;
+    void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException;
 
 }

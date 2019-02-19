@@ -17,6 +17,7 @@ package com.dua3.meja.model.poi.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.function.DoubleConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,12 +25,13 @@ import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
+import com.dua3.meja.util.Options;
 
 /**
  * Implementation of {@link WorkbookWriter} for Excel files in the new
  * ".xlsx"-format.
  */
-public class XlsxWorkbookWriter extends WorkbookWriter {
+public class XlsxWorkbookWriter implements WorkbookWriter {
 
     private static final Logger LOGGER = Logger.getLogger(XlsxWorkbookWriter.class.getName());
 
@@ -48,10 +50,10 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
     }
 
     @Override
-    public void write(Workbook workbook, OutputStream out) throws IOException {
+    public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
         if (workbook instanceof PoiWorkbook.PoiXssfWorkbook) {
             LOGGER.log(Level.FINE, "writing XLSX workbook using POI.");
-            workbook.write(FileTypeXlsx.instance(), out);
+            workbook.write(FileTypeXlsx.instance(), out, Options.empty(), updateProgress);
         } else {
             LOGGER.log(Level.FINE, "writing {0} using streaming API in XLSX format.",
                     workbook.getClass().getSimpleName());
@@ -59,7 +61,7 @@ public class XlsxWorkbookWriter extends WorkbookWriter {
                 LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsxWorkbook.copy(workbook);
                 LOGGER.log(Level.FINE, "writing workbook ...");
-                xlsxWorkbook.write(FileTypeXlsx.instance(), out);
+                xlsxWorkbook.write(FileTypeXlsx.instance(), out, Options.empty(), updateProgress);
                 LOGGER.log(Level.FINE, "flushing buffers ...");
                 out.flush();
                 LOGGER.log(Level.FINE, "done.");

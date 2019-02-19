@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleConsumer;
 
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.WorkbookWriter;
@@ -164,9 +165,9 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void write(FileType type, OutputStream out, Options options) throws IOException {
+    public void write(FileType type, OutputStream out, Options options, DoubleConsumer updateProgress) throws IOException {
         WorkbookWriter writer = type.getWriter();
         writer.setOptions(options);
-        writer.write(this, out);
+        writer.write(this, out, updateProgress);
     }
 }

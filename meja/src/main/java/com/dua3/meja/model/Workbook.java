@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.DoubleConsumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -311,11 +312,15 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @throws java.io.IOException if an I/O error occurs
      */
     default void write(Path path, Options options) throws IOException {
-        FileType type = FileType
+    	write(path, options, p -> {});
+    }
+    
+   default void write(Path path, Options options, DoubleConsumer updateProgress) throws IOException {
+	   FileType type = FileType
             .forPath(path)
             .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for "+path));
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
-            write(type, out, options);
+            write(type, out, options, updateProgress);
         }
     }
 
@@ -339,8 +344,23 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *                 type)
      * @throws java.io.IOException if an I/O error occurs
      */
-    void write(FileType fileType, OutputStream out, Options options) throws IOException;
+    default void write(FileType fileType, OutputStream out, Options options) throws IOException {
+    	write(fileType, out, options, p -> {});
+    }
 
+    /**
+     * Writes the workbook to a stream.
+     *
+     * @param fileType the file type to use
+     * @param out      output stream to write to
+     * @param options  special options to use (supported options depend on the file
+     *                 type)
+     * @param updateProgress
+     * 					callback for progress updates; parameter is between 0.0 and 1.0 or Double.MAX_VALUE for indeterminate
+     * @throws java.io.IOException if an I/O error occurs
+     */
+    void write(FileType fileType, OutputStream out, Options options, DoubleConsumer updateProgress) throws IOException;
+    
     /**
      * Get cached instance of object.
      *

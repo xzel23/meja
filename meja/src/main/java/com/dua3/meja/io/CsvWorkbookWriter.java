@@ -18,6 +18,7 @@ package com.dua3.meja.io;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.function.DoubleConsumer;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
@@ -29,7 +30,7 @@ import com.dua3.meja.util.Options;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class CsvWorkbookWriter extends WorkbookWriter {
+public class CsvWorkbookWriter implements WorkbookWriter {
 
     /**
      * The singleton instance.
@@ -40,12 +41,19 @@ public class CsvWorkbookWriter extends WorkbookWriter {
         return new CsvWorkbookWriter();
     }
 
-    private static void writeSheets(Workbook workbook, final CsvWriter writer) throws IOException {
+    private static void writeSheets(Workbook workbook, final CsvWriter writer, DoubleConsumer updateProgress) throws IOException {
+    	long processedRows = 0;
+    	long totalRows = 0;
+    	for (Sheet sheet : workbook) {
+    		totalRows += sheet.getRowCount();
+    	}
+    	
         for (Sheet sheet : workbook) {
             for (Row row : sheet) {
                 for (Cell cell : row) {
                     writer.addField(cell.toString());
                 }
+                updateProgress.accept((double)processedRows/totalRows);
                 writer.nextRow();
             }
             writer.nextRow();
@@ -68,19 +76,20 @@ public class CsvWorkbookWriter extends WorkbookWriter {
      *
      * @param workbook the workbook to write
      * @param out      the write to write the workbook to
+     * @param updateProgress callback for progress updates
      * @throws IOException if an input/output error occurs
      */
-    public void write(Workbook workbook, BufferedWriter out) throws IOException {
+    public void write(Workbook workbook, BufferedWriter out, DoubleConsumer updateProgress) throws IOException {
         // do not close the writer - it is the caller's responsibility
         CsvWriter csvWriter = CsvWriter.create(out, options);
-        writeSheets(workbook, csvWriter);
+        writeSheets(workbook, csvWriter, updateProgress);
         csvWriter.flush();
     }
 
     @Override
-    public void write(Workbook workbook, OutputStream out) throws IOException {
+    public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
         CsvWriter csvWriter = CsvWriter.create(out, options);
-        writeSheets(workbook, csvWriter);
+        writeSheets(workbook, csvWriter, updateProgress);
         csvWriter.flush();
     }
 }

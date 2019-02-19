@@ -17,6 +17,7 @@ package com.dua3.meja.model.poi.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.function.DoubleConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,12 +25,13 @@ import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
+import com.dua3.meja.util.Options;
 
 /**
  * Implementation of {@link WorkbookWriter} for Excel files in the old
  * ".xls"-format.
  */
-public class XlsWorkbookWriter extends WorkbookWriter {
+public class XlsWorkbookWriter implements WorkbookWriter {
 
     private static final Logger LOGGER = Logger.getLogger(XlsWorkbookWriter.class.getName());
 
@@ -48,16 +50,16 @@ public class XlsWorkbookWriter extends WorkbookWriter {
     }
 
     @Override
-    public void write(Workbook workbook, OutputStream out) throws IOException {
+    public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
         if (workbook instanceof PoiWorkbook.PoiHssfWorkbook) {
             LOGGER.log(Level.FINE, "writing XLS workbook using POI.");
-            workbook.write(FileTypeXls.instance(), out);
+            workbook.write(FileTypeXls.instance(), out, Options.empty(), updateProgress);
         } else {
             try (Workbook xlsWorkbook = PoiWorkbookFactory.instance().createXls()) {
                 LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsWorkbook.copy(workbook);
                 LOGGER.log(Level.FINE, "writing workbook ...");
-                xlsWorkbook.write(FileTypeXls.instance(), out);
+                xlsWorkbook.write(FileTypeXls.instance(), out, Options.empty(), updateProgress);
                 LOGGER.log(Level.FINE, "flushing buffers ...");
                 out.flush();
                 LOGGER.log(Level.FINE, "done.");

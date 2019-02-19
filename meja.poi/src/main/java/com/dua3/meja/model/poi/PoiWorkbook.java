@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.DoubleConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -608,16 +609,18 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void write(FileType type, OutputStream out, Options options) throws IOException {
+    public void write(FileType type, OutputStream out, Options options, DoubleConsumer updateProgress) throws IOException {
         if (type == getStandardFileType()) {
             // if the workbook is to be saved in the same format, write it out
             // directly so that
             // features not yet supported by Meja don't get lost in the process
+        	updateProgress.accept(WorkbookWriter.PROGRESS_INDETERMINATE);
             poiWorkbook.write(out);
+        	updateProgress.accept(1.0);
         } else {
             WorkbookWriter writer = type.getWriter();
             writer.setOptions(options);
-            writer.write(this, out);
+            writer.write(this, out, updateProgress);
         }
     }
 
