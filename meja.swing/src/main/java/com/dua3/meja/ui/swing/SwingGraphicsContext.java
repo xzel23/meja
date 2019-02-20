@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
 
 import com.dua3.meja.ui.GraphicsContext;
 import com.dua3.meja.ui.Rectangle;
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 
 public final class SwingGraphicsContext implements GraphicsContext {

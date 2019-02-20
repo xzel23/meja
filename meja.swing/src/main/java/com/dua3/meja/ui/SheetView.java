@@ -19,7 +19,7 @@ import java.beans.PropertyChangeListener;
 import java.util.function.IntFunction;
 
 import com.dua3.meja.model.Sheet;
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 
 /**
  *

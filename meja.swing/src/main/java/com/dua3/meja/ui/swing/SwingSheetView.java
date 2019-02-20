@@ -69,7 +69,7 @@ import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.MejaHelper;
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 
 /**

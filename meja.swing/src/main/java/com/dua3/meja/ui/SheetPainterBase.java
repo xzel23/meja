@@ -25,7 +25,7 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.MejaConfig;
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 
 /**
  * A helper class that implements the actual drawing algorithm.

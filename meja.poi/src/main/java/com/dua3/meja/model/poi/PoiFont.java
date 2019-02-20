@@ -22,7 +22,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.Font.FontDef;
 

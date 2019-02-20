@@ -17,7 +17,7 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 
 /**

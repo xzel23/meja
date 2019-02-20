@@ -15,7 +15,7 @@
  */
 package com.dua3.meja.ui;
 
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 
 public interface GraphicsContext {
 

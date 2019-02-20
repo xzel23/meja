@@ -32,7 +32,7 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 
 /**

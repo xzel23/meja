@@ -15,7 +15,7 @@
  */
 package com.dua3.meja.model;
 
-import com.dua3.utility.Color;
+import com.dua3.utility.data.Color;
 
 /**
  * Definition of a cell border.
