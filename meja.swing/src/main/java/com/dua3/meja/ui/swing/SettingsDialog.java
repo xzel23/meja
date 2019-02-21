@@ -2,7 +2,6 @@ package com.dua3.meja.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Frame;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,12 +14,14 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.Options;
+import com.dua3.utility.options.Option.ChoiceOption;
 import com.dua3.utility.swing.SwingUtil;
 
 @SuppressWarnings("serial")
@@ -43,7 +44,7 @@ public class SettingsDialog extends JDialog {
         for (Option<?> option : options) {
             settingsPanel.add(new JLabel(option.getName()));
             if (option instanceof Option.ChoiceOption) {
-                JComboBox<Supplier<?>> cb = new JComboBox<>(new Vector<Supplier<?>>((Option.ChoiceOption)option.getChoices()));
+                JComboBox<Supplier<?>> cb = new JComboBox<>(new Vector<Supplier<?>>(((Option.ChoiceOption)option).getChoices()));
                 cb.setSelectedItem(option.getDefault());
                 inputs.add(cb);
                 settingsPanel.add(cb);
@@ -58,7 +59,13 @@ public class SettingsDialog extends JDialog {
         add(new JButton(SwingUtil.createAction("OK", () -> {
             result = new Options();
             for (int i = 0; i < options.size(); i++) {
-                result.put((Option) options.get(i), (Supplier) inputs.get(i).getSelectedItem());
+                var option = (Option) options.get(i);
+                JComponent component = inputs.get(i);
+                if (option instanceof ChoiceOption) {                    
+                    result.put(option, (Supplier) ((JComboBox) component).getSelectedItem());
+                } else {
+                    result.put(option, () -> ((JTextField) component).getText());
+                }
             }
             this.dispose();
         })), BorderLayout.SOUTH);
@@ -67,7 +74,7 @@ public class SettingsDialog extends JDialog {
         setLocationRelativeTo(parent);
     }
 
-    SettingsDialog(Frame parent, String title, String text, Option<?>... options) {
+    SettingsDialog(JFrame parent, String title, String text, Option<?>... options) {
         this(parent, title, text, Arrays.asList(options));
     }
 
