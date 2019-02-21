@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -35,16 +36,22 @@ public class SettingsDialog extends JDialog {
 
         add(new JLabel(text), BorderLayout.NORTH);
 
-        List<JComboBox<Supplier<?>>> inputs = new ArrayList<>(options.size());
+        List<JComponent> inputs = new ArrayList<>(options.size());
 
         settingsPanel = new JPanel();
         settingsPanel.setLayout(new GridLayout(options.size(), 2));
         for (Option<?> option : options) {
             settingsPanel.add(new JLabel(option.getName()));
-            JComboBox<Supplier<?>> cb = new JComboBox<>(new Vector<Supplier<?>>(option.getChoices()));
-            cb.setSelectedItem(option.getDefault());
-            inputs.add(cb);
-            settingsPanel.add(cb);
+            if (option instanceof Option.ChoiceOption) {
+                JComboBox<Supplier<?>> cb = new JComboBox<>(new Vector<Supplier<?>>((Option.ChoiceOption)option.getChoices()));
+                cb.setSelectedItem(option.getDefault());
+                inputs.add(cb);
+                settingsPanel.add(cb);
+            } else {
+                JTextField tf = new JTextField(String.valueOf(option.getDefault()));
+                inputs.add(tf);
+                settingsPanel.add(tf);
+            }
         }
         add(settingsPanel, BorderLayout.CENTER);
 
