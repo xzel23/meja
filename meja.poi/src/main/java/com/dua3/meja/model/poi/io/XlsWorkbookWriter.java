@@ -25,7 +25,7 @@ import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Options;
 
 /**
  * Implementation of {@link WorkbookWriter} for Excel files in the old

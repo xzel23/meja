@@ -45,8 +45,8 @@ import com.dua3.meja.model.Sheet.RowInfo;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
-import com.dua3.meja.util.Option;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Option;
+import com.dua3.utility.options.Options;
 import com.dua3.utility.lang.LangUtil;
 
 /**

@@ -18,7 +18,7 @@ package com.dua3.meja.model;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Options;
 
 /**
  * Abstract base class for workbook factories.

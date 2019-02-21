@@ -23,7 +23,7 @@ import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookReader;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Options;
 import com.dua3.utility.lang.LangUtil;
 
 /**

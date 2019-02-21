@@ -31,7 +31,7 @@ import com.dua3.meja.model.AbstractWorkbook;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Options;
 
 /**
  * Generic implementation of {@link Workbook}.

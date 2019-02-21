@@ -38,7 +38,7 @@ import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Options;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.TextUtil;

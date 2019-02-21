@@ -20,10 +20,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+import com.dua3.utility.io.CsvReader;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.meja.io.RowBuilder;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.io.CsvReader.RowBuilder;
+import com.dua3.utility.options.Options;
 
 /**
  *
@@ -59,7 +60,7 @@ public class CsvWorkbookReader extends WorkbookReader {
     public <W extends Workbook> W read(WorkbookFactory<W> factory, BufferedReader in, Path path) throws IOException {
         W workbook = factory.create();
         workbook.setPath(path);
-        RowBuilder builder = new RowBuilder(workbook.createSheet(path.toString()), options);
+        RowBuilder builder = new SheetRowBuilder(workbook.createSheet(path.toString()), options);
         workbook.setObjectCaching(true);
         try (CsvReader reader = CsvReader.create(builder, in, options)) {
             reader.readAll();
@@ -73,7 +74,7 @@ public class CsvWorkbookReader extends WorkbookReader {
     protected <W extends Workbook> W read(WorkbookFactory<W> factory, InputStream in, Path path) throws IOException {
         W workbook = factory.create();
         workbook.setPath(path);
-        RowBuilder builder = new RowBuilder(workbook.createSheet("Sheet 1"), options);
+        RowBuilder builder = new SheetRowBuilder(workbook.createSheet("Sheet 1"), options);
         workbook.setObjectCaching(true);
         try (CsvReader reader = CsvReader.create(builder, in, options)) {
             reader.readAll();

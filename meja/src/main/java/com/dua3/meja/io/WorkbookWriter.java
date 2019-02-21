@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.util.function.DoubleConsumer;
 
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Options;
 
 /**
  * Abstract base class for writing workbook data.

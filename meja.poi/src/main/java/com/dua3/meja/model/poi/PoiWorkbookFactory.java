@@ -30,9 +30,9 @@ import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.model.poi.io.FileTypeExcel;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
-import com.dua3.meja.util.Option;
-import com.dua3.meja.util.OptionSet;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Option;
+import com.dua3.utility.options.OptionSet;
+import com.dua3.utility.options.Options;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;

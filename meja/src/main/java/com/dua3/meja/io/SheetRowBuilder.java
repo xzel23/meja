@@ -19,16 +19,19 @@ import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import com.dua3.utility.io.Csv;
+import com.dua3.utility.io.CsvReader.RowBuilder;
+
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.CellValueHelper;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Options;
 
 /**
  * Implementation of the {@link RowBuilder} interface that appends new rows for an existing sheet.
  */
-public class RowBuilder implements IRowBuilder {
+public class SheetRowBuilder implements RowBuilder {
 
     private final Sheet sheet;
     private final CellValueHelper helper;
@@ -41,7 +44,7 @@ public class RowBuilder implements IRowBuilder {
      * @param sheet   the sheet to build rows for
      * @param options the locale to use
      */
-    public RowBuilder(Sheet sheet, Options options) {
+    public SheetRowBuilder(Sheet sheet, Options options) {
         this.sheet = sheet;
 
         Locale locale = Csv.getLocale(options);

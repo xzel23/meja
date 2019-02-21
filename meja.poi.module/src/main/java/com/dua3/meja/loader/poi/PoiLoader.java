@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.meja.util.Options;
+import com.dua3.utility.options.Options;
 import com.dua3.utility.lang.LangUtil;
 
 /**
