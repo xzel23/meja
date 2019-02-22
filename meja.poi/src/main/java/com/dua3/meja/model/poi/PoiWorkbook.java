@@ -38,7 +38,7 @@ import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.TextUtil;
@@ -609,7 +609,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void write(FileType type, OutputStream out, Options options, DoubleConsumer updateProgress) throws IOException {
+    public void write(FileType type, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException {
         if (type == getStandardFileType()) {
             // if the workbook is to be saved in the same format, write it out
             // directly so that

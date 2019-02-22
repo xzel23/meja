@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.io;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.utility.options.Option;
+import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.io.IOUtil;
 
 /**
@@ -105,8 +107,8 @@ public abstract class FileType implements Comparable<FileType> {
 		return list;
 	}
 
-    public List<Option<?>> getSettings() {
-        return Collections.emptyList();
+    public OptionSet getSettings() {
+        return new OptionSet(Collections.emptyList());
     }
 
     // all instances of the same class are considered equal

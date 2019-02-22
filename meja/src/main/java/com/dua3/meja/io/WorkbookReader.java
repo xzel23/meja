@@ -23,7 +23,7 @@ import java.nio.file.Path;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 /**
  * Abstract base class for reading workbook data.
@@ -58,7 +58,7 @@ public abstract class WorkbookReader {
         }
     }
 
-    public void setOptions(Options importSettings) {
+    public void setOptions(OptionValues importSettings) {
         // nop: empty default implementation for Readers that don't take options
     }
 

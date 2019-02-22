@@ -25,7 +25,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 /**
  *
@@ -61,14 +61,14 @@ public class CsvWorkbookWriter implements WorkbookWriter {
         }
     }
 
-    private Options options = Options.empty();
+    private OptionValues options = OptionValues.empty();
 
     private CsvWorkbookWriter() {
     }
 
     @Override
-    public void setOptions(Options importSettings) {
-        this.options = new Options(importSettings);
+    public void setOptions(OptionValues importSettings) {
+        this.options = new OptionValues(importSettings);
     }
 
     /**

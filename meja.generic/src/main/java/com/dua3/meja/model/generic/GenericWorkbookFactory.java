@@ -23,7 +23,7 @@ import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookReader;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.lang.LangUtil;
 
 /**
@@ -53,7 +53,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
     }
 
     @Override
-    public GenericWorkbook open(Path path, Options importSettings) throws IOException {
+    public GenericWorkbook open(Path path, OptionValues importSettings) throws IOException {
         FileType type = FileType.forPath(path).orElseThrow(() -> new IllegalArgumentException("cannot determine filetype"));
 
         LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",

@@ -47,7 +47,8 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Option;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionSet;
+import com.dua3.utility.options.OptionValues;
 
 /**
  * Helper class.
@@ -261,8 +262,8 @@ public class MejaSwingHelper {
         final WorkbookFactory<?> factory = fileType.factory();
 
         // ask user for file type specific settings
-        List<Option<?>> settings = fileType.getSettings();
-        Options importSettings = Options.empty(); // default is empty
+        OptionSet settings = fileType.getSettings();
+        OptionValues importSettings = OptionValues.empty(); // default is empty
         if (!settings.isEmpty()) {
             SettingsDialog dialog = new SettingsDialog(parent, fileType.getName() + " - Settings",
                     "Please verify the import settings:", settings);

@@ -32,7 +32,7 @@ import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -132,7 +132,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     @Override
-    public PoiWorkbook open(Path path, Options importSettings) throws IOException {
+    public PoiWorkbook open(Path path, OptionValues importSettings) throws IOException {
         // Read Excel files directly using POI methods
         // Do not use the create(File) method to avoid exception when trying
         // to save the workbook again to the same file.

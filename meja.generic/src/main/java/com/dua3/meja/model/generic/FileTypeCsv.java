@@ -8,6 +8,7 @@ import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.utility.options.Option;
+import com.dua3.utility.options.OptionSet;
 
 public class FileTypeCsv extends FileType {
     private static final FileType INSTANCE = new FileTypeCsv();
@@ -30,7 +31,7 @@ public class FileTypeCsv extends FileType {
         return CsvWorkbookWriter.create();
     }
     @Override
-    public List<Option<?>> getSettings() {
+    public OptionSet getSettings() {
         return Csv.getOptions();
     }
 }

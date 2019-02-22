@@ -20,7 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.dua3.utility.options.Option;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionSet;
+import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.options.Option.ChoiceOption;
 import com.dua3.utility.swing.SwingUtil;
 
@@ -28,10 +29,10 @@ import com.dua3.utility.swing.SwingUtil;
 public class SettingsDialog extends JDialog {
 
     private final JPanel settingsPanel;
-    private Options result = Options.empty();
+    private OptionValues result = OptionValues.empty();
 
     @SuppressWarnings({ "rawtypes" })
-    SettingsDialog(Component parent, String title, String text, List<Option<?>> options) {
+    SettingsDialog(Component parent, String title, String text, OptionSet options) {
         super((JFrame) SwingUtilities.getRoot(parent), title, true);
         setLayout(new BorderLayout());
 
@@ -57,10 +58,10 @@ public class SettingsDialog extends JDialog {
         add(settingsPanel, BorderLayout.CENTER);
 
         add(new JButton(SwingUtil.createAction("OK", () -> {
-            result = new Options();
-            for (int i = 0; i < options.size(); i++) {
-                var option = (Option) options.get(i);
-                JComponent component = inputs.get(i);
+            result = new OptionValues();
+            int i=0;
+            for (var option: options) {
+                JComponent component = inputs.get(i++);
                 if (option instanceof ChoiceOption) {                    
                     result.put(option, (Supplier) ((JComboBox) component).getSelectedItem());
                 } else {
@@ -75,10 +76,10 @@ public class SettingsDialog extends JDialog {
     }
 
     SettingsDialog(JFrame parent, String title, String text, Option<?>... options) {
-        this(parent, title, text, Arrays.asList(options));
+        this(parent, title, text, new OptionSet(options));
     }
 
-    public Options getResult() {
+    public OptionValues getResult() {
         return result;
     }
 }

@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.lang.LangUtil;
 
 /**
@@ -78,7 +78,7 @@ public class PoiLoader extends WorkbookFactory<Workbook> {
     }
 
     @Override
-    public Workbook open(Path path, Options importSettings) throws IOException {
+    public Workbook open(Path path, OptionValues importSettings) throws IOException {
         return factory.open(path, importSettings);
     }
 }

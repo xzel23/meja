@@ -24,7 +24,7 @@ import com.dua3.utility.io.CsvReader;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.utility.io.CsvReader.RowBuilder;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 /**
  *
@@ -41,7 +41,7 @@ public class CsvWorkbookReader extends WorkbookReader {
         return new CsvWorkbookReader();
     }
 
-    private Options options = Options.empty();
+    private OptionValues options = OptionValues.empty();
 
     private CsvWorkbookReader() {
     }
@@ -85,7 +85,7 @@ public class CsvWorkbookReader extends WorkbookReader {
     }
 
     @Override
-    public void setOptions(Options importSettings) {
-        this.options = new Options(importSettings);
+    public void setOptions(OptionValues importSettings) {
+        this.options = new OptionValues(importSettings);
     }
 }

@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.util.function.DoubleConsumer;
 
 import com.dua3.meja.model.Workbook;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 /**
  * Abstract base class for writing workbook data.
@@ -32,7 +32,7 @@ public interface WorkbookWriter {
 
     public static final double PROGRESS_INDETERMINATE = -1.0;
 
-	default void setOptions(Options exportSettings) {
+	default void setOptions(OptionValues exportSettings) {
         // empty implementation for writers not taking export options
     }
 

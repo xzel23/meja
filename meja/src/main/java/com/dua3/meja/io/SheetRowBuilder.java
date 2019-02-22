@@ -26,7 +26,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.CellValueHelper;
-import com.dua3.utility.options.Options;
+import com.dua3.utility.options.OptionValues;
 
 /**
  * Implementation of the {@link RowBuilder} interface that appends new rows for an existing sheet.
@@ -44,7 +44,7 @@ public class SheetRowBuilder implements RowBuilder {
      * @param sheet   the sheet to build rows for
      * @param options the locale to use
      */
-    public SheetRowBuilder(Sheet sheet, Options options) {
+    public SheetRowBuilder(Sheet sheet, OptionValues options) {
         this.sheet = sheet;
 
         Locale locale = Csv.getLocale(options);
