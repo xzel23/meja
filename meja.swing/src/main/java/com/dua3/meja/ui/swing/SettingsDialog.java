@@ -4,25 +4,24 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
-import java.util.function.Supplier;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import com.dua3.utility.options.Option;
+import com.dua3.utility.options.Option.ChoiceOption;
+import com.dua3.utility.options.Option.Value;
 import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.options.OptionValues;
-import com.dua3.utility.options.Option.ChoiceOption;
 import com.dua3.utility.swing.SwingUtil;
 
 @SuppressWarnings("serial")
@@ -45,7 +44,7 @@ public class SettingsDialog extends JDialog {
         for (Option<?> option : options) {
             settingsPanel.add(new JLabel(option.getName()));
             if (option instanceof Option.ChoiceOption) {
-                JComboBox<Supplier<?>> cb = new JComboBox<>(new Vector<Supplier<?>>(((Option.ChoiceOption)option).getChoices()));
+                JComboBox<Value<?>> cb = new JComboBox<>(new Vector<Value<?>>(((Option.ChoiceOption)option).getChoices()));
                 cb.setSelectedItem(option.getDefault());
                 inputs.add(cb);
                 settingsPanel.add(cb);
@@ -63,7 +62,7 @@ public class SettingsDialog extends JDialog {
             for (var option: options) {
                 JComponent component = inputs.get(i++);
                 if (option instanceof ChoiceOption) {                    
-                    result.put(option, (Supplier) ((JComboBox) component).getSelectedItem());
+                    result.put(option, (Value) ((JComboBox) component).getSelectedItem());
                 } else {
                     result.put(option, () -> ((JTextField) component).getText());
                 }
