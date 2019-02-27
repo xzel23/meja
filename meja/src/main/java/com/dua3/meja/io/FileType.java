@@ -21,14 +21,12 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.nio.file.Path;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.utility.options.Option;
 import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.io.IOUtil;
 

@@ -1,13 +1,10 @@
 package com.dua3.meja.model.generic;
 
-import java.util.List;
-
 import com.dua3.utility.io.Csv;
 import com.dua3.meja.io.CsvWorkbookWriter;
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookWriter;
-import com.dua3.utility.options.Option;
 import com.dua3.utility.options.OptionSet;
 
 public class FileTypeCsv extends FileType {
