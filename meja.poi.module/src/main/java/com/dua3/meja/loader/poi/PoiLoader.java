@@ -30,7 +30,8 @@ public class PoiLoader extends WorkbookFactory<Workbook> {
 
     private final WorkbookFactory<? extends Workbook> factory;
 
-    public PoiLoader() {
+    @SuppressWarnings("unchecked")
+	public PoiLoader() {
         try {
             Properties properties = new Properties();
             try (InputStream in = PoiLoader.class.getResourceAsStream("lib/files.properties")) {

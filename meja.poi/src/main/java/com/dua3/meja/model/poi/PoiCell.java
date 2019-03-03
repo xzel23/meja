@@ -607,7 +607,7 @@ public final class PoiCell extends AbstractCell {
         DataFormatter dataFormatter = getWorkbook().getDataFormatter(locale);
         try {
             return dataFormatter.formatCellValue(poiCell, evaluator);
-        } catch (Exception ex) {
+        } catch (@SuppressWarnings("unused") IllegalArgumentException ex) {
             return Cell.ERROR_TEXT;
         }
     }

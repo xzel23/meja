@@ -112,7 +112,7 @@ public class GenericCellStyle implements CellStyle {
                 } else {
                     dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
                 }
-            } catch (Exception e) {
+            } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
                 LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
                 dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
             }
@@ -134,7 +134,7 @@ public class GenericCellStyle implements CellStyle {
                 String fmt = dataFormat == null || dataFormat.isEmpty() ? "0.##########" : dataFormat;
                 DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
                 numberFormatter = new DecimalFormat(fmt, symbols);
-            } catch (Exception e) {
+            } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
                 LOGGER.log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
                 numberFormatter = NumberFormat.getInstance(locale);
                 numberFormatter.setGroupingUsed(false);

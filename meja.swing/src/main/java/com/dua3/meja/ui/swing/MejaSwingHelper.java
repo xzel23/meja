@@ -56,8 +56,6 @@ import com.dua3.utility.options.OptionValues;
 public class MejaSwingHelper {
 
     private static final class SheetTableModel extends AbstractTableModel {
-        private static final Logger LOG = Logger.getLogger(SheetTableModel.class.getName());
-
         private final Sheet sheet;
         private final boolean firstRowIsHeader;
         private static final long serialVersionUID = 1L;
