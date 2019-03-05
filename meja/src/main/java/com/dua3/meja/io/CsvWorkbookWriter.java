@@ -78,6 +78,21 @@ public class CsvWorkbookWriter implements WorkbookWriter {
      *
      * @param workbook the workbook to write
      * @param out      the write to write the workbook to
+     * @throws IOException if an input/output error occurs
+     */
+    public void write(Workbook workbook, BufferedWriter out) throws IOException {
+        // do not close the writer - it is the caller's responsibility
+        CsvWriter csvWriter = CsvWriter.create(out, options);
+        writeSheets(workbook, csvWriter, p -> {});
+        csvWriter.flush();
+    }
+
+    /**
+     * Write to a BufferedWriter. This is implemented because CSV is a character
+     * format. The Encoding must be set correctly in the writer.
+     *
+     * @param workbook the workbook to write
+     * @param out      the write to write the workbook to
      * @param updateProgress callback for progress updates
      * @throws IOException if an input/output error occurs
      */
