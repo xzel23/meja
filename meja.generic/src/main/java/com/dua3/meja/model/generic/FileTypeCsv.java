@@ -1,6 +1,6 @@
 package com.dua3.meja.model.generic;
 
-import com.dua3.utility.io.Csv;
+import com.dua3.utility.io.CsvIo;
 import com.dua3.meja.io.CsvWorkbookWriter;
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
@@ -29,6 +29,6 @@ public class FileTypeCsv extends FileType {
     }
     @Override
     public OptionSet getSettings() {
-        return Csv.getOptions();
+        return CsvIo.getOptions();
     }
 }

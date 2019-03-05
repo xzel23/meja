@@ -18,6 +18,7 @@ package com.dua3.meja.io;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Objects;
 import java.util.function.DoubleConsumer;
 
 import com.dua3.utility.io.CsvWriter;
@@ -52,7 +53,7 @@ public class CsvWorkbookWriter implements WorkbookWriter {
         for (Sheet sheet : workbook) {
             for (Row row : sheet) {
                 for (Cell cell : row) {
-                    writer.addField(cell.toString());
+                    writer.addField(cell.get());
                 }
                 updateProgress.accept((double)processedRows/totalRows);
                 writer.nextRow();
