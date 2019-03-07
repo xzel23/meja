@@ -48,8 +48,15 @@ public class CsvWorkbookWriter implements WorkbookWriter {
     	for (Sheet sheet : workbook) {
     		totalRows += sheet.getRowCount();
     	}
-    	
+
+        boolean writeSheetNames = workbook.getSheetCount()>1;
+
         for (Sheet sheet : workbook) {
+            if (writeSheetNames) {
+                writer.addField("!"+sheet.getSheetName()+"!");
+                writer.nextRow();
+            }
+
             for (Row row : sheet) {
                 for (Cell cell : row) {
                     writer.addField(cell.get());
