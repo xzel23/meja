@@ -15,6 +15,9 @@
 module com.dua3.meja.poi {
 	exports com.dua3.meja.model.poi;
 	opens com.dua3.meja.model.poi;
+
+	exports com.dua3.meja.model.poi.io;
+	opens com.dua3.meja.model.poi.io;
 	
 	provides com.dua3.meja.model.WorkbookFactory
 	with com.dua3.meja.model.poi.PoiWorkbookFactory;

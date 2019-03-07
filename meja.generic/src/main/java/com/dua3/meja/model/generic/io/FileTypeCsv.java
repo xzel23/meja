@@ -1,10 +1,11 @@
-package com.dua3.meja.model.generic;
+package com.dua3.meja.model.generic.io;
 
 import com.dua3.utility.io.CsvIo;
 import com.dua3.meja.io.CsvWorkbookWriter;
 import com.dua3.meja.io.FileType;
 import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookWriter;
+import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.utility.options.OptionSet;
 
 public class FileTypeCsv extends FileType {

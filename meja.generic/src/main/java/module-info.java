@@ -16,6 +16,9 @@ module com.dua3.meja.generic {
 	exports com.dua3.meja.model.generic;
 	opens com.dua3.meja.model.generic;
 	
+	exports com.dua3.meja.model.generic.io;
+	opens com.dua3.meja.model.generic.io;
+	
 	provides com.dua3.meja.model.WorkbookFactory 
 	with com.dua3.meja.model.generic.GenericWorkbookFactory;
 

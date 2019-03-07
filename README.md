@@ -61,3 +61,4 @@ __BETA3__:
 - WorkbookWriter is now an interface (was an abstract class before)
 - FileType implements Comparable
 - WorkbookWriter: accepts callback for progress updates
+- bugfixes
