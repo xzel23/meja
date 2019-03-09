@@ -21,10 +21,11 @@ module com.dua3.meja.generic {
 	
 	provides com.dua3.meja.model.WorkbookFactory 
 	with com.dua3.meja.model.generic.GenericWorkbookFactory;
+	
+	requires transitive com.dua3.meja;
 
 	requires java.logging;
     requires com.dua3.utility;
-	requires com.dua3.meja;
 
 	uses com.dua3.utility.text.FontUtil;
 }
