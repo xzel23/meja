@@ -52,7 +52,7 @@ subprojects {
   // library versions
   def currentOS = org.gradle.internal.os.OperatingSystem.current()
   ext {
-	dua3UtilityVersion = '4.0.0-BETA1'
+	dua3UtilityVersion = '4.0.0-BETA2'
     dua3FxVersion = '0.3.5-SNAPSHOT'
     javafxversion = '11.0.2'
     junitVersion = '5.3.1'
