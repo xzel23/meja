@@ -570,7 +570,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     @Override
     public Iterator<Sheet> iterator() {
-        return new Iterator<Sheet>() {
+        return new Iterator<>() {
             Iterator<PoiSheet> iter = sheets.iterator();
 
             @Override

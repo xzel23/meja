@@ -39,8 +39,8 @@ import com.dua3.utility.options.OptionValues;
  */
 public class GenericWorkbook extends AbstractWorkbook {
 
-    final List<GenericSheet> sheets = new ArrayList<>();
-    final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
+    private final List<GenericSheet> sheets = new ArrayList<>();
+    private final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
     private final GenericCellStyle defaultCellStyle;
     private int currentSheetIdx = 0;
 
@@ -126,7 +126,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public Iterator<Sheet> iterator() {
-        return new Iterator<Sheet>() {
+        return new Iterator<>() {
             Iterator<GenericSheet> iter = sheets.iterator();
 
             @Override

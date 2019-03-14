@@ -45,9 +45,9 @@ import com.dua3.utility.options.OptionValues;
  */
 public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
-    public final String PROPERTY_ACTIVE_SHEET = "ACTIVE_SHEET";
-    public final String PROPERTY_SHEET_ADDED = "SHEET_ADDED";
-    public final String PROPERTY_SHEET_REMOVED = "SHEET_REMOVED";
+    String PROPERTY_ACTIVE_SHEET = "ACTIVE_SHEET";
+    String PROPERTY_SHEET_ADDED = "SHEET_ADDED";
+    String PROPERTY_SHEET_REMOVED = "SHEET_REMOVED";
 
     /**
      * Add property change listener.
@@ -55,7 +55,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @see PropertyChangeSupport#addPropertyChangeListener(PropertyChangeListener)
      * @param listener the listener
      */
-    public void addPropertyChangeListener(PropertyChangeListener listener);
+    void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * Add property change listener.
@@ -65,7 +65,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param propertyName the property name
      * @param listener     the listener
      */
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+    void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Close workbook.
@@ -230,7 +230,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @see PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
      * @param listener the listener
      */
-    public void removePropertyChangeListener(PropertyChangeListener listener);
+    void removePropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * Remove property change listener.
@@ -240,7 +240,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param propertyName the name of the property
      * @param listener     the listener
      */
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+    void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Remove sheet by number.

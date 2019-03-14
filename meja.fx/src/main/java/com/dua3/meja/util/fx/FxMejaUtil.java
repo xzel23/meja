@@ -73,7 +73,6 @@ public class FxMejaUtil {
     public static List<FileChooser.ExtensionFilter> getExtensionFilters(OpenMode mode) {
         List<FileChooser.ExtensionFilter> filters = new LinkedList<>();
         FileType.getFileTypes(mode, Workbook.class)
-            .stream()
             .forEach(t ->
                 filters.add(
                     new FileChooser.ExtensionFilter(
@@ -94,7 +93,6 @@ public class FxMejaUtil {
     public static List<FileChooser.ExtensionFilter> getExtensionFilters() {
         List<FileChooser.ExtensionFilter> filters = new LinkedList<>();
         FileType.filetypes()
-            .stream()
             .forEach(t -> filters.add(new FileChooser.ExtensionFilter(t.getName(), t.getExtensions())));
         return filters;
     }
