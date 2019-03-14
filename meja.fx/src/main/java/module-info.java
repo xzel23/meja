@@ -4,5 +4,6 @@ module com.dua3.meja.fx {
 
 	requires javafx.controls;
 	
-    requires transitive com.dua3.meja;    
+    requires transitive com.dua3.meja;
+    requires com.dua3.utility;
 }

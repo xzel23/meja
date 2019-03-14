@@ -30,7 +30,7 @@ import java.util.function.DoubleConsumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.dua3.meja.io.FileType;
+import com.dua3.utility.io.FileType;
 import com.dua3.utility.options.OptionValues;
 
 /**

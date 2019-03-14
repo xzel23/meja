@@ -29,7 +29,7 @@ import java.util.function.DoubleConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.AbstractWorkbook;
 import com.dua3.meja.model.CellStyle;
@@ -38,6 +38,8 @@ import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
+import com.dua3.meja.model.poi.io.XlsWorkbookWriter;
+import com.dua3.utility.io.FileType;
 import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.TextAttributes;
@@ -161,7 +163,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        protected FileType getStandardFileType() {
+        protected FileType<PoiHssfWorkbook> getStandardFileType() {
             return FileTypeXls.instance();
         }
 
@@ -263,7 +265,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        protected FileType getStandardFileType() {
+        protected FileType<PoiXssfWorkbook> getStandardFileType() {
             return FileTypeXlsx.instance();
         }
 
@@ -617,10 +619,12 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         	updateProgress.accept(WorkbookWriter.PROGRESS_INDETERMINATE);
             poiWorkbook.write(out);
         	updateProgress.accept(1.0);
-        } else {
-            WorkbookWriter writer = type.getWriter();
+        } else if (type instanceof FileTypeWorkbook){
+            WorkbookWriter writer = ((FileTypeWorkbook) type).getWorkbookWriter();
             writer.setOptions(options);
             writer.write(this, out, updateProgress);
+        } else {
+            throw new IllegalStateException("could not write workbook");
         }
     }
 

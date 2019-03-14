@@ -25,12 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleConsumer;
 
-import com.dua3.meja.io.FileType;
+import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.AbstractWorkbook;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.utility.io.FileType;
 import com.dua3.utility.options.OptionValues;
 
 /**
@@ -166,7 +167,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public void write(FileType type, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException {
-        WorkbookWriter writer = type.getWriter();
+        WorkbookWriter writer = ((FileTypeWorkbook) type).getWorkbookWriter();
         writer.setOptions(options);
         writer.write(this, out, updateProgress);
     }

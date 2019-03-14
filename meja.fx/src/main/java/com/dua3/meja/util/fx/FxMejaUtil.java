@@ -1,5 +1,6 @@
 package com.dua3.meja.util.fx;
 
+import com.dua3.meja.model.Workbook;
 import javafx.scene.control.TableView;
 import javafx.stage.FileChooser;
 
@@ -8,9 +9,9 @@ import com.dua3.meja.model.Sheet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.OpenMode;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Row;
 
 public class FxMejaUtil {
@@ -71,17 +72,16 @@ public class FxMejaUtil {
      */
     public static List<FileChooser.ExtensionFilter> getExtensionFilters(OpenMode mode) {
         List<FileChooser.ExtensionFilter> filters = new LinkedList<>();
-        FileType.filetypes()
+        FileType.getFileTypes(mode, Workbook.class)
             .stream()
-            .filter(t -> t.isSupported(mode))
-            .forEach(t -> 
+            .forEach(t ->
                 filters.add(
                     new FileChooser.ExtensionFilter(
                         t.getName(), 
                         t.getExtensions()
                             .stream()
                             .map(ext -> "*."+ext)
-                            .collect(Collectors.toList()))));
+                            .collect(Collectors.toList()).toArray(String[]::new))));
         return filters;
     }
 

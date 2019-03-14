@@ -19,11 +19,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 import com.dua3.meja.io.CsvWorkbookReader;
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.io.WorkbookReader;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.io.FileTypeCsv;
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.lang.LangUtil;
 

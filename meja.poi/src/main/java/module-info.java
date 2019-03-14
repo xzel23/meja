@@ -19,12 +19,13 @@ module com.dua3.meja.poi {
 	exports com.dua3.meja.model.poi.io;
 	opens com.dua3.meja.model.poi.io;
 	
-	provides com.dua3.meja.model.WorkbookFactory
-	with com.dua3.meja.model.poi.PoiWorkbookFactory;
-	
+	provides com.dua3.meja.model.WorkbookFactory with com.dua3.meja.model.poi.PoiWorkbookFactory;
+	provides com.dua3.utility.io.FileType with com.dua3.meja.model.poi.io.FileTypeExcel;
+
 	requires transitive com.dua3.meja;
 
 	requires poi;
 	requires java.logging;
     requires com.dua3.utility;
+    requires poi.ooxml;
 }

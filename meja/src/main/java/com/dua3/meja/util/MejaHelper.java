@@ -17,17 +17,11 @@ package com.dua3.meja.util;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
@@ -35,6 +29,8 @@ import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.lang.LangUtil;
 
 /**
@@ -248,20 +244,17 @@ public class MejaHelper {
      * @throws IOException if workbook could not be loaded
      */
     public static Workbook openWorkbook(Path path) throws IOException {
-        FileType fileType = FileType.forPath(path).orElseThrow(
-                () -> new IllegalArgumentException("Could not determine type of file '" + path.toString() + "."));
-
-        LangUtil.check(fileType.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
-                fileType.getName());
-
-        try {
-            WorkbookFactory<?> factory = fileType.factory();
-            return factory.open(path);
-        } catch (IOException ex) {
-            String msg = "Could not load workbook '" + path + "'.";
-            LOGGER.log(Level.SEVERE, msg, ex);
-            throw new IOException(msg, ex);
+        IOException exception = null;
+        for (var t: FileType.getFileTypes(OpenMode.READ, Workbook.class)) {
+            try {
+                return t.read(path);
+            } catch (IOException e) {
+                LOGGER.warning("Reading '"+path+"' failed");
+                exception = e;
+            }
         }
+
+        throw (exception != null) ? exception : new IOException("Could not determine file type");
     }
 
     private MejaHelper() {

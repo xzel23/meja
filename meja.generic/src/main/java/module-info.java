@@ -28,4 +28,6 @@ module com.dua3.meja.generic {
     requires com.dua3.utility;
 
 	uses com.dua3.utility.text.FontUtil;
+
+	provides com.dua3.utility.io.FileType with com.dua3.meja.model.generic.io.FileTypeCsv;
 }

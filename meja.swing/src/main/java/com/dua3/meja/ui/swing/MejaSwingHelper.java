@@ -35,8 +35,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import com.dua3.meja.io.FileType;
-import com.dua3.meja.io.OpenMode;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
@@ -44,9 +42,12 @@ import com.dua3.meja.model.Sheet.RowInfo;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.swing.SwingFileFilter;
 
 /**
  * Helper class.
@@ -221,7 +222,7 @@ public class MejaSwingHelper {
 
         JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
 
-        for (FileFilter filter : SwingFileFilter.getFilters(OpenMode.READ)) {
+        for (FileFilter filter : SwingFileFilter.getFilters(OpenMode.READ, Workbook.class)) {
             jfc.addChoosableFileFilter(filter);
         }
 
@@ -232,32 +233,18 @@ public class MejaSwingHelper {
         }
 
         path = jfc.getSelectedFile().toPath();
-        FileFilter filter = jfc.getFileFilter();
 
-        if (filter instanceof SwingFileFilter) {
-            // get factory from the used filter definition
-            final SwingFileFilter swingFileFilter = (SwingFileFilter) filter;
-            final FileType fileType = swingFileFilter.getFileType();
-            return openWorkbook(parent, path, fileType);
-        } else {
-            // another filter was used (ie. "all files")
-            return Optional.of(MejaHelper.openWorkbook(path));
-        }
+        return openWorkbook(parent, path);
     }
 
     public static Optional<Workbook> openWorkbook(Component parent, Path path) throws IOException {
-        return openWorkbook(parent, path, FileType.forPath(path).orElseThrow());
+        FileType<Workbook> fileType = FileType.forPath(path, Workbook.class).orElseThrow();
+
+        // load
+        return Optional.of(fileType.read(path, t -> showOptionsDialog(parent, t)));
     }
 
-    public static Optional<Workbook> openWorkbook(Component parent, Path path, final FileType fileType)
-            throws IOException {
-        if (fileType == null) {
-            return Optional.empty();
-        }
-
-        final WorkbookFactory<?> factory = fileType.factory();
-
-        // ask user for file type specific settings
+    private static OptionValues showOptionsDialog(Component parent, FileType fileType) {
         OptionSet settings = fileType.getSettings();
         OptionValues importSettings = OptionValues.empty(); // default is empty
         if (!settings.isEmpty()) {
@@ -266,9 +253,7 @@ public class MejaSwingHelper {
             dialog.setVisible(true);
             importSettings = dialog.getResult();
         }
-
-        // load
-        return Optional.of(factory.open(path, importSettings));
+        return importSettings;
     }
 
     /**
@@ -311,9 +296,9 @@ public class MejaSwingHelper {
             }
         }
 
-        Optional<FileType> type = FileType.forPath(file.toPath());
+        Optional<FileType<Workbook>> type = FileType.forPath(file.toPath(), Workbook.class);
         if (type.isPresent()) {
-            type.get().getWriter().write(workbook, file.toPath());
+            type.get().write(file.toPath(), workbook);
         } else {
             workbook.write(file.toPath());
         }
