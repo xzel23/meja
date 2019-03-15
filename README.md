@@ -61,6 +61,9 @@ __BETA3__:
 - WorkbookWriter is now an interface (was an abstract class before)
 - FileType implements Comparable
 - WorkbookWriter: accepts callback for progress updates
+
+__BETA4__:
 - CsvWorkbookWriter: if workbook contains more than one sheet, prepend each sheet with a single line containing only `!<sheet name>!`
 - the deprecated `Cell.getDate()` method returning `java.util.Date` has been replaced by a method of the same name returning `java.time.LocalDate`
+- The cell type DATE has been split into DATE and DATE_TIME. This should make many things easier. The reason for not making this distinction in earlier versions is that Excel (which at the time was the only implementation) doesn't distinguish between the two.
 - bugfixes
