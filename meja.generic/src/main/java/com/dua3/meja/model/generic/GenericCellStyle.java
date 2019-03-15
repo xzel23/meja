@@ -15,9 +15,14 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.meja.model.*;
+import com.dua3.utility.data.Color;
+import com.dua3.utility.text.Font;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -25,15 +30,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.dua3.meja.model.BorderStyle;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Direction;
-import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.model.HAlign;
-import com.dua3.meja.model.VAlign;
-import com.dua3.utility.data.Color;
-import com.dua3.utility.text.Font;
 
 /**
  *
@@ -98,13 +94,13 @@ public class GenericCellStyle implements CellStyle {
     }
 
     /**
-     * Format date for output.
+     * Format datetime for output.
      *
      * @param locale the locale to use during formatting
-     * @param date   the date to format
+     * @param arg   the datetime to format
      * @return text representation of {@code date}
      */
-    public String format(LocalDateTime date, Locale locale) {
+    public String format(LocalDateTime arg, Locale locale) {
         if (dateFormatter == null) {
             try {
                 if (dataFormat == null || dataFormat.isEmpty()) {
@@ -118,7 +114,31 @@ public class GenericCellStyle implements CellStyle {
             }
         }
 
-        return dateFormatter.format(date);
+        return dateFormatter.format(arg);
+    }
+
+    /**
+     * Format date for output.
+     *
+     * @param locale the locale to use during formatting
+     * @param date   the date to format
+     * @return text representation of {@code date}
+     */
+    public String format(LocalDate ar g, Locale locale) {
+        if (dateFormatter == null) {
+            try {
+                if (dataFormat == null || dataFormat.isEmpty()) {
+                    dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+                } else {
+                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
+                }
+            } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
+                dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+            }
+        }
+
+        return dateFormatter.format(arg);
     }
 
     /**

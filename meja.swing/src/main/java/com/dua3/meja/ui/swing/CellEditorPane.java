@@ -15,28 +15,7 @@
  */
 package com.dua3.meja.ui.swing;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.JTextPane;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.BoxView;
-import javax.swing.text.ComponentView;
-import javax.swing.text.Element;
-import javax.swing.text.IconView;
-import javax.swing.text.LabelView;
-import javax.swing.text.ParagraphView;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledEditorKit;
-import javax.swing.text.View;
-import javax.swing.text.ViewFactory;
-
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.HAlign;
-import com.dua3.meja.model.VAlign;
+import com.dua3.meja.model.*;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.swing.StyledDocumentBuilder;
@@ -46,6 +25,11 @@ import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextAttributes;
+
+import javax.swing.*;
+import javax.swing.text.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -166,7 +150,8 @@ public class CellEditorPane extends JTextPane {
         case BOOLEAN:
         case ERROR:
         case NUMERIC:
-        case DATE:
+        case DATE_:
+        case DATE_TIME:
             return HAlign.ALIGN_RIGHT;
         case TEXT:
         case FORMULA:

@@ -61,5 +61,6 @@ __BETA3__:
 - WorkbookWriter is now an interface (was an abstract class before)
 - FileType implements Comparable
 - WorkbookWriter: accepts callback for progress updates
-- CsvWorkbookWriter: if workbook contains more than one sheet, prepend each sheet with `!<sheet name>!`
+- CsvWorkbookWriter: if workbook contains more than one sheet, prepend each sheet with a single line containing only `!<sheet name>!`
+- the deprecated `Cell.getDate()` method returning `java.util.Date` has been replaced by a method of the same name returning `java.time.LocalDate`
 - bugfixes

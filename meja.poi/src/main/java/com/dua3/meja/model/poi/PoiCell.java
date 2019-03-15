@@ -15,22 +15,13 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.chrono.IsoChronology;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.FormatStyle;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.dua3.meja.model.AbstractCell;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
+import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.*;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -39,18 +30,14 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
-import com.dua3.meja.model.AbstractCell;
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.CellType;
-import com.dua3.meja.util.RectangularRegion;
-import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.Font;
-import com.dua3.utility.text.RichText;
-import com.dua3.utility.text.RichTextBuilder;
-import com.dua3.utility.text.Run;
-import com.dua3.utility.text.Style;
-import com.dua3.utility.text.TextAttributes;
+import java.time.*;
+import java.time.chrono.IsoChronology;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.FormatStyle;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -77,6 +64,46 @@ public final class PoiCell extends AbstractCell {
         default:
             throw new IllegalArgumentException();
         }
+    }
+
+    private static CellType getCellType(org.apache.poi.ss.usermodel.Cell poiCell, org.apache.poi.ss.usermodel.CellType poiType) {
+        CellType type = translateCellType(poiType);
+        // because excel annoyingly store dates as doubles, we have to check for dates using some tricks
+        if (type == CellType.NUMERIC) {
+            // since formulas returning dates should return CellType.FORMULA
+            // rather than CellType.DATE, only test for dates if cell is numeric.
+            if (isCellDateTime(poiCell, poiType)) {
+                type = CellType.DATE_TIME;
+            }
+            if (isCellDateFormatted(poiCell, poiType)) {
+                type = CellType.DATE_;
+            }
+        }
+        return type;
+    }
+
+    private static boolean isCellDateFormatted(org.apache.poi.ss.usermodel.Cell poiCell, org.apache.poi.ss.usermodel.CellType poiType) {
+        /*
+         * DateUtil.isCellDateFormatted() throws IllegalStateException when cell is not
+         * numeric, so we have to work around this. TODO create SCCSE and report bug
+         * against POI
+         */
+        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
+            poiType = poiCell.getCachedFormulaResultType();
+        }
+        return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC && DateUtil.isCellDateFormatted(poiCell);
+    }
+
+    private static boolean isCellDateTime(org.apache.poi.ss.usermodel.Cell poiCell, org.apache.poi.ss.usermodel.CellType poiType) {
+        // check if date formatted and time is exactly midnight
+        if (!isCellDateFormatted(poiCell, poiType)) {
+            return false;
+        }
+
+        // check time
+        Instant instant = poiCell.getDateCellValue().toInstant();
+        LocalTime time = LocalTime.from(instant);
+        return time.toNanoOfDay()!=0;
     }
 
     final org.apache.poi.ss.usermodel.Cell poiCell;
@@ -143,8 +170,12 @@ public final class PoiCell extends AbstractCell {
         case NUMERIC:
             set(other.getNumber());
             break;
-        case DATE:
+        case DATE_:
             setCellStyleDate(cellStyle);
+            set(other.getDate());
+            break;
+        case DATE_TIME:
+            setCellStyleDateTime(cellStyle);
             set(other.getDateTime());
             break;
         case TEXT:
@@ -173,7 +204,9 @@ public final class PoiCell extends AbstractCell {
         switch (getCellType()) {
         case BLANK:
             return null;
-        case DATE:
+        case DATE_:
+            return LocalDate.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
+        case DATE_TIME:
             return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
         case NUMERIC:
             return poiCell.getNumericCellValue();
@@ -216,13 +249,7 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public CellType getCellType() {
-        CellType type = translateCellType(poiCell.getCellType());
-        // since formulas returning dates should return CellType.FORMULA
-        // rather than CellType.DATE, only test for dates if cell is numeric.
-        if (type == CellType.NUMERIC && isCellDateFormatted()) {
-            type = CellType.DATE;
-        }
-        return type;
+        return getCellType(poiCell, poiCell.getCellType());
     }
 
     @Override
@@ -231,13 +258,14 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    @Deprecated
-    public Date getDate() {
+    public LocalDate getDate() {
         if (isEmpty()) { // POI will throw for wrong CellType but return null
                          // for empty cells
             throw new IllegalStateException("Cell does not contain a date.");
         }
-        return poiCell.getDateCellValue();
+        return poiCell.getDateCellValue().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
     }
 
     @Override
@@ -282,11 +310,7 @@ public final class PoiCell extends AbstractCell {
         if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
             poiType = poiCell.getCachedFormulaResultType();
         }
-        CellType type = translateCellType(poiType);
-        if (type == CellType.NUMERIC && isCellDateFormatted()) {
-            type = CellType.DATE;
-        }
-        return type;
+        return getCellType(poiCell, poiType);
     }
 
     @Override
@@ -339,6 +363,13 @@ public final class PoiCell extends AbstractCell {
     }
 
     boolean isDateFormat(PoiCellStyle cellStyle) {
+        org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
+        int i = style.getDataFormat();
+        String f = style.getDataFormatString();
+        return DateUtil.isADateFormat(i, f);
+    }
+
+    boolean isDateTimeFormat(PoiCellStyle cellStyle) {
         org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
         int i = style.getDataFormat();
         String f = style.getDataFormatString();
@@ -487,6 +518,25 @@ public final class PoiCell extends AbstractCell {
         setCellStyle(getWorkbook().getCellStyle(dateStyleName));
     }
 
+    private void setCellStyleDateTime(PoiCellStyle cellStyle) {
+        if (isDateTimeFormat(cellStyle)) {
+            // nothing to do
+            return;
+        }
+
+        // try to get a version adapted to dates
+        String dateTimeStyleName = cellStyle.getName() + "#DATETIME#";
+        if (!getWorkbook().hasCellStyle(dateTimeStyleName)) {
+            // if that doesn't exist, create a new format
+            PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateTimeStyleName);
+            dateStyle.copyStyle(cellStyle);
+            String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, FormatStyle.SHORT,
+                    IsoChronology.INSTANCE, Locale.ROOT);
+            dateStyle.setDataFormat(pattern);
+        }
+        setCellStyle(getWorkbook().getCellStyle(dateTimeStyleName));
+    }
+
     @Override
     public PoiCell setFormula(String arg) {
         Object old = get();
@@ -595,8 +645,14 @@ public final class PoiCell extends AbstractCell {
      */
     private String getFormattedText(Locale locale) {
         // is there a special date format?
-        if (getResultType() == CellType.DATE) {
+        if (getResultType() == CellType.DATE_) {
             DateTimeFormatter df = getCellStyle().getLocaleAwareDateFormat(locale);
+            if (df != null) {
+                return df.format(getDate());
+            }
+        }
+        if (getResultType() == CellType.DATE_TIME) {
+            DateTimeFormatter df = getCellStyle().getLocaleAwareDateTimeFormat(locale);
             if (df != null) {
                 return df.format(getDateTime());
             }

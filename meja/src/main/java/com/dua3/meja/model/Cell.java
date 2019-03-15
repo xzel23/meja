@@ -16,14 +16,14 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.RichText;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Locale;
-
-import com.dua3.meja.util.RectangularRegion;
-import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.RichText;
 
 /**
  * A single cell of a sheet.
@@ -126,16 +126,13 @@ public interface Cell {
      *
      * @return date cell value
      * @throws IllegalStateException if cell is not of date value
-     * @deprecated Use the new Date and Time API introduced in Java 8 and the
-     *             corresponding {@link Cell#getDateTime()} method.
      */
-    @Deprecated
-    Date getDate();
+    LocalDate getDate();
 
     /**
-     * Return date value.
+     * Return datetime value.
      *
-     * @return date cell value
+     * @return datetime cell value
      * @throws IllegalStateException if cell is not of date value
      */
     LocalDateTime getDateTime();

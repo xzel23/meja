@@ -15,26 +15,20 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.Locale;
-import java.util.Objects;
-
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-
-import com.dua3.meja.model.BorderStyle;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Direction;
-import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.model.HAlign;
-import com.dua3.meja.model.VAlign;
+import com.dua3.meja.model.*;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.TextAttributes;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  *
@@ -409,12 +403,23 @@ public abstract class PoiCellStyle implements CellStyle {
 
     DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
         switch (poiCellStyle.getDataFormat()) {
-        case 0x0e:
-            return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
-        case 0xa4:
-            return DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
-        default:
-            return null;
+            case 0x0e:
+                return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+            case 0xa4:
+                return DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
+            default:
+                return null;
+        }
+    }
+
+    DateTimeFormatter getLocaleAwareDateTimeFormat(Locale locale) {
+        switch (poiCellStyle.getDataFormat()) {
+            case 0x0e:
+                return DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(locale);
+            case 0xa4:
+                return DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL).withLocale(locale);
+            default:
+                return null;
         }
     }
 

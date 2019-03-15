@@ -15,18 +15,15 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.meja.model.*;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.RichText;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
-
-import com.dua3.meja.model.AbstractCell;
-import com.dua3.meja.model.AbstractRow;
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.CellType;
-import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.RichText;
 
 /**
  *
@@ -105,7 +102,10 @@ public class GenericCell extends AbstractCell {
         case NUMERIC:
             set(other.getNumber());
             break;
-        case DATE:
+        case DATE_:
+            set(other.getDate());
+            break;
+        case DATE_TIME:
             set(other.getDateTime());
             break;
         case TEXT:
@@ -130,8 +130,10 @@ public class GenericCell extends AbstractCell {
             return getText();
         case NUMERIC:
             return RichText.valueOf(getCellStyle().format((Number) value, locale));
-        case DATE:
+        case DATE_:
             return RichText.valueOf(getCellStyle().format((LocalDateTime) value, locale));
+        case DATE_TIME:
+            return RichText.valueOf(getCellStyle().format((LocalDate) value, locale));
         default:
             return RichText.valueOf(value);
         }
@@ -161,14 +163,16 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    @Deprecated
-    public Date getDate() {
-        return Date.from(getDateTime().atZone(ZoneId.systemDefault()).toInstant());
+    public LocalDate getDate() {
+        if (getCellType() == CellType.DATE_) {
+            return (LocalDate) value;
+        }
+        throw new IllegalStateException("Cannot get date value from cell of type " + getCellType().name() + ".");
     }
 
     @Override
     public LocalDateTime getDateTime() {
-        if (getCellType() == CellType.DATE) {
+        if (getCellType() == CellType.DATE_TIME) {
             return (LocalDateTime) value;
         }
         throw new IllegalStateException("Cannot get date value from cell of type " + getCellType().name() + ".");
@@ -253,15 +257,13 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    @Deprecated
-    public GenericCell set(Date arg) {
-        LocalDateTime ldt = LocalDateTime.ofInstant(arg.toInstant(), ZoneId.systemDefault());
-        return set(ldt, CellType.DATE);
+    public GenericCell set(LocalDate arg) {
+        return set(arg, CellType.DATE_);
     }
 
     @Override
     public GenericCell set(LocalDateTime arg) {
-        return set(arg, CellType.DATE);
+        return set(arg, CellType.DATE_TIME);
     }
 
     @Override
@@ -351,7 +353,9 @@ public class GenericCell extends AbstractCell {
             return "";
         case NUMERIC:
             return getCellStyle().format((Number) value, locale);
-        case DATE:
+        case DATE_:
+            return getCellStyle().format((LocalDate) value, locale);
+        case DATE_TIME:
             return getCellStyle().format((LocalDateTime) value, locale);
         default:
             return String.valueOf(value);
