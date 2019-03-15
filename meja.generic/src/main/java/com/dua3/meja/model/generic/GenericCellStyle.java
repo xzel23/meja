@@ -104,13 +104,13 @@ public class GenericCellStyle implements CellStyle {
         if (dateFormatter == null) {
             try {
                 if (dataFormat == null || dataFormat.isEmpty()) {
-                    dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+                    dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
                 } else {
                     dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
                 }
             } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
                 LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
-                dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+                dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
             }
         }
 
@@ -121,10 +121,10 @@ public class GenericCellStyle implements CellStyle {
      * Format date for output.
      *
      * @param locale the locale to use during formatting
-     * @param date   the date to format
+     * @param arg the date to format
      * @return text representation of {@code date}
      */
-    public String format(LocalDate ar g, Locale locale) {
+    public String format(LocalDate arg, Locale locale) {
         if (dateFormatter == null) {
             try {
                 if (dataFormat == null || dataFormat.isEmpty()) {

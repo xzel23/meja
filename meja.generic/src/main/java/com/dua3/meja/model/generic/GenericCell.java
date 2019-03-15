@@ -21,8 +21,6 @@ import com.dua3.utility.text.RichText;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -102,7 +100,7 @@ public class GenericCell extends AbstractCell {
         case NUMERIC:
             set(other.getNumber());
             break;
-        case DATE_:
+        case DATE:
             set(other.getDate());
             break;
         case DATE_TIME:
@@ -130,7 +128,7 @@ public class GenericCell extends AbstractCell {
             return getText();
         case NUMERIC:
             return RichText.valueOf(getCellStyle().format((Number) value, locale));
-        case DATE_:
+        case DATE:
             return RichText.valueOf(getCellStyle().format((LocalDateTime) value, locale));
         case DATE_TIME:
             return RichText.valueOf(getCellStyle().format((LocalDate) value, locale));
@@ -164,7 +162,7 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public LocalDate getDate() {
-        if (getCellType() == CellType.DATE_) {
+        if (getCellType() == CellType.DATE) {
             return (LocalDate) value;
         }
         throw new IllegalStateException("Cannot get date value from cell of type " + getCellType().name() + ".");
@@ -258,7 +256,7 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public GenericCell set(LocalDate arg) {
-        return set(arg, CellType.DATE_);
+        return set(arg, CellType.DATE);
     }
 
     @Override
@@ -353,7 +351,7 @@ public class GenericCell extends AbstractCell {
             return "";
         case NUMERIC:
             return getCellStyle().format((Number) value, locale);
-        case DATE_:
+        case DATE:
             return getCellStyle().format((LocalDate) value, locale);
         case DATE_TIME:
             return getCellStyle().format((LocalDateTime) value, locale);

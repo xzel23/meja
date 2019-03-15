@@ -35,6 +35,7 @@ import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
+import java.time.temporal.TemporalQueries;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,7 +77,7 @@ public final class PoiCell extends AbstractCell {
                 type = CellType.DATE_TIME;
             }
             if (isCellDateFormatted(poiCell, poiType)) {
-                type = CellType.DATE_;
+                type = CellType.DATE;
             }
         }
         return type;
@@ -102,8 +103,8 @@ public final class PoiCell extends AbstractCell {
 
         // check time
         Instant instant = poiCell.getDateCellValue().toInstant();
-        LocalTime time = LocalTime.from(instant);
-        return time.toNanoOfDay()!=0;
+        LocalTime time = instant.query(TemporalQueries.localTime());
+        return time !=null;
     }
 
     final org.apache.poi.ss.usermodel.Cell poiCell;
@@ -170,7 +171,7 @@ public final class PoiCell extends AbstractCell {
         case NUMERIC:
             set(other.getNumber());
             break;
-        case DATE_:
+        case DATE:
             setCellStyleDate(cellStyle);
             set(other.getDate());
             break;
@@ -204,7 +205,7 @@ public final class PoiCell extends AbstractCell {
         switch (getCellType()) {
         case BLANK:
             return null;
-        case DATE_:
+        case DATE:
             return LocalDate.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
         case DATE_TIME:
             return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
@@ -403,14 +404,13 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    @Deprecated
-    public PoiCell set(Date arg) {
-        arg = getWorkbook().cache(arg);
+    public PoiCell set(LocalDate arg) {
         Object old = get();
         if (arg == null) {
             clear();
         } else {
-            poiCell.setCellValue(arg);
+            Date d = Date.from(arg.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            poiCell.setCellValue(d);
             if (!isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is not date formatted
@@ -424,7 +424,6 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public PoiCell set(LocalDateTime arg) {
-        arg = getWorkbook().cache(arg);
         Object old = get();
         if (arg == null) {
             clear();
@@ -645,7 +644,7 @@ public final class PoiCell extends AbstractCell {
      */
     private String getFormattedText(Locale locale) {
         // is there a special date format?
-        if (getResultType() == CellType.DATE_) {
+        if (getResultType() == CellType.DATE) {
             DateTimeFormatter df = getCellStyle().getLocaleAwareDateFormat(locale);
             if (df != null) {
                 return df.format(getDate());

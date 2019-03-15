@@ -20,8 +20,7 @@ import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.Date;
 import java.util.Locale;
 
@@ -133,7 +132,7 @@ public interface Cell {
      * Return datetime value.
      *
      * @return datetime cell value
-     * @throws IllegalStateException if cell is not of date value
+     * @throws IllegalStateException if cell is not of datetime value
      */
     LocalDateTime getDateTime();
 
@@ -258,12 +257,8 @@ public interface Cell {
      *
      * @param arg date
      * @return this cell
-     * @deprecated Use the new Date and Time API introduced in Java 8 and the
-     *             corresponding methods {@link #set(LocalDateTime)} and
-     *             {@link #set(LocalDate)}.
      */
-    @Deprecated
-    Cell set(Date arg);
+    Cell set(LocalDate arg);
 
     /**
      * Set cell value to date.
@@ -272,17 +267,6 @@ public interface Cell {
      * @return this cell
      */
     Cell set(LocalDateTime arg);
-
-    /**
-     * Set cell value to date.
-     *
-     * @param arg date
-     * @return this cell
-     */
-    default Cell set(LocalDate arg) {
-        set(arg == null ? null : arg.atStartOfDay());
-        return this;
-    }
 
     /**
      * Set cell value to number.
@@ -331,11 +315,18 @@ public interface Cell {
         } else if (arg instanceof RichText) {
             set((RichText) arg);
         } else if (arg instanceof java.util.Date) {
-            set((java.util.Date) arg);
+            LocalDateTime dt = LocalDateTime.ofInstant(((java.util.Date) arg).toInstant(), ZoneId.systemDefault());
+            LocalTime t = dt.toLocalTime();
+            if (t.toNanoOfDay()==0) {
+                // set to DATE
+                set(dt.toLocalDate());
+            } else {
+                // set to DATE_TIME
+                set(dt);
+            }
         } else {
             set(String.valueOf(arg));
         }
-
         return this;
     }
 

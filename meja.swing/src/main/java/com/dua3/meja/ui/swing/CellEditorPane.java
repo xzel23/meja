@@ -150,7 +150,7 @@ public class CellEditorPane extends JTextPane {
         case BOOLEAN:
         case ERROR:
         case NUMERIC:
-        case DATE_:
+        case DATE:
         case DATE_TIME:
             return HAlign.ALIGN_RIGHT;
         case TEXT:

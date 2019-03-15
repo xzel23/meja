@@ -48,7 +48,7 @@ public enum CellType {
     /**
      * Type for date cells.
      */
-    DATE_,
+    DATE,
     /**
      * Type for date_time cells.
      */
