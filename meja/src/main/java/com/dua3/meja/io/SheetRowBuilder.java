@@ -48,7 +48,7 @@ public class SheetRowBuilder implements RowBuilder {
         this.sheet = sheet;
 
         Locale locale = CsvIo.getLocale(options);
-        CsvIo.PredefinedDateTimeFormat dateFormat = CsvIo.getDateFormat(options);
+        CsvIo.PredefinedDateFormat dateFormat = CsvIo.getDateFormat(options);
 
         NumberFormat numberFormat = NumberFormat.getInstance(locale);
         DateTimeFormatter dateFormatter = dateFormat.getFormatter(locale);
