@@ -30,7 +30,7 @@ subprojects {
 
   /////////////////////////////////////////////////////////////////////////////
 	group              = 'com.dua3.meja'
-	version            = '2.0-BETA4'
+	version            = '2.0-SNAPSHOT'
 		
 	ext.moduleName     = project.group 
 	ext.scm            = 'https://gitlab.com/com.dua3/lib/meja.git'
@@ -42,6 +42,8 @@ subprojects {
 	ext.developerEmail = 'axel@dua3.com'
   ////////////////////////////////////////////////////////////////////////////
 
+  sourceCompatibility = 11
+  targetCompatibility = 11
 
   // repositories
   repositories {
@@ -49,37 +51,14 @@ subprojects {
     mavenLocal()
   }
 
-  // library versions
-  def currentOS = org.gradle.internal.os.OperatingSystem.current()
-  ext {
-	dua3UtilityVersion = '4.0.0-BETA2'
-    dua3FxVersion = '0.3.5-SNAPSHOT'
-    javafxversion = '11.0.2'
-    junitVersion = '5.3.1'
-
-    if (currentOS.isWindows()) {
-      platform = 'win'
-    } else if (currentOS.isLinux()) {
-      platform = 'linux'
-    } else if (currentOS.isMacOsX()) {
-      platform = 'mac'
-    }
-  }
-
   // dependencies
   dependencies {
-    implementation "com.dua3.utility:utility:${dua3UtilityVersion}"
+    // com.dua3 libraries
+    implementation "com.dua3.utility:utility:${System.properties['com.dua3.utility.version']}"
 
     // JUnit
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-  }
-
-  // remove module-info.java from eclipse source folder
-  eclipse.classpath.file.whenMerged {
-    for (item in entries.findAll{ it.path.matches('src/.*/java') }) {
-      item.excludes += 'module-info.java'
-    }
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${System.properties['org.junit.version']}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${System.properties['org.junit.version']}"
   }
 
   test {
@@ -95,9 +74,6 @@ subprojects {
         options.addStringOption('-module-path', classpath.asPath)
     }
   }
-
-  sourceCompatibility = 11
-  targetCompatibility = 11
 
   compileJava {
     options.encoding = 'UTF-8'
@@ -196,15 +172,8 @@ subprojects {
 
 // === SPOTBUGS === >
 
-  spotbugs.toolVersion = '3.1.11'
+  spotbugs.toolVersion = '3.1.12'
   spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
-    
-  tasks.withType(com.github.spotbugs.SpotBugsTask) {
-    reports {
-      xml.enabled false
-      html.enabled true        
-    }
-  }
 
 }
 

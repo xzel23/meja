@@ -8,7 +8,8 @@ dependencies {
     implementation project(':meja.generic')
     implementation project(':meja.poi')
     implementation project(':meja.swing')
-    implementation "com.dua3.utility:utility.swing:${dua3UtilityVersion}"
+
+    implementation "com.dua3.utility:utility.swing:${System.properties['com.dua3.utility.version']}"
 }
 
 mainClassName = 'com.dua3.meja.excelviewer.SwingExcelViewer'
