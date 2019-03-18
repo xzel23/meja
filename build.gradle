@@ -13,9 +13,9 @@
 // limitations under the License.
 
 plugins {
-  id 'com.dua3.gradle.jpms' version '0.8.3' apply false
-  id 'com.github.spotbugs'  version '1.6.10' apply false
-  id 'com.jfrog.bintray'    version '1.8.4' apply false
+  id 'com.dua3.gradle.jpms'     version '0.8.3'  apply false
+  id 'com.github.spotbugs'      version '1.6.10' apply false
+  id 'com.jfrog.bintray'        version '1.8.4'  apply false
 }
 
 subprojects {
@@ -28,37 +28,53 @@ subprojects {
   apply plugin:  'com.dua3.gradle.jpms'
   apply plugin:  'com.jfrog.bintray'
 
+  ext.versionSuffix = project.hasProperty('release') ? "" : "-SNAPSHOT"
+
   /////////////////////////////////////////////////////////////////////////////
-	group              = 'com.dua3.meja'
-	version            = "${System.properties['com.dua3.meja.version']}"
+  	group              = 'com.dua3.meja'
+    version            = rootProject.file('version').text.trim()+versionSuffix
 		
-	ext.moduleName     = project.group 
-	ext.scm            = 'https://gitlab.com/com.dua3/lib/meja.git'
-	ext.repo           = 'public'
-	ext.description    = 'The Meja Spreadsheet Library'
+	  ext.moduleName     = project.group 
+	  ext.scm            = 'https://gitlab.com/com.dua3/lib/meja.git'
+	  ext.repo           = 'public'
+	  ext.description    = 'The Meja Spreadsheet Library'
 		
-	ext.developerId    = 'axh'
-	ext.developerName  = 'Axel Howind'
-	ext.developerEmail = 'axel@dua3.com'
+	  ext.developerId    = 'axh'
+	  ext.developerName  = 'Axel Howind'
+	  ext.developerEmail = 'axel@dua3.com'
   ////////////////////////////////////////////////////////////////////////////
 
-  sourceCompatibility = 11
-  targetCompatibility = 11
+  sourceCompatibility = java_version
+  targetCompatibility = java_version
 
   // repositories
   repositories {
     jcenter()
-    mavenLocal()
+
+    // no dependencies on local versions in release
+    if (!project.hasProperty('release')) {
+      mavenLocal()
+    }
+  }
+
+  // get OS (because JavaFX packages are OS dependent)
+  def currentOS = org.gradle.internal.os.OperatingSystem.current()
+  if (currentOS.isWindows()) {
+    ext.platform = 'win'
+  } else if (currentOS.isLinux()) {
+    ext.platform = 'linux'
+  } else if (currentOS.isMacOsX()) {
+    ext.platform = 'mac'
   }
 
   // dependencies
   dependencies {
     // com.dua3 libraries
-    implementation "com.dua3.utility:utility:${System.properties['com.dua3.utility.version']}"
+    implementation "com.dua3.utility:utility:${dua3_utility_version}${versionSuffix}"
 
     // JUnit
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${System.properties['org.junit.version']}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${System.properties['org.junit.version']}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
   }
 
   test {
