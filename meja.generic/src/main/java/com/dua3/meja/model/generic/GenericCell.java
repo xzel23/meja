@@ -129,9 +129,9 @@ public class GenericCell extends AbstractCell {
         case NUMERIC:
             return RichText.valueOf(getCellStyle().format((Number) value, locale));
         case DATE:
-            return RichText.valueOf(getCellStyle().format((LocalDateTime) value, locale));
-        case DATE_TIME:
             return RichText.valueOf(getCellStyle().format((LocalDate) value, locale));
+        case DATE_TIME:
+            return RichText.valueOf(getCellStyle().format((LocalDateTime) value, locale));
         default:
             return RichText.valueOf(value);
         }
