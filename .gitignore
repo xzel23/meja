@@ -9,4 +9,4 @@
 **/out/
 
 # dependencies in resources (jars are copied to the resource folder during build)
-meja.poi.module/src/main/resources/com/dua3/meja/loader/poi/lib
+meja-poi-module/src/main/resources/com/dua3/meja/loader/poi/lib
