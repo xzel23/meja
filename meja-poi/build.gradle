@@ -1,0 +1,17 @@
+dependencies {
+    implementation project(':meja')
+
+    // Apache POI
+    def poiVersion = "4.0.1"
+    compile "org.apache.poi:poi:${poiVersion}"
+    compile "org.apache.poi:poi-ooxml:${poiVersion}"
+    compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+}
+
+// copy jars to lib folder to be collected by project meja.poi.module
+task copyToLib(type: Copy) {
+    into "$buildDir/libs"
+    from configurations.runtime
+}
+
+build.dependsOn(copyToLib)

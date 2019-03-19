@@ -57,6 +57,9 @@ subprojects {
     }
   }
 
+  // handle snapshot versions
+  dua3_utility_version = "${dua3_utility_version}${versionSuffix}"
+
   // get OS (because JavaFX packages are OS dependent)
   def currentOS = org.gradle.internal.os.OperatingSystem.current()
   if (currentOS.isWindows()) {
@@ -70,7 +73,7 @@ subprojects {
   // dependencies
   dependencies {
     // com.dua3 libraries
-    implementation "com.dua3.utility:utility:${dua3_utility_version}${versionSuffix}"
+    implementation "com.dua3.utility:utility:${dua3_utility_version}"
 
     // JUnit
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
