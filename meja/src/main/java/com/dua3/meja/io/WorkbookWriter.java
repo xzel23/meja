@@ -15,6 +15,9 @@
  */
 package com.dua3.meja.io;
 
+import com.dua3.meja.model.Workbook;
+import com.dua3.utility.options.OptionValues;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,15 +25,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.DoubleConsumer;
 
-import com.dua3.meja.model.Workbook;
-import com.dua3.utility.options.OptionValues;
-
 /**
  * Abstract base class for writing workbook data.
  */
 public interface WorkbookWriter {
 
-    public static final double PROGRESS_INDETERMINATE = -1.0;
+    double PROGRESS_INDETERMINATE = -1.0;
 
 	default void setOptions(OptionValues exportSettings) {
         // empty implementation for writers not taking export options

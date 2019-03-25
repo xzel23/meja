@@ -40,7 +40,7 @@ public enum VAlign {
 
     private final boolean wrap;
 
-    private VAlign(boolean wrap) {
+    VAlign(boolean wrap) {
         this.wrap = wrap;
 
     }

@@ -365,7 +365,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         private final Consumer<SwingSheetView> action;
 
-        private Actions(Consumer<SwingSheetView> action) {
+        Actions(Consumer<SwingSheetView> action) {
             this.action = action;
         }
 

@@ -15,11 +15,11 @@
  */
 package com.dua3.meja.ui;
 
-import java.beans.PropertyChangeListener;
-import java.util.function.IntFunction;
-
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
+
+import java.beans.PropertyChangeListener;
+import java.util.function.IntFunction;
 
 /**
  *
@@ -27,12 +27,12 @@ import com.dua3.utility.data.Color;
  */
 public interface SheetView {
 
-    public static final double MAX_COLUMN_WIDTH = 800;
+    double MAX_COLUMN_WIDTH = 800;
 
     /**
      * property "sheet".
      */
-    final String PROPERTY_SHEET = "sheet";
+    String PROPERTY_SHEET = "sheet";
 
     /**
      * Add a new listener.
@@ -54,7 +54,7 @@ public interface SheetView {
      *
      * @return color of grid
      */
-    public Color getGridColor();
+    Color getGridColor();
 
     /**
      * Get the sheet for this view.
@@ -118,7 +118,7 @@ public interface SheetView {
      *
      * @param gridColor the color for th grid
      */
-    public void setGridColor(Color gridColor);
+    void setGridColor(Color gridColor);
 
     /**
      * Set sheet to display.
@@ -140,7 +140,7 @@ public interface SheetView {
      * @param j the column number
      * @return the label text
      */
-    public String getColumnName(int j);
+    String getColumnName(int j);
 
     /**
      * Get name for row.
@@ -148,19 +148,19 @@ public interface SheetView {
      * @param i the row number
      * @return the label text
      */
-    public String getRowName(int i);
+    String getRowName(int i);
 
     /**
      * Set the column name provider.
      * 
      * @param columnNames a function that maps column numbers to column names
      */
-    public void setColumnNames(IntFunction<String> columnNames);
+    void setColumnNames(IntFunction<String> columnNames);
 
     /**
      * Set the row name provider.
      * 
      * @param rowNames a function that maps row numbers to row names
      */
-    public void setRowNames(IntFunction<String> rowNames);
+    void setRowNames(IntFunction<String> rowNames);
 }

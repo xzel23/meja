@@ -30,5 +30,5 @@ public enum FillPattern {
     /**
      * Solid pattern.
      */
-    SOLID;
+    SOLID
 }

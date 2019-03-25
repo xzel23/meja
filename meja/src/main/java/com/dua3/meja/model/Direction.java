@@ -37,5 +37,5 @@ public enum Direction {
     /**
      * West (left) direction.
      */
-    WEST;
+    WEST
 }

@@ -26,7 +26,7 @@ import com.dua3.utility.text.Font;
 public interface CellStyle {
 
     enum StandardDataFormats {
-        FULL, MEDIUM;
+        FULL, MEDIUM
     }
 
     /**

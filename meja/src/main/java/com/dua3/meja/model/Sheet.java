@@ -15,19 +15,14 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.text.ToStringBuilder;
+
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import com.dua3.meja.util.RectangularRegion;
-import com.dua3.utility.text.ToStringBuilder;
 
 /**
  * An interface representing a single sheet of a workbook.
@@ -36,16 +31,16 @@ import com.dua3.utility.text.ToStringBuilder;
  */
 public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
-    public final String PROPERTY_ZOOM = "ZOOM";
-    public final String PROPERTY_LAYOUT_CHANGED = "LAYOUT_CHANGED";
-    public final String PROPERTY_SPLIT = "SPLIT";
-    public final String PROPERTY_ACTIVE_CELL = "ACTIVE_CELL";
-    public final String PROPERTY_CELL_CONTENT = "CELL_CONTENT";
-    public final String PROPERTY_CELL_STYLE = "CELL_STYLE";
-    public final String PROPERTY_ROWS_ADDED = "ROWS_ADDED";
-    public final String PROPERTY_COLUMNS_ADDED = "COLUMNS_ADDED";
+    String PROPERTY_ZOOM = "ZOOM";
+    String PROPERTY_LAYOUT_CHANGED = "LAYOUT_CHANGED";
+    String PROPERTY_SPLIT = "SPLIT";
+    String PROPERTY_ACTIVE_CELL = "ACTIVE_CELL";
+    String PROPERTY_CELL_CONTENT = "CELL_CONTENT";
+    String PROPERTY_CELL_STYLE = "CELL_STYLE";
+    String PROPERTY_ROWS_ADDED = "ROWS_ADDED";
+    String PROPERTY_COLUMNS_ADDED = "COLUMNS_ADDED";
 
-    public static class RowInfo {
+    class RowInfo {
         private static final RowInfo NONE = new RowInfo(0, -1);
 
         private final int firstRow;
@@ -82,9 +77,9 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     void addMergedRegion(RectangularRegion cells);
 
-    public void addPropertyChangeListener(PropertyChangeListener listener);
+    void addPropertyChangeListener(PropertyChangeListener listener);
 
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+    void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Adjusts the size of the column to its contents.
@@ -246,9 +241,9 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     float getZoom();
 
-    public void removePropertyChangeListener(PropertyChangeListener listener);
+    void removePropertyChangeListener(PropertyChangeListener listener);
 
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
+    void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Sets an automatic filter on the given row (optional operation).

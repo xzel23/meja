@@ -45,7 +45,7 @@ public enum HAlign {
     // whether text is wrapped regardless of text wrap setting in cell style
     private final boolean wrap;
 
-    private HAlign(boolean wrap) {
+    HAlign(boolean wrap) {
         this.wrap = wrap;
 
     }

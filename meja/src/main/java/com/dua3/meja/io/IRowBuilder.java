@@ -28,7 +28,7 @@ public interface IRowBuilder {
     /**
      * Create a row as {@code List<String>}.
      */
-    public class ListRowBuilder implements IRowBuilder {
+    class ListRowBuilder implements IRowBuilder {
 
         private List<String> row;
 
@@ -62,15 +62,15 @@ public interface IRowBuilder {
      *
      * @param value the value to add
      */
-    public void add(String value);
+    void add(String value);
 
     /**
      * End the current row.
      */
-    public void endRow();
+    void endRow();
 
     /**
      * Start a new row.
      */
-    public void startRow();
+    void startRow();
 }

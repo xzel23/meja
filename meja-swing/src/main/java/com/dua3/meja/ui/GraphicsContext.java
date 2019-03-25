@@ -25,11 +25,11 @@ public interface GraphicsContext {
 
     void fillRect(double x, double y, double width, double height);
 
-    public Rectangle getClipBounds();
+    Rectangle getClipBounds();
 
     void setColor(Color color);
 
-    public void setStroke(Color color, double width);
+    void setStroke(Color color, double width);
 
     void setXOR(boolean on);
 

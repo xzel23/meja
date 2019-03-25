@@ -3,18 +3,18 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.ui.SheetView;
+import com.dua3.utility.lang.LangUtil;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.ui.SheetView;
-import com.dua3.utility.lang.LangUtil;
 
 /**
  *
@@ -23,17 +23,17 @@ import com.dua3.utility.lang.LangUtil;
 public class ExcelViewerModel {
 
     interface ExcelViewer {
-        public SheetView getCurrentView();
+        SheetView getCurrentView();
 
-        public SheetView getViewForSheet(Sheet sheet);
+        SheetView getViewForSheet(Sheet sheet);
 
-        public void setEditable(boolean b);
+        void setEditable(boolean b);
 
-        public void workbookChanged(Path oldPath, Path newPath);
+        void workbookChanged(Path oldPath, Path newPath);
     }
 
     enum MessageType {
-        ERROR, INFO;
+        ERROR, INFO
     }
 
     private static final Logger LOGGER = Logger.getLogger(ExcelViewer.class.getName());

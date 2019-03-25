@@ -52,5 +52,5 @@ public enum CellType {
     /**
      * Type for date_time cells.
      */
-    DATE_TIME;
+    DATE_TIME
 }

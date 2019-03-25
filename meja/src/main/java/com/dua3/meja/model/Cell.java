@@ -20,8 +20,10 @@ import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
-import java.time.*;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Locale;
 
 /**
@@ -34,7 +36,7 @@ public interface Cell {
     /**
      * The text to show in error cells.
      */
-    public final String ERROR_TEXT = "#ERROR";
+    String ERROR_TEXT = "#ERROR";
 
     /**
      * Clear the cell`s content.
@@ -368,7 +370,7 @@ public interface Cell {
      * @param value the formula as a string
      * @return this cell
      */
-    public Cell setFormula(String value);
+    Cell setFormula(String value);
 
     /**
      * Return string representation of cell content.
