@@ -143,7 +143,7 @@ public final class PoiCell extends AbstractCell {
     public void clear() {
         if (!isEmpty()) {
             Object old = get();
-            poiCell.setCellType(org.apache.poi.ss.usermodel.CellType.BLANK);
+            poiCell.setBlank();
             updateRow();
             valueChanged(old, null);
         }
@@ -543,7 +543,6 @@ public final class PoiCell extends AbstractCell {
             clear();
         } else {
             poiCell.setCellFormula(arg);
-            poiCell.setCellType(org.apache.poi.ss.usermodel.CellType.FORMULA);
             final PoiWorkbook wb = getWorkbook();
             if (wb.isFormulaEvaluationSupported()) {
                 try {
