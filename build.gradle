@@ -13,186 +13,187 @@
 // limitations under the License.
 
 plugins {
-  id 'com.dua3.gradle.jpms'     version '0.8.3'  apply false
-  id 'com.github.spotbugs'      version '1.6.10' apply false
-  id 'com.jfrog.bintray'        version '1.8.4'  apply false
+    id 'com.dua3.gradle.jpms' version '0.8.3' apply false
+    id 'com.github.spotbugs' version '1.6.10' apply false
+    id 'com.jfrog.bintray' version '1.8.4' apply false
 }
 
 subprojects {
 
-  apply plugin:  'java'
-  apply plugin:  'java-library'
-  apply plugin:  'maven-publish'
-  apply plugin:  'eclipse'
-  apply plugin:  'com.github.spotbugs'
-  apply plugin:  'com.dua3.gradle.jpms'
-  apply plugin:  'com.jfrog.bintray'
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'eclipse'
+    apply plugin: 'com.github.spotbugs'
+    apply plugin: 'com.dua3.gradle.jpms'
+    apply plugin: 'com.jfrog.bintray'
 
-  ext.versionSuffix = project.hasProperty('release') ? "" : "-SNAPSHOT"
+    ext.versionSuffix = project.hasProperty('release') ? "" : "-SNAPSHOT"
 
-  /////////////////////////////////////////////////////////////////////////////
-  	group              = 'com.dua3.meja'
-    version            = rootProject.file('version').text.trim()+versionSuffix
-		
-	  ext.moduleName     = project.group 
-	  ext.scm            = 'https://gitlab.com/com.dua3/lib/meja.git'
-	  ext.repo           = 'public'
-	  ext.description    = 'The Meja Spreadsheet Library'
-		
-	  ext.developerId    = 'axh'
-	  ext.developerName  = 'Axel Howind'
-	  ext.developerEmail = 'axel@dua3.com'
-  ////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////
+    group = 'com.dua3.meja'
+    version = rootProject.file('version').text.trim() + versionSuffix
 
-  sourceCompatibility = java_version
-  targetCompatibility = java_version
+    ext.moduleName = project.group
+    ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
+    ext.repo = 'public'
+    ext.description = 'The Meja Spreadsheet Library'
 
-  // repositories
-  repositories {
-    jcenter()
+    ext.developerId = 'axh'
+    ext.developerName = 'Axel Howind'
+    ext.developerEmail = 'axel@dua3.com'
+    ////////////////////////////////////////////////////////////////////////////
 
-    // no dependencies on local versions in release
-    if (!project.hasProperty('release')) {
-      mavenLocal()
-    }
-  }
+    sourceCompatibility = java_version
+    targetCompatibility = java_version
 
-  // handle snapshot versions
-  dua3_utility_version = "${dua3_utility_version}${versionSuffix}"
+    // repositories
+    repositories {
+        jcenter()
 
-  // get OS (because JavaFX packages are OS dependent)
-  def currentOS = org.gradle.internal.os.OperatingSystem.current()
-  if (currentOS.isWindows()) {
-    ext.platform = 'win'
-  } else if (currentOS.isLinux()) {
-    ext.platform = 'linux'
-  } else if (currentOS.isMacOsX()) {
-    ext.platform = 'mac'
-  }
-
-  // dependencies
-  dependencies {
-    // com.dua3 libraries
-    implementation "com.dua3.utility:utility:${dua3_utility_version}"
-
-    // JUnit
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
-  }
-
-  test {
-    useJUnitPlatform()
-
-    filter {
-        exclude '**/module-info.class'
-    }
-  }
-
-  javadoc {
-    doFirst {
-        options.addStringOption('-module-path', classpath.asPath)
-    }
-  }
-
-  compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-  }
-
-  // === BINTRAY === >
-
-  bintray {
-    user = findProperty('BINTRAY_USER') ?: 'NONE'
-    key = findProperty('BINTRAY_KEY') ?: 'NONE'
-
-    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-    publish = true //[Default: false] Whether version should be auto published after an upload    
-    override = true //[Default: false] Whether to override version artifacts already published    
-
-    publications = ['projectPublication']
-
-    pkg {
-        repo = project.repo
-        name = project.group
-        userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
-        licenses = ['Apache-2.0']
-        vcsUrl = project.scm
-
-	    version {
-	        name = project.version
-	        desc = project.name+version
-	        released  = new Date()
-	        vcsTag = project.version
-	    }
-    }
-  }
-
-  // === ARTIFACTS === >
-
-  task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-  }
-
-  task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-  }
-
-  artifacts {
-	archives jar
-    archives sourcesJar
-    archives javadocJar
-  }
-
-  // === MAVEN publication === >
-
-  // Create the pom configuration:
-  def pomConfig = {
-    licenses {
-        license {
-            name "The Apache Software License, Version 2.0"
-            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        // no dependencies on local versions in release
+        if (!project.hasProperty('release')) {
+            mavenLocal()
         }
     }
-    developers {
-        developer {
-            id    project.developerId
-            name  project.developerName
-            email project.developerEmail
+
+    // handle snapshot versions
+    dua3_utility_version = "${dua3_utility_version}${versionSuffix}"
+
+    // get OS (because JavaFX packages are OS dependent)
+    def currentOS = org.gradle.internal.os.OperatingSystem.current()
+    if (currentOS.isWindows()) {
+        ext.platform = 'win'
+    } else if (currentOS.isLinux()) {
+        ext.platform = 'linux'
+    } else if (currentOS.isMacOsX()) {
+        ext.platform = 'mac'
+    }
+
+    // dependencies
+    dependencies {
+        // com.dua3 libraries
+        implementation "com.dua3.utility:utility:${dua3_utility_version}"
+
+        // JUnit
+        testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_version}"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
+    }
+
+    test {
+        useJUnitPlatform()
+
+        filter {
+            exclude '**/module-info.class'
         }
     }
-    
-    scm {
-       url project.scm
-    }
-  }
 
-  // Create the publication with the pom configuration:
-  publishing {
-    publications {
-        projectPublication(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            groupId project.group
-            artifactId project.name
-            version version
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', project.description)
-                root.appendNode('name', project.group)
-                root.appendNode('url', project.scm)
-                root.children().last() + pomConfig
+    javadoc {
+        options.encoding = 'UTF-8'
+        doFirst {
+            options.addStringOption('-module-path', classpath.asPath)
+        }
+    }
+
+    compileJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+
+    // === BINTRAY === >
+
+    bintray {
+        user = findProperty('BINTRAY_USER') ?: 'NONE'
+        key = findProperty('BINTRAY_KEY') ?: 'NONE'
+
+        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+        publish = true //[Default: false] Whether version should be auto published after an upload    
+        override = true //[Default: false] Whether to override version artifacts already published    
+
+        publications = ['projectPublication']
+
+        pkg {
+            repo = project.repo
+            name = project.group
+            userOrg = findProperty('BINTRAY_USER_ORG') ?: 'NONE'
+            licenses = ['Apache-2.0']
+            vcsUrl = project.scm
+
+            version {
+                name = project.version
+                desc = project.name + version
+                released = new Date()
+                vcsTag = project.version
             }
         }
     }
-  }
+
+    // === ARTIFACTS === >
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives jar
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    // === MAVEN publication === >
+
+    // Create the pom configuration:
+    def pomConfig = {
+        licenses {
+            license {
+                name "The Apache Software License, Version 2.0"
+                url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                id project.developerId
+                name project.developerName
+                email project.developerEmail
+            }
+        }
+
+        scm {
+            url project.scm
+        }
+    }
+
+    // Create the publication with the pom configuration:
+    publishing {
+        publications {
+            projectPublication(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+                groupId project.group
+                artifactId project.name
+                version version
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', project.description)
+                    root.appendNode('name', project.group)
+                    root.appendNode('url', project.scm)
+                    root.children().last() + pomConfig
+                }
+            }
+        }
+    }
 
 // === SPOTBUGS === >
 
-  spotbugs.toolVersion = '3.1.12'
-  spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
+    spotbugs.toolVersion = '3.1.12'
+    spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
 }
 
