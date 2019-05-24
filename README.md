@@ -71,7 +71,10 @@ __BETA4__:
 
 __BETA5__:
 
-- Changes to build files.
+- Changes to build files
 - Fix ClassCastException when writing CSV data containing dates.
 - added `Sheet.createRow()` and `Row.createCell()`
 
+__BETA6__:
+- Fix Javadoc encoding issue
+- Fix some POI deprecation warnings
