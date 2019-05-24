@@ -241,6 +241,14 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     float getZoom();
 
+    /**
+     * Create a new row at the bottom of the sheet.
+     * @return new row instance
+     */
+    default Row createRow() {
+        return getRow(getRowCount());
+    }
+
     void removePropertyChangeListener(PropertyChangeListener listener);
 
     void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);

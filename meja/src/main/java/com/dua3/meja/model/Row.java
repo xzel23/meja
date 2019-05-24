@@ -37,6 +37,14 @@ public interface Row extends Iterable<Cell> {
     void copy(Row other);
 
     /**
+     * Create new cell to the right of the existing cells.
+     * @return new Cell instance
+     */
+    default Cell createCell() {
+        return getCell(getLastCellNum());
+    }
+
+    /**
      * Get cell.
      *
      * @param j the column number

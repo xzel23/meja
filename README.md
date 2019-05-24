@@ -73,3 +73,5 @@ __BETA5__:
 
 - Changes to build files.
 - Fix ClassCastException when writing CSV data containing dates.
+- added `Sheet.createRow()` and `Row.createCell()`
+
