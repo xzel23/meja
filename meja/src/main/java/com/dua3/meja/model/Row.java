@@ -41,7 +41,7 @@ public interface Row extends Iterable<Cell> {
      * @return new Cell instance
      */
     default Cell createCell() {
-        return getCell(getLastCellNum());
+        return getCell(getLastCellNum()+1);
     }
 
     /**

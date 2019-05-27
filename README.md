@@ -79,3 +79,4 @@ __BETA6__:
 - Fix Javadoc encoding issue
 - Fix some POI deprecation warnings
 - Database utility class to copy data from ResultSet into Sheet
+- Fix Off-by-One error in Row.createCell()
