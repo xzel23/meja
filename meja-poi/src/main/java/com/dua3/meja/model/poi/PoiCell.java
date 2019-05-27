@@ -48,6 +48,9 @@ public final class PoiCell extends AbstractCell {
 
     private static final Logger LOGGER = Logger.getLogger(PoiCell.class.getName());
 
+    private static final char NON_BREAKING_SPACE = (char) 160;
+    private static final char TAB = '\t';
+
     private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
         switch (poiType) {
         case BLANK:
@@ -568,8 +571,8 @@ public final class PoiCell extends AbstractCell {
     public RichText toRichText(RichTextString rts) {
         String text = rts.getString();
         // TODO: properly process tabs
-        text = text.replace('\t', ' '); // tab
-        text = text.replace((char) 160, ' '); // non-breaking space
+        text = text.replace(TAB, ' '); // tab
+        text = text.replace(NON_BREAKING_SPACE, ' '); // non-breaking space
 
         RichTextBuilder rtb = new RichTextBuilder();
         int start = 0;

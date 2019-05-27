@@ -24,6 +24,8 @@ public class DbMejaUtil {
      *  the sheet to fill
      * @param rs
      *  the ResultSet
+     * @param addTableHeader
+     *  whether to generate a header row
      * @return
      *  the number of rows read
      * @throws SQLException
