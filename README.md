@@ -76,6 +76,7 @@ __BETA5__:
 - added `Sheet.createRow()` and `Row.createCell()`
 
 __BETA6__:
+
 - Fix Javadoc encoding issue
 - Fix some POI deprecation warnings
 - Database utility class to copy data from ResultSet into Sheet
