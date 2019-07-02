@@ -57,9 +57,6 @@ subprojects {
         }
     }
 
-    // handle snapshot versions
-    dua3_utility_version = "${dua3_utility_version}${versionSuffix}"
-
     // get OS (because JavaFX packages are OS dependent)
     def currentOS = org.gradle.internal.os.OperatingSystem.current()
     if (currentOS.isWindows()) {
@@ -190,7 +187,7 @@ subprojects {
         }
     }
 
-// === SPOTBUGS === >
+// === SPOTBUGS === >grtadlew
 
     spotbugs.toolVersion = '3.1.12'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
