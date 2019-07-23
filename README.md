@@ -82,3 +82,9 @@ __BETA6__:
 - Database utility class to copy data from ResultSet into Sheet
 - small code cleanups
 - Fix Off-by-One error in Row.createCell()
+
+__BETA7__:
+
+- update utility
+- remove version file
+
