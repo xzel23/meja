@@ -19,18 +19,16 @@ plugins {
 }
 
 subprojects {
-
     apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
-    apply plugin: 'eclipse'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.dua3.gradle.jpms'
     apply plugin: 'com.jfrog.bintray'
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '2.0-BETA7'
+    version = '2.0-BETA8'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
@@ -47,7 +45,7 @@ subprojects {
         javafx_version='12.0.1'
         junit_version='5.3.1'
 
-        dua3_utility_version = '4.0.3'
+        dua3_utility_version = '4.0.5'
     }
 
     sourceCompatibility = java_version

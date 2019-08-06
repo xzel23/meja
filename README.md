@@ -88,3 +88,6 @@ __BETA7__:
 - update utility
 - remove version file
 
+__BETA8__:
+
+- `MejaHelper.openWorkbook()` determines the correct type by looking at the file extension.

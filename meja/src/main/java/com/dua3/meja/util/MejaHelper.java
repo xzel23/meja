@@ -30,6 +30,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.lang.LangUtil;
 
@@ -234,9 +235,7 @@ public class MejaHelper {
      * Open workbook file.
      * <p>
      * This method inspects the file name extension to determine which factory
-     * should be used for loading. If there are multiple factories registered for
-     * the extension, the matching factories are tried in sequential order. If
-     * loading succeeds, the workbook is returned.
+     * should be used for loading.
      * </p>
      * 
      * @param path the workbook path
@@ -244,17 +243,7 @@ public class MejaHelper {
      * @throws IOException if workbook could not be loaded
      */
     public static Workbook openWorkbook(Path path) throws IOException {
-        IOException exception = null;
-        for (var t: FileType.getFileTypes(OpenMode.READ, Workbook.class)) {
-            try {
-                return t.read(path);
-            } catch (IOException e) {
-                LOGGER.warning("Reading '"+path+"' failed");
-                exception = e;
-            }
-        }
-
-        throw (exception != null) ? exception : new IOException("Could not determine file type");
+        return FileType.read(path, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: "+path));
     }
 
     private MejaHelper() {
