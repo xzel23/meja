@@ -304,8 +304,15 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public Number getNumber() {
-        LangUtil.check(getCellType() == CellType.NUMERIC, "Cell does not contain a number.");
-        return poiCell.getNumericCellValue();
+        switch (getCellType()) {
+            case NUMERIC:
+                return poiCell.getNumericCellValue();
+            case FORMULA:
+                LangUtil.check(getResultType()==CellType.NUMERIC, "formula does not yield a number");
+                return poiCell.getNumericCellValue();
+            default:
+                throw new IllegalStateException("Cell does not contain a number.");
+        }
     }
 
     @Override
