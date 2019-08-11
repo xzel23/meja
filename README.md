@@ -91,3 +91,8 @@ __BETA7__:
 __BETA8__:
 
 - `MejaHelper.openWorkbook()` determines the correct type by looking at the file extension.
+
+__BETA9__:
+
+ - support reading numerical values from formula cells
+ 
