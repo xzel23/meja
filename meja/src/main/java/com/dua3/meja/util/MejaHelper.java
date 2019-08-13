@@ -29,6 +29,7 @@ import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.io.OpenMode;
@@ -244,6 +245,97 @@ public class MejaHelper {
      */
     public static Workbook openWorkbook(Path path) throws IOException {
         return FileType.read(path, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: "+path));
+    }
+
+    /**
+     * Options controlling print output.
+     */
+    public static enum PrintOptions {
+        LINE_ABOVE,
+        LINE_BELOW,
+        LINE_BELOW_HEADER;
+    }
+
+    /**
+     * Print Sheet contesnts as a text table (for console output).
+     * <p>
+     * Example output:
+     * <pre>
+     *     ----------  (PrintOptions.LINE_ABOVE)
+     *     |A|  B| C|
+     *     |-+---+--|  (PrintOptions.LINE_BELOW_HEADER)
+     *     |1|123|xx|
+     *     ----------  (PrintOptions.LINE_BELOW)
+     * </pre>
+     *
+     * @param app
+     * @param sheet
+     * @param locale
+     * @throws IOException
+     */
+    public static void printTable(Appendable app, Sheet sheet, Locale locale, PrintOptions... printOptions) throws IOException {
+        EnumSet<PrintOptions> options = EnumSet.noneOf(PrintOptions.class);
+        options.addAll(Arrays.asList(printOptions));
+
+        // determine column dimensions
+        int[] columnLength = new int[sheet.getColumnCount()];
+        for (Row row: sheet) {
+            for (int j=0; j<sheet.getColumnCount(); j++) {
+                 for (String s: row.getCell(0).toString(locale).split("\n")) {
+                    columnLength[j] = Math.max(columnLength[0], s.length());
+                 }
+            }
+        }
+
+        int overallLength = 1;
+        for (int len: columnLength) {
+            overallLength += len+1;
+        }
+
+        // output data
+        Formatter fmt = new Formatter(app);
+
+        if (options.contains(PrintOptions.LINE_ABOVE)) {
+            fmt.format("%s%n", "-".repeat(overallLength));
+        }
+
+        boolean isHeadRow = true;
+        for (Row row: sheet) {
+            // collect data and determine row height
+            int lines = 0;
+            String[][] data = new String[sheet.getColumnCount()][];
+            for (int j=0; j<sheet.getColumnCount(); j++) {
+                data[j] = row.getCell(0).toString(locale).split("\n");
+                lines = Math.max(lines, data[j].length);
+            }
+
+            // print row data
+            for (int k=0;k<lines; k++) {
+                fmt.format("|");
+                for (int j=0; j<sheet.getColumnCount(); j++) {
+                    int w=columnLength[j];
+                    String[] colulmnData = data[j];
+                    String s = k<colulmnData.length ? colulmnData[k]:"";
+                    fmt.format("%"+w+"s|", s);
+                }
+                fmt.format("%n");
+            }
+
+            if (isHeadRow && options.contains(PrintOptions.LINE_BELOW_HEADER) && sheet.getRowCount()>1) {
+                fmt.format("|");
+                for (int j=0; j<sheet.getColumnCount(); j++) {
+                    String fmts = j+1<sheet.getColumnCount() ? "%s+" : "%s|";
+                    fmt.format(fmts, "-".repeat(columnLength[j]));
+                }
+                fmt.format("%n");
+            }
+
+            isHeadRow = false;
+        }
+
+        if (options.contains(PrintOptions.LINE_BELOW)) {
+            fmt.format("%s%n", "-".repeat(overallLength));
+        }
     }
 
     private MejaHelper() {

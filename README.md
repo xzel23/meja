@@ -96,3 +96,6 @@ __BETA9__:
 
  - support reading numerical values from formula cells
  
+__BETA10__:
+
+ - `MejaHelper.printTable`: output sheet as text in tabular form
