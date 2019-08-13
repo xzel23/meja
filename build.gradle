@@ -1,11 +1,11 @@
 // Copyright 2019 Axel Howind
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,7 +13,8 @@
 // limitations under the License.
 
 plugins {
-    id 'com.dua3.gradle.jpms' version '0.8.3' apply false
+    id 'com.dua3.gradle.jpms' version '1.0-BETA1' apply false
+    id 'com.adarshr.test-logger' version '1.7.0' apply false
     id 'com.github.spotbugs' version '1.6.10' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
 }
@@ -24,6 +25,7 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.dua3.gradle.jpms'
+    apply plugin: 'com.adarshr.test-logger'
     apply plugin: 'com.jfrog.bintray'
 
     /////////////////////////////////////////////////////////////////////////////
@@ -83,10 +85,6 @@ subprojects {
 
     test {
         useJUnitPlatform()
-
-        filter {
-            exclude '**/module-info.class'
-        }
     }
 
     javadoc {
@@ -108,8 +106,8 @@ subprojects {
         key = findProperty('BINTRAY_KEY') ?: 'NONE'
 
         dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-        publish = true //[Default: false] Whether version should be auto published after an upload    
-        override = true //[Default: false] Whether to override version artifacts already published    
+        publish = true //[Default: false] Whether version should be auto published after an upload
+        override = true //[Default: false] Whether to override version artifacts already published
 
         publications = ['projectPublication']
 
