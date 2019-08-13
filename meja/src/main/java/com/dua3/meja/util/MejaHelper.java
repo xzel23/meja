@@ -281,7 +281,7 @@ public class MejaHelper {
         int[] columnLength = new int[sheet.getColumnCount()];
         for (Row row: sheet) {
             for (int j=0; j<sheet.getColumnCount(); j++) {
-                 for (String s: row.getCell(0).toString(locale).split("\n")) {
+                 for (String s: row.getCell(j).toString(locale).split("\n")) {
                     columnLength[j] = Math.max(columnLength[j], s.length());
                  }
             }
