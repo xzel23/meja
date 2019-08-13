@@ -28,7 +28,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '2.0-BETA11'
+    version = '2.0-BETA10a'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'

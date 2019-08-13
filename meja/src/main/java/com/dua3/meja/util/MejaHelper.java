@@ -282,7 +282,7 @@ public class MejaHelper {
         for (Row row: sheet) {
             for (int j=0; j<sheet.getColumnCount(); j++) {
                  for (String s: row.getCell(0).toString(locale).split("\n")) {
-                    columnLength[j] = Math.max(columnLength[0], s.length());
+                    columnLength[j] = Math.max(columnLength[j], s.length());
                  }
             }
         }
@@ -305,7 +305,7 @@ public class MejaHelper {
             int lines = 0;
             String[][] data = new String[sheet.getColumnCount()][];
             for (int j=0; j<sheet.getColumnCount(); j++) {
-                data[j] = row.getCell(0).toString(locale).split("\n");
+                data[j] = row.getCell(j).toString(locale).split("\n");
                 lines = Math.max(lines, data[j].length);
             }
 
