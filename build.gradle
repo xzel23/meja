@@ -87,6 +87,10 @@ subprojects {
         useJUnitPlatform()
     }
 
+    testlogger {
+        theme 'standard-parallel'
+    }
+
     javadoc {
         options.encoding = 'UTF-8'
         doFirst {
