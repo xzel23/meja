@@ -99,3 +99,4 @@ __BETA9__:
 __BETA10__:
 
  - `MejaHelper.printTable`: output sheet as text in tabular form
+ - removed MejaConfig. This had the sole purpose of toggling XOR-drawing in the sheet painter and I never really used it. If XOR-drawing does not work for whatever reason, create an issue and set the system property `MEJA_USE_XOR_DRAWING` to `false`.

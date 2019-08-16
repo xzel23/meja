@@ -24,7 +24,6 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
-import com.dua3.meja.util.MejaConfig;
 import com.dua3.utility.data.Color;
 
 /**
@@ -34,6 +33,10 @@ import com.dua3.utility.data.Color;
  * @param <GC> the concrete class implementing GraphicsContext
  */
 public abstract class SheetPainterBase<SV extends SheetView, GC extends GraphicsContext> {
+
+    public static final String MEJA_USE_XOR_DRAWING = "MEJA_USE_XOR_DRAWING";
+
+    private boolean useXorDrawing = System.getProperty(MEJA_USE_XOR_DRAWING, "true").equalsIgnoreCase("true");
 
     enum CellDrawMode {
         /**
@@ -474,8 +477,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         Cell logicalCell = sheet.getCurrentCell().getLogicalCell();
         Rectangle rect = getCellRect(logicalCell);
 
-        gc.setXOR(MejaConfig.isXorDrawModeEnabled());
-
+        gc.setXOR(useXorDrawing);
         gc.setStroke(getSelectionColor(), getSelectionStrokeWidth());
         gc.drawRect(rect.getX(), rect.getY(), rect.getW(), rect.getH());
         gc.setXOR(false);
