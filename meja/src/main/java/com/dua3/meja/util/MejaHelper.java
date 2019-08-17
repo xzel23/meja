@@ -15,25 +15,15 @@
  */
 package com.dua3.meja.util;
 
+import com.dua3.meja.model.*;
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.text.TextUtil;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.SearchOptions;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.utility.data.Pair;
-import com.dua3.utility.io.FileType;
-import com.dua3.utility.io.IOUtil;
-import com.dua3.utility.io.OpenMode;
-import com.dua3.utility.lang.LangUtil;
 
 /**
  * Helper class.
@@ -238,19 +228,20 @@ public class MejaHelper {
      * This method inspects the file name extension to determine which factory
      * should be used for loading.
      * </p>
-     * 
+     *
      * @param path the workbook path
      * @return the workbook loaded from file
      * @throws IOException if workbook could not be loaded
      */
     public static Workbook openWorkbook(Path path) throws IOException {
-        return FileType.read(path, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: "+path));
+        return FileType.read(path, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: " + path));
     }
 
     /**
      * Options controlling print output.
      */
     public static enum PrintOptions {
+        PREPEND_SHEET_NAME,
         LINE_ABOVE,
         LINE_BELOW,
         LINE_BELOW_HEADER;
@@ -279,17 +270,17 @@ public class MejaHelper {
 
         // determine column dimensions
         int[] columnLength = new int[sheet.getColumnCount()];
-        for (Row row: sheet) {
-            for (int j=0; j<sheet.getColumnCount(); j++) {
-                 for (String s: row.getCell(j).toString(locale).split("\n")) {
+        for (Row row : sheet) {
+            for (int j = 0; j < sheet.getColumnCount(); j++) {
+                for (String s : row.getCell(j).toString(locale).split("\n")) {
                     columnLength[j] = Math.max(columnLength[j], s.length());
-                 }
+                }
             }
         }
 
         int overallLength = 1;
-        for (int len: columnLength) {
-            overallLength += len+1;
+        for (int len : columnLength) {
+            overallLength += len + 1;
         }
 
         // output data
@@ -299,32 +290,41 @@ public class MejaHelper {
             fmt.format("%s%n", "-".repeat(overallLength));
         }
 
+        if (options.contains(PrintOptions.PREPEND_SHEET_NAME)) {
+            String title = sheet.getSheetName();
+            fmt.format("|%s|%n", TextUtil.align(title, overallLength, TextUtil.Alignment.CENTER));
+
+            if (options.contains(PrintOptions.LINE_ABOVE)) {
+                fmt.format("%s%n", "-".repeat(overallLength));
+            }
+        }
+
         boolean isHeadRow = true;
-        for (Row row: sheet) {
+        for (Row row : sheet) {
             // collect data and determine row height
             int lines = 0;
             String[][] data = new String[sheet.getColumnCount()][];
-            for (int j=0; j<sheet.getColumnCount(); j++) {
+            for (int j = 0; j < sheet.getColumnCount(); j++) {
                 data[j] = row.getCell(j).toString(locale).split("\n");
                 lines = Math.max(lines, data[j].length);
             }
 
             // print row data
-            for (int k=0;k<lines; k++) {
+            for (int k = 0; k < lines; k++) {
                 fmt.format("|");
-                for (int j=0; j<sheet.getColumnCount(); j++) {
-                    int w=columnLength[j];
+                for (int j = 0; j < sheet.getColumnCount(); j++) {
+                    int w = columnLength[j];
                     String[] colulmnData = data[j];
-                    String s = k<colulmnData.length ? colulmnData[k]:"";
-                    fmt.format("%"+w+"s|", s);
+                    String s = k < colulmnData.length ? colulmnData[k] : "";
+                    fmt.format("%" + w + "s|", s);
                 }
                 fmt.format("%n");
             }
 
-            if (isHeadRow && options.contains(PrintOptions.LINE_BELOW_HEADER) && sheet.getRowCount()>1) {
+            if (isHeadRow && options.contains(PrintOptions.LINE_BELOW_HEADER) && sheet.getRowCount() > 1) {
                 fmt.format("|");
-                for (int j=0; j<sheet.getColumnCount(); j++) {
-                    String fmts = j+1<sheet.getColumnCount() ? "%s+" : "%s|";
+                for (int j = 0; j < sheet.getColumnCount(); j++) {
+                    String fmts = j + 1 < sheet.getColumnCount() ? "%s+" : "%s|";
                     fmt.format(fmts, "-".repeat(columnLength[j]));
                 }
                 fmt.format("%n");
