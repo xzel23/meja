@@ -292,7 +292,7 @@ public class MejaHelper {
 
         if (options.contains(PrintOptions.PREPEND_SHEET_NAME)) {
             String title = sheet.getSheetName();
-            fmt.format("|%s|%n", TextUtil.align(title, overallLength, TextUtil.Alignment.CENTER));
+            fmt.format("|%s|%n", TextUtil.align(title, overallLength-2, TextUtil.Alignment.CENTER));
 
             if (options.contains(PrintOptions.LINE_ABOVE)) {
                 fmt.format("%s%n", "-".repeat(overallLength));
