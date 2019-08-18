@@ -13,7 +13,7 @@
 // limitations under the License.
 
 plugins {
-    id 'com.dua3.gradle.jpms' version '1.0-BETA1' apply false
+    id 'com.dua3.gradle.jpms' version '1.0-BETA2' apply false
     id 'com.adarshr.test-logger' version '1.7.0' apply false
     id 'com.github.spotbugs' version '1.6.10' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
@@ -44,7 +44,7 @@ subprojects {
 
     ext {
         java_version='11'
-        javafx_version='12.0.1'
+        javafx_version='12.0.2'
         junit_version='5.3.1'
 
         dua3_utility_version = '4.0.7'
