@@ -241,10 +241,11 @@ public class MejaHelper {
      * Options controlling print output.
      */
     public static enum PrintOptions {
+        DRAW_LINES,
         PREPEND_SHEET_NAME,
         LINE_ABOVE,
         LINE_BELOW,
-        LINE_BELOW_HEADER;
+        FIRST_LINE_IS_HEADER;
     }
 
     /**
@@ -260,13 +261,26 @@ public class MejaHelper {
      * </pre>
      *
      * @param app
+     *  the Appendable used for output
      * @param sheet
+     *  the sheet to print
      * @param locale
+     *  the locale to use (i. e. for number formatting)
      * @throws IOException
+     *  if an output error occurs
      */
-    public static void printTable(Appendable app, Sheet sheet, Locale locale, PrintOptions... printOptions) throws IOException {
-        EnumSet<PrintOptions> options = EnumSet.noneOf(PrintOptions.class);
-        options.addAll(Arrays.asList(printOptions));
+    public static <A extends Appendable> A printTable(A app, Sheet sheet, Locale locale, PrintOptions... printOptions) throws IOException {
+        EnumSet<PrintOptions> options = EnumSet.copyOf(Arrays.asList(printOptions));
+
+        // setup the symbols used to drawing lines
+        final String pipe, dash, cross;
+        if (options.contains(PrintOptions.DRAW_LINES)) {
+            pipe = "|";
+            dash = "-";
+            cross = "+";
+        } else {
+            pipe = dash = cross = " ";
+        }
 
         // determine column dimensions
         int[] columnLength = new int[sheet.getColumnCount()];
@@ -287,12 +301,12 @@ public class MejaHelper {
         Formatter fmt = new Formatter(app);
 
         if (options.contains(PrintOptions.LINE_ABOVE)) {
-            fmt.format("%s%n", "-".repeat(overallLength));
+            fmt.format("%s%n", dash.repeat(overallLength));
         }
 
         if (options.contains(PrintOptions.PREPEND_SHEET_NAME)) {
             String title = sheet.getSheetName();
-            fmt.format("|%s|%n", TextUtil.align(title, overallLength-2, TextUtil.Alignment.CENTER));
+            fmt.format("%2$s%1$s%2$s%n", TextUtil.align(title, overallLength-2, TextUtil.Alignment.CENTER), pipe);
 
             if (options.contains(PrintOptions.LINE_ABOVE)) {
                 fmt.format("%s%n", "-".repeat(overallLength));
@@ -304,28 +318,31 @@ public class MejaHelper {
             // collect data and determine row height
             int lines = 0;
             String[][] data = new String[sheet.getColumnCount()][];
+            int[] align = new int[sheet.getColumnCount()];
             for (int j = 0; j < sheet.getColumnCount(); j++) {
                 data[j] = row.getCell(j).toString(locale).split("\n");
+                align[j] = row.getCell(j).get() instanceof Number ? 1 : -1;
                 lines = Math.max(lines, data[j].length);
             }
 
             // print row data
             for (int k = 0; k < lines; k++) {
-                fmt.format("|");
+                fmt.format("%s", pipe /* '|' */);
                 for (int j = 0; j < sheet.getColumnCount(); j++) {
-                    int w = columnLength[j];
+                    int w = align[j]*columnLength[j];
                     String[] colulmnData = data[j];
                     String s = k < colulmnData.length ? colulmnData[k] : "";
-                    fmt.format("%" + w + "s|", s);
+                    fmt.format("%1$" + w + "s%2$s", s, pipe);
                 }
                 fmt.format("%n");
             }
 
-            if (isHeadRow && options.contains(PrintOptions.LINE_BELOW_HEADER) && sheet.getRowCount() > 1) {
-                fmt.format("|");
+            // print horizontal line
+            if (isHeadRow && options.contains(PrintOptions.FIRST_LINE_IS_HEADER) && sheet.getRowCount() > 1) {
+                fmt.format("%s", pipe);
                 for (int j = 0; j < sheet.getColumnCount(); j++) {
-                    String fmts = j + 1 < sheet.getColumnCount() ? "%s+" : "%s|";
-                    fmt.format(fmts, "-".repeat(columnLength[j]));
+                    String endSymbol = j + 1 < sheet.getColumnCount() ? cross : pipe;
+                    fmt.format("%s%s", "-".repeat(columnLength[j]), endSymbol);
                 }
                 fmt.format("%n");
             }
@@ -334,8 +351,10 @@ public class MejaHelper {
         }
 
         if (options.contains(PrintOptions.LINE_BELOW)) {
-            fmt.format("%s%n", "-".repeat(overallLength));
+            fmt.format("%s%n", dash.repeat(overallLength));
         }
+
+        return app;
     }
 
     private MejaHelper() {

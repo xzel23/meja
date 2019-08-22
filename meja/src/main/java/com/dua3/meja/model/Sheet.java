@@ -173,7 +173,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
      * Get merged region at position.
-     * 
+     *
      * @param rowNum the row number
      * @param colNum the column number
      * @return the merged region or null if the cell does not belong to a merged
@@ -243,10 +243,17 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
      * Create a new row at the bottom of the sheet.
-     * @return new row instance
+     * @param values
+     *  the values to insert (optional)
+     * @return
+     *  new row instance
      */
-    default Row createRow() {
-        return getRow(getRowCount());
+    default Row createRow(Object... values) {
+        Row row = getRow(getRowCount());
+        for (int i=0; i< values.length; i++) {
+            row.getCell(i).set(values[i]);
+        }
+        return row;
     }
 
     void removePropertyChangeListener(PropertyChangeListener listener);
@@ -313,7 +320,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
      * Create row iterator.
-     * 
+     *
      * @return row iterator
      */
     @Override
@@ -371,7 +378,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
      * Create a stream of the rows in this sheet.
-     * 
+     *
      * @return stream of rows
      */
     default Stream<Row> rows() {
