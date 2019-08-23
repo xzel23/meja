@@ -270,7 +270,9 @@ public class MejaHelper {
      *  if an output error occurs
      */
     public static <A extends Appendable> A printTable(A app, Sheet sheet, Locale locale, PrintOptions... printOptions) throws IOException {
-        EnumSet<PrintOptions> options = EnumSet.copyOf(Arrays.asList(printOptions));
+        EnumSet<PrintOptions> options = printOptions.length==0
+                ? EnumSet.noneOf(PrintOptions.class)
+                : EnumSet.copyOf(Arrays.asList(printOptions));
 
         // setup the symbols used to drawing lines
         final String pipe, dash, cross;

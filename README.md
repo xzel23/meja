@@ -105,4 +105,5 @@ __BETA11__:
 
  - __BREAKING__: Added parameter `Object... values` to `Sheet.createRow()`. This requires recompilation, but no source changes.
  - `MejaHelper.printTable()`: `FIRST_LINE_IS_HEADER` to indicate that the first line is table header.
- 
+ - (BETA11a): fix IllegalArgumentException when no PrintOptions are supplied.
+  
