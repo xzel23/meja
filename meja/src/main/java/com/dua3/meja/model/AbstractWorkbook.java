@@ -2,6 +2,7 @@ package com.dua3.meja.model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -14,15 +15,15 @@ public abstract class AbstractWorkbook implements Workbook {
     /**
      * The path of this workbook.
      */
-    protected Path path;
+    protected URI uri;
 
     /**
      * The object cache used to reduce memory usage.
      */
     private ObjectCache objectCache = null;
 
-    public AbstractWorkbook(Path path) {
-        this.path = path;
+    public AbstractWorkbook(URI uri) {
+        this.uri = uri;
     }
 
     @Override
@@ -41,8 +42,8 @@ public abstract class AbstractWorkbook implements Workbook {
     }
 
     @Override
-    public Optional<Path> getPath() {
-        return Optional.ofNullable(path);
+    public Optional<URI> getUri() {
+        return Optional.ofNullable(uri);
     }
 
     /**
@@ -81,10 +82,10 @@ public abstract class AbstractWorkbook implements Workbook {
     }
 
     @Override
-    public void setPath(Path path) {
-        Path oldPath = this.path;
-        this.path = path;
-        firePropertyChange(PROPERTY_ACTIVE_SHEET, oldPath, path);
+    public void setUri(URI uri) {
+        URI oldUri = this.uri;
+        this.uri = uri;
+        firePropertyChange(PROPERTY_ACTIVE_SHEET, oldUri, this.uri);
     }
 
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {

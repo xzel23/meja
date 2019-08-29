@@ -107,3 +107,7 @@ __BETA11__:
  - `MejaHelper.printTable()`: `FIRST_LINE_IS_HEADER` to indicate that the first line is table header.
  - (BETA11a): fix IllegalArgumentException when no PrintOptions are supplied.
   
+__BETA_12__:
+
+ - use URI instead of Path everywhere (because Path makes problems when referring to files located inside jars)
+ 

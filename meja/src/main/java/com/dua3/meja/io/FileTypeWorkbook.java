@@ -7,6 +7,7 @@ import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.OptionValues;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.function.Function;
 
@@ -19,7 +20,7 @@ public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
     public abstract WorkbookFactory getWorkbookFactory();
 
     @Override
-    public void write(Path path, W document, Function<FileType, OptionValues> options) throws IOException {
-        getWorkbookWriter().write(document, path);
+    public void write(URI uri, W document, Function<FileType, OptionValues> options) throws IOException {
+        getWorkbookWriter().write(document, uri);
     }
 }

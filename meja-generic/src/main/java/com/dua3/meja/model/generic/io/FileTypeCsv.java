@@ -13,6 +13,7 @@ import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.options.OptionValues;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.function.Function;
 
@@ -22,14 +23,14 @@ public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {
     public static FileType instance() {
         return INSTANCE;
     }
-    
+
     public FileTypeCsv() {
         super("CSV", OpenMode.READ_AND_WRITE, GenericWorkbook.class, "csv", "txt");
     }
 
     @Override
-    public GenericWorkbook read(Path path, Function<FileType, OptionValues> options) throws IOException {
-        return GenericWorkbookFactory.instance().open(path);
+    public GenericWorkbook read(URI uri, Function<FileType, OptionValues> options) throws IOException {
+        return GenericWorkbookFactory.instance().open(uri);
     }
 
     @Override

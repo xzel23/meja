@@ -12,12 +12,13 @@ import com.dua3.utility.options.OptionValues;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.function.Function;
 
 public class FileTypeXls extends FileTypeWorkbook<PoiWorkbook.PoiHssfWorkbook> {
     private static final FileTypeXls INSTANCE = new FileTypeXls();
-    
+
     public static FileTypeXls instance() {
         return INSTANCE;
     }
@@ -33,8 +34,8 @@ public class FileTypeXls extends FileTypeWorkbook<PoiWorkbook.PoiHssfWorkbook> {
     }
 
     @Override
-    public PoiWorkbook.PoiHssfWorkbook read(Path path, Function<FileType, OptionValues> options) throws IOException {
-        PoiWorkbook wb = PoiWorkbookFactory.instance().open(path);
+    public PoiWorkbook.PoiHssfWorkbook read(URI uri, Function<FileType, OptionValues> options) throws IOException {
+        PoiWorkbook wb = PoiWorkbookFactory.instance().open(uri);
         LangUtil.check(wb instanceof PoiWorkbook.PoiHssfWorkbook);
         return (PoiWorkbook.PoiHssfWorkbook) wb;
     }

@@ -20,8 +20,8 @@ import java.beans.PropertyChangeSupport;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.options.OptionValues;
 
 /**
@@ -203,16 +204,16 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     }
 
     /**
-     * Get the Path for this workbook.
+     * Get the URI for this workbook.
      *
      * <p>
-     * When a workbook is opened, the Path is set so that it can be used to later
+     * When a workbook is opened, the URI is set so that it can be used to later
      * save the workbook back to the same location.
      * </p>
      *
-     * @return the Path for this workbook
+     * @return the URI for this workbook
      */
-    Optional<Path> getPath();
+    Optional<URI> getUri();
 
     /**
      * Check if a style with this name is defined.
@@ -277,49 +278,49 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     void setObjectCaching(boolean enabled);
 
     /**
-     * Set Path for this workbook. See {@link #getPath}.
+     * Set URI for this workbook. See {@link #getUri}.
      *
-     * @param path the Path to set.
+     * @param uri the URI to set.
      */
-    void setPath(Path path);
+    void setUri(URI uri);
 
     /**
-     * Writes the workbook to a path using standard options.
+     * Writes the workbook to a URI using standard options.
      *
-     * @param path the path to write to.
+     * @param uri the URI to write to.
      *             <p>
      *             The file format to used is determined by the extension of
-     *             {@code path} which must be one of the extensions defined in
+     *             {@code uri} which must be one of the extensions defined in
      *             {@link FileType}.
      *             </p>
      * @throws java.io.IOException if an I/O error occurs
      */
-    default void write(Path path) throws IOException {
-        write(path, OptionValues.empty());
+    default void write(URI uri) throws IOException {
+        write(uri, OptionValues.empty());
     }
 
     /**
      * Writes the workbook to a file.
      *
-     * @param path    the path to write to.
+     * @param uri    the URI to write to.
      *                <p>
      *                The file format to used is determined by the extension of
-     *                {@code path} which must be one of the extensions defined in
+     *                {@code uri} which must be one of the extensions defined in
      *                {@link FileType}.
      *                </p>
      * @param options special options to use (supported options depend on the file
      *                type)
      * @throws java.io.IOException if an I/O error occurs
      */
-    default void write(Path path, OptionValues options) throws IOException {
-    	write(path, options, p -> {});
+    default void write(URI uri, OptionValues options) throws IOException {
+    	write(uri, options, p -> {});
     }
-    
-   default void write(Path path, OptionValues options, DoubleConsumer updateProgress) throws IOException {
+
+   default void write(URI uri, OptionValues options, DoubleConsumer updateProgress) throws IOException {
 	   FileType type = FileType
-            .forPath(path)
-            .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for "+path));
-        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
+            .forUri(uri)
+            .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for "+uri));
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(IOUtil.toPath(uri)))) {
             write(type, out, options, updateProgress);
         }
     }
@@ -360,7 +361,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @throws java.io.IOException if an I/O error occurs
      */
     void write(FileType fileType, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException;
-    
+
     /**
      * Get cached instance of object.
      *
@@ -374,7 +375,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Create a stream of the rows in this sheet.
-     * 
+     *
      * @return stream of rows
      */
     default Stream<Sheet> sheets() {

@@ -17,6 +17,7 @@ package com.dua3.meja.model.poi;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,10 +84,10 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          * Construct instance from existing POI workbook.
          *
          * @param poiWorkbook the POI workbook instance
-         * @param path        the Path of the workbook
+         * @param uri        the URI of the workbook
          */
-        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, Path path) {
-            super(poiWorkbook, path);
+        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, URI uri) {
+            super(poiWorkbook, uri);
             this.defaultCellStyle = new PoiHssfCellStyle(this, poiWorkbook.getCellStyleAt((short) 0));
             cellStyles.put("", (short) 0);
             init();
@@ -184,10 +185,10 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          * Construct instance from existing POI workbook.
          *
          * @param poiWorkbook the POI workbook instance
-         * @param path        the Path of the workbook
+         * @param uri         the URI of the workbook
          */
-        public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
-            super(poiWorkbook, path);
+        public PoiXssfWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, URI uri) {
+            super(poiWorkbook, uri);
             assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt((short) 0));
             init();
@@ -299,10 +300,10 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * Construct a new instance.
      *
      * @param poiWorkbook the POI workbook instance
-     * @param path        the Path of this workbook
+     * @param uri        the URI of this workbook
      */
-    protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
-        super(path);
+    protected PoiWorkbook(org.apache.poi.ss.usermodel.Workbook poiWorkbook, URI uri) {
+        super(uri);
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
 

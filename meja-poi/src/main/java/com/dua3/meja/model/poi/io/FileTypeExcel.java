@@ -10,19 +10,20 @@ import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.OptionValues;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.function.Function;
 
 /**
  * FileType for <em>reading</em> Excel files.
- * 
+ *
  * There are different file types for reading and writing because
  * when reading, the user normally wants to have a filter that shows <em>all</em>
  * Excel files.
  */
 public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     private static final FileType INSTANCE = new FileTypeExcel();
-    
+
     public static FileType instance() {
         return INSTANCE;
     }
@@ -51,12 +52,12 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     @Override
-    public PoiWorkbook read(Path path, Function<FileType, OptionValues> options) throws IOException {
-        if (FileTypeXlsx.instance().matches(path.toString())) {
-            return FileTypeXlsx.instance().read(path, options);
+    public PoiWorkbook read(URI uri, Function<FileType, OptionValues> options) throws IOException {
+        if (FileTypeXlsx.instance().matches(uri.getSchemeSpecificPart())) {
+            return FileTypeXlsx.instance().read(uri, options);
         }
-        if (FileTypeXls.instance().matches(path.toString())) {
-            return FileTypeXls.instance().read(path, options);
+        if (FileTypeXls.instance().matches(uri.getSchemeSpecificPart())) {
+            return FileTypeXls.instance().read(uri, options);
         }
         throw new IllegalArgumentException("cannot determine file type for reading");
     }

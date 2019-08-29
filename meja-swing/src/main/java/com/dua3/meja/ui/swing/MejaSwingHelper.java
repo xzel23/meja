@@ -21,6 +21,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -40,9 +41,8 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Sheet.RowInfo;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionSet;
@@ -212,11 +212,12 @@ public class MejaSwingHelper {
      * Show a file open dialog and load the selected workbook.
      *
      * @param parent the parent component to use for the dialog
-     * @param path   the directory to set in the open dialog or the default path
+     * @param uri   the directory to set in the open dialog or the default path
      * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException if a workbook was selected but could not be loaded
      */
-    public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, Path path) throws IOException {
+    public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, URI uri) throws IOException {
+        Path path = IOUtil.toPath(uri);
         boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
         File file = defaultFS ? path.toFile() : new File(".");
 
@@ -232,16 +233,14 @@ public class MejaSwingHelper {
             return Optional.empty();
         }
 
-        path = jfc.getSelectedFile().toPath();
-
-        return openWorkbook(parent, path);
+        return openWorkbook(parent, jfc.getSelectedFile().toURI());
     }
 
-    public static Optional<Workbook> openWorkbook(Component parent, Path path) throws IOException {
-        FileType<Workbook> fileType = FileType.forPath(path, Workbook.class).orElseThrow();
+    public static Optional<Workbook> openWorkbook(Component parent, URI uri) throws IOException {
+        FileType<Workbook> fileType = FileType.forUri(uri, Workbook.class).orElseThrow();
 
         // load
-        return Optional.of(fileType.read(path, t -> showOptionsDialog(parent, t)));
+        return Optional.of(fileType.read(uri, t -> showOptionsDialog(parent, t)));
     }
 
     private static OptionValues showOptionsDialog(Component parent, FileType fileType) {
@@ -266,13 +265,14 @@ public class MejaSwingHelper {
      *
      * @param parent   the parent component for the dialog
      * @param workbook the workbook to save
-     * @param path     the path to set the default path in the dialog
+     * @param uri     the URI to set the default path in the dialog
      * @return the URI the file was saved to or {@code null} if the user canceled
      *         the dialog
      * @throws IOException if an exception occurs while saving
      */
-    public static Optional<Path> showDialogAndSaveWorkbook(Component parent, Workbook workbook, Path path)
+    public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, URI uri)
             throws IOException {
+        Path path = IOUtil.toPath(uri);
         boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
         File file = defaultFS ? path.toFile() : new File(".");
 
@@ -296,14 +296,14 @@ public class MejaSwingHelper {
             }
         }
 
-        Optional<FileType<Workbook>> type = FileType.forPath(file.toPath(), Workbook.class);
+        Optional<FileType<Workbook>> type = FileType.forUri(file.toURI(), Workbook.class);
         if (type.isPresent()) {
-            type.get().write(file.toPath(), workbook);
+            type.get().write(file.toURI(), workbook);
         } else {
-            workbook.write(file.toPath());
+            workbook.write(file.toURI());
         }
 
-        return Optional.of(file.toPath());
+        return Optional.of(file.toURI());
     }
 
     private MejaSwingHelper() {

@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 
 import com.dua3.utility.options.OptionValues;
@@ -38,7 +39,7 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      */
     public WORKBOOK copyOf(Workbook other) {
         WORKBOOK workbook = create();
-        workbook.setPath(other.getPath().orElse(null));
+        workbook.setUri(other.getUri().orElse(null));
 
         // copy styles
         for (String styleName : other.getCellStyleNames()) {
@@ -77,12 +78,12 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * is possible to open a CSV file as Excel workbook.
      * </p>
      *
-     * @param path the workbook path
+     * @param uri the workbook URI
      * @return workbook
      * @throws IOException if an input/output error occurs
      */
-    public WORKBOOK open(Path path) throws IOException {
-        return open(path, OptionValues.empty());
+    public WORKBOOK open(URI uri) throws IOException {
+        return open(uri, OptionValues.empty());
     }
 
     /**
@@ -92,11 +93,11 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * is possible to open a CSV file as Excel workbook.
      * </p>
      *
-     * @param path           the workbook path
+     * @param uri           the workbook URI
      * @param importSettings settings to configure the input process
      * @return workbook
      * @throws IOException if an input/output error occurs
      */
-    public abstract WORKBOOK open(Path path, OptionValues importSettings) throws IOException;
+    public abstract WORKBOOK open(URI uri, OptionValues importSettings) throws IOException;
 
 }

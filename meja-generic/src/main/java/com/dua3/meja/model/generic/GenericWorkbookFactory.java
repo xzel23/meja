@@ -16,6 +16,7 @@
 package com.dua3.meja.model.generic;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 
 import com.dua3.meja.io.CsvWorkbookReader;
@@ -54,8 +55,8 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
     }
 
     @Override
-    public GenericWorkbook open(Path path, OptionValues importSettings) throws IOException {
-        FileType type = FileType.forPath(path).orElseThrow(() -> new IllegalArgumentException("cannot determine filetype"));
+    public GenericWorkbook open(URI uri, OptionValues importSettings) throws IOException {
+        FileType type = FileType.forUri(uri).orElseThrow(() -> new IllegalArgumentException("cannot determine filetype"));
 
         LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
                 type.getName());
@@ -63,7 +64,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
         WorkbookReader reader = CsvWorkbookReader.create();
         reader.setOptions(importSettings);
 
-        return reader.read(GenericWorkbookFactory.instance(), path);
+        return reader.read(GenericWorkbookFactory.instance(), uri);
     }
 
 }

@@ -33,8 +33,8 @@ public class Converter {
             System.err.println("Outputfile already exists.");
         }
 
-        try (Workbook workbook = GenericWorkbookFactory.instance().open(in.toPath())) {
-            workbook.write(out.toPath());
+        try (Workbook workbook = GenericWorkbookFactory.instance().open(in.toURI())) {
+            workbook.write(out.toURI());
             System.out.println("Data written to " + out.getAbsolutePath());
         } catch (IOException ex) {
             System.err.println("I/O Error: " + ex.getMessage());

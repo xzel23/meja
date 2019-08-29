@@ -11,16 +11,17 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.function.Function;
 
 public class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook.PoiXssfWorkbook> {
     private static final FileTypeXlsx INSTANCE = new FileTypeXlsx();
-    
+
     public static FileTypeXlsx instance() {
         return INSTANCE;
     }
-    
+
     private FileTypeXlsx() {
         super("Excel", OpenMode.READ_AND_WRITE, PoiWorkbook.PoiXssfWorkbook.class, "xlsx");
     }
@@ -32,8 +33,8 @@ public class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook.PoiXssfWorkbook> 
     }
 
     @Override
-    public PoiWorkbook.PoiXssfWorkbook read(Path path, Function<FileType, OptionValues> options) throws IOException {
-        PoiWorkbook wb = PoiWorkbookFactory.instance().open(path);
+    public PoiWorkbook.PoiXssfWorkbook read(URI uri, Function<FileType, OptionValues> options) throws IOException {
+        PoiWorkbook wb = PoiWorkbookFactory.instance().open(uri);
         LangUtil.check(wb instanceof PoiWorkbook.PoiXssfWorkbook);
         return (PoiWorkbook.PoiXssfWorkbook) wb;
     }

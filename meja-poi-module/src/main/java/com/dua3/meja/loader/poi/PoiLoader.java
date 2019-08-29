@@ -3,6 +3,7 @@ package com.dua3.meja.loader.poi;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
@@ -42,7 +43,7 @@ public class PoiLoader extends WorkbookFactory<Workbook> {
 
             LangUtil.check(filesStr.startsWith("[") && filesStr.endsWith("]"));
             filesStr = filesStr.substring(1,filesStr.length()-1);
-            
+
             URL[] urls = Arrays.stream(filesStr.split(","))
                 .map(String::trim)
                 .map(file -> PoiLoader.class.getResource("lib/"+file))
@@ -79,7 +80,7 @@ public class PoiLoader extends WorkbookFactory<Workbook> {
     }
 
     @Override
-    public Workbook open(Path path, OptionValues importSettings) throws IOException {
-        return factory.open(path, importSettings);
+    public Workbook open(URI uri, OptionValues importSettings) throws IOException {
+        return factory.open(uri, importSettings);
     }
 }

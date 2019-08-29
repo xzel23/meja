@@ -16,11 +16,13 @@
 package com.dua3.meja.io;
 
 import com.dua3.meja.model.Workbook;
+import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.options.OptionValues;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.DoubleConsumer;
@@ -40,13 +42,13 @@ public interface WorkbookWriter {
      * Write workbook to file.
      *
      * @param workbook the workbook to write
-     * @param path     the path to write to
+     * @param uri     the URI to write to
      * @throws IOException if an error occurs when writing out the workbook
      */
-    default void write(Workbook workbook, Path path) throws IOException {
-    	write(workbook, path, p -> {});
+    default void write(Workbook workbook, URI uri) throws IOException {
+    	write(workbook, uri, p -> {});
     }
-    
+
     /**
      * Write workbook to a stream.
      *
@@ -62,13 +64,13 @@ public interface WorkbookWriter {
      * Write workbook to file.
      *
      * @param workbook the workbook to write
-     * @param path     the path to write to
-     * @param updateProgress 
+     * @param uri     the URI to write to
+     * @param updateProgress
      * 					callback for progress updates
      * @throws IOException if an error occurs when writing out the workbook
      */
-    default void write(Workbook workbook, Path path, DoubleConsumer updateProgress) throws IOException {
-        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
+    default void write(Workbook workbook, URI uri, DoubleConsumer updateProgress) throws IOException {
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(IOUtil.toPath(uri)))) {
             write(workbook, out, updateProgress);
         }
     }
@@ -78,7 +80,7 @@ public interface WorkbookWriter {
      *
      * @param workbook the workbook to write
      * @param out      the stream to write to
-     * @param updateProgress 
+     * @param updateProgress
      * 					callback for progress updates
      * @throws IOException if an error occurs when writing out the workbook
      */

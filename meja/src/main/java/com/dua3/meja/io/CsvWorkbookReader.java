@@ -18,6 +18,7 @@ package com.dua3.meja.io;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Path;
 
 import com.dua3.utility.io.CsvReader;
@@ -53,14 +54,14 @@ public class CsvWorkbookReader extends WorkbookReader {
      * @param         <W> the Workbook implementation class to use
      * @param factory the WorkbookFactory to use
      * @param in      the reader to read from
-     * @param path    the URI of the source (for creating meaningful error messages)
+     * @param uri    the URI of the source (for creating meaningful error messages)
      * @return the workbook read
      * @throws IOException if an io-error occurs during reading
      */
-    public <W extends Workbook> W read(WorkbookFactory<W> factory, BufferedReader in, Path path) throws IOException {
+    public <W extends Workbook> W read(WorkbookFactory<W> factory, BufferedReader in, URI uri) throws IOException {
         W workbook = factory.create();
-        workbook.setPath(path);
-        RowBuilder builder = new SheetRowBuilder(workbook.createSheet(path.toString()), options);
+        workbook.setUri(uri);
+        RowBuilder builder = new SheetRowBuilder(workbook.createSheet(uri.toString()), options);
         workbook.setObjectCaching(true);
         try (CsvReader reader = CsvReader.create(builder, in, options)) {
             reader.readAll();
@@ -71,9 +72,9 @@ public class CsvWorkbookReader extends WorkbookReader {
     }
 
     @Override
-    protected <W extends Workbook> W read(WorkbookFactory<W> factory, InputStream in, Path path) throws IOException {
+    protected <W extends Workbook> W read(WorkbookFactory<W> factory, InputStream in, URI uri) throws IOException {
         W workbook = factory.create();
-        workbook.setPath(path);
+        workbook.setUri(uri);
         RowBuilder builder = new SheetRowBuilder(workbook.createSheet("Sheet 1"), options);
         workbook.setObjectCaching(true);
         try (CsvReader reader = CsvReader.create(builder, in, options)) {

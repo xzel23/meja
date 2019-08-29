@@ -20,6 +20,7 @@ import com.dua3.utility.io.FileType;
 import com.dua3.utility.text.TextUtil;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -229,12 +230,12 @@ public class MejaHelper {
      * should be used for loading.
      * </p>
      *
-     * @param path the workbook path
+     * @param uri the workbook URI
      * @return the workbook loaded from file
      * @throws IOException if workbook could not be loaded
      */
-    public static Workbook openWorkbook(Path path) throws IOException {
-        return FileType.read(path, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: " + path));
+    public static Workbook openWorkbook(URI uri) throws IOException {
+        return FileType.read(uri, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: " + uri));
     }
 
     /**

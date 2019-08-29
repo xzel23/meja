@@ -18,6 +18,7 @@ package com.dua3.meja.model.poi;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.model.poi.io.FileTypeExcel;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
+import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.options.OptionValues;
@@ -50,11 +52,11 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     public static final String OPTION_LOCALE = "Locale";
 
-    private static PoiWorkbook createWorkbook(final org.apache.poi.ss.usermodel.Workbook poiWorkbook, Path path) {
+    private static PoiWorkbook createWorkbook(final org.apache.poi.ss.usermodel.Workbook poiWorkbook, URI uri) {
         if (poiWorkbook instanceof HSSFWorkbook) {
-            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, path);
+            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, uri);
         } else {
-            return new PoiXssfWorkbook(poiWorkbook, path);
+            return new PoiXssfWorkbook(poiWorkbook, uri);
         }
     }
 
@@ -72,16 +74,15 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     /**
      *
      * @param in
-     * @param locale
-     * @param path
+     * @param uri
      * @return the workbook
      * @throws IOException
      */
-    private static PoiWorkbook open(InputStream in, Path path) throws IOException {
+    private static PoiWorkbook open(InputStream in, URI uri) throws IOException {
         try {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
                     .create(in);
-            return createWorkbook(poiWorkbook, path);
+            return createWorkbook(poiWorkbook, uri);
         } catch (org.apache.poi.util.RecordFormatException ex) {
             throw new FileFormatException("Invalid file format or corrupted data", ex);
         }
@@ -132,25 +133,25 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     @Override
-    public PoiWorkbook open(Path path, OptionValues importSettings) throws IOException {
+    public PoiWorkbook open(URI uri, OptionValues importSettings) throws IOException {
         // Read Excel files directly using POI methods
         // Do not use the create(File) method to avoid exception when trying
         // to save the workbook again to the same file.
-        try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
-            return open(in, path);
+        try (InputStream in = new BufferedInputStream(uri.toURL().openStream())) {
+            return open(in, uri);
         }
     }
 
     /**
      *
-     * @param path Path of the workbook to open
+     * @param uri URI of the workbook to open
      * @return the workbook the workbook
      * @throws IOException if an error occurs
      */
     @Override
-    public PoiWorkbook open(Path path) throws IOException {
-        try (InputStream in = new BufferedInputStream(Files.newInputStream(path))) {
-            return open(in, path);
+    public PoiWorkbook open(URI uri) throws IOException {
+        try (InputStream in = new BufferedInputStream(uri.toURL().openStream())) {
+            return open(in, uri);
         }
     }
 

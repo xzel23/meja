@@ -17,6 +17,7 @@ package com.dua3.meja.model.generic;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,10 +48,10 @@ public class GenericWorkbook extends AbstractWorkbook {
     /**
      * Construct a new {@code GenericWorkbook}.
      *
-     * @param path the Path to set
+     * @param uri the URI to set
      */
-    public GenericWorkbook(Path path) {
-        super(path);
+    public GenericWorkbook(URI uri) {
+        super(uri);
         this.defaultCellStyle = new GenericCellStyle(this);
         this.cellStyles.put("", defaultCellStyle);
     }
