@@ -33,6 +33,24 @@ import java.util.Locale;
  */
 public interface Cell {
 
+    class CellException extends IllegalStateException {
+        public CellException(Cell cell, String message, Throwable cause) {
+            super(messagePrefix(cell)+message, cause);
+        }
+
+        public CellException(Cell cell, String message) {
+            super(messagePrefix(cell)+message);
+        }
+
+        public CellException(Cell cell, Throwable cause) {
+            super(messagePrefix(cell)+cause.getMessage(), cause);
+        }
+
+        private static String messagePrefix(Cell cell) {
+            return cell==null ? "" : "["+cell.getCellRef(RefOption.WITH_SHEET)+"] ";
+        }
+    }
+
     /**
      * The text to show in error cells.
      */
@@ -297,7 +315,7 @@ public interface Cell {
      * <li>{@link java.lang.String}
      * <li>{@link RichText}
      * </ul>
-     * 
+     *
      * @param arg the value
      * @return this cell
      */
@@ -398,7 +416,7 @@ public interface Cell {
 
     /**
      * Test if cell is merged.
-     * 
+     *
      * @return true if cell is merged
      */
     default boolean isMerged() {
@@ -407,7 +425,7 @@ public interface Cell {
 
     /**
      * Merge cell with neighbouring cells.
-     * 
+     *
      * @param spanX the horizontal span
      * @param spanY the vertical span
      */

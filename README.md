@@ -111,3 +111,8 @@ __BETA_12__:
 
  - use URI instead of Path everywhere (because Path makes problems when referring to files located inside jars)
  
+__BETA_13__:
+
+ - When exceptions are thrown while accessing cells, the cell ref is prefixed to the exception message
+ - update dependencies
+

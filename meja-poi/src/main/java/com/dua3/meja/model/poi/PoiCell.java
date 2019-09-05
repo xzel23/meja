@@ -66,7 +66,7 @@ public final class PoiCell extends AbstractCell {
         case FORMULA:
             return CellType.FORMULA;
         default:
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("unknown value for org.apache.poi.ss.usermodel.CellType: "+poiType);
         }
     }
 
@@ -186,7 +186,7 @@ public final class PoiCell extends AbstractCell {
             set(other.getText());
             break;
         default:
-            throw new UnsupportedOperationException("Unsupported Cell Type: " + other.getCellType());
+            throw new CellException(other, "Unsupported Cell Type: " + other.getCellType());
         }
     }
 
@@ -223,7 +223,7 @@ public final class PoiCell extends AbstractCell {
         case ERROR:
             return ERROR_TEXT;
         default:
-            throw new IllegalStateException();
+            throw new CellException(this, "unsupported cell type: "+ poiCell.getCellType());
         }
     }
 
@@ -242,7 +242,7 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public boolean getBoolean() {
-        LangUtil.check(getCellType() == CellType.BOOLEAN, "Cell does not contain a boolean value.");
+        LangUtil.check(getCellType() == CellType.BOOLEAN, () -> new CellException(this, "Cell does not contain a boolean value."));
         return poiCell.getBooleanCellValue();
     }
 
@@ -265,7 +265,7 @@ public final class PoiCell extends AbstractCell {
     public LocalDate getDate() {
         if (isEmpty()) { // POI will throw for wrong CellType but return null
                          // for empty cells
-            throw new IllegalStateException("Cell does not contain a date.");
+            throw new CellException(this, "Cell does not contain a date.");
         }
         return poiCell.getDateCellValue().toInstant()
                 .atZone(ZoneId.systemDefault())
@@ -276,7 +276,7 @@ public final class PoiCell extends AbstractCell {
     public LocalDateTime getDateTime() {
         if (isEmpty()) { // POI will throw for wrong CellType but return null
                          // for empty cells
-            throw new IllegalStateException("Cell does not contain date/time.");
+            throw new CellException(this, "Cell does not contain date/time.");
         }
         return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
     }
@@ -293,7 +293,7 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public String getFormula() {
-        LangUtil.check(getCellType() == CellType.FORMULA, "Cell does not contain a formula.");
+        LangUtil.check(getCellType() == CellType.FORMULA, () -> new CellException(this, "Cell does not contain a formula."));
         return poiCell.getCellFormula();
     }
 
@@ -308,10 +308,10 @@ public final class PoiCell extends AbstractCell {
             case NUMERIC:
                 return poiCell.getNumericCellValue();
             case FORMULA:
-                LangUtil.check(getResultType()==CellType.NUMERIC, "formula does not yield a number");
+                LangUtil.check(getResultType()==CellType.NUMERIC, () -> new CellException(this, "formula does not yield a number"));
                 return poiCell.getNumericCellValue();
             default:
-                throw new IllegalStateException("Cell does not contain a number.");
+                throw new CellException(this, "cell does not contain a number.");
         }
     }
 
@@ -341,7 +341,7 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public RichText getText() {
-        LangUtil.check(getCellType() == CellType.TEXT, "Cell does not contain a text value.");
+        LangUtil.check(getCellType() == CellType.TEXT, () -> new CellException(this, "Cell does not contain a text value."));
         return toRichText(poiCell.getRichStringCellValue());
     }
 
@@ -648,7 +648,7 @@ public final class PoiCell extends AbstractCell {
 
     /**
      * Format the cell content as a String, with number and date format applied.
-     * 
+     *
      * @return cell content with format applied
      */
     private String getFormattedText(Locale locale) {

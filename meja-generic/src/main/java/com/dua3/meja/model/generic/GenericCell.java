@@ -59,18 +59,18 @@ public class GenericCell extends AbstractCell {
      * Construct a new {@code GenericCell}.
      *
      * @param row       the row this cell belongs to
-     * @param colNumber the column number
+     * @param colNr     the column number
      * @param cellStyle the cell style to use
      */
-    public GenericCell(AbstractRow row, int colNumber, GenericCellStyle cellStyle) {
+    public GenericCell(AbstractRow row, int colNr, GenericCellStyle cellStyle) {
         super(row);
 
-        LangUtil.check(colNumber <= Short.MAX_VALUE, "Column number out of range.");
+        LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER, () -> new CellException(this, "column number out of range: "+colNr));
 
         this.cellStyle = cellStyle;
         this.value = null;
 
-        initData(colNumber);
+        initData(colNr);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class GenericCell extends AbstractCell {
             set(other.getText());
             break;
         default:
-            throw new IllegalArgumentException();
+            throw new CellException(other, "unsupported cell type: "+other.getCellType());
         }
     }
 
@@ -142,7 +142,7 @@ public class GenericCell extends AbstractCell {
         if (getCellType() == CellType.BOOLEAN) {
             return (boolean) value;
         }
-        throw new IllegalStateException("Cannot get boolean value from cell of type " + getCellType().name() + ".");
+        throw new CellException(this, "Cannot get boolean value from cell of type " + getCellType().name() + ".");
     }
 
     @Override
@@ -165,7 +165,7 @@ public class GenericCell extends AbstractCell {
         if (getCellType() == CellType.DATE) {
             return (LocalDate) value;
         }
-        throw new IllegalStateException("Cannot get date value from cell of type " + getCellType().name() + ".");
+        throw new CellException(this, "Cannot get date value from cell of type " + getCellType().name() + ".");
     }
 
     @Override
@@ -173,7 +173,7 @@ public class GenericCell extends AbstractCell {
         if (getCellType() == CellType.DATE_TIME) {
             return (LocalDateTime) value;
         }
-        throw new IllegalStateException("Cannot get date value from cell of type " + getCellType().name() + ".");
+        throw new CellException(this, "Cannot get date value from cell of type " + getCellType().name() + ".");
     }
 
     @Override
@@ -181,7 +181,7 @@ public class GenericCell extends AbstractCell {
         if (getCellType() == CellType.FORMULA) {
             return (String) value;
         }
-        throw new IllegalStateException("Cannot get formula from cell of type " + getCellType().name() + ".");
+        throw new CellException(this, "Cannot get formula from cell of type " + getCellType().name() + ".");
     }
 
     @Override
@@ -194,7 +194,7 @@ public class GenericCell extends AbstractCell {
         if (getCellType() == CellType.NUMERIC) {
             return (Number) value;
         }
-        throw new IllegalStateException("Cannot get numeric value from cell of type " + getCellType().name() + ".");
+        throw new CellException(this, "Cannot get numeric value from cell of type " + getCellType().name() + ".");
     }
 
     @Override
@@ -225,7 +225,7 @@ public class GenericCell extends AbstractCell {
         case TEXT:
             return (RichText) value;
         default:
-            throw new IllegalStateException("Cannot get text value from cell of type " + getCellType().name() + ".");
+            throw new CellException(this, "Cannot get text value from cell of type " + getCellType().name() + ".");
         }
     }
 
@@ -240,7 +240,7 @@ public class GenericCell extends AbstractCell {
     }
 
     private void initData(int colNr) {
-        LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER);
+        LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER, () -> new CellException(this, "column number out of range: "+colNr));
         data = (((long) colNr) << 48) | INITIAL_DATA;
     }
 
@@ -307,7 +307,7 @@ public class GenericCell extends AbstractCell {
     @Override
     public void setCellStyle(CellStyle cellStyle) {
         if (cellStyle.getWorkbook() != getWorkbook()) {
-            throw new IllegalArgumentException("Cell style does not belong to this workbook.");
+            throw new CellException(this, "Cell style does not belong to this workbook.");
         }
         if (cellStyle != this.cellStyle) {
             GenericCellStyle old = this.cellStyle;
@@ -329,7 +329,7 @@ public class GenericCell extends AbstractCell {
     @Override
     protected void setHorizontalSpan(int spanX) {
         if (spanX < 0 || spanX > MAX_HORIZONTAL_SPAN) {
-            throw new IllegalArgumentException();
+            throw new CellException(this, "invalid value for horizontal span: "+spanX);
         }
 
         data = (data & 0xffff_0000_ffff_ffffL) | (((long) spanX) << 32);
@@ -338,7 +338,7 @@ public class GenericCell extends AbstractCell {
     @Override
     protected void setVerticalSpan(int spanY) {
         if (spanY < 0 || spanY > MAX_VERTICAL_SPAN) {
-            throw new IllegalArgumentException();
+            throw new CellException(this, "invalid value for vertical span: "+spanY);
         }
 
         data = (data & 0xffff_ffff_0000_00ffL) | (((long) spanY) << 8);
