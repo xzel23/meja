@@ -116,3 +116,7 @@ __BETA_13__:
  - When exceptions are thrown while accessing cells, the cell ref is prefixed to the exception message
  - update dependencies
 
+__BETA_14__:
+
+ - update dependencies, i.e. OpenJFX 13 (still compatible with Java 11)
+ 
