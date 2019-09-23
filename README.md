@@ -119,4 +119,8 @@ __BETA_13__:
 __BETA_14__:
 
  - update dependencies, i.e. OpenJFX 13 (still compatible with Java 11)
+
+__BETA_15__:
+
+ - update dependencies, rename module descriptors: `com.dua3.meja` -> `meja`
  
