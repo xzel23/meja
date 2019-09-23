@@ -106,6 +106,7 @@ public class MejaSwingHelper {
                     SwingUtilities.invokeAndWait(dispatcher);
                 } catch (InvocationTargetException | InterruptedException e) {
                     LOG.log(Level.WARNING, "interrupted", e);
+                    Thread.currentThread().interrupt();
                 }
             }
 

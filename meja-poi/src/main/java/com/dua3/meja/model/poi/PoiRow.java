@@ -89,6 +89,7 @@ public final class PoiRow extends AbstractRow {
      * Update first and last column numbers.
      *
      * @param columnNumber
+     *  the column number
      */
     void setColumnUsed(int columnNumber) {
         getSheet().setColumnUsed(columnNumber);

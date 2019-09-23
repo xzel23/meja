@@ -21,7 +21,6 @@ import com.dua3.utility.text.TextUtil;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.logging.Logger;
@@ -32,8 +31,6 @@ import java.util.logging.Logger;
  * @author Axel Howind (axel@dua3.com)
  */
 public class MejaHelper {
-
-    private static final Logger LOGGER = Logger.getLogger(MejaHelper.class.getName());
 
     /**
      * Find cell containing text in row.
@@ -241,12 +238,12 @@ public class MejaHelper {
     /**
      * Options controlling print output.
      */
-    public static enum PrintOptions {
+    public enum PrintOptions {
         DRAW_LINES,
         PREPEND_SHEET_NAME,
         LINE_ABOVE,
         LINE_BELOW,
-        FIRST_LINE_IS_HEADER;
+        FIRST_LINE_IS_HEADER
     }
 
     /**
@@ -261,16 +258,20 @@ public class MejaHelper {
      *     ----------  (PrintOptions.LINE_BELOW)
      * </pre>
      *
+     * @param <A>
+     *      type parameter for the Appendable used
      * @param app
      *  the Appendable used for output
      * @param sheet
      *  the sheet to print
      * @param locale
      *  the locale to use (i. e. for number formatting)
-     * @throws IOException
-     *  if an output error occurs
+     * @param printOptions
+     *  the {@link PrintOptions} to use
+     * @return
+     *  the Appanedable
      */
-    public static <A extends Appendable> A printTable(A app, Sheet sheet, Locale locale, PrintOptions... printOptions) throws IOException {
+    public static <A extends Appendable> A printTable(A app, Sheet sheet, Locale locale, PrintOptions... printOptions) {
         EnumSet<PrintOptions> options = printOptions.length==0
                 ? EnumSet.noneOf(PrintOptions.class)
                 : EnumSet.copyOf(Arrays.asList(printOptions));

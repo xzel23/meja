@@ -1,7 +1,6 @@
 package com.dua3.meja.model.generic.io;
 
 import com.dua3.meja.io.FileTypeWorkbook;
-import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbook;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.utility.io.CsvIo;
@@ -14,7 +13,6 @@ import com.dua3.utility.options.OptionValues;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.function.Function;
 
 public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {

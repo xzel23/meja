@@ -1,9 +1,9 @@
-module com.dua3.meja.db {
+module meja.db {
     exports com.dua3.meja.db;
 
-    requires transitive com.dua3.meja;
+    requires transitive meja;
 
     requires java.logging;
     requires java.sql;
-    requires com.dua3.utility;
+    requires dua3_utility;
 }

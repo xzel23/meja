@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
@@ -31,8 +30,7 @@ public class PoiLoader extends WorkbookFactory<Workbook> {
 
     private final WorkbookFactory<? extends Workbook> factory;
 
-    @SuppressWarnings("unchecked")
-	public PoiLoader() {
+    public PoiLoader() {
         try {
             Properties properties = new Properties();
             try (InputStream in = PoiLoader.class.getResourceAsStream("lib/files.properties")) {
@@ -51,12 +49,7 @@ public class PoiLoader extends WorkbookFactory<Workbook> {
 
             LOG.info(() -> "creating classloader with content: "+Arrays.toString(urls));
 
-            URLClassLoader classloader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-                @Override
-                public URLClassLoader run() {
-                    return new URLClassLoader(urls);
-                }
-            });
+            URLClassLoader classloader = AccessController.doPrivileged((PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(urls));
 
             this.factory = (WorkbookFactory<? extends Workbook>) classloader.loadClass("com.dua3.meja.model.poi.PoiWorkbookFactory").getConstructor().newInstance();
         } catch (ClassNotFoundException

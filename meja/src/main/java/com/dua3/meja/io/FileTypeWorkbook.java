@@ -8,7 +8,6 @@ import com.dua3.utility.options.OptionValues;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.function.Function;
 
 public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {

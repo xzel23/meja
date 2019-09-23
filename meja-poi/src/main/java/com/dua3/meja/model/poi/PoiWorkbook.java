@@ -18,7 +18,6 @@ package com.dua3.meja.model.poi;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,7 +38,6 @@ import com.dua3.meja.model.poi.PoiCellStyle.PoiHssfCellStyle;
 import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
-import com.dua3.meja.model.poi.io.XlsWorkbookWriter;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.data.Color;
@@ -119,7 +117,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
         @Override
         public Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
-            if (poiColor == null || poiColor == HSSFColorPredefined.AUTOMATIC.getColor()) {
+            if (poiColor == null || poiColor.equals(HSSFColorPredefined.AUTOMATIC.getColor())) {
                 return defaultColor;
             }
 
@@ -521,7 +519,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     @Override
     public boolean hasCellStyle(java.lang.String name) {
-        return cellStyles.keySet().contains(name);
+        return cellStyles.containsKey(name);
     }
 
     @Override

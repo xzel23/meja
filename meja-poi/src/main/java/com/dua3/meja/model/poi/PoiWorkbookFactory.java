@@ -19,8 +19,6 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Optional;
 
 import com.dua3.meja.io.FileFormatException;
@@ -31,7 +29,6 @@ import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.model.poi.io.FileTypeExcel;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
-import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.options.OptionValues;
@@ -72,11 +69,14 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     /**
-     *
+     * Open Workbook from InputStream.
      * @param in
+     *  the stream to read from
      * @param uri
+     *  the URI to set
      * @return the workbook
      * @throws IOException
+     *  if an error occurs when reading
      */
     private static PoiWorkbook open(InputStream in, URI uri) throws IOException {
         try {

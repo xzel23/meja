@@ -9,11 +9,9 @@ import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.function.Function;
 
 public class FileTypeXls extends FileTypeWorkbook<PoiWorkbook.PoiHssfWorkbook> {

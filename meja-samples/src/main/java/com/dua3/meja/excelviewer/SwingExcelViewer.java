@@ -30,7 +30,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -104,7 +103,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
 
             if (file != null) {
                 try {
-                    viewer.setWorkbook(Optional.of(MejaHelper.openWorkbook(file.toURI())));
+                    viewer.setWorkbook(MejaHelper.openWorkbook(file.toURI()));
                 } catch (IOException ex) {
                     LOG.log(Level.SEVERE, "Could not load workbook from " + file.getAbsolutePath(), ex);
                 }
@@ -239,10 +238,10 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
 
         Optional<URI> uri = workbook.getUri();
         try {
-            if (!uri.isPresent()) {
+            if (uri.isEmpty()) {
                 final Optional<URI> newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
                         model.getCurrentUri());
-                if (!newUri.isPresent()) {
+                if (newUri.isEmpty()) {
                     // user cancelled the dialog
                     LOG.info("save-dialog was cancelled.");
                     return;
@@ -285,7 +284,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
             final Optional<Workbook> newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this,
                     model.getCurrentUri());
             if (newWorkbook.isPresent()) {
-                setWorkbook(newWorkbook);
+                setWorkbook(newWorkbook.get());
             }
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Exception loading workbook.", ex);
@@ -300,9 +299,9 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         }
     }
 
-    private void setWorkbook(final Optional<Workbook> newWorkbook) {
+    private void setWorkbook(final Workbook newWorkbook) {
         final Optional<URI> oldPath = model.getUri();
-        model.setWorkbook(newWorkbook.get());
+        model.setWorkbook(newWorkbook);
         final Optional<URI> newPath = model.getUri();
         workbookChanged(oldPath.orElse(null), newPath.orElse(null));
     }
@@ -381,10 +380,10 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
                     URI uri = files.get(0).toURI();
                     Optional<Workbook> workbook = MejaSwingHelper.openWorkbook(this, uri);
                     if (workbook.isPresent()) {
-                        setWorkbook(workbook);
+                        setWorkbook(workbook.get());
                         dtde.getDropTargetContext().dropComplete(true);
                     } else {
-                        LOG.log(Level.WARNING, "Could not process dropped item '" + uri + "'.");
+                        LOG.log(Level.WARNING, () -> "Could not process dropped item '" + uri + "'.");
                         dtde.getDropTargetContext().dropComplete(false);
                     }
                 }

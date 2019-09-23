@@ -18,7 +18,7 @@ public class FxMejaUtil {
 
     /**
      * Copy data from TableView to Sheet.
-     * 
+     *
      * @param table
      *  the TableView to copy from
      * @param sheet
@@ -30,7 +30,7 @@ public class FxMejaUtil {
 
     /**
      * Copy data from TableView to Sheet.
-     * 
+     *
      * @param table
      *  the TableView to copy from
      * @param sheet
@@ -57,17 +57,17 @@ public class FxMejaUtil {
         	row = sheet.getRow(posI+(++i));
         	int j = 0;
         	for (var obj: rowData) {
-    			row.getCell(posJ+(j++)).set(obj);        		
+    			row.getCell(posJ+(j++)).set(obj);
         	}
         }
     }
-    
+
     /**
      * Get list of ExtensionFilters for supported file types.
-     * 
+     *
      * @param mode
      *  the mode requested (read/write)
-     * @return 
+     * @return
      *  list of ExtensionFilters
      */
     public static List<FileChooser.ExtensionFilter> getExtensionFilters(OpenMode mode) {
@@ -76,7 +76,7 @@ public class FxMejaUtil {
             .forEach(t ->
                 filters.add(
                     new FileChooser.ExtensionFilter(
-                        t.getName(), 
+                        t.getName(),
                         t.getExtensions()
                             .stream()
                             .map(ext -> "*."+ext)
@@ -86,13 +86,13 @@ public class FxMejaUtil {
 
     /**
      * Get list of ExtensionFilters for supported file types.
-     * 
-     * @return 
+     *
+     * @return
      *  list of ExtensionFilters
      */
     public static List<FileChooser.ExtensionFilter> getExtensionFilters() {
         List<FileChooser.ExtensionFilter> filters = new LinkedList<>();
-        FileType.filetypes()
+        FileType.fileTypes()
             .forEach(t -> filters.add(new FileChooser.ExtensionFilter(t.getName(), t.getExtensions())));
         return filters;
     }

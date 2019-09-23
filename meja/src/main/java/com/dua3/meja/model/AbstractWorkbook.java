@@ -3,7 +3,6 @@ package com.dua3.meja.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.Optional;
 
 import com.dua3.meja.util.ObjectCache;

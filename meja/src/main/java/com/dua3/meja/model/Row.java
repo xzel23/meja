@@ -111,12 +111,12 @@ public interface Row extends Iterable<Cell> {
 
     /**
      * Create cell iterator.
-     * 
+     *
      * @return cell iterator
      */
     @Override
     default Iterator<Cell> iterator() {
-        return new Iterator<Cell>() {
+        return new Iterator<>() {
 
             private int colNum = getFirstCellNum();
 
@@ -143,7 +143,7 @@ public interface Row extends Iterable<Cell> {
 
     /**
      * Create a stream of the cells in this row.
-     * 
+     *
      * @return stream of cells
      */
     default Stream<Cell> cells() {

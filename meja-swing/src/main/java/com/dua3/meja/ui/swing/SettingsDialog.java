@@ -61,10 +61,10 @@ public class SettingsDialog extends JDialog {
             int i=0;
             for (var option: options) {
                 JComponent component = inputs.get(i++);
-                if (option instanceof ChoiceOption) {                    
+                if (option instanceof ChoiceOption) {
                     result.put(option, (Value) ((JComboBox) component).getSelectedItem());
                 } else {
-                    result.put(option, () -> ((JTextField) component).getText());
+                    result.put(option, ((JTextField) component)::getText);
                 }
             }
             this.dispose();

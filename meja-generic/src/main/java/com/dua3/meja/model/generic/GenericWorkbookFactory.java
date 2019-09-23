@@ -17,7 +17,6 @@ package com.dua3.meja.model.generic;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 
 import com.dua3.meja.io.CsvWorkbookReader;
 import com.dua3.meja.io.WorkbookReader;

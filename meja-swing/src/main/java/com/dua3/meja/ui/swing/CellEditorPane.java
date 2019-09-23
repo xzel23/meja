@@ -53,8 +53,8 @@ public class CellEditorPane extends JTextPane {
             super.layoutMajorAxis(targetSpan, axis, offsets, spans);
 
             int textBlockHeight = 0;
-            for (int i = 0; i < spans.length; i++) {
-                textBlockHeight += spans[i];
+            for (int span : spans) {
+                textBlockHeight += span;
             }
 
             final int available = targetSpan - textBlockHeight;
@@ -172,7 +172,7 @@ public class CellEditorPane extends JTextPane {
 
     /**
      * Get a {@link SimpleAttributeSet} corresponding to the cellstyle.
-     * 
+     *
      * @param cellStyle the cell style
      * @param cell      the cell (because cell tye influences the style attributes)
      * @return a SimpleAttributeSet

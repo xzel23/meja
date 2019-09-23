@@ -361,7 +361,6 @@ public abstract class PoiCellStyle implements CellStyle {
             poiCellStyle.setDataFormat((short) 0x0e);
         } else if (StandardDataFormats.FULL.name().equals(format)) {
             poiCellStyle.setDataFormat((short) 0xa4);
-            return;
         } else {
             poiCellStyle.setDataFormat(getWorkbook().poiWorkbook.createDataFormat().getFormat(format));
         }

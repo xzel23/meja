@@ -282,6 +282,7 @@ public class PoiSheet extends AbstractSheet {
      * Update first and last column numbers.
      *
      * @param columnNumber
+     *  the column number
      */
     void setColumnUsed(int columnNumber) {
         int oldValue = lastColumn;

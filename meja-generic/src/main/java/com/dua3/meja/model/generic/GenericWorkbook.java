@@ -18,7 +18,6 @@ package com.dua3.meja.model.generic;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,7 +56,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         // nop
     }
 
@@ -122,7 +121,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public boolean hasCellStyle(java.lang.String name) {
-        return cellStyles.keySet().contains(name);
+        return cellStyles.containsKey(name);
     }
 
     @Override

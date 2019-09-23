@@ -114,7 +114,7 @@ public abstract class AbstractSheet implements Sheet {
         for (int idx = 0; idx < mergedRegions.size(); idx++) {
             RectangularRegion rr = mergedRegions.get(idx);
             if (rr.getFirstRow() == rowNumber && rr.getFirstColumn() == columnNumber) {
-                mergedRegions.remove(idx);
+                mergedRegions.remove(idx--);
                 for (int i = rr.getFirstRow(); i <= rr.getLastRow(); i++) {
                     Row row = getRow(i);
                     for (int j = rr.getFirstColumn(); j <= rr.getLastColumn(); j++) {

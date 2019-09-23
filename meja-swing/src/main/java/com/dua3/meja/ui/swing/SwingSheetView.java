@@ -191,7 +191,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             }
 
             Optional<Cell> oc = MejaHelper.find(sheet, getText(), options);
-            if (!oc.isPresent()) {
+            if (oc.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Text was not found.");
             } else {
                 Cell cell = oc.get();
@@ -359,9 +359,9 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         MOVE_UP(view -> view.move(Direction.NORTH)), MOVE_DOWN(view -> view.move(Direction.SOUTH)),
         MOVE_LEFT(view -> view.move(Direction.WEST)), MOVE_RIGHT(view -> view.move(Direction.EAST)),
         PAGE_UP(view -> view.movePage(Direction.NORTH)), PAGE_DOWN(view -> view.movePage(Direction.SOUTH)),
-        MOVE_HOME(view -> view.moveHome()), MOVE_END(view -> view.moveEnd()),
-        START_EDITING(view -> view.startEditing()), SHOW_SEARCH_DIALOG(view -> view.showSearchDialog()),
-        COPY(view -> view.copyToClipboard());
+        MOVE_HOME(SwingSheetView::moveHome), MOVE_END(SwingSheetView::moveEnd),
+        START_EDITING(SwingSheetView::startEditing), SHOW_SEARCH_DIALOG(SwingSheetView::showSearchDialog),
+        COPY(SwingSheetView::copyToClipboard);
 
         private final Consumer<SwingSheetView> action;
 
