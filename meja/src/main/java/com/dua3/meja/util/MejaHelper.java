@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
-import java.util.logging.Logger;
 
 /**
  * Helper class.

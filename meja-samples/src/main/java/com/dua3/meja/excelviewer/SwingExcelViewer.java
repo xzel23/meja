@@ -283,9 +283,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         try {
             final Optional<Workbook> newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this,
                     model.getCurrentUri());
-            if (newWorkbook.isPresent()) {
-                setWorkbook(newWorkbook.get());
-            }
+            newWorkbook.ifPresent(this::setWorkbook);
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Exception loading workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
