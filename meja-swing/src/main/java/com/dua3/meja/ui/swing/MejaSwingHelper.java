@@ -244,7 +244,7 @@ public class MejaSwingHelper {
         return Optional.of(fileType.read(uri, t -> showOptionsDialog(parent, t)));
     }
 
-    private static OptionValues showOptionsDialog(Component parent, FileType fileType) {
+    private static OptionValues showOptionsDialog(Component parent, FileType<?> fileType) {
         OptionSet settings = fileType.getSettings();
         OptionValues importSettings = OptionValues.empty(); // default is empty
         if (!settings.isEmpty()) {

@@ -333,7 +333,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param out      output stream to write to
      * @throws IOException if an I/O error occurs
      */
-    default void write(FileType fileType, OutputStream out) throws IOException {
+    default void write(FileType<?> fileType, OutputStream out) throws IOException {
         write(fileType, out, OptionValues.empty());
     }
 
@@ -346,7 +346,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *                 type)
      * @throws IOException if an I/O error occurs
      */
-    default void write(FileType fileType, OutputStream out, OptionValues options) throws IOException {
+    default void write(FileType<?> fileType, OutputStream out, OptionValues options) throws IOException {
         write(fileType, out, options, p -> {
         });
     }
@@ -361,7 +361,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param updateProgress callback for progress updates; parameter is between 0.0 and 1.0 or Double.MAX_VALUE for indeterminate
      * @throws IOException if an I/O error occurs
      */
-    void write(FileType fileType, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException;
+    void write(FileType<?> fileType, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException;
 
     /**
      * Get cached instance of object.

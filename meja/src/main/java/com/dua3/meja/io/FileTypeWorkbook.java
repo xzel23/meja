@@ -16,7 +16,7 @@ public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
     }
 
     public abstract WorkbookWriter getWorkbookWriter();
-    public abstract WorkbookFactory getWorkbookFactory();
+    public abstract WorkbookFactory<? extends W> getWorkbookFactory();
 
     @Override
     public void write(URI uri, W document, Function<FileType, OptionValues> options) throws IOException {

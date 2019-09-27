@@ -302,7 +302,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      *
      * @return the file type matching the underlying POI implementation
      */
-    protected abstract FileType getStandardFileType();
+    protected abstract FileType<?> getStandardFileType();
 
     @Override
     public boolean hasCellStyle(String name) {
@@ -384,7 +384,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void write(FileType type, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException {
+    public void write(FileType<?> type, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException {
         if (type == getStandardFileType()) {
             // if the workbook is to be saved in the same format, write it out
             // directly so that
@@ -393,7 +393,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             poiWorkbook.write(out);
             updateProgress.accept(1.0);
         } else if (type instanceof FileTypeWorkbook) {
-            WorkbookWriter writer = ((FileTypeWorkbook) type).getWorkbookWriter();
+            WorkbookWriter writer = ((FileTypeWorkbook<?>) type).getWorkbookWriter();
             writer.setOptions(options);
             writer.write(this, out, updateProgress);
         } else {
