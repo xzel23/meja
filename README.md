@@ -125,3 +125,8 @@ __BETA_15__:
  - update dependencies, rename module descriptors: `meja` -> `meja`
  - code cleanup
   
+__BETA_16__:
+
+ - code cleanup
+ - buildable with JDK 13
+ 
