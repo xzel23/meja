@@ -104,7 +104,7 @@ public class MejaHelper {
      * Find cell containing text in sheet.
      *
      * @param sheet   the sheet
-     * @param text    the text to searcg for
+     * @param text    the text to search for
      * @param options the {@link SearchOptions} to use
      * @return the cell found or {@code null} if nothing found
      */
@@ -118,7 +118,7 @@ public class MejaHelper {
      * Find cell containing text in sheet.
      *
      * @param sheet   the sheet
-     * @param text    the text to searcg for
+     * @param text    the text to search for
      * @param options the {@link SearchOptions} to use
      * @return {@code Optional} holding the cell found or empty
      */
@@ -246,7 +246,7 @@ public class MejaHelper {
     }
 
     /**
-     * Print Sheet contesnts as a text table (for console output).
+     * Print Sheet contents as a text table (for console output).
      * <p>
      * Example output:
      * <pre>
@@ -268,7 +268,7 @@ public class MejaHelper {
      * @param printOptions
      *  the {@link PrintOptions} to use
      * @return
-     *  the Appanedable
+     *  the Appendable
      */
     public static <A extends Appendable> A printTable(A app, Sheet sheet, Locale locale, PrintOptions... printOptions) {
         EnumSet<PrintOptions> options = printOptions.length==0
@@ -333,8 +333,8 @@ public class MejaHelper {
                 fmt.format("%s", pipe /* '|' */);
                 for (int j = 0; j < sheet.getColumnCount(); j++) {
                     int w = align[j]*columnLength[j];
-                    String[] colulmnData = data[j];
-                    String s = k < colulmnData.length ? colulmnData[k] : "";
+                    String[] columnData = data[j];
+                    String s = k < columnData.length ? columnData[k] : "";
                     fmt.format("%1$" + w + "s%2$s", s, pipe);
                 }
                 fmt.format("%n");

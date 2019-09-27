@@ -128,7 +128,7 @@ public class CellEditorPane extends JTextPane {
     }
 
     /**
-     * Translate {@code HALign.ALIGN_AUTOMATIC} to the actual value for the cell
+     * Translate {@code HAlign.ALIGN_AUTOMATIC} to the actual value for the cell
      * type.
      *
      * @param hAlign the horizontal alignment

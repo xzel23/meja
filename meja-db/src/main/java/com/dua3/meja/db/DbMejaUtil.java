@@ -19,7 +19,7 @@ public class DbMejaUtil {
     /**
      * Fill Sheet with data from {@link ResultSet}.
      *
-     * The resuult set data will be appended at the bottom of the sheet.
+     * The result set data will be appended at the bottom of the sheet.
      * @param sheet
      *  the sheet to fill
      * @param rs

@@ -21,8 +21,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 
 /**
- *
- * @author a5xysq1
+ * Kitchensink example.
  */
 public class KitchenSink extends JFrame {
     private static final long serialVersionUID = 1L;
@@ -92,7 +91,7 @@ public class KitchenSink extends JFrame {
         try {
             wb.close();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Exception occured while closing workbook.", e);
+            logger.log(Level.SEVERE, "Exception occurred while closing workbook.", e);
         }
         super.dispose();
     }

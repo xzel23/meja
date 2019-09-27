@@ -234,7 +234,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
          *
          * @param cell the cell to scroll to
          */
-        public void ensureCellIsVisibile(Cell cell) {
+        public void ensureCellIsVisible(Cell cell) {
             if (cell == null) {
                 return;
             }
@@ -762,7 +762,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     @Override
     public void scrollToCurrentCell() {
-        sheetPane.ensureCellIsVisibile(getCurrentLogicalCell());
+        sheetPane.ensureCellIsVisible(getCurrentLogicalCell());
     }
 
     @Override
@@ -1041,7 +1041,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             return;
         }
 
-        sheetPane.ensureCellIsVisibile(cell);
+        sheetPane.ensureCellIsVisible(cell);
         sheetPane.setScrollable(false);
 
         final JComponent editorComp = editor.startEditing(cell);

@@ -67,7 +67,7 @@ public class CellValueHelper {
     /**
      * Parse a date value.
      *
-     * @param text string representaion of a date
+     * @param text string representation of a date
      * @return instance of {@link Date} representing {@code value} or {@code null},
      *         if {@code value} could not be fully parsed
      */
@@ -76,7 +76,7 @@ public class CellValueHelper {
         ParsePosition pos = new ParsePosition(0);
 
         // dry run first: try a complete parse first, but do not resolve fields
-        // (to avoid exceoptions if this is not a date)
+        // (to avoid exceptions if this is not a date)
         TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);
         if (ta == null || pos.getErrorIndex() >= 0 || pos.getIndex() != text.length()) {
             // an error occurred or parsing did not use all available input
@@ -92,7 +92,7 @@ public class CellValueHelper {
     /**
      * Parse a numeric value.
      *
-     * @param text string representaion of a numeric
+     * @param text string representation of a numeric
      * @return instance of {@link Number} representing {@code value} or
      *         {@code null}, if {@code value} could not be fully parsed
      */

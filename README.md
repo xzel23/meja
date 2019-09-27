@@ -12,7 +12,7 @@ Meja is released under the [Apache License 2.0](http://www.apache.org/licenses/L
 
 ## Modules
 
-Meja consistsof different modules, each providing different functionality.
+Meja consists of different modules, each providing different functionality.
 
 ### Module: meja (`com.dua3.meja`)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 a5xysq1.
+ * Copyright 2015 axel@dua3.com.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -18,8 +18,7 @@ package com.dua3.meja.util;
 import com.dua3.utility.text.ToStringBuilder;
 
 /**
- *
- * @author a5xysq1
+ * A rectaungular region.
  */
 public class RectangularRegion {
 

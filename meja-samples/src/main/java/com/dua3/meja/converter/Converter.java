@@ -30,7 +30,7 @@ public class Converter {
         File out = new File(args[1]);
 
         if (out.exists()) {
-            System.err.println("Outputfile already exists.");
+            System.err.println("Outfile already exists.");
         }
 
         try (Workbook workbook = GenericWorkbookFactory.instance().open(in.toURI())) {

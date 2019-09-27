@@ -220,7 +220,7 @@ public abstract class PoiCellStyle implements CellStyle {
     /**
      * Construct new instance.
      *
-     * @param workbook     the workbook this style belings to
+     * @param workbook     the workbook this style belongs to
      * @param font         the font
      * @param poiCellStyle the POI cell style
      */
