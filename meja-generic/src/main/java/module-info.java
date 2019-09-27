@@ -13,21 +13,21 @@
 // limitations under the License.
 
 module meja.generic {
-	exports com.dua3.meja.model.generic;
-	opens com.dua3.meja.model.generic;
+    exports com.dua3.meja.model.generic;
+    opens com.dua3.meja.model.generic;
 
-	exports com.dua3.meja.model.generic.io;
-	opens com.dua3.meja.model.generic.io;
+    exports com.dua3.meja.model.generic.io;
+    opens com.dua3.meja.model.generic.io;
 
-	provides com.dua3.meja.model.WorkbookFactory
-	with com.dua3.meja.model.generic.GenericWorkbookFactory;
+    provides com.dua3.meja.model.WorkbookFactory
+            with com.dua3.meja.model.generic.GenericWorkbookFactory;
 
-	requires transitive meja;
+    requires transitive meja;
 
-	requires java.logging;
+    requires java.logging;
     requires dua3_utility;
 
-	uses com.dua3.utility.text.FontUtil;
+    uses com.dua3.utility.text.FontUtil;
 
-	provides com.dua3.utility.io.FileType with com.dua3.meja.model.generic.io.FileTypeCsv;
+    provides com.dua3.utility.io.FileType with com.dua3.meja.model.generic.io.FileTypeCsv;
 }

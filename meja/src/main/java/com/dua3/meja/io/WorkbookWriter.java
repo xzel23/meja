@@ -33,7 +33,7 @@ public interface WorkbookWriter {
 
     double PROGRESS_INDETERMINATE = -1.0;
 
-	default void setOptions(OptionValues exportSettings) {
+    default void setOptions(OptionValues exportSettings) {
         // empty implementation for writers not taking export options
     }
 
@@ -41,11 +41,12 @@ public interface WorkbookWriter {
      * Write workbook to file.
      *
      * @param workbook the workbook to write
-     * @param uri     the URI to write to
+     * @param uri      the URI to write to
      * @throws IOException if an error occurs when writing out the workbook
      */
     default void write(Workbook workbook, URI uri) throws IOException {
-    	write(workbook, uri, p -> {});
+        write(workbook, uri, p -> {
+        });
     }
 
     /**
@@ -56,16 +57,16 @@ public interface WorkbookWriter {
      * @throws IOException if an error occurs when writing out the workbook
      */
     default void write(Workbook workbook, OutputStream out) throws IOException {
-    	write(workbook, out, p -> {});
+        write(workbook, out, p -> {
+        });
     }
 
     /**
      * Write workbook to file.
      *
-     * @param workbook the workbook to write
-     * @param uri     the URI to write to
-     * @param updateProgress
-     * 					callback for progress updates
+     * @param workbook       the workbook to write
+     * @param uri            the URI to write to
+     * @param updateProgress callback for progress updates
      * @throws IOException if an error occurs when writing out the workbook
      */
     default void write(Workbook workbook, URI uri, DoubleConsumer updateProgress) throws IOException {
@@ -77,10 +78,9 @@ public interface WorkbookWriter {
     /**
      * Write workbook to a stream.
      *
-     * @param workbook the workbook to write
-     * @param out      the stream to write to
-     * @param updateProgress
-     * 					callback for progress updates
+     * @param workbook       the workbook to write
+     * @param out            the stream to write to
+     * @param updateProgress callback for progress updates
      * @throws IOException if an error occurs when writing out the workbook
      */
     void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException;

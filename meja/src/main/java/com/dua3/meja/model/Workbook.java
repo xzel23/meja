@@ -15,6 +15,10 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.options.OptionValues;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.BufferedOutputStream;
@@ -29,10 +33,6 @@ import java.util.Spliterators;
 import java.util.function.DoubleConsumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import com.dua3.utility.io.FileType;
-import com.dua3.utility.io.IOUtil;
-import com.dua3.utility.options.OptionValues;
 
 /**
  * Workbook class.
@@ -53,18 +53,18 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Add property change listener.
      *
-     * @see PropertyChangeSupport#addPropertyChangeListener(PropertyChangeListener)
      * @param listener the listener
+     * @see PropertyChangeSupport#addPropertyChangeListener(PropertyChangeListener)
      */
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * Add property change listener.
      *
-     * @see PropertyChangeSupport#addPropertyChangeListener(String,
-     *      PropertyChangeListener)
      * @param propertyName the property name
      * @param listener     the listener
+     * @see PropertyChangeSupport#addPropertyChangeListener(String,
+     * PropertyChangeListener)
      */
     void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
@@ -138,6 +138,14 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *                                  the workbook does not contain any sheets)
      */
     Sheet getCurrentSheet();
+
+    /**
+     * Set the current sheet.
+     *
+     * @param idx index of the sheet to make current
+     * @throws IndexOutOfBoundsException if no sheet exists at the given index
+     */
+    void setCurrentSheet(int idx);
 
     /**
      * Get index of current sheet.
@@ -216,6 +224,13 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     Optional<URI> getUri();
 
     /**
+     * Set URI for this workbook. See {@link #getUri}.
+     *
+     * @param uri the URI to set.
+     */
+    void setUri(URI uri);
+
+    /**
      * Check if a style with this name is defined.
      *
      * @param name the name of the cell style
@@ -228,18 +243,18 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Remove property change listener.
      *
-     * @see PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
      * @param listener the listener
+     * @see PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
      */
     void removePropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * Remove property change listener.
      *
-     * @see PropertyChangeSupport#removePropertyChangeListener(String,
-     *      PropertyChangeListener)
      * @param propertyName the name of the property
      * @param listener     the listener
+     * @see PropertyChangeSupport#removePropertyChangeListener(String,
+     * PropertyChangeListener)
      */
     void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
@@ -267,32 +282,17 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
         removeSheet(idx);
     }
 
-    /**
-     * Set the current sheet.
-     *
-     * @param idx index of the sheet to make current
-     * @throws IndexOutOfBoundsException if no sheet exists at the given index
-     */
-    void setCurrentSheet(int idx);
-
     void setObjectCaching(boolean enabled);
-
-    /**
-     * Set URI for this workbook. See {@link #getUri}.
-     *
-     * @param uri the URI to set.
-     */
-    void setUri(URI uri);
 
     /**
      * Writes the workbook to a URI using standard options.
      *
      * @param uri the URI to write to.
-     *             <p>
-     *             The file format to used is determined by the extension of
-     *             {@code uri} which must be one of the extensions defined in
-     *             {@link FileType}.
-     *             </p>
+     *            <p>
+     *            The file format to used is determined by the extension of
+     *            {@code uri} which must be one of the extensions defined in
+     *            {@link FileType}.
+     *            </p>
      * @throws java.io.IOException if an I/O error occurs
      */
     default void write(URI uri) throws IOException {
@@ -302,7 +302,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Writes the workbook to a file.
      *
-     * @param uri    the URI to write to.
+     * @param uri     the URI to write to.
      *                <p>
      *                The file format to used is determined by the extension of
      *                {@code uri} which must be one of the extensions defined in
@@ -313,13 +313,14 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @throws java.io.IOException if an I/O error occurs
      */
     default void write(URI uri, OptionValues options) throws IOException {
-    	write(uri, options, p -> {});
+        write(uri, options, p -> {
+        });
     }
 
-   default void write(URI uri, OptionValues options, DoubleConsumer updateProgress) throws IOException {
-	   FileType type = FileType
-            .forUri(uri)
-            .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for "+uri));
+    default void write(URI uri, OptionValues options, DoubleConsumer updateProgress) throws IOException {
+        FileType type = FileType
+                .forUri(uri)
+                .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for " + uri));
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(IOUtil.toPath(uri)))) {
             write(type, out, options, updateProgress);
         }
@@ -346,18 +347,18 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @throws java.io.IOException if an I/O error occurs
      */
     default void write(FileType fileType, OutputStream out, OptionValues options) throws IOException {
-    	write(fileType, out, options, p -> {});
+        write(fileType, out, options, p -> {
+        });
     }
 
     /**
      * Writes the workbook to a stream.
      *
-     * @param fileType the file type to use
-     * @param out      output stream to write to
-     * @param options  special options to use (supported options depend on the file
-     *                 type)
-     * @param updateProgress
-     * 					callback for progress updates; parameter is between 0.0 and 1.0 or Double.MAX_VALUE for indeterminate
+     * @param fileType       the file type to use
+     * @param out            output stream to write to
+     * @param options        special options to use (supported options depend on the file
+     *                       type)
+     * @param updateProgress callback for progress updates; parameter is between 0.0 and 1.0 or Double.MAX_VALUE for indeterminate
      * @throws java.io.IOException if an I/O error occurs
      */
     void write(FileType fileType, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException;
@@ -365,11 +366,10 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Get cached instance of object.
      *
-     * @param     <T> object type
+     * @param <T> object type
      * @param obj the object to lookup
      * @return the cached instance, if an instance equal to {@code obj} is present
-     *         in the cache, {@code obj} otherwise
-     *
+     * in the cache, {@code obj} otherwise
      */
     <T> T cache(T obj);
 

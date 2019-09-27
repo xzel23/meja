@@ -13,13 +13,13 @@
 // limitations under the License.
 
 module meja.poi.module {
-	exports com.dua3.meja.loader.poi;
-	opens com.dua3.meja.loader.poi;
+    exports com.dua3.meja.loader.poi;
+    opens com.dua3.meja.loader.poi;
 
-	provides com.dua3.meja.model.WorkbookFactory
-	with com.dua3.meja.loader.poi.PoiLoader;
+    provides com.dua3.meja.model.WorkbookFactory
+            with com.dua3.meja.loader.poi.PoiLoader;
 
-	requires dua3_utility;
-	requires transitive meja;
-	requires java.logging;
+    requires dua3_utility;
+    requires transitive meja;
+    requires java.logging;
 }

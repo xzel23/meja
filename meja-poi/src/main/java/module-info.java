@@ -13,19 +13,19 @@
 // limitations under the License.
 
 module meja.poi {
-	exports com.dua3.meja.model.poi;
-	opens com.dua3.meja.model.poi;
+    exports com.dua3.meja.model.poi;
+    opens com.dua3.meja.model.poi;
 
-	exports com.dua3.meja.model.poi.io;
-	opens com.dua3.meja.model.poi.io;
+    exports com.dua3.meja.model.poi.io;
+    opens com.dua3.meja.model.poi.io;
 
-	provides com.dua3.meja.model.WorkbookFactory with com.dua3.meja.model.poi.PoiWorkbookFactory;
-	provides com.dua3.utility.io.FileType with com.dua3.meja.model.poi.io.FileTypeExcel;
+    provides com.dua3.meja.model.WorkbookFactory with com.dua3.meja.model.poi.PoiWorkbookFactory;
+    provides com.dua3.utility.io.FileType with com.dua3.meja.model.poi.io.FileTypeExcel;
 
-	requires transitive meja;
+    requires transitive meja;
 
-	requires poi;
-	requires java.logging;
+    requires poi;
+    requires java.logging;
     requires dua3_utility;
     requires poi.ooxml;
 }

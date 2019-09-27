@@ -13,16 +13,16 @@
 // limitations under the License.
 
 module meja {
-	exports com.dua3.meja.util;
-	exports com.dua3.meja.model;
-	exports com.dua3.meja.io;
-	opens com.dua3.meja.util;
-	opens com.dua3.meja.model;
-	opens com.dua3.meja.io;
+    exports com.dua3.meja.util;
+    exports com.dua3.meja.model;
+    exports com.dua3.meja.io;
+    opens com.dua3.meja.util;
+    opens com.dua3.meja.model;
+    opens com.dua3.meja.io;
 
-	requires java.logging;
-	requires java.desktop;
+    requires java.logging;
+    requires java.desktop;
     requires dua3_utility;
 
-	uses com.dua3.meja.model.WorkbookFactory;
+    uses com.dua3.meja.model.WorkbookFactory;
 }
