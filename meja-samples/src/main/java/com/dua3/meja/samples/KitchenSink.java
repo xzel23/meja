@@ -1,7 +1,7 @@
 package com.dua3.meja.samples;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +39,7 @@ public class KitchenSink extends JFrame {
 
         sheet.splitAt(1, 0);
 
-        for (Map.Entry<String, Color> e : Color.palette().entrySet()) {
+        for (Entry<String, Color> e : Color.palette().entrySet()) {
             String name = e.getKey();
 
             CellStyle cs = wb.getCellStyle(name);

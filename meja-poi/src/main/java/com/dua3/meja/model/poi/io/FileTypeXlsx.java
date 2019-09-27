@@ -4,6 +4,7 @@ import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook;
+import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
@@ -14,7 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Function;
 
-public class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook.PoiXssfWorkbook> {
+public class FileTypeXlsx extends FileTypeWorkbook<PoiXssfWorkbook> {
     private static final FileTypeXlsx INSTANCE = new FileTypeXlsx();
 
     public static FileTypeXlsx instance() {
@@ -22,7 +23,7 @@ public class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook.PoiXssfWorkbook> 
     }
 
     private FileTypeXlsx() {
-        super("Excel", OpenMode.READ_AND_WRITE, PoiWorkbook.PoiXssfWorkbook.class, "xlsx");
+        super("Excel", OpenMode.READ_AND_WRITE, PoiXssfWorkbook.class, "xlsx");
     }
 
     // loosen access to make init() callable by FileTypeExcel
@@ -32,10 +33,10 @@ public class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook.PoiXssfWorkbook> 
     }
 
     @Override
-    public PoiWorkbook.PoiXssfWorkbook read(URI uri, Function<FileType, OptionValues> options) throws IOException {
+    public PoiXssfWorkbook read(URI uri, Function<FileType, OptionValues> options) throws IOException {
         PoiWorkbook wb = PoiWorkbookFactory.instance().open(uri);
-        LangUtil.check(wb instanceof PoiWorkbook.PoiXssfWorkbook);
-        return (PoiWorkbook.PoiXssfWorkbook) wb;
+        LangUtil.check(wb instanceof PoiXssfWorkbook);
+        return (PoiXssfWorkbook) wb;
     }
 
     @Override

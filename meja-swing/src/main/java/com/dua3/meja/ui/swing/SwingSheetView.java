@@ -607,7 +607,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     /**
      * The sheet displayed.
      */
-    private transient Sheet sheet;
+    private transient Sheet sheet = null;
 
     /**
      * The color to use for the grid lines.
@@ -894,24 +894,24 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         // setup input map for ...
         final InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         // ... keyboard navigation
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_UP, 0), Actions.MOVE_UP);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_UP, 0), Actions.MOVE_UP);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DOWN, 0), Actions.MOVE_DOWN);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_DOWN, 0), Actions.MOVE_DOWN);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_LEFT, 0), Actions.MOVE_LEFT);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_LEFT, 0), Actions.MOVE_LEFT);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK),
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), Actions.MOVE_UP);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_UP, 0), Actions.MOVE_UP);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), Actions.MOVE_DOWN);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_DOWN, 0), Actions.MOVE_DOWN);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), Actions.MOVE_LEFT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_LEFT, 0), Actions.MOVE_LEFT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK),
                 Actions.MOVE_HOME);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK),
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK),
                 Actions.MOVE_END);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, 0), Actions.START_EDITING);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), Actions.START_EDITING);
         // ... other stuff
-        inputMap.put(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
-        inputMap.put(KeyStroke.getKeyStroke('C', java.awt.event.InputEvent.CTRL_DOWN_MASK), Actions.COPY);
+        inputMap.put(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
+        inputMap.put(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK), Actions.COPY);
         final ActionMap actionMap = getActionMap();
         for (Actions action : Actions.values()) {
             actionMap.put(action, action.getAction(this));
@@ -1047,9 +1047,8 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         final JComponent editorComp = editor.startEditing(cell);
         final Rectangle cellRect = sheetPane.getCellRectInViewCoordinates(cell);
 
-        JComponent editorParent = sheetPane;
         editorComp.setBounds(rectS2D(cellRect));
-        editorParent.add(editorComp);
+        sheetPane.add(editorComp);
         editorComp.validate();
         editorComp.setVisible(true);
         editorComp.repaint();

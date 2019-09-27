@@ -37,7 +37,7 @@ public class PoiFont {
      */
     protected final PoiWorkbook workbook;
 
-    protected final com.dua3.utility.text.Font font;
+    protected final Font font;
 
     /**
      *
@@ -100,14 +100,10 @@ public class PoiFont {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof PoiFont) {
-            return Objects.equals(getPoiFont(), ((PoiFont) obj).getPoiFont());
-        } else {
-            return false;
-        }
+        return obj instanceof PoiFont && Objects.equals(getPoiFont(), ((PoiFont) obj).getPoiFont());
     }
 
-    public com.dua3.utility.text.Font getFont() {
+    public Font getFont() {
         return font;
     }
 

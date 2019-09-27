@@ -22,10 +22,10 @@ import com.dua3.utility.text.Font;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -124,7 +124,7 @@ public class GenericCellStyle implements CellStyle {
      * @param arg the date to format
      * @return text representation of {@code date}
      */
-    public String format(LocalDate arg, Locale locale) {
+    public String format(TemporalAccessor arg, Locale locale) {
         if (dateFormatter == null) {
             try {
                 if (dataFormat == null || dataFormat.isEmpty()) {

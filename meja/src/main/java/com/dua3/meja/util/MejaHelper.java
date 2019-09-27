@@ -18,6 +18,7 @@ package com.dua3.meja.util;
 import com.dua3.meja.model.*;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.text.TextUtil;
+import com.dua3.utility.text.TextUtil.Alignment;
 
 import java.io.IOException;
 import java.net.URI;
@@ -53,7 +54,7 @@ public class MejaHelper {
      * @param options the {@link SearchOptions} to use
      * @return the cell found or {@code null} if nothing found
      */
-    public static Cell find(Row row, String text, Set<SearchOptions> options) {
+    public static Cell find(Row row, String text, Collection<SearchOptions> options) {
         boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
         boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
         boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
@@ -88,7 +89,7 @@ public class MejaHelper {
                 cellText = cellText.toLowerCase(Locale.ROOT);
             }
 
-            if (matchComplete && cellText.equals(text) || !matchComplete && cellText.contains(text)) {
+            if (matchComplete ? cellText.equals(text) : cellText.contains(text)) {
                 // found!
                 if (updateCurrent) {
                     row.getSheet().setCurrentCell(cell);
@@ -122,7 +123,7 @@ public class MejaHelper {
      * @param options the {@link SearchOptions} to use
      * @return {@code Optional} holding the cell found or empty
      */
-    public static Optional<Cell> find(Sheet sheet, String text, Set<SearchOptions> options) {
+    public static Optional<Cell> find(Sheet sheet, String text, Collection<SearchOptions> options) {
         Lock lock = sheet.readLock();
         lock.lock();
         try {
@@ -167,7 +168,7 @@ public class MejaHelper {
                     cellText = cellText.toLowerCase(Locale.ROOT);
                 }
 
-                if (matchComplete && cellText.equals(text) || !matchComplete && cellText.contains(text)) {
+                if (matchComplete ? cellText.equals(text) : cellText.contains(text)) {
                     // found!
                     if (updateCurrent) {
                         sheet.setCurrentCell(cell);
@@ -309,7 +310,7 @@ public class MejaHelper {
 
         if (options.contains(PrintOptions.PREPEND_SHEET_NAME)) {
             String title = sheet.getSheetName();
-            fmt.format("%2$s%1$s%2$s%n", TextUtil.align(title, overallLength-2, TextUtil.Alignment.CENTER), pipe);
+            fmt.format("%2$s%1$s%2$s%n", TextUtil.align(title, overallLength-2, Alignment.CENTER), pipe);
 
             if (options.contains(PrintOptions.LINE_ABOVE)) {
                 fmt.format("%s%n", "-".repeat(overallLength));

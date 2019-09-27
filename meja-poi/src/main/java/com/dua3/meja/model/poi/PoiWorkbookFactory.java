@@ -34,6 +34,7 @@ import com.dua3.utility.options.OptionSet;
 import com.dua3.utility.options.OptionValues;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -83,7 +84,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
                     .create(in);
             return createWorkbook(poiWorkbook, uri);
-        } catch (org.apache.poi.util.RecordFormatException ex) {
+        } catch (RecordFormatException ex) {
             throw new FileFormatException("Invalid file format or corrupted data", ex);
         }
     }
@@ -111,7 +112,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @return the newly created Workbook
      */
     public Workbook createXls() {
-        return new PoiHssfWorkbook(new org.apache.poi.hssf.usermodel.HSSFWorkbook(), null);
+        return new PoiHssfWorkbook(new HSSFWorkbook(), null);
     }
 
     /**

@@ -26,6 +26,7 @@ import com.dua3.utility.text.Style;
 
 import javax.swing.*;
 import javax.swing.text.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,10 +51,7 @@ public class CellEditorPane extends JTextPane {
 
             super.layoutMajorAxis(targetSpan, axis, offsets, spans);
 
-            int textBlockHeight = 0;
-            for (int span : spans) {
-                textBlockHeight += span;
-            }
+            int textBlockHeight = Arrays.stream(spans).sum();
 
             final int available = targetSpan - textBlockHeight;
             float offset;

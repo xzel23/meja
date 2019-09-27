@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -307,12 +308,12 @@ public interface Cell {
      * </p>
      * The following types are supported:
      * <ul>
-     * <li>{@link java.lang.Number}
-     * <li>{@link java.lang.Boolean}
-     * <li>{@link java.time.LocalDateTime}
-     * <li>{@link java.time.LocalDate}
-     * <li>{@link java.util.Date} (deprecated)
-     * <li>{@link java.lang.String}
+     * <li>{@link Number}
+     * <li>{@link Boolean}
+     * <li>{@link LocalDateTime}
+     * <li>{@link LocalDate}
+     * <li>{@link Date} (deprecated)
+     * <li>{@link String}
      * <li>{@link RichText}
      * </ul>
      *
@@ -334,8 +335,8 @@ public interface Cell {
             set((LocalDate) arg);
         } else if (arg instanceof RichText) {
             set((RichText) arg);
-        } else if (arg instanceof java.util.Date) {
-            LocalDateTime dt = LocalDateTime.ofInstant(((java.util.Date) arg).toInstant(), ZoneId.systemDefault());
+        } else if (arg instanceof Date) {
+            LocalDateTime dt = LocalDateTime.ofInstant(((Date) arg).toInstant(), ZoneId.systemDefault());
             LocalTime t = dt.toLocalTime();
             if (t.toNanoOfDay()==0) {
                 // set to DATE

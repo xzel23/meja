@@ -67,12 +67,7 @@ public class DbMejaUtil {
 
     private static Object getObject(ResultSet rs, int i) throws SQLException {
         Object obj = rs.getObject(i);
-
-        if (obj instanceof Clob) {
-            obj = toString((Clob) obj);
-        }
-
-        return obj;
+        return obj instanceof Clob ? toString((Clob) obj) : obj;
     }
 
     private static String toString(Clob clob) {

@@ -55,7 +55,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
 
     @Override
     public GenericWorkbook open(URI uri, OptionValues importSettings) throws IOException {
-        FileType type = FileType.forUri(uri).orElseThrow(() -> new IllegalArgumentException("cannot determine filetype"));
+        FileType<?> type = FileType.forUri(uri).orElseThrow(() -> new IllegalArgumentException("cannot determine filetype"));
 
         LangUtil.check(type.isSupported(OpenMode.READ), "Reading is not supported for files of type '%s'.",
                 type.getName());
@@ -63,7 +63,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
         WorkbookReader reader = CsvWorkbookReader.create();
         reader.setOptions(importSettings);
 
-        return reader.read(GenericWorkbookFactory.instance(), uri);
+        return reader.read(instance(), uri);
     }
 
 }

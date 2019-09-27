@@ -306,9 +306,9 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public void setCellStyle(CellStyle cellStyle) {
-        if (cellStyle.getWorkbook() != getWorkbook()) {
-            throw new CellException(this, "Cell style does not belong to this workbook.");
-        }
+        LangUtil.check(cellStyle.getWorkbook() == getWorkbook(),
+                () ->  new CellException(this, "Cell style does not belong to this workbook."));
+
         if (cellStyle != this.cellStyle) {
             GenericCellStyle old = this.cellStyle;
             this.cellStyle = (GenericCellStyle) cellStyle;
@@ -328,18 +328,16 @@ public class GenericCell extends AbstractCell {
 
     @Override
     protected void setHorizontalSpan(int spanX) {
-        if (spanX < 0 || spanX > MAX_HORIZONTAL_SPAN) {
-            throw new CellException(this, "invalid value for horizontal span: "+spanX);
-        }
+        LangUtil.check(spanX >= 0 && spanX <= MAX_HORIZONTAL_SPAN,
+            () -> new CellException(this, "invalid value for horizontal span: "+spanX));
 
         data = (data & 0xffff_0000_ffff_ffffL) | (((long) spanX) << 32);
     }
 
     @Override
     protected void setVerticalSpan(int spanY) {
-        if (spanY < 0 || spanY > MAX_VERTICAL_SPAN) {
-            throw new CellException(this, "invalid value for vertical span: "+spanY);
-        }
+        LangUtil.check(spanY >= 0 && spanY <= MAX_VERTICAL_SPAN,
+                () -> new CellException(this, "invalid value for vertical span: "+spanY));
 
         data = (data & 0xffff_ffff_0000_00ffL) | (((long) spanY) << 8);
     }

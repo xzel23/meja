@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.DoubleConsumer;
 
 import com.dua3.meja.io.FileTypeWorkbook;
@@ -32,6 +33,7 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
 
 /**
@@ -81,7 +83,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     String getCellStyleName(GenericCellStyle cellStyle) {
-        for (Map.Entry<String, GenericCellStyle> entry : cellStyles.entrySet()) {
+        for (Entry<String, GenericCellStyle> entry : cellStyles.entrySet()) {
             if (entry.getValue() == cellStyle) {
                 return entry.getKey();
             }
@@ -120,7 +122,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public boolean hasCellStyle(java.lang.String name) {
+    public boolean hasCellStyle(String name) {
         return cellStyles.containsKey(name);
     }
 
@@ -154,9 +156,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public void setCurrentSheet(int idx) {
-        if (idx < 0 || idx > sheets.size()) {
-            throw new IndexOutOfBoundsException("Sheet index out of range: " + idx);
-        }
+        LangUtil.checkIndex(idx, sheets.size());
 
         int oldIdx = getCurrentSheetIndex();
         if (idx != oldIdx) {

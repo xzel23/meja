@@ -6,7 +6,7 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
 import javafx.scene.control.TableView;
-import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -64,17 +64,13 @@ public class FxMejaUtil {
      * @param mode the mode requested (read/write)
      * @return list of ExtensionFilters
      */
-    public static List<FileChooser.ExtensionFilter> getExtensionFilters(OpenMode mode) {
-        List<FileChooser.ExtensionFilter> filters = new LinkedList<>();
-        FileType.getFileTypes(mode, Workbook.class)
-                .forEach(t ->
-                        filters.add(
-                                new FileChooser.ExtensionFilter(
-                                        t.getName(),
-                                        t.getExtensions()
-                                                .stream()
-                                                .map(ext -> "*." + ext)
-                                                .collect(Collectors.toList()).toArray(String[]::new))));
+    public static List<ExtensionFilter> getExtensionFilters(OpenMode mode) {
+        List<ExtensionFilter> filters = FileType.getFileTypes(mode, Workbook.class).stream().map(t -> new ExtensionFilter(
+                t.getName(),
+                t.getExtensions()
+                        .stream()
+                        .map(ext -> "*." + ext)
+                        .collect(Collectors.toList()).toArray(String[]::new))).collect(Collectors.toCollection(LinkedList::new));
         return filters;
     }
 
@@ -83,10 +79,8 @@ public class FxMejaUtil {
      *
      * @return list of ExtensionFilters
      */
-    public static List<FileChooser.ExtensionFilter> getExtensionFilters() {
-        List<FileChooser.ExtensionFilter> filters = new LinkedList<>();
-        FileType.fileTypes()
-                .forEach(t -> filters.add(new FileChooser.ExtensionFilter(t.getName(), t.getExtensions())));
+    public static List<ExtensionFilter> getExtensionFilters() {
+        List<ExtensionFilter> filters = FileType.fileTypes().stream().map(t -> new ExtensionFilter(t.getName(), t.getExtensions())).collect(Collectors.toCollection(LinkedList::new));
         return filters;
     }
 }

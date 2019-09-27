@@ -43,9 +43,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
+import com.dua3.meja.excelviewer.ExcelViewerModel.ExcelViewer;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
@@ -61,7 +63,7 @@ import com.dua3.utility.swing.SwingUtil;
  * @author axel
  */
 @SuppressWarnings("serial")
-public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelViewer, DropTargetListener {
+public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetListener {
 
     private static final Logger LOG = Logger.getLogger(SwingExcelViewer.class.getName());
 
@@ -189,7 +191,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
         mnLookAndFeel.add(SwingUtil.createAction("Cross Platform",
                 e -> setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName())));
         mnLookAndFeel.addSeparator();
-        for (final UIManager.LookAndFeelInfo lAF : UIManager.getInstalledLookAndFeels()) {
+        for (final LookAndFeelInfo lAF : UIManager.getInstalledLookAndFeels()) {
             mnLookAndFeel.add(SwingUtil.createAction(lAF.getName(), e -> setLookAndFeel(lAF.getClassName())));
         }
 
@@ -332,7 +334,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewerModel.ExcelVi
 
     private void updateUri(URI path) {
         if (path != null) {
-            setTitle(APPLICATION_NAME + " - " + path.toString());
+            setTitle(APPLICATION_NAME + " - " + path);
             model.setUri(path);
         } else {
             setTitle(APPLICATION_NAME);

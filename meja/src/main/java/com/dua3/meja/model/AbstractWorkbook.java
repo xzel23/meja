@@ -21,7 +21,7 @@ public abstract class AbstractWorkbook implements Workbook {
      */
     private ObjectCache objectCache = null;
 
-    public AbstractWorkbook(URI uri) {
+    protected AbstractWorkbook(URI uri) {
         this.uri = uri;
     }
 
@@ -73,11 +73,7 @@ public abstract class AbstractWorkbook implements Workbook {
      */
     @Override
     public void setObjectCaching(boolean enabled) {
-        if (enabled && !isObjectCachingEnabled()) {
-            objectCache = new ObjectCache();
-        } else {
-            objectCache = null;
-        }
+        objectCache = enabled && !isObjectCachingEnabled() ? new ObjectCache() : null;
     }
 
     @Override

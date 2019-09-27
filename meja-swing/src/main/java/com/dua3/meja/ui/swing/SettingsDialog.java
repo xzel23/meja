@@ -30,7 +30,7 @@ public class SettingsDialog extends JDialog {
     private final JPanel settingsPanel;
     private OptionValues result = OptionValues.empty();
 
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings("rawtypes")
     SettingsDialog(Component parent, String title, String text, OptionSet options) {
         super((JFrame) SwingUtilities.getRoot(parent), title, true);
         setLayout(new BorderLayout());
@@ -43,8 +43,8 @@ public class SettingsDialog extends JDialog {
         settingsPanel.setLayout(new GridLayout(options.size(), 2));
         for (Option<?> option : options) {
             settingsPanel.add(new JLabel(option.getName()));
-            if (option instanceof Option.ChoiceOption) {
-                JComboBox<Value<?>> cb = new JComboBox<>(new Vector<Value<?>>(((Option.ChoiceOption)option).getChoices()));
+            if (option instanceof ChoiceOption) {
+                JComboBox<Value<?>> cb = new JComboBox<>(new Vector<Value<?>>(((ChoiceOption)option).getChoices()));
                 cb.setSelectedItem(option.getDefault());
                 inputs.add(cb);
                 settingsPanel.add(cb);

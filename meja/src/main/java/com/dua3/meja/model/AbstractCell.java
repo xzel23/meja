@@ -17,7 +17,7 @@ public abstract class AbstractCell implements Cell {
      *
      * @param row the row the new cell belongs to
      */
-    public AbstractCell(AbstractRow row) {
+    protected AbstractCell(AbstractRow row) {
         this.row = row;
         this.logicalCell = this;
     }

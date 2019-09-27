@@ -22,6 +22,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.TextAttributes;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 
@@ -370,10 +371,10 @@ public abstract class PoiCellStyle implements CellStyle {
     public void setFillPattern(FillPattern pattern) {
         switch (pattern) {
         case NONE:
-            poiCellStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.NO_FILL);
+            poiCellStyle.setFillPattern(FillPatternType.NO_FILL);
             break;
         case SOLID:
-            poiCellStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+            poiCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             break;
         default:
             throw new IllegalArgumentException();

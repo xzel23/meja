@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.ui.swing;
 
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -34,6 +35,7 @@ import javax.swing.text.Document;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.CellValueHelper;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.swing.SwingUtil;
 
 /**
@@ -77,11 +79,11 @@ public class DefaultCellEditor implements CellEditor {
 
         // setup input map for keyboard navigation
         final InputMap inputMap = component.getInputMap(JComponent.WHEN_FOCUSED);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ENTER, 0), DefaultCellEditor.Actions.COMMIT);
-        inputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_ESCAPE, 0), DefaultCellEditor.Actions.ABORT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), Actions.COMMIT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), Actions.ABORT);
 
         final ActionMap actionMap = component.getActionMap();
-        for (DefaultCellEditor.Actions action : DefaultCellEditor.Actions.values()) {
+        for (Actions action : Actions.values()) {
             actionMap.put(action, action.getAction(this));
         }
         cell = null;
@@ -94,9 +96,8 @@ public class DefaultCellEditor implements CellEditor {
 
     @Override
     public JComponent startEditing(Cell cell) {
-        if (isEditing()) {
-            throw new IllegalStateException("Already editing.");
-        }
+        LangUtil.check(!isEditing(), "Already editing.");
+
         this.cell = cell;
 
         component.setContent(cell, sheetView.getScale(), false);

@@ -17,6 +17,8 @@ package com.dua3.meja.model.poi;
 
 import java.util.Objects;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
@@ -34,14 +36,14 @@ import com.dua3.utility.lang.LangUtil;
 public class PoiSheet extends AbstractSheet {
 
     protected final PoiWorkbook workbook;
-    protected org.apache.poi.ss.usermodel.Sheet poiSheet;
+    protected Sheet poiSheet;
     private int firstColumn;
     private int lastColumn;
     private float zoom = 1.0f;
     private int autoFilterRow = -1;
     private float factorWidth = 1;
 
-    protected PoiSheet(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Sheet poiSheet) {
+    protected PoiSheet(PoiWorkbook workbook, Sheet poiSheet) {
         this.workbook = workbook;
         this.poiSheet = poiSheet;
         init();
@@ -103,12 +105,9 @@ public class PoiSheet extends AbstractSheet {
     public void clear() {
         // determine sheet number
         int sheetNr = workbook.poiWorkbook.getSheetIndex(poiSheet);
-        if (sheetNr >= workbook.getSheetCount()) {
-            /*
-             * This should never happen as this sheet is part of the workbook.
-             */
-            throw new IllegalStateException();
-        }
+
+        // This should never happen as this sheet is part of the workbook.
+        assert sheetNr < workbook.getSheetCount();
 
         //
         String sheetName = getSheetName();
@@ -121,11 +120,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof PoiSheet) {
-            return Objects.equals(poiSheet, ((PoiSheet) obj).poiSheet);
-        } else {
-            return false;
-        }
+        return obj instanceof PoiSheet && Objects.equals(poiSheet, ((PoiSheet) obj).poiSheet);
     }
 
     @Override
@@ -182,13 +177,13 @@ public class PoiSheet extends AbstractSheet {
         return poiSheet.getLastRowNum();
     }
 
-    public org.apache.poi.ss.usermodel.Sheet getPoiSheet() {
+    public Sheet getPoiSheet() {
         return poiSheet;
     }
 
     @Override
     public PoiRow getRow(int i) {
-        org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
+        Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
             poiRow = poiSheet.createRow(i);
             firePropertyChange(PROPERTY_ROWS_ADDED, RowInfo.none(), new RowInfo(i, i));
@@ -203,7 +198,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public float getRowHeight(int rowNum) {
-        final org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNum);
+        final Row poiRow = poiSheet.getRow(rowNum);
         return poiRow == null ? poiSheet.getDefaultRowHeightInPoints() : poiRow.getHeightInPoints();
     }
 
@@ -260,7 +255,7 @@ public class PoiSheet extends AbstractSheet {
         }
     }
 
-    private void setAutoFilterForPoiRow(org.apache.poi.ss.usermodel.Row poiRow) {
+    private void setAutoFilterForPoiRow(Row poiRow) {
         if (poiRow != null) {
             int rowNumber = poiRow.getRowNum();
             short col1 = poiRow.getFirstCellNum();
@@ -272,7 +267,7 @@ public class PoiSheet extends AbstractSheet {
     @Override
     public void setAutofilterRow(int rowNumber) {
         if (rowNumber >= 0) {
-            org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(rowNumber);
+            Row poiRow = poiSheet.getRow(rowNumber);
             setAutoFilterForPoiRow(poiRow);
         }
         autoFilterRow = rowNumber;
@@ -314,7 +309,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void setRowHeight(int i, float height) {
-        org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
+        Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
             poiRow = poiSheet.createRow(i);
         }
@@ -347,7 +342,7 @@ public class PoiSheet extends AbstractSheet {
         firstColumn = Integer.MAX_VALUE;
         lastColumn = 0;
         for (int i = poiSheet.getFirstRowNum(); i < poiSheet.getLastRowNum() + 1; i++) {
-            final org.apache.poi.ss.usermodel.Row poiRow = poiSheet.getRow(i);
+            final Row poiRow = poiSheet.getRow(i);
             if (poiRow != null) {
                 final short firstCellNum = poiRow.getFirstCellNum();
                 if (firstCellNum >= 0) {

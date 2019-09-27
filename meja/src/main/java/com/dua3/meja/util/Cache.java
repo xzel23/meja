@@ -37,7 +37,7 @@ public class Cache<K, V> {
      * <p>
      * Values are held as instances of {@link SoftReference}. That means values can
      * be garbage collected at any time. When a value is requested via the
-     * {@link Cache#get(java.lang.Object)} method, it will be created on-the-fly if
+     * {@link Cache#get(Object)} method, it will be created on-the-fly if
      * no entry for the key exists or the corresponding value has been garbage
      * collected.
      * </p>

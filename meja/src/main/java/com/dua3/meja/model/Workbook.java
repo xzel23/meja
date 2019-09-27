@@ -293,7 +293,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *            {@code uri} which must be one of the extensions defined in
      *            {@link FileType}.
      *            </p>
-     * @throws java.io.IOException if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     default void write(URI uri) throws IOException {
         write(uri, OptionValues.empty());
@@ -310,7 +310,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *                </p>
      * @param options special options to use (supported options depend on the file
      *                type)
-     * @throws java.io.IOException if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     default void write(URI uri, OptionValues options) throws IOException {
         write(uri, options, p -> {
@@ -318,7 +318,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     }
 
     default void write(URI uri, OptionValues options, DoubleConsumer updateProgress) throws IOException {
-        FileType type = FileType
+        FileType<?> type = FileType
                 .forUri(uri)
                 .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for " + uri));
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(IOUtil.toPath(uri)))) {
@@ -331,7 +331,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *
      * @param fileType the file type to use
      * @param out      output stream to write to
-     * @throws java.io.IOException if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     default void write(FileType fileType, OutputStream out) throws IOException {
         write(fileType, out, OptionValues.empty());
@@ -344,7 +344,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param out      output stream to write to
      * @param options  special options to use (supported options depend on the file
      *                 type)
-     * @throws java.io.IOException if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     default void write(FileType fileType, OutputStream out, OptionValues options) throws IOException {
         write(fileType, out, options, p -> {
@@ -359,7 +359,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param options        special options to use (supported options depend on the file
      *                       type)
      * @param updateProgress callback for progress updates; parameter is between 0.0 and 1.0 or Double.MAX_VALUE for indeterminate
-     * @throws java.io.IOException if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     void write(FileType fileType, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException;
 

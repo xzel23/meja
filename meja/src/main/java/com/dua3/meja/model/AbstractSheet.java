@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.lang.LangUtil;
 
 public abstract class AbstractSheet implements Sheet {
 
@@ -22,8 +23,7 @@ public abstract class AbstractSheet implements Sheet {
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private List<RectangularRegion> mergedRegions = new ArrayList<>();
 
-    public AbstractSheet() {
-        super();
+    protected AbstractSheet() {
     }
 
     @Override
@@ -74,9 +74,7 @@ public abstract class AbstractSheet implements Sheet {
     public void addMergedRegion(RectangularRegion cells) {
         // check that all cells are unmerged
         for (RectangularRegion rr : mergedRegions) {
-            if (rr.intersects(cells)) {
-                throw new IllegalStateException("New merged region overlaps with an existing one.");
-            }
+            LangUtil.check(!rr.intersects(cells), "New merged region overlaps with an existing one.");
         }
 
         // update cell data
@@ -103,12 +101,7 @@ public abstract class AbstractSheet implements Sheet {
 
     @Override
     public RectangularRegion getMergedRegion(int rowNum, int colNum) {
-        for (RectangularRegion rr : mergedRegions) {
-            if (rr.contains(rowNum, colNum)) {
-                return rr;
-            }
-        }
-        return null;
+        return mergedRegions.stream().filter(rr -> rr.contains(rowNum, colNum)).findFirst().orElse(null);
     }
 
     protected void removeMergedRegion(int rowNumber, int columnNumber) {

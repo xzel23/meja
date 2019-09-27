@@ -16,7 +16,7 @@ import java.net.URI;
 import java.util.function.Function;
 
 public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {
-    private static final FileType INSTANCE = new FileTypeCsv();
+    private static final FileType<GenericWorkbook> INSTANCE = new FileTypeCsv();
 
     public static FileType instance() {
         return INSTANCE;

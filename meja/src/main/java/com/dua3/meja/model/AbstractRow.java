@@ -5,7 +5,7 @@ public abstract class AbstractRow implements Row {
     private final AbstractSheet sheet;
     protected final int rowNumber;
 
-    public AbstractRow(AbstractSheet sheet, int rowNumber) {
+    protected AbstractRow(AbstractSheet sheet, int rowNumber) {
         this.sheet = sheet;
         this.rowNumber = rowNumber;
     }

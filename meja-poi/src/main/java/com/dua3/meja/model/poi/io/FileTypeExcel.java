@@ -21,7 +21,7 @@ import java.util.function.Function;
  * Excel files.
  */
 public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
-    private static final FileType INSTANCE = new FileTypeExcel();
+    private static final FileType<PoiWorkbook> INSTANCE = new FileTypeExcel();
 
     public static FileType instance() {
         return INSTANCE;

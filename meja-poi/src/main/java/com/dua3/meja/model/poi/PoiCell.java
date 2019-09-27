@@ -19,6 +19,7 @@ import com.dua3.meja.model.AbstractCell;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.*;
@@ -192,11 +193,7 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof PoiCell) {
-            return Objects.equals(poiCell, ((PoiCell) obj).poiCell);
-        } else {
-            return false;
-        }
+        return obj instanceof PoiCell && Objects.equals(poiCell, ((PoiCell) obj).poiCell);
     }
 
     @Override
@@ -284,7 +281,7 @@ public final class PoiCell extends AbstractCell {
     private Font getFontForFormattingRun(RichTextString richText, int i) {
         if (richText instanceof HSSFRichTextString) {
             HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
-            return ((PoiWorkbook.PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i))
+            return ((PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i))
                     .getFont();
         } else {
             return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i)).getFont();
@@ -625,7 +622,7 @@ public final class PoiCell extends AbstractCell {
 
     private void push(RichTextBuilder app, String key, Style attr) {
         @SuppressWarnings("unchecked")
-        List<Style> current = (List<Style>) app.get(key);
+        Collection<Style> current = (Collection<Style>) app.get(key);
         if (current == null) {
             current = new LinkedList<>();
             app.put(key, current);
