@@ -230,7 +230,7 @@ public class CellEditorPane extends JTextPane {
             text = cell.getAsText(getLocale());
         }
 
-        setDocument(StyledDocumentBuilder.toStyledDocument(text, this::getTextAttributes,
+        setDocument(StyledDocumentBuilder.toStyledDocument(text, CellEditorPane::getTextAttributes,
                 Pair.of(StyledDocumentBuilder.SCALE, scale),
                 Pair.of(StyledDocumentBuilder.ATTRIBUTE_SET, getCellAttributes(cellStyle, cell))));
 
@@ -240,7 +240,7 @@ public class CellEditorPane extends JTextPane {
         repaint();
     }
 
-    private TextAttributes getTextAttributes(Style s) {
+    private static TextAttributes getTextAttributes(Style s) {
         Map<String, Object> m = new HashMap<>();
         for (String attr : TextAttributes.defaults().keySet()) {
             m.put(attr, s.get(attr));

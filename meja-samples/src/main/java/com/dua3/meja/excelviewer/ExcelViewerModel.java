@@ -36,7 +36,7 @@ public class ExcelViewerModel {
         ERROR, INFO
     }
 
-    private static final Logger LOGGER = Logger.getLogger(ExcelViewer.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ExcelViewerModel.class.getName());
 
     private static final String LICENSE = "Copyright %d %s%n" + "%n"
             + "Licensed under the Apache License, Version 2.0 (the \"License\");%n"

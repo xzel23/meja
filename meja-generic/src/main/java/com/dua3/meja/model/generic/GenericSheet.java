@@ -33,8 +33,8 @@ import com.dua3.utility.text.TextUtil;
  */
 public class GenericSheet extends AbstractSheet {
 
-    private static final float DEFAULT_COLUMN_WIDTH = 80f;
-    private static final float DEFAULT_ROW_HEIGHT = 12f;
+    private static final float DEFAULT_COLUMN_WIDTH = 80.0f;
+    private static final float DEFAULT_ROW_HEIGHT = 12.0f;
 
     private final GenericWorkbook workbook;
     private final String sheetName;
@@ -73,7 +73,7 @@ public class GenericSheet extends AbstractSheet {
         final int n = getColumnCount();
 
         float[] colWidth = new float[n];
-        Arrays.fill(colWidth, 0f);
+        Arrays.fill(colWidth, 0.0f);
 
         for (Row row : this) {
             for (int j = 0; j < n; j++) {
@@ -90,7 +90,7 @@ public class GenericSheet extends AbstractSheet {
         }
     }
 
-    // helper method used to calculate a cell's width    
+    // helper method used to calculate a cell's width
     private static float calcCellWidth(Cell cell) {
         // calculate the exact width
         String text = cell.toString();

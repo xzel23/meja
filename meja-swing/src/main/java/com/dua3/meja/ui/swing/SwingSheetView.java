@@ -602,7 +602,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
-    private double scale = 1f;
+    private double scale = 1.0f;
 
     /**
      * The sheet displayed.

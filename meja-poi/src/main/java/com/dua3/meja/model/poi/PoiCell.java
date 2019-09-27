@@ -620,7 +620,7 @@ public final class PoiCell extends AbstractCell {
         return rtb.toRichText();
     }
 
-    private void push(RichTextBuilder app, String key, Style attr) {
+    private static void push(RichTextBuilder app, String key, Style attr) {
         @SuppressWarnings("unchecked")
         Collection<Style> current = (Collection<Style>) app.get(key);
         if (current == null) {
