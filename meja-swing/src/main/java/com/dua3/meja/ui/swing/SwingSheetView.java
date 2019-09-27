@@ -160,7 +160,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             SwingUtilities.getRootPane(submitButton).setDefaultButton(submitButton);
 
             // Escape closes dialog
-            final AbstractAction escapeAction = new AbstractAction() {
+            final Action escapeAction = new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent ae) {
                     setVisible(false);
@@ -363,9 +363,9 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         START_EDITING(SwingSheetView::startEditing), SHOW_SEARCH_DIALOG(SwingSheetView::showSearchDialog),
         COPY(SwingSheetView::copyToClipboard);
 
-        private final Consumer<SwingSheetView> action;
+        private final Consumer<? super SwingSheetView> action;
 
-        Actions(Consumer<SwingSheetView> action) {
+        Actions(Consumer<? super SwingSheetView> action) {
             this.action = action;
         }
 
@@ -1047,8 +1047,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         final JComponent editorComp = editor.startEditing(cell);
         final Rectangle cellRect = sheetPane.getCellRectInViewCoordinates(cell);
 
-        JComponent editorParent;
-        editorParent = sheetPane;
+        JComponent editorParent = sheetPane;
         editorComp.setBounds(rectS2D(cellRect));
         editorParent.add(editorComp);
         editorComp.validate();

@@ -70,7 +70,7 @@ public class MejaSwingHelper {
 
         class SheetListener implements PropertyChangeListener {
 
-            public SheetListener() {
+            SheetListener() {
             }
 
             @Override

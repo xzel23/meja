@@ -14,29 +14,29 @@ Meja is released under the [Apache License 2.0](http://www.apache.org/licenses/L
 
 Meja consists of different modules, each providing different functionality.
 
-### Module: meja (`com.dua3.meja`)
+### Module: meja (`meja`)
 
 This is the base module providing functionality shared by different models.
 
-### Module: meja.generic (`com.dua3.meja.generic`)
+### Module: meja.generic (`meja.generic`)
 
 A generic Workbook implementation. Fast and memory efficient. Use this implementation when creating workbooks in memory. Also defines the CSV FileType.
 
-### meja.poi (`com.dua3.meja.poi`)
+### meja.poi (`meja.poi`)
 
 An implementation backed by the Apache POI implementation of the Microsoft Office Excel file format. Defines FileTypes for xls and xlsx files. Use this implementation to read and modify Excel files.
 
-### meja.swing (`com.dua3.meja.swing`)
+### meja.swing (`meja.swing`)
 
 Defines Swing controls for displaying Sheets and Workbooks.
 
-### meja.samples (`com.dua3.meja.samples`)
+### meja.samples (`meja.samples`)
 
 Several small samples to demonstrate how to use this library.
 
-### meja.fx (`com.dua3.meja.fx`)
+### meja.fx (`meja.fx`)
 
-Utilites for JavaFX.
+Utilities for JavaFX.
 
 ## Changes
 
@@ -122,5 +122,6 @@ __BETA_14__:
 
 __BETA_15__:
 
- - update dependencies, rename module descriptors: `com.dua3.meja` -> `meja`
- 
+ - update dependencies, rename module descriptors: `meja` -> `meja`
+ - code cleanup
+  

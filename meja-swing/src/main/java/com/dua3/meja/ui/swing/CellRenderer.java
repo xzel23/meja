@@ -23,6 +23,7 @@ import com.dua3.meja.model.Cell;
 /**
  * Interface for cell renderers.
  */
+@FunctionalInterface
 public interface CellRenderer {
 
     /**

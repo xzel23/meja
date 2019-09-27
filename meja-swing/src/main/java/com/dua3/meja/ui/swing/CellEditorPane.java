@@ -21,10 +21,8 @@ import com.dua3.utility.data.Pair;
 import com.dua3.utility.swing.StyledDocumentBuilder;
 import com.dua3.utility.swing.SwingFontUtil;
 import com.dua3.utility.swing.SwingUtil;
-import com.dua3.utility.text.Font;
-import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.*;
 import com.dua3.utility.text.Style;
-import com.dua3.utility.text.TextAttributes;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -207,7 +205,8 @@ public class CellEditorPane extends JTextPane {
         return dfltAttr;
     }
 
-    private static SwingFontUtil fontUtil = new SwingFontUtil();
+    private static FontUtil<java.awt.Font> fontUtil = new SwingFontUtil();
+
     /**
      * Set the editor content to the content of given cell.
      *
