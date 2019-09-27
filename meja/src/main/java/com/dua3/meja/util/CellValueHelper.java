@@ -20,7 +20,6 @@ import java.text.ParsePosition;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
-import java.util.Date;
 import java.util.Optional;
 
 import com.dua3.meja.model.Cell;
@@ -68,7 +67,7 @@ public class CellValueHelper {
      * Parse a date value.
      *
      * @param text string representation of a date
-     * @return instance of {@link Date} representing {@code value} or {@code null},
+     * @return Optional with {@link LocalDateTime} representing {@code value} or empty optional,
      *         if {@code value} could not be fully parsed
      */
     protected Optional<LocalDateTime> parseDate(String text) {

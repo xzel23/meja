@@ -127,11 +127,11 @@ public class GenericCell extends AbstractCell {
         case TEXT:
             return getText();
         case NUMERIC:
-            return RichText.valueOf(getCellStyle().format((Number) value, locale));
+            return RichText.valueOf(cellStyle.format((Number) value, locale));
         case DATE:
-            return RichText.valueOf(getCellStyle().format((LocalDate) value, locale));
+            return RichText.valueOf(cellStyle.format((LocalDate) value, locale));
         case DATE_TIME:
-            return RichText.valueOf(getCellStyle().format((LocalDateTime) value, locale));
+            return RichText.valueOf(cellStyle.format((LocalDateTime) value, locale));
         default:
             return RichText.valueOf(value);
         }
@@ -348,11 +348,11 @@ public class GenericCell extends AbstractCell {
         case BLANK:
             return "";
         case NUMERIC:
-            return getCellStyle().format((Number) value, locale);
+            return cellStyle.format((Number) value, locale);
         case DATE:
-            return getCellStyle().format((LocalDate) value, locale);
+            return cellStyle.format((LocalDate) value, locale);
         case DATE_TIME:
-            return getCellStyle().format((LocalDateTime) value, locale);
+            return cellStyle.format((LocalDateTime) value, locale);
         default:
             return String.valueOf(value);
         }

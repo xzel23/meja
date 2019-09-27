@@ -70,7 +70,7 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void autoSizeColumns() {
-        final int n = getColumnCount();
+        final int n = numberOfColumns;
 
         float[] colWidth = new float[n];
         Arrays.fill(colWidth, 0.0f);
@@ -146,7 +146,7 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public int getLastColNum() {
-        return getColumnCount() - 1;
+        return numberOfColumns - 1;
     }
 
     @Override

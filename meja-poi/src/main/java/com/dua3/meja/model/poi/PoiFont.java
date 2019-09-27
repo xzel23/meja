@@ -100,7 +100,7 @@ public class PoiFont {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof PoiFont && Objects.equals(getPoiFont(), ((PoiFont) obj).getPoiFont());
+        return obj instanceof PoiFont && Objects.equals(poiFont, ((PoiFont) obj).poiFont);
     }
 
     public Font getFont() {
@@ -118,7 +118,7 @@ public class PoiFont {
 
     @Override
     public int hashCode() {
-        return font.hashCode() + 37 * getPoiFont().hashCode();
+        return font.hashCode() + 37 * poiFont.hashCode();
     }
 
     @Override

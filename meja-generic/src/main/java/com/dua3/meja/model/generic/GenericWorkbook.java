@@ -98,7 +98,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public Sheet getCurrentSheet() {
-        return getSheet(getCurrentSheetIndex());
+        return getSheet(currentSheetIdx);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     public void setCurrentSheet(int idx) {
         LangUtil.checkIndex(idx, sheets.size());
 
-        int oldIdx = getCurrentSheetIndex();
+        int oldIdx = currentSheetIdx;
         if (idx != oldIdx) {
             currentSheetIdx = idx;
             firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);

@@ -149,7 +149,7 @@ public class PoiSheet extends AbstractSheet {
         CellAddress cellRef = poiSheet.getActiveCell();
         if (cellRef != null) {
             currentRow = Math.max(getFirstRowNum(), Math.min(getLastRowNum(), cellRef.getRow()));
-            currentColumn = Math.max(getFirstColNum(), Math.min(getLastColNum(), cellRef.getColumn()));
+            currentColumn = Math.max(firstColumn, Math.min(lastColumn, cellRef.getColumn()));
         } else {
             currentRow = poiSheet.getTopRow();
             currentColumn = poiSheet.getLeftCol();
@@ -371,7 +371,7 @@ public class PoiSheet extends AbstractSheet {
         }
 
         // determine default font size
-        short fontSize = getWorkbook().poiWorkbook.getFontAt(0).getFontHeightInPoints();
+        short fontSize = workbook.poiWorkbook.getFontAt(0).getFontHeightInPoints();
         factorWidth = fontSize * 0.525f / 256;
     }
 

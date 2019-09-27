@@ -1031,7 +1031,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      * Enter edit mode for the current cell.
      */
     private void startEditing() {
-        if (!isEditable() || isEditing()) {
+        if (!editable || editing) {
             return;
         }
 
@@ -1112,7 +1112,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         if (!currentCellChanged) {
             // if it already was the current cell, start cell editing
-            if (isEditable()) {
+            if (editable) {
                 startEditing();
                 editing = true;
             }

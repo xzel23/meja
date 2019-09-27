@@ -478,7 +478,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         Rectangle rect = getCellRect(logicalCell);
 
         gc.setXOR(useXorDrawing);
-        gc.setStroke(getSelectionColor(), getSelectionStrokeWidth());
+        gc.setStroke(SELECTION_COLOR, getSelectionStrokeWidth());
         gc.drawRect(rect.getX(), rect.getY(), rect.getW(), rect.getH());
         gc.setXOR(false);
     }

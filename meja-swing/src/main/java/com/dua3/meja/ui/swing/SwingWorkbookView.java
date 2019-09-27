@@ -49,7 +49,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
      */
     public SwingWorkbookView() {
         setLayout(new CardLayout());
-        
+
         content = new JTabbedPane(SwingConstants.BOTTOM);
         content.addChangeListener(this);
         add(content);
@@ -180,7 +180,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
         switch (property) {
         case Workbook.PROPERTY_SHEET_ADDED:
         case Workbook.PROPERTY_SHEET_REMOVED:
-            SwingUtilities.invokeLater(() -> setWorkbook(getWorkbook()));
+            SwingUtilities.invokeLater(() -> setWorkbook(workbook));
             break;
         default:
             break;
