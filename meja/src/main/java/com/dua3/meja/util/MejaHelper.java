@@ -58,7 +58,7 @@ public class MejaHelper {
         boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
         boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
         boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
-        boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMLUA_TEXT);
+        boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMULA_TEXT);
 
         if (ignoreCase) {
             text = text.toLowerCase(Locale.ROOT);
@@ -130,7 +130,7 @@ public class MejaHelper {
             boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
             boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
             boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
-            boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMLUA_TEXT);
+            boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMULA_TEXT);
 
             if (isEmpty(sheet)) {
                 return Optional.empty();

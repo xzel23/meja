@@ -18,7 +18,7 @@ package com.dua3.meja.util;
 import com.dua3.utility.text.ToStringBuilder;
 
 /**
- * A rectaungular region.
+ * A rectangular region.
  */
 public class RectangularRegion {
 

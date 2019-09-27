@@ -38,5 +38,5 @@ public enum SearchOptions {
     /**
      * Search in formula text instead of result.
      */
-    SEARCH_FORMLUA_TEXT
+    SEARCH_FORMULA_TEXT
 }

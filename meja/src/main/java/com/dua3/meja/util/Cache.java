@@ -67,11 +67,11 @@ public class Cache<K, V> {
         WEAK_KEYS
     }
 
-    private final Function<K, V> compute;
+    private final Function<? super K, ? extends V> compute;
 
     private final Map<K, SoftReference<V>> items;
 
-    public Cache(Type type, Function<K, V> compute) {
+    public Cache(Type type, Function<? super K, ? extends V> compute) {
         this.compute = compute;
         switch (type) {
         case STRONG_KEYS:

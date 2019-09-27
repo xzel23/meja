@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +19,7 @@ public abstract class AbstractSheet implements Sheet {
     private static final Logger LOG = Logger.getLogger(AbstractSheet.class.getName());
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private List<RectangularRegion> mergedRegions = new ArrayList<>();
 
     public AbstractSheet() {
