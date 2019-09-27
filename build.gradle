@@ -47,7 +47,7 @@ subprojects {
         javafx_version='13'
         junit_version='5.5.1'
 
-        dua3_utility_version = '5-BETA1'
+        dua3_utility_version = '5-BETA2'
     }
 
     sourceCompatibility = java_version
@@ -195,7 +195,7 @@ subprojects {
 
 // === SPOTBUGS === >grtadlew
 
-    spotbugs.toolVersion = '3.1.12'
+    spotbugs.toolVersion = '4.0.0-beta4'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.SpotBugsTask) {
