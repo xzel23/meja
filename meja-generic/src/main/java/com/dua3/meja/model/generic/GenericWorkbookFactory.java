@@ -40,6 +40,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
 
     public GenericWorkbookFactory() {
         // force initialization of FileType instances
+        //noinspection ResultOfMethodCallIgnored
         FileTypeCsv.instance();
     }
 

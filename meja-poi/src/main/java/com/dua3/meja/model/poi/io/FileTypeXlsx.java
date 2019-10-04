@@ -36,7 +36,7 @@ public class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
     public PoiWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, OptionValues> options) throws IOException {
         PoiWorkbook wb = PoiWorkbookFactory.instance().open(uri);
         LangUtil.check(wb instanceof PoiXssfWorkbook);
-        return (PoiXssfWorkbook) wb;
+        return wb;
     }
 
     @Override

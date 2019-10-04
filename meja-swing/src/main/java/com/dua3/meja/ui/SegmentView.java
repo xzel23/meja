@@ -52,8 +52,8 @@ public interface SegmentView<SV extends SheetView, GC extends GraphicsContext> {
         }
 
         Lock lock = sheet.readLock();
+        lock.lock();
         try {
-            lock.lock();
 
             SheetPainterBase<SV, GC> sheetPainter = getSheetPainter();
 

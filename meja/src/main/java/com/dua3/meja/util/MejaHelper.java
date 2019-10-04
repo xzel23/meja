@@ -334,6 +334,7 @@ public class MejaHelper {
                     int w = align[j]*columnLength[j];
                     String[] columnData = data[j];
                     String s = k < columnData.length ? columnData[k] : "";
+                    //noinspection StringConcatenationInFormatCall
                     fmt.format("%1$" + w + "s%2$s", s, pipe);
                 }
                 fmt.format("%n");

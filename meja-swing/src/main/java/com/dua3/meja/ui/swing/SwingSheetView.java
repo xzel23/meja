@@ -78,7 +78,7 @@ import com.dua3.utility.swing.SwingUtil;
 @SuppressWarnings("serial")
 public class SwingSheetView extends JPanel implements SheetView, PropertyChangeListener {
 
-    private class SearchDialog extends JDialog {
+    private final class SearchDialog extends JDialog {
 
         private final JTextField jtfText = new JTextField(40);
         private final JCheckBox jcbIgnoreCase = new JCheckBox("ignore case", true);
@@ -205,7 +205,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     }
 
-    private class SheetPane extends JScrollPane {
+    private final class SheetPane extends JScrollPane {
         final SwingSegmentView topLeftQuadrant;
         final SwingSegmentView topRightQuadrant;
         final SwingSegmentView bottomLeftQuadrant;
@@ -374,7 +374,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
     }
 
-    class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, SwingGraphicsContext> {
+    final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, SwingGraphicsContext> {
         private final IntSupplier startRow;
         private final IntSupplier endRow;
         private final IntSupplier startColumn;

@@ -470,7 +470,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        public PoiHssfCellStyle getDefaultCellStyle() {
+        public PoiCellStyle getDefaultCellStyle() {
             return defaultCellStyle;
         }
 
@@ -479,7 +479,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        public PoiHssfCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
+        public PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
             return new PoiHssfCellStyle(this, (HSSFCellStyle) poiStyle);
         }
 
@@ -578,12 +578,12 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        public PoiXssfCellStyle getDefaultCellStyle() {
+        public PoiCellStyle getDefaultCellStyle() {
             return defaultCellStyle;
         }
 
         @Override
-        public PoiXssfCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
+        public PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
             return new PoiXssfCellStyle(this, (XSSFCellStyle) poiStyle);
         }
 

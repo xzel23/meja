@@ -89,6 +89,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public PoiWorkbookFactory() {
         // force initialization of FileType instances
         FileTypeExcel.instance();

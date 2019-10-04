@@ -68,7 +68,7 @@ public class MejaSwingHelper {
             sl = new SheetListener();
         }
 
-        class SheetListener implements PropertyChangeListener {
+        final class SheetListener implements PropertyChangeListener {
 
             SheetListener() {
             }

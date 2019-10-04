@@ -40,7 +40,7 @@ public class CellEditorPane extends JTextPane {
     /**
      * A subclass of BoxView that enables alignment options.
      */
-    class AlignedBoxView extends BoxView {
+    final class AlignedBoxView extends BoxView {
 
         AlignedBoxView(Element elem, int axis) {
             super(elem, axis);
@@ -87,7 +87,7 @@ public class CellEditorPane extends JTextPane {
     /**
      * A custom EditorKit to allow vertical alignment of text.
      */
-    class CellEditorKit extends StyledEditorKit {
+    final class CellEditorKit extends StyledEditorKit {
         @Override
         public ViewFactory getViewFactory() {
             return new CellEditorViewFactory();
@@ -97,7 +97,7 @@ public class CellEditorPane extends JTextPane {
     /**
      * A ViewFactory for the custom EditorKit.
      */
-    class CellEditorViewFactory implements ViewFactory {
+    final class CellEditorViewFactory implements ViewFactory {
 
         @Override
         public View create(Element elem) {
