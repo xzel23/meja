@@ -27,6 +27,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.CellValueHelper;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
 
 /**
@@ -36,8 +37,8 @@ public class SheetRowBuilder implements RowBuilder {
 
     private final Sheet sheet;
     private final CellValueHelper helper;
-    private Row currentRow;
-    private int colNr;
+    private Row currentRow = null;
+    private int colNr = 0;
 
     /**
      * Construct a new {@code RowBuilder}.
@@ -59,18 +60,21 @@ public class SheetRowBuilder implements RowBuilder {
 
     @Override
     public void add(String value) {
+        LangUtil.check(currentRow!=null, "missing call to startRow()");
         Cell cell = currentRow.getCell(colNr++);
         helper.setCellValue(cell, value);
     }
 
     @Override
     public void endRow() {
+        LangUtil.check(currentRow!=null, "unexpected call to endRow()");
         currentRow = null;
         colNr = 0;
     }
 
     @Override
     public void startRow() {
+        LangUtil.check(currentRow==null, "unexpected call to startRow()");
         currentRow = sheet.getRow(sheet.getRowCount());
         colNr = 0;
     }

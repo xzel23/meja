@@ -41,7 +41,7 @@ import com.dua3.meja.ui.WorkbookView;
 @SuppressWarnings("serial")
 public class SwingWorkbookView extends JComponent implements WorkbookView, ChangeListener, PropertyChangeListener {
 
-    private Workbook workbook;
+    private Workbook workbook = null;
     private final JTabbedPane content;
 
     /**

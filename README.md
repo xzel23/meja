@@ -132,3 +132,10 @@ __BETA_16__:
  - performance improvements
  - bug fixes
  
+__BETA_17__:
+
+ - further code cleanup
+ - update utility dependency
+ - remove usage of deprecated API (deprecated XSSFColor constructor)
+ - performance improvements
+ - small bug fixes
