@@ -589,10 +589,14 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
+        XSSFWorkbook getPoiWorkbook() {
+            return (XSSFWorkbook) super.getPoiWorkbook();
+        }
+
+        @Override
         public XSSFColor getPoiColor(Color color) {
-            XSSFColor xcolor = new XSSFColor();
-            xcolor.setRGB(color.toByteArray());
-            return xcolor;
+            IndexedColorMap colorMap = getPoiWorkbook().getStylesSource().getIndexedColors();
+            return new XSSFColor(new byte[] {(byte) color.r(), (byte) color.g(), (byte)color.b()}, colorMap);
         }
 
         @Override
