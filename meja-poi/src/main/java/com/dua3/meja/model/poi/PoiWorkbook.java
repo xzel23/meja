@@ -493,7 +493,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        protected FileType<PoiHssfWorkbook> getStandardFileType() {
+        protected FileType<PoiWorkbook> getStandardFileType() {
             return FileTypeXls.instance();
         }
 
@@ -595,7 +595,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        protected FileType<PoiXssfWorkbook> getStandardFileType() {
+        protected FileType<PoiWorkbook> getStandardFileType() {
             return FileTypeXlsx.instance();
         }
 

@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.function.Function;
 
 public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
-    protected FileTypeWorkbook(String name, OpenMode mode, Class<W> cls, String... extensions) {
+    protected FileTypeWorkbook(String name, OpenMode mode, Class<? extends W> cls, String... extensions) {
         super(name, mode, cls, extensions);
     }
 
@@ -19,7 +19,7 @@ public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
     public abstract WorkbookFactory<? extends W> getWorkbookFactory();
 
     @Override
-    public void write(URI uri, W document, Function<FileType, OptionValues> options) throws IOException {
+    public void write(URI uri, W document, Function<FileType<? super W>, OptionValues> options) throws IOException {
         getWorkbookWriter().write(document, uri);
     }
 }

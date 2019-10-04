@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {
     private static final FileType<GenericWorkbook> INSTANCE = new FileTypeCsv();
 
-    public static FileType instance() {
+    public static FileType<GenericWorkbook> instance() {
         return INSTANCE;
     }
 
@@ -27,7 +27,7 @@ public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {
     }
 
     @Override
-    public GenericWorkbook read(URI uri, Function<FileType, OptionValues> options) throws IOException {
+    public GenericWorkbook read(URI uri, Function<FileType<? extends GenericWorkbook>, OptionValues> options) throws IOException {
         return GenericWorkbookFactory.instance().open(uri);
     }
 

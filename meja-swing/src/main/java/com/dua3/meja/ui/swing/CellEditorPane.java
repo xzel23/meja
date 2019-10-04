@@ -217,6 +217,7 @@ public class CellEditorPane extends JTextPane {
         CellStyle cellStyle = cell.getCellStyle();
 
         Font font = cellStyle.getFont();
+        @SuppressWarnings("NumericCastThatLosesPrecision") 
         final java.awt.Font awtFont = fontUtil.convert(font).deriveFont((float) scale * font.getSizeInPoints());
 
         setFont(awtFont);

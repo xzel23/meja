@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Function;
 
-public class FileTypeXls extends FileTypeWorkbook<PoiHssfWorkbook> {
+public class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
     private static final FileTypeXls INSTANCE = new FileTypeXls();
 
     public static FileTypeXls instance() {
@@ -33,14 +33,14 @@ public class FileTypeXls extends FileTypeWorkbook<PoiHssfWorkbook> {
     }
 
     @Override
-    public PoiHssfWorkbook read(URI uri, Function<FileType, OptionValues> options) throws IOException {
+    public PoiHssfWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, OptionValues> options) throws IOException {
         PoiWorkbook wb = PoiWorkbookFactory.instance().open(uri);
         LangUtil.check(wb instanceof PoiHssfWorkbook);
         return (PoiHssfWorkbook) wb;
     }
-
+    
     @Override
-    public WorkbookFactory getWorkbookFactory() {
+    public WorkbookFactory<PoiWorkbook> getWorkbookFactory() {
         return PoiWorkbookFactory.instance();
     }
 

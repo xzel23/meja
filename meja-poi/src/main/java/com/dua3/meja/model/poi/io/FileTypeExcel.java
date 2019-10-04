@@ -23,7 +23,7 @@ import java.util.function.Function;
 public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     private static final FileType<PoiWorkbook> INSTANCE = new FileTypeExcel();
 
-    public static FileType instance() {
+    public static FileType<PoiWorkbook> instance() {
         return INSTANCE;
     }
 
@@ -32,7 +32,7 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     @Override
-    public WorkbookFactory getWorkbookFactory() {
+    public WorkbookFactory<PoiWorkbook> getWorkbookFactory() {
         return PoiWorkbookFactory.instance();
     }
 
@@ -51,7 +51,7 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     @Override
-    public PoiWorkbook read(URI uri, Function<FileType, OptionValues> options) throws IOException {
+    public PoiWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, OptionValues> options) throws IOException {
         if (FileTypeXlsx.instance().matches(uri.getSchemeSpecificPart())) {
             return FileTypeXlsx.instance().read(uri, options);
         }

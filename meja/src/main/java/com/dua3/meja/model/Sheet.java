@@ -393,9 +393,11 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     static String getColumnName(int j) {
         StringBuilder sb = new StringBuilder();
+        //noinspection CharUsedInArithmeticContext,NumericCastThatLosesPrecision
         sb.append((char) ('A' + j % 26));
         j /= 26;
         while (j > 0) {
+            //noinspection CharUsedInArithmeticContext,NumericCastThatLosesPrecision
             sb.insert(0, (char) ('A' + j % 26 - 1));
             j /= 26;
         }
@@ -411,14 +413,14 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      *                                  name
      */
     static int getColumnNumber(String colName) {
-        final int stride = 'z' - 'a' + 1;
+        final int stride = (int) 'z' - (int) 'a' + 1;
         int col = 0;
         for (char c : colName.toLowerCase(Locale.ROOT).toCharArray()) {
             if (c < 'a' || 'z' < c) {
                 throw new IllegalArgumentException("'" + colName + "' ist no valid column name.");
             }
 
-            int d = c - 'a' + 1;
+            int d = (int) c - (int) 'a' + 1;
             col = col * stride + d;
         }
         return col - 1;

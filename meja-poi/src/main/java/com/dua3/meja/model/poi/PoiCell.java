@@ -594,7 +594,7 @@ public final class PoiCell extends AbstractCell {
             Font runFont = getFontForFormattingRun(rts, i);
             properties.put(TextAttributes.FONT_FAMILY, runFont.getFamily());
             properties.put(TextAttributes.FONT_SIZE, runFont.getSizeInPoints() + "pt");
-            properties.put(TextAttributes.COLOR, runFont.getColor().toString());
+            properties.put(TextAttributes.COLOR, runFont.getColor());
             if (runFont.isBold()) {
                 properties.put(TextAttributes.FONT_WEIGHT, "bold");
             }
@@ -607,7 +607,6 @@ public final class PoiCell extends AbstractCell {
             if (runFont.isStrikeThrough()) {
                 properties.put(TextAttributes.TEXT_DECORATION, "line-through");
             }
-            properties.put(TextAttributes.COLOR, runFont.getColor());
 
             Style attr = Style.create("style", properties);
             push(rtb, TextAttributes.STYLE_START_RUN, attr);
