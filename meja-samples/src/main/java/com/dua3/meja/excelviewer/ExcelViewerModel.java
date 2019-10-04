@@ -150,7 +150,7 @@ public class ExcelViewerModel {
             }
         }
         this.workbook = workbook;
-        LOGGER.info(LangUtil.msgs("Workbook changed to ", getUri(this.workbook)));
+        LOGGER.info(() -> "Workbook changed to " + getUri(this.workbook).map(Object::toString).orElse(""));
     }
 
     protected void setZoom(float zoom) {
