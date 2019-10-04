@@ -42,6 +42,7 @@ public class PoiLoader extends WorkbookFactory<Workbook> {
             LangUtil.check(filesStr.startsWith("[") && filesStr.endsWith("]"));
             filesStr = filesStr.substring(1,filesStr.length()-1);
 
+            @SuppressWarnings("HardcodedFileSeparator") 
             URL[] urls = Arrays.stream(filesStr.split(","))
                 .map(String::trim)
                 .map(file -> PoiLoader.class.getResource("lib/"+file))

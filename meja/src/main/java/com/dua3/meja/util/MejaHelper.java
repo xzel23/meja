@@ -17,6 +17,7 @@ package com.dua3.meja.util;
 
 import com.dua3.meja.model.*;
 import com.dua3.utility.io.FileType;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.TextUtil;
 import com.dua3.utility.text.TextUtil.Alignment;
 
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
+import java.util.regex.Pattern;
 
 /**
  * Helper class.
@@ -31,6 +33,8 @@ import java.util.concurrent.locks.Lock;
  * @author Axel Howind (axel@dua3.com)
  */
 public class MejaHelper {
+
+    public static final Pattern PATTERN_NEWLINE = Pattern.compile("\n|\r\n|\n\r");
 
     /**
      * Find cell containing text in row.
@@ -41,9 +45,7 @@ public class MejaHelper {
      * @return the cell found or {@code null} if nothing found
      */
     public static Cell find(Row row, String text, SearchOptions... options) {
-        // EnumSet.of throws IllegalArgumentException if options is empty, so
-        // use a standard HashSet instead.
-        return find(row, text, new HashSet<>(Arrays.asList(options)));
+        return find(row, text, LangUtil.enumSet(SearchOptions.class, options));
     }
 
     /**
@@ -110,9 +112,7 @@ public class MejaHelper {
      * @return the cell found or {@code null} if nothing found
      */
     public static Optional<Cell> find(Sheet sheet, String text, SearchOptions... options) {
-        // EnumSet.of throws IllegalArgumentException if options is empty, so
-        // use a standard HashSet instead.
-        return find(sheet, text, new HashSet<>(Arrays.asList(options)));
+        return find(sheet, text, LangUtil.enumSet(SearchOptions.class, options));
     }
 
     /**
@@ -272,9 +272,7 @@ public class MejaHelper {
      *  the Appendable
      */
     public static <A extends Appendable> A printTable(A app, Sheet sheet, Locale locale, PrintOptions... printOptions) {
-        EnumSet<PrintOptions> options = printOptions.length==0
-                ? EnumSet.noneOf(PrintOptions.class)
-                : EnumSet.copyOf(Arrays.asList(printOptions));
+        EnumSet<PrintOptions> options = LangUtil.enumSet(PrintOptions.class, printOptions);
 
         // setup the symbols used to drawing lines
         final String pipe, dash, cross;
@@ -290,7 +288,7 @@ public class MejaHelper {
         int[] columnLength = new int[sheet.getColumnCount()];
         for (Row row : sheet) {
             for (int j = 0; j < sheet.getColumnCount(); j++) {
-                for (String s : row.getCell(j).toString(locale).split("\n")) {
+                for (String s : PATTERN_NEWLINE.split(row.getCell(j).toString(locale))) {
                     columnLength[j] = Math.max(columnLength[j], s.length());
                 }
             }
@@ -324,7 +322,7 @@ public class MejaHelper {
             String[][] data = new String[sheet.getColumnCount()][];
             int[] align = new int[sheet.getColumnCount()];
             for (int j = 0; j < sheet.getColumnCount(); j++) {
-                data[j] = row.getCell(j).toString(locale).split("\n");
+                data[j] = PATTERN_NEWLINE.split(row.getCell(j).toString(locale));
                 align[j] = row.getCell(j).get() instanceof Number ? 1 : -1;
                 lines = Math.max(lines, data[j].length);
             }

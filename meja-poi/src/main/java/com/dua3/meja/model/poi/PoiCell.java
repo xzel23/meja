@@ -49,7 +49,7 @@ public final class PoiCell extends AbstractCell {
 
     private static final Logger LOGGER = Logger.getLogger(PoiCell.class.getName());
 
-    private static final char NON_BREAKING_SPACE = (char) 160;
+    private static final char NON_BREAKING_SPACE = 160;
     private static final char TAB = '\t';
 
     private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
@@ -273,7 +273,7 @@ public final class PoiCell extends AbstractCell {
     public LocalDateTime getDateTime() {
         if (isEmpty()) { // POI will throw for wrong CellType but return null
                          // for empty cells
-            throw new CellException(this, "Cell does not contain date/time.");
+            throw new CellException(this, "Cell does not contain datetime.");
         }
         return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
     }

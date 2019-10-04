@@ -37,7 +37,7 @@ public class Converter {
             workbook.write(out.toURI());
             System.out.println("Data written to " + out.getAbsolutePath());
         } catch (IOException ex) {
-            System.err.println("I/O Error: " + ex.getMessage());
+            System.err.println("IO error: " + ex.getMessage());
         }
     }
 

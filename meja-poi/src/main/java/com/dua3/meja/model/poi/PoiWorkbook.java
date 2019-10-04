@@ -417,7 +417,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          */
         public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, URI uri) {
             super(poiWorkbook, uri);
-            this.defaultCellStyle = new PoiHssfCellStyle(this, poiWorkbook.getCellStyleAt((short) 0));
+            this.defaultCellStyle = new PoiHssfCellStyle(this, poiWorkbook.getCellStyleAt(0));
             cellStyles.put("", (short) 0);
             init();
         }
@@ -519,7 +519,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         public PoiXssfWorkbook(Workbook poiWorkbook, URI uri) {
             super(poiWorkbook, uri);
             assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
-            this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt((short) 0));
+            this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt(0));
             init();
         }
 
