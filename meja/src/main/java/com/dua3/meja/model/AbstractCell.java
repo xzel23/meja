@@ -64,6 +64,7 @@ public abstract class AbstractCell implements Cell {
 
     @Override
     public void unMerge() {
+        //noinspection ObjectEquality
         LangUtil.check(logicalCell == this, "Cell is not top left cell of a merged region");
 
         getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());

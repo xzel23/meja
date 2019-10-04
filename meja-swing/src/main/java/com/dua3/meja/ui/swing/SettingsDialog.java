@@ -44,7 +44,7 @@ public class SettingsDialog extends JDialog {
         for (Option<?> option : options) {
             settingsPanel.add(new JLabel(option.getName()));
             if (option instanceof ChoiceOption) {
-                JComboBox<Value<?>> cb = new JComboBox<>(new Vector<Value<?>>(((ChoiceOption<?>)option).getChoices()));
+                JComboBox<Value<?>> cb = new JComboBox<>(new Vector<>(((ChoiceOption<?>)option).getChoices()));
                 cb.setSelectedItem(option.getDefault());
                 inputs.add(cb);
                 settingsPanel.add(cb);

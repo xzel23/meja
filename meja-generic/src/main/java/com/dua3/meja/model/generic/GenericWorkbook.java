@@ -84,6 +84,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     String getCellStyleName(GenericCellStyle cellStyle) {
         for (Entry<String, GenericCellStyle> entry : cellStyles.entrySet()) {
+            //noinspection ObjectEquality
             if (entry.getValue() == cellStyle) {
                 return entry.getKey();
             }

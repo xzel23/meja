@@ -298,6 +298,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void setCurrentCell(Cell cell) {
+        //noinspection ObjectEquality
         LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
         Cell old = getCurrentCell();

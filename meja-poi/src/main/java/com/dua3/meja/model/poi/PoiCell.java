@@ -501,6 +501,7 @@ public final class PoiCell extends AbstractCell {
         LangUtil.check((cellStyle instanceof PoiCellStyle), "Incompatible implementation.");
 
         Object old = getCellStyle();
+        //noinspection ConstantConditions
         poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
         styleChanged(old, cellStyle);
     }

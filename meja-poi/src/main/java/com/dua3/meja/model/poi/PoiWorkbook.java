@@ -385,6 +385,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     @Override
     public void write(FileType<?> type, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException {
+        //noinspection ObjectEquality
         if (type == getStandardFileType()) {
             // if the workbook is to be saved in the same format, write it out
             // directly so that

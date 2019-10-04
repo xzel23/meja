@@ -275,7 +275,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         private Rectangle getCellRectInViewCoordinates(Cell cell) {
             if (sheet == null) {
-                return null;
+                return new Rectangle(0,0,0,0);
             }
 
             boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
@@ -787,6 +787,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
         int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
         sheet.setCurrentCell(newRowNum, newColNum);
+        //noinspection ObjectEquality
         return getCurrentCell() != oldCell;
     }
 
@@ -839,6 +840,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             this.sheet.removePropertyChangeListener(this);
         }
 
+        //noinspection ObjectEquality
         if (sheet != this.sheet) {
             Sheet oldSheet = this.sheet;
             this.sheet = sheet;
@@ -846,7 +848,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             LOG.fine("sheet changed.");
 
             if (this.sheet != null) {
-                sheet.addPropertyChangeListener(this);
+                this.sheet.addPropertyChangeListener(this);
             }
 
             updateContent();
@@ -1045,9 +1047,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         sheetPane.setScrollable(false);
 
         final JComponent editorComp = editor.startEditing(cell);
+        
         final Rectangle cellRect = sheetPane.getCellRectInViewCoordinates(cell);
-
         editorComp.setBounds(rectS2D(cellRect));
+        
         sheetPane.add(editorComp);
         editorComp.validate();
         editorComp.setVisible(true);

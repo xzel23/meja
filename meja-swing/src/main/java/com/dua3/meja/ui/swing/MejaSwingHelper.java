@@ -222,7 +222,7 @@ public class MejaSwingHelper {
         boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
         File file = defaultFS ? path.toFile() : new File(".");
 
-        JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
+        JFileChooser jfc = new JFileChooser(file.isDirectory() ? file : file.getParentFile());
 
         for (FileFilter filter : SwingFileFilter.getFilters(OpenMode.READ, Workbook.class)) {
             jfc.addChoosableFileFilter(filter);
@@ -278,7 +278,7 @@ public class MejaSwingHelper {
         boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
         File file = defaultFS ? path.toFile() : new File(".");
 
-        JFileChooser jfc = new JFileChooser(file == null || file.isDirectory() ? file : file.getParentFile());
+        JFileChooser jfc = new JFileChooser(file.isDirectory() ? file : file.getParentFile());
 
         int rc = jfc.showSaveDialog(parent);
 

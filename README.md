@@ -129,4 +129,6 @@ __BETA_16__:
 
  - code cleanup
  - buildable with JDK 13
+ - performance improvements
+ - bug fixes
  

@@ -296,6 +296,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     }
 
     public void update(Sheet sheet) {
+        //noinspection ObjectEquality
         if (sheet != this.sheet) {
             this.sheet = sheet;
         }
@@ -352,18 +353,16 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             return;
         }
 
+        Color fillFgColor = style.getFillFgColor();
+        if (fillFgColor != null) {
+            g.setColor(fillFgColor);
+            g.fillRect(cr.getX(), cr.getY(), cr.getW(), cr.getH());
+        }
+
         if (pattern != FillPattern.SOLID) {
             Color fillBgColor = style.getFillBgColor();
             if (fillBgColor != null) {
                 g.setColor(fillBgColor);
-                g.fillRect(cr.getX(), cr.getY(), cr.getW(), cr.getH());
-            }
-        }
-
-        if (pattern != FillPattern.NONE) {
-            Color fillFgColor = style.getFillFgColor();
-            if (fillFgColor != null) {
-                g.setColor(fillFgColor);
                 g.fillRect(cr.getX(), cr.getY(), cr.getW(), cr.getH());
             }
         }
@@ -614,6 +613,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                 Cell logicalCell = cell.getLogicalCell();
 
                 final boolean visible;
+                //noinspection ObjectEquality
                 if (cell == logicalCell) {
                     // if cell is not merged or the topleft cell of the
                     // merged region, then it is visible

@@ -72,6 +72,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
             if (view != null) {
                 assert view instanceof SwingSheetView;
                 SwingSheetView sheetView = (SwingSheetView) view;
+                //noinspection ObjectEquality
                 if (sheet == sheetView.getSheet()) {
                     return sheetView;
                 }
@@ -166,6 +167,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
 
     @Override
     public void stateChanged(ChangeEvent evt) {
+        //noinspection ObjectEquality
         if (evt.getSource() == content) {
             int idx = content.getSelectedIndex();
             if (workbook != null && idx>=0) {
