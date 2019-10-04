@@ -26,38 +26,6 @@ import java.util.List;
 public interface IRowBuilder {
 
     /**
-     * Create a row as {@code List<String>}.
-     */
-    class ListRowBuilder implements IRowBuilder {
-
-        private List<String> row;
-
-        @Override
-        public void add(String value) {
-            row.add(value);
-        }
-
-        @Override
-        public void endRow() {
-            // nop
-        }
-
-        /**
-         * Return the constructed row as {@code List<String>}.
-         *
-         * @return the row as {@code List<String>}
-         */
-        public List<String> getRow() {
-            return Collections.unmodifiableList(row);
-        }
-
-        @Override
-        public void startRow() {
-            row = new ArrayList<>();
-        }
-    }
-
-    /**
      * Add a value.
      *
      * @param value the value to add
