@@ -23,7 +23,7 @@ public class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     private FileTypeXlsx() {
-        super("Excel", OpenMode.READ_AND_WRITE, PoiXssfWorkbook.class, "xlsx");
+        super("Excel", OpenMode.READ_AND_WRITE, PoiXssfWorkbook.class, "xlsx", "xlsm");
     }
 
     // loosen access to make init() callable by FileTypeExcel

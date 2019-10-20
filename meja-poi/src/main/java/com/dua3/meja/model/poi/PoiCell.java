@@ -206,9 +206,9 @@ public final class PoiCell extends AbstractCell {
         case BLANK:
             return null;
         case DATE:
-            return LocalDate.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
+            return poiCell.getLocalDateTimeCellValue().toLocalDate();
         case DATE_TIME:
-            return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
+            return poiCell.getLocalDateTimeCellValue();
         case NUMERIC:
             return poiCell.getNumericCellValue();
         case FORMULA:
@@ -264,9 +264,7 @@ public final class PoiCell extends AbstractCell {
                          // for empty cells
             throw new CellException(this, "Cell does not contain a date.");
         }
-        return poiCell.getDateCellValue().toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
+        return poiCell.getLocalDateTimeCellValue().toLocalDate();
     }
 
     @Override
@@ -275,7 +273,7 @@ public final class PoiCell extends AbstractCell {
                          // for empty cells
             throw new CellException(this, "Cell does not contain datetime.");
         }
-        return LocalDateTime.ofInstant(poiCell.getDateCellValue().toInstant(), ZoneId.systemDefault());
+        return poiCell.getLocalDateTimeCellValue();
     }
 
     private Font getFontForFormattingRun(RichTextString richText, int i) {
@@ -416,8 +414,7 @@ public final class PoiCell extends AbstractCell {
         if (arg == null) {
             clear();
         } else {
-            Date d = Date.from(arg.atStartOfDay(ZoneId.systemDefault()).toInstant());
-            poiCell.setCellValue(d);
+            poiCell.setCellValue(arg);
             if (!isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is not date formatted
@@ -435,8 +432,7 @@ public final class PoiCell extends AbstractCell {
         if (arg == null) {
             clear();
         } else {
-            Date d = Date.from(arg.atZone(ZoneId.systemDefault()).toInstant());
-            poiCell.setCellValue(d);
+            poiCell.setCellValue(arg);
             if (!isCellDateFormatted()) {
                 // Excel does not have a cell type for dates!
                 // Warn if cell is not date formatted

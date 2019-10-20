@@ -139,3 +139,9 @@ __BETA_17__:
  - remove usage of deprecated API (deprecated XSSFColor constructor)
  - performance improvements
  - small bug fixes
+
+__BETA_18__:
+
+ - update POI to 4.1.1
+ - remove (now) unnecessary conversions to java.util.Date
+ - add extension "xlsm" to xlsx filetype
