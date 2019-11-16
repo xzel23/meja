@@ -145,3 +145,9 @@ __BETA_18__:
  - update POI to 4.1.1
  - remove (now) unnecessary conversions to java.util.Date
  - add extension "xlsm" to xlsx filetype
+
+__BETA_19__:
+
+ - update gradle to 6.0 to make compilation on JDK 13 possible
+ - update utility dependency
+ - update openjfx to 13.0.1
