@@ -13,7 +13,7 @@
 // limitations under the License.
 
 plugins {
-    id 'com.dua3.gradle.jpms' version '1.0-BETA5' apply false
+    id 'com.dua3.gradle.jpms' version '1.0' apply false
     id 'com.adarshr.test-logger' version '1.7.0' apply false
     id 'com.github.spotbugs' version '2.0.0' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
@@ -44,10 +44,10 @@ subprojects {
 
     ext {
         java_version='11'
-        javafx_version='13.0.1'
+        javafx_version='13.0.2'
         junit_version='5.5.1'
 
-        dua3_utility_version = '5-BETA6'
+        dua3_utility_version = '5.2'
     }
 
     sourceCompatibility = java_version
@@ -195,7 +195,7 @@ subprojects {
 
 // === SPOTBUGS === >grtadlew
 
-    spotbugs.toolVersion = '4.0.0-beta4'
+    spotbugs.toolVersion = '4.0.0'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.SpotBugsTask) {

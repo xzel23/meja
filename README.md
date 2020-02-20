@@ -151,3 +151,11 @@ __BETA_19__:
  - update gradle to 6.0 to make compilation on JDK 13 possible
  - update utility dependency
  - update openjfx to 13.0.1
+
+__BETA_20__:
+
+ - update utility to 5.2
+ - update Apache POI to 4.1.2
+ - update JavaFX to 13.0.2
+ - update spotbugs to 4.0 final
+ - update gradle plugins
