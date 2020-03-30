@@ -30,7 +30,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '2.0-BETA20-SNAPSHOT'
+    version = '2.0'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
@@ -195,7 +195,7 @@ subprojects {
 
 // === SPOTBUGS === >grtadlew
 
-    spotbugs.toolVersion = '4.0.0'
+    spotbugs.toolVersion = '4.0.1'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.SpotBugsTask) {
