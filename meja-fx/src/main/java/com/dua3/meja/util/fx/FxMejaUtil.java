@@ -5,6 +5,8 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -37,7 +39,7 @@ public class FxMejaUtil {
      * @param posJ  the column number where to insert the data
      */
     public static void copyToSheet(TableView<? extends Iterable<?>> table, Sheet sheet, int posI, int posJ) {
-        var columns = table.getColumns();
+        ObservableList<? extends TableColumn<? extends Iterable<?>, ?>> columns = table.getColumns();
         int m = columns.size();
 
         // table header
@@ -49,10 +51,10 @@ public class FxMejaUtil {
         sheet.splitAt(1, 0);
 
         // copy data
-        for (var rowData : table.getItems()) {
+        for (Iterable<?> rowData : table.getItems()) {
             row = sheet.getRow(posI + (++i));
             int j = 0;
-            for (var obj : rowData) {
+            for (Object obj : rowData) {
                 row.getCell(posJ + (j++)).set(obj);
             }
         }
@@ -70,7 +72,7 @@ public class FxMejaUtil {
                 t.getExtensions()
                         .stream()
                         .map(ext -> "*." + ext)
-                        .collect(Collectors.toList()).toArray(String[]::new))).collect(Collectors.toCollection(LinkedList::new));
+                        .collect(Collectors.toList()).toArray(new String[0]))).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**

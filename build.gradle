@@ -43,11 +43,11 @@ subprojects {
     ////////////////////////////////////////////////////////////////////////////
 
     ext {
-        java_version='11'
+        java_version='8'
         javafx_version='13.0.2'
         junit_version='5.5.1'
 
-        dua3_utility_version = '5.2'
+        dua3_utility_version = '5.3.4'
     }
 
     sourceCompatibility = java_version

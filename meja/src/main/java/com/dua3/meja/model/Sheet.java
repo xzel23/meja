@@ -325,7 +325,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     @Override
     default Iterator<Row> iterator() {
-        return new Iterator<>() {
+        return new Iterator<Row>() {
 
             private int rowNum = getFirstRowNum();
 

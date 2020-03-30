@@ -59,7 +59,7 @@ public class SettingsDialog extends JDialog {
         add(new JButton(SwingUtil.createAction("OK", () -> {
             result = new OptionValues();
             int i=0;
-            for (var option: options) {
+            for (Option<?> option: options) {
                 JComponent component = inputs.get(i++);
                 if (option instanceof ChoiceOption) {
                     result.put(option, (Value) ((JComboBox) component).getSelectedItem());
