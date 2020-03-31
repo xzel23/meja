@@ -303,7 +303,7 @@ public class MejaHelper {
         Formatter fmt = new Formatter(app);
 
         if (options.contains(PrintOptions.LINE_ABOVE)) {
-            fmt.format("%s%n", dash.repeat(overallLength));
+            fmt.format("%s%n", TextUtil.repeat(dash, overallLength));
         }
 
         if (options.contains(PrintOptions.PREPEND_SHEET_NAME)) {
@@ -311,7 +311,7 @@ public class MejaHelper {
             fmt.format("%2$s%1$s%2$s%n", TextUtil.align(title, overallLength-2, Alignment.CENTER), pipe);
 
             if (options.contains(PrintOptions.LINE_ABOVE)) {
-                fmt.format("%s%n", "-".repeat(overallLength));
+                fmt.format("%s%n", TextUtil.repeat("-", overallLength));
             }
         }
 
@@ -345,7 +345,7 @@ public class MejaHelper {
                 fmt.format("%s", pipe);
                 for (int j = 0; j < sheet.getColumnCount(); j++) {
                     String endSymbol = j + 1 < sheet.getColumnCount() ? cross : pipe;
-                    fmt.format("%s%s", "-".repeat(columnLength[j]), endSymbol);
+                    fmt.format("%s%s", TextUtil.repeat("-", columnLength[j]), endSymbol);
                 }
                 fmt.format("%n");
             }
@@ -354,7 +354,7 @@ public class MejaHelper {
         }
 
         if (options.contains(PrintOptions.LINE_BELOW)) {
-            fmt.format("%s%n", dash.repeat(overallLength));
+            fmt.format("%s%n", TextUtil.repeat(dash, overallLength));
         }
 
         return app;

@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.0.1
+
+ - remove Java 9+ API usage
+
 ## Version 2.0
 
  - restore Java 8 compatibility
