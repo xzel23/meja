@@ -1,7 +1,7 @@
 dependencies {
     api project(':meja')
 
-    implementation "org.openjfx:javafx-base:${javafx_version}:${platform}"
-    implementation "org.openjfx:javafx-graphics:${javafx_version}:${platform}"
-    implementation "org.openjfx:javafx-controls:${javafx_version}:${platform}"
+    compileOnly "org.openjfx:javafx-base:${javafx_version}:${platform}"
+    compileOnly "org.openjfx:javafx-graphics:${javafx_version}:${platform}"
+    compileOnly "org.openjfx:javafx-controls:${javafx_version}:${platform}"
 }
