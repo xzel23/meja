@@ -19,6 +19,7 @@ import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
+import com.dua3.utility.text.Font;
 
 /**
  * Kitchensink example.
@@ -62,11 +63,45 @@ public class KitchenSink extends JFrame {
         }
     }
 
+    private static void addTextColorSheet(Workbook wb) {
+        Sheet sheet = wb.createSheet("text colors");
+
+        Row row = sheet.getRow(0);
+        row.getCell(0).set("Color");
+        row.getCell(1).set("Code");
+        row.getCell(2).set("darker");
+        row.getCell(3).set("brighter");
+
+        sheet.splitAt(1, 0);
+
+        CellStyle csDefault = wb.getDefaultCellStyle();
+        Font fontDefault = csDefault.getFont();
+        for (Entry<String, Color> e : Color.palette().entrySet()) {
+            String name = "font"+e.getKey();
+
+            CellStyle cs = wb.getCellStyle(name);
+            cs.setFont(fontDefault.deriveFont(Font.FontDef.color(e.getValue())));
+
+            CellStyle csDark = wb.getCellStyle(name + "Dark");
+            csDark.setFont(fontDefault.deriveFont(Font.FontDef.color(e.getValue().darker())));
+
+            CellStyle csBright = wb.getCellStyle(name + "Bright");
+            csBright.setFont(fontDefault.deriveFont(Font.FontDef.color(e.getValue().brighter())));
+
+            row = sheet.getRow(sheet.getRowCount());
+            row.getCell(0).set(name).setCellStyle(cs);
+            row.getCell(1).set(e.getValue().toString()).setCellStyle(cs);
+            row.getCell(2).set("darker").setCellStyle(csDark);
+            row.getCell(3).set("brighter").setCellStyle(csBright);
+        }
+    }
+
     private static Workbook createWorkbook(WorkbookFactory<?> factory) {
         Workbook wb = factory.create();
 
         addColorSheet(wb);
-
+        addTextColorSheet(wb);
+        
         return wb;
     }
 
