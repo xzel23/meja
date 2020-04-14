@@ -1,6 +1,6 @@
 # Meja Changelog
 
-## Version 2.0.2
+## Version 2.0.3
 
  - remove Java 9 API usage
  - update JavaFX to 14
