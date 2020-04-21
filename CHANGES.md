@@ -2,6 +2,7 @@
 
 ## Version 2.0.4
 
+ - fix writing GenericWorkbook to fiile with xls extension using xlsx format
  - add Hyperlink support (preview)
  
 ## Version 2.0.3

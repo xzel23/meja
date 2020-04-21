@@ -397,6 +397,7 @@ public interface Cell {
      * Set Hyperlink.
      *
      * @param target the link target
+     * @return this cell
      */
     Cell setHyperlink(URL target);
 

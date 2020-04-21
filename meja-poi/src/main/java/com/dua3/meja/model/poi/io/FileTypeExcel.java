@@ -60,4 +60,9 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
         }
         throw new IllegalArgumentException("cannot determine file type for reading");
     }
+
+    @Override
+    public boolean isCompound() {
+        return true;
+    }
 }
