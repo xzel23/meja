@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -326,6 +327,49 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
         }
     }
 
+    /**
+     * Writes the workbook to a Path using standard options.
+     *
+     * @param path the path to write to.
+     *            <p>
+     *            The file format to used is determined by the extension of
+     *            {@code path} which must be one of the extensions defined in
+     *            {@link FileType}.
+     *            </p>
+     * @throws IOException if an I/O error occurs
+     */
+    default void write(Path path) throws IOException {
+        write(path, OptionValues.empty());
+    }
+
+    /**
+     * Writes the workbook to a file.
+     *
+     * @param path    the path to write to.
+     *                <p>
+     *                The file format to used is determined by the extension of
+     *                {@code uri} which must be one of the extensions defined in
+     *                {@link FileType}.
+     *                </p>
+     * @param options special options to use (supported options depend on the file
+     *                type)
+     * @throws IOException if an I/O error occurs
+     */
+    default void write(Path path, OptionValues options) throws IOException {
+        write(path, options, p -> {
+        });
+    }
+
+
+    default void write(Path path, OptionValues options, DoubleConsumer updateProgress) throws IOException {
+        FileType<?> type = FileType
+                .forExtension(IOUtil.getExtension(path))
+                .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for " + path));
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
+            write(type, out, options, updateProgress);
+        }
+    }
+    
     /**
      * Writes the workbook to a stream using default options.
      *
