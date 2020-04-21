@@ -533,6 +533,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     public static class PoiXssfWorkbook extends PoiWorkbook {
 
         private final PoiXssfCellStyle defaultCellStyle;
+        private IndexedColorMap colorMap;
 
         /**
          * Construct instance from existing POI workbook.
@@ -544,6 +545,9 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             super(poiWorkbook, uri);
             assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt(0));
+            this.colorMap = poiWorkbook instanceof XSSFWorkbook 
+                    ? ((XSSFWorkbook) poiWorkbook).getStylesSource().getIndexedColors()
+                    : new DefaultIndexedColorMap();
             init();
         }
 
@@ -612,13 +616,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        XSSFWorkbook getPoiWorkbook() {
-            return (XSSFWorkbook) super.getPoiWorkbook();
-        }
-
-        @Override
         public XSSFColor getPoiColor(Color color) {
-            IndexedColorMap colorMap = getPoiWorkbook().getStylesSource().getIndexedColors();
             return new XSSFColor(new byte[] {(byte) color.r(), (byte) color.g(), (byte)color.b()}, colorMap);
         }
 
