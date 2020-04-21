@@ -20,12 +20,14 @@ import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * A single cell of a sheet.
@@ -391,6 +393,20 @@ public interface Cell {
      */
     Cell setFormula(String value);
 
+    /**
+     * Set Hyperlink.
+     *
+     * @param target the link target
+     */
+    Cell setHyperlink(URL target);
+
+    /**
+     * Get Hyperlink.
+     * 
+     * @return an Optional with the Hyperlink or empty Optional
+     */
+    Optional<URL> getHyperlink();
+    
     /**
      * Return string representation of cell content.
      *

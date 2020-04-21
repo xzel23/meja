@@ -30,21 +30,19 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.text.TextAttributes;
 import com.dua3.utility.text.TextUtil;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.DoubleConsumer;
@@ -400,6 +398,31 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         } else {
             throw new IllegalStateException("could not write workbook");
         }
+    }
+
+    public Hyperlink createHyperLink(URL target) {
+        HyperlinkType type;
+        String address;
+        switch (target.getProtocol().toLowerCase(Locale.ROOT)) {
+            case "http":
+            case "https":
+                type = HyperlinkType.URL;
+                address = target.toExternalForm();
+                break;
+            case "file":
+                type = HyperlinkType.FILE;
+                address = target.getPath();
+                break;
+            case "mailto":
+                type = HyperlinkType.EMAIL;
+                address = target.getPath();
+                break;
+            default:
+                throw new IllegalArgumentException("unsupported protocol: "+target.getProtocol());
+        }
+        Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(type);
+        link.setAddress(address);
+        return link;
     }
 
     /**

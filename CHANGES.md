@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.0.4
+
+ - add Hyperlink support (preview)
+ 
 ## Version 2.0.3
 
  - remove Java 9 API usage

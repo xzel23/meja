@@ -21,16 +21,18 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.*;
+import com.dua3.utility.text.Font;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.time.*;
 import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
@@ -189,6 +191,7 @@ public final class PoiCell extends AbstractCell {
         default:
             throw new CellException(other, "Unsupported Cell Type: " + other.getCellType());
         }
+        other.getHyperlink().ifPresent(this::setHyperlink);
     }
 
     @Override
@@ -567,6 +570,39 @@ public final class PoiCell extends AbstractCell {
         updateRow();
         valueChanged(old, null);
         return this;
+    }
+
+    @Override
+    public PoiCell setHyperlink(URL target) {
+        Hyperlink link = getWorkbook().createHyperLink(target);
+        poiCell.setHyperlink(link);
+        return this;
+    }
+
+    @Override
+    public Optional<URL> getHyperlink() {
+        Hyperlink link = poiCell.getHyperlink();
+
+        if (link==null) {
+            return Optional.empty();
+        }
+        try {
+            switch (link.getType()) {
+                case URL:
+                    return Optional.of(new URL(link.getAddress()));
+                case EMAIL:
+                    return Optional.of(new URL("mailto:" + link.getAddress()));
+                case FILE:
+                    return Optional.of(IOUtil.toURL(Paths.get(link.getAddress())));
+                case NONE:
+                    return Optional.empty();
+                case DOCUMENT:
+                default:
+                    throw new UnsupportedOperationException("Unsupported link type: "+link.getType());
+            }
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public RichText toRichText(RichTextString rts) {

@@ -19,9 +19,14 @@ import com.dua3.meja.model.*;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  *
@@ -31,7 +36,7 @@ public class GenericCell extends AbstractCell {
     public static final int MAX_HORIZONTAL_SPAN = 0xefff;
     public static final int MAX_VERTICAL_SPAN = 0xef_ffff;
     public static final int MAX_COLUMN_NUMBER = 0xef_ffff;
-
+    
     /**
      * The precalculated initial value for the data field with rowspan=colspan=1 and
      * a cell type of blank.
@@ -40,6 +45,37 @@ public class GenericCell extends AbstractCell {
             | CellType.BLANK.ordinal();
     private Object value;
     private GenericCellStyle cellStyle;
+    private Map<Attribute, Object> attributes = null;
+
+    enum Attribute {
+        LINK_URL,
+        LABEL;
+    }
+    
+    private Optional<Object> getAttribute(Attribute name) {
+        if (attributes == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(attributes.get(name));
+    }
+
+    private void setAttribute(Attribute name, Object value) {
+        if (value==null) {
+            if (attributes!=null) {
+                attributes.remove(name);
+                if (attributes.isEmpty()) {
+                    attributes = null;
+                }
+            }
+            return;
+        }
+        
+        if (attributes==null) {
+            attributes = new HashMap<>();
+        }
+
+        attributes.put(name, value);
+    }
 
     /**
      * A single long storing meta information.
@@ -112,6 +148,7 @@ public class GenericCell extends AbstractCell {
         default:
             throw new CellException(other, "unsupported cell type: "+other.getCellType());
         }
+        other.getHyperlink().ifPresent(this::setHyperlink);
     }
 
     @Override
@@ -326,6 +363,23 @@ public class GenericCell extends AbstractCell {
     public GenericCell setFormula(String value) {
         set(value, CellType.FORMULA);
         return this;
+    }
+
+    @Override
+    public Cell setHyperlink(URL target) {
+        setAttribute(Attribute.LINK_URL, target);
+        return this;
+    }
+
+    @Override
+    public Optional<URL> getHyperlink() {
+        return getAttribute(Attribute.LINK_URL).flatMap(obj -> {
+            try {
+                return Optional.of(new URL(obj.toString()));
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException("invalid link URL: "+obj);
+            }
+        });
     }
 
     @Override
