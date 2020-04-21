@@ -2,8 +2,10 @@
 
 ## Version 2.0.4
 
- - fix writing GenericWorkbook to fiile with xls extension using xlsx format
- - add Hyperlink support (preview)
+ - fix writing GenericWorkbook to file with xls extension wrongly using xlsx format
+ - add Hyperlink support
+ - Workbook.write(Path)
+ - add CreateCalendar sample
  
 ## Version 2.0.3
 

@@ -1,11 +1,12 @@
 package com.dua3.meja.samples;
 
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.*;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
+import com.dua3.utility.data.Color;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
@@ -64,7 +65,7 @@ public class CreateCalendar {
                 String dayName=DayOfWeek.values()[(d+firstDayOfWeek.ordinal()) % daysPerWeek]
                         .getDisplayName(TextStyle.FULL, locale)
                         .substring(0,2);
-                row.getCell(j+d+1).set(dayName);
+                row.getCell(j + d + 1).set(dayName);
             }
             
             LocalDate firstOfMonth = LocalDate.of(year, month.getValue(), 1);
@@ -74,16 +75,30 @@ public class CreateCalendar {
                 int idx = offset+d.getDayOfMonth()-1;
                 int ii = idx/daysPerWeek;
                 int jj = idx%daysPerWeek;
-                sheet.getCell(i+ii,j+jj+1).set(d.getDayOfMonth());
+                Cell cell = sheet.getCell(i+ii,j+jj+1).set(d.getDayOfMonth());
+                setStyle(cell, d);
                 
                 // write week number
                 if (d.getDayOfMonth()==1 || d.getDayOfWeek()==firstDayOfWeek) {
                     sheet.getCell(i+ii, j).set(d.get(weekFields.weekOfWeekBasedYear()));
                 }
             }
-            
         }
 
         wb.write(file);
+    }
+
+    private static void setStyle(Cell cell, LocalDate d) {
+        if (d.getMonth()==Month.DECEMBER && d.getDayOfMonth()==25) {
+            try {
+                cell.setHyperlink(new URL("https://en.wikipedia.org/wiki/Christmas"));
+                CellStyle csHoliday = cell.getWorkbook().getCellStyle("holiday");
+                csHoliday.setFillFgColor(Color.INDIANRED.brighter());
+                csHoliday.setFillPattern(FillPattern.SOLID);
+                cell.setCellStyle(csHoliday);
+            } catch (MalformedURLException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }
