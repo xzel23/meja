@@ -23,6 +23,7 @@ import com.dua3.utility.text.TextUtil.Alignment;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.regex.Pattern;
@@ -233,6 +234,21 @@ public class MejaHelper {
      */
     public static Workbook openWorkbook(URI uri) throws IOException {
         return FileType.read(uri, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: " + uri));
+    }
+
+    /**
+     * Open workbook file.
+     * <p>
+     * This method inspects the file name extension to determine which factory
+     * should be used for loading.
+     * </p>
+     *
+     * @param path the workbook Path
+     * @return the workbook loaded from file
+     * @throws IOException if workbook could not be loaded
+     */
+    public static Workbook openWorkbook(Path path) throws IOException {
+        return FileType.read(path, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: " + path));
     }
 
     /**
