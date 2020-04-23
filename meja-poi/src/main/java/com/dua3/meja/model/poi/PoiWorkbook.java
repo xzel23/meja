@@ -26,6 +26,7 @@ import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.text.TextAttributes;
@@ -411,7 +412,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
                 break;
             case "file":
                 type = HyperlinkType.FILE;
-                address = target.getPath();
+                address = IOUtil.toUnixPath(IOUtil.toPath(target).normalize());
                 break;
             case "mailto":
                 type = HyperlinkType.EMAIL;

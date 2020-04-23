@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.0.5
+
+ - fix Hyperlink to file
+
 ## Version 2.0.4
 
  - fix writing GenericWorkbook to file with xls extension wrongly using xlsx format
