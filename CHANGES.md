@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 2.0.6
+
+ - Workbook.resolve() to resolve workbook relative paths
+ - fix Hyperlink to file (again)
+
 ## Version 2.0.5
 
  - fix Hyperlink to file
