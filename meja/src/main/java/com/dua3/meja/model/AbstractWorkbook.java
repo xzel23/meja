@@ -3,9 +3,11 @@ package com.dua3.meja.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import com.dua3.meja.util.ObjectCache;
+import com.dua3.utility.io.IOUtil;
 
 public abstract class AbstractWorkbook implements Workbook {
 
@@ -87,4 +89,15 @@ public abstract class AbstractWorkbook implements Workbook {
         pcs.firePropertyChange(propertyName, oldValue, newValue);
     }
 
+    @Override
+    public Path resolve(Path path) {
+        Optional<URI> wbUri = getUri();
+
+        if (!wbUri.isPresent()) {
+            return path;
+        }
+
+        Path parent = IOUtil.toPath(wbUri.get()).getParent();
+        return parent == null ? path : parent.resolve(path);
+    }
 }

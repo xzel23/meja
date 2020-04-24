@@ -30,8 +30,11 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.*;
 import java.time.chrono.IsoChronology;
@@ -593,14 +596,16 @@ public final class PoiCell extends AbstractCell {
                 case EMAIL:
                     return Optional.of(new URL("mailto:" + link.getAddress()));
                 case FILE:
-                    return Optional.of(IOUtil.toURL(Paths.get(link.getAddress())));
+                    return Optional.of(IOUtil.toURL(getWorkbook().resolve(
+                            Paths.get(URLDecoder.decode(link.getAddress(), StandardCharsets.UTF_8.name()))
+                    )));
                 case NONE:
                     return Optional.empty();
                 case DOCUMENT:
                 default:
                     throw new UnsupportedOperationException("Unsupported link type: "+link.getType());
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
     }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,17 +50,25 @@ class PoiWorkbookTest {
     public void testConvertXlsxToXls() throws IOException {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"));
         Path pathToCopy = testdataDir.resolve("population by country (copy).xls");
-        original.write(pathToCopy);
-        testCountryWorkbook(pathToCopy.getFileName().toString());
+        try {
+            original.write(pathToCopy);
+            testCountryWorkbook(pathToCopy.getFileName().toString());
+        } finally {
+            Files.delete(pathToCopy);
+        }
     }
 
     @Test
-    @Disabled("POI bug")
+    @Disabled("POI bug") // TODO create bug report and fix
     public void testConvertXlsToXlsx() throws IOException {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
         Path pathToCopy = testdataDir.resolve("population by country (copy).xlsx");
-        original.write(pathToCopy);
-        testCountryWorkbook(pathToCopy.getFileName().toString());
+        try {
+            original.write(pathToCopy);
+            testCountryWorkbook(pathToCopy.getFileName().toString());
+        } finally {
+            Files.delete(pathToCopy);
+        }
     }
 
     private void testCountryWorkbook(String filename) throws IOException {
@@ -94,5 +103,23 @@ class PoiWorkbookTest {
                     .sum();
             assertEquals(expected, actual);
         }
+    }
+
+    @Test
+    public void testHyperLink() throws IOException {
+        Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("Links.xlsx"));
+        Sheet sheet = wb.getSheetByName("Links");
+
+        Cell cCalendar = sheet.getCell(0,1);
+        assertEquals("Calendar", cCalendar.toString());
+        Optional<URL> lCalendar = cCalendar.getHyperlink();
+        assertTrue(lCalendar.isPresent());
+        assertEquals(IOUtil.toURL(testdataDir.resolve("Excel 2015 Calendar.xlsx")), lCalendar.get());
+
+        Cell cEmail = sheet.getCell(2,1);
+        assertEquals("Email Developer", cEmail.toString());
+        Optional<URL> lEmail = cEmail.getHyperlink();
+        assertTrue(lEmail.isPresent());
+        assertEquals(new URL("mailto:mailto:axel@dua3.com?subject=Meja%20Test%20Email"), lEmail.get());
     }
 }
