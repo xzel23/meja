@@ -22,12 +22,12 @@ class PoiWorkbookTest {
 
     @Test
     public void testXlsx() throws IOException {
-        testCountryWorkbook("population by country.xlsx");
+        testCountryWorkbook(testdataDir.resolve("population by country.xlsx"));
     }
 
     @Test
     public void testXls() throws IOException {
-        testCountryWorkbook("population by country.xls");
+        testCountryWorkbook(testdataDir.resolve("population by country.xls"));
     }
 
     @Test
@@ -35,7 +35,7 @@ class PoiWorkbookTest {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"));
         Path pathToCopy = testdataDir.resolve("population by country (copy).xlsx");
         original.write(pathToCopy);
-        testCountryWorkbook(pathToCopy.getFileName().toString());
+        testCountryWorkbook(pathToCopy);
     }
 
     @Test
@@ -43,7 +43,7 @@ class PoiWorkbookTest {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
         Path pathToCopy = testdataDir.resolve("population by country (copy).xls");
         original.write(pathToCopy);
-        testCountryWorkbook(pathToCopy.getFileName().toString());
+        testCountryWorkbook(pathToCopy);
     }
 
     @Test
@@ -52,7 +52,7 @@ class PoiWorkbookTest {
         Path pathToCopy = testdataDir.resolve("population by country (copy).xls");
         try {
             original.write(pathToCopy);
-            testCountryWorkbook(pathToCopy.getFileName().toString());
+            testCountryWorkbook(pathToCopy);
         } finally {
             Files.delete(pathToCopy);
         }
@@ -62,17 +62,18 @@ class PoiWorkbookTest {
     @Disabled("POI bug") // TODO create bug report and fix
     public void testConvertXlsToXlsx() throws IOException {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
-        Path pathToCopy = testdataDir.resolve("population by country (copy).xlsx");
+        String wbFilename = "population by country (copy).xlsx";
+        Path pathToCopy = testdataDir.resolve(wbFilename);
         try {
             original.write(pathToCopy);
-            testCountryWorkbook(pathToCopy.getFileName().toString());
+            testCountryWorkbook(pathToCopy);
         } finally {
             Files.delete(pathToCopy);
         }
     }
 
-    private void testCountryWorkbook(String filename) throws IOException {
-        Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve(filename));
+    private void testCountryWorkbook(Path pathToWorkbook) throws IOException {
+        Workbook wb = MejaHelper.openWorkbook(pathToWorkbook);
         assertEquals(1, wb.getSheetCount());
 
         Sheet sheet = wb.getSheet(0);
