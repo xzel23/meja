@@ -6,6 +6,7 @@ import com.dua3.utility.data.Color;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -90,15 +91,11 @@ public class CreateCalendar {
 
     private static void setStyle(Cell cell, LocalDate d) {
         if (d.getMonth()==Month.DECEMBER && d.getDayOfMonth()==25) {
-            try {
-                cell.setHyperlink(new URL("https://en.wikipedia.org/wiki/Christmas"));
-                CellStyle csHoliday = cell.getWorkbook().getCellStyle("holiday");
-                csHoliday.setFillFgColor(Color.INDIANRED.brighter());
-                csHoliday.setFillPattern(FillPattern.SOLID);
-                cell.setCellStyle(csHoliday);
-            } catch (MalformedURLException e) {
-                throw new IllegalStateException(e);
-            }
+            cell.setHyperlink(URI.create("https://en.wikipedia.org/wiki/Christmas"));
+            CellStyle csHoliday = cell.getWorkbook().getCellStyle("holiday");
+            csHoliday.setFillFgColor(Color.INDIANRED.brighter());
+            csHoliday.setFillPattern(FillPattern.SOLID);
+            cell.setCellStyle(csHoliday);
         }
     }
 }

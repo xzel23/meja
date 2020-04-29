@@ -595,7 +595,8 @@ public final class PoiCell extends AbstractCell {
                 case FILE:
                     return Optional.of(IOUtil.toURI(getWorkbook().resolve(
                             Paths.get(URLDecoder.decode(link.getAddress(), StandardCharsets.UTF_8.name())
-                                            .replaceFirst("^file:///", "")) // workaround for windows paths
+                                            .replaceFirst("^file:///([a-zA-Z]:)", "$1") // workaround for absolute windows paths
+                                            .replaceFirst("^file:///", "/")) 
                     )));
                 case NONE:
                     return Optional.empty();

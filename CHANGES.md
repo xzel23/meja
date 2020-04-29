@@ -1,5 +1,14 @@
 # Meja Changelog
 
+## Version 2.0.8
+
+ - update utility dependency
+ - fix hyperlinks - links are now passed by URI as problems with absolute paths on windows could not be resolved with URLs
+ 
+## Version 2.0.7
+
+ - changes to Hyperlinking (still broken, fixed in 2.0.8)
+
 ## Version 2.0.6
 
  - Workbook.resolve() to resolve workbook relative paths
