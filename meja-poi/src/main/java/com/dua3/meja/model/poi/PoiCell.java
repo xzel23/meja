@@ -31,9 +31,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.*;
@@ -576,14 +574,14 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public PoiCell setHyperlink(URL target) {
+    public PoiCell setHyperlink(URI target) {
         Hyperlink link = getWorkbook().createHyperLink(target);
         poiCell.setHyperlink(link);
         return this;
     }
 
     @Override
-    public Optional<URL> getHyperlink() {
+    public Optional<URI> getHyperlink() {
         Hyperlink link = poiCell.getHyperlink();
 
         if (link==null) {
@@ -592,12 +590,12 @@ public final class PoiCell extends AbstractCell {
         try {
             switch (link.getType()) {
                 case URL:
-                    return Optional.of(new URL(link.getAddress()));
                 case EMAIL:
-                    return Optional.of(new URL("mailto:" + link.getAddress()));
+                    return Optional.of(new URI(link.getAddress()));
                 case FILE:
-                    return Optional.of(IOUtil.toURL(getWorkbook().resolve(
-                            Paths.get(URLDecoder.decode(link.getAddress(), StandardCharsets.UTF_8.name()))
+                    return Optional.of(IOUtil.toURI(getWorkbook().resolve(
+                            Paths.get(URLDecoder.decode(link.getAddress(), StandardCharsets.UTF_8.name())
+                                            .replaceFirst("^file:///", "")) // workaround for windows paths
                     )));
                 case NONE:
                     return Optional.empty();
@@ -605,7 +603,7 @@ public final class PoiCell extends AbstractCell {
                 default:
                     throw new UnsupportedOperationException("Unsupported link type: "+link.getType());
             }
-        } catch (MalformedURLException | UnsupportedEncodingException e) {
+        } catch (URISyntaxException | UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
     }

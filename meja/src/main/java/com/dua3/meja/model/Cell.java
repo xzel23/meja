@@ -20,6 +20,7 @@ import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -399,14 +400,14 @@ public interface Cell {
      * @param target the link target
      * @return this cell
      */
-    Cell setHyperlink(URL target);
+    Cell setHyperlink(URI target);
 
     /**
      * Get Hyperlink.
      * 
      * @return an Optional with the Hyperlink or empty Optional
      */
-    Optional<URL> getHyperlink();
+    Optional<URI> getHyperlink();
     
     /**
      * Return string representation of cell content.

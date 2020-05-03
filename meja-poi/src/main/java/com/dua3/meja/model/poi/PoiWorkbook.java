@@ -401,25 +401,22 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
     }
 
-    public Hyperlink createHyperLink(URL target) {
+    public Hyperlink createHyperLink(URI target) {
         HyperlinkType type;
-        String address;
-        switch (target.getProtocol().toLowerCase(Locale.ROOT)) {
+        String address=target.toString();
+        switch (target.getScheme().toLowerCase(Locale.ROOT)) {
             case "http":
             case "https":
                 type = HyperlinkType.URL;
-                address = target.toExternalForm();
                 break;
             case "file":
                 type = HyperlinkType.FILE;
-                address = IOUtil.toUnixPath(IOUtil.toPath(target).normalize());
                 break;
             case "mailto":
                 type = HyperlinkType.EMAIL;
-                address = target.getPath();
                 break;
             default:
-                throw new IllegalArgumentException("unsupported protocol: "+target.getProtocol());
+                throw new IllegalArgumentException("unsupported protocol: "+target.getScheme());
         }
         Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(type);
         link.setAddress(address);

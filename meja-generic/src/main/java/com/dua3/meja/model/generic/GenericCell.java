@@ -20,6 +20,8 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,7 +50,7 @@ public class GenericCell extends AbstractCell {
     private Map<Attribute, Object> attributes = null;
 
     enum Attribute {
-        LINK_URL,
+        LINK_URI,
         LABEL;
     }
     
@@ -366,18 +368,18 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public Cell setHyperlink(URL target) {
-        setAttribute(Attribute.LINK_URL, target);
+    public Cell setHyperlink(URI target) {
+        setAttribute(Attribute.LINK_URI, target);
         return this;
     }
 
     @Override
-    public Optional<URL> getHyperlink() {
-        return getAttribute(Attribute.LINK_URL).flatMap(obj -> {
+    public Optional<URI> getHyperlink() {
+        return getAttribute(Attribute.LINK_URI).flatMap(obj -> {
             try {
-                return Optional.of(new URL(obj.toString()));
-            } catch (MalformedURLException e) {
-                throw new IllegalStateException("invalid link URL: "+obj);
+                return Optional.of(new URI(obj.toString()));
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException("invalid link URI: "+obj);
             }
         });
     }
