@@ -74,6 +74,24 @@ class PoiWorkbookTest {
         }
     }
 
+    @Test
+    public void testConvertXlsxToHtml() throws IOException, URISyntaxException {
+        String[] files = { "population by country.xlsx", "Excel 2015 Calendar.xlsx" };
+        for (String inFile: files) {
+            String outFile = IOUtil.replaceExtension(inFile, "html");
+            copyToHtml(inFile, outFile);
+        }
+    }
+
+    private void copyToHtml(String inFile, String outFile) throws IOException {
+        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve(inFile));
+        Path pathToCopy = testdataDir.resolve(outFile);
+        try {
+            original.write(pathToCopy);
+        } finally {
+        }
+    }
+
     private void testCountryWorkbook(Path pathToWorkbook) throws IOException, URISyntaxException {
         Workbook wb = MejaHelper.openWorkbook(pathToWorkbook);
         assertEquals(1, wb.getSheetCount());
