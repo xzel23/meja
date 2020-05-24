@@ -25,4 +25,6 @@ module meja {
     requires dua3_utility;
 
     uses com.dua3.meja.model.WorkbookFactory;
+
+    provides com.dua3.utility.io.FileType with com.dua3.meja.io.FileTypeHtml;
 }

@@ -74,6 +74,16 @@ class PoiWorkbookTest {
         }
     }
 
+    @Test
+    public void testConvertXlsxToHtml() throws IOException, URISyntaxException {
+        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"));
+        Path pathToCopy = testdataDir.resolve("population by country.html");
+        try {
+            original.write(pathToCopy);
+        } finally {
+        }
+    }
+
     private void testCountryWorkbook(Path pathToWorkbook) throws IOException, URISyntaxException {
         Workbook wb = MejaHelper.openWorkbook(pathToWorkbook);
         assertEquals(1, wb.getSheetCount());
