@@ -91,7 +91,7 @@ public class HtmlWorkbookWriter implements WorkbookWriter {
     private static <T> void writeAttribute(PrintStream out, String attribute, Cell cell, Function<Cell,T> getter, Predicate<T> condition, Function<T,String> formatter) {
         T v = getter.apply(cell);
         if (condition.test(v)) {
-            out.format("%s=\"%s\"", attribute, formatter.apply(v));
+            out.format(" %s=\"%s\"", attribute, formatter.apply(v));
         }
     }
     
@@ -106,7 +106,8 @@ public class HtmlWorkbookWriter implements WorkbookWriter {
      *
      * @param workbook the workbook to write
      * @param out      the write to write the workbook to
-     * @param wbId
+     * @param locale   the locale to use (i. e. when formatting cell contents such as numbers)
+     * @param wbId     workbook ID to use when generating DIV-IDs
      * @throws IOException if an input/output error occurs
      */
     public void write(Workbook workbook, PrintStream out, Locale locale, String wbId) throws IOException {
@@ -118,14 +119,27 @@ public class HtmlWorkbookWriter implements WorkbookWriter {
      * format. The Encoding must be set correctly in the writer.
      *
      * @param workbook       the workbook to write
-     * @param out            the write to write the workbook to
+     * @param out            the PrintStream to write the workbook to
+     * @param locale         the locale to use (i. e. when formatting cell contents such as numbers)
+     * @param wbId           workbook ID to use when generating DIV-IDs
      * @param updateProgress callback for progress updates
-     * @throws IOException if an input/output error occurs
+     * @throws IOException   if an input/output error occurs
      */
     public void write(Workbook workbook, PrintStream out, Locale locale, String wbId, DoubleConsumer updateProgress) throws IOException {
         writeSheets(workbook, out, locale, wbId, updateProgress);
     }
 
+    /**
+     * Write to a BufferedWriter. This is implemented because CSV is a character
+     * format. The Encoding must be set correctly in the writer.
+     *
+     * @param workbook       the workbook to write
+     * @param out            the OutputStream to write the workbook to
+     * @param locale         the locale to use (i. e. when formatting cell contents such as numbers)
+     * @param wbId           workbook ID to use when generating DIV-IDs
+     * @param updateProgress callback for progress updates
+     * @throws IOException   if an input/output error occurs
+     */
     public void write(Workbook workbook, OutputStream out, Locale locale, String wbId, DoubleConsumer updateProgress) throws IOException {
         PrintStream printStream = new PrintStream(out, false, StandardCharsets.UTF_8.name());
         printStream.format("<html>%n" +
