@@ -38,9 +38,9 @@ public class CsvWorkbookWriter implements WorkbookWriter {
     }
 
     /**
-     * The singleton instance.
+     * Create instance.
      *
-     * @return the singleton instance of {@code CsvWorkbookWriter}
+     * @return instance of {@code CsvWorkbookWriter}
      */
     public static CsvWorkbookWriter create() {
         return new CsvWorkbookWriter();

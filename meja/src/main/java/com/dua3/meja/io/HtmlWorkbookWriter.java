@@ -40,9 +40,9 @@ public class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     /**
-     * The singleton instance.
+     * Create instance.
      *
-     * @return the singleton instance of {@code CsvWorkbookWriter}
+     * @return instance of {@code HtmlWorkbookWriter}
      */
     public static HtmlWorkbookWriter create() {
         return new HtmlWorkbookWriter();
@@ -101,8 +101,7 @@ public class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     /**
-     * Write to a BufferedWriter. This is implemented because CSV is a character
-     * format. The Encoding must be set correctly in the writer.
+     * Write to a PrintStream.
      *
      * @param workbook the workbook to write
      * @param out      the write to write the workbook to
@@ -115,8 +114,7 @@ public class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     /**
-     * Write to a BufferedWriter. This is implemented because CSV is a character
-     * format. The Encoding must be set correctly in the writer.
+     * Write to a PrintStream.
      *
      * @param workbook       the workbook to write
      * @param out            the PrintStream to write the workbook to
@@ -130,8 +128,7 @@ public class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     /**
-     * Write to a BufferedWriter. This is implemented because CSV is a character
-     * format. The Encoding must be set correctly in the writer.
+     * Write to OutputStream.
      *
      * @param workbook       the workbook to write
      * @param out            the OutputStream to write the workbook to
