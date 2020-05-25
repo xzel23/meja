@@ -18,6 +18,7 @@ package com.dua3.meja.model.generic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import com.dua3.meja.model.AbstractSheet;
 import com.dua3.meja.model.Cell;
@@ -225,7 +226,7 @@ public class GenericSheet extends AbstractSheet {
     @Override
     public void setColumnWidth(int j, float width) {
         if (j < columnWidth.size()) {
-            if (columnWidth.set(j, width) != width) {
+            if (!Objects.equals(columnWidth.set(j, width), width)) { // use Objects.equlas to avoid NPE!
                 firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
             }
         } else {

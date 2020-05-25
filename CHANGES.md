@@ -1,8 +1,8 @@
 # Meja Changelog
 
-## Version 2.0.11 (TBR)
+## Version 2.0.10.1
 
- - Javadoc fixes
+ - fix NPE in GenericSheet.setColumnWidth()
 
 ## Version 2.0.10
 
