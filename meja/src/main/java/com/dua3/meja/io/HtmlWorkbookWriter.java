@@ -66,6 +66,10 @@ public class HtmlWorkbookWriter implements WorkbookWriter {
                 out.format("<tr>%n", sheetId);
                 
                 for (Cell cell : row) {
+                    if (cell.getHorizontalSpan() == 0 || cell.getVerticalSpan()==0) {
+                        continue;
+                    }
+                    
                     out.format("  <td");
                     writeAttribute(out, "colspan", cell, Cell::getHorizontalSpan, v -> v>1, Object::toString);
                     writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v>1, Object::toString);
