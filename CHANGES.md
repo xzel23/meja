@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.0.11 (TBR)
+
+ - Javadoc fixes
+
 ## Version 2.0.10
 
  - initial support for output in HTML format
