@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 2.0.11 (TBR)
+
+ - fix display of merged cells in HTML output
+ - support hyperlinks in HTML output
+ 
 ## Version 2.0.10.1
 
  - fix NPE in GenericSheet.setColumnWidth()

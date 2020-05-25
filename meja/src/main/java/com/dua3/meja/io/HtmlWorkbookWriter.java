@@ -25,8 +25,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -74,8 +76,11 @@ public class HtmlWorkbookWriter implements WorkbookWriter {
                     writeAttribute(out, "colspan", cell, Cell::getHorizontalSpan, v -> v>1, Object::toString);
                     writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v>1, Object::toString);
                     out.format(">");
-                    
+
+                    Optional<URI> hyperlink = cell.getHyperlink();
+                    hyperlink.ifPresent(link -> out.format("<a href=\"%s\">", link));
                     out.format("%s", cell.getAsText(locale));
+                    hyperlink.ifPresent(link -> out.format("</a>"));
                     
                     out.format("</td>%n");
                 }
