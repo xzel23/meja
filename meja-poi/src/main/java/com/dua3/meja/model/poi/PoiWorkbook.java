@@ -259,7 +259,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         boolean bold = sWeight == null ? font.isBold() : "bold".equals(sWeight);
 
         Object sDecoration = attributes.get(TextAttributes.TEXT_DECORATION);
-        boolean underline = sDecoration == null ? font.isUnderlined() : "underline".equals(sDecoration);
+        boolean underline = sDecoration == null ? font.isUnderline() : "underline".equals(sDecoration);
         boolean strikethrough = sDecoration == null ? font.isStrikeThrough() : "line-through".equals(sDecoration);
 
         Object sColor = attributes.get(TextAttributes.COLOR);
@@ -452,7 +452,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             poiFont.setColor(getPoiColor(font.getColor()).getIndex());
             poiFont.setBold(font.isBold());
             poiFont.setItalic(font.isItalic());
-            poiFont.setUnderline(font.isUnderlined() ? Font.U_SINGLE
+            poiFont.setUnderline(font.isUnderline() ? Font.U_SINGLE
                     : Font.U_NONE);
             poiFont.setStrikeout(font.isStrikeThrough());
             return new PoiFont(this, poiFont);
@@ -557,7 +557,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             poiFont.setColor(getPoiColor(font.getColor()).getIndex());
             poiFont.setBold(font.isBold());
             poiFont.setItalic(font.isItalic());
-            poiFont.setUnderline(font.isUnderlined() ? Font.U_SINGLE
+            poiFont.setUnderline(font.isUnderline() ? Font.U_SINGLE
                     : Font.U_NONE);
             poiFont.setStrikeout(font.isStrikeThrough());
             return new PoiFont(this, poiFont);

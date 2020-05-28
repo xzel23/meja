@@ -194,7 +194,7 @@ public class CellEditorPane extends JTextPane {
         }
 
         // these must be set despite already setting the component font
-        StyleConstants.setUnderline(dfltAttr, cellStyle.getFont().isUnderlined());
+        StyleConstants.setUnderline(dfltAttr, cellStyle.getFont().isUnderline());
         StyleConstants.setStrikeThrough(dfltAttr, cellStyle.getFont().isStrikeThrough());
 
         StyleConstants.setForeground(dfltAttr, SwingUtil.toAwtColor(cellStyle.getFont().getColor()));

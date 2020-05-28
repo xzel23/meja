@@ -73,7 +73,7 @@ public class PoiFont {
         poiFont.setBold(other.isBold());
         poiFont.setItalic(other.isItalic());
         poiFont.setStrikeout(other.isStrikeThrough());
-        poiFont.setUnderline(other.isUnderlined() ? org.apache.poi.ss.usermodel.Font.U_SINGLE
+        poiFont.setUnderline(other.isUnderline() ? org.apache.poi.ss.usermodel.Font.U_SINGLE
                 : org.apache.poi.ss.usermodel.Font.U_NONE);
 
         return poiFont;

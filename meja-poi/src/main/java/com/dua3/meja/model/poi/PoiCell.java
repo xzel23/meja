@@ -638,7 +638,7 @@ public final class PoiCell extends AbstractCell {
             if (runFont.isItalic()) {
                 properties.put(TextAttributes.FONT_STYLE, "italic");
             }
-            if (runFont.isUnderlined()) {
+            if (runFont.isUnderline()) {
                 properties.put(TextAttributes.TEXT_DECORATION, "underline");
             }
             if (runFont.isStrikeThrough()) {
