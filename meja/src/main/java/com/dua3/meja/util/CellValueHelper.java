@@ -52,7 +52,7 @@ public class CellValueHelper {
      *         is equal to either "true" or "false" (ignoring case). {@code null}
      *         otherwise.
      */
-    protected Optional<Boolean> parseBoolean(String text) {
+    private Optional<Boolean> parseBoolean(String text) {
         text = text.trim();
         if (Boolean.FALSE.toString().equalsIgnoreCase(text)) {
             return Optional.of(Boolean.FALSE);
@@ -70,7 +70,7 @@ public class CellValueHelper {
      * @return Optional with {@link LocalDateTime} representing {@code value} or empty optional,
      *         if {@code value} could not be fully parsed
      */
-    protected Optional<LocalDateTime> parseDate(String text) {
+    private Optional<LocalDateTime> parseDate(String text) {
         text = text.trim();
         ParsePosition pos = new ParsePosition(0);
 
@@ -95,7 +95,7 @@ public class CellValueHelper {
      * @return instance of {@link Number} representing {@code value} or
      *         {@code null}, if {@code value} could not be fully parsed
      */
-    protected Optional<Number> parseNumber(String text) {
+    private Optional<Number> parseNumber(String text) {
         text = text.trim();
         ParsePosition pos = new ParsePosition(0);
         Number number = numberFormat.parse(text, pos);

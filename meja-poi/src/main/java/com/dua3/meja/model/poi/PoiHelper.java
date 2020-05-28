@@ -28,7 +28,7 @@ import com.dua3.meja.model.VAlign;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class PoiHelper {
+public final class PoiHelper {
 
     private static final Logger LOGGER = Logger.getLogger(PoiHelper.class.getName());
 

@@ -130,7 +130,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     @Override
     public Iterator<Sheet> iterator() {
         return new Iterator<Sheet>() {
-            Iterator<GenericSheet> iter = sheets.iterator();
+            private final Iterator<GenericSheet> iter = sheets.iterator();
 
             @Override
             public boolean hasNext() {

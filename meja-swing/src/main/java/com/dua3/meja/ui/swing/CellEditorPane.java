@@ -203,7 +203,7 @@ public class CellEditorPane extends JTextPane {
         return dfltAttr;
     }
 
-    private static FontUtil<java.awt.Font> fontUtil = new SwingFontUtil();
+    private static final FontUtil<java.awt.Font> fontUtil = new SwingFontUtil();
 
     /**
      * Set the editor content to the content of given cell.

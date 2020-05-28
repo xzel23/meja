@@ -10,10 +10,10 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DbMejaUtil {
+public final class DbMejaUtil {
 
     /** Logger */
-    protected static final Logger LOG = Logger.getLogger(DbMejaUtil.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(DbMejaUtil.class.getSimpleName());
     private static final String ERROR_TEXT = "###";
 
     /**

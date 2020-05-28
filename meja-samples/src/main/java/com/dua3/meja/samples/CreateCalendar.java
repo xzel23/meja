@@ -5,9 +5,7 @@ import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.utility.data.Color;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
@@ -17,8 +15,11 @@ import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
-public class CreateCalendar {
-    
+public final class CreateCalendar {
+
+    private CreateCalendar() {
+    }
+
     public static void main(String[] args) throws IOException {
         try {
             Path file = Paths.get("calendar.xlsx");

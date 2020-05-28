@@ -11,12 +11,12 @@ import com.dua3.utility.io.IOUtil;
 
 public abstract class AbstractWorkbook implements Workbook {
 
-    protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /**
      * The path of this workbook.
      */
-    protected URI uri;
+    private URI uri;
 
     /**
      * The object cache used to reduce memory usage.

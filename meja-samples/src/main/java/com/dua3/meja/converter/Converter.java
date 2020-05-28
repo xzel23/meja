@@ -18,7 +18,10 @@ import com.dua3.meja.model.generic.GenericWorkbookFactory;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class Converter {
+public final class Converter {
+
+    private Converter() {
+    }
 
     public static void main(String[] args) {
         if (args.length != 2) {

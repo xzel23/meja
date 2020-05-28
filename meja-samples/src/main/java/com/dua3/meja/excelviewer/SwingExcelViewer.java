@@ -93,7 +93,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
             SwingExcelViewer viewer = new SwingExcelViewer(model);
 
             if (args.length > 1) {
-                model.showInfo();
+                System.out.println(model.getInfo());
                 System.exit(STATUS_ERROR);
             }
 

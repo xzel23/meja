@@ -5,6 +5,7 @@
  - fix display of merged cells in HTML output
  - support hyperlinks in HTML output
  - update utility to 6.2.2
+ - code cleanup
  
 ## Version 2.0.10.1
 

@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
 
 import com.dua3.utility.options.Option;
 import com.dua3.utility.options.Option.ChoiceOption;
@@ -64,7 +65,7 @@ public class SettingsDialog extends JDialog {
                 if (option instanceof ChoiceOption) {
                     result.put(option, (Value) ((JComboBox) component).getSelectedItem());
                 } else {
-                    result.put(option, ((JTextField) component)::getText);
+                    result.put(option, ((JTextComponent) component)::getText);
                 }
             }
             this.dispose();

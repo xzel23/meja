@@ -31,7 +31,7 @@ import com.dua3.utility.options.OptionValues;
  * Implementation of {@link WorkbookWriter} for Excel files in the old
  * ".xls"-format.
  */
-public class XlsWorkbookWriter implements WorkbookWriter {
+public final class XlsWorkbookWriter implements WorkbookWriter {
 
     private static final Logger LOGGER = Logger.getLogger(XlsWorkbookWriter.class.getName());
 

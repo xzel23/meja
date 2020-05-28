@@ -24,7 +24,7 @@ import com.dua3.utility.text.Font;
 /**
  * Kitchensink example.
  */
-public class KitchenSink extends JFrame {
+public final class KitchenSink extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = Logger.getLogger(KitchenSink.class.getName());
@@ -116,7 +116,7 @@ public class KitchenSink extends JFrame {
 
     private Workbook wb;
 
-    public KitchenSink() {
+    private KitchenSink() {
         super("Méja Kitchensink demo");
         init();
     }

@@ -21,7 +21,7 @@ public abstract class AbstractSheet implements Sheet {
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
-    private List<RectangularRegion> mergedRegions = new ArrayList<>();
+    private final List<RectangularRegion> mergedRegions = new ArrayList<>();
 
     protected AbstractSheet() {
     }

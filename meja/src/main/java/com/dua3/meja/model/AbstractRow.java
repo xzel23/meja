@@ -3,7 +3,7 @@ package com.dua3.meja.model;
 public abstract class AbstractRow implements Row {
 
     private final AbstractSheet sheet;
-    protected final int rowNumber;
+    private final int rowNumber;
 
     protected AbstractRow(AbstractSheet sheet, int rowNumber) {
         this.sheet = sheet;

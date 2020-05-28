@@ -30,7 +30,7 @@ import com.dua3.utility.options.OptionValues;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class CsvWorkbookReader extends WorkbookReader {
+public final class CsvWorkbookReader extends WorkbookReader {
 
     /**
      * Create a new instance of {@code CsvWorkbookReader}.

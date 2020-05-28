@@ -19,9 +19,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.utility.options.OptionValues;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -36,7 +34,7 @@ import java.util.function.Predicate;
 /**
  * @author Axel Howind (axel@dua3.com)
  */
-public class HtmlWorkbookWriter implements WorkbookWriter {
+public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     private HtmlWorkbookWriter() {
     }

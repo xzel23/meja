@@ -42,7 +42,6 @@ public enum VAlign {
 
     VAlign(boolean wrap) {
         this.wrap = wrap;
-
     }
 
     /**

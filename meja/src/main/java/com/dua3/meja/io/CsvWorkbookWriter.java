@@ -30,7 +30,7 @@ import java.util.function.DoubleConsumer;
 /**
  * @author Axel Howind (axel@dua3.com)
  */
-public class CsvWorkbookWriter implements WorkbookWriter {
+public final class CsvWorkbookWriter implements WorkbookWriter {
 
     private OptionValues options = OptionValues.empty();
 

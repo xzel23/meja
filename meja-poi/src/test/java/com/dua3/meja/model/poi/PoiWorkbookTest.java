@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -19,21 +18,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PoiWorkbookTest {
 
-    private static Path testdataDir = IOUtil.toPath(PoiWorkbookTest.class.getResource("/"))
+    private static final Path testdataDir = IOUtil.toPath(PoiWorkbookTest.class.getResource("/"))
             .resolve("../../../../../testdata").normalize();
 
     @Test
-    public void testXlsx() throws IOException, URISyntaxException {
+    public void testXlsx() throws Exception {
         testCountryWorkbook(testdataDir.resolve("population by country.xlsx"));
     }
 
     @Test
-    public void testXls() throws IOException, URISyntaxException {
+    public void testXls() throws Exception {
         testCountryWorkbook(testdataDir.resolve("population by country.xls"));
     }
 
     @Test
-    public void testSaveAndReloadXlsx() throws IOException, URISyntaxException {
+    public void testSaveAndReloadXlsx() throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"));
         Path pathToCopy = testdataDir.resolve("population by country (copy).xlsx");
         original.write(pathToCopy);
@@ -41,7 +40,7 @@ class PoiWorkbookTest {
     }
 
     @Test
-    public void testSaveAndReloadXls() throws IOException, URISyntaxException {
+    public void testSaveAndReloadXls() throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
         Path pathToCopy = testdataDir.resolve("population by country (copy).xls");
         original.write(pathToCopy);
@@ -49,7 +48,7 @@ class PoiWorkbookTest {
     }
 
     @Test
-    public void testConvertXlsxToXls() throws IOException, URISyntaxException {
+    public void testConvertXlsxToXls() throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"));
         Path pathToCopy = testdataDir.resolve("population by country (copy).xls");
         try {
@@ -62,7 +61,7 @@ class PoiWorkbookTest {
 
     @Test
     @Disabled("POI bug") // TODO create bug report and fix
-    public void testConvertXlsToXlsx() throws IOException, URISyntaxException {
+    public void testConvertXlsToXlsx() throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
         String wbFilename = "population by country (copy).xlsx";
         Path pathToCopy = testdataDir.resolve(wbFilename);
@@ -75,7 +74,7 @@ class PoiWorkbookTest {
     }
 
     @Test
-    public void testConvertXlsxToHtml() throws IOException, URISyntaxException {
+    public void testConvertXlsxToHtml() throws Exception {
         String[] files = { "population by country.xlsx", "Excel 2015 Calendar.xlsx" };
         for (String inFile: files) {
             String outFile = IOUtil.replaceExtension(inFile, "html");
@@ -86,10 +85,7 @@ class PoiWorkbookTest {
     private void copyToHtml(String inFile, String outFile) throws IOException {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve(inFile));
         Path pathToCopy = testdataDir.resolve(outFile);
-        try {
-            original.write(pathToCopy);
-        } finally {
-        }
+        original.write(pathToCopy);
     }
 
     private void testCountryWorkbook(Path pathToWorkbook) throws IOException, URISyntaxException {
@@ -127,7 +123,7 @@ class PoiWorkbookTest {
     }
 
     @Test
-    public void testHyperLink() throws IOException, URISyntaxException {
+    public void testHyperLink() throws Exception {
         Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("Links.xlsx"));
         Sheet sheet = wb.getSheetByName("Links");
 

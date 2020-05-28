@@ -19,10 +19,8 @@ import com.dua3.meja.model.*;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -35,9 +33,9 @@ import java.util.Optional;
  * @author Axel Howind (axel@dua3.com)
  */
 public class GenericCell extends AbstractCell {
-    public static final int MAX_HORIZONTAL_SPAN = 0xefff;
-    public static final int MAX_VERTICAL_SPAN = 0xef_ffff;
-    public static final int MAX_COLUMN_NUMBER = 0xef_ffff;
+    private static final int MAX_HORIZONTAL_SPAN = 0xefff;
+    private static final int MAX_VERTICAL_SPAN = 0xef_ffff;
+    private static final int MAX_COLUMN_NUMBER = 0xef_ffff;
     
     /**
      * The precalculated initial value for the data field with rowspan=colspan=1 and
@@ -51,7 +49,7 @@ public class GenericCell extends AbstractCell {
 
     enum Attribute {
         LINK_URI,
-        LABEL;
+        LABEL
     }
     
     private Optional<Object> getAttribute(Attribute name) {
@@ -379,7 +377,7 @@ public class GenericCell extends AbstractCell {
             try {
                 return Optional.of(new URI(obj.toString()));
             } catch (URISyntaxException e) {
-                throw new IllegalStateException("invalid link URI: "+obj);
+                throw new IllegalStateException("invalid link URI: "+obj, e);
             }
         });
     }

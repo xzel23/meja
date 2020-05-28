@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FxMejaUtil {
+public final class FxMejaUtil {
 
     private FxMejaUtil() {
         // utility class

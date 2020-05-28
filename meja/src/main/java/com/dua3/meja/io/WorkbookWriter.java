@@ -29,6 +29,7 @@ import java.util.function.DoubleConsumer;
 /**
  * Abstract base class for writing workbook data.
  */
+@FunctionalInterface
 public interface WorkbookWriter {
 
     double PROGRESS_INDETERMINATE = -1.0;

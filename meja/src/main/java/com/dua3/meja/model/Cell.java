@@ -21,7 +21,6 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
 import java.net.URI;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -323,6 +322,7 @@ public interface Cell {
      * @param arg the value
      * @return this cell
      */
+    @SuppressWarnings("UseOfObsoleteDateTimeApi")
     default Cell set(Object arg) {
         arg = getWorkbook().cache(arg);
 

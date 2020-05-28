@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class MejaHelper {
+public final class MejaHelper {
 
     public static final Pattern PATTERN_NEWLINE = Pattern.compile("\n|\r\n|\n\r");
 

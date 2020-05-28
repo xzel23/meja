@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Function;
 
-public class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
+public final class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
     private static final FileTypeXlsx INSTANCE = new FileTypeXlsx();
 
     public static FileTypeXlsx instance() {

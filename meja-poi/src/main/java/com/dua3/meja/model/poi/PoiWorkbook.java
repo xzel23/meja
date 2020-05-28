@@ -26,7 +26,6 @@ import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.io.FileType;
-import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
 import com.dua3.utility.text.TextAttributes;
@@ -43,7 +42,6 @@ import org.apache.poi.xssf.usermodel.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.DoubleConsumer;
@@ -356,7 +354,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     @Override
     public Iterator<Sheet> iterator() {
         return new Iterator<Sheet>() {
-            Iterator<PoiSheet> iter = sheets.iterator();
+            private final Iterator<PoiSheet> iter = sheets.iterator();
 
             @Override
             public boolean hasNext() {
@@ -531,7 +529,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     public static class PoiXssfWorkbook extends PoiWorkbook {
 
         private final PoiXssfCellStyle defaultCellStyle;
-        private IndexedColorMap colorMap;
+        private final IndexedColorMap colorMap;
 
         /**
          * Construct instance from existing POI workbook.

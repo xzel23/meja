@@ -54,13 +54,14 @@ import com.dua3.utility.swing.SwingFileFilter;
  *
  * @author Axel Howind (axel@dua3.com)
  */
-public class MejaSwingHelper {
+public final class MejaSwingHelper {
 
     private static final class SheetTableModel extends AbstractTableModel {
         private final Sheet sheet;
         private final boolean firstRowIsHeader;
         private static final long serialVersionUID = 1L;
-        private SheetListener sl;
+        
+        private final SheetListener sl;
 
         private SheetTableModel(Sheet sheet, boolean firstRowIsHeader) {
             this.sheet = sheet;
@@ -69,9 +70,6 @@ public class MejaSwingHelper {
         }
 
         final class SheetListener implements PropertyChangeListener {
-
-            SheetListener() {
-            }
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {

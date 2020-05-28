@@ -61,7 +61,7 @@ public class ExcelViewerModel {
     /**
      * The currently opened workbook.
      */
-    protected Workbook workbook = null;
+    private Workbook workbook = null;
 
     /**
      * The current directory.
@@ -159,8 +159,8 @@ public class ExcelViewerModel {
         }
     }
 
-    protected void showInfo() {
-        System.out.format("%s%n%n%s%n", appName, getLicenseText());
+    protected String getInfo() {
+        return String.format("%s%n%n%s%n", appName, getLicenseText());
     }
 
 }
