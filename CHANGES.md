@@ -1,6 +1,10 @@
 # Meja Changelog
 
-## Version 2.0.11 (TBR)
+## Version 2.0.12 (TBR)
+
+
+
+## Version 2.0.11
 
  - fix display of merged cells in HTML output
  - support hyperlinks in HTML output
