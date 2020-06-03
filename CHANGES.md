@@ -2,7 +2,8 @@
 
 ## Version 2.0.12 (TBR)
 
-
+ - update utility
+ - add test for HtmlWorkbookWriter
 
 ## Version 2.0.11
 

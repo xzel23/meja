@@ -1,16 +1,19 @@
 package com.dua3.meja.model.poi;
 
+import com.dua3.meja.io.HtmlWorkbookWriter;
 import com.dua3.meja.model.*;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.io.IOUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -149,5 +152,22 @@ class PoiWorkbookTest {
         Cell cellLinkToEmail = sheet2.getCell(1,0);
         cellLinkToEmail.setHyperlink(lEmail.get());
         assertEquals(lEmail.get(), cellLinkToEmail.getHyperlink().get());
+    }
+    
+    @Test
+    public void testHtmlExport() throws IOException {
+        Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
+        
+        for (Sheet sheet: wb) {
+            HtmlWorkbookWriter writer = HtmlWorkbookWriter.create();
+
+            String refHtml = IOUtil.read(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
+            
+            try (ByteArrayOutputStream os = new ByteArrayOutputStream(); PrintStream out = new PrintStream(os)) {
+                writer.writeSheet(sheet, out, Locale.ROOT, "test");
+                String actHtml = os.toString();
+                assertEquals(refHtml, actHtml);
+            }
+        }
     }
 }

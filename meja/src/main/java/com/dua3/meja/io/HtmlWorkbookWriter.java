@@ -49,50 +49,70 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     private static void writeSheets(Workbook workbook, PrintStream out, Locale locale, String wbId, DoubleConsumer updateProgress) throws IOException {
-        long processedRows = 0;
         long totalRows = 0;
         for (Sheet sheet : workbook) {
             totalRows += sheet.getRowCount();
         }
 
+        long processedRows = 0;
         for (Sheet sheet : workbook) {
-            // open DIV for sheet
-            String sheetId = (wbId.isEmpty() ? "" : wbId+"-") + sheet.getSheetName().replaceAll("[^a-zA-z0-9]", "_");
-            out.format("<div id=\"%s\">%n", sheetId);
+            processedRows = writeSheet(sheet, out, locale, wbId, totalRows, processedRows, updateProgress);
+        }
+    }
 
-            out.format("<table class=\"meja-sheet\">%n", sheetId);
+    /**
+     * Write sheet as HTML.
+     * <p>
+     * <em>NOTE:</em> This method does not add HTML header and body tags.
+     * @param sheet the sheet to write
+     * @param out the PrintStream to write to
+     * @param locale the locale to use
+     * @param wbId the workbook-ID (used for HTML anchors)
+     */
+    public static void writeSheet(Sheet sheet, PrintStream out, Locale locale, String wbId) {
+        writeSheet(sheet, out, locale, wbId, sheet.getRowCount(), 0L, p -> {});
+    }
+    
+    private static long writeSheet(Sheet sheet, PrintStream out, Locale locale, String wbId, long totalRows, long processedRows, DoubleConsumer updateProgress) {
+        // open DIV for sheet
+        String sheetId = (wbId.isEmpty() ? "" : wbId+"-") + sheet.getSheetName().replaceAll("[^a-zA-z0-9]", "_");
+        out.format("<div id=\"%s\">%n", sheetId);
 
-            for (Row row : sheet) {
-                out.format("<tr>%n", sheetId);
-                
-                for (Cell cell : row) {
-                    if (cell.getHorizontalSpan() == 0 || cell.getVerticalSpan()==0) {
-                        continue;
-                    }
-                    
-                    out.format("  <td");
-                    writeAttribute(out, "colspan", cell, Cell::getHorizontalSpan, v -> v>1, Object::toString);
-                    writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v>1, Object::toString);
-                    out.format(">");
+        out.format("<table class=\"meja-sheet\">%n", sheetId);
 
-                    Optional<URI> hyperlink = cell.getHyperlink();
-                    hyperlink.ifPresent(link -> out.format("<a href=\"%s\">", link));
-                    out.format("%s", cell.getAsText(locale));
-                    hyperlink.ifPresent(link -> out.format("</a>"));
-                    
-                    out.format("</td>%n");
+        for (Row row : sheet) {
+            out.format("<tr>%n", sheetId);
+            
+            for (Cell cell : row) {
+                if (cell.getHorizontalSpan() == 0 || cell.getVerticalSpan()==0) {
+                    continue;
                 }
                 
-                updateProgress.accept((double) processedRows / totalRows);
-                
-                out.format("</tr>%n", sheetId);
-            }
+                out.format("  <td");
+                writeAttribute(out, "colspan", cell, Cell::getHorizontalSpan, v -> v>1, Object::toString);
+                writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v>1, Object::toString);
+                out.format(">");
 
-            out.format("</table>%n");
+                Optional<URI> hyperlink = cell.getHyperlink();
+                hyperlink.ifPresent(link -> out.format("<a href=\"%s\">", link));
+                out.format("%s", cell.getAsText(locale));
+                hyperlink.ifPresent(link -> out.format("</a>"));
+                
+                out.format("</td>%n");
+            }
             
-            // close DIV for sheet
-            out.format("</div>%n");
+            updateProgress.accept((double) processedRows / totalRows);
+            
+            out.format("</tr>%n", sheetId);
+            
+            processedRows++;
         }
+
+        out.format("</table>%n");
+
+        // close DIV for sheet
+        out.format("</div>%n");
+        return processedRows;
     }
 
     private static <T> void writeAttribute(PrintStream out, String attribute, Cell cell, Function<Cell,T> getter, Predicate<T> condition, Function<T,String> formatter) {
