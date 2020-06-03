@@ -164,7 +164,9 @@ class PoiWorkbookTest {
             String refHtml = IOUtil.read(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
             
             try (ByteArrayOutputStream os = new ByteArrayOutputStream(); PrintStream out = new PrintStream(os)) {
+                writer.printHtmlHeader(out);
                 writer.writeSheet(sheet, out, Locale.ROOT, "test");
+                writer.printHtmlFooter(out);
                 String actHtml = os.toString();
                 assertEquals(refHtml, actHtml);
             }

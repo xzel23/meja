@@ -59,6 +59,8 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             processedRows = writeSheet(sheet, out, locale, wbId, totalRows, processedRows, updateProgress);
         }
     }
+    
+    
 
     /**
      * Write sheet as HTML.
@@ -166,13 +168,33 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      */
     public void write(Workbook workbook, OutputStream out, Locale locale, String wbId, DoubleConsumer updateProgress) throws IOException {
         PrintStream printStream = new PrintStream(out, false, StandardCharsets.UTF_8.name());
-        printStream.format("<html>%n" +
+        printHtmlHeader(printStream);
+        writeSheets(workbook, printStream, locale, wbId, updateProgress);
+        printHtmlFooter(printStream);
+    }
+
+    public void printHtmlHeader(PrintStream out, String supplementalHeaderText) {
+        out.format("<html>%n" +
                            "<head>%n" +
                            "<meta charset=\"utf-8\">%n" +
+                           supplementalHeaderText +
                            "</head>%n" +
                            "<body>%n");
-        writeSheets(workbook, printStream, locale, wbId, updateProgress);
-        printStream.format("</body>%n" +
+    }
+
+    public void printHtmlHeader(PrintStream out) {
+        printHtmlHeader(out, getCss());
+    }
+    
+    public void printHtmlFooter(PrintStream out) {
+        out.format("</body>%n" +
                            "</html>%n");
+    }
+
+    public String getCss() {
+        return "  <style>\n" +
+               "    table.meja-sheet { border-collapse: collapse; }\n" +
+               "    table.meja-sheet td,th { border: 1px solid darkgray; padding: 3px; }\n" +
+               "  </style>";
     }
 }
