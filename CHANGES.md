@@ -1,9 +1,9 @@
 # Meja Changelog
 
-## Version 2.0.12 (TBR)
+## Version 2.0.12
 
- - update utility
- - add test for HtmlWorkbookWriter
+ - update utility to 6.2.3
+ - add some tests for HtmlWorkbookWriter (in the POI package since an excel-workbook is used as input)
 
 ## Version 2.0.11
 
