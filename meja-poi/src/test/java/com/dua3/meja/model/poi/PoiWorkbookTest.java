@@ -163,11 +163,11 @@ class PoiWorkbookTest {
 
             String refHtml = IOUtil.read(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
             
-            try (ByteArrayOutputStream os = new ByteArrayOutputStream(); PrintStream out = new PrintStream(os)) {
+            try (ByteArrayOutputStream os = new ByteArrayOutputStream(); PrintStream out = new PrintStream(os, false, StandardCharsets.UTF_8.name())) {
                 writer.printHtmlHeader(out);
                 writer.writeSheet(sheet, out, Locale.ROOT, "test");
                 writer.printHtmlFooter(out);
-                String actHtml = os.toString();
+                String actHtml = os.toString(StandardCharsets.UTF_8.name());
                 assertEquals(refHtml, actHtml);
             }
         }
