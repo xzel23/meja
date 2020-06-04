@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.0.13
+
+ - output relative links in HtmlWorkbookWriter if possible
+ 
 ## Version 2.0.12
 
  - update utility to 6.2.3

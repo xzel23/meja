@@ -76,6 +76,8 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     }
     
     private static long writeSheet(Sheet sheet, PrintStream out, Locale locale, String wbId, long totalRows, long processedRows, DoubleConsumer updateProgress) {
+        Optional<URI> baseUri = sheet.getWorkbook().getUri().map(uri -> uri.resolve(""));
+
         // open DIV for sheet
         String sheetId = (wbId.isEmpty() ? "" : wbId+"-") + sheet.getSheetName().replaceAll("[^a-zA-z0-9]", "_");
         out.format("<div id=\"%s\">%n", sheetId);
@@ -96,7 +98,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 out.format(">");
 
                 Optional<URI> hyperlink = cell.getHyperlink();
-                hyperlink.ifPresent(link -> out.format("<a href=\"%s\">", link));
+                hyperlink.ifPresent(link -> out.format("<a href=\"%s\">", baseUri.map(base -> base.relativize(link)).orElse(link)));
                 out.format("%s", cell.getAsText(locale));
                 hyperlink.ifPresent(link -> out.format("</a>"));
                 
