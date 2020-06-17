@@ -1,8 +1,8 @@
 # Meja Changelog
 
-## Version 2.0.14 (TBR)
+## Version 2.0.13.1
 
- - update utility
+ - update utility (to be consistent with other libs)
 
 ## Version 2.0.13
 
