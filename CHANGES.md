@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.0.13.2
+
+ - update utility (to be consistent with other libs)
+
 ## Version 2.0.13.1
 
  - update utility (to be consistent with other libs)
