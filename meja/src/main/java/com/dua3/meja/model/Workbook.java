@@ -189,6 +189,18 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     }
 
     /**
+     * Find sheet by name. This works like {@link #getSheetByName(String)} except that it returns an Optional and does
+     * not throw an {@code IllegalArgumentException} when the sheet dooes not exist.
+     *
+     * @param sheetName name of sheet
+     * @return an Optional holding the sheet or an empty Optional
+     */
+    default Optional<Sheet> findSheetByName(String sheetName) {
+        int idx = getSheetIndexByName(sheetName);
+        return idx>=0 ? Optional.of(getSheet(idx)) : Optional.empty();
+    }
+
+    /**
      * Returns number of sheets in this workbook.
      *
      * @return sheet
@@ -210,6 +222,15 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
             idx++;
         }
         return -1;
+    }
+
+    /**
+     * Get the sheet with the given name or create it if not yet contained in workbook.
+     * @param sheetName the name of the sheet
+     * @return the sheet with the name passed as argument
+     */
+    default Sheet getOrCreateSheet(String sheetName) {
+        return findSheetByName(sheetName).orElse(createSheet(sheetName));
     }
 
     /**
@@ -238,8 +259,6 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @return true, if style is present
      */
     boolean hasCellStyle(String name);
-
-    boolean isObjectCachingEnabled();
 
     /**
      * Remove property change listener.
@@ -283,7 +302,24 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
         removeSheet(idx);
     }
 
-    void setObjectCaching(boolean enabled);
+    /**
+     * Test whether object caching is enabled.
+     * @return state of object caching
+     */
+    boolean isObjectCachingEnabled();
+
+    /**
+     * Set object caching.
+     * <br>
+     * When object caching is enabled, cell values will be added to a simple cache. This helps to reduce memory
+     * consumption when adding many different instances to a workbook that are technically equal. A good example is
+     * adding calculated dates to a workbook with many cells containing instances representing the same values.
+     * The effect on memory consumption may vary between different workbook implementations. When in doubt, nmeasure
+     * with realistic data for your use case.
+     * 
+     * @param enable flag indicating whether to en- or disable object caching 
+     */
+    void setObjectCaching(boolean enable);
 
     /**
      * Writes the workbook to a URI using standard options.

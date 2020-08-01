@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 2.0.14
+
+ - Workbook.findSheetByName() and Workbook.getOrCreateSheet()
+ - update utility
+ - add some javadoc to the Workbook object caching methods
+
 ## Version 2.0.13.2
 
  - update utility (to be consistent with other libs)
