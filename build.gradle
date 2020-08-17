@@ -15,7 +15,7 @@
 plugins {
     id 'com.dua3.gradle.jpms' version '1.0' apply false
     id 'com.adarshr.test-logger' version '1.7.0' apply false
-    id 'com.github.spotbugs' version '2.0.0' apply false
+    id 'com.github.spotbugs' version '4.5.0' apply false
     id 'com.jfrog.bintray' version '1.8.4' apply false
 }
 
@@ -47,7 +47,7 @@ subprojects {
         javafx_version='14'
         junit_version='5.5.1'
 
-        dua3_utility_version = '6.5'
+        dua3_utility_version = '6.6'
     }
 
     sourceCompatibility = java_version
@@ -195,10 +195,10 @@ subprojects {
 
 // === SPOTBUGS === >grtadlew
 
-    spotbugs.toolVersion = '4.0.1'
+    spotbugs.toolVersion = '4.1.1'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
-    tasks.withType(com.github.spotbugs.SpotBugsTask) {
+    tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
         reports {
             xml.enabled = false
             html.enabled = true

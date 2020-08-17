@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 2.0.15
+
+ - update utility
+ - update spotbugs
+ 
 ## Version 2.0.14
 
  - Workbook.findSheetByName() and Workbook.getOrCreateSheet()
