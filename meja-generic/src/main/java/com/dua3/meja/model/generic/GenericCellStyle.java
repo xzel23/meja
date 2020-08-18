@@ -51,7 +51,8 @@ public class GenericCellStyle implements CellStyle {
     private VAlign vAlign;
     private final BorderStyle[] borderStyle = new BorderStyle[Direction.values().length];
     private boolean wrap;
-    private String dataFormat = "";
+    private String dataFormat;
+    private short rotation;
 
     // formatting helper
     private DateTimeFormatter dateFormatter = null;
@@ -72,27 +73,13 @@ public class GenericCellStyle implements CellStyle {
         this.vAlign = VAlign.ALIGN_MIDDLE;
         this.wrap = false;
         this.dataFormat = "";
+        this.rotation = 0;
 
         for (Direction d : Direction.values()) {
             borderStyle[d.ordinal()] = defaultBorderStyle;
         }
     }
-
-    @Override
-    public void copyStyle(CellStyle other) {
-        setHAlign(other.getHAlign());
-        setVAlign(other.getVAlign());
-        for (Direction d : Direction.values()) {
-            setBorderStyle(d, other.getBorderStyle(d));
-        }
-        setDataFormat(other.getDataFormat());
-        setFillBgColor(other.getFillBgColor());
-        setFillFgColor(other.getFillFgColor());
-        setFillPattern(other.getFillPattern());
-        setFont(other.getFont());
-        setWrap(other.isWrap());
-    }
-
+    
     /**
      * Format datetime for output.
      *
@@ -266,4 +253,13 @@ public class GenericCellStyle implements CellStyle {
         this.wrap = wrap;
     }
 
+    @Override
+    public void setRotation(short rotation) {
+        this.rotation = rotation;
+    }
+
+    @Override
+    public short getRotation() {
+        return rotation;
+    }
 }

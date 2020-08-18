@@ -19,6 +19,7 @@ import com.dua3.meja.model.*;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.TextAttributes;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -118,6 +119,10 @@ public abstract class PoiCellStyle implements CellStyle {
             poiCellStyle.setFillForegroundColor(((PoiHssfWorkbook) workbook).getPoiColor(color).getIndex());
         }
 
+        @Override
+        public short getRotation() {
+            return poiCellStyle.getRotation();
+        }
     }
 
     static class PoiXssfCellStyle extends PoiCellStyle {
@@ -201,6 +206,11 @@ public abstract class PoiCellStyle implements CellStyle {
             final XSSFColor poiColor = color == null ? null : ((PoiXssfWorkbook) workbook).getPoiColor(color);
             ((XSSFCellStyle) poiCellStyle).setFillForegroundColor(poiColor);
         }
+
+        @Override
+        public short getRotation() {
+            return (short) (poiCellStyle.getRotation()+90);
+        }
     }
 
     /**
@@ -229,21 +239,6 @@ public abstract class PoiCellStyle implements CellStyle {
         this.workbook = workbook;
         this.font = font;
         this.poiCellStyle = poiCellStyle;
-    }
-
-    @Override
-    public void copyStyle(CellStyle other) {
-        setHAlign(other.getHAlign());
-        setVAlign(other.getVAlign());
-        for (Direction d : Direction.values()) {
-            setBorderStyle(d, other.getBorderStyle(d));
-        }
-        setDataFormat(other.getDataFormat());
-        setFillFgColor(other.getFillFgColor());
-        setFillBgColor(other.getFillBgColor());
-        setFillPattern(other.getFillPattern());
-        setFont(other.getFont());
-        setWrap(other.isWrap());
     }
 
     /**
@@ -401,6 +396,12 @@ public abstract class PoiCellStyle implements CellStyle {
         poiCellStyle.setWrapText(wrap);
     }
 
+    @Override
+    public void setRotation(short angle) {
+        LangUtil.check(angle>=-90 && angle <=90, "angle must be in range [-90, 90]: %d", angle);
+        poiCellStyle.setRotation(angle);
+    }
+    
     DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
         switch (poiCellStyle.getDataFormat()) {
             case 0x0e:

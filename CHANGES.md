@@ -4,6 +4,8 @@
 
  - update utility
  - update spotbugs
+ - code cleanup
+ - text rotation in CellStyle (not yet supported in viewer)
  
 ## Version 2.0.14
 

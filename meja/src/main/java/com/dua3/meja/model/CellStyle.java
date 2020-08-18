@@ -34,7 +34,20 @@ public interface CellStyle {
      *
      * @param other cell style
      */
-    void copyStyle(CellStyle other);
+    default void copyStyle(CellStyle other) {
+        setHAlign(other.getHAlign());
+        setVAlign(other.getVAlign());
+        for (Direction d : Direction.values()) {
+            setBorderStyle(d, other.getBorderStyle(d));
+        }
+        setDataFormat(other.getDataFormat());
+        setFillBgColor(other.getFillBgColor());
+        setFillFgColor(other.getFillFgColor());
+        setFillPattern(other.getFillPattern());
+        setFont(other.getFont());
+        setWrap(other.isWrap());
+        setRotation(other.getRotation());
+    }
 
     /**
      * Get border style.
@@ -178,4 +191,16 @@ public interface CellStyle {
      * @param wrap true if text should be wrapped
      */
     void setWrap(boolean wrap);
+
+    /**
+     * Set text rotation.
+     * @param angle the angle in degrees; valid range is -90 to 90
+     */
+    void setRotation(short angle);
+
+    /**
+     * Get text rotation.
+     * @return rotation angle in degrees (-90 to 90)
+     */
+    short getRotation();
 }
