@@ -1,11 +1,12 @@
 # Meja Changelog
 
-## Version 2.0.15-BETA1
+## Version 2.1-BETA1
 
  - update utility
  - update spotbugs
  - code cleanup
  - text rotation in CellStyle (not yet supported in viewer)
+ - HTML output: support cell styles
  
 ## Version 2.0.14
 
