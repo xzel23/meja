@@ -133,9 +133,15 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         for (Row row : sheet) {
             out.format("<tr>%n");
             
+            int col=0;
             for (Cell cell : row) {
                 if (cell.getHorizontalSpan() == 0 || cell.getVerticalSpan()==0) {
                     continue;
+                }
+                
+                // add missing cells
+                while (col++<cell.getColumnNumber()) {
+                    out.format("  <td></td>%n");
                 }
                 
                 out.format("  <td");
