@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Formatter;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -163,11 +164,13 @@ class PoiWorkbookTest {
 
             String refHtml = IOUtil.read(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
             
-            try (ByteArrayOutputStream os = new ByteArrayOutputStream(); PrintStream out = new PrintStream(os, false, StandardCharsets.UTF_8.name())) {
-                writer.printHtmlHeader(out);
-                writer.writeSheet(sheet, out, Locale.ROOT, "test");
-                writer.printHtmlFooter(out);
-                String actHtml = os.toString(StandardCharsets.UTF_8.name());
+            try (Formatter out = new Formatter()) {
+                writer.writeHtmlHeaderStart(out);
+                writer.writeCss(out, wb);
+                writer.writeHtmlHeaderEnd(out);
+                writer.writeSheet(sheet, out, Locale.ROOT);
+                writer.writeHtmlFooter(out);
+                String actHtml = out.toString();
                 assertEquals(refHtml, actHtml);
             }
         }

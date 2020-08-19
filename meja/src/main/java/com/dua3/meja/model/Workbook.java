@@ -132,6 +132,12 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     List<String> getCellStyleNames();
 
     /**
+     * Get stream of cell styles contained in workbook,
+     * @return stream of cell styles
+     */
+    Stream<? extends CellStyle> cellStyles();
+    
+    /**
      * Get the current sheet.
      *
      * @return the current sheet.
@@ -458,7 +464,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *
      * @return stream of rows
      */
-    default Stream<Sheet> sheets() {
+    default Stream<? extends Sheet> sheets() {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
     }
 

@@ -24,30 +24,32 @@ public enum HAlign {
     /**
      * Align text to the left.
      */
-    ALIGN_LEFT(false),
+    ALIGN_LEFT(false, "text-align: left;"),
     /**
      * Align text centered.
      */
-    ALIGN_CENTER(false),
+    ALIGN_CENTER(false, "text-align: center;"),
     /**
      * Align text to the right.
      */
-    ALIGN_RIGHT(false),
+    ALIGN_RIGHT(false, "text-align: right;"),
     /**
      * Align text justified.
      */
-    ALIGN_JUSTIFY(true),
+    ALIGN_JUSTIFY(true, "text-align: left;"),
     /**
      * Use automatic alignment depending on cell content.
      */
-    ALIGN_AUTOMATIC(false);
+    ALIGN_AUTOMATIC(false, "text-align: left;");
 
     // whether text is wrapped regardless of text wrap setting in cell style
     private final boolean wrap;
 
-    HAlign(boolean wrap) {
+    private final String css;
+    
+    HAlign(boolean wrap, String css) {
         this.wrap = wrap;
-
+        this.css = css;
     }
 
     /**
@@ -60,5 +62,13 @@ public enum HAlign {
      */
     public boolean isWrap() {
         return wrap;
+    }
+
+    /**
+     * Get CSS style definition.
+     * @return CSS style (i. e. "text-align: ...;")
+     */
+    public String getCssStyle() {
+        return css; 
     }
 }

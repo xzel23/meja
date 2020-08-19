@@ -25,6 +25,7 @@ import com.dua3.meja.model.poi.PoiCellStyle.PoiXssfCellStyle;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
@@ -47,6 +48,8 @@ import java.util.Map.Entry;
 import java.util.function.DoubleConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author axel
@@ -419,6 +422,13 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(type);
         link.setAddress(address);
         return link;
+    }
+
+    @Override
+    public Stream<? extends PoiCellStyle> cellStyles() {
+        Iterator<?extends PoiCellStyle> iter = DataUtil.map(cellStyles.keySet().iterator(), this::getCellStyle);
+        Spliterator<?extends PoiCellStyle> spliterator = Spliterators.spliterator(iter, cellStyles.size(), 0);
+        return StreamSupport.stream(spliterator, false);
     }
 
     /**

@@ -209,7 +209,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public short getRotation() {
-            return (short) (poiCellStyle.getRotation()+90);
+            return (short) (poiCellStyle.getRotation());
         }
     }
 
@@ -332,7 +332,7 @@ public abstract class PoiCellStyle implements CellStyle {
         if (width <= 2.0f) {
             return org.apache.poi.ss.usermodel.BorderStyle.THICK;
         }
-        return org.apache.poi.ss.usermodel.BorderStyle.THIN;
+        return org.apache.poi.ss.usermodel.BorderStyle.THICK;
     }
 
     @Override

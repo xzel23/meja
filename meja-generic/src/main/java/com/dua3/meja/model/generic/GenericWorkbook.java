@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.DoubleConsumer;
+import java.util.stream.Stream;
 
 import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
@@ -95,6 +96,11 @@ public class GenericWorkbook extends AbstractWorkbook {
     @Override
     public List<String> getCellStyleNames() {
         return new ArrayList<>(cellStyles.keySet());
+    }
+
+    @Override
+    public Stream<? extends CellStyle> cellStyles() {
+        return cellStyles.values().stream();
     }
 
     @Override

@@ -24,24 +24,27 @@ public enum VAlign {
     /**
      * Align text to the top.
      */
-    ALIGN_TOP(false),
+    ALIGN_TOP(false, "vertical-align: top;"),
     /**
      * Align text vertically centered.
      */
-    ALIGN_MIDDLE(false),
+    ALIGN_MIDDLE(false, "vertical-align: middle;"),
     /**
      * Align text to the bottom.
      */
-    ALIGN_BOTTOM(false),
+    ALIGN_BOTTOM(false, "vertical-align: bottom;"),
     /**
      * Align text lines equally spaced.
      */
-    ALIGN_JUSTIFY(false);
+    ALIGN_JUSTIFY(false, "vertical-align: top;");
 
     private final boolean wrap;
 
-    VAlign(boolean wrap) {
+    private final String css;
+    
+    VAlign(boolean wrap, String css) {
         this.wrap = wrap;
+        this.css = css;
     }
 
     /**
@@ -54,5 +57,13 @@ public enum VAlign {
      */
     public boolean isWrap() {
         return wrap;
+    }
+
+    /**
+     * Get CSS style definition.
+     * @return CSS style (i. e. "vertical-align: ...;")
+     */
+    public String getCssStyle() {
+        return css;
     }
 }

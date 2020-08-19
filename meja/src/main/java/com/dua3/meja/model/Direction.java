@@ -24,18 +24,28 @@ public enum Direction {
     /**
      * North (top) direction.
      */
-    NORTH,
+    NORTH("top"),
     /**
      * East (right) direction.
      */
-    EAST,
+    EAST("right"),
     /**
      * South (bottom) direction.
      */
-    SOUTH,
+    SOUTH("bottom"),
 
     /**
      * West (left) direction.
      */
-    WEST
+    WEST("left");
+    
+    private final String cssName;
+    
+    Direction(String cssName) {
+        this.cssName = cssName;
+    }
+    
+    public String getCssName() {
+        return cssName;
+    }
 }

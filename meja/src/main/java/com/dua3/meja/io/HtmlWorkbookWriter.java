@@ -15,17 +15,17 @@
  */
 package com.dua3.meja.io;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.*;
+import com.dua3.utility.data.Color;
+import com.dua3.utility.text.TextUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Formatter;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
@@ -48,7 +48,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         return new HtmlWorkbookWriter();
     }
 
-    private static void writeSheets(Workbook workbook, PrintStream out, Locale locale, String wbId, DoubleConsumer updateProgress) throws IOException {
+    private static void writeSheets(Workbook workbook, Formatter out, Locale locale, DoubleConsumer updateProgress) throws IOException {
         long totalRows = 0;
         for (Sheet sheet : workbook) {
             totalRows += sheet.getRowCount();
@@ -56,11 +56,39 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
         long processedRows = 0;
         for (Sheet sheet : workbook) {
-            processedRows = writeSheet(sheet, out, locale, wbId, totalRows, processedRows, updateProgress);
+            processedRows = writeSheet(sheet, out, locale, totalRows, processedRows, updateProgress);
         }
     }
     
-    
+    private static void writeCellStyle(Formatter out, CellStyle cs) {
+        out.format("    .%s { ", id(cs));
+        out.format("%s ", cs.getFont().getCssStyle());
+        out.format("%s ", cs.getHAlign().getCssStyle());
+        out.format("%s ", cs.getVAlign().getCssStyle());
+        if (cs.getRotation()!=0) {
+            out.format("transform: rotate(%ddeg); ", cs.getRotation());
+        }
+        for (Direction d : Direction.values()) {
+            BorderStyle bs = cs.getBorderStyle(d);
+            Color c = bs.getColor();
+            float w = bs.getWidth();
+            if (!c.isTransparent() && w>0) {
+                out.format(Locale.ROOT, "border-%s: %.2fpt solid %s; ", d.getCssName(), w, c.toCss());
+            }
+        }
+        if (!cs.getFillBgColor().isTransparent()) {
+            out.format("background-color: %s; ", cs.getFillBgColor().toCss());
+        }
+        
+        /* TODO: these are still unsupported:
+        cs.getFillFgColor();
+        cs.getFillPattern();
+        cs.getDataFormat();
+        cs.isWrap();        
+        */
+
+        out.format("}%n");
+    }
 
     /**
      * Write sheet as HTML.
@@ -69,23 +97,41 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param sheet the sheet to write
      * @param out the PrintStream to write to
      * @param locale the locale to use
-     * @param wbId the workbook-ID (used for HTML anchors)
      */
-    public static void writeSheet(Sheet sheet, PrintStream out, Locale locale, String wbId) {
-        writeSheet(sheet, out, locale, wbId, sheet.getRowCount(), 0L, p -> {});
+    public static void writeSheet(Sheet sheet, Formatter out, Locale locale) {
+        writeSheet(sheet, out, locale, sheet.getRowCount(), 0L, p -> {});
+    }
+
+    private static String id(CellStyle style) {
+        return id(style.getWorkbook())
+               +"_CS_"
+               + TextUtil.byteArrayToHexString(style.getName().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static String id(Sheet sheet) {
+        return id(sheet.getWorkbook())
+               +"_SHEET_"
+               + TextUtil.byteArrayToHexString(sheet.getSheetName().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static String id(Workbook workbook) {
+        return "WB_"+TextUtil.getMD5String(workbook.getUri().map(URI::toString).orElse(""));
     }
     
-    private static long writeSheet(Sheet sheet, PrintStream out, Locale locale, String wbId, long totalRows, long processedRows, DoubleConsumer updateProgress) {
+    private static long writeSheet(Sheet sheet, Formatter out, Locale locale, long totalRows, long processedRows, DoubleConsumer updateProgress) {
         Optional<URI> baseUri = sheet.getWorkbook().getUri().map(uri -> uri.resolve(""));
 
         // open DIV for sheet
-        String sheetId = (wbId.isEmpty() ? "" : wbId+"-") + sheet.getSheetName().replaceAll("[^a-zA-z0-9]", "_");
+        String sheetId = id(sheet);
+        
         out.format("<div id=\"%s\">%n", sheetId);
 
-        out.format("<table class=\"meja-sheet\">%n", sheetId);
+        out.format("<table class=\"meja-sheet\">%n");
+
+        CellStyle defaultCellStyle = sheet.getWorkbook().getDefaultCellStyle();
 
         for (Row row : sheet) {
-            out.format("<tr>%n", sheetId);
+            out.format("<tr>%n");
             
             for (Cell cell : row) {
                 if (cell.getHorizontalSpan() == 0 || cell.getVerticalSpan()==0) {
@@ -95,6 +141,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 out.format("  <td");
                 writeAttribute(out, "colspan", cell, Cell::getHorizontalSpan, v -> v>1, Object::toString);
                 writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v>1, Object::toString);
+                writeAttribute(out, "class", cell, Cell::getCellStyle, cs -> !Objects.equals(cs, defaultCellStyle), HtmlWorkbookWriter::id);
                 out.format(">");
 
                 Optional<URI> hyperlink = cell.getHyperlink();
@@ -107,7 +154,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             
             updateProgress.accept((double) processedRows / totalRows);
             
-            out.format("</tr>%n", sheetId);
+            out.format("</tr>%n");
             
             processedRows++;
         }
@@ -119,7 +166,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         return processedRows;
     }
 
-    private static <T> void writeAttribute(PrintStream out, String attribute, Cell cell, Function<Cell,T> getter, Predicate<T> condition, Function<T,String> formatter) {
+    private static <T> void writeAttribute(Formatter out, String attribute, Cell cell, Function<Cell,T> getter, Predicate<T> condition, Function<T,String> formatter) {
         T v = getter.apply(cell);
         if (condition.test(v)) {
             out.format(" %s=\"%s\"", attribute, formatter.apply(v));
@@ -128,34 +175,32 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     
     @Override
     public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
-        write(workbook, out, Locale.getDefault(), "", updateProgress);
+        write(workbook, out, Locale.getDefault(), updateProgress);
     }
 
     /**
-     * Write to a PrintStream.
+     * Write to a Formatter.
      *
      * @param workbook the workbook to write
      * @param out      the write to write the workbook to
      * @param locale   the locale to use (i. e. when formatting cell contents such as numbers)
-     * @param wbId     workbook ID to use when generating DIV-IDs
      * @throws IOException if an input/output error occurs
      */
-    public void write(Workbook workbook, PrintStream out, Locale locale, String wbId) throws IOException {
-        writeSheets(workbook, out, locale, wbId, p -> {});
+    public void write(Workbook workbook, Formatter out, Locale locale) throws IOException {
+        writeSheets(workbook, out, locale, p -> {});
     }
 
     /**
-     * Write to a PrintStream.
+     * Write to a Formatter.
      *
      * @param workbook       the workbook to write
-     * @param out            the PrintStream to write the workbook to
+     * @param out            the Formatter to write the workbook to
      * @param locale         the locale to use (i. e. when formatting cell contents such as numbers)
-     * @param wbId           workbook ID to use when generating DIV-IDs
      * @param updateProgress callback for progress updates
      * @throws IOException   if an input/output error occurs
      */
-    public void write(Workbook workbook, PrintStream out, Locale locale, String wbId, DoubleConsumer updateProgress) throws IOException {
-        writeSheets(workbook, out, locale, wbId, updateProgress);
+    public void write(Workbook workbook, Formatter out, Locale locale, DoubleConsumer updateProgress) throws IOException {
+        writeSheets(workbook, out, locale, updateProgress);
     }
 
     /**
@@ -164,39 +209,37 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param workbook       the workbook to write
      * @param out            the OutputStream to write the workbook to
      * @param locale         the locale to use (i. e. when formatting cell contents such as numbers)
-     * @param wbId           workbook ID to use when generating DIV-IDs
      * @param updateProgress callback for progress updates
      * @throws IOException   if an input/output error occurs
      */
-    public void write(Workbook workbook, OutputStream out, Locale locale, String wbId, DoubleConsumer updateProgress) throws IOException {
-        PrintStream printStream = new PrintStream(out, false, StandardCharsets.UTF_8.name());
-        printHtmlHeader(printStream);
-        writeSheets(workbook, printStream, locale, wbId, updateProgress);
-        printHtmlFooter(printStream);
+    public void write(Workbook workbook, OutputStream out, Locale locale, DoubleConsumer updateProgress) throws IOException {
+        Formatter fmt = new Formatter(out, StandardCharsets.UTF_8.name());
+        writeHtmlHeaderStart(fmt);
+        writeCss(fmt, workbook);
+        writeHtmlHeaderEnd(fmt);
+        writeSheets(workbook, fmt, locale, updateProgress);
+        writeHtmlFooter(fmt);
     }
 
-    public void printHtmlHeader(PrintStream out, String supplementalHeaderText) {
-        out.format("<html>%n" +
-                           "<head>%n" +
-                           "<meta charset=\"utf-8\">%n" +
-                           supplementalHeaderText +
-                           "</head>%n" +
-                           "<body>%n");
+    public void writeHtmlHeaderStart(Formatter out) {
+        out.format("<html>%n<head>%n  <meta charset=\"utf-8\">%n");
     }
 
-    public void printHtmlHeader(PrintStream out) {
-        printHtmlHeader(out, getCss());
+    public void writeHtmlHeaderEnd(Formatter out) {
+        out.format("</head>%n<body>%n");
+    }
+    public void writeHtmlFooter(Formatter out) {
+        out.format("</body>%n</html>%n");
+    }
+
+    public void writeCss(Formatter out, Workbook... workbooks) {
+        out.format("  <style>%n" +
+               "    table.meja-sheet { border-collapse: collapse; }%n" +
+               "    table.meja-sheet td,th { border: 1px solid darkgray; padding: 3px; }%n");
+        for (Workbook workbook : workbooks) {
+            workbook.cellStyles().forEach(cs -> writeCellStyle(out, cs));
+        }
+        out.format("  </style>%n");
     }
     
-    public void printHtmlFooter(PrintStream out) {
-        out.format("</body>%n" +
-                           "</html>%n");
-    }
-
-    public String getCss() {
-        return "  <style>\n" +
-               "    table.meja-sheet { border-collapse: collapse; }\n" +
-               "    table.meja-sheet td,th { border: 1px solid darkgray; padding: 3px; }\n" +
-               "  </style>";
-    }
 }
