@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Formatter;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -270,14 +268,29 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     public void writeCss(Formatter out, Workbook... workbooks) {
-        out.format(Locale.ROOT, "  <style>%n" +
-               "    table.meja-sheet { border-collapse: collapse; table-layout: fixed; }%n" +
-               "    table.meja-sheet td,th { border: 1px solid darkgray; padding: 3px; white-space: pre; overflow: visible; max-width: 0; max-height: 0; }%n" +
-               "    table.meja-sheet td:empty::after{ content: \"\\00a0\"; }%n");
+        out.format(Locale.ROOT, "  <style>%n");
+        writeCommonCss(out);
         for (Workbook workbook : workbooks) {
             workbook.cellStyles().forEach(cs -> writeCellStyle(out, cs));
         }
         out.format(Locale.ROOT, "  </style>%n");
     }
-    
+
+    private void writeCommonCss(Formatter out) {
+        out.format(Locale.ROOT, "    table.meja-sheet { border-collapse: collapse; table-layout: fixed; }%n" +
+                                "    table.meja-sheet td,th { border: none; padding: 3px; white-space: pre; overflow: visible; max-width: 0; max-height: 0; }%n" +
+                                "    table.meja-sheet td:empty::after{ content: \"\\00a0\"; }%n");
+    }
+
+    public void writeCssForSingleSheet(Formatter out, Sheet sheet) {
+        // determine styles used in this sheet
+        Set<CellStyle> styles = new HashSet<>();
+        sheet.rows().forEach(row -> row.cells().forEach(cell -> styles.add(cell.getCellStyle())));
+
+        out.format(Locale.ROOT, "  <style>%n");
+        writeCommonCss(out);
+        styles.stream().forEach(cs -> writeCellStyle(out, cs));
+        out.format(Locale.ROOT, "  </style>%n");
+    }
+
 }

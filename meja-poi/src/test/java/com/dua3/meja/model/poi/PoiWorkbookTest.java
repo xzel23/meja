@@ -166,7 +166,7 @@ class PoiWorkbookTest {
             
             try (Formatter out = new Formatter()) {
                 writer.writeHtmlHeaderStart(out);
-                writer.writeCss(out, wb);
+                writer.writeCssForSingleSheet(out, sheet);
                 writer.writeHtmlHeaderEnd(out);
                 writer.writeSheet(sheet, out, Locale.ROOT);
                 writer.writeHtmlFooter(out);
