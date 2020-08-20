@@ -70,7 +70,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             Color c = bs.getColor();
             float w = bs.getWidth();
             if (!c.isTransparent() && w>0) {
-                out.format(Locale.ROOT, "border-%s: %.2fpt solid %s; ", d.getCssName(), w, c.toCss());
+                out.format(Locale.ROOT, "border-%s: %.2fpt solid %s !important; ", d.getCssName(), w, c.toCss());
             }
         }
         if (cs.getFillPattern() != FillPattern.NONE) {
@@ -278,7 +278,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     private void writeCommonCss(Formatter out) {
         out.format(Locale.ROOT, "    table.meja-sheet { border-collapse: collapse; table-layout: fixed; }%n" +
-                                "    table.meja-sheet td,th { border: none; padding: 3px; white-space: pre; overflow: visible; max-width: 0; max-height: 0; }%n" +
+                                "    table.meja-sheet td,th { border: 1px solid #d4d4d4; padding: 3px; white-space: pre; overflow: visible; max-width: 0; max-height: 0; }%n" +
                                 "    table.meja-sheet td:empty::after{ content: \"\\00a0\"; }%n");
     }
 
