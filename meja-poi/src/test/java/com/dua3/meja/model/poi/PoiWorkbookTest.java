@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.Objects;
@@ -156,8 +157,11 @@ class PoiWorkbookTest {
     }
     
     @Test
-    public void testHtmlExport() throws IOException {
+    public void testHtmlExport() throws IOException, URISyntaxException {
         Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
+        
+        // make sure workbook URI is the same independent of test environment
+        wb.setUri(Paths.get("/dev/null").toUri());
         
         for (Sheet sheet: wb) {
             HtmlWorkbookWriter writer = HtmlWorkbookWriter.create();
