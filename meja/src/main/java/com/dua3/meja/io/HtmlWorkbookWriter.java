@@ -285,11 +285,12 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     public void writeCssForSingleSheet(Formatter out, Sheet sheet) {
         // determine styles used in this sheet
         Set<CellStyle> styles = new HashSet<>();
-        sheet.rows().forEach(row -> row.cells().forEach(cell -> styles.add(cell.getCellStyle())));
+        sheet.rows().forEach(row -> row.cells().map(Cell::getCellStyle).forEach(styles::add));
 
         out.format(Locale.ROOT, "  <style>%n");
         writeCommonCss(out);
-        styles.stream().forEach(cs -> writeCellStyle(out, cs));
+        // sort styles to get reproducible results (i. e. in unit tests)
+        styles.stream().sorted((a,b) -> a.getName().compareTo(b.getName())).forEach(cs -> writeCellStyle(out, cs));
         out.format(Locale.ROOT, "  </style>%n");
     }
 
