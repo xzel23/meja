@@ -77,7 +77,7 @@ public final class PoiHelper {
         case JUSTIFY:
             return VAlign.ALIGN_JUSTIFY;
         case DISTRIBUTED:
-            return VAlign.ALIGN_MIDDLE;
+            return VAlign.ALIGN_DISTRIBUTED;
         default:
             LOGGER.log(Level.WARNING, "Unknown value for vertical alignment: {0}", alignment);
             return VAlign.ALIGN_MIDDLE;
@@ -93,7 +93,9 @@ public final class PoiHelper {
         case ALIGN_BOTTOM:
             return VerticalAlignment.BOTTOM;
         case ALIGN_JUSTIFY:
-            return VerticalAlignment.JUSTIFY;
+            return VerticalAlignment.JUSTIFY; 
+        case ALIGN_DISTRIBUTED:
+            return VerticalAlignment.DISTRIBUTED;
         default:
             throw new IllegalArgumentException();
         }

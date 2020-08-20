@@ -72,6 +72,10 @@ public class CellEditorPane extends JTextPane {
             case ALIGN_JUSTIFY:
                 offset = (float) available / spans.length;
                 increase = offset;
+                break; 
+            case ALIGN_DISTRIBUTED:
+                offset = available;
+                increase = 0;
                 break;
             default:
                 throw new IllegalStateException();

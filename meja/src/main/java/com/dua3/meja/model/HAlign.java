@@ -36,7 +36,7 @@ public enum HAlign {
     /**
      * Align text justified.
      */
-    ALIGN_JUSTIFY(true, "text-align: left;"),
+    ALIGN_JUSTIFY(true, "text-align: left; white-space: pre-wrap !important;"),
     /**
      * Use automatic alignment depending on cell content.
      */

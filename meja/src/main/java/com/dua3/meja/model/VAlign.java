@@ -36,7 +36,11 @@ public enum VAlign {
     /**
      * Align text lines equally spaced.
      */
-    ALIGN_JUSTIFY(false, "vertical-align: top;");
+    ALIGN_JUSTIFY(false, "vertical-align: bottom;"),
+    /**
+     * Align text lines equally spaced.
+     */
+    ALIGN_DISTRIBUTED(false, "vertical-align: bottom; white-space: pre-wrap !important;");
 
     private final boolean wrap;
 
