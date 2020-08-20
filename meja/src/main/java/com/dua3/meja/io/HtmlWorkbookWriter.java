@@ -59,10 +59,15 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     
     private static void writeCellStyle(Formatter out, CellStyle cs) {
         out.format(Locale.ROOT, "    .%s { ", id(cs));
+        writeCellStyleAttributes(out, cs);
+        out.format(Locale.ROOT, "}%n");
+    }
+
+    private static void writeCellStyleAttributes(Formatter out, CellStyle cs) {
         out.format(Locale.ROOT, "%s ", cs.getFont().getCssStyle());
         out.format(Locale.ROOT, "%s ", cs.getHAlign().getCssStyle());
         out.format(Locale.ROOT, "%s ", cs.getVAlign().getCssStyle());
-        if (cs.getRotation()!=0) {
+        if (cs.getRotation() != 0) {
             out.format(Locale.ROOT, "transform: rotate(%ddeg); ", cs.getRotation());
         }
         for (Direction d : Direction.values()) {
@@ -76,15 +81,10 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         if (cs.getFillPattern() != FillPattern.NONE) {
             out.format(Locale.ROOT, "background-color: %s; ", cs.getFillFgColor().toCss());
         }
-        
-        /* TODO: these are still unsupported:
-        cs.getFillFgColor();
-        cs.getFillPattern();
-        cs.getDataFormat();
-        cs.isWrap();        
-        */
 
-        out.format(Locale.ROOT, "}%n");
+        if (cs.isWrap()) {
+            out.format(Locale.ROOT, "white-space: pre-wrap; overflow-wrap: break-word; ");
+        }
     }
 
     /**
@@ -267,19 +267,29 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         out.format(Locale.ROOT, "</body>%n</html>%n");
     }
 
-    public void writeCss(Formatter out, Workbook... workbooks) {
+    public void writeCss(Formatter out, Workbook workbook) {
         out.format(Locale.ROOT, "  <style>%n");
-        writeCommonCss(out);
-        for (Workbook workbook : workbooks) {
-            workbook.cellStyles().forEach(cs -> writeCellStyle(out, cs));
-        }
+        writeCommonCss(out, workbook.getDefaultCellStyle());
+        workbook.cellStyles().forEach(cs -> writeCellStyle(out, cs));
         out.format(Locale.ROOT, "  </style>%n");
     }
 
-    private void writeCommonCss(Formatter out) {
-        out.format(Locale.ROOT, "    table.meja-sheet { border-collapse: collapse; table-layout: fixed; }%n" +
-                                "    table.meja-sheet td,th { border: 1px solid #d4d4d4; padding: 3px; white-space: pre; overflow: visible; max-width: 0; max-height: 0; }%n" +
-                                "    table.meja-sheet td:empty::after{ content: \"\\00a0\"; }%n");
+    private void writeCommonCss(Formatter out, CellStyle defaultCellStyle) {
+        out.format(Locale.ROOT, "    table.meja-sheet { border-collapse: collapse;" +
+                                " table-layout: fixed;" +
+                                "padding: 3px; " +
+                                "white-space: pre; " +
+                                "overflow: visible; ");
+        writeCellStyleAttributes(out, defaultCellStyle);
+        out.format(Locale.ROOT, "}%n");
+        
+        out.format(Locale.ROOT, "    table.meja-sheet td,th { " +
+                                "border: 1px solid #d4d4d4; " +
+                                "max-width: 0; " +
+                                "max-height: 0; " +
+                                "}%n");
+
+        out.format(Locale.ROOT, "    table.meja-sheet td:empty::after{ content: \"\\00a0\"; }%n");
     }
 
     public void writeCssForSingleSheet(Formatter out, Sheet sheet) {
@@ -288,9 +298,12 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         sheet.rows().forEach(row -> row.cells().map(Cell::getCellStyle).forEach(styles::add));
 
         out.format(Locale.ROOT, "  <style>%n");
-        writeCommonCss(out);
+        
+        writeCommonCss(out, sheet.getWorkbook().getDefaultCellStyle());
+        
         // sort styles to get reproducible results (i. e. in unit tests)
         styles.stream().sorted((a,b) -> a.getName().compareTo(b.getName())).forEach(cs -> writeCellStyle(out, cs));
+        
         out.format(Locale.ROOT, "  </style>%n");
     }
 
