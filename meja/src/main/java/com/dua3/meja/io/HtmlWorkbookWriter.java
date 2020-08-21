@@ -289,6 +289,10 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                                 "max-height: 0; " +
                                 "}%n");
 
+        out.format(Locale.ROOT, "    table.meja-sheet a { " +
+                                "color: inherit; " +
+                                "}%n");
+        
         out.format(Locale.ROOT, "    table.meja-sheet td:empty::after{ content: \"\\00a0\"; }%n");
     }
 

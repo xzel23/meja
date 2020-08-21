@@ -4,6 +4,7 @@
 
  - several minor fixes
  - change Cell.setCellStyle() return type from void to Cell to allow chaining
+ - HTML-export: display links in color defined by cell style
  
 ## Version 2.1-BETA1
 
