@@ -374,16 +374,18 @@ public interface Cell {
      * Set cell style.
      *
      * @param cellStyle cell style
+     * @return this cell
      */
-    void setCellStyle(CellStyle cellStyle);
+    Cell setCellStyle(CellStyle cellStyle);
 
     /**
      * Sets the cell style registered under name in the workbook.
      *
      * @param cellStyleName cell style name
+     * @return this cell
      */
-    default void setCellStyle(String cellStyleName) {
-        setCellStyle(getWorkbook().getCellStyle(cellStyleName));
+    default Cell setCellStyle(String cellStyleName) {
+        return setCellStyle(getWorkbook().getCellStyle(cellStyleName));
     }
 
     /**

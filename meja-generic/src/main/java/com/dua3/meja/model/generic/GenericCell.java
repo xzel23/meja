@@ -342,7 +342,7 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public void setCellStyle(CellStyle cellStyle) {
+    public GenericCell setCellStyle(CellStyle cellStyle) {
         //noinspection ObjectEquality
         LangUtil.check(cellStyle.getWorkbook() == getWorkbook(),
                 () ->  new CellException(this, "Cell style does not belong to this workbook."));
@@ -353,6 +353,8 @@ public class GenericCell extends AbstractCell {
             this.cellStyle = (GenericCellStyle) cellStyle;
             styleChanged(old, this.cellStyle);
         }
+        
+        return this;
     }
 
     private void setCellType(CellType type) {

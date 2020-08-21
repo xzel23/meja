@@ -497,13 +497,15 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public void setCellStyle(CellStyle cellStyle) {
+    public PoiCell setCellStyle(CellStyle cellStyle) {
         LangUtil.check((cellStyle instanceof PoiCellStyle), "Incompatible implementation.");
 
         Object old = getCellStyle();
         //noinspection ConstantConditions
         poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
         styleChanged(old, cellStyle);
+        
+        return this;
     }
 
     private void setCellStyleDate(PoiCellStyle cellStyle) {

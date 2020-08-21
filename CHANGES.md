@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 2.1-BETA2
+
+ - several minor fixes
+ - change Cell.setCellStyle() return type from void to Cell to allow chaining
+ 
 ## Version 2.1-BETA1
 
  - update utility
