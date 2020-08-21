@@ -5,6 +5,7 @@
  - several minor fixes
  - change Cell.setCellStyle() return type from void to Cell to allow chaining
  - HTML-export: display links in color defined by cell style
+ - disabled the POI-module build fore the time being - I will either enable it for final or switch to POI 5 which will hopefully be Jigsaw compatible by itself so that the POI-module will not be needed anymore
  
 ## Version 2.1-BETA1
 
