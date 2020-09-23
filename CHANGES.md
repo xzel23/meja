@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 2.1-BETA3
+
+ - HTML export: improved CSS for rotated cells
+ - Cell.merge() returns `this`
+ 
 ## Version 2.1-BETA2
 
  - several minor fixes
