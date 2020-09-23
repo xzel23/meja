@@ -450,7 +450,7 @@ public interface Cell {
      * @param spanX the horizontal span
      * @param spanY the vertical span
      */
-    default void merge(int spanX, int spanY) {
+    default Cell merge(int spanX, int spanY) {
         LangUtil.check(!isMerged(), "Cell is already merged.");
         LangUtil.check(spanX >= 1);
         LangUtil.check(spanY >= 1);
@@ -463,5 +463,7 @@ public interface Cell {
 
         RectangularRegion region = new RectangularRegion(iMin, iMax, jMin, jMax);
         getSheet().addMergedRegion(region);
+        
+        return this;
     }
 }
