@@ -67,8 +67,10 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         out.format(Locale.ROOT, "%s ", cs.getFont().getCssStyle());
         out.format(Locale.ROOT, "%s ", cs.getHAlign().getCssStyle());
         out.format(Locale.ROOT, "%s ", cs.getVAlign().getCssStyle());
-        if (cs.getRotation() != 0) {
-            out.format(Locale.ROOT, "transform: rotate(%ddeg); ", cs.getRotation());
+        short alpha = cs.getRotation();
+        if (alpha != 0) {
+            String origin = alpha > 0 ? "bottom left" : "top left";
+            out.format(Locale.ROOT, "transform-origin: %s; transform: rotate(%ddeg);", origin, alpha);
         }
         for (Direction d : Direction.values()) {
             BorderStyle bs = cs.getBorderStyle(d);
