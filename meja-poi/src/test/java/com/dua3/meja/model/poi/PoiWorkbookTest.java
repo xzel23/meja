@@ -184,4 +184,34 @@ class PoiWorkbookTest {
             }
         }
     }
+
+    @Test
+    public void testRowGetLastColNumErrorXlsx() {
+        Workbook wb = PoiWorkbookFactory.instance().createXlsx();
+        testRowGetLastColNumErrorHelper(wb);
+    }
+
+    @Test
+    public void testRowGetLastColNumErrorXls() {
+        Workbook wb = PoiWorkbookFactory.instance().createXls();
+        testRowGetLastColNumErrorHelper(wb);
+    }
+
+    private void testRowGetLastColNumErrorHelper(Workbook wb) {
+        Sheet sheet = wb.createSheet("index");
+
+        assertEquals( 0, sheet.getFirstRowNum());
+        assertEquals( 0, sheet.getFirstColNum());
+        assertEquals(-1, sheet.getLastRowNum());
+        assertEquals(-1, sheet.getLastColNum());
+
+        sheet.createRow(1, 2, 3, 4);
+        assertEquals(0, sheet.getFirstRowNum());
+        assertEquals(0, sheet.getFirstColNum());
+        assertEquals(0, sheet.getLastRowNum());
+        assertEquals(3, sheet.getLastColNum());
+
+        sheet.createRow(1, 2, 3, 4);
+    }
+
 }

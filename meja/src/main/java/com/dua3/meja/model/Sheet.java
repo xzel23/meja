@@ -146,7 +146,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     /**
      * Get number of first used row.
      *
-     * @return the first used column number
+     * @return the first used column number, or 0 if sheet is empty
      */
     int getFirstRowNum();
 

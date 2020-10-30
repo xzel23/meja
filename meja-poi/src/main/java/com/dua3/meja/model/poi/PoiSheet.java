@@ -164,7 +164,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public int getFirstRowNum() {
-        return poiSheet.getFirstRowNum();
+        return Math.max(0, poiSheet.getFirstRowNum());
     }
 
     @Override
@@ -341,7 +341,7 @@ public class PoiSheet extends AbstractSheet {
     private void init() {
         // update row and column information
         firstColumn = Integer.MAX_VALUE;
-        lastColumn = 0;
+        lastColumn = -1;
         for (int i = poiSheet.getFirstRowNum(); i < poiSheet.getLastRowNum() + 1; i++) {
             final Row poiRow = poiSheet.getRow(i);
             if (poiRow != null) {
@@ -358,7 +358,7 @@ public class PoiSheet extends AbstractSheet {
 
         if (firstColumn == Integer.MAX_VALUE) {
             firstColumn = 0;
-            lastColumn = 0;
+            lastColumn = -1;
         }
 
         // extract merged regions

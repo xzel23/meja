@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.1-BETA6
+
+- bugfixes in POI implementatation
+
 ## Version 2.1-BETA5
 
 - fix CellStyle.getRotation() returning values >90 degrees in XSSF implementation
