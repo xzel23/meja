@@ -350,8 +350,8 @@ public class PoiSheet extends AbstractSheet {
                     firstColumn = Math.min(firstColumn, firstCellNum);
                 }
                 final short lastCellNum = (short) (poiRow.getLastCellNum() - 1);
-                if (lastCellNum >= 0) {
-                    lastColumn = Math.max(lastColumn, lastCellNum);
+                if (lastCellNum > lastColumn) {
+                    lastColumn = lastCellNum;
                 }
             }
         }
