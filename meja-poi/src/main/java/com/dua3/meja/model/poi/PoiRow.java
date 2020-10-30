@@ -69,12 +69,14 @@ public final class PoiRow extends AbstractRow {
 
     @Override
     public int getFirstCellNum() {
-        return poiRow.getFirstCellNum();
+        // POI returns -1 for empty rows
+        return Math.max(0, poiRow.getFirstCellNum());
     }
 
     @Override
     public int getLastCellNum() {
-        return poiRow.getLastCellNum() - 1;
+        // POI returns -1 for empty rows
+        return Math.max(0, poiRow.getLastCellNum())-1;
     }
 
     @Override
