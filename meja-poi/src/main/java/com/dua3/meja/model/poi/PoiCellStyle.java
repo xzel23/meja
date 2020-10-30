@@ -122,7 +122,7 @@ public abstract class PoiCellStyle implements CellStyle {
         @Override
         public short getRotation() {
             short r = poiCellStyle.getRotation();
-            return r <= 90 ? r : (short) (r - 180); // XSSF uses 0 - 180
+            return r==0xff ? 90 : r; // HSSF uses -90 to 90, special value 0xff for vertical
         }
     }
 
@@ -210,7 +210,8 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public short getRotation() {
-            return (short) (poiCellStyle.getRotation());
+            short angle = poiCellStyle.getRotation();
+            return angle <= 90 ? angle : (short) (angle - 180); // XSSF uses 0 to 180 degrees
         }
     }
 

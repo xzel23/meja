@@ -17,6 +17,7 @@ package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.*;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 
 import java.text.DecimalFormat;
@@ -254,8 +255,9 @@ public class GenericCellStyle implements CellStyle {
     }
 
     @Override
-    public void setRotation(short rotation) {
-        this.rotation = rotation;
+    public void setRotation(short angle) {
+        LangUtil.check(angle>=-90 && angle <=90, "angle must be in range [-90, 90]: %d", angle);
+        this.rotation = (short) angle;
     }
 
     @Override
