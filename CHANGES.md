@@ -1,10 +1,23 @@
 # Meja Changelog
 
+## Version 2.1-BETA5
+
+- fix CellStyle.getRotation() returning values >90 degrees in XSSF implementation
+
+## Version 2.1-BETA5
+
+- fix Poi implementation: Row.getLastCellNum() returned -2 for empty rows()
+- Row.getFirstCellNum() returns 0 for empty rows (was unspecified)
+
+## Version 2.1-BETA4
+
+- minor fixes
+
 ## Version 2.1-BETA3
 
- - HTML export: improved CSS for rotated cells
- - Cell.merge() returns `this`
- 
+- HTML export: improved CSS for rotated cells
+- Cell.merge() returns `this`
+
 ## Version 2.1-BETA2
 
  - several minor fixes
