@@ -1,44 +1,20 @@
 # Meja Changelog
 
-## Version 2.1-BETA7.1
+## Version 2.1
 
-- POI: fix copying sheet with autofilter
-
-## Version 2.1-BETA7
-
-- fix rotated text in HTML output
-
-## Version 2.1-BETA6
-
-- bugfixes in POI implementatation
-
-## Version 2.1-BETA5
-
-- fix CellStyle.getRotation() returning values >90 degrees in XSSF implementation
-
-## Version 2.1-BETA5
-
-- fix Poi implementation: Row.getLastCellNum() returned -2 for empty rows()
-- Row.getFirstCellNum() returns 0 for empty rows (was unspecified)
-
-## Version 2.1-BETA4
-
-- minor fixes
-
-## Version 2.1-BETA3
-
-- HTML export: improved CSS for rotated cells
-- Cell.merge() returns `this`
-
-## Version 2.1-BETA2
-
+ - POI: fix copying sheet with autofilter
+ - fix rotated text in HTML output
+ - bugfixes in POI implementatation
+ - fix CellStyle.getRotation() returning values >90 degrees in XSSF implementation
+ - fix Poi implementation: Row.getLastCellNum() returned -2 for empty rows()
+ - Row.getFirstCellNum() returns 0 for empty rows (was unspecified)
+ - minor fixes
+ - HTML export: improved CSS for rotated cells
+ - Cell.merge() returns `this`
  - several minor fixes
  - change Cell.setCellStyle() return type from void to Cell to allow chaining
  - HTML-export: display links in color defined by cell style
  - disabled the POI-module build fore the time being - I will either enable it for final or switch to POI 5 which will hopefully be Jigsaw compatible by itself so that the POI-module will not be needed anymore
- 
-## Version 2.1-BETA1
-
  - update utility
  - update spotbugs
  - code cleanup
