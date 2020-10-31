@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.1-BETA7
+
+- fix rotated text in HTML output
+
 ## Version 2.1-BETA6
 
 - bugfixes in POI implementatation
