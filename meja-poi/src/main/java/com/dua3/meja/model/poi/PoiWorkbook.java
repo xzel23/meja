@@ -562,7 +562,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();
             poiFont.setFontName(font.getFamily());
             poiFont.setFontHeight(((short) Math.round(20 * font.getSizeInPoints())));
-            poiFont.setColor(getPoiColor(font.getColor()).getIndex());
+            poiFont.setColor(getPoiColor(font.getColor()));
             poiFont.setBold(font.isBold());
             poiFont.setItalic(font.isItalic());
             poiFont.setUnderline(font.isUnderline() ? Font.U_SINGLE
