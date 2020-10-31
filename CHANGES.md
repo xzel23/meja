@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.1-BETA7.1
+
+- POI: fix copying sheet with autofilter
+
 ## Version 2.1-BETA7
 
 - fix rotated text in HTML output

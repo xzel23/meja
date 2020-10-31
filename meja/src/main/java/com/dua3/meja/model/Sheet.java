@@ -356,23 +356,34 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @param other sheet to copy data from
      */
     default void copy(Sheet other) {
-        // copy split
-        splitAt(other.getSplitRow(), other.getSplitColumn());
-        // set autofilter
-        setAutofilterRow(other.getAutoFilterRow());
+        // get split and autofilter position
+        int splitRow = other.getSplitRow();
+        int splitColumn = other.getSplitColumn();
+        int autoFilterRow = other.getAutoFilterRow();
+        
         // copy column widths
         for (int j = other.getFirstColNum(); j <= other.getLastColNum(); j++) {
             setColumnWidth(j, other.getColumnWidth(j));
         }
+        
         // copy merged regions
         for (RectangularRegion rr : other.getMergedRegions()) {
             addMergedRegion(rr);
         }
+        
         // copy row data
         for (Row row : other) {
             final int i = row.getRowNumber();
             getRow(i).copy(row);
             setRowHeight(i, other.getRowHeight(i));
+
+            // apply split and autofilter after row is written (POI restriction)
+            if (i==autoFilterRow) {
+                setAutofilterRow(autoFilterRow);
+            }
+            if (i==splitRow) {
+                splitAt(splitRow, splitColumn);
+            }
         }
     }
 
