@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 2.2
+
+ - update utility to 6.8
+
 ## Version 2.1
 
  - POI: fix copying sheet with autofilter

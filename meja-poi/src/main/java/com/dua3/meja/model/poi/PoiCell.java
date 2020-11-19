@@ -647,7 +647,7 @@ public final class PoiCell extends AbstractCell {
                 properties.put(TextAttributes.TEXT_DECORATION, "line-through");
             }
 
-            Style style = Style.create("style", properties);
+            Style style = Style.create("style", "", properties);
             rtb.push(style);
             rtb.append(text, start, end);
             rtb.pop(style);
