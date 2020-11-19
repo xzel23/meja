@@ -647,25 +647,15 @@ public final class PoiCell extends AbstractCell {
                 properties.put(TextAttributes.TEXT_DECORATION, "line-through");
             }
 
-            Style attr = Style.create("style", properties);
-            push(rtb, TextAttributes.STYLE_START_RUN, attr);
+            Style style = Style.create("style", properties);
+            rtb.push(style);
             rtb.append(text, start, end);
-            push(rtb, TextAttributes.STYLE_END_RUN, attr);
+            rtb.pop(style);
             start = end;
         }
         rtb.append(text, start, text.length());
 
         return rtb.toRichText();
-    }
-
-    private static void push(RichTextBuilder app, String key, Style attr) {
-        @SuppressWarnings("unchecked")
-        Collection<Style> current = (Collection<Style>) app.get(key);
-        if (current == null) {
-            current = new LinkedList<>();
-            app.put(key, current);
-        }
-        current.add(attr);
     }
 
     @Override

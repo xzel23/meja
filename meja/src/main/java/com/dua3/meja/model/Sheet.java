@@ -16,7 +16,6 @@
 package com.dua3.meja.model;
 
 import com.dua3.meja.util.RectangularRegion;
-import com.dua3.utility.text.ToStringBuilder;
 
 import java.beans.PropertyChangeListener;
 import java.util.*;
@@ -65,7 +64,10 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
         @Override
         public String toString() {
-            return new ToStringBuilder().add("firstRow", firstRow).add("lastRow", lastRow).toString();
+            return "RowInfo{" +
+                   "firstRow=" + firstRow +
+                   ", lastRow=" + lastRow +
+                   '}';
         }
     }
 

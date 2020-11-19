@@ -15,8 +15,6 @@
  */
 package com.dua3.meja.util;
 
-import com.dua3.utility.text.ToStringBuilder;
-
 /**
  * A rectangular region.
  */
@@ -103,7 +101,12 @@ public class RectangularRegion {
 
     @Override
     public String toString() {
-        return new ToStringBuilder().add("rowMin", rowMin).add("rowMax", rowMax).add("colMin", colMin)
-                .add("colMax", colMax).toString();
+        return "RectangularRegion{" +
+               "rowMin=" + rowMin +
+               ", rowMax=" + rowMax +
+               ", colMin=" + colMin +
+               ", colMax=" + colMax +
+               '}';
     }
+
 }
