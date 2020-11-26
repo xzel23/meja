@@ -20,6 +20,7 @@ import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontDef;
 
 /**
  * Kitchensink example.
@@ -80,13 +81,13 @@ public final class KitchenSink extends JFrame {
             String name = "font"+e.getKey();
 
             CellStyle cs = wb.getCellStyle(name);
-            cs.setFont(fontDefault.deriveFont(Font.FontDef.color(e.getValue())));
+            cs.setFont(fontDefault.deriveFont(FontDef.color(e.getValue())));
 
             CellStyle csDark = wb.getCellStyle(name + "Dark");
-            csDark.setFont(fontDefault.deriveFont(Font.FontDef.color(e.getValue().darker())));
+            csDark.setFont(fontDefault.deriveFont(FontDef.color(e.getValue().darker())));
 
             CellStyle csBright = wb.getCellStyle(name + "Bright");
-            csBright.setFont(fontDefault.deriveFont(Font.FontDef.color(e.getValue().brighter())));
+            csBright.setFont(fontDefault.deriveFont(FontDef.color(e.getValue().brighter())));
 
             row = sheet.getRow(sheet.getRowCount());
             row.getCell(0).set(name).setCellStyle(cs);
