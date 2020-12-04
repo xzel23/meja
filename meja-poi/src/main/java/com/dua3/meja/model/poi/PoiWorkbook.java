@@ -246,34 +246,21 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         return getPoiFont(font, TextAttributes.none());
     }
 
-    PoiFont getPoiFont(com.dua3.utility.text.Font font, TextAttributes attributes) {
-        String name = String.valueOf(attributes.getOrDefault(TextAttributes.FONT_FAMILY, font.getFamily()));
-
-        Object sSize = attributes.get(TextAttributes.FONT_SIZE);
-        short height = (short) Math
-                .round(sSize == null ? font.getSizeInPoints() : TextUtil.decodeFontSize(sSize.toString()));
-
-        final Object sStyle = attributes.get(TextAttributes.FONT_STYLE);
-        boolean italic = sStyle == null ? font.isItalic() : "italic".equals(sStyle);
-
-        final Object sWeight = attributes.get(TextAttributes.FONT_WEIGHT);
-        boolean bold = sWeight == null ? font.isBold() : "bold".equals(sWeight);
-
-        Object sDecoration = attributes.get(TextAttributes.TEXT_DECORATION);
-        boolean underline = sDecoration == null ? font.isUnderline() : "underline".equals(sDecoration);
-        boolean strikethrough = sDecoration == null ? font.isStrikeThrough() : "line-through".equals(sDecoration);
-
-        Object sColor = attributes.get(TextAttributes.COLOR);
-        Color color = sColor == null ? font.getColor() : Color.valueOf(sColor.toString());
+    PoiFont getPoiFont(com.dua3.utility.text.Font baseFont, TextAttributes attributes) {
+        com.dua3.utility.text.Font font = attributes.getFont(baseFont);
 
         // try to find existing font
         for (int i = 0; i < poiWorkbook.getNumberOfFontsAsInt(); i++) {
             Font poiFont = poiWorkbook.getFontAt(i);
 
-            if (poiFont.getFontName().equalsIgnoreCase(name) && poiFont.getFontHeightInPoints() == height
-                    && poiFont.getBold() == bold && poiFont.getItalic() == italic
-                    && (poiFont.getUnderline() != Font.U_NONE) == underline && poiFont.getStrikeout() == strikethrough
-                    && getColor(poiFont, Color.BLACK).equals(color) && poiFont.getTypeOffset() == Font.SS_NONE) {
+            if (poiFont.getFontName().equalsIgnoreCase(font.getFamily()) 
+                && poiFont.getFontHeightInPoints() == font.getSizeInPoints()
+                && poiFont.getBold() == baseFont.isBold() 
+                && poiFont.getItalic() == font.isItalic()
+                && (poiFont.getUnderline() != Font.U_NONE) == font.isUnderline()
+                && poiFont.getStrikeout() == font.isStrikeThrough()
+                && getColor(poiFont, Color.BLACK).equals(font.getColor())
+                && poiFont.getTypeOffset() == Font.SS_NONE) {
                 return new PoiFont(this, poiFont);
             }
         }

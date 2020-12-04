@@ -631,21 +631,7 @@ public final class PoiCell extends AbstractCell {
             Map<String, Object> properties = new HashMap<>();
             // apply font attributes for formatting run
             Font runFont = getFontForFormattingRun(rts, i);
-            properties.put(TextAttributes.FONT_FAMILY, runFont.getFamily());
-            properties.put(TextAttributes.FONT_SIZE, runFont.getSizeInPoints() + "pt");
-            properties.put(TextAttributes.COLOR, runFont.getColor());
-            if (runFont.isBold()) {
-                properties.put(TextAttributes.FONT_WEIGHT, "bold");
-            }
-            if (runFont.isItalic()) {
-                properties.put(TextAttributes.FONT_STYLE, "italic");
-            }
-            if (runFont.isUnderline()) {
-                properties.put(TextAttributes.TEXT_DECORATION, "underline");
-            }
-            if (runFont.isStrikeThrough()) {
-                properties.put(TextAttributes.TEXT_DECORATION, "line-through");
-            }
+            properties.put(TextAttributes.FONT, runFont);
 
             Style style = Style.create("style", "", properties);
             rtb.push(style);

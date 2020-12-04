@@ -47,7 +47,7 @@ subprojects {
         javafx_version='14'
         junit_version='5.5.1'
 
-        dua3_utility_version = '7-BETA5'
+        dua3_utility_version = '7-BETA7'
     }
 
     sourceCompatibility = java_version
@@ -56,11 +56,7 @@ subprojects {
     // repositories
     repositories {
         jcenter()
-
-        // no dependencies on local versions in release
-        if (!project.hasProperty('release')) {
-            mavenLocal()
-        }
+        mavenLocal()
     }
 
     // get OS (because JavaFX packages are OS dependent)
