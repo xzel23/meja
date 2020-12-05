@@ -2,7 +2,8 @@
 
 ## Version 2.2
 
- - update utility to 6.8
+ - update utility to 7; this is a major update of that library
+ - bugfixes; refactorings, and improvements
 
 ## Version 2.1
 
