@@ -17,18 +17,17 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.*;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.data.Pair;
+import com.dua3.utility.swing.StyledDocumentConversionOption;
 import com.dua3.utility.swing.StyledDocumentConverter;
 import com.dua3.utility.swing.SwingFontUtil;
 import com.dua3.utility.swing.SwingUtil;
-import com.dua3.utility.text.*;
-import com.dua3.utility.text.Style;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
+import com.dua3.utility.text.RichText;
 
 import javax.swing.*;
 import javax.swing.text.*;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -197,13 +196,6 @@ public class CellEditorPane extends JTextPane {
             throw new IllegalStateException();
         }
 
-        // these must be set despite already setting the component font
-        StyleConstants.setUnderline(dfltAttr, cellStyle.getFont().isUnderline());
-        StyleConstants.setStrikeThrough(dfltAttr, cellStyle.getFont().isStrikeThrough());
-
-        StyleConstants.setForeground(dfltAttr, SwingUtil.toAwtColor(cellStyle.getFont().getColor()));
-        StyleConstants.setBackground(dfltAttr, SwingUtil.toAwtColor(Color.TRANSPARENT_WHITE));
-
         return dfltAttr;
     }
 
@@ -213,38 +205,33 @@ public class CellEditorPane extends JTextPane {
      * Set the editor content to the content of given cell.
      *
      * @param cell  the cell to display
-     * @param scale the scale to apply
      * @param eval  set to true to display formula results instead of the formula
      *              itself
      */
     public void setContent(Cell cell, double scale, boolean eval) {
         CellStyle cellStyle = cell.getCellStyle();
 
+        Color fg = cellStyle.getFillFgColor();
+        Color bg = cellStyle.getFillBgColor();
         Font font = cellStyle.getFont();
-        @SuppressWarnings("NumericCastThatLosesPrecision") 
-        final java.awt.Font awtFont = fontUtil.convert(font).deriveFont((float) scale * font.getSizeInPoints());
 
-        setFont(awtFont);
-        setBackground(SwingUtil.toAwtColor(cellStyle.getFillFgColor()));
-        setForeground(SwingUtil.toAwtColor(font.getColor()));
-
+        setBackground(SwingUtil.toAwtColor(fg));
+        setForeground(SwingUtil.toAwtColor(bg));
+        
         final RichText text;
         if (!eval && cell.getCellType() == CellType.FORMULA) {
             text = RichText.valueOf("=" + cell.getFormula());
         } else {
             text = cell.getAsText(getLocale());
         }
-
-        Style style = Style.create(cellStyle.getName(), 
-                Pair.of(Style.COLOR, cellStyle.getFillFgColor()), 
-                Pair.of(Style.BACKGROUND_COLOR, cellStyle.getFillBgColor()),
-                Pair.of(Style.FONT, cellStyle.getFont()));
-        setDocument(converter.convert(text.apply(style)));
-        /* FIXME        
-        setDocument(toStyledDocument(text, CellEditorPane::getTextAttributes,
-                Pair.of(StyledDocumentBuilder.SCALE, scale),
-                Pair.of(StyledDocumentBuilder.ATTRIBUTE_SET, getCellAttributes(cellStyle, cell))));
-         */
+        
+        setDocument(
+                StyledDocumentConverter.create(
+                        StyledDocumentConversionOption.addDefaultAttributes(getCellAttributes(cellStyle, cell)),
+                        StyledDocumentConversionOption.scale(scale),
+                        StyledDocumentConversionOption.defaultFont(font)
+                ).convert(text)
+        );
 
         this.vAlign = cellStyle.getVAlign();
 
@@ -252,16 +239,4 @@ public class CellEditorPane extends JTextPane {
         repaint();
     }
     
-    private final StyledDocumentConverter converter = new StyledDocumentConverter();
-
-/*
-    private static TextAttributes getTextAttributes(Style s) {
-        Map<String, Object> m = new HashMap<>();
-        for (String attr : TextAttributes.defaults().keySet()) {
-            m.put(attr, s.get(attr));
-        }
-        return TextAttributes.of(m);
-    }
-    
- */
 }
