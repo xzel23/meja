@@ -380,7 +380,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
     @Override
     public void setFont(Font font) {
-        poiCellStyle.setFont(workbook.getPoiFont(font, TextAttributes.none()).getPoiFont());
+        poiCellStyle.setFont(workbook.getPoiFont(font).getPoiFont());
     }
 
     @Override

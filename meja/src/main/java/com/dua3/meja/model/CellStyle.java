@@ -17,6 +17,7 @@ package com.dua3.meja.model;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.Style;
 
 /**
  * Definition of a cell style.
@@ -203,4 +204,5 @@ public interface CellStyle {
      * @return rotation angle in degrees (-90 to 90)
      */
     short getRotation();
+    
 }

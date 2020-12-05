@@ -12,4 +12,13 @@ dependencies {
     implementation "com.dua3.utility:utility-swing:${dua3_utility_version}"
 }
 
-mainClassName = 'com.dua3.meja.excelviewer.SwingExcelViewer'
+task(runExcelViewer, dependsOn: 'classes', type: JavaExec) {
+    main = 'com.dua3.meja.excelviewer.SwingExcelViewer'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+task(runKitchenSink, dependsOn: 'classes', type: JavaExec) {
+    main = 'com.dua3.meja.samples.KitchenSink'
+    classpath = sourceSets.main.runtimeClasspath
+}
+//mainClassName = mainClassName == null ? "com.dua3.meja.excelviewer.SwingExcelViewer" : mainClassName

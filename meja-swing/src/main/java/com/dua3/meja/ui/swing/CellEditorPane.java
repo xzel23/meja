@@ -18,7 +18,7 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.*;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.Pair;
-import com.dua3.utility.swing.StyledDocumentBuilder;
+import com.dua3.utility.swing.StyledDocumentConverter;
 import com.dua3.utility.swing.SwingFontUtil;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.*;
@@ -235,16 +235,26 @@ public class CellEditorPane extends JTextPane {
             text = cell.getAsText(getLocale());
         }
 
-        setDocument(StyledDocumentBuilder.toStyledDocument(text, CellEditorPane::getTextAttributes,
+        Style style = Style.create(cellStyle.getName(), 
+                Pair.of(Style.COLOR, cellStyle.getFillFgColor()), 
+                Pair.of(Style.BACKGROUND_COLOR, cellStyle.getFillBgColor()),
+                Pair.of(Style.FONT, cellStyle.getFont()));
+        setDocument(converter.convert(text.apply(style)));
+        /* FIXME        
+        setDocument(toStyledDocument(text, CellEditorPane::getTextAttributes,
                 Pair.of(StyledDocumentBuilder.SCALE, scale),
                 Pair.of(StyledDocumentBuilder.ATTRIBUTE_SET, getCellAttributes(cellStyle, cell))));
+         */
 
         this.vAlign = cellStyle.getVAlign();
 
         revalidate();
         repaint();
     }
+    
+    private final StyledDocumentConverter converter = new StyledDocumentConverter();
 
+/*
     private static TextAttributes getTextAttributes(Style s) {
         Map<String, Object> m = new HashMap<>();
         for (String attr : TextAttributes.defaults().keySet()) {
@@ -252,4 +262,6 @@ public class CellEditorPane extends JTextPane {
         }
         return TextAttributes.of(m);
     }
+    
+ */
 }

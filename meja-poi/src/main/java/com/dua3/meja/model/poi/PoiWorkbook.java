@@ -29,8 +29,6 @@ import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.OptionValues;
-import com.dua3.utility.text.TextAttributes;
-import com.dua3.utility.text.TextUtil;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -243,19 +241,13 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
 
     PoiFont getPoiFont(com.dua3.utility.text.Font font) {
-        return getPoiFont(font, TextAttributes.none());
-    }
-
-    PoiFont getPoiFont(com.dua3.utility.text.Font baseFont, TextAttributes attributes) {
-        com.dua3.utility.text.Font font = attributes.getFont(baseFont);
-
         // try to find existing font
         for (int i = 0; i < poiWorkbook.getNumberOfFontsAsInt(); i++) {
             Font poiFont = poiWorkbook.getFontAt(i);
 
-            if (poiFont.getFontName().equalsIgnoreCase(font.getFamily()) 
+            if (poiFont.getFontName().equalsIgnoreCase(font.getFamily())
                 && poiFont.getFontHeightInPoints() == font.getSizeInPoints()
-                && poiFont.getBold() == baseFont.isBold() 
+                && poiFont.getBold() == font.isBold()
                 && poiFont.getItalic() == font.isItalic()
                 && (poiFont.getUnderline() != Font.U_NONE) == font.isUnderline()
                 && poiFont.getStrikeout() == font.isStrikeThrough()

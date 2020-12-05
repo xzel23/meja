@@ -474,7 +474,7 @@ public final class PoiCell extends AbstractCell {
 
         RichTextString richText = getWorkbook().createRichTextString(s.toString());
         for (Run run : s) {
-            PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont(), run.getAttributes());
+            PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont().deriveFont(run.getFontDef()));
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
         poiCell.setCellValue(richText);
@@ -631,15 +631,16 @@ public final class PoiCell extends AbstractCell {
             Map<String, Object> properties = new HashMap<>();
             // apply font attributes for formatting run
             Font runFont = getFontForFormattingRun(rts, i);
-            properties.put(TextAttributes.FONT, runFont);
+            properties.put(Style.FONT, runFont);
 
-            Style style = Style.create("style", "", properties);
+            Style style = Style.create("style", properties);
             rtb.push(style);
             rtb.append(text, start, end);
             rtb.pop(style);
             start = end;
         }
-        rtb.append(text, start, text.length());
+        // append the remainder
+        rtb.append(text, rtb.length(), text.length());
 
         return rtb.toRichText();
     }
