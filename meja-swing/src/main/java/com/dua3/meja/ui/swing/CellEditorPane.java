@@ -227,9 +227,9 @@ public class CellEditorPane extends JTextPane {
         
         setDocument(
                 StyledDocumentConverter.create(
-                        StyledDocumentConversionOption.addDefaultAttributes(getCellAttributes(cellStyle, cell)),
-                        StyledDocumentConversionOption.scale(scale),
-                        StyledDocumentConversionOption.defaultFont(font)
+                        StyledDocumentConverter.addStyledAttributes(getCellAttributes(cellStyle, cell)),
+                        StyledDocumentConverter.scale(scale),
+                        StyledDocumentConverter.defaultFont(font)
                 ).convert(text)
         );
 
