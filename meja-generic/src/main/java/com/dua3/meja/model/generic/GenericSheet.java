@@ -50,6 +50,11 @@ public class GenericSheet extends AbstractSheet {
     private int currentColumn = 0;
     private float zoom = 1.0f;
 
+    /**
+     * Constructor
+     * @param workbook the workbook to add this sheet to
+     * @param sheetName the sheet name
+     */
     public GenericSheet(GenericWorkbook workbook, String sheetName) {
         this.workbook = workbook;
         this.sheetName = sheetName;

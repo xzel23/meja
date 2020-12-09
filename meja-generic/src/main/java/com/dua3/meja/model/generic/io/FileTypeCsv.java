@@ -15,9 +15,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Function;
 
+/**
+ * File type for CSV files.
+ */
 public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {
     private static final FileType<GenericWorkbook> INSTANCE = new FileTypeCsv();
 
+    /**
+     * Return instance of this file type.
+     * @return instance of file type
+     */
     public static FileType<GenericWorkbook> instance() {
         return INSTANCE;
     }

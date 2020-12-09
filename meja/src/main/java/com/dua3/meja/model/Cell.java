@@ -449,6 +449,7 @@ public interface Cell {
      *
      * @param spanX the horizontal span
      * @param spanY the vertical span
+     * @return this cell after merging
      */
     default Cell merge(int spanX, int spanY) {
         LangUtil.check(!isMerged(), "Cell is already merged.");
