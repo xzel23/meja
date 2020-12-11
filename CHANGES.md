@@ -1,8 +1,8 @@
 # Meja Changelog
 
-## Version 2.2.1
+## Version 2.2.x
 
- - update utliity to 7.0.1 (that contains a )bugfix release)
+ - update utility to 7.0.x bugfix releases
 
 ## Version 2.2
 
