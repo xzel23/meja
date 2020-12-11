@@ -15,9 +15,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Function;
 
+/**
+ * File type for Excel 97-2004 .XLS files.
+ */
 public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
     private static final FileTypeXls INSTANCE = new FileTypeXls();
 
+    /**
+     * Get XLS file type instance.
+     * @return instance of this file type
+     */
     public static FileTypeXls instance() {
         return INSTANCE;
     }

@@ -14,6 +14,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Utility class for integrating Meja with JavaFX.
+ */
 public final class FxMejaUtil {
 
     private FxMejaUtil() {

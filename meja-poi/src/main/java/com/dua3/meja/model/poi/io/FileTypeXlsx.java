@@ -15,9 +15,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Function;
 
+/**
+ * File type for Excel .XLSX files.
+ */
 public final class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
     private static final FileTypeXlsx INSTANCE = new FileTypeXlsx();
 
+    /**
+     * Get XLSX file type instance.
+     * @return instance of this file type
+     */
     public static FileTypeXlsx instance() {
         return INSTANCE;
     }

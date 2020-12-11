@@ -34,10 +34,17 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
 
     private static final GenericWorkbookFactory INSTANCE = new GenericWorkbookFactory();
 
+    /**
+     * Get instance of factory.
+     * @return factory instance
+     */
     public static GenericWorkbookFactory instance() {
         return INSTANCE;
     }
 
+    /**
+     * Constructor.
+     */
     public GenericWorkbookFactory() {
         // force initialization of FileType instances
         //noinspection ResultOfMethodCallIgnored
