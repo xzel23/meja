@@ -65,7 +65,6 @@ class PoiWorkbookTest {
     }
 
     @Test
-    @Disabled("POI bug") // TODO create bug report and fix
     public void testConvertXlsToXlsx() throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
         String wbFilename = "population by country (copy).xlsx";

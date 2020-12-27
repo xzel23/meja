@@ -176,20 +176,28 @@ public abstract class PoiCellStyle implements CellStyle {
             XSSFColor poiColor = color == null ? null : ((PoiXssfWorkbook) workbook).getPoiColor(color);
             switch (d) {
             case NORTH:
-                ((XSSFCellStyle) poiCellStyle).setTopBorderColor(poiColor);
                 poiCellStyle.setBorderTop(poiBorder);
+                if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
+                    ((XSSFCellStyle) poiCellStyle).setTopBorderColor(poiColor);
+                }
                 break;
             case EAST:
-                ((XSSFCellStyle) poiCellStyle).setRightBorderColor(poiColor);
                 poiCellStyle.setBorderRight(poiBorder);
+                if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
+                    ((XSSFCellStyle) poiCellStyle).setRightBorderColor(poiColor);
+                }
                 break;
             case SOUTH:
-                ((XSSFCellStyle) poiCellStyle).setBottomBorderColor(poiColor);
                 poiCellStyle.setBorderBottom(poiBorder);
+                if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
+                    ((XSSFCellStyle) poiCellStyle).setBottomBorderColor(poiColor);
+                }
                 break;
             case WEST:
-                ((XSSFCellStyle) poiCellStyle).setLeftBorderColor(poiColor);
                 poiCellStyle.setBorderLeft(poiBorder);
+                if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
+                    ((XSSFCellStyle) poiCellStyle).setLeftBorderColor(poiColor);
+                }
                 break;
             default:
                 throw new IllegalArgumentException();
