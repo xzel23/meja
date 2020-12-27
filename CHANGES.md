@@ -3,6 +3,7 @@
 ## Version 2.2.x
 
  - update utility to 7.0.x bugfix releases
+ - fix exception when copying cell styles (2.2.6)
 
 ## Version 2.2
 
