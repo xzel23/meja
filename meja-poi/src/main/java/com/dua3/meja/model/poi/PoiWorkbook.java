@@ -242,7 +242,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     PoiFont getPoiFont(com.dua3.utility.text.Font font) {
         // try to find existing font
-        for (int i = 0; i < poiWorkbook.getNumberOfFontsAsInt(); i++) {
+        for (int i = 0; i < poiWorkbook.getNumberOfFonts(); i++) {
             Font poiFont = poiWorkbook.getFontAt(i);
 
             if (poiFont.getFontName().equalsIgnoreCase(font.getFamily())
