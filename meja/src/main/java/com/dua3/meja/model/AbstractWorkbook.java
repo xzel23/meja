@@ -9,6 +9,9 @@ import java.util.Optional;
 import com.dua3.meja.util.ObjectCache;
 import com.dua3.utility.io.IOUtil;
 
+/**
+ * Abstract base class for implementaions of the {@link Workbook} interface.
+ */
 public abstract class AbstractWorkbook implements Workbook {
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);

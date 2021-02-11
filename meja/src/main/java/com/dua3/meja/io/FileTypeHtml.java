@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Function;
 
+/**
+ * A FileType instance for HTML files.
+ */
 public class FileTypeHtml extends FileTypeWorkbook<Workbook> {
     private static final FileType<Workbook> INSTANCE = new FileTypeHtml();
 

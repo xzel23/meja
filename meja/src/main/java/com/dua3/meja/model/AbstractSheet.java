@@ -15,6 +15,9 @@ import java.util.logging.Logger;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 
+/**
+ * Abstract base class for implementations of the {@link Sheet} interface.
+ */
 public abstract class AbstractSheet implements Sheet {
 
     private static final Logger LOG = Logger.getLogger(AbstractSheet.class.getName());
