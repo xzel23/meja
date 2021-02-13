@@ -30,8 +30,7 @@ import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 
 /**
- *
- * @author axel
+ * POI implementation of the {@link com.dua3.meja.model.Sheet} interface.
  */
 public class PoiSheet extends AbstractSheet {
 

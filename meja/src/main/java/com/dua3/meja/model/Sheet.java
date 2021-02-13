@@ -30,13 +30,21 @@ import java.util.stream.StreamSupport;
  */
 public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
+    /** Property: zoom factor. */
     String PROPERTY_ZOOM = "ZOOM";
+    /** Property: layout change. */
     String PROPERTY_LAYOUT_CHANGED = "LAYOUT_CHANGED";
+    /** Property: split row in sheet. */
     String PROPERTY_SPLIT = "SPLIT";
+    /** Property: active cell in sheet. */
     String PROPERTY_ACTIVE_CELL = "ACTIVE_CELL";
+    /** Property: cell content. */
     String PROPERTY_CELL_CONTENT = "CELL_CONTENT";
+    /** Property: cell style. */
     String PROPERTY_CELL_STYLE = "CELL_STYLE";
+    /** Property: rows added. */
     String PROPERTY_ROWS_ADDED = "ROWS_ADDED";
+    /** Property: columns added. */
     String PROPERTY_COLUMNS_ADDED = "COLUMNS_ADDED";
 
     class RowInfo {
@@ -79,8 +87,17 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     void addMergedRegion(RectangularRegion cells);
 
+    /**
+     * Add property change listener to sheet.
+     * @param listener the listener
+     */
     void addPropertyChangeListener(PropertyChangeListener listener);
 
+    /**
+     * Add property change listener to sheet.
+     * @param propertyName the property whose changes are to be tracked
+     * @param listener the listener
+     */
     void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**

@@ -26,8 +26,12 @@ import com.dua3.utility.text.Style;
  */
 public interface CellStyle {
 
+    /**
+     * Enumaration of standard data formats.
+     */
     enum StandardDataFormats {
-        FULL, MEDIUM
+        FULL, 
+        MEDIUM
     }
 
     /**

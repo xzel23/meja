@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.function.Function;
 
+/**
+ * Abstract base class for workbook filetypes.
+ * @param <W> the generic workbook type associated with this filetype
+ */
 public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
     protected FileTypeWorkbook(String name, OpenMode mode, Class<? extends W> cls, String... extensions) {
         super(name, mode, cls, extensions);
