@@ -24,8 +24,8 @@ module meja.poi {
 
     requires transitive meja;
 
-    requires poi;
+    requires org.apache.poi.ooxml;
+    requires org.apache.poi.ooxml.schemas;
     requires java.logging;
     requires dua3_utility;
-    requires poi.ooxml;
 }
