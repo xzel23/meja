@@ -17,7 +17,6 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.*;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.swing.StyledDocumentConversionOption;
 import com.dua3.utility.swing.StyledDocumentConverter;
 import com.dua3.utility.swing.SwingFontUtil;
 import com.dua3.utility.swing.SwingUtil;

@@ -17,7 +17,6 @@ package com.dua3.meja.model;
 
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
-import com.dua3.utility.text.Style;
 
 /**
  * Definition of a cell style.

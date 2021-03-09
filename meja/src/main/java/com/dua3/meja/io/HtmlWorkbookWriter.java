@@ -308,7 +308,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         writeCommonCss(out, sheet.getWorkbook().getDefaultCellStyle());
         
         // sort styles to get reproducible results (i. e. in unit tests)
-        styles.stream().sorted((a,b) -> a.getName().compareTo(b.getName())).forEach(cs -> writeCellStyle(out, cs));
+        styles.stream().sorted(Comparator.comparing(CellStyle::getName)).forEach(cs -> writeCellStyle(out, cs));
         
         out.format(Locale.ROOT, "  </style>%n");
     }
