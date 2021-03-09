@@ -3,7 +3,6 @@ dependencies {
 
     // Apache POI
     def poiVersion = "5.0.0"
-    compile "org.apache.poi:poi:${poiVersion}"
-    compile "org.apache.poi:poi-ooxml:${poiVersion}"
-    //compile "org.apache.poi:poi-ooxml-schemas:${poiVersion}"
+    implementation "org.apache.poi:poi:${poiVersion}"
+    implementation "org.apache.poi:poi-ooxml:${poiVersion}"
 }
