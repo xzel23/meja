@@ -14,7 +14,7 @@
 
 plugins {
     id 'com.adarshr.test-logger' version '2.1.0' apply false
-    id 'com.github.spotbugs' version '4.6.2' apply false
+    id 'com.github.spotbugs' version '4.7.0' apply false
     id 'com.jfrog.bintray' version '1.8.5' apply false
 }
 
@@ -45,7 +45,7 @@ subprojects {
         javafx_version='16'
         junit_version='5.5.1'
 
-        dua3_utility_version = '9-SNAPSHOT'
+        dua3_utility_version = '9-beta4-SNAPSHOT'
     }
 
     sourceCompatibility = java_version
@@ -186,7 +186,7 @@ subprojects {
 
 // === SPOTBUGS === >grtadlew
 
-    spotbugs.toolVersion = '4.2.1'
+    spotbugs.toolVersion = '4.2.2'
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
