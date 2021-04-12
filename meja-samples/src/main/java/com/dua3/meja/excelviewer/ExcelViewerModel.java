@@ -7,7 +7,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.logging.LogUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -122,9 +122,9 @@ public class ExcelViewerModel {
             return;
         }
 
-        LOGGER.fine(LangUtil.msgs("Writing workbook to %s", uri));
+        LOGGER.fine(LogUtil.format("Writing workbook to %s", uri));
         workbook.write(uri);
-        LOGGER.info(LangUtil.msgs("Workbook written to %s", uri));
+        LOGGER.info(LogUtil.format("Workbook written to %s", uri));
     }
 
     /**

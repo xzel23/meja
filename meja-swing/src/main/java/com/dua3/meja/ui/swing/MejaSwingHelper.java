@@ -15,7 +15,25 @@
  */
 package com.dua3.meja.ui.swing;
 
-import java.awt.Component;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Sheet.RowInfo;
+import com.dua3.meja.model.Workbook;
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.OpenMode;
+import com.dua3.utility.logging.LogUtil;
+import com.dua3.utility.options.OptionSet;
+import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.swing.SwingFileFilter;
+
+import javax.swing.*;
+import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -27,27 +45,6 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.event.TableModelListener;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Sheet.RowInfo;
-import com.dua3.meja.model.Workbook;
-import com.dua3.utility.io.FileType;
-import com.dua3.utility.io.IOUtil;
-import com.dua3.utility.io.OpenMode;
-import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.OptionValues;
-import com.dua3.utility.swing.SwingFileFilter;
 
 /**
  * Helper class.
@@ -97,7 +94,7 @@ public final class MejaSwingHelper {
                     dispatcher = SheetTableModel.this::fireTableStructureChanged;
                     break;
                 default:
-                    dispatcher = () -> LOG.fine(LangUtil.msgs("ignored event: %s", evt));
+                    dispatcher = () -> LOG.fine(LogUtil.format("ignored event: %s", evt));
                     break;
                 }
                 try {
