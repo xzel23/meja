@@ -15,12 +15,6 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Optional;
-
 import com.dua3.meja.io.FileFormatException;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
@@ -29,14 +23,19 @@ import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.model.poi.io.FileTypeExcel;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
+import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
-import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.OptionValues;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *
@@ -46,7 +45,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
 
-    private static final OptionSet OPTIONS = new OptionSet();
+    private static final Collection<Option<?>> OPTIONS = new ArrayList<>();
 
     public static final String OPTION_LOCALE = "Locale";
 
@@ -56,10 +55,6 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
         } else {
             return new PoiXssfWorkbook(poiWorkbook, uri);
         }
-    }
-
-    public static Optional<Option<?>> getOption(String name) {
-        return OPTIONS.getOption(name);
     }
 
     /**
@@ -135,7 +130,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     @Override
-    public PoiWorkbook open(URI uri, OptionValues importSettings) throws IOException {
+    public PoiWorkbook open(URI uri, Arguments importSettings) throws IOException {
         // Read Excel files directly using POI methods
         // Do not use the create(File) method to avoid exception when trying
         // to save the workbook again to the same file.

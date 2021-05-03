@@ -20,7 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.dua3.utility.io.CsvIo;
-import com.dua3.utility.io.CsvIo.PredefinedDateFormat;
+import com.dua3.utility.io.IoOptions;
+import com.dua3.utility.io.PredefinedDateFormat;
 import com.dua3.utility.io.CsvReader.RowBuilder;
 
 import com.dua3.meja.model.Cell;
@@ -28,7 +29,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.CellValueHelper;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 /**
  * Implementation of the {@link RowBuilder} interface that appends new rows for an existing sheet.
@@ -46,11 +47,11 @@ public class SheetRowBuilder implements RowBuilder {
      * @param sheet   the sheet to build rows for
      * @param options the locale to use
      */
-    public SheetRowBuilder(Sheet sheet, OptionValues options) {
+    public SheetRowBuilder(Sheet sheet, Arguments options) {
         this.sheet = sheet;
 
-        Locale locale = CsvIo.getLocale(options);
-        PredefinedDateFormat dateFormat = CsvIo.getDateFormat(options);
+        Locale locale = IoOptions.getLocale(options);
+        PredefinedDateFormat dateFormat = IoOptions.getDateFormat(options);
 
         NumberFormat numberFormat = NumberFormat.getInstance(locale);
         DateTimeFormatter dateFormatter = dateFormat.getFormatter(locale);

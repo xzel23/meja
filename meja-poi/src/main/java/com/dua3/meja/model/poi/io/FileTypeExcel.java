@@ -7,7 +7,7 @@ import com.dua3.meja.model.poi.PoiWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 import java.io.IOException;
 import java.net.URI;
@@ -51,7 +51,7 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     @Override
-    public PoiWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, OptionValues> options) throws IOException {
+    public PoiWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
         if (FileTypeXlsx.instance().matches(uri.getSchemeSpecificPart())) {
             return FileTypeXlsx.instance().read(uri, options);
         }

@@ -4,7 +4,7 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,7 +23,7 @@ public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
     public abstract WorkbookFactory<? extends W> getWorkbookFactory();
 
     @Override
-    public void write(URI uri, W document, Function<FileType<? super W>, OptionValues> options) throws IOException {
+    public void write(URI uri, W document, Function<FileType<? super W>, Arguments> options) throws IOException {
         getWorkbookWriter().write(document, uri);
     }
 }

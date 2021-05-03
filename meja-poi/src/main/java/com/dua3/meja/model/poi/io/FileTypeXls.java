@@ -9,7 +9,7 @@ import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,7 +40,7 @@ public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     @Override
-    public PoiHssfWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, OptionValues> options) throws IOException {
+    public PoiHssfWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
         PoiWorkbook wb = PoiWorkbookFactory.instance().open(uri);
         LangUtil.check(wb instanceof PoiHssfWorkbook);
         return (PoiHssfWorkbook) wb;

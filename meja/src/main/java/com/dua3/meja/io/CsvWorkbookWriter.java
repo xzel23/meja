@@ -20,7 +20,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.CsvWriter;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -32,7 +32,7 @@ import java.util.function.DoubleConsumer;
  */
 public final class CsvWorkbookWriter implements WorkbookWriter {
 
-    private OptionValues options = OptionValues.empty();
+    private Arguments options = Arguments.empty();
 
     private CsvWorkbookWriter() {
     }
@@ -73,8 +73,8 @@ public final class CsvWorkbookWriter implements WorkbookWriter {
     }
 
     @Override
-    public void setOptions(OptionValues importSettings) {
-        this.options = new OptionValues(importSettings);
+    public void setOptions(Arguments importSettings) {
+        this.options = importSettings;
     }
 
     /**

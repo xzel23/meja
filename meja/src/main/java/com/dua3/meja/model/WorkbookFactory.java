@@ -18,7 +18,7 @@ package com.dua3.meja.model;
 import java.io.IOException;
 import java.net.URI;
 
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 /**
  * Abstract base class for workbook factories.
@@ -82,7 +82,7 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * @throws IOException if an input/output error occurs
      */
     public WORKBOOK open(URI uri) throws IOException {
-        return open(uri, OptionValues.empty());
+        return open(uri, Arguments.empty());
     }
 
     /**
@@ -97,6 +97,6 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * @return workbook
      * @throws IOException if an input/output error occurs
      */
-    public abstract WORKBOOK open(URI uri, OptionValues importSettings) throws IOException;
+    public abstract WORKBOOK open(URI uri, Arguments importSettings) throws IOException;
 
 }

@@ -8,11 +8,13 @@ import com.dua3.meja.io.CsvWorkbookWriter;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
-import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.Option;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -37,7 +39,7 @@ public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {
     }
 
     @Override
-    public GenericWorkbook read(URI uri, Function<FileType<? extends GenericWorkbook>, OptionValues> options) throws IOException {
+    public GenericWorkbook read(URI uri, Function<FileType<? extends GenericWorkbook>, Arguments> options) throws IOException {
         return GenericWorkbookFactory.instance().open(uri);
     }
 
@@ -52,7 +54,7 @@ public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {
     }
 
     @Override
-    public OptionSet getSettings() {
+    public Collection<Option<?>> getSettings() {
         return CsvIo.getOptions();
     }
 }

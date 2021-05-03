@@ -5,11 +5,13 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.utility.io.CsvIo;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
-import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.Option;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 
 /**
@@ -37,12 +39,12 @@ public class FileTypeHtml extends FileTypeWorkbook<Workbook> {
     }
 
     @Override
-    public Workbook read(URI uri, Function<FileType<? extends Workbook>, OptionValues> options) throws IOException {
+    public Workbook read(URI uri, Function<FileType<? extends Workbook>, Arguments> options) throws IOException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public OptionSet getSettings() {
-        return CsvIo.getOptions();
+    public Collection<Option<?>> getSettings() {
+        return Collections.emptyList();
     }
 }

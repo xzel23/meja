@@ -25,7 +25,7 @@ import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 /**
  * Implementation of {@link WorkbookWriter} for Excel files in the new
@@ -53,7 +53,7 @@ public final class XlsxWorkbookWriter implements WorkbookWriter {
     public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
         if (workbook instanceof PoiXssfWorkbook) {
             LOGGER.log(Level.FINE, "writing XLSX workbook using POI.");
-            workbook.write(FileTypeXlsx.instance(), out, OptionValues.empty(), updateProgress);
+            workbook.write(FileTypeXlsx.instance(), out, Arguments.empty(), updateProgress);
         } else {
             LOGGER.log(Level.FINE, "writing {0} using streaming API in XLSX format.",
                     workbook.getClass().getSimpleName());
@@ -61,7 +61,7 @@ public final class XlsxWorkbookWriter implements WorkbookWriter {
                 LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsxWorkbook.copy(workbook);
                 LOGGER.log(Level.FINE, "writing workbook ...");
-                xlsxWorkbook.write(FileTypeXlsx.instance(), out, OptionValues.empty(), updateProgress);
+                xlsxWorkbook.write(FileTypeXlsx.instance(), out, Arguments.empty(), updateProgress);
                 LOGGER.log(Level.FINE, "flushing buffers ...");
                 out.flush();
                 LOGGER.log(Level.FINE, "done.");

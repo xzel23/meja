@@ -3,9 +3,7 @@ package com.dua3.meja.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,20 +17,18 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 
 import com.dua3.utility.options.Option;
-import com.dua3.utility.options.Option.ChoiceOption;
-import com.dua3.utility.options.Option.Value;
-import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.ChoiceOption;
+import com.dua3.utility.options.Arguments;
 import com.dua3.utility.swing.SwingUtil;
 
 @SuppressWarnings("serial")
 public class SettingsDialog extends JDialog {
 
     private final JPanel settingsPanel;
-    private OptionValues result = OptionValues.empty();
+    private Arguments result = Arguments.empty();
 
-    @SuppressWarnings("rawtypes")
-    SettingsDialog(Component parent, String title, String text, OptionSet options) {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    SettingsDialog(Component parent, String title, String text, Collection<Option<?>> options) {
         super((JFrame) SwingUtilities.getRoot(parent), title, true);
         setLayout(new BorderLayout());
 
@@ -43,14 +39,15 @@ public class SettingsDialog extends JDialog {
         settingsPanel = new JPanel();
         settingsPanel.setLayout(new GridLayout(options.size(), 2));
         for (Option<?> option : options) {
-            settingsPanel.add(new JLabel(option.getName()));
+            settingsPanel.add(new JLabel(option.displayName()));
             if (option instanceof ChoiceOption) {
-                JComboBox<Value<?>> cb = new JComboBox<>(new Vector<>(((ChoiceOption<?>)option).getChoices()));
-                cb.setSelectedItem(option.getDefault());
+                ChoiceOption co = (ChoiceOption) option;
+                JComboBox<ChoiceOption.Choice<?>> cb = new JComboBox<>(new Vector<>(co.choices()));
+                cb.setSelectedItem(co.choice(co.getDefault()));
                 inputs.add(cb);
                 settingsPanel.add(cb);
             } else {
-                JTextField tf = new JTextField(String.valueOf(option.getDefault()));
+                JTextField tf = new JTextField();
                 inputs.add(tf);
                 settingsPanel.add(tf);
             }
@@ -58,16 +55,19 @@ public class SettingsDialog extends JDialog {
         add(settingsPanel, BorderLayout.CENTER);
 
         add(new JButton(SwingUtil.createAction("OK", () -> {
-            result = new OptionValues();
+            Deque<Arguments.Entry<?>> entries = new LinkedList<>();
             int i=0;
-            for (Option<?> option: options) {
+            for (Option option: options) {
                 JComponent component = inputs.get(i++);
+                Object value;
                 if (option instanceof ChoiceOption) {
-                    result.put(option, (Value) ((JComboBox) component).getSelectedItem());
+                    value = ((JComboBox) component).getSelectedItem();
                 } else {
-                    result.put(option, ((JTextComponent) component)::getText);
+                    value = ((JTextComponent) component).getText();
                 }
+                entries.add(Arguments.createEntry(option, value));
             }
+            result = Arguments.of(entries.toArray(Arguments.Entry[]::new));
             this.dispose();
         })), BorderLayout.SOUTH);
         pack();
@@ -76,10 +76,10 @@ public class SettingsDialog extends JDialog {
     }
 
     SettingsDialog(JFrame parent, String title, String text, Option<?>... options) {
-        this(parent, title, text, new OptionSet(options));
+        this(parent, title, text, Arrays.asList(options));
     }
 
-    public OptionValues getResult() {
+    public Arguments getResult() {
         return result;
     }
 }

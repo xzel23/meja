@@ -17,7 +17,7 @@ package com.dua3.meja.io;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.IOUtil;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public interface WorkbookWriter {
 
     double PROGRESS_INDETERMINATE = -1.0;
 
-    default void setOptions(OptionValues exportSettings) {
+    default void setOptions(Arguments exportSettings) {
         // empty implementation for writers not taking export options
     }
 

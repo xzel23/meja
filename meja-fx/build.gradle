@@ -1,7 +1,11 @@
+plugins {
+    id "com.dua3.javafxgradle7plugin" version "0.0.9"
+}
+
+javafx {
+    modules = [ 'javafx.base', 'javafx.graphics', 'javafx.controls' ]
+}
+
 dependencies {
     api project(':meja')
-
-    compileOnly "org.openjfx:javafx-base:${javafx_version}:${platform}"
-    compileOnly "org.openjfx:javafx-graphics:${javafx_version}:${platform}"
-    compileOnly "org.openjfx:javafx-controls:${javafx_version}:${platform}"
 }

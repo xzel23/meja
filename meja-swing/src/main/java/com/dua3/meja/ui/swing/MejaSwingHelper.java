@@ -24,8 +24,8 @@ import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.logging.LogUtil;
-import com.dua3.utility.options.OptionSet;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.Option;
 import com.dua3.utility.swing.SwingFileFilter;
 
 import javax.swing.*;
@@ -42,6 +42,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -240,9 +241,9 @@ public final class MejaSwingHelper {
         return Optional.of(fileType.read(uri, t -> showOptionsDialog(parent, t)));
     }
 
-    private static OptionValues showOptionsDialog(Component parent, FileType<?> fileType) {
-        OptionSet settings = fileType.getSettings();
-        OptionValues importSettings = OptionValues.empty(); // default is empty
+    private static Arguments showOptionsDialog(Component parent, FileType<?> fileType) {
+        Collection<Option<?>> settings = fileType.getSettings();
+        Arguments importSettings = Arguments.empty(); // default is empty
         if (!settings.isEmpty()) {
             SettingsDialog dialog = new SettingsDialog(parent, fileType.getName() + " - Settings",
                     "Please verify the import settings:", settings);

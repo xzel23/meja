@@ -35,7 +35,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 /**
  * Generic implementation of {@link Workbook}.
@@ -173,7 +173,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void write(FileType<?> type, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException {
+    public void write(FileType<?> type, OutputStream out, Arguments options, DoubleConsumer updateProgress) throws IOException {
         WorkbookWriter writer = ((FileTypeWorkbook<?>) type).getWorkbookWriter();
         writer.setOptions(options);
         writer.write(this, out, updateProgress);

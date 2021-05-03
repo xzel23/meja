@@ -25,7 +25,7 @@ import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 
 /**
  * Implementation of {@link WorkbookWriter} for Excel files in the old
@@ -53,13 +53,13 @@ public final class XlsWorkbookWriter implements WorkbookWriter {
     public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
         if (workbook instanceof PoiHssfWorkbook) {
             LOGGER.log(Level.FINE, "writing XLS workbook using POI.");
-            workbook.write(FileTypeXls.instance(), out, OptionValues.empty(), updateProgress);
+            workbook.write(FileTypeXls.instance(), out, Arguments.empty(), updateProgress);
         } else {
             try (Workbook xlsWorkbook = PoiWorkbookFactory.instance().createXls()) {
                 LOGGER.log(Level.FINE, "copying workbook data ...");
                 xlsWorkbook.copy(workbook);
                 LOGGER.log(Level.FINE, "writing workbook ...");
-                xlsWorkbook.write(FileTypeXls.instance(), out, OptionValues.empty(), updateProgress);
+                xlsWorkbook.write(FileTypeXls.instance(), out, Arguments.empty(), updateProgress);
                 LOGGER.log(Level.FINE, "flushing buffers ...");
                 out.flush();
                 LOGGER.log(Level.FINE, "done.");

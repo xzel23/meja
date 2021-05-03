@@ -26,7 +26,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3.0.0-beta1'
+    version = '3.0.0-beta2'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
@@ -43,7 +43,7 @@ subprojects {
         javafx_version='16'
         junit_version='5.7.1'
 
-        dua3_utility_version = '9-beta4'
+        dua3_utility_version = '9-beta7'
     }
 
     sourceCompatibility = java_version
@@ -83,16 +83,6 @@ subprojects {
 
         // Maven Central Repository
         mavenCentral()
-    }
-
-    // get OS (because JavaFX packages are OS dependent)
-    def currentOS = org.gradle.internal.os.OperatingSystem.current()
-    if (currentOS.isWindows()) {
-        ext.platform = 'win'
-    } else if (currentOS.isLinux()) {
-        ext.platform = 'linux'
-    } else if (currentOS.isMacOsX()) {
-        ext.platform = 'mac'
     }
 
     // dependencies

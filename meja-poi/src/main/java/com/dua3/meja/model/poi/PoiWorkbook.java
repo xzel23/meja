@@ -28,7 +28,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.options.OptionValues;
+import com.dua3.utility.options.Arguments;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -363,7 +363,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void write(FileType<?> type, OutputStream out, OptionValues options, DoubleConsumer updateProgress) throws IOException {
+    public void write(FileType<?> type, OutputStream out, Arguments options, DoubleConsumer updateProgress) throws IOException {
         //noinspection ObjectEquality
         if (type == getStandardFileType()) {
             // if the workbook is to be saved in the same format, write it out
