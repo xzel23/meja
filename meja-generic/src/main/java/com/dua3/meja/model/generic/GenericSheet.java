@@ -111,6 +111,7 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void clear() {
+        rows.clear();
         copy(new GenericSheet(workbook, sheetName));
     }
 
