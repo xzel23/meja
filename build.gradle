@@ -26,7 +26,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3.0.0-beta2'
+    version = '3.0.0-beta3-SNAPSHOT'
 
     ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
@@ -43,7 +43,7 @@ subprojects {
         javafx_version='16'
         junit_version='5.7.1'
 
-        dua3_utility_version = '9-beta7'
+        dua3_utility_version = '9-beta8'
     }
 
     sourceCompatibility = java_version
