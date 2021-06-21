@@ -1,7 +1,8 @@
-
 plugins {
     id 'application'
 }
+
+description = 'Meja spreadsheet library - samples'
 
 dependencies {
     implementation project(':meja')
@@ -21,4 +22,3 @@ task(runKitchenSink, dependsOn: 'classes', type: JavaExec) {
     main = 'com.dua3.meja.samples.KitchenSink'
     classpath = sourceSets.main.runtimeClasspath
 }
-//mainClassName = mainClassName == null ? "com.dua3.meja.excelviewer.SwingExcelViewer" : mainClassName

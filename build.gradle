@@ -18,9 +18,11 @@ plugins {
 }
 
 subprojects {
-    apply plugin: 'java'
+
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+    apply plugin: 'idea'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.adarshr.test-logger'
 
@@ -28,28 +30,29 @@ subprojects {
     group = 'com.dua3.meja'
     version = '3.0.0-beta3-SNAPSHOT'
 
-    ext.moduleName = project.group
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
-    ext.description = 'The Meja Spreadsheet Library'
 
     ext.developerId = 'axh'
     ext.developerName = 'Axel Howind'
-    ext.developerEmail = 'axel@dua3.com'
+    ext.developerEmail = 'axh@dua3.com'
+    ext.organization = 'dua3'
+    ext.organizationUrl = 'https://www.dua3.com'
     ////////////////////////////////////////////////////////////////////////////
 
     ext {
+        isReleaseVersion = !version.endsWith("SNAPSHOT")
+        
         java_version='11'
         javafx_version='16'
         junit_version='5.7.1'
 
-        dua3_utility_version = '9-beta9'
+        dua3_utility_version = '9-beta10'
     }
 
     sourceCompatibility = java_version
     targetCompatibility = java_version
 
-    // repositories
     repositories {
         // Maven local Repository
         mavenLocal()
@@ -95,6 +98,19 @@ subprojects {
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_version}"
     }
 
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    idea {
+        module {
+            inheritOutputDirs = false
+            outputDir = file("$buildDir/classes/java/main/")
+            testOutputDir = file("$buildDir/classes/java/test/")
+        }
+    }
+
     test {
         useJUnitPlatform()
     }
@@ -103,31 +119,14 @@ subprojects {
         theme 'standard-parallel'
     }
 
-    javadoc {
-        options.encoding = 'UTF-8'
-    }
-
     compileJava {
         options.encoding = 'UTF-8'
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     }
 
-    // === ARTIFACTS === >
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
-
-    artifacts {
-        archives jar
-        archives sourcesJar
-        archives javadocJar
+    javadoc {
+        options.encoding = 'UTF-8'
+        options.addBooleanOption('html5', true)
     }
 
     // === MAVEN publication === >
@@ -137,7 +136,7 @@ subprojects {
         licenses {
             license {
                 name "The Apache Software License, Version 2.0"
-                url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                url "https://www.apache.org/licenses/LICENSE-2.0.txt"
             }
         }
         developers {
@@ -145,6 +144,8 @@ subprojects {
                 id project.developerId
                 name project.developerName
                 email project.developerEmail
+                organization project.organization
+                organizationUrl project.organizationUrl
             }
         }
 
@@ -156,17 +157,15 @@ subprojects {
     // Create the publication with the pom configuration:
     publishing {
         publications {
-            projectJars(MavenPublication) {
-                from components.java
-                artifact sourcesJar
-                artifact javadocJar
+            mavenJava(MavenPublication) {
                 groupId project.group
                 artifactId project.name
                 version version
+                from components.java
                 pom.withXml {
                     def root = asNode()
                     root.appendNode('description', project.description)
-                    root.appendNode('name', project.group)
+                    root.appendNode('name', project.name)
                     root.appendNode('url', project.scm)
                     root.children().last() + pomConfig
                 }
@@ -203,6 +202,17 @@ subprojects {
                         header(HttpHeaderAuthentication)
                     }
                 }
+
+                // Sonatype OSSRH
+                maven {
+                    def releaseRepo = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                    def snapshotRepo = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                    url = isReleaseVersion ? releaseRepo : snapshotRepo
+                    credentials {
+                        username = System.properties.get('ossrhUsername')
+                        password = System.properties.get('ossrhPassword')
+                    }
+                }
             } else if (System.getenv("CI_JOB_TOKEN")!=null) {
                 System.out.println("!!using CI_JOB_TOKEN!!")
                 maven {
@@ -222,19 +232,26 @@ subprojects {
         }
     }
 
-// === SPOTBUGS === >grtadlew
+    // === sign artifacts
+    signing {
+        sign publishing.publications.mavenJava
+    }
 
+    // === SPOTBUGS === >
     spotbugs.toolVersion = '4.2.2'
-    spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
         reports {
-            xml.enabled = false
-            html.enabled = true
+            xml.enabled false
+            html.enabled true
         }
     }
 
 }
 
 // === DEFAULT TASKS === >
+tasks.withType(PublishToMavenRepository) {
+    dependsOn publishToMavenLocal
+}
+
 defaultTasks 'build', 'publishToMavenLocal'

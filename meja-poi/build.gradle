@@ -1,3 +1,5 @@
+description = 'Meja spreadsheet library - Apache POI implementation'
+
 dependencies {
     implementation project(':meja')
 

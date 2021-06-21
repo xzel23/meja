@@ -2,6 +2,8 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
+description = 'Meja spreadsheet library - JavaFX tools'
+
 javafx {
     modules = [ 'javafx.base', 'javafx.graphics', 'javafx.controls' ]
 }
