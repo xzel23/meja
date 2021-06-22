@@ -28,7 +28,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3.0.0-beta3-SNAPSHOT'
+    version = '3.0.0-beta3'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
