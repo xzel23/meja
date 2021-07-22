@@ -47,7 +47,7 @@ subprojects {
         javafx_version='16'
         junit_version='5.7.1'
 
-        dua3_utility_version = '9-beta12'
+        dua3_utility_version = '9-beta13'
     }
 
     sourceCompatibility = java_version
