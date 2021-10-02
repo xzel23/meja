@@ -389,15 +389,15 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             CellStyle style = isTopLeft ? styleTopLeft : styleBottomRight;
 
             BorderStyle b = style.getBorderStyle(d);
-            if (b.getWidth() == 0) {
+            if (b.width() == 0) {
                 continue;
             }
 
-            Color color = b.getColor();
+            Color color = b.color();
             if (color == null) {
                 color = Color.BLACK;
             }
-            g.setStroke(color, b.getWidth());
+            g.setStroke(color, b.width());
 
             switch (d) {
                 case NORTH -> g.drawLine(cr.getLeft(), cr.getTop(), cr.getRight(), cr.getTop());

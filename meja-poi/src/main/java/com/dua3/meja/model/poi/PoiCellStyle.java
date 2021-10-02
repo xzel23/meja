@@ -82,7 +82,7 @@ public abstract class PoiCellStyle implements CellStyle {
         @Override
         public void setBorderStyle(Direction d, BorderStyle borderStyle) {
             org.apache.poi.ss.usermodel.BorderStyle poiBorder = getPoiBorder(borderStyle);
-            short poiColor = ((PoiHssfWorkbook) workbook).getPoiColor(borderStyle.getColor()).getIndex();
+            short poiColor = ((PoiHssfWorkbook) workbook).getPoiColor(borderStyle.color()).getIndex();
             switch (d) {
                 case NORTH -> {
                     poiCellStyle.setTopBorderColor(poiColor);
@@ -168,7 +168,7 @@ public abstract class PoiCellStyle implements CellStyle {
         @Override
         public void setBorderStyle(Direction d, BorderStyle borderStyle) {
             org.apache.poi.ss.usermodel.BorderStyle poiBorder = getPoiBorder(borderStyle);
-            final Color color = borderStyle.getColor();
+            final Color color = borderStyle.color();
             XSSFColor poiColor = color == null ? null : ((PoiXssfWorkbook) workbook).getPoiColor(color);
             switch (d) {
                 case NORTH -> {
@@ -308,7 +308,7 @@ public abstract class PoiCellStyle implements CellStyle {
      * @return the POI constant to use
      */
     protected org.apache.poi.ss.usermodel.BorderStyle getPoiBorder(BorderStyle borderStyle) {
-        float width = borderStyle.getWidth();
+        float width = borderStyle.width();
         if (width == 0) {
             return org.apache.poi.ss.usermodel.BorderStyle.NONE;
         }

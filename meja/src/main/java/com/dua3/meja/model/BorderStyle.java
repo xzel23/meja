@@ -20,38 +20,4 @@ import com.dua3.utility.data.Color;
 /**
  * Definition of a cell border.
  */
-public class BorderStyle {
-
-    private final float width;
-    private final Color color;
-
-    /**
-     * Construct a new {@code BorderStyle}.
-     *
-     * @param width the border width to use in points
-     * @param color the border color to use
-     */
-    public BorderStyle(float width, Color color) {
-        this.width = width;
-        this.color = color;
-    }
-
-    /**
-     * Get border color.
-     *
-     * @return the border color
-     */
-    public Color getColor() {
-        return color;
-    }
-
-    /**
-     * Get border width.
-     *
-     * @return the border width
-     */
-    public float getWidth() {
-        return width;
-    }
-
-}
+public record BorderStyle(float width, Color color) {}

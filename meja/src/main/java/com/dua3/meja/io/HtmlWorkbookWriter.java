@@ -74,8 +74,8 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         }
         for (Direction d : Direction.values()) {
             BorderStyle bs = cs.getBorderStyle(d);
-            Color c = bs.getColor();
-            float w = bs.getWidth();
+            Color c = bs.color();
+            float w = bs.width();
             if (!c.isTransparent() && w>0) {
                 out.format(Locale.ROOT, "border-%s: %.2fpt solid %s !important; ", d.getCssName(), w, c.toCss());
             }
