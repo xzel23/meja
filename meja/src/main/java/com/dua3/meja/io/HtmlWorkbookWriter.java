@@ -104,13 +104,13 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     private static String id(CellStyle style) {
         return id(style.getWorkbook())
                +"_CS_"
-               + TextUtil.byteArrayToHexString(style.getName().getBytes(StandardCharsets.UTF_8));
+               + HexFormat.of().formatHex(style.getName().getBytes(StandardCharsets.UTF_8));
     }
 
     private static String id(Sheet sheet) {
         return id(sheet.getWorkbook())
                +"_SHEET_"
-               + TextUtil.byteArrayToHexString(sheet.getSheetName().getBytes(StandardCharsets.UTF_8));
+               + HexFormat.of().formatHex(sheet.getSheetName().getBytes(StandardCharsets.UTF_8));
     }
 
     private static String id(Workbook workbook) {

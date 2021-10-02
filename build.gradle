@@ -14,7 +14,7 @@
 
 plugins {
     id 'com.adarshr.test-logger' version '2.1.0' apply false
-    id 'com.github.spotbugs' version '4.7.0' apply false
+    id 'com.github.spotbugs' version '4.7.2' apply false
 }
 
 subprojects {
@@ -28,7 +28,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3.0.0-beta4-SNAPSHOT'
+    version = '3-beta9'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
@@ -43,11 +43,11 @@ subprojects {
     ext {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
         
-        java_version='11'
-        javafx_version='16'
+        java_version='17'
+        javafx_version='17.0.0.1'
         junit_version='5.7.1'
 
-        dua3_utility_version = '9.0'
+        dua3_utility_version = '10-BETA9'
     }
 
     sourceCompatibility = java_version
