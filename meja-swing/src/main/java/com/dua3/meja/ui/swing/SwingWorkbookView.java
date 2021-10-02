@@ -180,12 +180,9 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
     public void propertyChange(PropertyChangeEvent evt) {
         String property = evt.getPropertyName();
         switch (property) {
-        case Workbook.PROPERTY_SHEET_ADDED:
-        case Workbook.PROPERTY_SHEET_REMOVED:
-            SwingUtilities.invokeLater(() -> setWorkbook(workbook));
-            break;
-        default:
-            break;
+            case Workbook.PROPERTY_SHEET_ADDED, Workbook.PROPERTY_SHEET_REMOVED -> SwingUtilities.invokeLater(() -> setWorkbook(workbook));
+            default -> {
+            }
         }
     }
 }

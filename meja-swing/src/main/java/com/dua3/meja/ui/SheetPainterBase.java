@@ -400,18 +400,10 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             g.setStroke(color, b.getWidth());
 
             switch (d) {
-            case NORTH:
-                g.drawLine(cr.getLeft(), cr.getTop(), cr.getRight(), cr.getTop());
-                break;
-            case EAST:
-                g.drawLine(cr.getRight(), cr.getTop(), cr.getRight(), cr.getBottom());
-                break;
-            case SOUTH:
-                g.drawLine(cr.getLeft(), cr.getBottom(), cr.getRight(), cr.getBottom());
-                break;
-            case WEST:
-                g.drawLine(cr.getLeft(), cr.getTop(), cr.getLeft(), cr.getBottom());
-                break;
+                case NORTH -> g.drawLine(cr.getLeft(), cr.getTop(), cr.getRight(), cr.getTop());
+                case EAST -> g.drawLine(cr.getRight(), cr.getTop(), cr.getRight(), cr.getBottom());
+                case SOUTH -> g.drawLine(cr.getLeft(), cr.getBottom(), cr.getRight(), cr.getBottom());
+                case WEST -> g.drawLine(cr.getLeft(), cr.getTop(), cr.getLeft(), cr.getBottom());
             }
         }
     }
@@ -637,15 +629,9 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                 // draw cell
                 if (visible) {
                     switch (cellDrawMode) {
-                    case DRAW_CELL_BACKGROUND:
-                        drawCellBackground(g, logicalCell);
-                        break;
-                    case DRAW_CELL_BORDER:
-                        drawCellBorder(g, logicalCell);
-                        break;
-                    case DRAW_CELL_FOREGROUND:
-                        drawCellForeground(g, logicalCell);
-                        break;
+                        case DRAW_CELL_BACKGROUND -> drawCellBackground(g, logicalCell);
+                        case DRAW_CELL_BORDER -> drawCellBorder(g, logicalCell);
+                        case DRAW_CELL_FOREGROUND -> drawCellForeground(g, logicalCell);
                     }
                 }
 

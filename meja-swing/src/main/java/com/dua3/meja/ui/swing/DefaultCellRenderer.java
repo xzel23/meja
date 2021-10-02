@@ -59,21 +59,14 @@ public class DefaultCellRenderer implements CellRenderer {
         if (wrap) {
             canvas = cr;
         } else {
-            switch (CellEditorPane.getHAlign(style.getHAlign(), cell.getResultType())) {
-            case ALIGN_LEFT:
-                canvas = new Rectangle(cr.x, cr.y, maxWidthScaled, cr.height);
-                break;
-            case ALIGN_RIGHT:
-                canvas = new Rectangle(cr.x + cr.width - maxWidthScaled, cr.y, maxWidthScaled, cr.height);
-                break;
-            case ALIGN_CENTER:
-                canvas = new Rectangle(cr.x + (cr.width - maxWidthScaled) / 2, cr.y, maxWidthScaled, cr.height);
-                break;
-            case ALIGN_JUSTIFY: // ALIGN_JUSTIFY implies wrap
-            case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be mapped to another value
-            default:
-                throw new IllegalStateException();
-            }
+            canvas = switch (CellEditorPane.getHAlign(style.getHAlign(), cell.getResultType())) {
+                case ALIGN_LEFT -> new Rectangle(cr.x, cr.y, maxWidthScaled, cr.height);
+                case ALIGN_RIGHT -> new Rectangle(cr.x + cr.width - maxWidthScaled, cr.y, maxWidthScaled, cr.height);
+                case ALIGN_CENTER -> new Rectangle(cr.x + (cr.width - maxWidthScaled) / 2, cr.y, maxWidthScaled, cr.height); // ALIGN_JUSTIFY implies wrap
+                case ALIGN_JUSTIFY -> throw new IllegalStateException();
+                // ALIGN_AUTOMATIC should already be mapped to another value
+                default -> throw new IllegalStateException();
+            };
         }
 
         component.setBounds(bounds);

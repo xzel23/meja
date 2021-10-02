@@ -33,37 +33,25 @@ public final class PoiHelper {
     private static final Logger LOGGER = Logger.getLogger(PoiHelper.class.getName());
 
     public static HorizontalAlignment hAlignToPoi(HAlign hAlign) {
-        switch (hAlign) {
-        case ALIGN_LEFT:
-            return HorizontalAlignment.LEFT;
-        case ALIGN_RIGHT:
-            return HorizontalAlignment.RIGHT;
-        case ALIGN_CENTER:
-            return HorizontalAlignment.CENTER;
-        case ALIGN_JUSTIFY:
-            return HorizontalAlignment.JUSTIFY;
-        case ALIGN_AUTOMATIC:
-            return HorizontalAlignment.GENERAL;
-        default:
-            throw new IllegalArgumentException();
-        }
+        return switch (hAlign) {
+            case ALIGN_LEFT -> HorizontalAlignment.LEFT;
+            case ALIGN_RIGHT -> HorizontalAlignment.RIGHT;
+            case ALIGN_CENTER -> HorizontalAlignment.CENTER;
+            case ALIGN_JUSTIFY -> HorizontalAlignment.JUSTIFY;
+            case ALIGN_AUTOMATIC -> HorizontalAlignment.GENERAL;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     public static HAlign poiToHAlign(HorizontalAlignment alignment) {
-        switch (alignment) {
-        case LEFT:
-            return HAlign.ALIGN_LEFT;
-        case CENTER:
-            return HAlign.ALIGN_CENTER;
-        case RIGHT:
-            return HAlign.ALIGN_RIGHT;
-        case CENTER_SELECTION:
-            return HAlign.ALIGN_CENTER;
-        case GENERAL:
-            return HAlign.ALIGN_AUTOMATIC;
-        default:
-            return HAlign.ALIGN_JUSTIFY;
-        }
+        return switch (alignment) {
+            case LEFT -> HAlign.ALIGN_LEFT;
+            case CENTER -> HAlign.ALIGN_CENTER;
+            case RIGHT -> HAlign.ALIGN_RIGHT;
+            case CENTER_SELECTION -> HAlign.ALIGN_CENTER;
+            case GENERAL -> HAlign.ALIGN_AUTOMATIC;
+            default -> HAlign.ALIGN_JUSTIFY;
+        };
     }
 
     public static VAlign poiToVAlign(VerticalAlignment alignment) {
@@ -85,20 +73,14 @@ public final class PoiHelper {
     }
 
     public static VerticalAlignment vAlignToPoi(VAlign vAlign) {
-        switch (vAlign) {
-        case ALIGN_TOP:
-            return VerticalAlignment.TOP;
-        case ALIGN_MIDDLE:
-            return VerticalAlignment.CENTER;
-        case ALIGN_BOTTOM:
-            return VerticalAlignment.BOTTOM;
-        case ALIGN_JUSTIFY:
-            return VerticalAlignment.JUSTIFY; 
-        case ALIGN_DISTRIBUTED:
-            return VerticalAlignment.DISTRIBUTED;
-        default:
-            throw new IllegalArgumentException();
-        }
+        return switch (vAlign) {
+            case ALIGN_TOP -> VerticalAlignment.TOP;
+            case ALIGN_MIDDLE -> VerticalAlignment.CENTER;
+            case ALIGN_BOTTOM -> VerticalAlignment.BOTTOM;
+            case ALIGN_JUSTIFY -> VerticalAlignment.JUSTIFY;
+            case ALIGN_DISTRIBUTED -> VerticalAlignment.DISTRIBUTED;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     private PoiHelper() {

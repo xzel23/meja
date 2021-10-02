@@ -107,15 +107,9 @@ public interface Cell {
 
         for (RefOption o : options) {
             switch (o) {
-            case FIX_COLUMN:
-                prefixColumn = "$";
-                break;
-            case FIX_ROW:
-                prefixRow = "$";
-                break;
-            case WITH_SHEET:
-                sheet = "'" + getSheet().getSheetName() + "'!";
-                break;
+                case FIX_COLUMN -> prefixColumn = "$";
+                case FIX_ROW -> prefixRow = "$";
+                case WITH_SHEET -> sheet = "'" + getSheet().getSheetName() + "'!";
             }
         }
 

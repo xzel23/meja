@@ -116,7 +116,7 @@ public interface Row extends Iterable<Cell> {
      */
     @Override
     default Iterator<Cell> iterator() {
-        return new Iterator<Cell>() {
+        return new Iterator<>() {
 
             private int colNum = getFirstCellNum();
 

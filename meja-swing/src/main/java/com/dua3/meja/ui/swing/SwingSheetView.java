@@ -724,26 +724,19 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     public void propertyChange(PropertyChangeEvent evt) {
         String property = evt.getPropertyName();
         switch (property) {
-        case Sheet.PROPERTY_ZOOM:
-        case Sheet.PROPERTY_LAYOUT_CHANGED:
-        case Sheet.PROPERTY_ROWS_ADDED:
-            updateContent();
-            break;
-        case Sheet.PROPERTY_SPLIT:
-            updateContent();
-            scrollToCurrentCell();
-            break;
-        case Sheet.PROPERTY_ACTIVE_CELL:
-            scrollToCurrentCell();
-            repaintCell((Cell) evt.getOldValue());
-            repaintCell((Cell) evt.getNewValue());
-            break;
-        case Sheet.PROPERTY_CELL_CONTENT:
-        case Sheet.PROPERTY_CELL_STYLE:
-            repaintCell((Cell) evt.getSource());
-            break;
-        default:
-            break;
+            case Sheet.PROPERTY_ZOOM, Sheet.PROPERTY_LAYOUT_CHANGED, Sheet.PROPERTY_ROWS_ADDED -> updateContent();
+            case Sheet.PROPERTY_SPLIT -> {
+                updateContent();
+                scrollToCurrentCell();
+            }
+            case Sheet.PROPERTY_ACTIVE_CELL -> {
+                scrollToCurrentCell();
+                repaintCell((Cell) evt.getOldValue());
+                repaintCell((Cell) evt.getNewValue());
+            }
+            case Sheet.PROPERTY_CELL_CONTENT, Sheet.PROPERTY_CELL_STYLE -> repaintCell((Cell) evt.getSource());
+            default -> {
+            }
         }
     }
 
@@ -944,18 +937,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         switch (d) {
-        case NORTH:
-            setCurrentRowNum(cell.getRowNumber() - 1);
-            break;
-        case SOUTH:
-            setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
-            break;
-        case WEST:
-            setCurrentColNum(cell.getColumnNumber() - 1);
-            break;
-        case EAST:
-            setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
-            break;
+            case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
+            case SOUTH -> setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
+            case WEST -> setCurrentColNum(cell.getColumnNumber() - 1);
+            case EAST -> setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
         }
     }
 
@@ -999,26 +984,26 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         java.awt.Rectangle cellRect = rectS2D(sheetPainter.getCellRect(cell));
         switch (d) {
-        case NORTH: {
-            int y = Math.max(0, cellRect.y - getVisibleRect().height);
-            setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
-            break;
-        }
-        case SOUTH: {
-            int y = Math.min(getSheetHeight() - 1, cellRect.y + getVisibleRect().height);
-            setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
-            break;
-        }
-        case WEST: {
-            int x = Math.max(0, cellRect.x - getVisibleRect().width);
-            setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
-            break;
-        }
-        case EAST: {
-            int x = Math.min(getSheetWidth() - 1, cellRect.x + getVisibleRect().width);
-            setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
-            break;
-        }
+            case NORTH -> {
+                int y = Math.max(0, cellRect.y - getVisibleRect().height);
+                setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
+                break;
+            }
+            case SOUTH -> {
+                int y = Math.min(getSheetHeight() - 1, cellRect.y + getVisibleRect().height);
+                setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
+                break;
+            }
+            case WEST -> {
+                int x = Math.max(0, cellRect.x - getVisibleRect().width);
+                setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
+                break;
+            }
+            case EAST -> {
+                int x = Math.min(getSheetWidth() - 1, cellRect.x + getVisibleRect().width);
+                setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
+                break;
+            }
         }
     }
 

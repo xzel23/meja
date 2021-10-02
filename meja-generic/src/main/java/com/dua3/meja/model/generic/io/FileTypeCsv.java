@@ -14,7 +14,6 @@ import com.dua3.utility.options.Option;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**

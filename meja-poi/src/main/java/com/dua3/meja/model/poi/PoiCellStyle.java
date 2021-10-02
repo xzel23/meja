@@ -48,24 +48,23 @@ public abstract class PoiCellStyle implements CellStyle {
             final Color color;
             final float width;
             switch (d) {
-            case NORTH:
-                color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getTopBorderColor());
-                width = getBorderWidth(poiCellStyle.getBorderTop());
-                break;
-            case EAST:
-                color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getRightBorderColor());
-                width = getBorderWidth(poiCellStyle.getBorderRight());
-                break;
-            case SOUTH:
-                color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getBottomBorderColor());
-                width = getBorderWidth(poiCellStyle.getBorderBottom());
-                break;
-            case WEST:
-                color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getLeftBorderColor());
-                width = getBorderWidth(poiCellStyle.getBorderLeft());
-                break;
-            default:
-                throw new IllegalArgumentException();
+                case NORTH -> {
+                    color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getTopBorderColor());
+                    width = getBorderWidth(poiCellStyle.getBorderTop());
+                }
+                case EAST -> {
+                    color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getRightBorderColor());
+                    width = getBorderWidth(poiCellStyle.getBorderRight());
+                }
+                case SOUTH -> {
+                    color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getBottomBorderColor());
+                    width = getBorderWidth(poiCellStyle.getBorderBottom());
+                }
+                case WEST -> {
+                    color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getLeftBorderColor());
+                    width = getBorderWidth(poiCellStyle.getBorderLeft());
+                }
+                default -> throw new IllegalArgumentException();
             }
             return new BorderStyle(width, color);
         }
@@ -85,24 +84,23 @@ public abstract class PoiCellStyle implements CellStyle {
             org.apache.poi.ss.usermodel.BorderStyle poiBorder = getPoiBorder(borderStyle);
             short poiColor = ((PoiHssfWorkbook) workbook).getPoiColor(borderStyle.getColor()).getIndex();
             switch (d) {
-            case NORTH:
-                poiCellStyle.setTopBorderColor(poiColor);
-                poiCellStyle.setBorderTop(poiBorder);
-                break;
-            case EAST:
-                poiCellStyle.setRightBorderColor(poiColor);
-                poiCellStyle.setBorderRight(poiBorder);
-                break;
-            case SOUTH:
-                poiCellStyle.setBottomBorderColor(poiColor);
-                poiCellStyle.setBorderBottom(poiBorder);
-                break;
-            case WEST:
-                poiCellStyle.setLeftBorderColor(poiColor);
-                poiCellStyle.setBorderLeft(poiBorder);
-                break;
-            default:
-                throw new IllegalArgumentException();
+                case NORTH -> {
+                    poiCellStyle.setTopBorderColor(poiColor);
+                    poiCellStyle.setBorderTop(poiBorder);
+                }
+                case EAST -> {
+                    poiCellStyle.setRightBorderColor(poiColor);
+                    poiCellStyle.setBorderRight(poiBorder);
+                }
+                case SOUTH -> {
+                    poiCellStyle.setBottomBorderColor(poiColor);
+                    poiCellStyle.setBorderBottom(poiBorder);
+                }
+                case WEST -> {
+                    poiCellStyle.setLeftBorderColor(poiColor);
+                    poiCellStyle.setBorderLeft(poiBorder);
+                }
+                default -> throw new IllegalArgumentException();
             }
         }
 
@@ -136,24 +134,23 @@ public abstract class PoiCellStyle implements CellStyle {
             final Color color;
             final float width;
             switch (d) {
-            case NORTH:
-                width = getBorderWidth(poiCellStyle.getBorderTop());
-                color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getTopBorderXSSFColor(), Color.BLACK);
-                break;
-            case EAST:
-                width = getBorderWidth(poiCellStyle.getBorderRight());
-                color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getRightBorderXSSFColor(), Color.BLACK);
-                break;
-            case SOUTH:
-                width = getBorderWidth(poiCellStyle.getBorderBottom());
-                color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getBottomBorderXSSFColor(), Color.BLACK);
-                break;
-            case WEST:
-                width = getBorderWidth(poiCellStyle.getBorderLeft());
-                color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getLeftBorderXSSFColor(), Color.BLACK);
-                break;
-            default:
-                throw new IllegalArgumentException();
+                case NORTH -> {
+                    width = getBorderWidth(poiCellStyle.getBorderTop());
+                    color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getTopBorderXSSFColor(), Color.BLACK);
+                }
+                case EAST -> {
+                    width = getBorderWidth(poiCellStyle.getBorderRight());
+                    color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getRightBorderXSSFColor(), Color.BLACK);
+                }
+                case SOUTH -> {
+                    width = getBorderWidth(poiCellStyle.getBorderBottom());
+                    color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getBottomBorderXSSFColor(), Color.BLACK);
+                }
+                case WEST -> {
+                    width = getBorderWidth(poiCellStyle.getBorderLeft());
+                    color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getLeftBorderXSSFColor(), Color.BLACK);
+                }
+                default -> throw new IllegalArgumentException();
             }
             return new BorderStyle(width, color);
         }
@@ -174,32 +171,31 @@ public abstract class PoiCellStyle implements CellStyle {
             final Color color = borderStyle.getColor();
             XSSFColor poiColor = color == null ? null : ((PoiXssfWorkbook) workbook).getPoiColor(color);
             switch (d) {
-            case NORTH:
-                poiCellStyle.setBorderTop(poiBorder);
-                if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
-                    ((XSSFCellStyle) poiCellStyle).setTopBorderColor(poiColor);
+                case NORTH -> {
+                    poiCellStyle.setBorderTop(poiBorder);
+                    if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
+                        ((XSSFCellStyle) poiCellStyle).setTopBorderColor(poiColor);
+                    }
                 }
-                break;
-            case EAST:
-                poiCellStyle.setBorderRight(poiBorder);
-                if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
-                    ((XSSFCellStyle) poiCellStyle).setRightBorderColor(poiColor);
+                case EAST -> {
+                    poiCellStyle.setBorderRight(poiBorder);
+                    if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
+                        ((XSSFCellStyle) poiCellStyle).setRightBorderColor(poiColor);
+                    }
                 }
-                break;
-            case SOUTH:
-                poiCellStyle.setBorderBottom(poiBorder);
-                if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
-                    ((XSSFCellStyle) poiCellStyle).setBottomBorderColor(poiColor);
+                case SOUTH -> {
+                    poiCellStyle.setBorderBottom(poiBorder);
+                    if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
+                        ((XSSFCellStyle) poiCellStyle).setBottomBorderColor(poiColor);
+                    }
                 }
-                break;
-            case WEST:
-                poiCellStyle.setBorderLeft(poiBorder);
-                if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
-                    ((XSSFCellStyle) poiCellStyle).setLeftBorderColor(poiColor);
+                case WEST -> {
+                    poiCellStyle.setBorderLeft(poiBorder);
+                    if (poiBorder != org.apache.poi.ss.usermodel.BorderStyle.NONE) {
+                        ((XSSFCellStyle) poiCellStyle).setLeftBorderColor(poiColor);
+                    }
                 }
-                break;
-            default:
-                throw new IllegalArgumentException();
+                default -> throw new IllegalArgumentException();
             }
         }
 
@@ -257,28 +253,14 @@ public abstract class PoiCellStyle implements CellStyle {
      * @return the width of the border in points
      */
     protected float getBorderWidth(org.apache.poi.ss.usermodel.BorderStyle poiBorder) {
-        switch (poiBorder) {
-        case NONE:
-            return 0;
-        case THIN:
-            return 0.75f;
-        case MEDIUM:
-        case MEDIUM_DASHED:
-        case MEDIUM_DASH_DOT:
-        case MEDIUM_DASH_DOT_DOT:
-            return 1.75f;
-        case THICK:
-            return 2;
-        case DASHED:
-        case DOTTED:
-        case DOUBLE:
-        case HAIR:
-        case DASH_DOT:
-        case DASH_DOT_DOT:
-        case SLANTED_DASH_DOT:
-        default:
-            return 1;
-        }
+        return switch (poiBorder) {
+            case NONE -> 0;
+            case THIN -> 0.75f;
+            case MEDIUM, MEDIUM_DASHED, MEDIUM_DASH_DOT, MEDIUM_DASH_DOT_DOT -> 1.75f;
+            case THICK -> 2;
+            case DASHED, DOTTED, DOUBLE, HAIR, DASH_DOT, DASH_DOT_DOT, SLANTED_DASH_DOT -> 1;
+            default -> 1;
+        };
     }
 
     @Override
@@ -294,12 +276,10 @@ public abstract class PoiCellStyle implements CellStyle {
 
     @Override
     public FillPattern getFillPattern() {
-        switch (poiCellStyle.getFillPattern()) {
-        case SOLID_FOREGROUND:
-            return FillPattern.SOLID;
-        default:
-            return FillPattern.NONE;
-        }
+        return switch (poiCellStyle.getFillPattern()) {
+            case SOLID_FOREGROUND -> FillPattern.SOLID;
+            default -> FillPattern.NONE;
+        };
     }
 
     @Override
@@ -374,14 +354,9 @@ public abstract class PoiCellStyle implements CellStyle {
     @Override
     public void setFillPattern(FillPattern pattern) {
         switch (pattern) {
-        case NONE:
-            poiCellStyle.setFillPattern(FillPatternType.NO_FILL);
-            break;
-        case SOLID:
-            poiCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            break;
-        default:
-            throw new IllegalArgumentException();
+            case NONE -> poiCellStyle.setFillPattern(FillPatternType.NO_FILL);
+            case SOLID -> poiCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            default -> throw new IllegalArgumentException();
         }
     }
 
@@ -412,25 +387,19 @@ public abstract class PoiCellStyle implements CellStyle {
     }
     
     DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
-        switch (poiCellStyle.getDataFormat()) {
-            case 0x0e:
-                return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
-            case 0xa4:
-                return DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
-            default:
-                return null;
-        }
+        return switch (poiCellStyle.getDataFormat()) {
+            case 0x0e -> DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+            case 0xa4 -> DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
+            default -> null;
+        };
     }
 
     DateTimeFormatter getLocaleAwareDateTimeFormat(Locale locale) {
-        switch (poiCellStyle.getDataFormat()) {
-            case 0x0e:
-                return DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(locale);
-            case 0xa4:
-                return DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL).withLocale(locale);
-            default:
-                return null;
-        }
+        return switch (poiCellStyle.getDataFormat()) {
+            case 0x0e -> DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(locale);
+            case 0xa4 -> DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL).withLocale(locale);
+            default -> null;
+        };
     }
 
 }

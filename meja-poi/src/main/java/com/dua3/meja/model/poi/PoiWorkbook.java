@@ -335,7 +335,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     @Override
     public Iterator<Sheet> iterator() {
-        return new Iterator<Sheet>() {
+        return new Iterator<>() {
             private final Iterator<PoiSheet> iter = sheets.iterator();
 
             @Override
@@ -384,20 +384,12 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     public Hyperlink createHyperLink(URI target) {
         HyperlinkType type;
         String address=target.toString();
-        switch (target.getScheme().toLowerCase(Locale.ROOT)) {
-            case "http":
-            case "https":
-                type = HyperlinkType.URL;
-                break;
-            case "file":
-                type = HyperlinkType.FILE;
-                break;
-            case "mailto":
-                type = HyperlinkType.EMAIL;
-                break;
-            default:
-                throw new IllegalArgumentException("unsupported protocol: "+target.getScheme());
-        }
+        type = switch (target.getScheme().toLowerCase(Locale.ROOT)) {
+            case "http", "https" -> HyperlinkType.URL;
+            case "file" -> HyperlinkType.FILE;
+            case "mailto" -> HyperlinkType.EMAIL;
+            default -> throw new IllegalArgumentException("unsupported protocol: " + target.getScheme());
+        };
         Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(type);
         link.setAddress(address);
         return link;

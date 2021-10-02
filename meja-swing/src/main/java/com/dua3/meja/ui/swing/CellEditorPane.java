@@ -55,28 +55,27 @@ public class CellEditorPane extends JTextPane {
             float offset;
             float increase;
             switch (vAlign) {
-            case ALIGN_TOP:
-                offset = 0;
-                increase = 0;
-                break;
-            case ALIGN_BOTTOM:
-                offset = available;
-                increase = 0;
-                break;
-            case ALIGN_MIDDLE:
-                offset = (float) available / 2;
-                increase = 0;
-                break;
-            case ALIGN_JUSTIFY:
-                offset = (float) available / spans.length;
-                increase = offset;
-                break; 
-            case ALIGN_DISTRIBUTED:
-                offset = available;
-                increase = 0;
-                break;
-            default:
-                throw new IllegalStateException();
+                case ALIGN_TOP -> {
+                    offset = 0;
+                    increase = 0;
+                }
+                case ALIGN_BOTTOM -> {
+                    offset = available;
+                    increase = 0;
+                }
+                case ALIGN_MIDDLE -> {
+                    offset = (float) available / 2;
+                    increase = 0;
+                }
+                case ALIGN_JUSTIFY -> {
+                    offset = (float) available / spans.length;
+                    increase = offset;
+                }
+                case ALIGN_DISTRIBUTED -> {
+                    offset = available;
+                    increase = 0;
+                }
+                default -> throw new IllegalStateException();
             }
 
             for (int i = 0; i < offsets.length; i++) {
@@ -143,20 +142,11 @@ public class CellEditorPane extends JTextPane {
             return hAlign;
         }
 
-        switch (type) {
-        case BLANK:
-        case BOOLEAN:
-        case ERROR:
-        case NUMERIC:
-        case DATE:
-        case DATE_TIME:
-            return HAlign.ALIGN_RIGHT;
-        case TEXT:
-        case FORMULA:
-            return HAlign.ALIGN_LEFT;
-        default:
-            throw new IllegalStateException();
-        }
+        return switch (type) {
+            case BLANK, BOOLEAN, ERROR, NUMERIC, DATE, DATE_TIME -> HAlign.ALIGN_RIGHT;
+            case TEXT, FORMULA -> HAlign.ALIGN_LEFT;
+            default -> throw new IllegalStateException();
+        };
     }
 
     private VAlign vAlign = VAlign.ALIGN_TOP;
@@ -178,21 +168,12 @@ public class CellEditorPane extends JTextPane {
     public SimpleAttributeSet getCellAttributes(final CellStyle cellStyle, Cell cell) {
         SimpleAttributeSet dfltAttr = new SimpleAttributeSet();
         switch (getHAlign(cellStyle.getHAlign(), cell.getResultType())) {
-        case ALIGN_LEFT:
-            StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_LEFT);
-            break;
-        case ALIGN_CENTER:
-            StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_CENTER);
-            break;
-        case ALIGN_RIGHT:
-            StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_RIGHT);
-            break;
-        case ALIGN_JUSTIFY:
-            StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_JUSTIFIED);
-            break;
-        case ALIGN_AUTOMATIC: // ALIGN_AUTOMATIC should already be resolved
-        default:
-            throw new IllegalStateException();
+            case ALIGN_LEFT -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_LEFT);
+            case ALIGN_CENTER -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_CENTER);
+            case ALIGN_RIGHT -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_RIGHT);
+            case ALIGN_JUSTIFY -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_JUSTIFIED);
+            // ALIGN_AUTOMATIC should already be resolved
+            default -> throw new IllegalStateException();
         }
 
         return dfltAttr;

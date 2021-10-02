@@ -121,32 +121,15 @@ public class GenericCell extends AbstractCell {
     public void copy(Cell other) {
         setCellStyle(other.getCellStyle().getName());
         switch (other.getCellType()) {
-        case BLANK:
-            clear();
-            break;
-        case BOOLEAN:
-            set(other.getBoolean());
-            break;
-        case ERROR:
-            set(Double.NaN);
-            break;
-        case FORMULA:
-            set(other.getFormula());
-            break;
-        case NUMERIC:
-            set(other.getNumber());
-            break;
-        case DATE:
-            set(other.getDate());
-            break;
-        case DATE_TIME:
-            set(other.getDateTime());
-            break;
-        case TEXT:
-            set(other.getText());
-            break;
-        default:
-            throw new CellException(other, "unsupported cell type: "+other.getCellType());
+            case BLANK -> clear();
+            case BOOLEAN -> set(other.getBoolean());
+            case ERROR -> set(Double.NaN);
+            case FORMULA -> set(other.getFormula());
+            case NUMERIC -> set(other.getNumber());
+            case DATE -> set(other.getDate());
+            case DATE_TIME -> set(other.getDateTime());
+            case TEXT -> set(other.getText());
+            default -> throw new CellException(other, "unsupported cell type: " + other.getCellType());
         }
         other.getHyperlink().ifPresent(this::setHyperlink);
     }
@@ -158,20 +141,14 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public RichText getAsText(Locale locale) {
-        switch (getCellType()) {
-        case BLANK:
-            return RichText.emptyText();
-        case TEXT:
-            return getText();
-        case NUMERIC:
-            return RichText.valueOf(cellStyle.format((Number) value, locale));
-        case DATE:
-            return RichText.valueOf(cellStyle.format((LocalDate) value, locale));
-        case DATE_TIME:
-            return RichText.valueOf(cellStyle.format((LocalDateTime) value, locale));
-        default:
-            return RichText.valueOf(value);
-        }
+        return switch (getCellType()) {
+            case BLANK -> RichText.emptyText();
+            case TEXT -> getText();
+            case NUMERIC -> RichText.valueOf(cellStyle.format((Number) value, locale));
+            case DATE -> RichText.valueOf(cellStyle.format((LocalDate) value, locale));
+            case DATE_TIME -> RichText.valueOf(cellStyle.format((LocalDateTime) value, locale));
+            default -> RichText.valueOf(value);
+        };
     }
 
     @Override
@@ -256,14 +233,11 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public RichText getText() {
-        switch (getCellType()) {
-        case BLANK:
-            return RichText.emptyText();
-        case TEXT:
-            return (RichText) value;
-        default:
-            throw new CellException(this, "Cannot get text value from cell of type " + getCellType().name() + ".");
-        }
+        return switch (getCellType()) {
+            case BLANK -> RichText.emptyText();
+            case TEXT -> (RichText) value;
+            default -> throw new CellException(this, "Cannot get text value from cell of type " + getCellType().name() + ".");
+        };
     }
 
     @Override
@@ -402,18 +376,13 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public String toString(Locale locale) {
-        switch (getCellType()) {
-        case BLANK:
-            return "";
-        case NUMERIC:
-            return cellStyle.format((Number) value, locale);
-        case DATE:
-            return cellStyle.format((LocalDate) value, locale);
-        case DATE_TIME:
-            return cellStyle.format((LocalDateTime) value, locale);
-        default:
-            return String.valueOf(value);
-        }
+        return switch (getCellType()) {
+            case BLANK -> "";
+            case NUMERIC -> cellStyle.format((Number) value, locale);
+            case DATE -> cellStyle.format((LocalDate) value, locale);
+            case DATE_TIME -> cellStyle.format((LocalDateTime) value, locale);
+            default -> String.valueOf(value);
+        };
     }
 
 }

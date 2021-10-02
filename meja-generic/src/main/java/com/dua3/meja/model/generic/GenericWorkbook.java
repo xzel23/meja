@@ -135,7 +135,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public Iterator<Sheet> iterator() {
-        return new Iterator<Sheet>() {
+        return new Iterator<>() {
             private final Iterator<GenericSheet> iter = sheets.iterator();
 
             @Override

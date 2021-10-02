@@ -18,7 +18,6 @@ package com.dua3.meja.model;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.IOUtil;
 import com.dua3.utility.options.Arguments;
-import com.dua3.utility.options.Arguments;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

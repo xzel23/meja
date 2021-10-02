@@ -74,14 +74,9 @@ public class Cache<K, V> {
     public Cache(Type type, Function<? super K, ? extends V> compute) {
         this.compute = compute;
         switch (type) {
-        case STRONG_KEYS:
-            items = new HashMap<>();
-            break;
-        case WEAK_KEYS:
-            items = new WeakHashMap<>();
-            break;
-        default:
-            throw new IllegalArgumentException();
+            case STRONG_KEYS -> items = new HashMap<>();
+            case WEAK_KEYS -> items = new WeakHashMap<>();
+            default -> throw new IllegalArgumentException();
         }
     }
 

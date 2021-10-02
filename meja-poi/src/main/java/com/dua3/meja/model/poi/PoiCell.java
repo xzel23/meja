@@ -56,22 +56,15 @@ public final class PoiCell extends AbstractCell {
     private static final char TAB = '\t';
 
     private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
-        switch (poiType) {
-        case BLANK:
-            return CellType.BLANK;
-        case BOOLEAN:
-            return CellType.BOOLEAN;
-        case ERROR:
-            return CellType.ERROR;
-        case NUMERIC:
-            return CellType.NUMERIC;
-        case STRING:
-            return CellType.TEXT;
-        case FORMULA:
-            return CellType.FORMULA;
-        default:
-            throw new IllegalArgumentException("unknown value for org.apache.poi.ss.usermodel.CellType: "+poiType);
-        }
+        return switch (poiType) {
+            case BLANK -> CellType.BLANK;
+            case BOOLEAN -> CellType.BOOLEAN;
+            case ERROR -> CellType.ERROR;
+            case NUMERIC -> CellType.NUMERIC;
+            case STRING -> CellType.TEXT;
+            case FORMULA -> CellType.FORMULA;
+            default -> throw new IllegalArgumentException("unknown value for org.apache.poi.ss.usermodel.CellType: " + poiType);
+        };
     }
 
     private static CellType getCellType(org.apache.poi.ss.usermodel.Cell poiCell, org.apache.poi.ss.usermodel.CellType poiType) {
@@ -162,35 +155,21 @@ public final class PoiCell extends AbstractCell {
         setCellStyle(cellStyle);
 
         switch (other.getCellType()) {
-        case BLANK:
-            clear();
-            break;
-        case BOOLEAN:
-            set(other.getBoolean());
-            break;
-        case ERROR:
-            // FIXME
-            setFormula("1/0");
-            break;
-        case FORMULA:
-            setFormula(other.getFormula());
-            break;
-        case NUMERIC:
-            set(other.getNumber());
-            break;
-        case DATE:
-            setCellStyleDate(cellStyle);
-            set(other.getDate());
-            break;
-        case DATE_TIME:
-            setCellStyleDateTime(cellStyle);
-            set(other.getDateTime());
-            break;
-        case TEXT:
-            set(other.getText());
-            break;
-        default:
-            throw new CellException(other, "Unsupported Cell Type: " + other.getCellType());
+            case BLANK -> clear();
+            case BOOLEAN -> set(other.getBoolean());
+            case ERROR -> setFormula("1/0"); // FIXME
+            case FORMULA -> setFormula(other.getFormula());
+            case NUMERIC -> set(other.getNumber());
+            case DATE -> {
+                setCellStyleDate(cellStyle);
+                set(other.getDate());
+            }
+            case DATE_TIME -> {
+                setCellStyleDateTime(cellStyle);
+                set(other.getDateTime());
+            }
+            case TEXT -> set(other.getText());
+            default -> throw new CellException(other, "Unsupported Cell Type: " + other.getCellType());
         }
         other.getHyperlink().ifPresent(this::setHyperlink);
     }
@@ -206,26 +185,17 @@ public final class PoiCell extends AbstractCell {
             return null;
         }
 
-        switch (getCellType()) {
-        case BLANK:
-            return null;
-        case DATE:
-            return poiCell.getLocalDateTimeCellValue().toLocalDate();
-        case DATE_TIME:
-            return poiCell.getLocalDateTimeCellValue();
-        case NUMERIC:
-            return poiCell.getNumericCellValue();
-        case FORMULA:
-            return poiCell.getCellFormula();
-        case BOOLEAN:
-            return poiCell.getBooleanCellValue();
-        case TEXT:
-            return getText();
-        case ERROR:
-            return ERROR_TEXT;
-        default:
-            throw new CellException(this, "unsupported cell type: "+ poiCell.getCellType());
-        }
+        return switch (getCellType()) {
+            case BLANK -> null;
+            case DATE -> poiCell.getLocalDateTimeCellValue().toLocalDate();
+            case DATE_TIME -> poiCell.getLocalDateTimeCellValue();
+            case NUMERIC -> poiCell.getNumericCellValue();
+            case FORMULA -> poiCell.getCellFormula();
+            case BOOLEAN -> poiCell.getBooleanCellValue();
+            case TEXT -> getText();
+            case ERROR -> ERROR_TEXT;
+            default -> throw new CellException(this, "unsupported cell type: " + poiCell.getCellType());
+        };
     }
 
     @Override
@@ -388,14 +358,11 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public boolean isEmpty() {
-        switch (poiCell.getCellType()) {
-        case BLANK:
-            return true;
-        case STRING:
-            return poiCell.getStringCellValue().isEmpty();
-        default:
-            return false;
-        }
+        return switch (poiCell.getCellType()) {
+            case BLANK -> true;
+            case STRING -> poiCell.getStringCellValue().isEmpty();
+            default -> false;
+        };
     }
 
     @Override
@@ -590,22 +557,17 @@ public final class PoiCell extends AbstractCell {
             return Optional.empty();
         }
         try {
-            switch (link.getType()) {
-                case URL:
-                case EMAIL:
-                    return Optional.of(new URI(link.getAddress()));
-                case FILE:
-                    return Optional.of(IOUtil.toURI(getWorkbook().resolve(
-                            Paths.get(URLDecoder.decode(link.getAddress(), StandardCharsets.UTF_8.name())
-                                            .replaceFirst("^file:///([a-zA-Z]:)", "$1") // workaround for absolute windows paths
-                                            .replaceFirst("^file:///", "/")) 
-                    )));
-                case NONE:
-                    return Optional.empty();
-                case DOCUMENT:
-                default:
-                    throw new UnsupportedOperationException("Unsupported link type: "+link.getType());
-            }
+            return switch (link.getType()) {
+                case URL, EMAIL -> Optional.of(new URI(link.getAddress()));
+                case FILE -> Optional.of(IOUtil.toURI(getWorkbook().resolve(
+                        Paths.get(URLDecoder.decode(link.getAddress(), StandardCharsets.UTF_8.name())
+                                .replaceFirst("^file:///([a-zA-Z]:)", "$1") // workaround for absolute windows paths
+                                .replaceFirst("^file:///", "/"))
+                )));
+                case NONE -> Optional.empty();
+                case DOCUMENT -> throw new UnsupportedOperationException("Unsupported link type: " + link.getType());
+                default -> throw new UnsupportedOperationException("Unsupported link type: " + link.getType());
+            };
         } catch (URISyntaxException | UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
