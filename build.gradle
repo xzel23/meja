@@ -28,7 +28,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3-beta9'
+    version = '3-BETA9'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
@@ -59,6 +59,8 @@ subprojects {
 
         // GitLab Packages
         if (System.properties.containsKey('gitlabPrivateToken')) {
+            System.out.println("!!using private token!!")
+            // Gitlab private packages
             maven {
                 url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
                 name "GitlabPrivate"
@@ -71,9 +73,10 @@ subprojects {
                 }
             }
         } else if (System.getenv("CI_JOB_TOKEN")!=null) {
+            System.out.println("!!using CI_JOB_TOKEN!!")
             maven {
                 url "https://gitlab.com/api/v4/projects/24900343/packages/maven"
-                name "GitlabPrivate"
+                name "GitLab"
                 credentials(HttpHeaderCredentials) {
                     name = 'Job-Token'
                     value = System.getenv("CI_JOB_TOKEN")
@@ -82,6 +85,8 @@ subprojects {
                     header(HttpHeaderAuthentication)
                 }
             }
+        } else {
+            System.out.println("!!neither gitlabPrivateToken nor CI_JOB_TOKEN is set -- cannot publish build!!")
         }
 
         // Maven Central Repository
@@ -238,6 +243,8 @@ subprojects {
     }
 
     // === SPOTBUGS === >
+    spotbugs.toolVersion = '4.2.3'
+
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
         reports {
             xml.enabled false
