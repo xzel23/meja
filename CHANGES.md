@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 3 (to be released)
+
+ - requires Java 17
+ - dependencies updated, now uses POI 5+
+ - some method names have changed because a few classes have been replaced by records (i. e. `getxxx()` -> `xxx()`)
+
 ## Version 2.2.x
 
  - update utility to 7.0.x bugfix releases
