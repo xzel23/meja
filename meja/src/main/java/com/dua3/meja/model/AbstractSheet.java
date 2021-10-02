@@ -81,12 +81,12 @@ public abstract class AbstractSheet implements Sheet {
         }
 
         // update cell data
-        int spanX = cells.getLastColumn() - cells.getFirstColumn() + 1;
-        int spanY = cells.getLastRow() - cells.getFirstRow() + 1;
-        AbstractCell topLeftCell = getCell(cells.getFirstRow(), cells.getFirstColumn());
+        int spanX = cells.lastColumn() - cells.firstColumn() + 1;
+        int spanY = cells.lastRow() - cells.firstRow() + 1;
+        AbstractCell topLeftCell = getCell(cells.firstRow(), cells.firstColumn());
         for (int i = 0; i < spanY; i++) {
             for (int j = 0; j < spanX; j++) {
-                AbstractCell cell = getCell(cells.getFirstRow() + i, cells.getFirstColumn() + j);
+                AbstractCell cell = getCell(cells.firstRow() + i, cells.firstColumn() + j);
                 cell.addedToMergedRegion(topLeftCell, spanX, spanY);
             }
         }
@@ -110,11 +110,11 @@ public abstract class AbstractSheet implements Sheet {
     protected void removeMergedRegion(int rowNumber, int columnNumber) {
         for (int idx = 0; idx < mergedRegions.size(); idx++) {
             RectangularRegion rr = mergedRegions.get(idx);
-            if (rr.getFirstRow() == rowNumber && rr.getFirstColumn() == columnNumber) {
+            if (rr.firstRow() == rowNumber && rr.firstColumn() == columnNumber) {
                 mergedRegions.remove(idx--);
-                for (int i = rr.getFirstRow(); i <= rr.getLastRow(); i++) {
+                for (int i = rr.firstRow(); i <= rr.lastRow(); i++) {
                     Row row = getRow(i);
-                    for (int j = rr.getFirstColumn(); j <= rr.getLastColumn(); j++) {
+                    for (int j = rr.firstColumn(); j <= rr.lastColumn(); j++) {
                         AbstractCell cell = (AbstractCell) row.getCellIfExists(j);
                         if (cell != null) {
                             cell.removedFromMergedRegion();

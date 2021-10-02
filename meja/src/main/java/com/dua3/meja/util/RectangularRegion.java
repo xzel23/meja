@@ -15,29 +15,19 @@
  */
 package com.dua3.meja.util;
 
+import com.dua3.utility.lang.LangUtil;
+
 /**
  * A rectangular region.
+ * @param firstRow    first row
+ * @param lastRow     last row {inclusive}
+ * @param firstColumn first column
+ * @param lastColumn  last column (inclusive)
  */
-public class RectangularRegion {
+public record RectangularRegion(int firstRow, int lastRow, int firstColumn, int lastColumn) {
 
-    private final int rowMin;
-    private final int rowMax;
-    private final int colMin;
-    private final int colMax;
-
-    /**
-     * Construct instance of {@code RectangularRegion}.
-     *
-     * @param rowMin first row
-     * @param rowMax last row {inclusive}
-     * @param colMin first column
-     * @param colMax last column (inclusive)
-     */
-    public RectangularRegion(int rowMin, int rowMax, int colMin, int colMax) {
-        this.rowMin = rowMin;
-        this.rowMax = rowMax;
-        this.colMin = colMin;
-        this.colMax = colMax;
+    public RectangularRegion {
+        LangUtil.check(firstRow<=lastRow && firstColumn<=lastColumn);
     }
 
     /**
@@ -46,46 +36,10 @@ public class RectangularRegion {
      * @param i the row number
      * @param j the column number
      * @return true if the cell at row {@code i} and column {@code j} is contained
-     *         in this region
+     * in this region
      */
     public boolean contains(int i, int j) {
-        return rowMin <= i && i <= rowMax && colMin <= j && j <= colMax;
-    }
-
-    /**
-     * Get first column number.
-     *
-     * @return number of first column
-     */
-    public int getFirstColumn() {
-        return colMin;
-    }
-
-    /**
-     * Get first row number.
-     *
-     * @return number of first row
-     */
-    public int getFirstRow() {
-        return rowMin;
-    }
-
-    /**
-     * Get last column number.
-     *
-     * @return number of last column (inclusive)
-     */
-    public int getLastColumn() {
-        return colMax;
-    }
-
-    /**
-     * Get last row number.
-     *
-     * @return number of last row (inclusive)
-     */
-    public int getLastRow() {
-        return rowMax;
+        return firstRow <= i && i <= lastRow && firstColumn <= j && j <= lastColumn;
     }
 
     /**
@@ -95,18 +49,8 @@ public class RectangularRegion {
      * @return true if both regions intersect
      */
     public boolean intersects(RectangularRegion other) {
-        return Math.min(rowMax, other.rowMax) - Math.max(rowMin, other.rowMin) >= 0
-                && Math.min(colMax, other.colMax) - Math.max(colMin, other.colMin) >= 0;
-    }
-
-    @Override
-    public String toString() {
-        return "RectangularRegion{" +
-               "rowMin=" + rowMin +
-               ", rowMax=" + rowMax +
-               ", colMin=" + colMin +
-               ", colMax=" + colMax +
-               '}';
+        return Math.min(lastRow, other.lastRow) - Math.max(firstRow, other.firstRow) >= 0
+               && Math.min(lastColumn, other.lastColumn) - Math.max(firstColumn, other.firstColumn) >= 0;
     }
 
 }

@@ -238,8 +238,6 @@ subprojects {
     }
 
     // === SPOTBUGS === >
-    spotbugs.toolVersion = '4.2.2'
-
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
         reports {
             xml.enabled false

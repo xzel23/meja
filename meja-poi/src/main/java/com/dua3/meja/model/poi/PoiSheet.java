@@ -55,8 +55,8 @@ public class PoiSheet extends AbstractSheet {
     }
 
     void addMergedRegionToPoiSheet(RectangularRegion cells) {
-        CellRangeAddress cra = new CellRangeAddress(cells.getFirstRow(), cells.getLastRow(), cells.getFirstColumn(),
-                cells.getLastColumn());
+        CellRangeAddress cra = new CellRangeAddress(cells.firstRow(), cells.lastRow(), cells.firstColumn(),
+                cells.lastColumn());
         poiSheet.addMergedRegion(cra);
     }
 

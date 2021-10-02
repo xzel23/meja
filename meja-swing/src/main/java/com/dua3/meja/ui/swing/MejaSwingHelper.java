@@ -75,8 +75,8 @@ public final class MejaSwingHelper {
                 switch (evt.getPropertyName()) {
                 case Sheet.PROPERTY_ROWS_ADDED: {
                     RowInfo ri = (RowInfo) evt.getNewValue();
-                    dispatcher = () -> fireTableRowsInserted(getRowNumber(ri.getFirstRow()),
-                            getRowNumber(ri.getLastRow()));
+                    dispatcher = () -> fireTableRowsInserted(getRowNumber(ri.firstRow()),
+                            getRowNumber(ri.lastRow()));
                 }
                     break;
                 case Sheet.PROPERTY_CELL_CONTENT:

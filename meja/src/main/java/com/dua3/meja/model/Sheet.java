@@ -47,35 +47,11 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     /** Property: columns added. */
     String PROPERTY_COLUMNS_ADDED = "COLUMNS_ADDED";
 
-    class RowInfo {
+    record RowInfo(int firstRow, int lastRow) {
         private static final RowInfo NONE = new RowInfo(0, -1);
 
-        private final int firstRow;
-        private final int lastRow;
-
-        public RowInfo(int firstRow, int lastRow) {
-            this.firstRow = firstRow;
-            this.lastRow = lastRow;
-        }
-
-        public int getFirstRow() {
-            return firstRow;
-        }
-
-        public int getLastRow() {
-            return lastRow;
-        }
-
-        public static Object none() {
+        public static RowInfo none() {
             return NONE;
-        }
-
-        @Override
-        public String toString() {
-            return "RowInfo{" +
-                   "firstRow=" + firstRow +
-                   ", lastRow=" + lastRow +
-                   '}';
         }
     }
 

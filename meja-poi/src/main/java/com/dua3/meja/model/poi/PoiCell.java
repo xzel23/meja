@@ -121,18 +121,18 @@ public final class PoiCell extends AbstractCell {
 
         if (mergedRegion != null) {
             // cell is merged
-            boolean isTop = getRowNumber() == mergedRegion.getFirstRow();
-            boolean isTopLeft = isTop && getColumnNumber() == mergedRegion.getFirstColumn();
+            boolean isTop = getRowNumber() == mergedRegion.firstRow();
+            boolean isTopLeft = isTop && getColumnNumber() == mergedRegion.firstColumn();
             PoiCell topLeftCell;
             if (isTopLeft) {
                 topLeftCell = this;
             } else {
-                PoiRow topRow = isTop ? row : row.getSheet().getRow(mergedRegion.getFirstRow());
-                topLeftCell = topRow.getCell(mergedRegion.getFirstColumn());
+                PoiRow topRow = isTop ? row : row.getSheet().getRow(mergedRegion.firstRow());
+                topLeftCell = topRow.getCell(mergedRegion.firstColumn());
             }
 
-            int spanX_ = 1 + mergedRegion.getLastColumn() - mergedRegion.getFirstColumn();
-            int spanY_ = 1 + mergedRegion.getLastRow() - mergedRegion.getFirstRow();
+            int spanX_ = 1 + mergedRegion.lastColumn() - mergedRegion.firstColumn();
+            int spanY_ = 1 + mergedRegion.lastRow() - mergedRegion.firstRow();
 
             addedToMergedRegion(topLeftCell, spanX_, spanY_);
         }
