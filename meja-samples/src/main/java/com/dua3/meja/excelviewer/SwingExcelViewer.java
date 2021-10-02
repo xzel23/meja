@@ -240,10 +240,10 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
 
         Optional<URI> uri = workbook.getUri();
         try {
-            if (!uri.isPresent()) {
+            if (uri.isEmpty()) {
                 final Optional<URI> newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
                         model.getCurrentUri());
-                if (!newUri.isPresent()) {
+                if (newUri.isEmpty()) {
                     // user cancelled the dialog
                     LOG.info("save-dialog was cancelled.");
                     return;

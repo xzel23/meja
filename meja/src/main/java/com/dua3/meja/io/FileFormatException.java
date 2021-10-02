@@ -16,6 +16,7 @@
 package com.dua3.meja.io;
 
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  *
@@ -23,6 +24,7 @@ import java.io.IOException;
  */
 public class FileFormatException extends IOException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

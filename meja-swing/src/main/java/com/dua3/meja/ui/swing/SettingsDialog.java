@@ -40,8 +40,7 @@ public class SettingsDialog extends JDialog {
         settingsPanel.setLayout(new GridLayout(options.size(), 2));
         for (Option<?> option : options) {
             settingsPanel.add(new JLabel(option.displayName()));
-            if (option instanceof ChoiceOption) {
-                ChoiceOption co = (ChoiceOption) option;
+            if (option instanceof ChoiceOption co) {
                 JComboBox<ChoiceOption.Choice<?>> cb = new JComboBox<>(new Vector<>(co.choices()));
                 cb.setSelectedItem(co.choice(co.getDefault()));
                 inputs.add(cb);

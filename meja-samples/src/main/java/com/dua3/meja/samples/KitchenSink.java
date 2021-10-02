@@ -1,6 +1,7 @@
 package com.dua3.meja.samples;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ import com.dua3.utility.text.FontDef;
  * Kitchensink example.
  */
 public final class KitchenSink extends JFrame {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final Logger logger = Logger.getLogger(KitchenSink.class.getName());

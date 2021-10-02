@@ -63,8 +63,7 @@ public class PoiSheet extends AbstractSheet {
     @Override
     public void autoSizeColumn(int j) {
         // for streaming implementation, only tracked columns can be autosized!
-        if (poiSheet instanceof SXSSFSheet) {
-            SXSSFSheet sxssfSheet = (SXSSFSheet) poiSheet;
+        if (poiSheet instanceof SXSSFSheet sxssfSheet) {
             if (!sxssfSheet.isColumnTrackedForAutoSizing(j)) {
                 return;
             }
@@ -79,8 +78,7 @@ public class PoiSheet extends AbstractSheet {
         boolean layoutChanged = false;
 
         // for streaming implementation, only tracked columns can be autosized!
-        if (poiSheet instanceof SXSSFSheet) {
-            SXSSFSheet sxssfSheet = (SXSSFSheet) poiSheet;
+        if (poiSheet instanceof SXSSFSheet sxssfSheet) {
             for (int j = 0; j < getColumnCount(); j++) {
                 if (sxssfSheet.isColumnTrackedForAutoSizing(j)) {
                     poiSheet.autoSizeColumn(j);

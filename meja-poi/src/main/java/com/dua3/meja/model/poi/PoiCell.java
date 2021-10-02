@@ -251,8 +251,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     private Font getFontForFormattingRun(RichTextString richText, int i) {
-        if (richText instanceof HSSFRichTextString) {
-            HSSFRichTextString hssfRichText = (HSSFRichTextString) richText;
+        if (richText instanceof HSSFRichTextString hssfRichText) {
             return ((PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i))
                     .getFont();
         } else {

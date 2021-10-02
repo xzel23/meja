@@ -96,7 +96,7 @@ public abstract class AbstractWorkbook implements Workbook {
     public Path resolve(Path path) {
         Optional<URI> wbUri = getUri();
 
-        if (!wbUri.isPresent()) {
+        if (wbUri.isEmpty()) {
             return path;
         }
 

@@ -38,6 +38,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.nio.file.FileSystems;
@@ -57,6 +58,7 @@ public final class MejaSwingHelper {
     private static final class SheetTableModel extends AbstractTableModel {
         private final Sheet sheet;
         private final boolean firstRowIsHeader;
+        @Serial
         private static final long serialVersionUID = 1L;
         
         private final SheetListener sl;
