@@ -244,9 +244,20 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      *  new row instance
      */
     default Row createRow(Object... values) {
+        return createRow(Arrays.asList(values));
+    }
+
+    /**
+     * Create a new row at the bottom of the sheet.
+     * @param values
+     *  the values to insert
+     * @return
+     *  new row instance
+     */
+    default Row createRow(Collection<? super Object> values) {
         Row row = getRow(getRowCount());
-        for (int i=0; i< values.length; i++) {
-            row.getCell(i).set(values[i]);
+        for (var value: values) {
+            row.createCell().set(value);
         }
         return row;
     }
