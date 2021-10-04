@@ -244,7 +244,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      *  new row instance
      */
     default Row createRow(Object... values) {
-        return createRow(Arrays.asList(values));
+        return createRowWith(Arrays.asList(values));
     }
 
     /**
@@ -254,7 +254,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @return
      *  new row instance
      */
-    default Row createRow(Collection<? super Object> values) {
+    default <T, C extends Iterable<T>> Row createRowWith(C values) {
         Row row = getRow(getRowCount());
         for (var value: values) {
             row.createCell().set(value);

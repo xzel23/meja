@@ -316,63 +316,64 @@ public final class MejaHelper {
         }
 
         // output data
-        Formatter fmt = new Formatter(app);
-
-        if (options.contains(PrintOptions.LINE_ABOVE)) {
-            fmt.format("%s%n", dash.repeat(overallLength));
-        }
-
-        if (options.contains(PrintOptions.PREPEND_SHEET_NAME)) {
-            String title = sheet.getSheetName();
-            fmt.format("%2$s%1$s%2$s%n", TextUtil.align(title, overallLength-2, Alignment.CENTER), pipe);
+        try (Formatter fmt = new Formatter(app)) {
 
             if (options.contains(PrintOptions.LINE_ABOVE)) {
-                fmt.format("%s%n", "-".repeat(overallLength));
-            }
-        }
-
-        boolean isHeadRow = true;
-        for (Row row : sheet) {
-            // collect data and determine row height
-            int lines = 0;
-            String[][] data = new String[sheet.getColumnCount()][];
-            int[] align = new int[sheet.getColumnCount()];
-            for (int j = 0; j < sheet.getColumnCount(); j++) {
-                data[j] = PATTERN_NEWLINE.split(row.getCell(j).toString(locale));
-                align[j] = row.getCell(j).get() instanceof Number ? 1 : -1;
-                lines = Math.max(lines, data[j].length);
+                fmt.format("%s%n", dash.repeat(overallLength));
             }
 
-            // print row data
-            for (int k = 0; k < lines; k++) {
-                fmt.format("%s", pipe /* '|' */);
-                for (int j = 0; j < sheet.getColumnCount(); j++) {
-                    int w = align[j]*columnLength[j];
-                    String[] columnData = data[j];
-                    String s = k < columnData.length ? columnData[k] : "";
-                    //noinspection StringConcatenationInFormatCall
-                    fmt.format("%1$" + w + "s%2$s", s, pipe);
+            if (options.contains(PrintOptions.PREPEND_SHEET_NAME)) {
+                String title = sheet.getSheetName();
+                fmt.format("%2$s%1$s%2$s%n", TextUtil.align(title, overallLength - 2, Alignment.CENTER), pipe);
+
+                if (options.contains(PrintOptions.LINE_ABOVE)) {
+                    fmt.format("%s%n", "-".repeat(overallLength));
                 }
-                fmt.format("%n");
             }
 
-            // print horizontal line
-            if (isHeadRow && options.contains(PrintOptions.FIRST_LINE_IS_HEADER) && sheet.getRowCount() > 1) {
-                fmt.format("%s", pipe);
+            boolean isHeadRow = true;
+            for (Row row : sheet) {
+                // collect data and determine row height
+                int lines = 0;
+                String[][] data = new String[sheet.getColumnCount()][];
+                int[] align = new int[sheet.getColumnCount()];
                 for (int j = 0; j < sheet.getColumnCount(); j++) {
-                    String endSymbol = j + 1 < sheet.getColumnCount() ? cross : pipe;
-                    fmt.format("%s%s", "-".repeat(columnLength[j]), endSymbol);
+                    data[j] = PATTERN_NEWLINE.split(row.getCell(j).toString(locale));
+                    align[j] = row.getCell(j).get() instanceof Number ? 1 : -1;
+                    lines = Math.max(lines, data[j].length);
                 }
-                fmt.format("%n");
+
+                // print row data
+                for (int k = 0; k < lines; k++) {
+                    fmt.format("%s", pipe /* '|' */);
+                    for (int j = 0; j < sheet.getColumnCount(); j++) {
+                        int w = align[j] * columnLength[j];
+                        String[] columnData = data[j];
+                        String s = k < columnData.length ? columnData[k] : "";
+                        //noinspection StringConcatenationInFormatCall
+                        fmt.format("%1$" + w + "s%2$s", s, pipe);
+                    }
+                    fmt.format("%n");
+                }
+
+                // print horizontal line
+                if (isHeadRow && options.contains(PrintOptions.FIRST_LINE_IS_HEADER) && sheet.getRowCount() > 1) {
+                    fmt.format("%s", pipe);
+                    for (int j = 0; j < sheet.getColumnCount(); j++) {
+                        String endSymbol = j + 1 < sheet.getColumnCount() ? cross : pipe;
+                        fmt.format("%s%s", "-".repeat(columnLength[j]), endSymbol);
+                    }
+                    fmt.format("%n");
+                }
+
+                isHeadRow = false;
             }
 
-            isHeadRow = false;
+            if (options.contains(PrintOptions.LINE_BELOW)) {
+                fmt.format("%s%n", dash.repeat(overallLength));
+            }
         }
-
-        if (options.contains(PrintOptions.LINE_BELOW)) {
-            fmt.format("%s%n", dash.repeat(overallLength));
-        }
-
+        
         return app;
     }
 

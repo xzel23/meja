@@ -250,12 +250,13 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @throws IOException   if an input/output error occurs
      */
     public void write(Workbook workbook, OutputStream out, Locale locale, DoubleConsumer updateProgress) throws IOException {
-        Formatter fmt = new Formatter(out, StandardCharsets.UTF_8.name());
-        writeHtmlHeaderStart(fmt);
-        writeCss(fmt, workbook);
-        writeHtmlHeaderEnd(fmt);
-        writeSheets(workbook, fmt, locale, updateProgress);
-        writeHtmlFooter(fmt);
+        try (Formatter fmt = new Formatter(out, StandardCharsets.UTF_8.name())) {
+            writeHtmlHeaderStart(fmt);
+            writeCss(fmt, workbook);
+            writeHtmlHeaderEnd(fmt);
+            writeSheets(workbook, fmt, locale, updateProgress);
+            writeHtmlFooter(fmt);
+        }
     }
 
     public void writeHtmlHeaderStart(Formatter out) {
