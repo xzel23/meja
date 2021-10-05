@@ -7,7 +7,6 @@ description = 'Meja spreadsheet library - samples'
 dependencies {
     implementation project(':meja')
     implementation project(':meja-generic')
-    implementation project(':meja-poi')
     implementation project(':meja-swing')
 
     implementation "com.dua3.utility:utility-swing:${dua3_utility_version}"

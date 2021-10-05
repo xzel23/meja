@@ -47,9 +47,21 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     private static void writeSheets(Workbook workbook, Formatter out, Locale locale, DoubleConsumer updateProgress) throws IOException {
         long totalRows = 0;
+        out.format("<div class=\"meja-tabbar\">%n");
         for (Sheet sheet : workbook) {
+            boolean isActive = sheet == sheet.getWorkbook().getCurrentSheet();
+
+            String cls = isActive ? "meja-tablink active" : "meja-tablink";
+
+            out.format("  <button class=\"%s\" onclick=\"mejaShowTab(event, '%s')\">%s</button>%n",
+                    cls,
+                    id(sheet),
+                    sheet.getSheetName()
+            );
+
             totalRows += sheet.getRowCount();
         }
+        out.format("</div>%n");
 
         long processedRows = 0;
         for (Sheet sheet : workbook) {
@@ -64,7 +76,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     private static void writeCellStyleAttributes(Formatter out, CellStyle cs) {
-        out.format(Locale.ROOT, "%s ", cs.getFont().getCssStyle());
+        out.format(Locale.ROOT, "  %s ", cs.getFont().getCssStyle());
         out.format(Locale.ROOT, "%s ", cs.getHAlign().getCssStyle());
         out.format(Locale.ROOT, "%s ", cs.getVAlign().getCssStyle());
         short alpha = cs.getRotation();
@@ -120,10 +132,15 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     private static long writeSheet(Sheet sheet, Formatter out, Locale locale, long totalRows, long processedRows, DoubleConsumer updateProgress) {
         Optional<URI> baseUri = sheet.getWorkbook().getUri().map(uri -> uri.resolve(""));
 
+        boolean isActive = sheet == sheet.getWorkbook().getCurrentSheet();
+        
         // open DIV for sheet
         String sheetId = id(sheet);
         
-        out.format(Locale.ROOT, "<div id=\"%s\">%n", sheetId);
+        String display = isActive ? "block" : "none";
+        String cls = isActive ? "meja-tab active" : "meja-tab";
+        
+        out.format(Locale.ROOT, "<div id=\"%s\" class=\"%s\" style=\"display: %s\">%n", sheetId, cls, display);
 
         out.format(Locale.ROOT, "  <table class=\"meja-sheet\">%n");
 
@@ -264,7 +281,25 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     public void writeHtmlHeaderEnd(Formatter out) {
-        out.format(Locale.ROOT, "</head>%n<body>%n");
+        out.format(Locale.ROOT, """
+                </head>
+                <body>
+                  <script>
+                  function mejaShowTab(evt, tabName) {
+                    var i, tabcontent, tablinks;
+                    tabs = document.getElementsByClassName("meja-tab");
+                    for (i = 0; i < tabs.length; i++) {
+                      tabs[i].style.display = "none";
+                    }
+                    tablinks = document.getElementsByClassName("meja-tablink");
+                    for (i = 0; i < tablinks.length; i++) {
+                      tablinks[i].className = tablinks[i].className.replace(" active", "");
+                    }
+                    document.getElementById(tabName).style.display = "block";
+                    evt.currentTarget.className += " active";
+                  }
+                  </script>
+                """);
     }
     public void writeHtmlFooter(Formatter out) {
         out.format(Locale.ROOT, "</body>%n</html>%n");
@@ -278,25 +313,57 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     private void writeCommonCss(Formatter out, CellStyle defaultCellStyle) {
-        out.format(Locale.ROOT, "    table.meja-sheet { border-collapse: collapse;" +
-                                " table-layout: fixed;" +
-                                "padding: 3px; " +
-                                "white-space: pre; " +
-                                "overflow: visible; ");
+        out.format(Locale.ROOT, """
+                .meja-tabbar {
+                  overflow: hidden;
+                  border: 1px solid #ccc;
+                  background-color: #f1f1f1;
+                }
+                .meja-tabbar button {
+                  background-color: inherit;
+                  float: left;
+                  border: none;
+                  outline: none;
+                  cursor: pointer;
+                  padding: 14px 16px;
+                  transition: 0.3s;
+                }
+                .meja-tabbar button:hover {
+                  background-color: #ddd;
+                }
+                .meja-tabbar button.active {
+                  background-color: #ccc;
+                }
+                .meja-tab {
+                  display: none;
+                  padding: 6px 12px;
+                  border: 1px solid #ccc;
+                  border-top: none;
+                }
+                table.meja-sheet { 
+                  border-collapse: collapse;
+                  table-layout: fixed;
+                  padding: 3px;
+                  white-space: pre;
+                  overflow: visible;
+                """
+        );
         writeCellStyleAttributes(out, defaultCellStyle);
-        out.format(Locale.ROOT, "}%n");
-        
-        out.format(Locale.ROOT, "    table.meja-sheet td,th { " +
-                                "border: 1px solid #d4d4d4; " +
-                                "max-width: 0; " +
-                                "max-height: 0; " +
-                                "}%n");
-
-        out.format(Locale.ROOT, "    table.meja-sheet a { " +
-                                "color: inherit; " +
-                                "}%n");
-        
-        out.format(Locale.ROOT, "    table.meja-sheet td:empty::after{ content: \"\\00a0\"; }%n");
+        out.format(Locale.ROOT, """
+                
+                }
+                table.meja-sheet td,th {
+                  border: 1px solid #d4d4d4;
+                  max-width: 0;
+                  max-height: 0;
+                }
+                table.meja-sheet a {
+                  color: inherit;
+                }
+                table.meja-sheet td:empty::after{
+                  content: "\\00a0";
+                }
+                """);
     }
 
     public void writeCssForSingleSheet(Formatter out, Sheet sheet) {
