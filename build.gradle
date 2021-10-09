@@ -245,6 +245,8 @@ subprojects {
     // === SPOTBUGS === >
     spotbugs.toolVersion = '4.2.3'
 
+    spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
+
     tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
         reports {
             xml.enabled false

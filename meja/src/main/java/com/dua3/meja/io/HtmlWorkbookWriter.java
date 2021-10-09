@@ -47,13 +47,13 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     private static void writeSheets(Workbook workbook, Formatter out, Locale locale, DoubleConsumer updateProgress) throws IOException {
         long totalRows = 0;
-        out.format("<div class=\"meja-tabbar\">%n");
+        out.format("<div class=\"meja-tabbar\">\n");
         for (Sheet sheet : workbook) {
             boolean isActive = sheet == sheet.getWorkbook().getCurrentSheet();
 
             String cls = isActive ? "meja-tablink active" : "meja-tablink";
 
-            out.format("  <button class=\"%s\" onclick=\"mejaShowTab(event, '%s')\">%s</button>%n",
+            out.format("  <button class=\"%s\" onclick=\"mejaShowTab(event, '%s')\">%s</button>\n",
                     cls,
                     id(sheet),
                     sheet.getSheetName()
@@ -61,7 +61,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
             totalRows += sheet.getRowCount();
         }
-        out.format("</div>%n");
+        out.format("</div>\n");
 
         long processedRows = 0;
         for (Sheet sheet : workbook) {
@@ -72,7 +72,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     private static void writeCellStyle(Formatter out, CellStyle cs) {
         out.format(Locale.ROOT, "    .%s { ", id(cs));
         writeCellStyleAttributes(out, cs);
-        out.format(Locale.ROOT, "}%n");
+        out.format(Locale.ROOT, "}\n");
     }
 
     private static void writeCellStyleAttributes(Formatter out, CellStyle cs) {
@@ -140,33 +140,33 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         String display = isActive ? "block" : "none";
         String cls = isActive ? "meja-tab active" : "meja-tab";
         
-        out.format(Locale.ROOT, "<div id=\"%s\" class=\"%s\" style=\"display: %s\">%n", sheetId, cls, display);
+        out.format(Locale.ROOT, "<div id=\"%s\" class=\"%s\" style=\"display: %s\">\n", sheetId, cls, display);
 
-        out.format(Locale.ROOT, "  <table class=\"meja-sheet\">%n");
+        out.format(Locale.ROOT, "  <table class=\"meja-sheet\">\n");
 
         CellStyle defaultCellStyle = sheet.getWorkbook().getDefaultCellStyle();
 
         // write column widths
-        out.format(Locale.ROOT, "    <colgroup>%n");
+        out.format(Locale.ROOT, "    <colgroup>\n");
         for (int j=0; j<=sheet.getLastColNum(); j++) {
-            out.format(Locale.ROOT, "<col style=\"width: %.2fpt;\">%n", sheet.getColumnWidth(j));
+            out.format(Locale.ROOT, "<col style=\"width: %.2fpt;\">\n", sheet.getColumnWidth(j));
         }
-        out.format(Locale.ROOT, "    </colgroup>%n");
+        out.format(Locale.ROOT, "    </colgroup>\n");
 
-        out.format(Locale.ROOT, "    <tbody>%n");
+        out.format(Locale.ROOT, "    <tbody>\n");
         
         int rownr=0;
         for (Row row : sheet) {
             // add missing rows
             while (rownr++<row.getRowNumber()) {
-                out.format(Locale.ROOT, "      <tr style=\"height: %.2fpt;\">%n", sheet.getRowHeight(rownr));
+                out.format(Locale.ROOT, "      <tr style=\"height: %.2fpt;\">\n", sheet.getRowHeight(rownr));
                 for (int i=0; i<sheet.getLastColNum(); i++) {
-                    out.format(Locale.ROOT, "        <td></td>%n");
+                    out.format(Locale.ROOT, "        <td></td>\n");
                 }
-                out.format(Locale.ROOT, "      </tr>%n");
+                out.format(Locale.ROOT, "      </tr>\n");
             }
 
-            out.format(Locale.ROOT, "      <tr style=\"height: %.2fpt;\">%n", sheet.getRowHeight(row.getRowNumber()));
+            out.format(Locale.ROOT, "      <tr style=\"height: %.2fpt;\">\n", sheet.getRowHeight(row.getRowNumber()));
             
             int colnr=0;
             for (Cell cell : row) {
@@ -177,7 +177,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 // add missing cells
                 while (colnr<cell.getColumnNumber()) {
                     if (!row.getCell(colnr).isMerged()) {
-                        out.format(Locale.ROOT, "        <td></td>%n");
+                        out.format(Locale.ROOT, "        <td></td>\n");
                     }
                     colnr++;
                 }
@@ -197,22 +197,22 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 out.format(Locale.ROOT, "%s", cell.getAsText(locale));
                 hyperlink.ifPresent(link -> out.format(Locale.ROOT, "</a>"));
 
-                out.format(Locale.ROOT, "</td>%n");
+                out.format(Locale.ROOT, "</td>\n");
                 colnr += cell.getHorizontalSpan();
             }
             
             updateProgress.accept((double) processedRows / totalRows);
             
-            out.format(Locale.ROOT, "    </tr>%n");
+            out.format(Locale.ROOT, "    </tr>\n");
             
             processedRows++;
         }
         
-        out.format(Locale.ROOT, "    </tbody>%n");
-        out.format(Locale.ROOT, "  </table>%n");
+        out.format(Locale.ROOT, "    </tbody>\n");
+        out.format(Locale.ROOT, "  </table>\n");
 
         // close DIV for sheet
-        out.format(Locale.ROOT, "</div>%n");
+        out.format(Locale.ROOT, "</div>\n");
         return processedRows;
     }
 
@@ -277,7 +277,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     public void writeHtmlHeaderStart(Formatter out) {
-        out.format(Locale.ROOT, "<html>%n<head>%n  <meta charset=\"utf-8\">%n");
+        out.format(Locale.ROOT, "<html>\n<head>\n  <meta charset=\"utf-8\">\n");
     }
 
     public void writeHtmlHeaderEnd(Formatter out) {
@@ -302,14 +302,14 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 """);
     }
     public void writeHtmlFooter(Formatter out) {
-        out.format(Locale.ROOT, "</body>%n</html>%n");
+        out.format(Locale.ROOT, "</body>\n</html>\n");
     }
 
     public void writeCss(Formatter out, Workbook workbook) {
-        out.format(Locale.ROOT, "  <style>%n");
+        out.format(Locale.ROOT, "  <style>\n");
         writeCommonCss(out, workbook.getDefaultCellStyle());
         workbook.cellStyles().forEach(cs -> writeCellStyle(out, cs));
-        out.format(Locale.ROOT, "  </style>%n");
+        out.format(Locale.ROOT, "  </style>\n");
     }
 
     private void writeCommonCss(Formatter out, CellStyle defaultCellStyle) {
@@ -371,14 +371,14 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         Set<CellStyle> styles = new HashSet<>();
         sheet.rows().forEach(row -> row.cells().map(Cell::getCellStyle).forEach(styles::add));
 
-        out.format(Locale.ROOT, "  <style>%n");
+        out.format(Locale.ROOT, "  <style>\n");
         
         writeCommonCss(out, sheet.getWorkbook().getDefaultCellStyle());
         
         // sort styles to get reproducible results (i. e. in unit tests)
         styles.stream().sorted(Comparator.comparing(CellStyle::getName)).forEach(cs -> writeCellStyle(out, cs));
         
-        out.format(Locale.ROOT, "  </style>%n");
+        out.format(Locale.ROOT, "  </style>\n");
     }
 
 }

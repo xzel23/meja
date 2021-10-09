@@ -1,4 +1,5 @@
 <FindBugsFilter>
-
-
+    <Match>
+        <Bug code="FS" />
+    </Match>
 </FindBugsFilter>
