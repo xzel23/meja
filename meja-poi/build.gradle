@@ -6,5 +6,14 @@ dependencies {
     // Apache POI
     def poiVersion = "5.0.0"
     implementation "org.apache.poi:poi:${poiVersion}"
-    implementation "org.apache.poi:poi-ooxml:${poiVersion}"
+    implementation "org.apache.poi:poi-ooxml:${poiVersion}", {
+        // SVG support
+        exclude group: "org.apache.xmlgraphics", module: "batik-all"
+        exclude group: "org.apache.xmlgraphics", module: "xmlgraphics-commons"
+        exclude group: "xml-apis", module: "xml-apis-ext"
+        // PDF support
+        exclude group: "org.apache.pdfbox", module: "pdfbox"
+        exclude group: "org.apache.pdfbox", module: "fontbox"
+        exclude group: "de.rototor.pdfbox", module: "graphics2d"
+    }
 }
