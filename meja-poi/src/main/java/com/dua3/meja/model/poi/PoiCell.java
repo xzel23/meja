@@ -579,9 +579,8 @@ public final class PoiCell extends AbstractCell {
         text = text.replace(NON_BREAKING_SPACE, ' '); // non-breaking space
 
         RichTextBuilder rtb = new RichTextBuilder();
-        int start = 0;
         for (int i = 0; i < rts.numFormattingRuns(); i++) {
-            start = rts.getIndexOfFormattingRun(i);
+            int start = rts.getIndexOfFormattingRun(i);
             int end = i + 1 < rts.numFormattingRuns() ? rts.getIndexOfFormattingRun(i + 1) : rts.length();
 
             if (start == end) {
@@ -598,7 +597,6 @@ public final class PoiCell extends AbstractCell {
             rtb.push(style);
             rtb.append(text, start, end);
             rtb.pop(style);
-            start = end;
         }
         // append the remainder
         rtb.append(text, rtb.length(), text.length());

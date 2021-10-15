@@ -85,6 +85,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
      *
      * @param args the command line arguments
      */
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         SwingUtil.setNativeLookAndFeel(APPLICATION_NAME);
 

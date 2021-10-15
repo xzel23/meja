@@ -76,7 +76,7 @@ public class Cache<K, V> {
         switch (type) {
             case STRONG_KEYS -> items = new HashMap<>();
             case WEAK_KEYS -> items = new WeakHashMap<>();
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException("unexpected value: "+type);
         }
     }
 

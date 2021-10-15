@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 class PoiWorkbookTest {
 
     private static final Path testdataDir = IOUtil.toPath(PoiWorkbookTest.class.getResource("/"))
