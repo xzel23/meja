@@ -23,6 +23,7 @@ import javax.swing.BorderFactory;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.HAlign;
 import com.dua3.meja.ui.SheetView;
 
 /**
@@ -59,13 +60,14 @@ public class DefaultCellRenderer implements CellRenderer {
         if (wrap) {
             canvas = cr;
         } else {
-            canvas = switch (CellEditorPane.getHAlign(style.getHAlign(), cell.getResultType())) {
+            HAlign hAlign = CellEditorPane.getHAlign(style.getHAlign(), cell.getResultType());
+            canvas = switch (hAlign) {
                 case ALIGN_LEFT -> new Rectangle(cr.x, cr.y, maxWidthScaled, cr.height);
                 case ALIGN_RIGHT -> new Rectangle(cr.x + cr.width - maxWidthScaled, cr.y, maxWidthScaled, cr.height);
-                case ALIGN_CENTER -> new Rectangle(cr.x + (cr.width - maxWidthScaled) / 2, cr.y, maxWidthScaled, cr.height); // ALIGN_JUSTIFY implies wrap
-                case ALIGN_JUSTIFY -> throw new IllegalStateException();
+                case ALIGN_CENTER -> new Rectangle(cr.x + (cr.width - maxWidthScaled) / 2, cr.y, maxWidthScaled, cr.height); 
+                case ALIGN_JUSTIFY -> throw new IllegalStateException("ALIGN_JUSTIFY implies wrap");
                 // ALIGN_AUTOMATIC should already be mapped to another value
-                default -> throw new IllegalStateException();
+                default -> throw new IllegalStateException("unexpected value: "+hAlign);
             };
         }
 

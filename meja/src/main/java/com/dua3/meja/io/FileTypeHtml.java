@@ -34,12 +34,12 @@ public class FileTypeHtml extends FileTypeWorkbook<Workbook> {
 
     @Override
     public WorkbookFactory<? extends Workbook> getWorkbookFactory() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("not implemented: factory for HTML workbooks");
     }
 
     @Override
     public Workbook read(URI uri, Function<FileType<? extends Workbook>, Arguments> options) throws IOException {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("not implemented: reading workbook from HTML file");
     }
 
     @Override

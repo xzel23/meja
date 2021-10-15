@@ -340,7 +340,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                   border: 1px solid #ccc;
                   border-top: none;
                 }
-                table.meja-sheet { 
+                table.meja-sheet {
                   border-collapse: collapse;
                   table-layout: fixed;
                   padding: 3px;

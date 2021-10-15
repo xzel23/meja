@@ -332,7 +332,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             setViewportView(bottomRightQuadrant);
             setColumnHeaderView(topRightQuadrant);
             setRowHeaderView(bottomLeftQuadrant);
-            setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, topLeftQuadrant);
+            setCorner(ScrollPaneConstants.UPPER_LEADING_CORNER, topLeftQuadrant);
 
             setViewportBorder(BorderFactory.createEmptyBorder());
         }

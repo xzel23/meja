@@ -20,6 +20,7 @@ public final class CreateCalendar {
     private CreateCalendar() {
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         try {
             Path file = Paths.get("calendar.html");

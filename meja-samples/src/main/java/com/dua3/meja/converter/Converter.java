@@ -23,6 +23,7 @@ public final class Converter {
     private Converter() {
     }
 
+    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         if (args.length != 2) {
             System.out.format("Usage: %s <input_file> <output_file>%n", Converter.class.getName());

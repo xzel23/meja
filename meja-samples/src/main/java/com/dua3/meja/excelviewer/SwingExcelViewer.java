@@ -91,12 +91,12 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
         SwingUtilities.invokeLater(() -> {
             ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
             SwingExcelViewer viewer = new SwingExcelViewer(model);
-/*
+
             if (args.length > 1) {
                 System.out.println(model.getInfo());
                 System.exit(STATUS_ERROR);
             }
-*/
+
             File file = args.length == 1 ? new File(args[0]) : null;
 
             viewer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

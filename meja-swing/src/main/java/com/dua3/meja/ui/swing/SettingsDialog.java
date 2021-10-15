@@ -28,11 +28,11 @@ public class SettingsDialog extends JDialog {
     private Arguments result = Arguments.empty();
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    SettingsDialog(Component parent, String title, String text, Collection<Option<?>> options) {
+    SettingsDialog(Component parent, String title, String text, Collection<? extends Option<?>> options) {
         super((JFrame) SwingUtilities.getRoot(parent), title, true);
         setLayout(new BorderLayout());
 
-        add(new JLabel(text), BorderLayout.NORTH);
+        add(new JLabel(text), BorderLayout.PAGE_START);
 
         List<JComponent> inputs = new ArrayList<>(options.size());
 
@@ -68,7 +68,7 @@ public class SettingsDialog extends JDialog {
             }
             result = Arguments.of(entries.toArray(Arguments.Entry[]::new));
             this.dispose();
-        })), BorderLayout.SOUTH);
+        })), BorderLayout.PAGE_END);
         pack();
 
         setLocationRelativeTo(parent);

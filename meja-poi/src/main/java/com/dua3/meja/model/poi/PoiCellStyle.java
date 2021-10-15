@@ -64,7 +64,7 @@ public abstract class PoiCellStyle implements CellStyle {
                     color = ((PoiHssfWorkbook) workbook).getColor(poiCellStyle.getLeftBorderColor());
                     width = getBorderWidth(poiCellStyle.getBorderLeft());
                 }
-                default -> throw new IllegalArgumentException();
+                default -> throw new IllegalArgumentException(String.valueOf(d));
             }
             return new BorderStyle(width, color);
         }
@@ -100,7 +100,7 @@ public abstract class PoiCellStyle implements CellStyle {
                     poiCellStyle.setLeftBorderColor(poiColor);
                     poiCellStyle.setBorderLeft(poiBorder);
                 }
-                default -> throw new IllegalArgumentException();
+                default -> throw new IllegalArgumentException(String.valueOf(d));
             }
         }
 
@@ -150,7 +150,7 @@ public abstract class PoiCellStyle implements CellStyle {
                     width = getBorderWidth(poiCellStyle.getBorderLeft());
                     color = workbook.getColor(((XSSFCellStyle) poiCellStyle).getLeftBorderXSSFColor(), Color.BLACK);
                 }
-                default -> throw new IllegalArgumentException();
+                default -> throw new IllegalArgumentException(String.valueOf(d));
             }
             return new BorderStyle(width, color);
         }
@@ -195,7 +195,7 @@ public abstract class PoiCellStyle implements CellStyle {
                         ((XSSFCellStyle) poiCellStyle).setLeftBorderColor(poiColor);
                     }
                 }
-                default -> throw new IllegalArgumentException();
+                default -> throw new IllegalArgumentException(String.valueOf(d));
             }
         }
 
@@ -356,7 +356,7 @@ public abstract class PoiCellStyle implements CellStyle {
         switch (pattern) {
             case NONE -> poiCellStyle.setFillPattern(FillPatternType.NO_FILL);
             case SOLID -> poiCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException(String.valueOf(pattern));
         }
     }
 

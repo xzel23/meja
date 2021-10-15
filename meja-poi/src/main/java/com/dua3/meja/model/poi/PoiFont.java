@@ -59,14 +59,14 @@ public class PoiFont {
         poiFont.setFontName(other.getFamily());
 
         final org.apache.poi.ss.usermodel.Color poiTextColor = workbook.getPoiColor(other.getColor());
-        if (poiFont instanceof HSSFFont && poiTextColor instanceof HSSFColor) {
-            poiFont.setColor(((HSSFColor) poiTextColor).getIndex());
-        } else if (poiFont instanceof XSSFFont && poiTextColor instanceof XSSFColor) {
-            ((XSSFFont) poiFont).setColor((XSSFColor) poiTextColor);
+        if (poiFont instanceof HSSFFont && poiTextColor instanceof HSSFColor hssfColor) {
+            poiFont.setColor(hssfColor.getIndex());
+        } else if (poiFont instanceof XSSFFont xssfFont && poiTextColor instanceof XSSFColor xssfColor) {
+            xssfFont.setColor(xssfColor);
         } else {
             // it should both either be XSSF _or_ HSSF implementations so this
             // line should never be reached.
-            throw new IllegalStateException();
+            throw new IllegalStateException("font and color types incompatible");
         }
 
         poiFont.setBold(other.isBold());

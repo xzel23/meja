@@ -39,7 +39,7 @@ public final class PoiHelper {
             case ALIGN_CENTER -> HorizontalAlignment.CENTER;
             case ALIGN_JUSTIFY -> HorizontalAlignment.JUSTIFY;
             case ALIGN_AUTOMATIC -> HorizontalAlignment.GENERAL;
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException(String.valueOf(hAlign));
         };
     }
 
@@ -79,7 +79,7 @@ public final class PoiHelper {
             case ALIGN_BOTTOM -> VerticalAlignment.BOTTOM;
             case ALIGN_JUSTIFY -> VerticalAlignment.JUSTIFY;
             case ALIGN_DISTRIBUTED -> VerticalAlignment.DISTRIBUTED;
-            default -> throw new IllegalArgumentException();
+            default -> throw new IllegalArgumentException(String.valueOf(vAlign));
         };
     }
 

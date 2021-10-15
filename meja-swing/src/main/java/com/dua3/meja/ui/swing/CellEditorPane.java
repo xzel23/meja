@@ -75,7 +75,7 @@ public class CellEditorPane extends JTextPane {
                     offset = available;
                     increase = 0;
                 }
-                default -> throw new IllegalStateException();
+                default -> throw new IllegalStateException("unexpected value: "+vAlign);
             }
 
             for (int i = 0; i < offsets.length; i++) {
@@ -145,7 +145,7 @@ public class CellEditorPane extends JTextPane {
         return switch (type) {
             case BLANK, BOOLEAN, ERROR, NUMERIC, DATE, DATE_TIME -> HAlign.ALIGN_RIGHT;
             case TEXT, FORMULA -> HAlign.ALIGN_LEFT;
-            default -> throw new IllegalStateException();
+            default -> throw new IllegalStateException("unexpected value: type");
         };
     }
 
@@ -167,13 +167,14 @@ public class CellEditorPane extends JTextPane {
      */
     public SimpleAttributeSet getCellAttributes(final CellStyle cellStyle, Cell cell) {
         SimpleAttributeSet dfltAttr = new SimpleAttributeSet();
-        switch (getHAlign(cellStyle.getHAlign(), cell.getResultType())) {
+        HAlign hAlign = getHAlign(cellStyle.getHAlign(), cell.getResultType());
+        switch (hAlign) {
             case ALIGN_LEFT -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_LEFT);
             case ALIGN_CENTER -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_CENTER);
             case ALIGN_RIGHT -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_RIGHT);
             case ALIGN_JUSTIFY -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_JUSTIFIED);
             // ALIGN_AUTOMATIC should already be resolved
-            default -> throw new IllegalStateException();
+            default -> throw new IllegalStateException("unexpected value: "+hAlign);
         }
 
         return dfltAttr;
