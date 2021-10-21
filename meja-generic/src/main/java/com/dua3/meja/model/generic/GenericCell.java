@@ -23,10 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  *
@@ -71,7 +68,7 @@ public class GenericCell extends AbstractCell {
         }
         
         if (attributes==null) {
-            attributes = new HashMap<>();
+            attributes = new EnumMap<>(GenericCell.Attribute.class);
         }
 
         attributes.put(name, value);
