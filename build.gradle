@@ -65,6 +65,12 @@ subprojects {
                 snapshotsOnly()
             }
         }
+        
+        // Apache Snapshots
+        maven {
+            name "apache.org-staging"
+            url "https://repository.apache.org/content/groups/staging/"
+        }
 
         // Maven local Repository
         mavenLocal()

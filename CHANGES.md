@@ -5,6 +5,7 @@
  - requires Java 17
  - dependencies updated, now uses POI 5+
  - some method names have changed because a few classes have been replaced by records (i. e. `getxxx()` -> `xxx()`)
+ - update Apache POI to version 5.1
 
 ## Version 2.2.x
 
