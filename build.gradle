@@ -28,7 +28,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3-BETA13-SNAPSHOT'
+    version = '3-BETA13'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
@@ -47,13 +47,15 @@ subprojects {
         javafx_version='17.0.0.1'
         junit_version='5.7.1'
 
-        dua3_utility_version = '10-BETA13'
+        dua3_utility_version = '10-BETA13.1'
     }
 
     sourceCompatibility = java_version
     targetCompatibility = java_version
 
     repositories {
+        mavenLocal()
+        
         // Maven Central Repository
         mavenCentral()
 
