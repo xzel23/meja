@@ -315,11 +315,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
             Workbook workbook = model.getWorkbook();
             final Optional<URI> uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
                     model.getCurrentUri());
-            if (uri.isPresent()) {
-                workbook.setUri(uri.get());
-                updateUri(uri.get());
-                LOG.info("Saved workbook to '" + uri.get() + "'.'");
-            }
+            uri.ifPresent(value -> {
+                workbook.setUri(value);
+                updateUri(value);
+                LOG.info("Saved workbook to '" + value + "'.'");
+            });
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "Exception saving workbook.", ex);
             JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
