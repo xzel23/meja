@@ -175,7 +175,7 @@ class PoiWorkbookTest {
                 writer.writeHtmlFooter(out);
                 String actHtml = out.toString();
                 
-                if (false) { // XXX set to false to update reference files
+                if (true) { // XXX set to false to update reference files
                     assertEquals(refHtml, actHtml);
                 } else {
                     IOUtil.write(testdataDir.resolve(sheet.getSheetName() + ".html"),actHtml); 
