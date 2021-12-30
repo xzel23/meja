@@ -15,7 +15,11 @@
  */
 package com.dua3.meja.model.generic;
 
-import com.dua3.meja.model.*;
+import com.dua3.meja.model.AbstractCell;
+import com.dua3.meja.model.AbstractRow;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
@@ -39,7 +43,7 @@ public class GenericCell extends AbstractCell {
      * a cell type of blank.
      */
     private static final long INITIAL_DATA = ((/* spanX */ 1L) << 32) | ((/* spanY */ 1L) << 8)
-            | CellType.BLANK.ordinal();
+                                             | CellType.BLANK.ordinal();
     private Object value;
     private GenericCellStyle cellStyle;
     private Map<Attribute, Object> attributes = null;

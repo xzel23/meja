@@ -15,7 +15,12 @@
  */
 package com.dua3.meja.model.generic;
 
-import com.dua3.meja.model.*;
+import com.dua3.meja.model.BorderStyle;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Direction;
+import com.dua3.meja.model.FillPattern;
+import com.dua3.meja.model.HAlign;
+import com.dua3.meja.model.VAlign;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;

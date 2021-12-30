@@ -18,7 +18,13 @@ package com.dua3.meja.model;
 import com.dua3.meja.util.RectangularRegion;
 
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;

@@ -1,6 +1,11 @@
 package com.dua3.meja.samples;
 
-import com.dua3.meja.model.*;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.FillPattern;
+import com.dua3.meja.model.Row;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.utility.data.Color;
 
@@ -78,7 +83,7 @@ public final class CreateCalendar {
                 int idx = offset+d.getDayOfMonth()-1;
                 int ii = idx/daysPerWeek;
                 int jj = idx%daysPerWeek;
-                Cell cell = sheet.getCell(i+ii,j+jj+1).set(d.getDayOfMonth());
+                Cell cell = sheet.getCell(i + ii, j + jj + 1).set(d.getDayOfMonth());
                 setStyle(cell, d);
                 
                 // write week number

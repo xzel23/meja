@@ -1,12 +1,15 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.meja.io.HtmlWorkbookWriter;
-import com.dua3.meja.model.*;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellType;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.io.IOUtil;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -156,7 +159,7 @@ class PoiWorkbookTest {
     }
     
     @Test
-    public void testHtmlExport() throws IOException, URISyntaxException {
+    public void testHtmlExport() throws IOException {
         Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
         
         // make sure workbook URI is the same independent of test environment
