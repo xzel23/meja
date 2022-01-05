@@ -14,7 +14,7 @@ dependencies {
 }
 
 task(runExcelViewer, dependsOn: 'classes', type: JavaExec) {
-    main = 'com.dua3.meja.excelviewer.SwingExcelViewer'
+    mainClass = 'com.dua3.meja.excelviewer.SwingExcelViewer'
     classpath = sourceSets.main.runtimeClasspath
     enableAssertions = true
 }
