@@ -17,6 +17,7 @@ package com.dua3.meja.model;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import com.dua3.utility.options.Arguments;
 

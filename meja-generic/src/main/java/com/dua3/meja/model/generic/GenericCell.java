@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.AbstractCell;
 import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
@@ -262,26 +263,26 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public GenericCell set(Boolean arg) {
+    public GenericCell set(@Nullable Boolean arg) {
         return set(arg, CellType.BOOLEAN);
     }
 
     @Override
-    public GenericCell set(LocalDate arg) {
+    public GenericCell set(@Nullable LocalDate arg) {
         return set(arg, CellType.DATE);
     }
 
     @Override
-    public GenericCell set(LocalDateTime arg) {
+    public GenericCell set(@Nullable LocalDateTime arg) {
         return set(arg, CellType.DATE_TIME);
     }
 
     @Override
-    public GenericCell set(Number arg) {
+    public GenericCell set(@Nullable Number arg) {
         return set(arg, CellType.NUMERIC);
     }
 
-    private GenericCell set(Object arg, CellType type) {
+    private GenericCell set(@Nullable Object arg, CellType type) {
         GenericSheet sheet = getSheet();
         arg = sheet.getWorkbook().cache(arg);
         if (arg != value || type != getCellType()) {
@@ -298,7 +299,7 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public GenericCell set(RichText arg) {
+    public GenericCell set(@Nullable RichText arg) {
         if (arg == null || arg.isEmpty()) {
             clear();
             return this;
@@ -308,7 +309,7 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public GenericCell set(String arg) {
+    public GenericCell set(@Nullable String arg) {
         if (arg == null || arg.isEmpty()) {
             clear();
             return this;
@@ -337,13 +338,13 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public GenericCell setFormula(String value) {
+    public GenericCell setFormula(@Nullable String value) {
         set(value, CellType.FORMULA);
         return this;
     }
 
     @Override
-    public Cell setHyperlink(URI target) {
+    public Cell setHyperlink(@Nullable URI target) {
         setAttribute(Attribute.LINK_URI, target);
         return this;
     }

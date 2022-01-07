@@ -23,6 +23,8 @@ module meja {
     requires java.logging;
     requires java.desktop;
     requires dua3_utility;
+    
+    requires static com.dua3.cabe.annotations;
 
     uses com.dua3.meja.model.WorkbookFactory;
 

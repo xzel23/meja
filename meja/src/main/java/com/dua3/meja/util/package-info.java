@@ -17,4 +17,7 @@
 /**
  * Helper and utility classes used by the Meja library.
  */
+@NotNullApi
 package com.dua3.meja.util;
+
+import com.dua3.cabe.annotations.NotNullApi;

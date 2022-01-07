@@ -3,9 +3,11 @@ package com.dua3.meja.model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.ObjectCache;
 import com.dua3.utility.io.IOUtil;
 
@@ -26,7 +28,7 @@ public abstract class AbstractWorkbook implements Workbook {
      */
     private ObjectCache objectCache = null;
 
-    protected AbstractWorkbook(URI uri) {
+    protected AbstractWorkbook(@Nullable URI uri) {
         this.uri = uri;
     }
 
@@ -88,7 +90,7 @@ public abstract class AbstractWorkbook implements Workbook {
         firePropertyChange(PROPERTY_ACTIVE_SHEET, oldUri, this.uri);
     }
 
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+    protected void firePropertyChange(String propertyName, @Nullable Object oldValue, @Nullable Object newValue) {
         pcs.firePropertyChange(propertyName, oldValue, newValue);
     }
 

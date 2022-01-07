@@ -27,4 +27,6 @@ module meja.poi {
     requires org.apache.poi.ooxml;
     requires java.logging;
     requires dua3_utility;
+    
+    requires static com.dua3.cabe.annotations;
 }

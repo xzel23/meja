@@ -12,6 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.4'
+    }
+}
+
 plugins {
     id 'com.adarshr.test-logger' version '3.0.0' apply false
     id 'com.github.spotbugs' version '4.8.0' apply false
@@ -25,10 +35,11 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.adarshr.test-logger'
+    apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3-BETA17-SNAPSHOT'
+    version = '3-BETA17'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
@@ -48,6 +59,7 @@ subprojects {
         junit_version='5.8.2'
 
         dua3_utility_version = '10-BETA17'
+        cabe_version = '0.4'
     }
 
     sourceCompatibility = java_version
@@ -80,7 +92,10 @@ subprojects {
 
     // dependencies
     dependencies {
-        // com.dua3 libraries
+        // Cabe (source annotations)
+        compileOnly "com.dua3.cabe:cabe-annotations:${cabe_version}"
+
+        // com.dua3.utility
         implementation "com.dua3.utility:utility:${dua3_utility_version}"
 
         // JUnit

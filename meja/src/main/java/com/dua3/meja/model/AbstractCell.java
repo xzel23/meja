@@ -2,6 +2,7 @@ package com.dua3.meja.model;
 
 import java.util.Locale;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
 
 /**
@@ -43,7 +44,7 @@ public abstract class AbstractCell implements Cell {
 
     protected abstract void setHorizontalSpan(int spanX);
 
-    protected void valueChanged(Object old, Object arg) {
+    protected void valueChanged(@Nullable Object old, @Nullable Object arg) {
         getSheet().cellValueChanged(this, old, arg);
     }
 

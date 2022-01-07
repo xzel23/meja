@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.util;
 
+import com.dua3.cabe.annotations.Nullable;
+
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +89,7 @@ public class Cache<K, V> {
         items.clear();
     }
 
-    public V get(K key) {
+    public V get(@Nullable K key) {
         if (key == null) {
             return null;
         }

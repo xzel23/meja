@@ -12,6 +12,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 
@@ -44,7 +45,7 @@ public abstract class AbstractSheet implements Sheet {
         pcs.firePropertyChange(evt);
     }
 
-    void cellValueChanged(AbstractCell cell, Object old, Object arg) {
+    void cellValueChanged(AbstractCell cell, @Nullable Object old, @Nullable Object arg) {
         PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_CONTENT, old, arg);
         pcs.firePropertyChange(evt);
     }
@@ -69,7 +70,7 @@ public abstract class AbstractSheet implements Sheet {
         return lock.writeLock();
     }
 
-    protected <T> void firePropertyChange(String property, T oldValue, T newValue) {
+    protected <T> void firePropertyChange(String property, @Nullable T oldValue, @Nullable T newValue) {
         pcs.firePropertyChange(property, oldValue, newValue);
     }
 

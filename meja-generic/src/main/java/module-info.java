@@ -26,6 +26,8 @@ module meja.generic {
 
     requires java.logging;
     requires dua3_utility;
+    
+    requires static com.dua3.cabe.annotations;
 
     uses com.dua3.utility.text.FontUtil;
 

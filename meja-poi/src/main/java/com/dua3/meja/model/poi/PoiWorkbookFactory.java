@@ -24,7 +24,6 @@ import com.dua3.meja.model.poi.io.FileTypeExcel;
 import com.dua3.meja.model.poi.io.FileTypeXls;
 import com.dua3.meja.model.poi.io.FileTypeXlsx;
 import com.dua3.utility.options.Arguments;
-import com.dua3.utility.options.Option;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -34,8 +33,6 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  *
@@ -44,10 +41,6 @@ import java.util.Collection;
 public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
-
-    private static final Collection<Option<?>> OPTIONS = new ArrayList<>();
-
-    public static final String OPTION_LOCALE = "Locale";
 
     private static PoiWorkbook createWorkbook(final org.apache.poi.ss.usermodel.Workbook poiWorkbook, URI uri) {
         if (poiWorkbook instanceof HSSFWorkbook) {

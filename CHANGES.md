@@ -6,6 +6,7 @@
  - dependencies updated, now uses POI 5+
  - some method names have changed because a few classes have been replaced by records (i. e. `getxxx()` -> `xxx()`)
  - update Apache POI to version 5.1
+ - API is "not-null-per default", i.e. all parameters of object type must not be null unless otherwise stated in the documentation. This is checked at runtime when assertions are enabled.
 
 ## Version 2.2.x
 

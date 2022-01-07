@@ -16,6 +16,7 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
@@ -37,7 +38,7 @@ import java.util.Optional;
 public interface Cell {
 
     class CellException extends IllegalStateException {
-        public CellException(Cell cell, String message, Throwable cause) {
+        public CellException(Cell cell, String message, @Nullable Throwable cause) {
             super(messagePrefix(cell)+message, cause);
         }
 
@@ -45,12 +46,12 @@ public interface Cell {
             super(messagePrefix(cell)+message);
         }
 
-        public CellException(Cell cell, Throwable cause) {
+        public CellException(Cell cell, @Nullable Throwable cause) {
             super(messagePrefix(cell)+cause.getMessage(), cause);
         }
 
         private static String messagePrefix(Cell cell) {
-            return cell==null ? "" : "["+cell.getCellRef(RefOption.WITH_SHEET)+"] ";
+            return "["+cell.getCellRef(RefOption.WITH_SHEET)+"] ";
         }
     }
 
@@ -95,7 +96,7 @@ public interface Cell {
     boolean getBoolean();
 
     /**
-     * Get cell reference (ie. "Sheet!A1" for the top left cell).
+     * Get cell reference (i.e. "Sheet!A1" for the top left cell).
      *
      * @param options options to be used
      * @return cell reference as String
@@ -267,7 +268,7 @@ public interface Cell {
      * @param b boolean value
      * @return this cell
      */
-    Cell set(Boolean b);
+    Cell set(@Nullable Boolean b);
 
     /**
      * Set cell value to date.
@@ -275,7 +276,7 @@ public interface Cell {
      * @param arg date
      * @return this cell
      */
-    Cell set(LocalDate arg);
+    Cell set(@Nullable LocalDate arg);
 
     /**
      * Set cell value to date.
@@ -283,7 +284,7 @@ public interface Cell {
      * @param arg date
      * @return this cell
      */
-    Cell set(LocalDateTime arg);
+    Cell set(@Nullable LocalDateTime arg);
 
     /**
      * Set cell value to number.
@@ -291,7 +292,7 @@ public interface Cell {
      * @param arg number
      * @return this cell
      */
-    Cell set(Number arg);
+    Cell set(@Nullable Number arg);
 
     /**
      * Set cell value.
@@ -317,7 +318,7 @@ public interface Cell {
      * @return this cell
      */
     @SuppressWarnings("UseOfObsoleteDateTimeApi")
-    default Cell set(Object arg) {
+    default Cell set(@Nullable Object arg) {
         arg = getWorkbook().cache(arg);
 
         if (arg == null) {
@@ -354,7 +355,7 @@ public interface Cell {
      * @param s rich text string
      * @return this cell
      */
-    Cell set(RichText s);
+    Cell set(@Nullable RichText s);
 
     /**
      * Set cell value to string.
@@ -362,7 +363,7 @@ public interface Cell {
      * @param s string
      * @return this cell
      */
-    Cell set(String s);
+    Cell set(@Nullable String s);
 
     /**
      * Set cell style.
@@ -388,7 +389,7 @@ public interface Cell {
      * @param value the formula as a string
      * @return this cell
      */
-    Cell setFormula(String value);
+    Cell setFormula(@Nullable String value);
 
     /**
      * Set Hyperlink.

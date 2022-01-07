@@ -17,4 +17,7 @@
 /**
  * Interfaces and classes shared by the different implementations.
  */
+@NotNullApi
 package com.dua3.meja.model;
+
+import com.dua3.cabe.annotations.NotNullApi;

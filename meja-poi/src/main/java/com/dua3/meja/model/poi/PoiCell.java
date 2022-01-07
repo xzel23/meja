@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.AbstractCell;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
@@ -381,7 +382,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public PoiCell set(Boolean arg) {
+    public PoiCell set(@Nullable Boolean arg) {
         arg = getWorkbook().cache(arg);
         Object old = get();
         if (arg == null) {
@@ -395,7 +396,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public PoiCell set(LocalDate arg) {
+    public PoiCell set(@Nullable LocalDate arg) {
         Object old = get();
         if (arg == null) {
             clear();
@@ -413,7 +414,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public PoiCell set(LocalDateTime arg) {
+    public PoiCell set(@Nullable LocalDateTime arg) {
         Object old = get();
         if (arg == null) {
             clear();
@@ -431,7 +432,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public PoiCell set(Number arg) {
+    public PoiCell set(@Nullable Number arg) {
         arg = getWorkbook().cache(arg);
         Object old = get();
         if (arg == null) {
@@ -450,7 +451,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public Cell set(RichText s) {
+    public Cell set(@Nullable RichText s) {
         s = getWorkbook().cache(s);
         Object old = get();
 
@@ -469,7 +470,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public PoiCell set(String arg) {
+    public PoiCell set(@Nullable String arg) {
         arg = getWorkbook().cache(arg);
         Object old = get();
         poiCell.setCellValue(arg);
@@ -529,7 +530,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public PoiCell setFormula(String arg) {
+    public PoiCell setFormula(@Nullable String arg) {
         Object old = get();
         if (arg == null) {
             clear();
@@ -558,7 +559,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public PoiCell setHyperlink(URI target) {
+    public PoiCell setHyperlink(@Nullable URI target) {
         Hyperlink link = getWorkbook().createHyperLink(target);
         poiCell.setHyperlink(link);
         return this;
