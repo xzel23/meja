@@ -3,15 +3,20 @@
 ## Version 3 (to be released)
 
  - requires Java 17
- - dependencies updated, now uses POI 5+
+ - Apache POI 5.2.0
  - some method names have changed because a few classes have been replaced by records (i. e. `getxxx()` -> `xxx()`)
- - update Apache POI to version 5.1
  - API is "not-null-per default", i.e. all parameters of object type must not be null unless otherwise stated in the documentation. This is checked at runtime when assertions are enabled.
+
+## version 2.4
+
+- JDK 11+
+- POI 5.2.0
+- update utility to 9.0.1
 
 ## Version 2.2.x
 
- - update utility to 7.0.x bugfix releases
- - fix exception when copying cell styles (2.2.6)
+- update utility to 7.0.x bugfix releases
+- fix exception when copying cell styles (2.2.6)
 
 ## Version 2.2
 
