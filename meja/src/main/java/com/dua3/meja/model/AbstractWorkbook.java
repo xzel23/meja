@@ -1,15 +1,14 @@
 package com.dua3.meja.model;
 
+import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.util.ObjectCache;
+import com.dua3.utility.io.IoUtil;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Optional;
-
-import com.dua3.cabe.annotations.Nullable;
-import com.dua3.meja.util.ObjectCache;
-import com.dua3.utility.io.IOUtil;
 
 /**
  * Abstract base class for implementaions of the {@link Workbook} interface.
@@ -102,7 +101,7 @@ public abstract class AbstractWorkbook implements Workbook {
             return path;
         }
 
-        Path parent = IOUtil.toPath(wbUri.get()).getParent();
+        Path parent = IoUtil.toPath(wbUri.get()).getParent();
         return parent == null ? path : parent.resolve(path);
     }
 }

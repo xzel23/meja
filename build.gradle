@@ -23,8 +23,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.adarshr.test-logger' version '3.0.0' apply false
-    id 'com.github.spotbugs' version '4.8.0' apply false
+    id 'com.adarshr.test-logger' version '3.1.0' apply false
+    id 'com.github.spotbugs' version '5.0.5' apply false
 }
 
 subprojects {
@@ -39,7 +39,7 @@ subprojects {
 
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3-BETA17'
+    version = '3-BETA18'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
@@ -55,10 +55,10 @@ subprojects {
         isReleaseVersion = !version.endsWith("SNAPSHOT")
         
         java_version='17'
-        javafx_version='17.0.0.1'
+        javafx_version='17.0.2'
         junit_version='5.8.2'
 
-        dua3_utility_version = '10-BETA17'
+        dua3_utility_version = '10-BETA18'
         cabe_version = '0.4'
     }
 
@@ -207,12 +207,12 @@ subprojects {
             html.enabled true
         }
     }
+    
+    // === DEFAULT TASKS === >
+    tasks.withType(PublishToMavenRepository) {
+        dependsOn publishToMavenLocal
+    }
 
-}
-
-// === DEFAULT TASKS === >
-tasks.withType(PublishToMavenRepository) {
-    dependsOn publishToMavenLocal
 }
 
 defaultTasks 'build', 'publishToMavenLocal'

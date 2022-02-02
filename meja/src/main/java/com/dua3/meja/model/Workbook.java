@@ -16,7 +16,7 @@
 package com.dua3.meja.model;
 
 import com.dua3.utility.io.FileType;
-import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.options.Arguments;
 
 import java.beans.PropertyChangeListener;
@@ -365,7 +365,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
         FileType<?> type = FileType
                 .forUri(uri)
                 .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for " + uri));
-        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(IOUtil.toPath(uri)))) {
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(IoUtil.toPath(uri)))) {
             write(type, out, options, updateProgress);
         }
     }
@@ -406,7 +406,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     default void write(Path path, Arguments options, DoubleConsumer updateProgress) throws IOException {
         FileType<?> type = FileType
-                .forExtension(IOUtil.getExtension(path))
+                .forExtension(IoUtil.getExtension(path))
                 .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for " + path));
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(path))) {
             write(type, out, options, updateProgress);

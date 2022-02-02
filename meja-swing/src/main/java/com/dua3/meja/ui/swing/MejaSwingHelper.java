@@ -21,7 +21,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Sheet.RowInfo;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
-import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.logging.LogUtil;
 import com.dua3.utility.options.Arguments;
@@ -218,7 +218,7 @@ public final class MejaSwingHelper {
      * @throws IOException if a workbook was selected but could not be loaded
      */
     public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, URI uri) throws IOException {
-        Path path = IOUtil.toPath(uri);
+        Path path = IoUtil.toPath(uri);
         boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
         File file = defaultFS ? path.toFile() : new File(".");
 
@@ -274,7 +274,7 @@ public final class MejaSwingHelper {
      */
     public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, URI uri)
             throws IOException {
-        Path path = IOUtil.toPath(uri);
+        Path path = IoUtil.toPath(uri);
         boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
         File file = defaultFS ? path.toFile() : new File(".");
 

@@ -16,7 +16,7 @@
 package com.dua3.meja.io;
 
 import com.dua3.meja.model.Workbook;
-import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.options.Arguments;
 
 import java.io.BufferedOutputStream;
@@ -71,7 +71,7 @@ public interface WorkbookWriter {
      * @throws IOException if an error occurs when writing out the workbook
      */
     default void write(Workbook workbook, URI uri, DoubleConsumer updateProgress) throws IOException {
-        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(IOUtil.toPath(uri)))) {
+        try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(IoUtil.toPath(uri)))) {
             write(workbook, out, updateProgress);
         }
     }

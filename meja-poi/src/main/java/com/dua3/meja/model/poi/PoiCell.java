@@ -22,7 +22,7 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.util.RectangularRegion;
-import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
@@ -575,7 +575,7 @@ public final class PoiCell extends AbstractCell {
         try {
             return switch (link.getType()) {
                 case URL, EMAIL -> Optional.of(new URI(link.getAddress()));
-                case FILE -> Optional.of(IOUtil.toURI(getWorkbook().resolve(
+                case FILE -> Optional.of(IoUtil.toURI(getWorkbook().resolve(
                         Paths.get(URLDecoder.decode(link.getAddress(), StandardCharsets.UTF_8.name())
                                 .replaceFirst("^file:///([a-zA-Z]:)", "$1") // workaround for absolute windows paths
                                 .replaceFirst("^file:///", "/"))

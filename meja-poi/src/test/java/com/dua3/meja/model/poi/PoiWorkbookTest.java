@@ -6,7 +6,7 @@ import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.MejaHelper;
-import com.dua3.utility.io.IOUtil;
+import com.dua3.utility.io.IoUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 class PoiWorkbookTest {
 
-    private static final Path testdataDir = IOUtil.toPath(PoiWorkbookTest.class.getResource("/"))
+    private static final Path testdataDir = IoUtil.toPath(PoiWorkbookTest.class.getResource("/"))
             .resolve("../../../../../testdata").normalize();
 
     @Test
@@ -84,7 +84,7 @@ class PoiWorkbookTest {
     public void testConvertXlsxToHtml() throws Exception {
         String[] files = { "population by country.xlsx", "Excel 2015 Calendar.xlsx" };
         for (String inFile: files) {
-            String outFile = IOUtil.replaceExtension(inFile, "html");
+            String outFile = IoUtil.replaceExtension(inFile, "html");
             copyToHtml(inFile, outFile);
         }
     }
@@ -138,7 +138,7 @@ class PoiWorkbookTest {
         assertEquals("Calendar", cCalendar.toString());
         Optional<URI> lCalendar = cCalendar.getHyperlink();
         assertTrue(lCalendar.isPresent());
-        assertEquals(IOUtil.toURI(testdataDir.resolve("Excel 2015 Calendar.xlsx")), lCalendar.get());
+        assertEquals(IoUtil.toURI(testdataDir.resolve("Excel 2015 Calendar.xlsx")), lCalendar.get());
 
         Cell cEmail = sheet.getCell(2,1);
         assertEquals("Email Developer", cEmail.toString());
@@ -168,7 +168,7 @@ class PoiWorkbookTest {
         for (Sheet sheet: wb) {
             HtmlWorkbookWriter writer = HtmlWorkbookWriter.create();
 
-            String refHtml = IOUtil.read(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
+            String refHtml = IoUtil.read(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
             
             try (Formatter out = new Formatter()) {
                 writer.writeHtmlHeaderStart(out);
@@ -181,7 +181,7 @@ class PoiWorkbookTest {
                 if (true) { // XXX set to false to update reference files
                     assertEquals(refHtml, actHtml);
                 } else {
-                    IOUtil.write(testdataDir.resolve(sheet.getSheetName() + ".html"),actHtml); 
+                    IoUtil.write(testdataDir.resolve(sheet.getSheetName() + ".html"),actHtml); 
                 }
             }
         }
