@@ -1,4 +1,4 @@
-package com.dua3.meja.util.fx;
+package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;

@@ -246,7 +246,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
                         model.getCurrentUri());
                 if (newUri.isEmpty()) {
                     // user cancelled the dialog
-                    LOG.info("save-dialog was cancelled.");
+                    LOG.fine("save-dialog was cancelled.");
                     return;
                 }
                 workbookChanged(null /* old path was not set */, newUri.get());

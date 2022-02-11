@@ -128,9 +128,9 @@ public class ExcelViewerModel {
             return;
         }
 
-        LOGGER.fine(LogUtil.format("Writing workbook to %s", uri));
+        LOGGER.finer(() -> "Writing workbook to " + uri);
         workbook.write(uri);
-        LOGGER.info(LogUtil.format("Workbook written to %s", uri));
+        LOGGER.fine(() -> "Workbook written to " + uri);
     }
 
     /**

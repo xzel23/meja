@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module meja {
+module com.dua3.meja {
     exports com.dua3.meja.util;
     exports com.dua3.meja.model;
     exports com.dua3.meja.io;
@@ -22,7 +22,7 @@ module meja {
 
     requires java.logging;
     requires java.desktop;
-    requires dua3_utility;
+    requires com.dua3.utility;
     
     requires static com.dua3.cabe.annotations;
 

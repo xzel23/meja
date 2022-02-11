@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module meja.poi {
+module com.dua3.meja.poi {
     exports com.dua3.meja.model.poi;
     opens com.dua3.meja.model.poi;
 
@@ -22,11 +22,11 @@ module meja.poi {
     provides com.dua3.meja.model.WorkbookFactory with com.dua3.meja.model.poi.PoiWorkbookFactory;
     provides com.dua3.utility.io.FileType with com.dua3.meja.model.poi.io.FileTypeExcel;
 
-    requires transitive meja;
+    requires transitive com.dua3.meja;
 
     requires org.apache.poi.ooxml;
     requires java.logging;
-    requires dua3_utility;
+    requires com.dua3.utility;
     
     requires static com.dua3.cabe.annotations;
 }

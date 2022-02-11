@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-module meja.generic {
+module com.dua3.meja.generic {
     exports com.dua3.meja.model.generic;
     opens com.dua3.meja.model.generic;
 
@@ -22,10 +22,10 @@ module meja.generic {
     provides com.dua3.meja.model.WorkbookFactory
             with com.dua3.meja.model.generic.GenericWorkbookFactory;
 
-    requires transitive meja;
+    requires transitive com.dua3.meja;
 
     requires java.logging;
-    requires dua3_utility;
+    requires com.dua3.utility;
     
     requires static com.dua3.cabe.annotations;
 

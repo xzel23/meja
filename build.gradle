@@ -18,13 +18,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.4'
+        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.4.1'
     }
 }
 
 plugins {
     id 'com.adarshr.test-logger' version '3.1.0' apply false
     id 'com.github.spotbugs' version '5.0.5' apply false
+    id 'com.github.ben-manes.versions' version '0.42.0'
 }
 
 subprojects {
@@ -35,11 +36,14 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'com.adarshr.test-logger'
-    apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
 
+    if (!name.endsWith('-fx')) {
+        apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
+    }
+    
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3-BETA18'
+    version = '3-BETA19-SNAPSHOT'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
@@ -58,7 +62,7 @@ subprojects {
         javafx_version='17.0.2'
         junit_version='5.8.2'
 
-        dua3_utility_version = '10-BETA18'
+        dua3_utility_version = '10-BETA19-SNAPSHOT'
         cabe_version = '0.4'
     }
 
@@ -197,7 +201,7 @@ subprojects {
     }
 
     // === SPOTBUGS === >
-    spotbugs.toolVersion = '4.2.3'
+    spotbugs.toolVersion = '4.5.3'
 
     spotbugs.excludeFilter = rootProject.file('spotbugs-exclude.xml')
 
@@ -215,4 +219,4 @@ subprojects {
 
 }
 
-defaultTasks 'build', 'publishToMavenLocal'
+defaultTasks 'build', 'publishToMavenLocal', 'dependencyUpdates'

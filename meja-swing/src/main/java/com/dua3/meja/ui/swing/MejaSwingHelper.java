@@ -99,7 +99,7 @@ public final class MejaSwingHelper {
                     dispatcher = SheetTableModel.this::fireTableStructureChanged;
                     break;
                 default:
-                    dispatcher = () -> LOG.fine(LogUtil.format("ignored event: %s", evt));
+                    dispatcher = () -> LOG.fine(() -> "ignored event: " + evt);
                     break;
                 }
                 try {
@@ -293,7 +293,7 @@ public final class MejaSwingHelper {
                     "File '" + file.getAbsolutePath() + "' already exists. Overwrite?", "File exists",
                     JOptionPane.YES_NO_OPTION);
             if (rc != JOptionPane.YES_OPTION) {
-                LOG.info("User chose not to overwrite file.");
+                LOG.fine("User chose not to overwrite file.");
                 return Optional.empty();
             }
         }
