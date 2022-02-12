@@ -10,6 +10,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.Rectangle;
@@ -71,7 +72,7 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, SwingGra
     }
 
     @Override
-    public void update(Sheet sheet) {
+    public void update(@Nullable Sheet sheet) {
         super.update(sheet);
 
         if (sheet != null) {

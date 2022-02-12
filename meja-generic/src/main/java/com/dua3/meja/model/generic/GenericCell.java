@@ -61,7 +61,7 @@ public class GenericCell extends AbstractCell {
         return Optional.ofNullable(attributes.get(name));
     }
 
-    private void setAttribute(Attribute name, Object value) {
+    private void setAttribute(Attribute name, @Nullable Object value) {
         if (value==null) {
             if (attributes!=null) {
                 attributes.remove(name);

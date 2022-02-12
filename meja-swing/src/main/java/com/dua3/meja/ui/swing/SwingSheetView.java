@@ -61,6 +61,7 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.SearchOptions;
@@ -234,7 +235,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
          *
          * @param cell the cell to scroll to
          */
-        public void ensureCellIsVisible(Cell cell) {
+        public void ensureCellIsVisible(@Nullable Cell cell) {
             if (cell == null) {
                 return;
             }
@@ -814,7 +815,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     @Override
     public void setGridColor(Color gridColor) {
-        this.gridColor = Objects.requireNonNull(gridColor);
+        this.gridColor = gridColor;
     }
 
     @Override
@@ -828,7 +829,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      * @param sheet the sheet to display
      */
     @Override
-    public final void setSheet(Sheet sheet) {
+    public final void setSheet(@Nullable Sheet sheet) {
         if (this.sheet != null) {
             this.sheet.removePropertyChangeListener(this);
         }

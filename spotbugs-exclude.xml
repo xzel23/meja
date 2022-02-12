@@ -1,5 +1,43 @@
 <FindBugsFilter>
     <Match>
-        <Bug code="FS" />
+        <Bug code="FS"/>
+    </Match>
+    <Match>
+        <Bug code="EI"/>
+    </Match>
+    <Match>
+        <Bug code="EI2"/>
+    </Match>
+    <Match>
+        <Bug code="MS"/>
+    </Match>
+    <Match>
+        <Bug code="RCN"/>
+        <Class name="com.dua3.meja.converter.Converter"/>
+        <Method name="main"/>
+    </Match>
+    <Match>
+        <Bug code="RCN"/>
+        <Class name="com.dua3.meja.model.poi.PoiCellStyle$PoiHssfCellStyle"/>
+    </Match>
+    <Match>
+        <Bug code="RCN"/>
+        <Class name="com.dua3.meja.ui.Rectangle"/>
+    </Match>
+    <Match>
+        <Bug code="RCN"/>
+        <Class name="com.dua3.meja.ui.swing.SettingsDialog"/>
+    </Match>
+    <Match>
+        <Bug code="RCN"/>
+        <Class name="com.dua3.meja.model.poi.PoiRow"/>
+    </Match>
+    <Match>
+        <Bug code="RCN"/>
+        <Class name="com.dua3.meja.model.poi.PoiCellStyle"/>
+    </Match>
+    <Match>
+        <Bug code="RCN"/>
+        <Class name="com.dua3.meja.model.poi.PoiCellStyle$PoiXssfCellStyle"/>
     </Match>
 </FindBugsFilter>

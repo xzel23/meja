@@ -17,4 +17,7 @@
 /**
  * An implementation based upon the Apache POI library.
  */
+@NotNullApi
 package com.dua3.meja.model.poi;
+
+import com.dua3.cabe.annotations.NotNullApi;

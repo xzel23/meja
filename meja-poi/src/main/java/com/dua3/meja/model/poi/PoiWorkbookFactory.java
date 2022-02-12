@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.io.FileFormatException;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
@@ -42,7 +43,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
 
-    private static PoiWorkbook createWorkbook(final org.apache.poi.ss.usermodel.Workbook poiWorkbook, URI uri) {
+    private static PoiWorkbook createWorkbook(final org.apache.poi.ss.usermodel.Workbook poiWorkbook, @Nullable URI uri) {
         if (poiWorkbook instanceof HSSFWorkbook) {
             return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, uri);
         } else {
@@ -67,7 +68,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @throws IOException
      *  if an error occurs when reading
      */
-    private static PoiWorkbook open(InputStream in, URI uri) throws IOException {
+    private static PoiWorkbook open(InputStream in, @Nullable URI uri) throws IOException {
         try {
             final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
                     .create(in);

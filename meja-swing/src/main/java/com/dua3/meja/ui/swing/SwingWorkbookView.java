@@ -28,6 +28,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
@@ -139,7 +140,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
      * @param workbook the workbook to display
      */
     @Override
-    public void setWorkbook(Workbook workbook) {
+    public void setWorkbook(@Nullable Workbook workbook) {
         content.removeAll();
 
         if (this.workbook!=null) {

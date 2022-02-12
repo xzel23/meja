@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.AbstractWorkbook;
@@ -95,7 +96,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * @param poiWorkbook the POI workbook instance
      * @param uri         the URI of this workbook
      */
-    protected PoiWorkbook(Workbook poiWorkbook, URI uri) {
+    protected PoiWorkbook(Workbook poiWorkbook, @Nullable URI uri) {
         super(uri);
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
@@ -159,7 +160,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj instanceof PoiWorkbook && Objects.equals(poiWorkbook, ((PoiWorkbook) obj).poiWorkbook);
     }
 
@@ -237,7 +238,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * @param poiFont the POI font instance
      * @return instance of {@link PoiFont} for the given font
      */
-    public PoiFont getFont(Font poiFont) {
+    public PoiFont getFont(@Nullable Font poiFont) {
         return poiFont == null ? getDefaultCellStyle().getPoiFont() : new PoiFont(this, poiFont);
     }
 
@@ -433,7 +434,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          * @param poiWorkbook the POI workbook instance
          * @param uri         the URI of the workbook
          */
-        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, URI uri) {
+        public PoiHssfWorkbook(HSSFWorkbook poiWorkbook, @Nullable URI uri) {
             super(poiWorkbook, uri);
             this.defaultCellStyle = new PoiHssfCellStyle(this, poiWorkbook.getCellStyleAt(0));
             cellStyles.put("", (short) 0);
@@ -465,7 +466,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        public Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
+        public Color getColor(@Nullable org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
             if (poiColor == null || poiColor.equals(HSSFColorPredefined.AUTOMATIC.getColor())) {
                 return defaultColor;
             }
@@ -484,7 +485,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         Color getColor(short idx) {
-            return getColor(((HSSFWorkbook) poiWorkbook).getCustomPalette().getColor(idx), null);
+            return getColor(((HSSFWorkbook) poiWorkbook).getCustomPalette().getColor(idx), Color.BLACK);
         }
 
         @Override
@@ -503,9 +504,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
         @Override
         public HSSFColor getPoiColor(Color color) {
-            if (color == null) {
-                return null;
-            }
             HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
             return palette.findSimilarColor(color.r(), color.g(), color.b());
         }
@@ -535,7 +533,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          * @param poiWorkbook the POI workbook instance
          * @param uri         the URI of the workbook
          */
-        public PoiXssfWorkbook(Workbook poiWorkbook, URI uri) {
+        public PoiXssfWorkbook(Workbook poiWorkbook, @Nullable URI uri) {
             super(poiWorkbook, uri);
             assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt(0));
@@ -570,7 +568,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        public Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
+        public Color getColor(@Nullable org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
             XSSFColor xssfColor = (XSSFColor) poiColor;
             if (poiColor == null || xssfColor.isAuto()) {
                 return defaultColor;

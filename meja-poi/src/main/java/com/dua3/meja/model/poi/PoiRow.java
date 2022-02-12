@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.cabe.annotations.Nullable;
+
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 import com.dua3.meja.model.AbstractRow;
@@ -51,7 +53,7 @@ public final class PoiRow extends AbstractRow {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj != null && getClass() == obj.getClass() && poiRow.equals(((PoiRow) obj).poiRow);
     }
 

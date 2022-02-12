@@ -8,4 +8,6 @@ module com.dua3.meja.swing {
     requires java.logging;
     requires com.dua3.utility;
     requires com.dua3.utility.swing;
+    
+    requires static com.dua3.cabe.annotations;
 }

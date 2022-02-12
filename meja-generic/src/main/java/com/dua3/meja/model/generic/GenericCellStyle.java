@@ -70,7 +70,7 @@ public class GenericCellStyle implements CellStyle {
      * @param workbook the workbook the style is defined in
      */
     public GenericCellStyle(GenericWorkbook workbook) {
-        this.workbook = Objects.requireNonNull(workbook);
+        this.workbook = workbook;
         this.font = new Font();
         this.fillPattern = FillPattern.NONE;
         this.fillBgColor = Color.WHITE;
@@ -214,44 +214,44 @@ public class GenericCellStyle implements CellStyle {
 
     @Override
     public void setBorderStyle(Direction d, BorderStyle borderStyle) {
-        this.borderStyle[d.ordinal()] = Objects.requireNonNull(borderStyle);
+        this.borderStyle[d.ordinal()] = borderStyle;
     }
 
     @Override
     public void setDataFormat(String format) {
-        this.dataFormat = Objects.requireNonNull(format);
+        this.dataFormat = format;
         this.dateFormatter = null;
         this.numberFormatter = null;
     }
 
     @Override
     public void setFillBgColor(Color fillBgColor) {
-        this.fillBgColor = Objects.requireNonNull(fillBgColor);
+        this.fillBgColor = fillBgColor;
     }
 
     @Override
     public void setFillFgColor(Color fillFgColor) {
-        this.fillFgColor = Objects.requireNonNull(fillFgColor);
+        this.fillFgColor = fillFgColor;
     }
 
     @Override
     public void setFillPattern(FillPattern fillPattern) {
-        this.fillPattern = Objects.requireNonNull(fillPattern);
+        this.fillPattern = fillPattern;
     }
 
     @Override
     public void setFont(Font font) {
-        this.font = Objects.requireNonNull(font);
+        this.font = font;
     }
 
     @Override
     public void setHAlign(HAlign hAlign) {
-        this.hAlign = Objects.requireNonNull(hAlign);
+        this.hAlign = hAlign;
     }
 
     @Override
     public void setVAlign(VAlign vAlign) {
-        this.vAlign = Objects.requireNonNull(vAlign);
+        this.vAlign = vAlign;
     }
 
     @Override

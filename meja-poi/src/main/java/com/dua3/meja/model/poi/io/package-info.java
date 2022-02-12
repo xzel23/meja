@@ -15,9 +15,9 @@
  */
 
 /**
- * Components to display workbooks and sheets in Swing applications.
+ * An implementation based upon the Apache POI library - Excel-file I/O.
  */
 @NotNullApi
-package com.dua3.meja.ui.swing;
+package com.dua3.meja.model.poi.io;
 
 import com.dua3.cabe.annotations.NotNullApi;

@@ -17,6 +17,7 @@ package com.dua3.meja.model.poi;
 
 import java.util.Objects;
 
+import com.dua3.cabe.annotations.Nullable;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
@@ -116,7 +117,7 @@ public class PoiSheet extends AbstractSheet {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj instanceof PoiSheet && Objects.equals(poiSheet, ((PoiSheet) obj).poiSheet);
     }
 
@@ -252,7 +253,7 @@ public class PoiSheet extends AbstractSheet {
         }
     }
 
-    private void setAutoFilterForPoiRow(Row poiRow) {
+    private void setAutoFilterForPoiRow(@Nullable Row poiRow) {
         if (poiRow != null) {
             int rowNumber = poiRow.getRowNum();
             short col1 = poiRow.getFirstCellNum();

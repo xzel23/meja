@@ -192,7 +192,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj instanceof PoiCell && Objects.equals(poiCell, ((PoiCell) obj).poiCell);
     }
 

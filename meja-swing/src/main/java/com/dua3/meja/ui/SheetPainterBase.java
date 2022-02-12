@@ -17,6 +17,7 @@ package com.dua3.meja.ui;
 
 import java.util.concurrent.locks.Lock;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
@@ -295,7 +296,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         return getRowPos(sheet.getSplitRow());
     }
 
-    public void update(Sheet sheet) {
+    public void update(@Nullable Sheet sheet) {
         //noinspection ObjectEquality
         if (sheet != this.sheet) {
             this.sheet = sheet;

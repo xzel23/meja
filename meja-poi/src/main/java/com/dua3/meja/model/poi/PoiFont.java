@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.model.poi;
 
+import com.dua3.cabe.annotations.Nullable;
+
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
@@ -98,7 +100,7 @@ public class PoiFont {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         return obj instanceof PoiFont && Objects.equals(poiFont, ((PoiFont) obj).poiFont);
     }
 

@@ -34,7 +34,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  *
@@ -111,13 +110,11 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setFillBgColor(Color color) {
-            Objects.requireNonNull(color);
             poiCellStyle.setFillBackgroundColor(((PoiHssfWorkbook) workbook).getPoiColor(color).getIndex());
         }
 
         @Override
         public void setFillFgColor(Color color) {
-            Objects.requireNonNull(color);
             poiCellStyle.setFillForegroundColor(((PoiHssfWorkbook) workbook).getPoiColor(color).getIndex());
         }
 
@@ -206,13 +203,13 @@ public abstract class PoiCellStyle implements CellStyle {
 
         @Override
         public void setFillBgColor(Color color) {
-            final XSSFColor poiColor = color == null ? null : ((PoiXssfWorkbook) workbook).getPoiColor(color);
+            final XSSFColor poiColor = ((PoiXssfWorkbook) workbook).getPoiColor(color);
             ((XSSFCellStyle) poiCellStyle).setFillBackgroundColor(poiColor);
         }
 
         @Override
         public void setFillFgColor(Color color) {
-            final XSSFColor poiColor = color == null ? null : ((PoiXssfWorkbook) workbook).getPoiColor(color);
+            final XSSFColor poiColor = ((PoiXssfWorkbook) workbook).getPoiColor(color);
             ((XSSFCellStyle) poiCellStyle).setFillForegroundColor(poiColor);
         }
 
@@ -346,7 +343,6 @@ public abstract class PoiCellStyle implements CellStyle {
 
     @Override
     public void setDataFormat(String format) {
-        Objects.requireNonNull(format);
         if (StandardDataFormats.MEDIUM.name().equals(format)) {
             poiCellStyle.setDataFormat((short) 0x0e);
         } else if (StandardDataFormats.FULL.name().equals(format)) {
