@@ -24,7 +24,7 @@ buildscript {
 
 plugins {
     id 'com.adarshr.test-logger' version '3.1.0' apply false
-    id 'com.github.spotbugs' version '5.0.5' apply false
+    id 'com.github.spotbugs' version '5.0.6' apply false
     id 'com.github.ben-manes.versions' version '0.42.0'
 }
 
@@ -43,7 +43,7 @@ subprojects {
     
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3-BETA19'
+    version = '3-BETA20-SNAPSHOT'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
@@ -62,7 +62,7 @@ subprojects {
         javafx_version='17.0.2'
         junit_version='5.8.2'
 
-        dua3_utility_version = '10-BETA19'
+        dua3_utility_version = '10-BETA20-SNAPSHOT'
         cabe_version = '0.4.1'
     }
 
