@@ -38,6 +38,14 @@
     </Match>
     <Match>
         <Bug code="RCN"/>
+        <Class name="com.dua3.meja.model.poi.PoiWorkbook$PoiHssfWorkbook"/>
+    </Match>
+    <Match>
+        <Bug code="RCN"/>
+        <Class name="com.dua3.meja.model.poi.PoiWorkbook$PoiXssfWorkbook"/>
+    </Match>
+    <Match>
+        <Bug code="RCN"/>
         <Class name="com.dua3.meja.model.poi.PoiCellStyle$PoiXssfCellStyle"/>
     </Match>
 </FindBugsFilter>

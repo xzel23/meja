@@ -96,7 +96,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * @param poiWorkbook the POI workbook instance
      * @param uri         the URI of this workbook
      */
-    protected PoiWorkbook(Workbook poiWorkbook, @Nullable URI uri) {
+    protected PoiWorkbook(@Nullable Workbook poiWorkbook, @Nullable URI uri) {
         super(uri);
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
@@ -481,7 +481,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             int r = triplet[0];
             int g = triplet[1];
             int b = triplet[2];
-            return new Color(r, g, b, a);
+            return Color.rgb(r, g, b, a);
         }
 
         Color getColor(short idx) {
@@ -505,7 +505,11 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         @Override
         public HSSFColor getPoiColor(Color color) {
             HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
-            return palette.findSimilarColor(color.r(), color.g(), color.b());
+            int argb = color.argb();
+            int r = (argb >> 16) & 0xff;
+            int g = (argb >>  8) & 0xff;
+            int b = (argb >>  0) & 0xff;
+            return palette.findSimilarColor(r, g, b);
         }
 
         @Override
@@ -525,7 +529,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     public static class PoiXssfWorkbook extends PoiWorkbook {
 
         private final PoiXssfCellStyle defaultCellStyle;
-        private final IndexedColorMap colorMap;
 
         /**
          * Construct instance from existing POI workbook.
@@ -537,9 +540,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             super(poiWorkbook, uri);
             assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt(0));
-            this.colorMap = poiWorkbook instanceof XSSFWorkbook 
-                    ? ((XSSFWorkbook) poiWorkbook).getStylesSource().getIndexedColors()
-                    : new DefaultIndexedColorMap();
             init();
         }
 
@@ -584,12 +584,12 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
                     int r = rgb[1] & 0xFF;
                     int g = rgb[2] & 0xFF;
                     int b = rgb[3] & 0xFF;
-                    return new Color(r, g, b, a);
+                    return Color.rgb(r, g, b, a);
                 } else {
                     int r = rgb[0] & 0xFF;
                     int g = rgb[1] & 0xFF;
                     int b = rgb[2] & 0xFF;
-                    return new Color(r, g, b);
+                    return Color.rgb(r, g, b);
                 }
             }
 
@@ -609,7 +609,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
         @Override
         public XSSFColor getPoiColor(Color color) {
-            return new XSSFColor(new byte[] {(byte) color.r(), (byte) color.g(), (byte)color.b()}, colorMap);
+            return new XSSFColor(color.toByteArrayRGB());
         }
 
         @Override

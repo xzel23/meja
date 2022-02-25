@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.function.DoubleConsumer;
 import java.util.stream.Stream;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.AbstractWorkbook;
@@ -52,7 +53,7 @@ public class GenericWorkbook extends AbstractWorkbook {
      *
      * @param uri the URI to set
      */
-    public GenericWorkbook(URI uri) {
+    public GenericWorkbook(@Nullable URI uri) {
         super(uri);
         this.defaultCellStyle = new GenericCellStyle(this);
         this.cellStyles.put("", defaultCellStyle);
