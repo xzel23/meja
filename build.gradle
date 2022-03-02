@@ -23,7 +23,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.adarshr.test-logger' version '3.1.0' apply false
+    id 'com.adarshr.test-logger' version '3.2.0' apply false
     id 'com.github.spotbugs' version '5.0.6' apply false
     id 'com.github.ben-manes.versions' version '0.42.0'
 }
@@ -43,7 +43,7 @@ subprojects {
     
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3-BETA20'
+    version = '3-BETA21-SNAPSHOT'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
