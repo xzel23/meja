@@ -62,7 +62,7 @@ subprojects {
         javafx_version='17.0.2'
         junit_version='5.8.2'
 
-        dua3_utility_version = '10-BETA22-SNAPSHOT'
+        dua3_utility_version = '10-BETA22'
         cabe_version = '0.4.1'
     }
 
