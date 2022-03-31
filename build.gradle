@@ -18,7 +18,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '0.5-BETA1'
+        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '1.0-BETA2'
     }
 }
 
@@ -43,7 +43,7 @@ subprojects {
     
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3-BETA23'
+    version = '3-BETA24'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
@@ -62,8 +62,8 @@ subprojects {
         javafx_version='18'
         junit_version='5.8.2'
 
-        dua3_utility_version = '10-BETA23'
-        cabe_version = '0.5-BETA1'
+        dua3_utility_version = '10-BETA24'
+        cabe_version = '1.0-BETA2'
     }
 
     sourceCompatibility = java_version
