@@ -375,15 +375,15 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     public void writeCssForSingleSheet(Formatter out, Sheet sheet) {
         // determine styles used in this sheet
-        Set<CellStyle> styles = new HashSet<>();
-        sheet.rows().forEach(row -> row.cells().map(Cell::getCellStyle).forEach(styles::add));
-
         out.format(Locale.ROOT, "  <style>\n");
-        
+
+        // write common styles
         writeCommonCss(out, sheet.getWorkbook().getDefaultCellStyle());
         
-        // sort styles to get reproducible results (i. e. in unit tests)
-        styles.stream().sorted(Comparator.comparing(CellStyle::getName)).forEach(cs -> writeCellStyle(out, cs));
+        // write user defined styles in sorted order to get reproducible results (i. e. in unit tests)
+        SortedMap<String,CellStyle> styles = new TreeMap<>();
+        sheet.rows().forEach(row -> row.cells().map(Cell::getCellStyle).forEach(s -> styles.putIfAbsent(s.getName(), s)));
+        styles.values().forEach(cs -> writeCellStyle(out, cs));
         
         out.format(Locale.ROOT, "  </style>\n");
     }
