@@ -7,6 +7,7 @@
  - Apache POI updated to 5.2.0
  - some method names have changed because a few classes have been replaced by records (i. e. `getxxx()` -> `xxx()`)
  - API is "not-null-per default", i.e. all parameters of object type must not be null unless otherwise stated in the documentation. This is checked at runtime when assertions are enabled.
+ - All overrides of MejaHelper.find() return Optional
 
 ## version 2.4
 

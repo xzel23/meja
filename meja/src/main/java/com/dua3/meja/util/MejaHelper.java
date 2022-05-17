@@ -54,7 +54,7 @@ public final class MejaHelper {
      * @param options the {@link SearchOptions} to use
      * @return the cell found or {@code null} if nothing found
      */
-    public static Cell find(Row row, String text, SearchOptions... options) {
+    public static Optional<Cell> find(Row row, String text, SearchOptions... options) {
         return find(row, text, LangUtil.enumSet(SearchOptions.class, options));
     }
 
@@ -66,7 +66,7 @@ public final class MejaHelper {
      * @param options the {@link SearchOptions} to use
      * @return the cell found or {@code null} if nothing found
      */
-    public static Cell find(Row row, String text, Collection<SearchOptions> options) {
+    public static Optional<Cell> find(Row row, String text, Collection<SearchOptions> options) {
         boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
         boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
         boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
@@ -106,11 +106,11 @@ public final class MejaHelper {
                 if (updateCurrent) {
                     row.getSheet().setCurrentCell(cell);
                 }
-                return cell;
+                return Optional.of(cell);
             }
         } while (j != jStart);
 
-        return null;
+        return Optional.empty();
     }
 
     /**
