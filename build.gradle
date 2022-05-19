@@ -12,19 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'com.dua3.cabe', name: 'cabe-gradle-plugin', version: '1.0-BETA2'
-    }
-}
-
 plugins {
     id 'com.adarshr.test-logger' version '3.2.0' apply false
-    id 'com.github.spotbugs' version '5.0.6' apply false
+    id 'com.github.spotbugs' version '5.0.7' apply false
+    id 'com.dua3.cabe' version '1.0.0-RC3' apply false
     id 'com.github.ben-manes.versions' version '0.42.0'
 }
 
@@ -38,12 +29,12 @@ subprojects {
     apply plugin: 'com.adarshr.test-logger'
 
     if (!name.endsWith('-fx')) {
-        apply plugin: 'com.dua3.cabe.cabe-gradle-plugin'
+        apply plugin: 'com.dua3.cabe'
     }
     
     /////////////////////////////////////////////////////////////////////////////
     group = 'com.dua3.meja'
-    version = '3-BETA26'
+    version = '3-BETA27-SNAPSHOT'
 
     ext.scm = 'https://gitlab.com/com.dua3/lib/meja.git'
     ext.repo = 'public'
@@ -62,8 +53,8 @@ subprojects {
         javafx_version='18'
         junit_version='5.8.2'
 
-        dua3_utility_version = '10-BETA26'
-        cabe_version = '1.0-BETA2'
+        dua3_utility_version = '10-BETA27-SNAPSHOT'
+        cabe_version = '1.0.0-RC3'
     }
 
     sourceCompatibility = java_version
@@ -197,6 +188,7 @@ subprojects {
 
     // === sign artifacts
     signing {
+        required { isReleaseVersion && gradle.taskGraph.hasTask("publish") }
         sign publishing.publications.mavenJava
     }
 
