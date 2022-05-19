@@ -23,7 +23,6 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.OpenMode;
-import com.dua3.utility.logging.LogUtil;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.swing.SwingFileFilter;

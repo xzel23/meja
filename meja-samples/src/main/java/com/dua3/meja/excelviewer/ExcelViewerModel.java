@@ -7,7 +7,6 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.utility.logging.LogUtil;
 
 import java.io.IOException;
 import java.net.URI;
