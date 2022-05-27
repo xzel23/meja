@@ -225,7 +225,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         return poiWorkbook.getActiveSheetIndex();
     }
 
-    DataFormatter getDataFormatter(Locale locale) {
+    static DataFormatter getDataFormatter(Locale locale) {
         return new DataFormatter(locale);
     }
 
@@ -508,7 +508,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             int argb = color.argb();
             int r = (argb >> 16) & 0xff;
             int g = (argb >>  8) & 0xff;
-            int b = (argb >>  0) & 0xff;
+            int b =  argb        & 0xff;
             return palette.findSimilarColor(r, g, b);
         }
 
