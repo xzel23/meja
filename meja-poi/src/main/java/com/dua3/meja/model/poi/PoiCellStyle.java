@@ -254,7 +254,7 @@ public abstract class PoiCellStyle implements CellStyle {
      * @param poiBorder the POI border value
      * @return the width of the border in points
      */
-    protected float getBorderWidth(org.apache.poi.ss.usermodel.BorderStyle poiBorder) {
+    protected static float getBorderWidth(org.apache.poi.ss.usermodel.BorderStyle poiBorder) {
         return switch (poiBorder) {
             case NONE -> 0;
             case THIN -> 0.75f;
@@ -309,7 +309,7 @@ public abstract class PoiCellStyle implements CellStyle {
      * @param borderStyle the border style
      * @return the POI constant to use
      */
-    protected org.apache.poi.ss.usermodel.BorderStyle getPoiBorder(BorderStyle borderStyle) {
+    protected static org.apache.poi.ss.usermodel.BorderStyle getPoiBorder(BorderStyle borderStyle) {
         float width = borderStyle.width();
         if (width == 0) {
             return org.apache.poi.ss.usermodel.BorderStyle.NONE;
@@ -320,9 +320,7 @@ public abstract class PoiCellStyle implements CellStyle {
         if (width <= 1.75f) {
             return org.apache.poi.ss.usermodel.BorderStyle.MEDIUM;
         }
-        if (width <= 2.0f) {
-            return org.apache.poi.ss.usermodel.BorderStyle.THICK;
-        }
+        // width > 1.75f
         return org.apache.poi.ss.usermodel.BorderStyle.THICK;
     }
 
