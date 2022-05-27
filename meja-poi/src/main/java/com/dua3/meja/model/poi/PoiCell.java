@@ -358,14 +358,14 @@ public final class PoiCell extends AbstractCell {
         return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC && DateUtil.isCellDateFormatted(poiCell);
     }
 
-    boolean isDateFormat(PoiCellStyle cellStyle) {
+    static boolean isDateFormat(PoiCellStyle cellStyle) {
         org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
         int i = style.getDataFormat();
         String f = style.getDataFormatString();
         return DateUtil.isADateFormat(i, f);
     }
 
-    boolean isDateTimeFormat(PoiCellStyle cellStyle) {
+    static boolean isDateTimeFormat(PoiCellStyle cellStyle) {
         org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
         int i = style.getDataFormat();
         String f = style.getDataFormatString();
@@ -656,7 +656,7 @@ public final class PoiCell extends AbstractCell {
 
         // if not, let POI do the formatting
         FormulaEvaluator evaluator = getWorkbook().evaluator;
-        DataFormatter dataFormatter = getWorkbook().getDataFormatter(locale);
+        DataFormatter dataFormatter = PoiWorkbook.getDataFormatter(locale);
         try {
             return dataFormatter.formatCellValue(poiCell, evaluator);
         } catch (@SuppressWarnings("unused") IllegalArgumentException ex) {
@@ -665,7 +665,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     /**
-     * Update sheet data, ie. first and last cell numbers.
+     * Update sheet data, i.e. first and last cell numbers.
      */
     private void updateRow() {
         if (getCellType() != CellType.BLANK) {
