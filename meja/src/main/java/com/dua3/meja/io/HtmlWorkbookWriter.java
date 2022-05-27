@@ -195,7 +195,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 writeAttribute(out, "colspan", cell, Cell::getHorizontalSpan, v -> v>1, Object::toString);
                 writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v>1, Object::toString);
                 if (!style.equals(defaultCellStyle)) {
-                    writeAttribute(out, "class", HtmlWorkbookWriter.id(style));
+                    writeAttribute(out, "class", id(style));
                 }
                 out.format(Locale.ROOT, ">");
 
@@ -243,8 +243,8 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * Write to a Formatter.
      *
      * @param workbook the workbook to write
-     * @param out      the write to write the workbook to
-     * @param locale   the locale to use (i. e. when formatting cell contents such as numbers)
+     * @param out      the writer to write the workbook to
+     * @param locale   the locale to use (i.e. when formatting cell contents such as numbers)
      * @throws IOException if an input/output error occurs
      */
     public void write(Workbook workbook, Formatter out, Locale locale) throws IOException {
@@ -256,7 +256,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      *
      * @param workbook       the workbook to write
      * @param out            the Formatter to write the workbook to
-     * @param locale         the locale to use (i. e. when formatting cell contents such as numbers)
+     * @param locale         the locale to use (i.e. when formatting cell contents such as numbers)
      * @param updateProgress callback for progress updates
      * @throws IOException   if an input/output error occurs
      */
@@ -269,7 +269,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      *
      * @param workbook       the workbook to write
      * @param out            the OutputStream to write the workbook to
-     * @param locale         the locale to use (i. e. when formatting cell contents such as numbers)
+     * @param locale         the locale to use (i.e. when formatting cell contents such as numbers)
      * @param updateProgress callback for progress updates
      * @throws IOException   if an input/output error occurs
      */
@@ -380,7 +380,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         // write common styles
         writeCommonCss(out, sheet.getWorkbook().getDefaultCellStyle());
         
-        // write user defined styles in sorted order to get reproducible results (i. e. in unit tests)
+        // write user defined styles in sorted order to get reproducible results (i.e. in unit tests)
         SortedMap<String,CellStyle> styles = new TreeMap<>();
         sheet.rows().forEach(row -> row.cells().map(Cell::getCellStyle).forEach(s -> styles.putIfAbsent(s.getName(), s)));
         styles.values().forEach(cs -> writeCellStyle(out, cs));

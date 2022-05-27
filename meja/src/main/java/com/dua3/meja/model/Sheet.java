@@ -321,7 +321,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
      * Split (freeze) view.
-     *
+     * <p>
      * Splits the sheet so that rows <em>above</em> i and columns <em>to the
      * left</em> of j remain in view when scrolling.
      *
@@ -349,7 +349,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
             @Override
             public Row next() {
                 if (!hasNext()) {
-                    throw new NoSuchElementException();
+                    throw new NoSuchElementException("no more rows in sheet");
                 }
 
                 return getRow(rowNum++);
@@ -452,8 +452,8 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     /**
      * Get row name as String.
      *
-     * @param i the row number as used in Excel spreadsheets
-     * @return the row name ("1" for row number 0)
+     * @param i the row number
+     * @return the row name (in Excel convention, i.e. "1" for row number 0)
      */
     static String getRowName(int i) {
         return Integer.toString(i + 1);

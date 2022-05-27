@@ -26,7 +26,7 @@ import com.dua3.utility.text.Font;
 public interface CellStyle {
 
     /**
-     * Enumaration of standard data formats.
+     * Enumeration of standard data formats.
      */
     enum StandardDataFormats {
         FULL, 

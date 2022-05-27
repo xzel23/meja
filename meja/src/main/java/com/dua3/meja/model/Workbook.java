@@ -196,7 +196,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Find sheet by name. This works like {@link #getSheetByName(String)} except that it returns an Optional and does
-     * not throw an {@code IllegalArgumentException} when the sheet dooes not exist.
+     * not throw an {@code IllegalArgumentException} when the sheet does not exist.
      *
      * @param sheetName name of sheet
      * @return an Optional holding the sheet or an empty Optional
@@ -318,9 +318,9 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * Set object caching.
      * <br>
      * When object caching is enabled, cell values will be added to a simple cache. This helps to reduce memory
-     * consumption when adding many different instances to a workbook that are technically equal. A good example is
+     * consumption when adding many instances to a workbook that are technically equal. A good example is
      * adding calculated dates to a workbook with many cells containing instances representing the same values.
-     * The effect on memory consumption may vary between different workbook implementations. When in doubt, nmeasure
+     * The effect on memory consumption may vary between different workbook implementations. When in doubt, measure
      * with realistic data for your use case.
      * 
      * @param enable flag indicating whether to en- or disable object caching 

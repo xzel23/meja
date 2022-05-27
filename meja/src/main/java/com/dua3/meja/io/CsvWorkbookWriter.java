@@ -82,7 +82,7 @@ public final class CsvWorkbookWriter implements WorkbookWriter {
      * format. The Encoding must be set correctly in the writer.
      *
      * @param workbook the workbook to write
-     * @param out      the write to write the workbook to
+     * @param out      the writer to write the workbook to
      * @throws IOException if an input/output error occurs
      */
     public void write(Workbook workbook, BufferedWriter out) throws IOException {
@@ -98,7 +98,7 @@ public final class CsvWorkbookWriter implements WorkbookWriter {
      * format. The Encoding must be set correctly in the writer.
      *
      * @param workbook       the workbook to write
-     * @param out            the write to write the workbook to
+     * @param out            the writer to write the workbook to
      * @param updateProgress callback for progress updates
      * @throws IOException if an input/output error occurs
      */

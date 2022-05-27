@@ -215,7 +215,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
         mnHelp.add(SwingUtil.createAction("About ...", e -> {
             String title = "About " + APPLICATION_NAME;
             String msg = model.getLicenseText();
-            JOptionPane.showMessageDialog(SwingExcelViewer.this, msg, title, JOptionPane.INFORMATION_MESSAGE, null);
+            JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE, null);
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }));
         menuBar.add(mnHelp);

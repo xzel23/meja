@@ -1,7 +1,7 @@
 package com.dua3.meja.model;
 
 /**
- * Abstract base class for implementaions of the {@link Row} interface.
+ * Abstract base class for implementations of the {@link Row} interface.
  */
 public abstract class AbstractRow implements Row {
 

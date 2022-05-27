@@ -63,8 +63,8 @@ public interface Row extends Iterable<Cell> {
 
     /**
      * Get column number of first cell.
-     *
-     * Workbooks have an area of used cells. All cells outside of that area are
+     * <p>
+     * Workbooks have an area of used cells. All cells outside that area are
      * blank. If the value returned by this method is greater than 0 that means that
      * all the cells to the left of the column returned are blank. The opposite is
      * not necessarily true, since the area of used cells might not be updated when
@@ -76,8 +76,8 @@ public interface Row extends Iterable<Cell> {
 
     /**
      * Get column number of last cell.
-     *
-     * Workbooks have an area of used cells. All cells outside of that area are
+     * <p>
+     * Workbooks have an area of used cells. All cells outside that area are
      * blank. If the value returned by this method is less than the number of
      * columns-1 that means that all the cells to the right of the column returned
      * are blank. The opposite is not necessarily true, since the area of used cells
@@ -128,7 +128,7 @@ public interface Row extends Iterable<Cell> {
             @Override
             public Cell next() {
                 if (!hasNext()) {
-                    throw new NoSuchElementException();
+                    throw new NoSuchElementException("no more cells in row");
                 }
 
                 return getCell(colNum++);

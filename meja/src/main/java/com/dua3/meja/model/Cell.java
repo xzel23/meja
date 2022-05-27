@@ -164,7 +164,7 @@ public interface Cell {
 
     /**
      * Get the horizontal span.
-     *
+     * <p>
      * The horizontal span of a merged cells is the horizontal number of merged
      * cells for the top left cell of the merged cells and 0 for the other merged
      * cells. For cells that are not merged, the span is 1.
@@ -239,7 +239,7 @@ public interface Cell {
 
     /**
      * Get the vertical span.
-     *
+     * <p>
      * The vertical span of a merged cells is the vertical number of merged cells
      * for the top left cell of the merged cells and 0 for the other merged cells.
      * For cells that are not merged, the span is 1.

@@ -53,7 +53,7 @@ public enum VAlign {
 
     /**
      * Get automatic wrapping for this alignment.
-     *
+     * <p>
      * When laying out text justified horizontally, the text is automatically
      * wrapped regardless of the cell style setting.
      *
@@ -65,7 +65,7 @@ public enum VAlign {
 
     /**
      * Get CSS style definition.
-     * @return CSS style (i. e. "vertical-align: ...;")
+     * @return CSS style (i.e. "vertical-align: ...;")
      */
     public String getCssStyle() {
         return css;

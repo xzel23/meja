@@ -136,7 +136,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     /**
      *
      * @param uri URI of the workbook to open
-     * @return the workbook the workbook
+     * @return the workbook
      * @throws IOException if an error occurs
      */
     @Override

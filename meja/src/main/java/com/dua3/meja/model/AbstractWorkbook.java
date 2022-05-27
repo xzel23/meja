@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 /**
- * Abstract base class for implementaions of the {@link Workbook} interface.
+ * Abstract base class for implementations of the {@link Workbook} interface.
  */
 public abstract class AbstractWorkbook implements Workbook {
 

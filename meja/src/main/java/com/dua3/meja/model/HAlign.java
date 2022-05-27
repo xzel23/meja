@@ -54,7 +54,7 @@ public enum HAlign {
 
     /**
      * Get automatic wrapping for this alignment.
-     *
+     * <p>
      * When laying out text justified, the text is automatically wrapped regardless
      * of the cell style setting.
      *
@@ -66,7 +66,7 @@ public enum HAlign {
 
     /**
      * Get CSS style definition.
-     * @return CSS style (i. e. "text-align: ...;")
+     * @return CSS style (i.e. "text-align: ...;")
      */
     public String getCssStyle() {
         return css; 

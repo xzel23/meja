@@ -70,7 +70,7 @@ public class ExcelViewerModel {
 
     /**
      * The current directory.
-     *
+     * <p>
      * This is the default directory selected in the Open and Save To dialogs.
      */
     private URI currentUri = Paths.get("").toUri();

@@ -232,7 +232,7 @@ public class GenericSheet extends AbstractSheet {
     @Override
     public void setColumnWidth(int j, float width) {
         if (j < columnWidth.size()) {
-            if (!Objects.equals(columnWidth.set(j, width), width)) { // use Objects.equlas to avoid NPE!
+            if (!Objects.equals(columnWidth.set(j, width), width)) { // use Objects.equals to avoid NPE!
                 firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
             }
         } else {

@@ -290,7 +290,7 @@ public final class MejaHelper {
      * @param sheet
      *  the sheet to print
      * @param locale
-     *  the locale to use (i. e. for number formatting)
+     *  the locale to use (i.e. for number formatting)
      * @param printOptions
      *  the {@link PrintOptions} to use
      * @return
@@ -299,7 +299,7 @@ public final class MejaHelper {
     public static <A extends Appendable> A printTable(A app, Sheet sheet, Locale locale, PrintOptions... printOptions) {
         EnumSet<PrintOptions> options = LangUtil.enumSet(PrintOptions.class, printOptions);
 
-        // setup the symbols used to drawing lines
+        // set up the symbols used to drawing lines
         final String pipe, dash, cross;
         if (options.contains(PrintOptions.DRAW_LINES)) {
             pipe = "|";

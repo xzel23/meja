@@ -138,7 +138,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * Calculate the rectangle the cell occupies on screen.
      *
      * @param cell the cell whose area is requested
-     * @return rectangle the rectangle the cell takes up in screen coordinates
+     * @return the rectangle the cell takes up in screen coordinates
      */
     public Rectangle getCellRect(Cell cell) {
         final int i = cell.getRowNumber();
@@ -550,7 +550,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
     /**
      * Draw cells.
-     *
+     * <p>
      * Since borders can be draw over by the background of adjacent cells and text
      * can overlap, drawing is done in three steps:
      * <ul>
@@ -608,7 +608,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                 final boolean visible;
                 //noinspection ObjectEquality
                 if (cell == logicalCell) {
-                    // if cell is not merged or the topleft cell of the
+                    // if cell is not merged or the top left cell of the
                     // merged region, then it is visible
                     visible = true;
                 } else {

@@ -52,7 +52,7 @@ public class CellValueHelper {
      *         is equal to either "true" or "false" (ignoring case). {@code null}
      *         otherwise.
      */
-    private Optional<Boolean> parseBoolean(String text) {
+    private static Optional<Boolean> parseBoolean(String text) {
         text = text.trim();
         if (Boolean.FALSE.toString().equalsIgnoreCase(text)) {
             return Optional.of(Boolean.FALSE);

@@ -6,7 +6,7 @@ import com.dua3.meja.util.Cache.Type;
 
 /**
  * A simple object cache used to avoid creating unnecessary instances of some implementation classes, notably
- * in the POI implkementation.
+ * in the POI implementation.
  */
 public class ObjectCache {
 

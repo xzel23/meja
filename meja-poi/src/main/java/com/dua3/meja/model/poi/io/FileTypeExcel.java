@@ -15,7 +15,7 @@ import java.util.function.Function;
 
 /**
  * FileType for <em>reading</em> Excel files.
- *
+ * <p>
  * There are different file types for reading and writing because
  * when reading, the user normally wants to have a filter that shows <em>all</em>
  * Excel files.

@@ -74,7 +74,7 @@ public class DefaultCellRenderer implements CellRenderer {
         component.setBounds(bounds);
         component.setContent(cell, scale, true);
 
-        // setup a graphics context for painting
+        // set up a graphics context for painting
         clip = canvas.intersection(clip).intersection(g.getClipBounds());
         clip.translate(-canvas.x, -canvas.y);
         final Graphics gPaint = g.create(canvas.x, canvas.y, canvas.width, canvas.height);

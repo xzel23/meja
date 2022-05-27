@@ -5,7 +5,7 @@
  - **Java 17 required**
  - module names changed to `com.dua3.meja`
  - Apache POI updated to 5.2.0
- - some method names have changed because a few classes have been replaced by records (i. e. `getxxx()` -> `xxx()`)
+ - some method names have changed because a few classes have been replaced by records (i.e. `getxxx()` -> `xxx()`)
  - API is "not-null-per default", i.e. all parameters of object type must not be null unless otherwise stated in the documentation. This is checked at runtime when assertions are enabled.
  - All overrides of MejaHelper.find() return Optional
 
@@ -29,7 +29,7 @@
 
  - POI: fix copying sheet with autofilter
  - fix rotated text in HTML output
- - bugfixes in POI implementatation
+ - bugfixes in POI implementation
  - fix CellStyle.getRotation() returning values >90 degrees in XSSF implementation
  - fix Poi implementation: Row.getLastCellNum() returned -2 for empty rows()
  - Row.getFirstCellNum() returns 0 for empty rows (was unspecified)
@@ -39,7 +39,7 @@
  - several minor fixes
  - change Cell.setCellStyle() return type from void to Cell to allow chaining
  - HTML-export: display links in color defined by cell style
- - disabled the POI-module build fore the time being - I will either enable it for final or switch to POI 5 which will hopefully be Jigsaw compatible by itself so that the POI-module will not be needed anymore
+ - disabled the POI-module build for the time being - I will either enable it for final or switch to POI 5 which will hopefully be Jigsaw compatible by itself so that the POI-module will not be needed anymore
  - update utility
  - update spotbugs
  - code cleanup
@@ -91,7 +91,7 @@
 ## Version 2.0.8
 
  - update utility dependency
- - fix hyperlinks - links are now passed by URI as problems with absolute paths on windows could not be resolved with URLs
+ - fix hyperlinks - links are now passed by URI as problems with absolute paths on Windows could not be resolved with URLs
  
 ## Version 2.0.7
 
@@ -239,7 +239,7 @@ __BETA2__:
 __BETA1__:
 
 - Meja requires Java 11 to compile and run.
-- Provides Jigsaw modules. However Apache POI is not yet fully modularised, so keep in mind when using jlink with meja.poi.
+- Provides Jigsaw modules. However, Apache POI is not yet fully modularised, so keep in mind when using jlink with meja.poi.
 - WorkbookFactory implementations can be loaded by `ServiceProvider.load()`. Loading is done automatically when using FileType.forPath(...).factory().
 - To run samples, run `./gradlew run` in the project directory
 

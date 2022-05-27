@@ -238,7 +238,7 @@ public final class MejaSwingHelper {
 
     public static Optional<Workbook> openWorkbook(Component parent, URI uri) throws IOException {
         FileType<Workbook> fileType = FileType.forUri(uri, Workbook.class)
-                .orElseThrow(() -> new IllegalArgumentException("Unknonwn filetype: "+uri));
+                .orElseThrow(() -> new IllegalArgumentException("unknown filetype: "+uri));
 
         // load
         return Optional.of(fileType.read(uri, t -> showOptionsDialog(parent, t)));

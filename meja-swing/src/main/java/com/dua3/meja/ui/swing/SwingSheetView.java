@@ -626,7 +626,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
     /**
      * Constructor.
-     *
+     * <p>
      * No sheet is set.
      */
     public SwingSheetView() {
@@ -987,22 +987,18 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             case NORTH -> {
                 int y = Math.max(0, cellRect.y - getVisibleRect().height);
                 setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
-                break;
             }
             case SOUTH -> {
                 int y = Math.min(getSheetHeight() - 1, cellRect.y + getVisibleRect().height);
                 setCurrentRowNum(sheetPainter.getRowNumberFromY(yD2S(y)));
-                break;
             }
             case WEST -> {
                 int x = Math.max(0, cellRect.x - getVisibleRect().width);
                 setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
-                break;
             }
             case EAST -> {
                 int x = Math.min(getSheetWidth() - 1, cellRect.x + getVisibleRect().width);
                 setCurrentColNum(sheetPainter.getColumnNumberFromX(xD2S(x)));
-                break;
             }
         }
     }
