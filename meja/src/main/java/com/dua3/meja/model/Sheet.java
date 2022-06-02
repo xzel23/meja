@@ -416,11 +416,11 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     static String getColumnName(int j) {
         StringBuilder sb = new StringBuilder();
-        //noinspection CharUsedInArithmeticContext,NumericCastThatLosesPrecision
+        // noinspection CharUsedInArithmeticContext
         sb.append((char) ('A' + j % 26));
         j /= 26;
         while (j > 0) {
-            //noinspection CharUsedInArithmeticContext,NumericCastThatLosesPrecision
+            // noinspection CharUsedInArithmeticContext
             sb.insert(0, (char) ('A' + j % 26 - 1));
             j /= 26;
         }

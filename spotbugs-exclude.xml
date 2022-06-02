@@ -48,4 +48,8 @@
         <Bug code="RCN"/>
         <Class name="com.dua3.meja.model.poi.PoiCellStyle$PoiXssfCellStyle"/>
     </Match>
+    <Match>
+        <Bug code="RCN"/>
+        <Class name="com.dua3.meja.samples.CreateCalendar"/>
+    </Match>
 </FindBugsFilter>
