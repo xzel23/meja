@@ -1,7 +1,0 @@
-description = 'Meja spreadsheet library - swing tools'
-
-dependencies {
-    implementation project(':meja')
-
-    implementation "com.dua3.utility:utility-swing:${dua3_utility_version}"
-}

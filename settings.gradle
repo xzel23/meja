@@ -1,2 +1,0 @@
-rootProject.name = 'meja'
-include 'meja', 'meja-generic', 'meja-poi', 'meja-swing', 'meja-fx', 'meja-db', 'meja-samples'

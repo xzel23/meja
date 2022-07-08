@@ -1,5 +1,0 @@
-description = 'Meja spreadsheet library - database tools'
-
-dependencies {
-    api project(':meja')
-}
