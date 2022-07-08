@@ -1,4 +1,4 @@
-rootProject.name = "meja"
+rootProject.name = "dua3-meja"
 
 include("meja")
 include("meja-generic") 
