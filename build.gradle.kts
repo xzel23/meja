@@ -29,7 +29,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.meja"
-    val version         = "3.0.0-RC3"
+    val version         = "3.0.0-RC4-SNAPSHOT"
     val scm             = "https://gitlab.com/com.dua3/lib/meja.git"
     val repo            = "public"
     val licenseName     = "The Apache Software License, Version 2.0"
@@ -49,6 +49,8 @@ val dua3UtilityVersion  by extra { "10.0.0-RC5" }
 val cabeVersion         by extra { "1.0.0-RC4" }
 
 subprojects {
+
+    project.setVersion(meta.version)
 
     apply(plugin = "java-library")
     apply(plugin = "maven-publish")
