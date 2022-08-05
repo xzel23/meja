@@ -450,7 +450,11 @@ public interface Cell {
         LangUtil.check(!isMerged(), "Cell is already merged.");
         LangUtil.check(spanX >= 1);
         LangUtil.check(spanY >= 1);
-        LangUtil.check(spanX > 1 || spanY > 1, "At least 2 cells must be merged.");
+        
+        if (spanX==1 && spanY==1) {
+            // ignore
+            return this;
+        }
 
         int iMin = getRowNumber();
         int iMax = iMin + spanY - 1;
