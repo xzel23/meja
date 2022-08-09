@@ -23,13 +23,13 @@ plugins {
     id("com.github.ben-manes.versions") version "0.42.0"
     id("com.adarshr.test-logger") version "3.2.0"
     id("com.github.spotbugs") version "5.0.9"
-    id("com.dua3.cabe") version "1.0.0-RC7"
+    id("com.dua3.cabe") version "1.0.0"
 }
 
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.meja"
-    val version         = "3.0.0-RC5-SNAPSHOT"
+    val version         = "3.0.0-RC5"
     val scm             = "https://gitlab.com/com.dua3/lib/meja.git"
     val repo            = "public"
     val licenseName     = "The Apache Software License, Version 2.0"
@@ -45,8 +45,7 @@ object meta {
 val isReleaseVersion = !meta.version.endsWith("SNAPSHOT")
 
 val javafxVersion       by extra { "18.0.2" }
-val dua3UtilityVersion  by extra { "10.0.0-RC8-SNAPSHOT" }
-val cabeVersion         by extra { "1.0.0-RC7" }
+val dua3UtilityVersion  by extra { "10.0.0-RC8" }
 
 subprojects {
 
@@ -92,7 +91,7 @@ subprojects {
     // dependencies
     dependencies {
         // Cabe (source annotations)
-        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0-RC7")
+        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0")
 
         // JUnit
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
