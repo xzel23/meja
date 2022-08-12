@@ -1,6 +1,6 @@
 # Meja Changelog
 
-## Version 3 (to be released)
+## Version 3.0.0
 
  - **Java 17 required**
  - module names changed to `com.dua3.meja`
