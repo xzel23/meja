@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 3.0.1 (to be released)
+
+- small fixes improvements
+
 ## Version 3.0.0
 
  - **Java 17 required**
