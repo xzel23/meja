@@ -18,7 +18,6 @@ package com.dua3.meja.model;
 import com.dua3.meja.util.RectangularRegion;
 
 import java.beans.PropertyChangeListener;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -250,7 +249,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      *  new row instance
      */
     default Row createRow(Object... values) {
-        return createRowWith(Arrays.asList(values));
+        return createRowWith(List.of(values));
     }
 
     /**

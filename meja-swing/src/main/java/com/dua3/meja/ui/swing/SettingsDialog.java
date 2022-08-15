@@ -1,15 +1,9 @@
 package com.dua3.meja.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
+import com.dua3.utility.options.Arguments;
+import com.dua3.utility.options.ChoiceOption;
+import com.dua3.utility.options.Option;
+import com.dua3.utility.swing.SwingUtil;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -21,11 +15,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
-
-import com.dua3.utility.options.Option;
-import com.dua3.utility.options.ChoiceOption;
-import com.dua3.utility.options.Arguments;
-import com.dua3.utility.swing.SwingUtil;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 
 @SuppressWarnings("serial")
 public class SettingsDialog extends JDialog {
@@ -81,7 +79,7 @@ public class SettingsDialog extends JDialog {
     }
 
     SettingsDialog(JFrame parent, String title, String text, Option<?>... options) {
-        this(parent, title, text, Arrays.asList(options));
+        this(parent, title, text, List.of(options));
     }
 
     public Arguments getResult() {
