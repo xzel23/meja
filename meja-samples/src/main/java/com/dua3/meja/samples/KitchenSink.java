@@ -1,15 +1,5 @@
 package com.dua3.meja.samples;
 
-import java.io.IOException;
-import java.io.Serial;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
@@ -22,6 +12,15 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import java.io.IOException;
+import java.io.Serial;
+import java.util.Map.Entry;
 
 /**
  * Kitchensink example.
@@ -30,7 +29,7 @@ public final class KitchenSink extends JFrame {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(KitchenSink.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(KitchenSink.class);
 
     private static void addColorSheet(Workbook wb) {
         Sheet sheet = wb.createSheet("colors");
@@ -129,7 +128,7 @@ public final class KitchenSink extends JFrame {
         try {
             wb.close();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Exception occurred while closing workbook.", e);
+            logger.error("exception occurred while closing workbook", e);
         }
         super.dispose();
     }

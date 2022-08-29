@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -71,6 +71,7 @@ import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
+import org.slf4j.LoggerFactory;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -585,7 +586,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
     }
 
-    private static final Logger LOG = Logger.getLogger(SwingSheetView.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SwingSheetView.class);
 
     private transient IntFunction<String> columnNames = Sheet::getColumnName;
 
@@ -838,7 +839,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             Sheet oldSheet = this.sheet;
             this.sheet = sheet;
 
-            LOG.fine("sheet changed.");
+            LOG.debug("sheet changed");
 
             if (this.sheet != null) {
                 this.sheet.addPropertyChangeListener(this);
@@ -1040,7 +1041,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     }
 
     private void updateContent() {
-        LOG.fine("updating content");
+        LOG.debug("updating content");
 
         if (sheet == null) {
             return;

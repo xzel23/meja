@@ -15,17 +15,17 @@
  */
 package com.dua3.meja.model.poi.io;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.function.DoubleConsumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.utility.options.Arguments;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.function.DoubleConsumer;
 
 /**
  * Implementation of {@link WorkbookWriter} for Excel files in the old
@@ -33,7 +33,7 @@ import com.dua3.utility.options.Arguments;
  */
 public final class XlsWorkbookWriter implements WorkbookWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(XlsWorkbookWriter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(XlsWorkbookWriter.class);
 
     private static final XlsWorkbookWriter INSTANCE = new XlsWorkbookWriter();
 
@@ -52,17 +52,16 @@ public final class XlsWorkbookWriter implements WorkbookWriter {
     @Override
     public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
         if (workbook instanceof PoiHssfWorkbook) {
-            LOGGER.log(Level.FINE, "writing XLS workbook using POI.");
+            LOGGER.debug("writing XLS workbook using POI");
             workbook.write(FileTypeXls.instance(), out, Arguments.empty(), updateProgress);
         } else {
             try (Workbook xlsWorkbook = PoiWorkbookFactory.instance().createXls()) {
-                LOGGER.log(Level.FINE, "copying workbook data ...");
+                LOGGER.debug("copying workbook data");
                 xlsWorkbook.copy(workbook);
-                LOGGER.log(Level.FINE, "writing workbook ...");
+                LOGGER.debug("writing workbook");
                 xlsWorkbook.write(FileTypeXls.instance(), out, Arguments.empty(), updateProgress);
-                LOGGER.log(Level.FINE, "flushing buffers ...");
+                LOGGER.debug("flushing buffers");
                 out.flush();
-                LOGGER.log(Level.FINE, "done.");
             }
         }
     }

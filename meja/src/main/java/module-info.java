@@ -20,11 +20,11 @@ module com.dua3.meja {
     opens com.dua3.meja.model;
     opens com.dua3.meja.io;
 
-    requires java.logging;
     requires java.desktop;
     requires com.dua3.utility;
     
     requires static com.dua3.cabe.annotations;
+    requires org.slf4j;
 
     uses com.dua3.meja.model.WorkbookFactory;
 

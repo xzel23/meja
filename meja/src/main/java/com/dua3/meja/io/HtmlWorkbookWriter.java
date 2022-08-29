@@ -30,7 +30,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Formatter;
+import java.util.HexFormat;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.DoubleConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -122,7 +127,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     private static String id(CellStyle style) {
         return id(style.getWorkbook())
-               +"_CS_"
+               + "_CS_"
                + HexFormat.of().formatHex(style.getName().getBytes(StandardCharsets.UTF_8));
     }
 

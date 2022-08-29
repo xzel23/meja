@@ -2,13 +2,13 @@ package com.dua3.meja.db;
 
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Utility class for using Meja with JDBC.
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public final class DbMejaUtil {
 
     /** Logger */
-    private static final Logger LOG = Logger.getLogger(DbMejaUtil.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(DbMejaUtil.class);
     private static final String ERROR_TEXT = "###";
 
     /**
@@ -35,16 +35,16 @@ public final class DbMejaUtil {
      *  if an error occurs while reading from the ResultSet.
      */
     public static int fill(Sheet sheet, ResultSet rs, boolean addTableHeader) throws SQLException {
-        LOG.fine("populating Sheet with ResultSet data");
+        LOG.debug("populating Sheet with ResultSet data");
 
         // read result metadata
-        LOG.finer("reading result meta data ...");
+        LOG.trace("reading result meta data");
         ResultSetMetaData meta = rs.getMetaData();
         int nColumns = meta.getColumnCount();
 
         // create table header
         if (addTableHeader) {
-            LOG.finer("creating table header ...");
+            LOG.trace("creating table header");
             Row header = sheet.createRow();
             for (int i = 1; i <= nColumns; i++) {
                 String label = meta.getColumnLabel(i);
@@ -53,7 +53,7 @@ public final class DbMejaUtil {
         }
 
         // read result
-        LOG.finer("reading result data ...");
+        LOG.trace("reading result data");
         int k = 0;
         while (rs.next()) {
             Row row = sheet.createRow();
@@ -63,7 +63,7 @@ public final class DbMejaUtil {
             k++;
         }
         final int n = k;
-        LOG.finer(() -> "read "+n+" rows of data");
+        LOG.debug("read {} rows of data", n);
 
         return n;
     }
@@ -77,7 +77,7 @@ public final class DbMejaUtil {
         try {
             return clob.getSubString(1, (int) Math.min(Integer.MAX_VALUE, clob.length()));
         } catch (SQLException e) {
-            LOG.log(Level.WARNING, "could no convert Clob to String", e);
+            LOG.warn("could no convert Clob to String", e);
             return ERROR_TEXT;
         }
     }

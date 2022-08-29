@@ -1,5 +1,11 @@
 package com.dua3.meja.model;
 
+import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.lang.LangUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -9,19 +15,13 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.dua3.cabe.annotations.Nullable;
-import com.dua3.meja.util.RectangularRegion;
-import com.dua3.utility.lang.LangUtil;
 
 /**
  * Abstract base class for implementations of the {@link Sheet} interface.
  */
 public abstract class AbstractSheet implements Sheet {
 
-    private static final Logger LOG = Logger.getLogger(AbstractSheet.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractSheet.class);
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -95,7 +95,7 @@ public abstract class AbstractSheet implements Sheet {
         // add to list
         mergedRegions.add(cells);
 
-        LOG.log(Level.FINE, "added merged region: {0}", cells);
+        LOG.debug("added merged region: {}", cells);
     }
 
     @Override
@@ -124,7 +124,7 @@ public abstract class AbstractSheet implements Sheet {
                 }
             }
         }
-        LOG.log(Level.FINE, "removed merged region at [{0}]", rowNumber + "," + columnNumber);
+        LOG.debug("removed merged region at [{},{}]", rowNumber, columnNumber);
     }
 
     @Override

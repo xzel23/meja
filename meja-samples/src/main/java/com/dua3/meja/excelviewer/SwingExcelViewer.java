@@ -15,6 +15,27 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.meja.excelviewer.ExcelViewerModel.ExcelViewer;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.ui.SheetView;
+import com.dua3.meja.ui.swing.MejaSwingHelper;
+import com.dua3.meja.ui.swing.SwingWorkbookView;
+import com.dua3.meja.util.MejaHelper;
+import com.dua3.utility.swing.SwingUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -33,28 +54,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.AbstractAction;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.WindowConstants;
-
-import com.dua3.meja.excelviewer.ExcelViewerModel.ExcelViewer;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.ui.swing.MejaSwingHelper;
-import com.dua3.meja.ui.swing.SwingWorkbookView;
-import com.dua3.meja.util.MejaHelper;
-import com.dua3.utility.swing.SwingUtil;
 
 /**
  * A sample Swing application that uses the Meja library to load and display
@@ -65,7 +64,7 @@ import com.dua3.utility.swing.SwingUtil;
 @SuppressWarnings("serial")
 public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetListener {
 
-    private static final Logger LOG = Logger.getLogger(SwingExcelViewer.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SwingExcelViewer.class);
 
     private static final int STATUS_ERROR = 1;
 
@@ -108,7 +107,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
                 try {
                     viewer.setWorkbook(MejaHelper.openWorkbook(file.toURI()));
                 } catch (IOException ex) {
-                    LOG.log(Level.SEVERE, "Could not load workbook from " + file.getAbsolutePath(), ex);
+                    LOG.error("could not load workbook from " + file.getAbsolutePath(), ex);
                 }
             }
         });
@@ -136,7 +135,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
      * Close the application window.
      */
     protected void closeApplication() {
-        LOG.info("Closing.");
+        LOG.info("closing");
         dispose();
     }
 
@@ -246,7 +245,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
                         model.getCurrentUri());
                 if (newUri.isEmpty()) {
                     // user cancelled the dialog
-                    LOG.fine("save-dialog was cancelled.");
+                    LOG.debug("save-dialog was cancelled");
                     return;
                 }
                 workbookChanged(null /* old path was not set */, newUri.get());
@@ -254,7 +253,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
                 model.saveWorkbook(uri.get());
             }
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "IO-Error saving workbook.", ex);
+            LOG.error("exception saving workbook", ex);
             JOptionPane.showMessageDialog(this, "IO-Error saving workbook.", "Workbook could not be saved.",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -270,7 +269,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
             UIManager.setLookAndFeel(lookAndFeelClassName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
-            LOG.log(Level.SEVERE, "Could not set Look&Feel.", ex);
+            LOG.error("could not set look&feel", ex);
         }
         SwingUtilities.updateComponentTreeUI(this);
     }
@@ -288,11 +287,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
                     model.getCurrentUri());
             newWorkbook.ifPresent(this::setWorkbook);
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Exception loading workbook.", ex);
+            LOG.error("exception loading workbook", ex);
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            LOG.log(Level.SEVERE, "Unknown Exception caught, will be rethrown after message dialog: {0}",
+            LOG.error("unknown Exception caught, will be rethrown after message dialog: {}",
                     ex.getMessage());
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
@@ -318,15 +317,14 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
             uri.ifPresent(value -> {
                 workbook.setUri(value);
                 updateUri(value);
-                LOG.info("Saved workbook to '" + value + "'.'");
+                LOG.info("saved workbook to {}", value);
             });
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, "Exception saving workbook.", ex);
+            LOG.error("exception saving workbook", ex);
             JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            LOG.log(Level.SEVERE,
-                    "Unknown Exception caught, will be rethrown after message dialog: " + ex.getMessage());
+            LOG.error("unknown exception caught, will be rethrown after message dialog: " + ex.getMessage());
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
             throw ex; // rethrow
@@ -384,16 +382,16 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
                         setWorkbook(workbook.get());
                         dtde.getDropTargetContext().dropComplete(true);
                     } else {
-                        LOG.log(Level.WARNING, () -> "Could not process dropped item '" + uri + "'.");
+                        LOG.warn("could not process dropped item '{}'", uri);
                         dtde.getDropTargetContext().dropComplete(false);
                     }
                 }
             } else {
-                LOG.warning("DataFlavor.javaFileListFlavor is not supported, drop rejected.");
+                LOG.warn("DataFlavor.javaFileListFlavor is not supported, drop rejected");
                 dtde.rejectDrop();
             }
         } catch (Exception ex) {
-            LOG.log(Level.WARNING, "Exception when processing dropped item, rejecting drop.", ex);
+            LOG.warn("exception processing dropped item, drop rejected", ex);
             dtde.rejectDrop();
         }
     }

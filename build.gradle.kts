@@ -29,7 +29,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.meja"
-    val version         = "3.0.1-SNAPSHOT"
+    val version         = "3.1.0-SNAPSHOT"
     val scm             = "https://gitlab.com/com.dua3/lib/meja.git"
     val repo            = "public"
     val licenseName     = "The Apache Software License, Version 2.0"
@@ -45,7 +45,7 @@ object meta {
 val isReleaseVersion = !meta.version.endsWith("SNAPSHOT")
 
 val javafxVersion       by extra { "18.0.2" }
-val dua3UtilityVersion  by extra { "10.0.1-SNAPSHOT" }
+val dua3UtilityVersion  by extra { "10.1.0-SNAPSHOT" }
 
 subprojects {
 
@@ -93,6 +93,9 @@ subprojects {
         // Cabe (source annotations)
         compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0")
 
+        // SLF4J
+        implementation("org.slf4j:slf4j-api:2.0.0")
+        
         // JUnit
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")

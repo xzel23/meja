@@ -15,14 +15,12 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -30,7 +28,7 @@ import com.dua3.meja.model.VAlign;
  */
 public final class PoiHelper {
 
-    private static final Logger LOGGER = Logger.getLogger(PoiHelper.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PoiHelper.class);
 
     public static HorizontalAlignment hAlignToPoi(HAlign hAlign) {
         return switch (hAlign) {
@@ -67,7 +65,7 @@ public final class PoiHelper {
         case DISTRIBUTED:
             return VAlign.ALIGN_DISTRIBUTED;
         default:
-            LOGGER.log(Level.WARNING, "Unknown value for vertical alignment: {0}", alignment);
+            LOGGER.warn("unknown value for vertical alignment: {}", alignment);
             return VAlign.ALIGN_MIDDLE;
         }
     }

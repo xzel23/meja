@@ -15,17 +15,17 @@
  */
 package com.dua3.meja.model.poi.io;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.function.DoubleConsumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.utility.options.Arguments;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.function.DoubleConsumer;
 
 /**
  * Implementation of {@link WorkbookWriter} for Excel files in the new
@@ -33,7 +33,7 @@ import com.dua3.utility.options.Arguments;
  */
 public final class XlsxWorkbookWriter implements WorkbookWriter {
 
-    private static final Logger LOGGER = Logger.getLogger(XlsxWorkbookWriter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(XlsxWorkbookWriter.class);
 
     private static final XlsxWorkbookWriter INSTANCE = new XlsxWorkbookWriter();
 
@@ -52,19 +52,18 @@ public final class XlsxWorkbookWriter implements WorkbookWriter {
     @Override
     public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
         if (workbook instanceof PoiXssfWorkbook) {
-            LOGGER.log(Level.FINE, "writing XLSX workbook using POI.");
+            LOGGER.debug("writing XLSX workbook using POI");
             workbook.write(FileTypeXlsx.instance(), out, Arguments.empty(), updateProgress);
         } else {
-            LOGGER.log(Level.FINE, "writing {0} using streaming API in XLSX format.",
+            LOGGER.debug("writing {} using streaming API in XLSX format",
                     workbook.getClass().getSimpleName());
             try (Workbook xlsxWorkbook = PoiWorkbookFactory.instance().createXlsxStreaming()) {
-                LOGGER.log(Level.FINE, "copying workbook data ...");
+                LOGGER.debug("copying workbook data");
                 xlsxWorkbook.copy(workbook);
-                LOGGER.log(Level.FINE, "writing workbook ...");
+                LOGGER.debug("writing workbook");
                 xlsxWorkbook.write(FileTypeXlsx.instance(), out, Arguments.empty(), updateProgress);
-                LOGGER.log(Level.FINE, "flushing buffers ...");
+                LOGGER.debug("flushing buffers");
                 out.flush();
-                LOGGER.log(Level.FINE, "done.");
             }
         }
     }

@@ -26,6 +26,8 @@ import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.swing.SwingFileFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -46,8 +48,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Helper class.
@@ -98,13 +98,13 @@ public final class MejaSwingHelper {
                     dispatcher = SheetTableModel.this::fireTableStructureChanged;
                     break;
                 default:
-                    dispatcher = () -> LOG.fine(() -> "ignored event: " + evt);
+                    dispatcher = () -> LOG.debug("ignored event: {}", evt);
                     break;
                 }
                 try {
                     SwingUtilities.invokeAndWait(dispatcher);
                 } catch (InvocationTargetException | InterruptedException e) {
-                    LOG.log(Level.WARNING, "interrupted", e);
+                    LOG.warn("interrupted", e);
                     Thread.currentThread().interrupt();
                 }
             }
@@ -169,7 +169,7 @@ public final class MejaSwingHelper {
 
             if (listenerList.getListenerCount() == 0) {
                 sl.detach();
-                LOG.fine("last TableModelListener was removed, detaching sheet listener from sheet");
+                LOG.debug("last TableModelListener was removed, detaching sheet listener from sheet");
             }
         }
 
@@ -179,12 +179,12 @@ public final class MejaSwingHelper {
 
             if (listenerList.getListenerCount() == 1) {
                 sl.attach();
-                LOG.fine("first TableModelListener was added, attaching sheet listener to sheet");
+                LOG.debug("first TableModelListener was added, attaching sheet listener to sheet");
             }
         }
     }
 
-    private static final Logger LOG = Logger.getLogger(MejaSwingHelper.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(MejaSwingHelper.class);
 
     /**
      * Create a TableModel to be used with JTable.
@@ -292,7 +292,7 @@ public final class MejaSwingHelper {
                     "File '" + file.getAbsolutePath() + "' already exists. Overwrite?", "File exists",
                     JOptionPane.YES_NO_OPTION);
             if (rc != JOptionPane.YES_OPTION) {
-                LOG.fine("User chose not to overwrite file.");
+                LOG.debug("user chose not to overwrite file");
                 return Optional.empty();
             }
         }

@@ -24,6 +24,8 @@ import com.dua3.meja.model.VAlign;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -33,8 +35,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -44,7 +44,7 @@ public class GenericCellStyle implements CellStyle {
 
     private static final BorderStyle defaultBorderStyle = new BorderStyle(0.0f, Color.BLACK);
 
-    private static final Logger LOGGER = Logger.getLogger(GenericCellStyle.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenericCellStyle.class);
 
     private final GenericWorkbook workbook;
 
@@ -101,7 +101,7 @@ public class GenericCellStyle implements CellStyle {
                     dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
                 }
             } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
-                LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
+                LOGGER.warn("not a date pattern: '{}'", dataFormat);
                 dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
             }
         }
@@ -125,7 +125,7 @@ public class GenericCellStyle implements CellStyle {
                     dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
                 }
             } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
-                LOGGER.log(Level.WARNING, "Not a date pattern: ''{0}''", dataFormat);
+                LOGGER.warn("not a date pattern: '{}'", dataFormat);
                 dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
             }
         }
@@ -147,7 +147,7 @@ public class GenericCellStyle implements CellStyle {
                 DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
                 numberFormatter = new DecimalFormat(fmt, symbols);
             } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
-                LOGGER.log(Level.WARNING, "Not a number pattern: ''{0}''", dataFormat);
+                LOGGER.warn("not a number pattern: '{}'", dataFormat);
                 numberFormatter = NumberFormat.getInstance(locale);
                 numberFormatter.setGroupingUsed(false);
             }

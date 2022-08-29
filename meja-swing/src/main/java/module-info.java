@@ -5,9 +5,9 @@ module com.dua3.meja.swing {
     requires transitive com.dua3.meja;
 
     requires java.desktop;
-    requires java.logging;
     requires com.dua3.utility;
     requires com.dua3.utility.swing;
     
     requires static com.dua3.cabe.annotations;
+    requires org.slf4j;
 }

@@ -46,7 +46,13 @@ import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -62,8 +68,6 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.DoubleConsumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -72,7 +76,7 @@ import java.util.stream.StreamSupport;
  */
 public abstract class PoiWorkbook extends AbstractWorkbook {
 
-    private static final Logger LOGGER = Logger.getLogger(PoiWorkbook.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PoiWorkbook.class);
     /**
      *
      */
@@ -335,8 +339,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             try {
                 evaluator.evaluateAll();
             } catch (NotImplementedException e) {
-                LOGGER.log(Level.WARNING,
-                        "unsupported function in formula. Flagging workbook as needing recalculation.", e);
+                LOGGER.warn("unsupported function in formula; flagging workbook as needing recalculation", e);
                 setForceFormulaRecalculation(true);
             }
         }
@@ -348,7 +351,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     public void setForceFormulaRecalculation(boolean flag) {
         poiWorkbook.setForceFormulaRecalculation(flag);
-        LOGGER.log(Level.INFO, "setForceFormulaRecalculation({0})", flag);
+        LOGGER.debug("setForceFormulaRecalculation({})", flag);
     }
 
     @Override

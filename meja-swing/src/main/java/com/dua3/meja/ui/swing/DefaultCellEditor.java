@@ -15,13 +15,12 @@
  */
 package com.dua3.meja.ui.swing;
 
-import java.awt.event.KeyEvent;
-import java.text.NumberFormat;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.util.CellValueHelper;
+import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.swing.SwingUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -32,18 +31,18 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.util.CellValueHelper;
-import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.swing.SwingUtil;
+import java.awt.event.KeyEvent;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Locale;
 
 /**
  * Default implementation for cell editor.
  */
 public class DefaultCellEditor implements CellEditor {
 
-    private static final Logger LOGGER = Logger.getLogger(DefaultCellEditor.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCellEditor.class);
 
     /**
      * Actions for key bindings.
@@ -141,7 +140,7 @@ public class DefaultCellEditor implements CellEditor {
             text = doc.getText(0, doc.getLength());
         } catch (BadLocationException ex) {
             text = "#ERROR";
-            LOGGER.log(Level.WARNING, "Could not get text from document.", ex);
+            LOGGER.warn("could not get text from document", ex);
         }
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
         NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
