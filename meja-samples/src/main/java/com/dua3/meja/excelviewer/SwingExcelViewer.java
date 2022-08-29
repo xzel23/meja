@@ -107,7 +107,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
                 try {
                     viewer.setWorkbook(MejaHelper.openWorkbook(file.toURI()));
                 } catch (IOException ex) {
-                    LOG.error("could not load workbook from " + file.getAbsolutePath(), ex);
+                    LOG.error("could not load workbook from {}", file.getAbsolutePath(), ex);
                 }
             }
         });
@@ -324,7 +324,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
             JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            LOG.error("unknown exception caught, will be rethrown after message dialog: " + ex.getMessage());
+            LOG.error("unknown exception caught, will be rethrown after message dialog: {}", ex.getMessage());
             JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
                     JOptionPane.ERROR_MESSAGE);
             throw ex; // rethrow
