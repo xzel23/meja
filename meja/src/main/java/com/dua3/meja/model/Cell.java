@@ -192,7 +192,7 @@ public interface Cell {
 
     /**
      * Return the result type.
-     *
+     * <p>
      * For non-formula cells, this is the same as the value returned by
      * {@link #getCellType()}. For formula cells, the result type of the last
      * evaluation is returned.

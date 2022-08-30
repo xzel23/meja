@@ -572,7 +572,7 @@ public final class PoiCell extends AbstractCell {
             return switch (link.getType()) {
                 case URL, EMAIL -> Optional.of(new URI(link.getAddress()));
                 case FILE -> Optional.of(IoUtil.toURI(getWorkbook().resolve(
-                        Paths.get(URLDecoder.decode(link.getAddress(), StandardCharsets.UTF_8.name())
+                        Paths.get(URLDecoder.decode(link.getAddress(), StandardCharsets.UTF_8)
                                 .replaceFirst("^file:///([a-zA-Z]:)", "$1") // workaround for absolute windows paths
                                 .replaceFirst("^file:///", "/"))
                 )));
@@ -580,7 +580,7 @@ public final class PoiCell extends AbstractCell {
                 case DOCUMENT -> throw new UnsupportedOperationException("Unsupported link type: " + link.getType());
                 default -> throw new UnsupportedOperationException("Unsupported link type: " + link.getType());
             };
-        } catch (URISyntaxException | UnsupportedEncodingException e) {
+        } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
     }
