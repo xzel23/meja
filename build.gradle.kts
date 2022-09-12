@@ -71,23 +71,6 @@ subprojects {
         withSourcesJar()
     }
 
-    repositories {
-        // Maven Central Repository
-        mavenCentral()
-
-        // Sonatype Snapshots
-        maven {
-            name = "oss.sonatype.org-snapshot"
-            url  = URI("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            mavenContent {
-                snapshotsOnly()
-            }
-        }
-
-        // Maven local Repository
-        mavenLocal()
-    }
-
     // dependencies
     dependencies {
         // Cabe (source annotations)
