@@ -5,7 +5,7 @@ dependencies {
     implementation(group = "com.dua3.utility", name = "utility", version = rootProject.extra["dua3UtilityVersion"] as String)
 
     // Apache POI
-    val poiVersion = "5.2.2"
+    val poiVersion = "5.2.3"
     implementation(group = "org.apache.poi", name = "poi", version = poiVersion)
     implementation(group = "org.apache.poi", name = "poi-ooxml", version = poiVersion) {
         // SVG support
