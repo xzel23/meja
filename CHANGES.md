@@ -1,6 +1,16 @@
 # Meja Changelog
 
-## Version 3.0.1 (to be released)
+## Version 3.1.1
+
+ - update utility
+ - update Apache POI
+
+## Version 3.1.0
+
+ - update utility
+ - all logging is done through SLF4J
+
+## Version 3.0.1
 
 - small fixes improvements
 

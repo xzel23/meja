@@ -29,7 +29,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.meja"
-    val version         = "3.1.0"
+    val version         = "3.1.1"
     val scm             = "https://gitlab.com/com.dua3/lib/meja.git"
     val repo            = "public"
     val licenseName     = "The Apache Software License, Version 2.0"
@@ -45,7 +45,7 @@ object meta {
 val isReleaseVersion = !meta.version.endsWith("SNAPSHOT")
 
 val javafxVersion       by extra { "18.0.2" }
-val dua3UtilityVersion  by extra { "10.1.0" }
+val dua3UtilityVersion  by extra { "10.1.1" }
 
 subprojects {
 
