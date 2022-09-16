@@ -5,12 +5,12 @@ plugins {
 description = "Meja spreadsheet library - JavaFX tools"
 
 javafx {
-    version = rootProject.extra["javafxVersion"] as String
+    version = rootProject.libs.versions.javafx.get()
     modules = listOf( "javafx.base", "javafx.graphics", "javafx.controls" )
     configuration = "compileOnly"
 }
 
 dependencies {
     api(project(":meja"))
-    implementation(group = "com.dua3.utility", name = "utility", version = rootProject.extra["dua3UtilityVersion"] as String)
+    implementation(rootProject.libs.dua3.utility)
 }

@@ -20,10 +20,10 @@ plugins {
     id("maven-publish")
     id("signing")
     id("idea")
-    id("com.github.ben-manes.versions") version "0.42.0"
-    id("com.adarshr.test-logger") version "3.2.0"
-    id("com.github.spotbugs") version "5.0.9"
-    id("com.dua3.cabe") version "1.0.0"
+    alias(libs.plugins.versions)
+    alias(libs.plugins.test.logger)
+    alias(libs.plugins.spotbugs)
+    alias(libs.plugins.cabe)
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -43,9 +43,6 @@ object meta {
 /////////////////////////////////////////////////////////////////////////////
 
 val isReleaseVersion = !meta.version.endsWith("SNAPSHOT")
-
-val javafxVersion       by extra { "19" }
-val dua3UtilityVersion  by extra { "10.1.2" }
 
 subprojects {
 
@@ -74,14 +71,14 @@ subprojects {
     // dependencies
     dependencies {
         // Cabe (source annotations)
-        compileOnly(group = "com.dua3.cabe", name = "cabe-annotations", version = "1.0.0")
+        compileOnly(rootProject.libs.cabe.annotations)
 
         // SLF4J
-        implementation("org.slf4j:slf4j-api:2.0.0")
+        implementation(rootProject.libs.slf4j.api)
         
         // JUnit
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
+        testImplementation(rootProject.libs.junit.jupiter.api)
+        testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
     }
 
     idea {

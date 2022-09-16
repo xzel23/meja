@@ -8,13 +8,14 @@ dependencies {
     implementation(project(":meja"))
     implementation(project(":meja-generic"))
     implementation(project(":meja-swing"))
-    implementation(group = "com.dua3.utility", name = "utility", version = rootProject.extra["dua3UtilityVersion"] as String)
-    implementation(group = "com.dua3.utility", name = "utility-swing", version = rootProject.extra["dua3UtilityVersion"] as String)
+
+    implementation(rootProject.libs.dua3.utility)
+    implementation(rootProject.libs.dua3.utility.swing)
 
     // include utility-logging as implementation for SLF4J
-    implementation(group = "com.dua3.utility", name = "utility-logging", version = rootProject.extra["dua3UtilityVersion"] as String)
+    implementation(rootProject.libs.dua3.utility.logging)
     // route Log4J2 to SLF4J
-    implementation("org.apache.logging.log4j:log4j-to-slf4j:2.19.0")
+    implementation(rootProject.libs.log4j.to.slf4j)
 
     runtimeOnly(project(":meja-poi"))
 }
