@@ -1,5 +1,5 @@
 plugins {
-    id("org.openjfx.javafxplugin") version "0.0.13"
+    alias(libs.plugins.javafx)
 }
 
 description = "Meja spreadsheet library - JavaFX tools"
