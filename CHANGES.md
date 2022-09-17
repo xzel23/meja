@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 3.1.2
+
+ - update dependencies
+ - use version catalogue for project dependencies
+
 ## Version 3.1.1
 
  - update utility
