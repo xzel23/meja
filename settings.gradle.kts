@@ -1,5 +1,5 @@
 rootProject.name = "dua3-meja"
-val projectVersion = "3.1.2"
+val projectVersion = "3.1.3-SNAPSHOT"
 
 include("meja")
 include("meja-generic") 
@@ -24,12 +24,12 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.0.13")
 
             version("cabe", "1.0.0")
-            version("dua3-utility", "10.2.1")
+            version("dua3-utility", "10.2.2-SNAPSHOT")
             version("javafx", "19")
-            version("junit", "5.9.0")
+            version("junit", "5.9.1")
             version("log4j", "2.19.0")
             version("poi", "5.2.3")
-            version("slf4j", "2.0.1")
+            version("slf4j", "2.0.2")
             
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
