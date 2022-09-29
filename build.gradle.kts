@@ -59,9 +59,7 @@ subprojects {
     }
 
     java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        }
+        toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
         withJavadocJar()
         withSourcesJar()
     }
@@ -73,7 +71,8 @@ subprojects {
 
         // SLF4J
         implementation(rootProject.libs.slf4j.api)
-        
+        testImplementation(rootProject.libs.slf4j.simple)
+
         // JUnit
         testImplementation(rootProject.libs.junit.jupiter.api)
         testRuntimeOnly(rootProject.libs.junit.jupiter.engine)

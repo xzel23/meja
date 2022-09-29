@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 3.1.3
+
+ - update dependencies
+ - improve test coverage
+ - respect options when reading CSV
+
 ## Version 3.1.2
 
  - update dependencies
