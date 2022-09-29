@@ -29,7 +29,7 @@ dependencyResolutionManagement {
             version("junit", "5.9.1")
             version("log4j", "2.19.0")
             version("poi", "5.2.3")
-            version("slf4j", "2.0.2")
+            version("slf4j", "2.0.3")
             
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
