@@ -39,7 +39,7 @@ public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {
 
     @Override
     public GenericWorkbook read(URI uri, Function<FileType<? extends GenericWorkbook>, Arguments> options) throws IOException {
-        return GenericWorkbookFactory.instance().open(uri);
+        return GenericWorkbookFactory.instance().open(uri, options.apply(this));
     }
 
     @Override
