@@ -49,7 +49,7 @@ class PoiWorkbookTest {
 
     @Test
     public void testSaveAndReloadXls() throws Exception {
-        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
+        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls").toUri());
         Path pathToCopy = testdataDir.resolve("population by country (copy).xls");
         original.write(pathToCopy);
         testCountryWorkbook(pathToCopy);
