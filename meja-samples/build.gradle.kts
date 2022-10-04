@@ -21,13 +21,13 @@ dependencies {
 }
 
 val runExcelViewer = task<JavaExec>("runExcelViewer") {
-    dependsOn("classes")
+    classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.excelviewer.SwingExcelViewer")
     enableAssertions = true
 }
 
 val runKitchenSink = task<JavaExec>("runKitchenSink") {
-    dependsOn("classes")
+    classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.samples.KitchenSink")
     enableAssertions = true
 }
