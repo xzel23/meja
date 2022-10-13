@@ -1,5 +1,13 @@
 # Meja Changelog
 
+## Version 3.1.4
+
+ - update dependencies
+ - code cleanup
+ - cleanup JavaScript of exported files
+ - add gradle tasks for running samples
+ - fix log4j warning when running tests
+
 ## Version 3.1.3
 
  - update dependencies
