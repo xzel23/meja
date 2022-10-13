@@ -179,10 +179,10 @@ class PoiWorkbookTest {
                 String actHtml = out.toString();
                 
                 boolean updateResult = false; // set to true to update reference files
-                if (!updateResult) { 
-                    assertEquals(refHtml, actHtml);
+                if (updateResult) {
+                    IoUtil.write(testdataDir.resolve(sheet.getSheetName() + ".html"),actHtml);
                 } else {
-                    IoUtil.write(testdataDir.resolve(sheet.getSheetName() + ".html"),actHtml); 
+                    assertEquals(refHtml, actHtml);
                 }
             }
         }

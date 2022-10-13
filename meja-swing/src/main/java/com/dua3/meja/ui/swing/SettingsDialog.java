@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-@SuppressWarnings("serial")
 public class SettingsDialog extends JDialog {
 
     private final JPanel settingsPanel;

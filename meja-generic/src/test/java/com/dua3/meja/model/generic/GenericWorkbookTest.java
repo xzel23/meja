@@ -1,6 +1,5 @@
 package com.dua3.meja.model.generic;
 
-import com.dua3.meja.io.HtmlWorkbookWriter;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Sheet;
@@ -12,19 +11,13 @@ import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Formatter;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SuppressWarnings("OptionalGetWithoutIsPresent")
 class GenericWorkbookTest {
 
     private static final Path testdataDir = IoUtil.toPath(GenericWorkbookTest.class.getResource("/"))
@@ -92,13 +85,12 @@ class GenericWorkbookTest {
     }
 
     private static Workbook openWorkbookCsv(Path pathToWorkbook) throws IOException {
-        Workbook wb = FileTypeCsv.instance()
+        return FileTypeCsv.instance()
                 .read(
-                        pathToWorkbook, 
+                        pathToWorkbook,
                         GenericWorkbook.class,
                         t -> Arguments.of(Arguments.createEntry(IoOptions.fieldSeparator(), ';'))
                 ).orElseThrow();
-        return wb;
     }
 
     @Test

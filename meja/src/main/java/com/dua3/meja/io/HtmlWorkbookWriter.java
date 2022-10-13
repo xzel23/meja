@@ -298,7 +298,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 <body>
                   <script>
                   function mejaShowTab(evt, tabName) {
-                    var i, tabcontent, tablinks;
+                    let i, tabs, tablinks;
                     tabs = document.getElementsByClassName("meja-tab");
                     for (i = 0; i < tabs.length; i++) {
                       tabs[i].style.display = "none";

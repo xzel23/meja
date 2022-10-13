@@ -1095,17 +1095,17 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         boolean currentCellChanged = setCurrentCell(row, col);
         requestFocusInWindow();
 
-        if (!currentCellChanged) {
-            // if it already was the current cell, start cell editing
-            if (editable) {
-                startEditing();
-                editing = true;
-            }
-        } else // otherwise stop cell editing
-        {
+        if (currentCellChanged) {
+            // if cell changed, stop cell editing
             if (editing) {
                 stopEditing(true);
                 editing = false;
+            }
+        } else {
+            // otherwise start cell editing
+            if (editable) {
+                startEditing();
+                editing = true;
             }
         }
     }
