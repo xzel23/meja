@@ -16,4 +16,5 @@ dependencies {
         exclude(group = "org.apache.pdfbox", module = "fontbox")
         exclude(group = "de.rototor.pdfbox", module = "graphics2d")
     }
+    testRuntimeOnly(rootProject.libs.log4j.to.slf4j)
 }
