@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import java.net.URI;
-import com.adarshr.gradle.testlogger.theme.ThemeType;
+import java.net.URI
+import com.adarshr.gradle.testlogger.theme.ThemeType
 
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id("java-library")
     id("maven-publish")
