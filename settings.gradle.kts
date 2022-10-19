@@ -1,5 +1,5 @@
 rootProject.name = "dua3-meja"
-val projectVersion = "3.1.4"
+val projectVersion = "3.1.5-SNAPSHOT"
 
 include("meja")
 include("meja-generic") 
@@ -17,9 +17,9 @@ dependencyResolutionManagement {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("versions", "com.github.ben-manes.versions").version("0.42.0")
+            plugin("versions", "com.github.ben-manes.versions").version("0.43.0")
             plugin("test-logger", "com.adarshr.test-logger").version("3.2.0")
-            plugin("spotbugs", "com.github.spotbugs").version("5.0.12")
+            plugin("spotbugs", "com.github.spotbugs").version("5.0.13")
             plugin("cabe", "com.dua3.cabe").version("1.0.0")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.0.13")
 
