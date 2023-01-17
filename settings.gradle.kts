@@ -26,7 +26,7 @@ dependencyResolutionManagement {
             version("cabe", "1.0.0")
             version("dua3-utility", "10.2.5")
             version("javafx", "19")
-            version("junit", "5.9.1")
+            version("junit", "5.9.2")
             version("log4j", "2.19.0")
             version("poi", "5.2.3")
             version("slf4j", "2.0.6")
