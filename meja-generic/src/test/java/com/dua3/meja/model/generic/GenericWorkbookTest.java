@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,34 +26,35 @@ class GenericWorkbookTest {
 
     @Test
     public void testCsv() throws Exception {
-        testCountryWorkbook(testdataDir.resolve("population by country.csv"));
+        testCountryWorkbook(testdataDir.resolve("population by country_US.csv"), Locale.US);
+        testCountryWorkbook(testdataDir.resolve("population by country_DE.csv"), Locale.GERMANY);
     }
 
     @Test
     public void testSaveAndReloadXlsx() throws Exception {
-        Workbook original = openWorkbookCsv(testdataDir.resolve("population by country.csv"));
+        Workbook original = openWorkbookCsv(testdataDir.resolve("population by country_US.csv"), Locale.US);
         Path pathToCopy = testdataDir.resolve("population by country (copy).csv");
         original.write(pathToCopy, Arguments.of(Arguments.createEntry(IoOptions.fieldSeparator(), ';')));
-        testCountryWorkbook(pathToCopy);
+        testCountryWorkbook(pathToCopy, Locale.US);
     }
 
     @Test
     public void testConvertToHtml() throws Exception {
-        String[] files = { "population by country.csv" };
+        String[] files = { "population by country_US.csv" };
         for (String inFile: files) {
             String outFile = IoUtil.replaceExtension(inFile, "html");
-            copyToHtml(inFile, outFile);
+            copyToHtml(inFile, outFile, Locale.US);
         }
     }
 
-    private void copyToHtml(String inFile, String outFile) throws IOException {
-        Workbook original = openWorkbookCsv(testdataDir.resolve(inFile));
+    private void copyToHtml(String inFile, String outFile, Locale locale) throws IOException {
+        Workbook original = openWorkbookCsv(testdataDir.resolve(inFile), locale);
         Path pathToCopy = testdataDir.resolve(outFile);
         original.write(pathToCopy);
     }
 
-    private void testCountryWorkbook(Path pathToWorkbook) throws IOException, URISyntaxException {
-        Workbook wb = openWorkbookCsv(pathToWorkbook);
+    private void testCountryWorkbook(Path pathToWorkbook, Locale locale) throws IOException {
+        Workbook wb = openWorkbookCsv(pathToWorkbook, locale);
         assertEquals(1, wb.getSheetCount());
 
         Sheet sheet = wb.getSheet(0);
@@ -84,12 +86,15 @@ class GenericWorkbookTest {
         }
     }
 
-    private static Workbook openWorkbookCsv(Path pathToWorkbook) throws IOException {
+    private static Workbook openWorkbookCsv(Path pathToWorkbook, Locale locale) throws IOException {
         return FileTypeCsv.instance()
                 .read(
                         pathToWorkbook,
                         GenericWorkbook.class,
-                        t -> Arguments.of(Arguments.createEntry(IoOptions.fieldSeparator(), ';'))
+                        t -> Arguments.of(
+                                Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
+                                Arguments.createEntry(IoOptions.locale(), locale)
+                        )
                 ).orElseThrow();
     }
 
