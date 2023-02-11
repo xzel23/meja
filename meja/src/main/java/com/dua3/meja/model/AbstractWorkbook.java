@@ -8,6 +8,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 /**
@@ -96,8 +97,7 @@ public abstract class AbstractWorkbook implements Workbook {
     @Override
     public Path resolve(Path path) {
         Optional<URI> wbUri = getUri();
-
-        if (wbUri.isEmpty()) {
+        if (path.isAbsolute() || wbUri.isEmpty() || wbUri.get().getScheme()==null) {
             return path;
         }
 
