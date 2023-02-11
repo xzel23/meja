@@ -182,7 +182,7 @@ class PoiWorkbookTest {
                 if (updateResult) {
                     IoUtil.write(testdataDir.resolve(sheet.getSheetName() + ".html"),actHtml);
                 } else {
-                    assertEquals(refHtml, actHtml);
+                    assertEquals(refHtml.replaceAll("\r\n", "\n"), actHtml.replaceAll("\r\n", "\n"));
                 }
             }
         }
