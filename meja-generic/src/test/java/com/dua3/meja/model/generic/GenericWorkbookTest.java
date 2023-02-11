@@ -11,7 +11,6 @@ import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Objects;
@@ -31,10 +30,13 @@ class GenericWorkbookTest {
     }
 
     @Test
-    public void testSaveAndReloadXlsx() throws Exception {
+    public void testSaveAndReloadCsv() throws Exception {
         Workbook original = openWorkbookCsv(testdataDir.resolve("population by country_US.csv"), Locale.US);
         Path pathToCopy = testdataDir.resolve("population by country (copy).csv");
-        original.write(pathToCopy, Arguments.of(Arguments.createEntry(IoOptions.fieldSeparator(), ';')));
+        original.write(pathToCopy, Arguments.of(
+                Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
+                Arguments.createEntry(IoOptions.locale(), Locale.US)
+        ));
         testCountryWorkbook(pathToCopy, Locale.US);
     }
 
