@@ -468,10 +468,4 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
     }
 
-    /**
-     * Resolve workbook relative path.
-     * @param path the path to resolve
-     * @return the resolved path
-     */
-    Path resolve(Path path);
 }

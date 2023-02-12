@@ -93,15 +93,4 @@ public abstract class AbstractWorkbook implements Workbook {
         pcs.firePropertyChange(propertyName, oldValue, newValue);
     }
 
-    @Override
-    public Path resolve(Path path) {
-        Optional<URI> wbUri = getUri();
-
-        if (wbUri.isEmpty()) {
-            return path;
-        }
-
-        Path parent = IoUtil.toPath(wbUri.get()).getParent();
-        return parent == null ? path : parent.resolve(path);
-    }
 }

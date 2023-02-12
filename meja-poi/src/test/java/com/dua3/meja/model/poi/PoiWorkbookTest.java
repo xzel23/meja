@@ -138,7 +138,7 @@ class PoiWorkbookTest {
         assertEquals("Calendar", cCalendar.toString());
         Optional<URI> lCalendar = cCalendar.getHyperlink();
         assertTrue(lCalendar.isPresent());
-        assertEquals(IoUtil.toURI(testdataDir.resolve("Excel 2015 Calendar.xlsx")), lCalendar.get());
+        assertEquals(wb.getUri().get().resolve("Excel%202015%20Calendar.xlsx"), lCalendar.get());
 
         Cell cEmail = sheet.getCell(2,1);
         assertEquals("Email Developer", cEmail.toString());
@@ -163,7 +163,7 @@ class PoiWorkbookTest {
         Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
         
         // make sure workbook URI is the same independent of test environment
-        wb.setUri(Paths.get("/dev/null").toUri());
+        wb.setUri(URI.create(""));
         
         for (Sheet sheet: wb) {
             HtmlWorkbookWriter writer = HtmlWorkbookWriter.create();
