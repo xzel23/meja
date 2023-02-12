@@ -30,7 +30,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object meta {
     val group           = "com.dua3.meja"
-    val scm             = "https://gitlab.com/com.dua3/lib/meja.git"
+    val scm             = "https://github.com/xzel23/meja.git"
     val repo            = "public"
     val licenseName     = "The Apache Software License, Version 2.0"
     val licenseUrl      = "https://www.apache.org/licenses/LICENSE-2.0.txt"
