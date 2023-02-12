@@ -1,5 +1,5 @@
 rootProject.name = "dua3-meja"
-val projectVersion = "3.1.6-SNAPSHOT"
+val projectVersion = "3.1.6"
 
 include("meja")
 include("meja-generic") 

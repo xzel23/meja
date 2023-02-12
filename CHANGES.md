@@ -1,5 +1,13 @@
 # Meja Changelog
 
+## Version 3.1.6
+
+ - update dependencies
+ - enable Github CI
+ - fix unit tests on windows
+ - fix unit tests depending on system locale
+ - **breaking:** remove Workbook.resolve()
+
 ## Version 3.1.4
 
  - update dependencies
