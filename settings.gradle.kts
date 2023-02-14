@@ -24,7 +24,7 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.0.13")
 
             version("cabe", "1.0.0")
-            version("dua3-utility", "10.2.8")
+            version("dua3-utility", "10.2.9")
             version("javafx", "19")
             version("junit", "5.9.2")
             version("log4j", "2.19.0")
