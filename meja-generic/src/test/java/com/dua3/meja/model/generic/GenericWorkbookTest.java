@@ -91,13 +91,12 @@ class GenericWorkbookTest {
     private static Workbook openWorkbookCsv(Path pathToWorkbook, Locale locale) throws IOException {
         return FileTypeCsv.instance()
                 .read(
-                        pathToWorkbook,
-                        GenericWorkbook.class,
-                        t -> Arguments.of(
-                                Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
-                                Arguments.createEntry(IoOptions.locale(), locale)
-                        )
-                ).orElseThrow();
+                    pathToWorkbook,
+                    t -> Arguments.of(
+                        Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
+                        Arguments.createEntry(IoOptions.locale(), locale)
+                    )
+                );
     }
 
     @Test
