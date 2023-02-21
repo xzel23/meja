@@ -37,7 +37,6 @@ public final class PoiHelper {
             case ALIGN_CENTER -> HorizontalAlignment.CENTER;
             case ALIGN_JUSTIFY -> HorizontalAlignment.JUSTIFY;
             case ALIGN_AUTOMATIC -> HorizontalAlignment.GENERAL;
-            default -> throw new IllegalArgumentException(String.valueOf(hAlign));
         };
     }
 
@@ -48,26 +47,20 @@ public final class PoiHelper {
             case RIGHT -> HAlign.ALIGN_RIGHT;
             case CENTER_SELECTION -> HAlign.ALIGN_CENTER;
             case GENERAL -> HAlign.ALIGN_AUTOMATIC;
-            default -> HAlign.ALIGN_JUSTIFY;
+            case FILL -> HAlign.ALIGN_JUSTIFY;
+            case JUSTIFY -> HAlign.ALIGN_JUSTIFY;
+            case DISTRIBUTED -> HAlign.ALIGN_JUSTIFY;
         };
     }
 
     public static VAlign poiToVAlign(VerticalAlignment alignment) {
-        switch (alignment) {
-        case TOP:
-            return VAlign.ALIGN_TOP;
-        case CENTER:
-            return VAlign.ALIGN_MIDDLE;
-        case BOTTOM:
-            return VAlign.ALIGN_BOTTOM;
-        case JUSTIFY:
-            return VAlign.ALIGN_JUSTIFY;
-        case DISTRIBUTED:
-            return VAlign.ALIGN_DISTRIBUTED;
-        default:
-            LOGGER.warn("unknown value for vertical alignment: {}", alignment);
-            return VAlign.ALIGN_MIDDLE;
-        }
+        return switch (alignment) {
+            case TOP -> VAlign.ALIGN_TOP;
+            case CENTER -> VAlign.ALIGN_MIDDLE;
+            case BOTTOM -> VAlign.ALIGN_BOTTOM;
+            case JUSTIFY -> VAlign.ALIGN_JUSTIFY;
+            case DISTRIBUTED -> VAlign.ALIGN_DISTRIBUTED;
+        };
     }
 
     public static VerticalAlignment vAlignToPoi(VAlign vAlign) {
@@ -77,7 +70,6 @@ public final class PoiHelper {
             case ALIGN_BOTTOM -> VerticalAlignment.BOTTOM;
             case ALIGN_JUSTIFY -> VerticalAlignment.JUSTIFY;
             case ALIGN_DISTRIBUTED -> VerticalAlignment.DISTRIBUTED;
-            default -> throw new IllegalArgumentException(String.valueOf(vAlign));
         };
     }
 
