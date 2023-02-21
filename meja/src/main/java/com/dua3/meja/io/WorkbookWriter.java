@@ -34,7 +34,7 @@ public interface WorkbookWriter {
 
     double PROGRESS_INDETERMINATE = -1.0;
 
-    default void setOptions(Arguments exportSettings) {
+    default void setOptions(Arguments options) {
         // empty implementation for writers not taking export options
     }
 

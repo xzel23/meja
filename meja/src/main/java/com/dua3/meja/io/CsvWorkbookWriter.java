@@ -73,8 +73,8 @@ public final class CsvWorkbookWriter implements WorkbookWriter {
     }
 
     @Override
-    public void setOptions(Arguments importSettings) {
-        this.options = importSettings;
+    public void setOptions(Arguments options) {
+        this.options = options;
     }
 
     /**

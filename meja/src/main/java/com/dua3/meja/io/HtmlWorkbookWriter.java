@@ -24,6 +24,8 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.io.IoOptions;
+import com.dua3.utility.options.Arguments;
 import com.dua3.utility.text.TextUtil;
 
 import java.io.IOException;
@@ -44,6 +46,8 @@ import java.util.function.Predicate;
  * @author Axel Howind (axel@dua3.com)
  */
 public final class HtmlWorkbookWriter implements WorkbookWriter {
+
+    private Arguments options;
 
     private HtmlWorkbookWriter() {
     }
@@ -82,35 +86,40 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     }
     
     private static void writeCellStyle(Formatter out, CellStyle cs) {
-        out.format(Locale.ROOT, "    .%s { ", id(cs));
+        out.format(Locale.ROOT, "    .%s {", id(cs));
         writeCellStyleAttributes(out, cs);
-        out.format(Locale.ROOT, "}\n");
+        out.format(Locale.ROOT, " }\n");
     }
 
     private static void writeCellStyleAttributes(Formatter out, CellStyle cs) {
-        out.format(Locale.ROOT, "  %s ", cs.getFont().getCssStyle());
+        out.format(Locale.ROOT, " %s ", cs.getFont().getCssStyle());
         out.format(Locale.ROOT, "%s ", cs.getHAlign().getCssStyle());
-        out.format(Locale.ROOT, "%s ", cs.getVAlign().getCssStyle());
+        out.format(Locale.ROOT, "%s", cs.getVAlign().getCssStyle());
         short alpha = cs.getRotation();
         if (alpha != 0) {
             String origin = alpha > 0 ? "bottom left" : "top left";
-            out.format(Locale.ROOT, "transform-origin: %s; transform: rotate(%ddeg);", origin, -alpha);
+            out.format(Locale.ROOT, " transform-origin: %s; transform: rotate(%ddeg);", origin, -alpha);
         }
         for (Direction d : Direction.values()) {
             BorderStyle bs = cs.getBorderStyle(d);
             Color c = bs.color();
             float w = bs.width();
             if (!c.isTransparent() && w>0) {
-                out.format(Locale.ROOT, "border-%s: %.2fpt solid %s !important; ", d.getCssName(), w, c.toCss());
+                out.format(Locale.ROOT, " border-%s: %.2fpt solid %s !important;", d.getCssName(), w, c.toCss());
             }
         }
         if (cs.getFillPattern() != FillPattern.NONE) {
-            out.format(Locale.ROOT, "background-color: %s; ", cs.getFillFgColor().toCss());
+            out.format(Locale.ROOT, " background-color: %s;", cs.getFillFgColor().toCss());
         }
 
         if (cs.isWrap()) {
-            out.format(Locale.ROOT, "white-space: pre-wrap; overflow-wrap: break-word; ");
+            out.format(Locale.ROOT, " white-space: pre-wrap; overflow-wrap: break-word;");
         }
+    }
+
+    @Override
+    public void setOptions(Arguments options) {
+        this.options = options;
     }
 
     /**
@@ -241,7 +250,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     
     @Override
     public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
-        write(workbook, out, Locale.getDefault(), updateProgress);
+        write(workbook, out, IoOptions.getLocale(options), updateProgress);
     }
 
     /**
@@ -358,7 +367,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                   padding: 3px;
                   white-space: pre;
                   overflow: visible;
-                """
+                """+" "
         );
         writeCellStyleAttributes(out, defaultCellStyle);
         out.format(Locale.ROOT, """
