@@ -72,7 +72,7 @@ subprojects {
 
         // SLF4J
         implementation(rootProject.libs.slf4j.api)
-        testImplementation(rootProject.libs.slf4j.simple)
+        testRuntimeOnly(rootProject.libs.slf4j.simple)
 
         // JUnit
         testImplementation(rootProject.libs.junit.jupiter.api)
