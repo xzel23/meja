@@ -198,7 +198,7 @@ public class CellEditorPane extends JTextPane {
     private static final FontUtil<java.awt.Font> fontUtil = new SwingFontUtil();
 
     /**
-     * Set the editor content to the content of given cell.
+     * Set the editor content to the content of the given cell.
      *
      * @param cell  the cell to display
      * @param eval  set to true to display formula results instead of the formula

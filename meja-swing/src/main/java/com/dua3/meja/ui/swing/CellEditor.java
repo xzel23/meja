@@ -28,7 +28,7 @@ public interface CellEditor {
     /**
      * Check editing state.
      *
-     * @return true if CellEditor is currently used to edit a cell
+     * @return true, if CellEditor is currently used to edit a cell
      */
     boolean isEditing();
 

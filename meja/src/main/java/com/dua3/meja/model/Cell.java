@@ -132,7 +132,7 @@ public interface Cell {
     CellType getCellType();
 
     /**
-     * Get the cell`s column number.
+     * Get the cell's column number.
      *
      * @return column number of this cell
      */
@@ -216,7 +216,7 @@ public interface Cell {
     Row getRow();
 
     /**
-     * Get the cell`s row number.
+     * Get the cell's row number.
      *
      * @return row number of this cell
      */
