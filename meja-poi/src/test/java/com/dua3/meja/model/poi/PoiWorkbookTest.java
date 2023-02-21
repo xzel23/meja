@@ -15,7 +15,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.Objects;

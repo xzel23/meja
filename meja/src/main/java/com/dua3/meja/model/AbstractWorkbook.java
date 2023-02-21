@@ -2,12 +2,10 @@ package com.dua3.meja.model;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.ObjectCache;
-import com.dua3.utility.io.IoUtil;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.Optional;
 
 /**
