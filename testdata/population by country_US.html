@@ -1,0 +1,3160 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+.meja-tabbar {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+.meja-tabbar button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+.meja-tabbar button:hover {
+  background-color: #ddd;
+}
+.meja-tabbar button.active {
+  background-color: #ccc;
+}
+.meja-tab {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+table.meja-sheet {
+  border-collapse: collapse;
+  table-layout: fixed;
+  padding: 3px;
+  white-space: pre;
+  overflow: visible;
+  color: #000000; font-size: 10.0pt; font-family: Helvetica; font-weight: normal; font-style: normal; text-align: left; vertical-align: middle; 
+}
+table.meja-sheet td,th {
+  border: 1px solid #d4d4d4;
+  max-width: 0;
+  max-height: 0;
+}
+table.meja-sheet a {
+  color: inherit;
+}
+table.meja-sheet td:empty::after{
+  content: "\00a0";
+}
+    .WB_8b75a7333e742fd933c2b531d6f3934e_CS_ {   color: #000000; font-size: 10.0pt; font-family: Helvetica; font-weight: normal; font-style: normal; text-align: left; vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <script>
+  function mejaShowTab(evt, tabName) {
+    let i, tabs, tablinks;
+    tabs = document.getElementsByClassName("meja-tab");
+    for (i = 0; i < tabs.length; i++) {
+      tabs[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("meja-tablink");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+  </script>
+<div class="meja-tabbar">
+  <button class="meja-tablink active" onclick="mejaShowTab(event, 'WB_8b75a7333e742fd933c2b531d6f3934e_SHEET_53686565742031')">Sheet 1</button>
+</div>
+<div id="WB_8b75a7333e742fd933c2b531d6f3934e_SHEET_53686565742031" class="meja-tab active" style="display: block">
+  <table class="meja-sheet">
+    <colgroup>
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+<col style="width: 80.00pt;">
+    </colgroup>
+    <tbody>
+      <tr style="height: 12.00pt;">
+        <td>Country (or dependency)</td>
+        <td>Population 2020</td>
+        <td>Yearly Change</td>
+        <td>Net Change</td>
+        <td>Density (P/Km²)</td>
+        <td>Land Area (Km²)</td>
+        <td>Migrants (net)</td>
+        <td>Fert. Rate</td>
+        <td>Med. Age</td>
+        <td>Urban Pop %</td>
+        <td>World Share</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>China</td>
+        <td>1439323776</td>
+        <td>0.39%</td>
+        <td>5540090</td>
+        <td>153</td>
+        <td>9388211</td>
+        <td>-348399</td>
+        <td>1,7</td>
+        <td>38</td>
+        <td>61%</td>
+        <td>18.47%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>India</td>
+        <td>1380004385</td>
+        <td>0.99%</td>
+        <td>13586631</td>
+        <td>464</td>
+        <td>2973190</td>
+        <td>-532687</td>
+        <td>2,2</td>
+        <td>28</td>
+        <td>35%</td>
+        <td>17.70%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>United States</td>
+        <td>331002651</td>
+        <td>0.59%</td>
+        <td>1937734</td>
+        <td>36</td>
+        <td>9147420</td>
+        <td>954806</td>
+        <td>1,8</td>
+        <td>38</td>
+        <td>83%</td>
+        <td>4.25%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Indonesia</td>
+        <td>273523615</td>
+        <td>1.07%</td>
+        <td>2898047</td>
+        <td>151</td>
+        <td>1811570</td>
+        <td>-98955</td>
+        <td>2,3</td>
+        <td>30</td>
+        <td>56%</td>
+        <td>3.51%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Pakistan</td>
+        <td>220892340</td>
+        <td>2.00%</td>
+        <td>4327022</td>
+        <td>287</td>
+        <td>770880</td>
+        <td>-233379</td>
+        <td>3,6</td>
+        <td>23</td>
+        <td>35%</td>
+        <td>2.83%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Brazil</td>
+        <td>212559417</td>
+        <td>0.72%</td>
+        <td>1509890</td>
+        <td>25</td>
+        <td>8358140</td>
+        <td>21200</td>
+        <td>1,7</td>
+        <td>33</td>
+        <td>88%</td>
+        <td>2.73%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Nigeria</td>
+        <td>206139589</td>
+        <td>2.58%</td>
+        <td>5175990</td>
+        <td>226</td>
+        <td>910770</td>
+        <td>-60000</td>
+        <td>5,4</td>
+        <td>18</td>
+        <td>52%</td>
+        <td>2.64%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Bangladesh</td>
+        <td>164689383</td>
+        <td>1.01%</td>
+        <td>1643222</td>
+        <td>1265</td>
+        <td>130170</td>
+        <td>-369501</td>
+        <td>2,1</td>
+        <td>28</td>
+        <td>39%</td>
+        <td>2.11%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Russia</td>
+        <td>145934462</td>
+        <td>0.04%</td>
+        <td>62206</td>
+        <td>9</td>
+        <td>16376870</td>
+        <td>182456</td>
+        <td>1,8</td>
+        <td>40</td>
+        <td>74%</td>
+        <td>1.87%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Mexico</td>
+        <td>128932753</td>
+        <td>1.06%</td>
+        <td>1357224</td>
+        <td>66</td>
+        <td>1943950</td>
+        <td>-60000</td>
+        <td>2,1</td>
+        <td>29</td>
+        <td>84%</td>
+        <td>1.65%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Japan</td>
+        <td>126476461</td>
+        <td>-0.30%</td>
+        <td>-383840</td>
+        <td>347</td>
+        <td>364555</td>
+        <td>71560</td>
+        <td>1,4</td>
+        <td>48</td>
+        <td>92%</td>
+        <td>1.62%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Ethiopia</td>
+        <td>114963588</td>
+        <td>2.57%</td>
+        <td>2884858</td>
+        <td>115</td>
+        <td>1000000</td>
+        <td>30000</td>
+        <td>4,3</td>
+        <td>19</td>
+        <td>21%</td>
+        <td>1.47%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Philippines</td>
+        <td>109581078</td>
+        <td>1.35%</td>
+        <td>1464463</td>
+        <td>368</td>
+        <td>298170</td>
+        <td>-67152</td>
+        <td>2,6</td>
+        <td>26</td>
+        <td>47%</td>
+        <td>1.41%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Egypt</td>
+        <td>102334404</td>
+        <td>1.94%</td>
+        <td>1946331</td>
+        <td>103</td>
+        <td>995450</td>
+        <td>-38033</td>
+        <td>3,3</td>
+        <td>25</td>
+        <td>43%</td>
+        <td>1.31%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Vietnam</td>
+        <td>97338579</td>
+        <td>0.91%</td>
+        <td>876473</td>
+        <td>314</td>
+        <td>310070</td>
+        <td>-80000</td>
+        <td>2,1</td>
+        <td>32</td>
+        <td>38%</td>
+        <td>1.25%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>DR Congo</td>
+        <td>89561403</td>
+        <td>3.19%</td>
+        <td>2770836</td>
+        <td>40</td>
+        <td>2267050</td>
+        <td>23861</td>
+        <td>6</td>
+        <td>17</td>
+        <td>46%</td>
+        <td>1.15%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Turkey</td>
+        <td>84339067</td>
+        <td>1.09%</td>
+        <td>909452</td>
+        <td>110</td>
+        <td>769630</td>
+        <td>283922</td>
+        <td>2,1</td>
+        <td>32</td>
+        <td>76%</td>
+        <td>1.08%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Iran</td>
+        <td>83992949</td>
+        <td>1.30%</td>
+        <td>1079043</td>
+        <td>52</td>
+        <td>1628550</td>
+        <td>-55000</td>
+        <td>2,2</td>
+        <td>32</td>
+        <td>76%</td>
+        <td>1.08%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Germany</td>
+        <td>83783942</td>
+        <td>0.32%</td>
+        <td>266897</td>
+        <td>240</td>
+        <td>348560</td>
+        <td>543822</td>
+        <td>1,6</td>
+        <td>46</td>
+        <td>76%</td>
+        <td>1.07%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Thailand</td>
+        <td>69799978</td>
+        <td>0.25%</td>
+        <td>174396</td>
+        <td>137</td>
+        <td>510890</td>
+        <td>19444</td>
+        <td>1,5</td>
+        <td>40</td>
+        <td>51%</td>
+        <td>0.90%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>United Kingdom</td>
+        <td>67886011</td>
+        <td>0.53%</td>
+        <td>355839</td>
+        <td>281</td>
+        <td>241930</td>
+        <td>260650</td>
+        <td>1,8</td>
+        <td>40</td>
+        <td>83%</td>
+        <td>0.87%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>France</td>
+        <td>65273511</td>
+        <td>0.22%</td>
+        <td>143783</td>
+        <td>119</td>
+        <td>547557</td>
+        <td>36527</td>
+        <td>1,9</td>
+        <td>42</td>
+        <td>82%</td>
+        <td>0.84%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Italy</td>
+        <td>60461826</td>
+        <td>-0.15%</td>
+        <td>-88249</td>
+        <td>206</td>
+        <td>294140</td>
+        <td>148943</td>
+        <td>1,3</td>
+        <td>47</td>
+        <td>69%</td>
+        <td>0.78%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Tanzania</td>
+        <td>59734218</td>
+        <td>2.98%</td>
+        <td>1728755</td>
+        <td>67</td>
+        <td>885800</td>
+        <td>-40076</td>
+        <td>4,9</td>
+        <td>18</td>
+        <td>37%</td>
+        <td>0.77%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>South Africa</td>
+        <td>59308690</td>
+        <td>1.28%</td>
+        <td>750420</td>
+        <td>49</td>
+        <td>1213090</td>
+        <td>145405</td>
+        <td>2,4</td>
+        <td>28</td>
+        <td>67%</td>
+        <td>0.76%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Myanmar</td>
+        <td>54409800</td>
+        <td>0.67%</td>
+        <td>364380</td>
+        <td>83</td>
+        <td>653290</td>
+        <td>-163313</td>
+        <td>2,2</td>
+        <td>29</td>
+        <td>31%</td>
+        <td>0.70%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Kenya</td>
+        <td>53771296</td>
+        <td>2.28%</td>
+        <td>1197323</td>
+        <td>94</td>
+        <td>569140</td>
+        <td>-10000</td>
+        <td>3,5</td>
+        <td>20</td>
+        <td>28%</td>
+        <td>0.69%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>South Korea</td>
+        <td>51269185</td>
+        <td>0.09%</td>
+        <td>43877</td>
+        <td>527</td>
+        <td>97230</td>
+        <td>11731</td>
+        <td>1,1</td>
+        <td>44</td>
+        <td>82%</td>
+        <td>0.66%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Colombia</td>
+        <td>50882891</td>
+        <td>1.08%</td>
+        <td>543448</td>
+        <td>46</td>
+        <td>1109500</td>
+        <td>204796</td>
+        <td>1,8</td>
+        <td>31</td>
+        <td>80%</td>
+        <td>0.65%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Spain</td>
+        <td>46754778</td>
+        <td>0.04%</td>
+        <td>18002</td>
+        <td>94</td>
+        <td>498800</td>
+        <td>40000</td>
+        <td>1,3</td>
+        <td>45</td>
+        <td>80%</td>
+        <td>0.60%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Uganda</td>
+        <td>45741007</td>
+        <td>3.32%</td>
+        <td>1471413</td>
+        <td>229</td>
+        <td>199810</td>
+        <td>168694</td>
+        <td>5</td>
+        <td>17</td>
+        <td>26%</td>
+        <td>0.59%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Argentina</td>
+        <td>45195774</td>
+        <td>0.93%</td>
+        <td>415097</td>
+        <td>17</td>
+        <td>2736690</td>
+        <td>4800</td>
+        <td>2,3</td>
+        <td>32</td>
+        <td>93%</td>
+        <td>0.58%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Algeria</td>
+        <td>43851044</td>
+        <td>1.85%</td>
+        <td>797990</td>
+        <td>18</td>
+        <td>2381740</td>
+        <td>-10000</td>
+        <td>3,1</td>
+        <td>29</td>
+        <td>73%</td>
+        <td>0.56%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Sudan</td>
+        <td>43849260</td>
+        <td>2.42%</td>
+        <td>1036022</td>
+        <td>25</td>
+        <td>1765048</td>
+        <td>-50000</td>
+        <td>4,4</td>
+        <td>20</td>
+        <td>35%</td>
+        <td>0.56%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Ukraine</td>
+        <td>43733762</td>
+        <td>-0.59%</td>
+        <td>-259876</td>
+        <td>75</td>
+        <td>579320</td>
+        <td>10000</td>
+        <td>1,4</td>
+        <td>41</td>
+        <td>69%</td>
+        <td>0.56%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Iraq</td>
+        <td>40222493</td>
+        <td>2.32%</td>
+        <td>912710</td>
+        <td>93</td>
+        <td>434320</td>
+        <td>7834</td>
+        <td>3,7</td>
+        <td>21</td>
+        <td>73%</td>
+        <td>0.52%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Afghanistan</td>
+        <td>38928346</td>
+        <td>2.33%</td>
+        <td>886592</td>
+        <td>60</td>
+        <td>652860</td>
+        <td>-62920</td>
+        <td>4,6</td>
+        <td>18</td>
+        <td>25%</td>
+        <td>0.50%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Poland</td>
+        <td>37846611</td>
+        <td>-0.11%</td>
+        <td>-41157</td>
+        <td>124</td>
+        <td>306230</td>
+        <td>-29395</td>
+        <td>1,4</td>
+        <td>42</td>
+        <td>60%</td>
+        <td>0.49%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Canada</td>
+        <td>37742154</td>
+        <td>0.89%</td>
+        <td>331107</td>
+        <td>4</td>
+        <td>9093510</td>
+        <td>242032</td>
+        <td>1,5</td>
+        <td>41</td>
+        <td>81%</td>
+        <td>0.48%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Morocco</td>
+        <td>36910560</td>
+        <td>1.20%</td>
+        <td>438791</td>
+        <td>83</td>
+        <td>446300</td>
+        <td>-51419</td>
+        <td>2,4</td>
+        <td>30</td>
+        <td>64%</td>
+        <td>0.47%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Saudi Arabia</td>
+        <td>34813871</td>
+        <td>1.59%</td>
+        <td>545343</td>
+        <td>16</td>
+        <td>2149690</td>
+        <td>134979</td>
+        <td>2,3</td>
+        <td>32</td>
+        <td>84%</td>
+        <td>0.45%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Uzbekistan</td>
+        <td>33469203</td>
+        <td>1.48%</td>
+        <td>487487</td>
+        <td>79</td>
+        <td>425400</td>
+        <td>-8863</td>
+        <td>2,4</td>
+        <td>28</td>
+        <td>50%</td>
+        <td>0.43%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Peru</td>
+        <td>32971854</td>
+        <td>1.42%</td>
+        <td>461401</td>
+        <td>26</td>
+        <td>1280000</td>
+        <td>99069</td>
+        <td>2,3</td>
+        <td>31</td>
+        <td>79%</td>
+        <td>0.42%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Angola</td>
+        <td>32866272</td>
+        <td>3.27%</td>
+        <td>1040977</td>
+        <td>26</td>
+        <td>1246700</td>
+        <td>6413</td>
+        <td>5,6</td>
+        <td>17</td>
+        <td>67%</td>
+        <td>0.42%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Malaysia</td>
+        <td>32365999</td>
+        <td>1.30%</td>
+        <td>416222</td>
+        <td>99</td>
+        <td>328550</td>
+        <td>50000</td>
+        <td>2</td>
+        <td>30</td>
+        <td>78%</td>
+        <td>0.42%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Mozambique</td>
+        <td>31255435</td>
+        <td>2.93%</td>
+        <td>889399</td>
+        <td>40</td>
+        <td>786380</td>
+        <td>-5000</td>
+        <td>4,9</td>
+        <td>18</td>
+        <td>38%</td>
+        <td>0.40%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Ghana</td>
+        <td>31072940</td>
+        <td>2.15%</td>
+        <td>655084</td>
+        <td>137</td>
+        <td>227540</td>
+        <td>-10000</td>
+        <td>3,9</td>
+        <td>22</td>
+        <td>57%</td>
+        <td>0.40%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Yemen</td>
+        <td>29825964</td>
+        <td>2.28%</td>
+        <td>664042</td>
+        <td>56</td>
+        <td>527970</td>
+        <td>-30000</td>
+        <td>3,8</td>
+        <td>20</td>
+        <td>38%</td>
+        <td>0.38%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Nepal</td>
+        <td>29136808</td>
+        <td>1.85%</td>
+        <td>528098</td>
+        <td>203</td>
+        <td>143350</td>
+        <td>41710</td>
+        <td>1,9</td>
+        <td>25</td>
+        <td>21%</td>
+        <td>0.37%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Venezuela</td>
+        <td>28435940</td>
+        <td>-0.28%</td>
+        <td>-79889</td>
+        <td>32</td>
+        <td>882050</td>
+        <td>-653249</td>
+        <td>2,3</td>
+        <td>30</td>
+        <td>N,A,</td>
+        <td>0.36%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Madagascar</td>
+        <td>27691018</td>
+        <td>2.68%</td>
+        <td>721711</td>
+        <td>48</td>
+        <td>581795</td>
+        <td>-1500</td>
+        <td>4,1</td>
+        <td>20</td>
+        <td>39%</td>
+        <td>0.36%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Cameroon</td>
+        <td>26545863</td>
+        <td>2.59%</td>
+        <td>669483</td>
+        <td>56</td>
+        <td>472710</td>
+        <td>-4800</td>
+        <td>4,6</td>
+        <td>19</td>
+        <td>56%</td>
+        <td>0.34%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Côte d'Ivoire</td>
+        <td>26378274</td>
+        <td>2.57%</td>
+        <td>661730</td>
+        <td>83</td>
+        <td>318000</td>
+        <td>-8000</td>
+        <td>4,7</td>
+        <td>19</td>
+        <td>51%</td>
+        <td>0.34%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>North Korea</td>
+        <td>25778816</td>
+        <td>0.44%</td>
+        <td>112655</td>
+        <td>214</td>
+        <td>120410</td>
+        <td>-5403</td>
+        <td>1,9</td>
+        <td>35</td>
+        <td>63%</td>
+        <td>0.33%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Australia</td>
+        <td>25499884</td>
+        <td>1.18%</td>
+        <td>296686</td>
+        <td>3</td>
+        <td>7682300</td>
+        <td>158246</td>
+        <td>1,8</td>
+        <td>38</td>
+        <td>86%</td>
+        <td>0.33%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Niger</td>
+        <td>24206644</td>
+        <td>3.84%</td>
+        <td>895929</td>
+        <td>19</td>
+        <td>1266700</td>
+        <td>4000</td>
+        <td>7</td>
+        <td>15</td>
+        <td>17%</td>
+        <td>0.31%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Taiwan</td>
+        <td>23816775</td>
+        <td>0.18%</td>
+        <td>42899</td>
+        <td>673</td>
+        <td>35410</td>
+        <td>30001</td>
+        <td>1,2</td>
+        <td>42</td>
+        <td>79%</td>
+        <td>0.31%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Sri Lanka</td>
+        <td>21413249</td>
+        <td>0.42%</td>
+        <td>89516</td>
+        <td>341</td>
+        <td>62710</td>
+        <td>-97986</td>
+        <td>2,2</td>
+        <td>34</td>
+        <td>18%</td>
+        <td>0.27%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Burkina Faso</td>
+        <td>20903273</td>
+        <td>2.86%</td>
+        <td>581895</td>
+        <td>76</td>
+        <td>273600</td>
+        <td>-25000</td>
+        <td>5,2</td>
+        <td>18</td>
+        <td>31%</td>
+        <td>0.27%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Mali</td>
+        <td>20250833</td>
+        <td>3.02%</td>
+        <td>592802</td>
+        <td>17</td>
+        <td>1220190</td>
+        <td>-40000</td>
+        <td>5,9</td>
+        <td>16</td>
+        <td>44%</td>
+        <td>0.26%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Romania</td>
+        <td>19237691</td>
+        <td>-0.66%</td>
+        <td>-126866</td>
+        <td>84</td>
+        <td>230170</td>
+        <td>-73999</td>
+        <td>1,6</td>
+        <td>43</td>
+        <td>55%</td>
+        <td>0.25%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Malawi</td>
+        <td>19129952</td>
+        <td>2.69%</td>
+        <td>501205</td>
+        <td>203</td>
+        <td>94280</td>
+        <td>-16053</td>
+        <td>4,3</td>
+        <td>18</td>
+        <td>18%</td>
+        <td>0.25%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Chile</td>
+        <td>19116201</td>
+        <td>0.87%</td>
+        <td>164163</td>
+        <td>26</td>
+        <td>743532</td>
+        <td>111708</td>
+        <td>1,7</td>
+        <td>35</td>
+        <td>85%</td>
+        <td>0.25%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Kazakhstan</td>
+        <td>18776707</td>
+        <td>1.21%</td>
+        <td>225280</td>
+        <td>7</td>
+        <td>2699700</td>
+        <td>-18000</td>
+        <td>2,8</td>
+        <td>31</td>
+        <td>58%</td>
+        <td>0.24%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Zambia</td>
+        <td>18383955</td>
+        <td>2.93%</td>
+        <td>522925</td>
+        <td>25</td>
+        <td>743390</td>
+        <td>-8000</td>
+        <td>4,7</td>
+        <td>18</td>
+        <td>45%</td>
+        <td>0.24%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Guatemala</td>
+        <td>17915568</td>
+        <td>1.90%</td>
+        <td>334096</td>
+        <td>167</td>
+        <td>107160</td>
+        <td>-9215</td>
+        <td>2,9</td>
+        <td>23</td>
+        <td>52%</td>
+        <td>0.23%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Ecuador</td>
+        <td>17643054</td>
+        <td>1.55%</td>
+        <td>269392</td>
+        <td>71</td>
+        <td>248360</td>
+        <td>36400</td>
+        <td>2,4</td>
+        <td>28</td>
+        <td>63%</td>
+        <td>0.23%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Syria</td>
+        <td>17500658</td>
+        <td>2.52%</td>
+        <td>430523</td>
+        <td>95</td>
+        <td>183630</td>
+        <td>-427391</td>
+        <td>2,8</td>
+        <td>26</td>
+        <td>60%</td>
+        <td>0.22%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Netherlands</td>
+        <td>17134872</td>
+        <td>0.22%</td>
+        <td>37742</td>
+        <td>508</td>
+        <td>33720</td>
+        <td>16000</td>
+        <td>1,7</td>
+        <td>43</td>
+        <td>92%</td>
+        <td>0.22%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Senegal</td>
+        <td>16743927</td>
+        <td>2.75%</td>
+        <td>447563</td>
+        <td>87</td>
+        <td>192530</td>
+        <td>-20000</td>
+        <td>4,7</td>
+        <td>19</td>
+        <td>49%</td>
+        <td>0.21%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Cambodia</td>
+        <td>16718965</td>
+        <td>1.41%</td>
+        <td>232423</td>
+        <td>95</td>
+        <td>176520</td>
+        <td>-30000</td>
+        <td>2,5</td>
+        <td>26</td>
+        <td>24%</td>
+        <td>0.21%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Chad</td>
+        <td>16425864</td>
+        <td>3.00%</td>
+        <td>478988</td>
+        <td>13</td>
+        <td>1259200</td>
+        <td>2000</td>
+        <td>5,8</td>
+        <td>17</td>
+        <td>23%</td>
+        <td>0.21%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Somalia</td>
+        <td>15893222</td>
+        <td>2.92%</td>
+        <td>450317</td>
+        <td>25</td>
+        <td>627340</td>
+        <td>-40000</td>
+        <td>6,1</td>
+        <td>17</td>
+        <td>47%</td>
+        <td>0.20%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Zimbabwe</td>
+        <td>14862924</td>
+        <td>1.48%</td>
+        <td>217456</td>
+        <td>38</td>
+        <td>386850</td>
+        <td>-116858</td>
+        <td>3,6</td>
+        <td>19</td>
+        <td>38%</td>
+        <td>0.19%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Guinea</td>
+        <td>13132795</td>
+        <td>2.83%</td>
+        <td>361549</td>
+        <td>53</td>
+        <td>245720</td>
+        <td>-4000</td>
+        <td>4,7</td>
+        <td>18</td>
+        <td>39%</td>
+        <td>0.17%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Rwanda</td>
+        <td>12952218</td>
+        <td>2.58%</td>
+        <td>325268</td>
+        <td>525</td>
+        <td>24670</td>
+        <td>-9000</td>
+        <td>4,1</td>
+        <td>20</td>
+        <td>18%</td>
+        <td>0.17%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Benin</td>
+        <td>12123200</td>
+        <td>2.73%</td>
+        <td>322049</td>
+        <td>108</td>
+        <td>112760</td>
+        <td>-2000</td>
+        <td>4,9</td>
+        <td>19</td>
+        <td>48%</td>
+        <td>0.16%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Burundi</td>
+        <td>11890784</td>
+        <td>3.12%</td>
+        <td>360204</td>
+        <td>463</td>
+        <td>25680</td>
+        <td>2001</td>
+        <td>5,5</td>
+        <td>17</td>
+        <td>14%</td>
+        <td>0.15%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Tunisia</td>
+        <td>11818619</td>
+        <td>1.06%</td>
+        <td>123900</td>
+        <td>76</td>
+        <td>155360</td>
+        <td>-4000</td>
+        <td>2,2</td>
+        <td>33</td>
+        <td>70%</td>
+        <td>0.15%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Bolivia</td>
+        <td>11673021</td>
+        <td>1.39%</td>
+        <td>159921</td>
+        <td>11</td>
+        <td>1083300</td>
+        <td>-9504</td>
+        <td>2,8</td>
+        <td>26</td>
+        <td>69%</td>
+        <td>0.15%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Belgium</td>
+        <td>11589623</td>
+        <td>0.44%</td>
+        <td>50295</td>
+        <td>383</td>
+        <td>30280</td>
+        <td>48000</td>
+        <td>1,7</td>
+        <td>42</td>
+        <td>98%</td>
+        <td>0.15%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Haiti</td>
+        <td>11402528</td>
+        <td>1.24%</td>
+        <td>139451</td>
+        <td>414</td>
+        <td>27560</td>
+        <td>-35000</td>
+        <td>3</td>
+        <td>24</td>
+        <td>57%</td>
+        <td>0.15%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Cuba</td>
+        <td>11326616</td>
+        <td>-0.06%</td>
+        <td>-6867</td>
+        <td>106</td>
+        <td>106440</td>
+        <td>-14400</td>
+        <td>1,6</td>
+        <td>42</td>
+        <td>78%</td>
+        <td>0.15%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>South Sudan</td>
+        <td>11193725</td>
+        <td>1.19%</td>
+        <td>131612</td>
+        <td>18</td>
+        <td>610952</td>
+        <td>-174200</td>
+        <td>4,7</td>
+        <td>19</td>
+        <td>25%</td>
+        <td>0.14%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Dominican Republic</td>
+        <td>10847910</td>
+        <td>1.01%</td>
+        <td>108952</td>
+        <td>225</td>
+        <td>48320</td>
+        <td>-30000</td>
+        <td>2,4</td>
+        <td>28</td>
+        <td>85%</td>
+        <td>0.14%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Czech Republic (Czechia)</td>
+        <td>10708981</td>
+        <td>0.18%</td>
+        <td>19772</td>
+        <td>139</td>
+        <td>77240</td>
+        <td>22011</td>
+        <td>1,6</td>
+        <td>43</td>
+        <td>74%</td>
+        <td>0.14%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Greece</td>
+        <td>10423054</td>
+        <td>-0.48%</td>
+        <td>-50401</td>
+        <td>81</td>
+        <td>128900</td>
+        <td>-16000</td>
+        <td>1,3</td>
+        <td>46</td>
+        <td>85%</td>
+        <td>0.13%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Jordan</td>
+        <td>10203134</td>
+        <td>1.00%</td>
+        <td>101440</td>
+        <td>115</td>
+        <td>88780</td>
+        <td>10220</td>
+        <td>2,8</td>
+        <td>24</td>
+        <td>91%</td>
+        <td>0.13%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Portugal</td>
+        <td>10196709</td>
+        <td>-0.29%</td>
+        <td>-29478</td>
+        <td>111</td>
+        <td>91590</td>
+        <td>-6000</td>
+        <td>1,3</td>
+        <td>46</td>
+        <td>66%</td>
+        <td>0.13%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Azerbaijan</td>
+        <td>10139177</td>
+        <td>0.91%</td>
+        <td>91459</td>
+        <td>123</td>
+        <td>82658</td>
+        <td>1200</td>
+        <td>2,1</td>
+        <td>32</td>
+        <td>56%</td>
+        <td>0.13%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Sweden</td>
+        <td>10099265</td>
+        <td>0.63%</td>
+        <td>62886</td>
+        <td>25</td>
+        <td>410340</td>
+        <td>40000</td>
+        <td>1,9</td>
+        <td>41</td>
+        <td>88%</td>
+        <td>0.13%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Honduras</td>
+        <td>9904607</td>
+        <td>1.63%</td>
+        <td>158490</td>
+        <td>89</td>
+        <td>111890</td>
+        <td>-6800</td>
+        <td>2,5</td>
+        <td>24</td>
+        <td>57%</td>
+        <td>0.13%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>United Arab Emirates</td>
+        <td>9890402</td>
+        <td>1.23%</td>
+        <td>119873</td>
+        <td>118</td>
+        <td>83600</td>
+        <td>40000</td>
+        <td>1,4</td>
+        <td>33</td>
+        <td>86%</td>
+        <td>0.13%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Hungary</td>
+        <td>9660351</td>
+        <td>-0.25%</td>
+        <td>-24328</td>
+        <td>107</td>
+        <td>90530</td>
+        <td>6000</td>
+        <td>1,5</td>
+        <td>43</td>
+        <td>72%</td>
+        <td>0.12%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Tajikistan</td>
+        <td>9537645</td>
+        <td>2.32%</td>
+        <td>216627</td>
+        <td>68</td>
+        <td>139960</td>
+        <td>-20000</td>
+        <td>3,6</td>
+        <td>22</td>
+        <td>27%</td>
+        <td>0.12%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Belarus</td>
+        <td>9449323</td>
+        <td>-0.03%</td>
+        <td>-3088</td>
+        <td>47</td>
+        <td>202910</td>
+        <td>8730</td>
+        <td>1,7</td>
+        <td>40</td>
+        <td>79%</td>
+        <td>0.12%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Austria</td>
+        <td>9006398</td>
+        <td>0.57%</td>
+        <td>51296</td>
+        <td>109</td>
+        <td>82409</td>
+        <td>65000</td>
+        <td>1,5</td>
+        <td>43</td>
+        <td>57%</td>
+        <td>0.12%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Papua New Guinea</td>
+        <td>8947024</td>
+        <td>1.95%</td>
+        <td>170915</td>
+        <td>20</td>
+        <td>452860</td>
+        <td>-800</td>
+        <td>3,6</td>
+        <td>22</td>
+        <td>13%</td>
+        <td>0.11%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Serbia</td>
+        <td>8737371</td>
+        <td>-0.40%</td>
+        <td>-34864</td>
+        <td>100</td>
+        <td>87460</td>
+        <td>4000</td>
+        <td>1,5</td>
+        <td>42</td>
+        <td>56%</td>
+        <td>0.11%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Israel</td>
+        <td>8655535</td>
+        <td>1.60%</td>
+        <td>136158</td>
+        <td>400</td>
+        <td>21640</td>
+        <td>10000</td>
+        <td>3</td>
+        <td>30</td>
+        <td>93%</td>
+        <td>0.11%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Switzerland</td>
+        <td>8654622</td>
+        <td>0.74%</td>
+        <td>63257</td>
+        <td>219</td>
+        <td>39516</td>
+        <td>52000</td>
+        <td>1,5</td>
+        <td>43</td>
+        <td>74%</td>
+        <td>0.11%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Togo</td>
+        <td>8278724</td>
+        <td>2.43%</td>
+        <td>196358</td>
+        <td>152</td>
+        <td>54390</td>
+        <td>-2000</td>
+        <td>4,4</td>
+        <td>19</td>
+        <td>43%</td>
+        <td>0.11%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Sierra Leone</td>
+        <td>7976983</td>
+        <td>2.10%</td>
+        <td>163768</td>
+        <td>111</td>
+        <td>72180</td>
+        <td>-4200</td>
+        <td>4,3</td>
+        <td>19</td>
+        <td>43%</td>
+        <td>0.10%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Hong Kong</td>
+        <td>7496981</td>
+        <td>0.82%</td>
+        <td>60827</td>
+        <td>7140</td>
+        <td>1050</td>
+        <td>29308</td>
+        <td>1,3</td>
+        <td>45</td>
+        <td>N,A,</td>
+        <td>0.10%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Laos</td>
+        <td>7275560</td>
+        <td>1.48%</td>
+        <td>106105</td>
+        <td>32</td>
+        <td>230800</td>
+        <td>-14704</td>
+        <td>2,7</td>
+        <td>24</td>
+        <td>36%</td>
+        <td>0.09%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Paraguay</td>
+        <td>7132538</td>
+        <td>1.25%</td>
+        <td>87902</td>
+        <td>18</td>
+        <td>397300</td>
+        <td>-16556</td>
+        <td>2,4</td>
+        <td>26</td>
+        <td>62%</td>
+        <td>0.09%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Bulgaria</td>
+        <td>6948445</td>
+        <td>-0.74%</td>
+        <td>-51674</td>
+        <td>64</td>
+        <td>108560</td>
+        <td>-4800</td>
+        <td>1,6</td>
+        <td>45</td>
+        <td>76%</td>
+        <td>0.09%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Libya</td>
+        <td>6871292</td>
+        <td>1.38%</td>
+        <td>93840</td>
+        <td>4</td>
+        <td>1759540</td>
+        <td>-1999</td>
+        <td>2,3</td>
+        <td>29</td>
+        <td>78%</td>
+        <td>0.09%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Lebanon</td>
+        <td>6825445</td>
+        <td>-0.44%</td>
+        <td>-30268</td>
+        <td>667</td>
+        <td>10230</td>
+        <td>-30012</td>
+        <td>2,1</td>
+        <td>30</td>
+        <td>78%</td>
+        <td>0.09%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Nicaragua</td>
+        <td>6624554</td>
+        <td>1.21%</td>
+        <td>79052</td>
+        <td>55</td>
+        <td>120340</td>
+        <td>-21272</td>
+        <td>2,4</td>
+        <td>26</td>
+        <td>57%</td>
+        <td>0.08%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Kyrgyzstan</td>
+        <td>6524195</td>
+        <td>1.69%</td>
+        <td>108345</td>
+        <td>34</td>
+        <td>191800</td>
+        <td>-4000</td>
+        <td>3</td>
+        <td>26</td>
+        <td>36%</td>
+        <td>0.08%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>El Salvador</td>
+        <td>6486205</td>
+        <td>0.51%</td>
+        <td>32652</td>
+        <td>313</td>
+        <td>20720</td>
+        <td>-40539</td>
+        <td>2,1</td>
+        <td>28</td>
+        <td>73%</td>
+        <td>0.08%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Turkmenistan</td>
+        <td>6031200</td>
+        <td>1.50%</td>
+        <td>89111</td>
+        <td>13</td>
+        <td>469930</td>
+        <td>-5000</td>
+        <td>2,8</td>
+        <td>27</td>
+        <td>53%</td>
+        <td>0.08%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Singapore</td>
+        <td>5850342</td>
+        <td>0.79%</td>
+        <td>46005</td>
+        <td>8358</td>
+        <td>700</td>
+        <td>27028</td>
+        <td>1,2</td>
+        <td>42</td>
+        <td>N,A,</td>
+        <td>0.08%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Denmark</td>
+        <td>5792202</td>
+        <td>0.35%</td>
+        <td>20326</td>
+        <td>137</td>
+        <td>42430</td>
+        <td>15200</td>
+        <td>1,8</td>
+        <td>42</td>
+        <td>88%</td>
+        <td>0.07%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Finland</td>
+        <td>5540720</td>
+        <td>0.15%</td>
+        <td>8564</td>
+        <td>18</td>
+        <td>303890</td>
+        <td>14000</td>
+        <td>1,5</td>
+        <td>43</td>
+        <td>86%</td>
+        <td>0.07%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Congo</td>
+        <td>5518087</td>
+        <td>2.56%</td>
+        <td>137579</td>
+        <td>16</td>
+        <td>341500</td>
+        <td>-4000</td>
+        <td>4,5</td>
+        <td>19</td>
+        <td>70%</td>
+        <td>0.07%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Slovakia</td>
+        <td>5459642</td>
+        <td>0.05%</td>
+        <td>2629</td>
+        <td>114</td>
+        <td>48088</td>
+        <td>1485</td>
+        <td>1,5</td>
+        <td>41</td>
+        <td>54%</td>
+        <td>0.07%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Norway</td>
+        <td>5421241</td>
+        <td>0.79%</td>
+        <td>42384</td>
+        <td>15</td>
+        <td>365268</td>
+        <td>28000</td>
+        <td>1,7</td>
+        <td>40</td>
+        <td>83%</td>
+        <td>0.07%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Oman</td>
+        <td>5106626</td>
+        <td>2.65%</td>
+        <td>131640</td>
+        <td>16</td>
+        <td>309500</td>
+        <td>87400</td>
+        <td>2,9</td>
+        <td>31</td>
+        <td>87%</td>
+        <td>0.07%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>State of Palestine</td>
+        <td>5101414</td>
+        <td>2.41%</td>
+        <td>119994</td>
+        <td>847</td>
+        <td>6020</td>
+        <td>-10563</td>
+        <td>3,7</td>
+        <td>21</td>
+        <td>80%</td>
+        <td>0.07%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Costa Rica</td>
+        <td>5094118</td>
+        <td>0.92%</td>
+        <td>46557</td>
+        <td>100</td>
+        <td>51060</td>
+        <td>4200</td>
+        <td>1,8</td>
+        <td>33</td>
+        <td>80%</td>
+        <td>0.07%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Liberia</td>
+        <td>5057681</td>
+        <td>2.44%</td>
+        <td>120307</td>
+        <td>53</td>
+        <td>96320</td>
+        <td>-5000</td>
+        <td>4,4</td>
+        <td>19</td>
+        <td>53%</td>
+        <td>0.06%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Ireland</td>
+        <td>4937786</td>
+        <td>1.13%</td>
+        <td>55291</td>
+        <td>72</td>
+        <td>68890</td>
+        <td>23604</td>
+        <td>1,8</td>
+        <td>38</td>
+        <td>63%</td>
+        <td>0.06%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Central African Republic</td>
+        <td>4829767</td>
+        <td>1.78%</td>
+        <td>84582</td>
+        <td>8</td>
+        <td>622980</td>
+        <td>-40000</td>
+        <td>4,8</td>
+        <td>18</td>
+        <td>43%</td>
+        <td>0.06%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>New Zealand</td>
+        <td>4822233</td>
+        <td>0.82%</td>
+        <td>39170</td>
+        <td>18</td>
+        <td>263310</td>
+        <td>14881</td>
+        <td>1,9</td>
+        <td>38</td>
+        <td>87%</td>
+        <td>0.06%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Mauritania</td>
+        <td>4649658</td>
+        <td>2.74%</td>
+        <td>123962</td>
+        <td>5</td>
+        <td>1030700</td>
+        <td>5000</td>
+        <td>4,6</td>
+        <td>20</td>
+        <td>57%</td>
+        <td>0.06%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Panama</td>
+        <td>4314767</td>
+        <td>1.61%</td>
+        <td>68328</td>
+        <td>58</td>
+        <td>74340</td>
+        <td>11200</td>
+        <td>2,5</td>
+        <td>30</td>
+        <td>68%</td>
+        <td>0.06%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Kuwait</td>
+        <td>4270571</td>
+        <td>1.51%</td>
+        <td>63488</td>
+        <td>240</td>
+        <td>17820</td>
+        <td>39520</td>
+        <td>2,1</td>
+        <td>37</td>
+        <td>N,A,</td>
+        <td>0.05%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Croatia</td>
+        <td>4105267</td>
+        <td>-0.61%</td>
+        <td>-25037</td>
+        <td>73</td>
+        <td>55960</td>
+        <td>-8001</td>
+        <td>1,4</td>
+        <td>44</td>
+        <td>58%</td>
+        <td>0.05%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Moldova</td>
+        <td>4033963</td>
+        <td>-0.23%</td>
+        <td>-9300</td>
+        <td>123</td>
+        <td>32850</td>
+        <td>-1387</td>
+        <td>1,3</td>
+        <td>38</td>
+        <td>43%</td>
+        <td>0.05%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Georgia</td>
+        <td>3989167</td>
+        <td>-0.19%</td>
+        <td>-7598</td>
+        <td>57</td>
+        <td>69490</td>
+        <td>-10000</td>
+        <td>2,1</td>
+        <td>38</td>
+        <td>58%</td>
+        <td>0.05%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Eritrea</td>
+        <td>3546421</td>
+        <td>1.41%</td>
+        <td>49304</td>
+        <td>35</td>
+        <td>101000</td>
+        <td>-39858</td>
+        <td>4,1</td>
+        <td>19</td>
+        <td>63%</td>
+        <td>0.05%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Uruguay</td>
+        <td>3473730</td>
+        <td>0.35%</td>
+        <td>11996</td>
+        <td>20</td>
+        <td>175020</td>
+        <td>-3000</td>
+        <td>2</td>
+        <td>36</td>
+        <td>96%</td>
+        <td>0.04%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Bosnia and Herzegovina</td>
+        <td>3280819</td>
+        <td>-0.61%</td>
+        <td>-20181</td>
+        <td>64</td>
+        <td>51000</td>
+        <td>-21585</td>
+        <td>1,3</td>
+        <td>43</td>
+        <td>52%</td>
+        <td>0.04%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Mongolia</td>
+        <td>3278290</td>
+        <td>1.65%</td>
+        <td>53123</td>
+        <td>2</td>
+        <td>1553560</td>
+        <td>-852</td>
+        <td>2,9</td>
+        <td>28</td>
+        <td>67%</td>
+        <td>0.04%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Armenia</td>
+        <td>2963243</td>
+        <td>0.19%</td>
+        <td>5512</td>
+        <td>104</td>
+        <td>28470</td>
+        <td>-4998</td>
+        <td>1,8</td>
+        <td>35</td>
+        <td>63%</td>
+        <td>0.04%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Jamaica</td>
+        <td>2961167</td>
+        <td>0.44%</td>
+        <td>12888</td>
+        <td>273</td>
+        <td>10830</td>
+        <td>-11332</td>
+        <td>2</td>
+        <td>31</td>
+        <td>55%</td>
+        <td>0.04%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Qatar</td>
+        <td>2881053</td>
+        <td>1.73%</td>
+        <td>48986</td>
+        <td>248</td>
+        <td>11610</td>
+        <td>40000</td>
+        <td>1,9</td>
+        <td>32</td>
+        <td>96%</td>
+        <td>0.04%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Albania</td>
+        <td>2877797</td>
+        <td>-0.11%</td>
+        <td>-3120</td>
+        <td>105</td>
+        <td>27400</td>
+        <td>-14000</td>
+        <td>1,6</td>
+        <td>36</td>
+        <td>63%</td>
+        <td>0.04%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Puerto Rico</td>
+        <td>2860853</td>
+        <td>-2.47%</td>
+        <td>-72555</td>
+        <td>323</td>
+        <td>8870</td>
+        <td>-97986</td>
+        <td>1,2</td>
+        <td>44</td>
+        <td>N,A,</td>
+        <td>0.04%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Lithuania</td>
+        <td>2722289</td>
+        <td>-1.35%</td>
+        <td>-37338</td>
+        <td>43</td>
+        <td>62674</td>
+        <td>-32780</td>
+        <td>1,7</td>
+        <td>45</td>
+        <td>71%</td>
+        <td>0.03%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Namibia</td>
+        <td>2540905</td>
+        <td>1.86%</td>
+        <td>46375</td>
+        <td>3</td>
+        <td>823290</td>
+        <td>-4806</td>
+        <td>3,4</td>
+        <td>22</td>
+        <td>55%</td>
+        <td>0.03%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Gambia</td>
+        <td>2416668</td>
+        <td>2.94%</td>
+        <td>68962</td>
+        <td>239</td>
+        <td>10120</td>
+        <td>-3087</td>
+        <td>5,3</td>
+        <td>18</td>
+        <td>59%</td>
+        <td>0.03%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Botswana</td>
+        <td>2351627</td>
+        <td>2.08%</td>
+        <td>47930</td>
+        <td>4</td>
+        <td>566730</td>
+        <td>3000</td>
+        <td>2,9</td>
+        <td>24</td>
+        <td>73%</td>
+        <td>0.03%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Gabon</td>
+        <td>2225734</td>
+        <td>2.45%</td>
+        <td>53155</td>
+        <td>9</td>
+        <td>257670</td>
+        <td>3260</td>
+        <td>4</td>
+        <td>23</td>
+        <td>87%</td>
+        <td>0.03%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Lesotho</td>
+        <td>2142249</td>
+        <td>0.80%</td>
+        <td>16981</td>
+        <td>71</td>
+        <td>30360</td>
+        <td>-10047</td>
+        <td>3,2</td>
+        <td>24</td>
+        <td>31%</td>
+        <td>0.03%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>North Macedonia</td>
+        <td>2083374</td>
+        <td>0.00%</td>
+        <td>-85</td>
+        <td>83</td>
+        <td>25220</td>
+        <td>-1000</td>
+        <td>1,5</td>
+        <td>39</td>
+        <td>59%</td>
+        <td>0.03%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Slovenia</td>
+        <td>2078938</td>
+        <td>0.01%</td>
+        <td>284</td>
+        <td>103</td>
+        <td>20140</td>
+        <td>2000</td>
+        <td>1,6</td>
+        <td>45</td>
+        <td>55%</td>
+        <td>0.03%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Guinea-Bissau</td>
+        <td>1968001</td>
+        <td>2.45%</td>
+        <td>47079</td>
+        <td>70</td>
+        <td>28120</td>
+        <td>-1399</td>
+        <td>4,5</td>
+        <td>19</td>
+        <td>45%</td>
+        <td>0.03%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Latvia</td>
+        <td>1886198</td>
+        <td>-1.08%</td>
+        <td>-20545</td>
+        <td>30</td>
+        <td>62200</td>
+        <td>-14837</td>
+        <td>1,7</td>
+        <td>44</td>
+        <td>69%</td>
+        <td>0.02%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Bahrain</td>
+        <td>1701575</td>
+        <td>3.68%</td>
+        <td>60403</td>
+        <td>2239</td>
+        <td>760</td>
+        <td>47800</td>
+        <td>2</td>
+        <td>32</td>
+        <td>89%</td>
+        <td>0.02%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Equatorial Guinea</td>
+        <td>1402985</td>
+        <td>3.47%</td>
+        <td>46999</td>
+        <td>50</td>
+        <td>28050</td>
+        <td>16000</td>
+        <td>4,6</td>
+        <td>22</td>
+        <td>73%</td>
+        <td>0.02%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Trinidad and Tobago</td>
+        <td>1399488</td>
+        <td>0.32%</td>
+        <td>4515</td>
+        <td>273</td>
+        <td>5130</td>
+        <td>-800</td>
+        <td>1,7</td>
+        <td>36</td>
+        <td>52%</td>
+        <td>0.02%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Estonia</td>
+        <td>1326535</td>
+        <td>0.07%</td>
+        <td>887</td>
+        <td>31</td>
+        <td>42390</td>
+        <td>3911</td>
+        <td>1,6</td>
+        <td>42</td>
+        <td>68%</td>
+        <td>0.02%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Timor-Leste</td>
+        <td>1318445</td>
+        <td>1.96%</td>
+        <td>25326</td>
+        <td>89</td>
+        <td>14870</td>
+        <td>-5385</td>
+        <td>4,1</td>
+        <td>21</td>
+        <td>33%</td>
+        <td>0.02%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Mauritius</td>
+        <td>1271768</td>
+        <td>0.17%</td>
+        <td>2100</td>
+        <td>626</td>
+        <td>2030</td>
+        <td>0</td>
+        <td>1,4</td>
+        <td>37</td>
+        <td>41%</td>
+        <td>0.02%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Cyprus</td>
+        <td>1207359</td>
+        <td>0.73%</td>
+        <td>8784</td>
+        <td>131</td>
+        <td>9240</td>
+        <td>5000</td>
+        <td>1,3</td>
+        <td>37</td>
+        <td>67%</td>
+        <td>0.02%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Eswatini</td>
+        <td>1160164</td>
+        <td>1.05%</td>
+        <td>12034</td>
+        <td>67</td>
+        <td>17200</td>
+        <td>-8353</td>
+        <td>3</td>
+        <td>21</td>
+        <td>30%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Djibouti</td>
+        <td>988000</td>
+        <td>1.48%</td>
+        <td>14440</td>
+        <td>43</td>
+        <td>23180</td>
+        <td>900</td>
+        <td>2,8</td>
+        <td>27</td>
+        <td>79%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Fiji</td>
+        <td>896445</td>
+        <td>0.73%</td>
+        <td>6492</td>
+        <td>49</td>
+        <td>18270</td>
+        <td>-6202</td>
+        <td>2,8</td>
+        <td>28</td>
+        <td>59%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Réunion</td>
+        <td>895312</td>
+        <td>0.72%</td>
+        <td>6385</td>
+        <td>358</td>
+        <td>2500</td>
+        <td>-1256</td>
+        <td>2,3</td>
+        <td>36</td>
+        <td>100%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Comoros</td>
+        <td>869601</td>
+        <td>2.20%</td>
+        <td>18715</td>
+        <td>467</td>
+        <td>1861</td>
+        <td>-2000</td>
+        <td>4,2</td>
+        <td>20</td>
+        <td>29%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Guyana</td>
+        <td>786552</td>
+        <td>0.48%</td>
+        <td>3786</td>
+        <td>4</td>
+        <td>196850</td>
+        <td>-6000</td>
+        <td>2,5</td>
+        <td>27</td>
+        <td>27%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Bhutan</td>
+        <td>771608</td>
+        <td>1.12%</td>
+        <td>8516</td>
+        <td>20</td>
+        <td>38117</td>
+        <td>320</td>
+        <td>2</td>
+        <td>28</td>
+        <td>46%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Solomon Islands</td>
+        <td>686884</td>
+        <td>2.55%</td>
+        <td>17061</td>
+        <td>25</td>
+        <td>27990</td>
+        <td>-1600</td>
+        <td>4,4</td>
+        <td>20</td>
+        <td>23%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Macao</td>
+        <td>649335</td>
+        <td>1.39%</td>
+        <td>8890</td>
+        <td>21645</td>
+        <td>30</td>
+        <td>5000</td>
+        <td>1,2</td>
+        <td>39</td>
+        <td>N,A,</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Montenegro</td>
+        <td>628066</td>
+        <td>0.01%</td>
+        <td>79</td>
+        <td>47</td>
+        <td>13450</td>
+        <td>-480</td>
+        <td>1,8</td>
+        <td>39</td>
+        <td>68%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Luxembourg</td>
+        <td>625978</td>
+        <td>1.66%</td>
+        <td>10249</td>
+        <td>242</td>
+        <td>2590</td>
+        <td>9741</td>
+        <td>1,5</td>
+        <td>40</td>
+        <td>88%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Western Sahara</td>
+        <td>597339</td>
+        <td>2.55%</td>
+        <td>14876</td>
+        <td>2</td>
+        <td>266000</td>
+        <td>5582</td>
+        <td>2,4</td>
+        <td>28</td>
+        <td>87%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Suriname</td>
+        <td>586632</td>
+        <td>0.90%</td>
+        <td>5260</td>
+        <td>4</td>
+        <td>156000</td>
+        <td>-1000</td>
+        <td>2,4</td>
+        <td>29</td>
+        <td>65%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Cabo Verde</td>
+        <td>555987</td>
+        <td>1.10%</td>
+        <td>6052</td>
+        <td>138</td>
+        <td>4030</td>
+        <td>-1342</td>
+        <td>2,3</td>
+        <td>28</td>
+        <td>68%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Maldives</td>
+        <td>540544</td>
+        <td>1.81%</td>
+        <td>9591</td>
+        <td>1802</td>
+        <td>300</td>
+        <td>11370</td>
+        <td>1,9</td>
+        <td>30</td>
+        <td>35%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Malta</td>
+        <td>441543</td>
+        <td>0.27%</td>
+        <td>1171</td>
+        <td>1380</td>
+        <td>320</td>
+        <td>900</td>
+        <td>1,5</td>
+        <td>43</td>
+        <td>93%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Brunei</td>
+        <td>437479</td>
+        <td>0.97%</td>
+        <td>4194</td>
+        <td>83</td>
+        <td>5270</td>
+        <td>0</td>
+        <td>1,8</td>
+        <td>32</td>
+        <td>80%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Guadeloupe</td>
+        <td>400124</td>
+        <td>0.02%</td>
+        <td>68</td>
+        <td>237</td>
+        <td>1690</td>
+        <td>-1440</td>
+        <td>2,2</td>
+        <td>44</td>
+        <td>N,A,</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Belize</td>
+        <td>397628</td>
+        <td>1.86%</td>
+        <td>7275</td>
+        <td>17</td>
+        <td>22810</td>
+        <td>1200</td>
+        <td>2,3</td>
+        <td>25</td>
+        <td>46%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Bahamas</td>
+        <td>393244</td>
+        <td>0.97%</td>
+        <td>3762</td>
+        <td>39</td>
+        <td>10010</td>
+        <td>1000</td>
+        <td>1,8</td>
+        <td>32</td>
+        <td>86%</td>
+        <td>0.01%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Martinique</td>
+        <td>375265</td>
+        <td>-0.08%</td>
+        <td>-289</td>
+        <td>354</td>
+        <td>1060</td>
+        <td>-960</td>
+        <td>1,9</td>
+        <td>47</td>
+        <td>92%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Iceland</td>
+        <td>341243</td>
+        <td>0.65%</td>
+        <td>2212</td>
+        <td>3</td>
+        <td>100250</td>
+        <td>380</td>
+        <td>1,8</td>
+        <td>37</td>
+        <td>94%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Vanuatu</td>
+        <td>307145</td>
+        <td>2.42%</td>
+        <td>7263</td>
+        <td>25</td>
+        <td>12190</td>
+        <td>120</td>
+        <td>3,8</td>
+        <td>21</td>
+        <td>24%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>French Guiana</td>
+        <td>298682</td>
+        <td>2.70%</td>
+        <td>7850</td>
+        <td>4</td>
+        <td>82200</td>
+        <td>1200</td>
+        <td>3,4</td>
+        <td>25</td>
+        <td>87%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Barbados</td>
+        <td>287375</td>
+        <td>0.12%</td>
+        <td>350</td>
+        <td>668</td>
+        <td>430</td>
+        <td>-79</td>
+        <td>1,6</td>
+        <td>40</td>
+        <td>31%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>New Caledonia</td>
+        <td>285498</td>
+        <td>0.97%</td>
+        <td>2748</td>
+        <td>16</td>
+        <td>18280</td>
+        <td>502</td>
+        <td>2</td>
+        <td>34</td>
+        <td>72%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>French Polynesia</td>
+        <td>280908</td>
+        <td>0.58%</td>
+        <td>1621</td>
+        <td>77</td>
+        <td>3660</td>
+        <td>-1000</td>
+        <td>2</td>
+        <td>34</td>
+        <td>64%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Mayotte</td>
+        <td>272815</td>
+        <td>2.50%</td>
+        <td>6665</td>
+        <td>728</td>
+        <td>375</td>
+        <td>0</td>
+        <td>3,7</td>
+        <td>20</td>
+        <td>46%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Sao Tome & Principe</td>
+        <td>219159</td>
+        <td>1.91%</td>
+        <td>4103</td>
+        <td>228</td>
+        <td>960</td>
+        <td>-1680</td>
+        <td>4,4</td>
+        <td>19</td>
+        <td>74%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Samoa</td>
+        <td>198414</td>
+        <td>0.67%</td>
+        <td>1317</td>
+        <td>70</td>
+        <td>2830</td>
+        <td>-2803</td>
+        <td>3,9</td>
+        <td>22</td>
+        <td>18%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Saint Lucia</td>
+        <td>183627</td>
+        <td>0.46%</td>
+        <td>837</td>
+        <td>301</td>
+        <td>610</td>
+        <td>0</td>
+        <td>1,4</td>
+        <td>34</td>
+        <td>19%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Channel Islands</td>
+        <td>173863</td>
+        <td>0.93%</td>
+        <td>1604</td>
+        <td>915</td>
+        <td>190</td>
+        <td>1351</td>
+        <td>1,5</td>
+        <td>43</td>
+        <td>30%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Guam</td>
+        <td>168775</td>
+        <td>0.89%</td>
+        <td>1481</td>
+        <td>313</td>
+        <td>540</td>
+        <td>-506</td>
+        <td>2,3</td>
+        <td>31</td>
+        <td>95%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Curaçao</td>
+        <td>164093</td>
+        <td>0.41%</td>
+        <td>669</td>
+        <td>370</td>
+        <td>444</td>
+        <td>515</td>
+        <td>1,8</td>
+        <td>42</td>
+        <td>89%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Kiribati</td>
+        <td>119449</td>
+        <td>1.57%</td>
+        <td>1843</td>
+        <td>147</td>
+        <td>810</td>
+        <td>-800</td>
+        <td>3,6</td>
+        <td>23</td>
+        <td>57%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Micronesia</td>
+        <td>115023</td>
+        <td>1.06%</td>
+        <td>1208</td>
+        <td>164</td>
+        <td>700</td>
+        <td>-600</td>
+        <td>3,1</td>
+        <td>24</td>
+        <td>21%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Grenada</td>
+        <td>112523</td>
+        <td>0.46%</td>
+        <td>520</td>
+        <td>331</td>
+        <td>340</td>
+        <td>-200</td>
+        <td>2,1</td>
+        <td>32</td>
+        <td>35%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>St, Vincent & Grenadines</td>
+        <td>110940</td>
+        <td>0.32%</td>
+        <td>351</td>
+        <td>284</td>
+        <td>390</td>
+        <td>-200</td>
+        <td>1,9</td>
+        <td>33</td>
+        <td>53%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Aruba</td>
+        <td>106766</td>
+        <td>0.43%</td>
+        <td>452</td>
+        <td>593</td>
+        <td>180</td>
+        <td>201</td>
+        <td>1,9</td>
+        <td>41</td>
+        <td>44%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Tonga</td>
+        <td>105695</td>
+        <td>1.15%</td>
+        <td>1201</td>
+        <td>147</td>
+        <td>720</td>
+        <td>-800</td>
+        <td>3,6</td>
+        <td>22</td>
+        <td>24%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>U,S, Virgin Islands</td>
+        <td>104425</td>
+        <td>-0.15%</td>
+        <td>-153</td>
+        <td>298</td>
+        <td>350</td>
+        <td>-451</td>
+        <td>2</td>
+        <td>43</td>
+        <td>96%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Seychelles</td>
+        <td>98347</td>
+        <td>0.62%</td>
+        <td>608</td>
+        <td>214</td>
+        <td>460</td>
+        <td>-200</td>
+        <td>2,5</td>
+        <td>34</td>
+        <td>56%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Antigua and Barbuda</td>
+        <td>97929</td>
+        <td>0.84%</td>
+        <td>811</td>
+        <td>223</td>
+        <td>440</td>
+        <td>0</td>
+        <td>2</td>
+        <td>34</td>
+        <td>26%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Isle of Man</td>
+        <td>85033</td>
+        <td>0.53%</td>
+        <td>449</td>
+        <td>149</td>
+        <td>570</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>53%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Andorra</td>
+        <td>77265</td>
+        <td>0.16%</td>
+        <td>123</td>
+        <td>164</td>
+        <td>470</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>88%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Dominica</td>
+        <td>71986</td>
+        <td>0.25%</td>
+        <td>178</td>
+        <td>96</td>
+        <td>750</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>74%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Cayman Islands</td>
+        <td>65722</td>
+        <td>1.19%</td>
+        <td>774</td>
+        <td>274</td>
+        <td>240</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>97%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Bermuda</td>
+        <td>62278</td>
+        <td>-0.36%</td>
+        <td>-228</td>
+        <td>1246</td>
+        <td>50</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>97%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Marshall Islands</td>
+        <td>59190</td>
+        <td>0.68%</td>
+        <td>399</td>
+        <td>329</td>
+        <td>180</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>70%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Northern Mariana Islands</td>
+        <td>57559</td>
+        <td>0.60%</td>
+        <td>343</td>
+        <td>125</td>
+        <td>460</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>88%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Greenland</td>
+        <td>56770</td>
+        <td>0.17%</td>
+        <td>98</td>
+        <td>0</td>
+        <td>410450</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>87%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>American Samoa</td>
+        <td>55191</td>
+        <td>-0.22%</td>
+        <td>-121</td>
+        <td>276</td>
+        <td>200</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>88%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Saint Kitts & Nevis</td>
+        <td>53199</td>
+        <td>0.71%</td>
+        <td>376</td>
+        <td>205</td>
+        <td>260</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>33%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Faeroe Islands</td>
+        <td>48863</td>
+        <td>0.38%</td>
+        <td>185</td>
+        <td>35</td>
+        <td>1396</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>43%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Sint Maarten</td>
+        <td>42876</td>
+        <td>1.15%</td>
+        <td>488</td>
+        <td>1261</td>
+        <td>34</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>96%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Monaco</td>
+        <td>39242</td>
+        <td>0.71%</td>
+        <td>278</td>
+        <td>26337</td>
+        <td>1</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Turks and Caicos</td>
+        <td>38717</td>
+        <td>1.38%</td>
+        <td>526</td>
+        <td>41</td>
+        <td>950</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>89%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Saint Martin</td>
+        <td>38666</td>
+        <td>1.75%</td>
+        <td>664</td>
+        <td>730</td>
+        <td>53</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Liechtenstein</td>
+        <td>38128</td>
+        <td>0.29%</td>
+        <td>109</td>
+        <td>238</td>
+        <td>160</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>15%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>San Marino</td>
+        <td>33931</td>
+        <td>0.21%</td>
+        <td>71</td>
+        <td>566</td>
+        <td>60</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>97%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Gibraltar</td>
+        <td>33691</td>
+        <td>-0.03%</td>
+        <td>-10</td>
+        <td>3369</td>
+        <td>10</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>British Virgin Islands</td>
+        <td>30231</td>
+        <td>0.67%</td>
+        <td>201</td>
+        <td>202</td>
+        <td>150</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>52%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Caribbean Netherlands</td>
+        <td>26223</td>
+        <td>0.94%</td>
+        <td>244</td>
+        <td>80</td>
+        <td>328</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>75%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Palau</td>
+        <td>18094</td>
+        <td>0.48%</td>
+        <td>86</td>
+        <td>39</td>
+        <td>460</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Cook Islands</td>
+        <td>17564</td>
+        <td>0.09%</td>
+        <td>16</td>
+        <td>73</td>
+        <td>240</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>75%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Anguilla</td>
+        <td>15003</td>
+        <td>0.90%</td>
+        <td>134</td>
+        <td>167</td>
+        <td>90</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Tuvalu</td>
+        <td>11792</td>
+        <td>1.25%</td>
+        <td>146</td>
+        <td>393</td>
+        <td>30</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>62%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Wallis & Futuna</td>
+        <td>11239</td>
+        <td>-1.69%</td>
+        <td>-193</td>
+        <td>80</td>
+        <td>140</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Nauru</td>
+        <td>10824</td>
+        <td>0.63%</td>
+        <td>68</td>
+        <td>541</td>
+        <td>20</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Saint Barthelemy</td>
+        <td>9877</td>
+        <td>0.30%</td>
+        <td>30</td>
+        <td>470</td>
+        <td>21</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Saint Helena</td>
+        <td>6077</td>
+        <td>0.30%</td>
+        <td>18</td>
+        <td>16</td>
+        <td>390</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>27%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Saint Pierre & Miquelon</td>
+        <td>5794</td>
+        <td>-0.48%</td>
+        <td>-28</td>
+        <td>25</td>
+        <td>230</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>100%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Montserrat</td>
+        <td>4992</td>
+        <td>0.06%</td>
+        <td>3</td>
+        <td>50</td>
+        <td>100</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>10%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Falkland Islands</td>
+        <td>3480</td>
+        <td>3.05%</td>
+        <td>103</td>
+        <td>0</td>
+        <td>12170</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>66%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Niue</td>
+        <td>1626</td>
+        <td>0.68%</td>
+        <td>11</td>
+        <td>6</td>
+        <td>260</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>46%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Tokelau</td>
+        <td>1357</td>
+        <td>1.27%</td>
+        <td>17</td>
+        <td>136</td>
+        <td>10</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0%</td>
+        <td>0.00%</td>
+    </tr>
+      <tr style="height: 12.00pt;">
+        <td>Holy See</td>
+        <td>801</td>
+        <td>0.25%</td>
+        <td>2</td>
+        <td>2003</td>
+        <td>0</td>
+        <td></td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>N,A,</td>
+        <td>0.00%</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

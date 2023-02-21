@@ -11,6 +11,7 @@ import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Objects;
@@ -32,27 +33,40 @@ class GenericWorkbookTest {
     @Test
     public void testSaveAndReloadCsv() throws Exception {
         Workbook original = openWorkbookCsv(testdataDir.resolve("population by country_US.csv"), Locale.US);
-        Path pathToCopy = testdataDir.resolve("population by country (copy).csv");
-        original.write(pathToCopy, Arguments.of(
-                Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
-                Arguments.createEntry(IoOptions.locale(), Locale.US)
-        ));
-        testCountryWorkbook(pathToCopy, Locale.US);
+        Path tempDir = Files.createTempDirectory("meja-test");
+        try {
+            Path pathToCopy = tempDir.resolve("population by country (copy).csv");
+            original.write(pathToCopy, Arguments.of(
+                    Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
+                    Arguments.createEntry(IoOptions.locale(), Locale.US)
+            ));
+            testCountryWorkbook(pathToCopy, Locale.US);
+        } finally {
+            IoUtil.deleteRecursive(tempDir);
+        }
     }
 
     @Test
     public void testConvertToHtml() throws Exception {
         String[] files = { "population by country_US.csv" };
-        for (String inFile: files) {
-            String outFile = IoUtil.replaceExtension(inFile, "html");
-            copyToHtml(inFile, outFile, Locale.US);
+        Path tempDir = Files.createTempDirectory("meja-test");
+        try {
+            for (String inFileName: files) {
+                Path inFile = testdataDir.resolve(inFileName);
+                String outFileName = IoUtil.replaceExtension(inFileName, "html");
+                Path refFile = testdataDir.resolve(outFileName);
+                Path outFile = tempDir.resolve(outFileName);
+                copyToHtml(inFile, outFile, Locale.US);
+                assertEquals(Files.readString(refFile), Files.readString(outFile));
+            }
+        } finally {
+            IoUtil.deleteRecursive(tempDir);
         }
     }
 
-    private void copyToHtml(String inFile, String outFile, Locale locale) throws IOException {
-        Workbook original = openWorkbookCsv(testdataDir.resolve(inFile), locale);
-        Path pathToCopy = testdataDir.resolve(outFile);
-        original.write(pathToCopy);
+    private void copyToHtml(Path inFile, Path outFile, Locale locale) throws IOException {
+        Workbook original = openWorkbookCsv(inFile, locale);
+        original.write(outFile);
     }
 
     private void testCountryWorkbook(Path pathToWorkbook, Locale locale) throws IOException {
