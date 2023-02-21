@@ -132,7 +132,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     List<String> getCellStyleNames();
 
     /**
-     * Get stream of cell styles contained in workbook,
+     * Get stream of cell styles contained in workbook.
      * @return stream of cell styles
      */
     Stream<? extends CellStyle> cellStyles();

@@ -52,7 +52,7 @@ public abstract class AbstractWorkbook implements Workbook {
     /**
      * Check if object caching is enabled.
      *
-     * @return true if object caching is enabled
+     * @return true, if object caching is enabled
      */
     @Override
     public boolean isObjectCachingEnabled() {

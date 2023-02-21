@@ -48,7 +48,7 @@ public interface Row extends Iterable<Cell> {
      * Get cell.
      *
      * @param j the column number
-     * @return this row`s cell for the given column, missing cells are created on
+     * @return this row's cell for the given column, missing cells are created on
      *         the fly
      */
     Cell getCell(int j);
@@ -57,7 +57,7 @@ public interface Row extends Iterable<Cell> {
      * Get cell.
      *
      * @param j the column number
-     * @return this row`s cell for the given column or null if cell doesn't exist
+     * @return this row's cell for the given column or null if cell doesn't exist
      */
     Cell getCellIfExists(int j);
 

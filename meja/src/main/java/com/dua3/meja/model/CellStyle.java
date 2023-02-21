@@ -84,7 +84,7 @@ public interface CellStyle {
     Color getFillFgColor();
 
     /**
-     * Get fill pattern.
+     * Get the fill pattern.
      *
      * @return the fill pattern used in this cell style
      */
@@ -157,7 +157,7 @@ public interface CellStyle {
     /**
      * Set foreground fill color.
      *
-     * @param color the foreground fill color to set
+     * @param color the foreground fill-color to set
      */
     void setFillFgColor(Color color);
 

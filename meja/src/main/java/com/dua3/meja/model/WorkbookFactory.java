@@ -30,7 +30,7 @@ import com.dua3.utility.options.Arguments;
 public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
 
     /**
-     * Return copy of workbook in this factory`s implementation.
+     * Return copy of workbook in this factory's implementation.
      *
      * @param other the source workbook
      * @return workbook instance of type {@code WORKBOOK} with the contents of
