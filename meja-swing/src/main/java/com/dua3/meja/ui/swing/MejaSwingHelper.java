@@ -76,30 +76,25 @@ public final class MejaSwingHelper {
             public void propertyChange(PropertyChangeEvent evt) {
                 final Runnable dispatcher;
                 switch (evt.getPropertyName()) {
-                case Sheet.PROPERTY_ROWS_ADDED: {
-                    RowInfo ri = (RowInfo) evt.getNewValue();
-                    dispatcher = () -> fireTableRowsInserted(getRowNumber(ri.firstRow()),
-                            getRowNumber(ri.lastRow()));
-                }
-                    break;
-                case Sheet.PROPERTY_CELL_CONTENT:
-                    if (firstRowIsHeader && ((Cell) evt.getSource()).getRowNumber() == 0) {
-                        dispatcher = SheetTableModel.this::fireTableStructureChanged;
-                    } else {
-                        assert evt.getSource() instanceof Cell;
-                        Cell cell = (Cell) evt.getSource();
-                        int i = cell.getRowNumber();
-                        int j = cell.getColumnNumber();
-                        dispatcher = () -> fireTableCellUpdated(i, j);
+                    case Sheet.PROPERTY_ROWS_ADDED -> {
+                        RowInfo ri = (RowInfo) evt.getNewValue();
+                        dispatcher = () -> fireTableRowsInserted(getRowNumber(ri.firstRow()),
+                                getRowNumber(ri.lastRow()));
                     }
-                    break;
-                case Sheet.PROPERTY_LAYOUT_CHANGED:
-                case Sheet.PROPERTY_COLUMNS_ADDED:
-                    dispatcher = SheetTableModel.this::fireTableStructureChanged;
-                    break;
-                default:
-                    dispatcher = () -> LOG.debug("ignored event: {}", evt);
-                    break;
+                    case Sheet.PROPERTY_CELL_CONTENT -> {
+                        if (firstRowIsHeader && ((Cell) evt.getSource()).getRowNumber() == 0) {
+                            dispatcher = SheetTableModel.this::fireTableStructureChanged;
+                        } else {
+                            assert evt.getSource() instanceof Cell;
+                            Cell cell = (Cell) evt.getSource();
+                            int i = cell.getRowNumber();
+                            int j = cell.getColumnNumber();
+                            dispatcher = () -> fireTableCellUpdated(i, j);
+                        }
+                    }
+                    case Sheet.PROPERTY_LAYOUT_CHANGED, Sheet.PROPERTY_COLUMNS_ADDED ->
+                            dispatcher = SheetTableModel.this::fireTableStructureChanged;
+                    default -> dispatcher = () -> LOG.debug("ignored event: {}", evt);
                 }
                 try {
                     SwingUtilities.invokeAndWait(dispatcher);
