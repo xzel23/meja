@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 3.2.0
+
+ - run GitHub CI on both Windows and Linux
+ - fix HTML export ignoring locale
+ - improved unit tests
+
 ## Version 3.1.6
 
  - update dependencies
