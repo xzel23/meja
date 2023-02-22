@@ -6,7 +6,9 @@ import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.utility.io.IoOptions;
 import com.dua3.utility.io.IoUtil;
+import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -93,7 +95,7 @@ class PoiWorkbookTest {
                 String outFileName = IoUtil.replaceExtension(inFileName, "html");
                 Path refFile = testdataDir.resolve(outFileName);
                 Path outFile = tempDir.resolve(outFileName);
-                copyToHtml(inFile, outFile);
+                copyToHtml(inFile, outFile, Locale.US);
                 assertLinesMatch(
                         maskUriHash(Files.readString(refFile)).lines(),
                         maskUriHash(Files.readString(outFile)).lines()
@@ -105,9 +107,9 @@ class PoiWorkbookTest {
         }
     }
 
-    private void copyToHtml(Path inFile, Path outFile) throws IOException {
+    private void copyToHtml(Path inFile, Path outFile, Locale locale) throws IOException {
         Workbook original = MejaHelper.openWorkbook(inFile);
-        original.write(outFile);
+        original.write(outFile, Arguments.of(Arguments.createEntry(IoOptions.locale(), locale)));
     }
 
     private void testCountryWorkbook(Path pathToWorkbook) throws IOException, URISyntaxException {
