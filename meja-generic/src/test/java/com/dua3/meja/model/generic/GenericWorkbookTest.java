@@ -46,6 +46,10 @@ class GenericWorkbookTest {
         }
     }
 
+    private static String maskUriHash(String s) {
+        return s.replaceAll("WB_[a-z0-9]{32}_", "WB_********************************_");
+    }
+
     @Test
     public void testConvertToHtml() throws Exception {
         String[] files = { "population by country_US.csv" };
@@ -57,7 +61,10 @@ class GenericWorkbookTest {
                 Path refFile = testdataDir.resolve(outFileName);
                 Path outFile = tempDir.resolve(outFileName);
                 copyToHtml(inFile, outFile, Locale.US);
-                assertEquals(Files.readString(refFile), Files.readString(outFile));
+                assertEquals(
+                        maskUriHash(Files.readString(refFile)),
+                        maskUriHash(Files.readString(outFile))
+                );
             }
         } finally {
             IoUtil.deleteRecursive(tempDir);

@@ -79,6 +79,10 @@ class PoiWorkbookTest {
         }
     }
 
+    private static String maskUriHash(String s) {
+        return s.replaceAll("WB_[a-z0-9]{32}_", "WB_********************************_");
+    }
+
     @Test
     public void testConvertXlsxToHtml() throws Exception {
         String[] files = { "population by country.xlsx", "Excel 2015 Calendar.xlsx" };
@@ -90,7 +94,10 @@ class PoiWorkbookTest {
                 Path refFile = testdataDir.resolve(outFileName);
                 Path outFile = tempDir.resolve(outFileName);
                 copyToHtml(inFile, outFile);
-                assertEquals(Files.readString(refFile), Files.readString(outFile));
+                assertLinesMatch(
+                        maskUriHash(Files.readString(refFile)).lines(),
+                        maskUriHash(Files.readString(outFile)).lines()
+                );
             }
         } finally {
             // cleanup again
