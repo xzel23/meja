@@ -5,6 +5,7 @@
  - run GitHub CI on both Windows and Linux
  - fix HTML export ignoring locale
  - improved unit tests
+ - update dependencies
 
 ## Version 3.1.6
 
