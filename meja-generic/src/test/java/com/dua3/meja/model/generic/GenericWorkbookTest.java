@@ -16,8 +16,7 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GenericWorkbookTest {
 
@@ -61,9 +60,9 @@ class GenericWorkbookTest {
                 Path refFile = testdataDir.resolve(outFileName);
                 Path outFile = tempDir.resolve(outFileName);
                 copyToHtml(inFile, outFile, Locale.US);
-                assertEquals(
-                        maskUriHash(Files.readString(refFile)),
-                        maskUriHash(Files.readString(outFile))
+                assertLinesMatch(
+                        maskUriHash(Files.readString(refFile)).lines(),
+                        maskUriHash(Files.readString(outFile)).lines()
                 );
             }
         } finally {
