@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 3.2.1
+
+ - parametrized unit tests
+ - update utility to fix version
+
 ## Version 3.2.0
 
  - run GitHub CI on both Windows and Linux
