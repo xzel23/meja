@@ -9,7 +9,11 @@ import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.io.IoOptions;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.options.Arguments;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,32 +30,33 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 class PoiWorkbookTest {
+    private static Path testdataDir;
 
-    private static final Path testdataDir = IoUtil.toPath(PoiWorkbookTest.class.getResource("/"))
-            .resolve("../../../../../testdata").normalize();
+    private static Path tempDir;
 
-    @Test
-    public void testXlsx() throws Exception {
-        testCountryWorkbook(testdataDir.resolve("population by country.xlsx"));
+    @BeforeAll
+    public static void setup() throws IOException {
+        testdataDir = IoUtil.toPath(PoiWorkbookTest.class.getResource("/"))
+                .resolve("../../../../../testdata").normalize();
+        tempDir = Files.createTempDirectory("meja-test");
     }
 
-    @Test
-    public void testXls() throws Exception {
-        testCountryWorkbook(testdataDir.resolve("population by country.xls"));
+    @AfterAll
+    public static void teardown() throws IOException {
+        IoUtil.deleteRecursive(tempDir);
     }
 
-    @Test
-    public void testSaveAndReloadXlsx() throws Exception {
-        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"));
-        Path pathToCopy = testdataDir.resolve("population by country (copy).xlsx");
-        original.write(pathToCopy);
-        testCountryWorkbook(pathToCopy);
+    @ParameterizedTest
+    @ValueSource(strings = { "population by country.xlsx", "population by country.xls" })
+    public void testOpenWorkbook(String filename) throws Exception {
+        testCountryWorkbook(testdataDir.resolve(filename));
     }
 
-    @Test
-    public void testSaveAndReloadXls() throws Exception {
-        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls").toUri());
-        Path pathToCopy = testdataDir.resolve("population by country (copy).xls");
+    @ParameterizedTest
+    @ValueSource(strings = { "population by country.xlsx", "population by country.xls" })
+    public void testSaveAndReloadWorkbook(String filename) throws Exception {
+        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve(filename));
+        Path pathToCopy = tempDir.resolve(filename);
         original.write(pathToCopy);
         testCountryWorkbook(pathToCopy);
     }
@@ -59,52 +64,35 @@ class PoiWorkbookTest {
     @Test
     public void testConvertXlsxToXls() throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"));
-        Path pathToCopy = testdataDir.resolve("population by country (copy).xls");
-        try {
-            original.write(pathToCopy);
-            testCountryWorkbook(pathToCopy);
-        } finally {
-            Files.delete(pathToCopy);
-        }
+        Path pathToCopy = tempDir.resolve("population by country.xls");
+        original.write(pathToCopy);
+        testCountryWorkbook(pathToCopy);
     }
 
     @Test
     public void testConvertXlsToXlsx() throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
-        String wbFilename = "population by country (copy).xlsx";
-        Path pathToCopy = testdataDir.resolve(wbFilename);
-        try {
-            original.write(pathToCopy);
-            testCountryWorkbook(pathToCopy);
-        } finally {
-            Files.delete(pathToCopy);
-        }
+        Path pathToCopy = tempDir.resolve("population by country.xlsx");
+        original.write(pathToCopy);
+        testCountryWorkbook(pathToCopy);
     }
 
     private static String maskUriHash(String s) {
         return s.replaceAll("WB_[a-z0-9]{32}_", "WB_********************************_");
     }
 
-    @Test
-    public void testConvertXlsxToHtml() throws Exception {
-        String[] files = { "population by country.xlsx", "Excel 2015 Calendar.xlsx" };
-        Path tempDir = Files.createTempDirectory("meja-test");
-        try {
-            for (String inFileName: files) {
-                Path inFile = testdataDir.resolve(inFileName);
-                String outFileName = IoUtil.replaceExtension(inFileName, "html");
-                Path refFile = testdataDir.resolve(outFileName);
-                Path outFile = tempDir.resolve(outFileName);
-                copyToHtml(inFile, outFile, Locale.US);
-                assertLinesMatch(
-                        maskUriHash(Files.readString(refFile)).lines(),
-                        maskUriHash(Files.readString(outFile)).lines()
-                );
-            }
-        } finally {
-            // cleanup again
-            IoUtil.deleteRecursive(tempDir);
-        }
+    @ParameterizedTest
+    @ValueSource(strings = { "population by country.xlsx", "Excel 2015 Calendar.xlsx" })
+    public void testConvertToHtml(String fileName) throws Exception {
+        Path inFile = testdataDir.resolve(fileName);
+        String outFileName = IoUtil.replaceExtension(fileName, "html");
+        Path refFile = testdataDir.resolve(outFileName);
+        Path outFile = tempDir.resolve(outFileName);
+        copyToHtml(inFile, outFile, Locale.US);
+        assertLinesMatch(
+                maskUriHash(Files.readString(refFile)).lines(),
+                maskUriHash(Files.readString(outFile)).lines()
+        );
     }
 
     private void copyToHtml(Path inFile, Path outFile, Locale locale) throws IOException {

@@ -42,6 +42,7 @@ dependencyResolutionManagement {
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
             library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
+            library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")
             library("poi", "org.apache.poi", "poi").versionRef("poi")
             library("poi-ooxml", "org.apache.poi", "poi-ooxml").versionRef("poi")
         }
