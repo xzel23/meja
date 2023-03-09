@@ -283,18 +283,12 @@ public final class MejaHelper {
      *     ----------  (PrintOptions.LINE_BELOW)
      * </pre>
      *
-     * @param <A>
-     *      type parameter for the Appendable used
-     * @param app
-     *  the Appendable used for output
-     * @param sheet
-     *  the sheet to print
-     * @param locale
-     *  the locale to use (i.e. for number formatting)
-     * @param printOptions
-     *  the {@link PrintOptions} to use
-     * @return
-     *  the Appendable
+     * @param <A>          type parameter for the Appendable used
+     * @param app          the Appendable used for output
+     * @param sheet        the sheet to print
+     * @param locale       the locale to use (i.e. for number formatting)
+     * @param printOptions the {@link PrintOptions} to use
+     * @return the Appendable
      */
     public static <A extends Appendable> A printTable(A app, Sheet sheet, Locale locale, PrintOptions... printOptions) {
         EnumSet<PrintOptions> options = LangUtil.enumSet(PrintOptions.class, printOptions);
@@ -382,7 +376,7 @@ public final class MejaHelper {
                 fmt.format("%s%n", dash.repeat(overallLength));
             }
         }
-        
+
         return app;
     }
 

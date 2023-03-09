@@ -2,11 +2,11 @@ rootProject.name = "dua3-meja"
 val projectVersion = "3.2.1"
 
 include("meja")
-include("meja-generic") 
+include("meja-generic")
 include("meja-poi")
 include("meja-swing")
 include("meja-fx")
-include("meja-db") 
+include("meja-db")
 include("meja-samples")
 
 dependencyResolutionManagement {
@@ -30,7 +30,7 @@ dependencyResolutionManagement {
             version("log4j", "2.20.0")
             version("poi", "5.2.3")
             version("slf4j", "2.0.6")
-            
+
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
             library("dua3-utility-db", "com.dua3.utility", "utility-db").versionRef("dua3-utility")
@@ -57,7 +57,7 @@ dependencyResolutionManagement {
         // Sonatype Releases
         maven {
             name = "oss.sonatype.org-releases"
-            url  = java.net.URI("https://s01.oss.sonatype.org/content/repositories/releases/")
+            url = java.net.URI("https://s01.oss.sonatype.org/content/repositories/releases/")
             mavenContent {
                 releasesOnly()
             }
@@ -66,7 +66,7 @@ dependencyResolutionManagement {
         // Apache releases
         maven {
             name = "apache-releases"
-            url  = java.net.URI("https://repository.apache.org/content/repositories/releases/")
+            url = java.net.URI("https://repository.apache.org/content/repositories/releases/")
             mavenContent {
                 releasesOnly()
             }

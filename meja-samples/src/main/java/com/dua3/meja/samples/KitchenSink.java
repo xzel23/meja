@@ -79,7 +79,7 @@ public final class KitchenSink extends JFrame {
         CellStyle csDefault = wb.getDefaultCellStyle();
         Font fontDefault = csDefault.getFont();
         for (Entry<String, Color> e : Color.palette().entrySet()) {
-            String name = "font"+e.getKey();
+            String name = "font" + e.getKey();
 
             CellStyle cs = wb.getCellStyle(name);
             cs.setFont(fontDefault.deriveFont(FontDef.color(e.getValue())));
@@ -103,7 +103,7 @@ public final class KitchenSink extends JFrame {
 
         addColorSheet(wb);
         addTextColorSheet(wb);
-        
+
         return wb;
     }
 

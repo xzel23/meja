@@ -39,19 +39,19 @@ public interface Cell {
 
     class CellException extends IllegalStateException {
         public CellException(Cell cell, String message, @Nullable Throwable cause) {
-            super(messagePrefix(cell)+message, cause);
+            super(messagePrefix(cell) + message, cause);
         }
 
         public CellException(Cell cell, String message) {
-            super(messagePrefix(cell)+message);
+            super(messagePrefix(cell) + message);
         }
 
         public CellException(Cell cell, @Nullable Throwable cause) {
-            super(messagePrefix(cell)+cause.getMessage(), cause);
+            super(messagePrefix(cell) + cause.getMessage(), cause);
         }
 
         private static String messagePrefix(Cell cell) {
-            return "["+cell.getCellRef(RefOption.WITH_SHEET)+"] ";
+            return "[" + cell.getCellRef(RefOption.WITH_SHEET) + "] ";
         }
     }
 
@@ -336,7 +336,7 @@ public interface Cell {
         } else if (arg instanceof Date) {
             LocalDateTime dt = LocalDateTime.ofInstant(((Date) arg).toInstant(), ZoneId.systemDefault());
             LocalTime t = dt.toLocalTime();
-            if (t.toNanoOfDay()==0) {
+            if (t.toNanoOfDay() == 0) {
                 // set to DATE
                 set(dt.toLocalDate());
             } else {
@@ -401,11 +401,11 @@ public interface Cell {
 
     /**
      * Get Hyperlink.
-     * 
+     *
      * @return an Optional with the Hyperlink or empty Optional
      */
     Optional<URI> getHyperlink();
-    
+
     /**
      * Return string representation of cell content.
      *
@@ -450,8 +450,8 @@ public interface Cell {
         LangUtil.check(!isMerged(), "Cell is already merged.");
         LangUtil.check(spanX >= 1);
         LangUtil.check(spanY >= 1);
-        
-        if (spanX==1 && spanY==1) {
+
+        if (spanX == 1 && spanY == 1) {
             // ignore
             return this;
         }
@@ -463,7 +463,7 @@ public interface Cell {
 
         RectangularRegion region = new RectangularRegion(iMin, iMax, jMin, jMax);
         getSheet().addMergedRegion(region);
-        
+
         return this;
     }
 }

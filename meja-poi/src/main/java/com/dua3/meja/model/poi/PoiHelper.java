@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author Axel Howind (axel@dua3.com)
  */
 public final class PoiHelper {

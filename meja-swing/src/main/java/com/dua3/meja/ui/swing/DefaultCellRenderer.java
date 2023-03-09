@@ -27,7 +27,6 @@ import com.dua3.meja.model.HAlign;
 import com.dua3.meja.ui.SheetView;
 
 /**
- *
  * @author Axel Howind (axel@dua3.com)
  */
 public class DefaultCellRenderer implements CellRenderer {
@@ -64,10 +63,11 @@ public class DefaultCellRenderer implements CellRenderer {
             canvas = switch (hAlign) {
                 case ALIGN_LEFT -> new Rectangle(cr.x, cr.y, maxWidthScaled, cr.height);
                 case ALIGN_RIGHT -> new Rectangle(cr.x + cr.width - maxWidthScaled, cr.y, maxWidthScaled, cr.height);
-                case ALIGN_CENTER -> new Rectangle(cr.x + (cr.width - maxWidthScaled) / 2, cr.y, maxWidthScaled, cr.height); 
+                case ALIGN_CENTER ->
+                        new Rectangle(cr.x + (cr.width - maxWidthScaled) / 2, cr.y, maxWidthScaled, cr.height);
                 case ALIGN_JUSTIFY -> throw new IllegalStateException("ALIGN_JUSTIFY implies wrap");
                 // ALIGN_AUTOMATIC should already be mapped to another value
-                default -> throw new IllegalStateException("unexpected value: "+hAlign);
+                default -> throw new IllegalStateException("unexpected value: " + hAlign);
             };
         }
 

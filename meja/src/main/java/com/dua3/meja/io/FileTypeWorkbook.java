@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 /**
  * Abstract base class for workbook filetypes.
+ *
  * @param <W> the generic workbook type associated with this filetype
  */
 public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
@@ -20,6 +21,7 @@ public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
     }
 
     public abstract WorkbookWriter getWorkbookWriter();
+
     public abstract WorkbookFactory<? extends W> getWorkbookFactory();
 
     @Override

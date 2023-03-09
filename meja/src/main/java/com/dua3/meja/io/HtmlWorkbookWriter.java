@@ -84,7 +84,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             processedRows = writeSheet(sheet, out, locale, totalRows, processedRows, updateProgress);
         }
     }
-    
+
     private static void writeCellStyle(Formatter out, CellStyle cs) {
         out.format(Locale.ROOT, "    .%s {", id(cs));
         writeCellStyleAttributes(out, cs);
@@ -104,7 +104,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             BorderStyle bs = cs.getBorderStyle(d);
             Color c = bs.color();
             float w = bs.width();
-            if (!c.isTransparent() && w>0) {
+            if (!c.isTransparent() && w > 0) {
                 out.format(Locale.ROOT, " border-%s: %.2fpt solid %s !important;", d.getCssName(), w, c.toCss());
             }
         }
@@ -126,8 +126,9 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * Write sheet as HTML.
      * <p>
      * <em>NOTE:</em> This method does not add HTML header and body tags.
-     * @param sheet the sheet to write
-     * @param out the PrintStream to write to
+     *
+     * @param sheet  the sheet to write
+     * @param out    the PrintStream to write to
      * @param locale the locale to use
      */
     public void writeSheet(Sheet sheet, Formatter out, Locale locale) {
@@ -136,31 +137,31 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     private static String id(CellStyle style) {
         return id(style.getWorkbook())
-               + "_CS_"
-               + HexFormat.of().formatHex(style.getName().getBytes(StandardCharsets.UTF_8));
+                + "_CS_"
+                + HexFormat.of().formatHex(style.getName().getBytes(StandardCharsets.UTF_8));
     }
 
     private static String id(Sheet sheet) {
         return id(sheet.getWorkbook())
-               +"_SHEET_"
-               + HexFormat.of().formatHex(sheet.getSheetName().getBytes(StandardCharsets.UTF_8));
+                + "_SHEET_"
+                + HexFormat.of().formatHex(sheet.getSheetName().getBytes(StandardCharsets.UTF_8));
     }
 
     private static String id(Workbook workbook) {
-        return "WB_"+TextUtil.getMD5String(workbook.getUri().map(URI::toString).orElse(""));
+        return "WB_" + TextUtil.getMD5String(workbook.getUri().map(URI::toString).orElse(""));
     }
-    
+
     private static long writeSheet(Sheet sheet, Formatter out, Locale locale, long totalRows, long processedRows, DoubleConsumer updateProgress) {
         Optional<URI> baseUri = sheet.getWorkbook().getUri().map(uri -> uri.resolve(""));
 
         boolean isActive = sheet == sheet.getWorkbook().getCurrentSheet();
-        
+
         // open DIV for sheet
         String sheetId = id(sheet);
-        
+
         String display = isActive ? "block" : "none";
         String cls = isActive ? "meja-tab active" : "meja-tab";
-        
+
         out.format(Locale.ROOT, "<div id=\"%s\" class=\"%s\" style=\"display: %s\">\n", sheetId, cls, display);
 
         out.format(Locale.ROOT, "  <table class=\"meja-sheet\">\n");
@@ -169,34 +170,34 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
         // write column widths
         out.format(Locale.ROOT, "    <colgroup>\n");
-        for (int j=0; j<=sheet.getLastColNum(); j++) {
+        for (int j = 0; j <= sheet.getLastColNum(); j++) {
             out.format(Locale.ROOT, "<col style=\"width: %.2fpt;\">\n", sheet.getColumnWidth(j));
         }
         out.format(Locale.ROOT, "    </colgroup>\n");
 
         out.format(Locale.ROOT, "    <tbody>\n");
-        
-        int rownr=0;
+
+        int rownr = 0;
         for (Row row : sheet) {
             // add missing rows
-            while (rownr++<row.getRowNumber()) {
+            while (rownr++ < row.getRowNumber()) {
                 out.format(Locale.ROOT, "      <tr style=\"height: %.2fpt;\">\n", sheet.getRowHeight(rownr));
-                for (int i=0; i<sheet.getLastColNum(); i++) {
+                for (int i = 0; i < sheet.getLastColNum(); i++) {
                     out.format(Locale.ROOT, "        <td></td>\n");
                 }
                 out.format(Locale.ROOT, "      </tr>\n");
             }
 
             out.format(Locale.ROOT, "      <tr style=\"height: %.2fpt;\">\n", sheet.getRowHeight(row.getRowNumber()));
-            
-            int colnr=0;
+
+            int colnr = 0;
             for (Cell cell : row) {
-                if (cell.getHorizontalSpan() == 0 || cell.getVerticalSpan()==0) {
+                if (cell.getHorizontalSpan() == 0 || cell.getVerticalSpan() == 0) {
                     continue;
                 }
-                
+
                 // add missing cells
-                while (colnr<cell.getColumnNumber()) {
+                while (colnr < cell.getColumnNumber()) {
                     if (!row.getCell(colnr).isMerged()) {
                         out.format(Locale.ROOT, "        <td></td>\n");
                     }
@@ -206,8 +207,8 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 CellStyle style = cell.getCellStyle();
 
                 out.format(Locale.ROOT, "        <td");
-                writeAttribute(out, "colspan", cell, Cell::getHorizontalSpan, v -> v>1, Object::toString);
-                writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v>1, Object::toString);
+                writeAttribute(out, "colspan", cell, Cell::getHorizontalSpan, v -> v > 1, Object::toString);
+                writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v > 1, Object::toString);
                 if (!style.equals(defaultCellStyle)) {
                     writeAttribute(out, "class", id(style));
                 }
@@ -221,14 +222,14 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 out.format(Locale.ROOT, "</td>\n");
                 colnr += cell.getHorizontalSpan();
             }
-            
+
             updateProgress.accept((double) processedRows / totalRows);
-            
+
             out.format(Locale.ROOT, "    </tr>\n");
-            
+
             processedRows++;
         }
-        
+
         out.format(Locale.ROOT, "    </tbody>\n");
         out.format(Locale.ROOT, "  </table>\n");
 
@@ -237,17 +238,17 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         return processedRows;
     }
 
-    private static <T> void writeAttribute(Formatter out, String attribute, Cell cell, Function<Cell,T> getter, Predicate<T> condition, Function<T,String> formatter) {
+    private static <T> void writeAttribute(Formatter out, String attribute, Cell cell, Function<Cell, T> getter, Predicate<T> condition, Function<T, String> formatter) {
         T v = getter.apply(cell);
         if (condition.test(v)) {
             writeAttribute(out, attribute, formatter.apply(v));
         }
     }
-    
+
     private static void writeAttribute(Formatter out, String attribute, String formattedValue) {
         out.format(Locale.ROOT, " %s=\"%s\"", attribute, formattedValue);
     }
-    
+
     @Override
     public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
         write(workbook, out, IoOptions.getLocale(options), updateProgress);
@@ -272,7 +273,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param out            the Formatter to write the workbook to
      * @param locale         the locale to use (i.e. when formatting cell contents such as numbers)
      * @param updateProgress callback for progress updates
-     * @throws IOException   if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     public void write(Workbook workbook, Formatter out, Locale locale, DoubleConsumer updateProgress) throws IOException {
         writeSheets(workbook, out, locale, updateProgress);
@@ -285,7 +286,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param out            the OutputStream to write the workbook to
      * @param locale         the locale to use (i.e. when formatting cell contents such as numbers)
      * @param updateProgress callback for progress updates
-     * @throws IOException   if an input/output error occurs
+     * @throws IOException if an input/output error occurs
      */
     public void write(Workbook workbook, OutputStream out, Locale locale, DoubleConsumer updateProgress) throws IOException {
         try (Formatter fmt = new Formatter(out, StandardCharsets.UTF_8.name())) {
@@ -322,6 +323,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                   </script>
                 """);
     }
+
     public void writeHtmlFooter(Formatter out) {
         out.format(Locale.ROOT, "</body>\n</html>\n");
     }
@@ -367,11 +369,11 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                   padding: 3px;
                   white-space: pre;
                   overflow: visible;
-                """+" "
+                """ + " "
         );
         writeCellStyleAttributes(out, defaultCellStyle);
         out.format(Locale.ROOT, """
-                
+                                
                 }
                 table.meja-sheet td,th {
                   border: 1px solid #d4d4d4;
@@ -393,12 +395,12 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
         // write common styles
         writeCommonCss(out, sheet.getWorkbook().getDefaultCellStyle());
-        
+
         // write user defined styles in sorted order to get reproducible results (i.e. in unit tests)
-        SortedMap<String,CellStyle> styles = new TreeMap<>();
+        SortedMap<String, CellStyle> styles = new TreeMap<>();
         sheet.rows().forEach(row -> row.cells().map(Cell::getCellStyle).forEach(s -> styles.putIfAbsent(s.getName(), s)));
         styles.values().forEach(cs -> writeCellStyle(out, cs));
-        
+
         out.format(Locale.ROOT, "  </style>\n");
     }
 

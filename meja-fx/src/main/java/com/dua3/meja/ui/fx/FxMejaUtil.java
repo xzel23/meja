@@ -72,13 +72,13 @@ public final class FxMejaUtil {
     public static List<ExtensionFilter> getExtensionFilters(OpenMode mode) {
         return FileType.getFileTypes(mode, Workbook.class).stream()
                 .map(t -> new ExtensionFilter(
-                    t.getName(),
-                    t.getExtensions()
-                            .stream()
-                            .map(ext -> "*." + ext)
-                            .toArray(String[]::new)
-                )
-        ).collect(Collectors.toCollection(LinkedList::new));
+                                t.getName(),
+                                t.getExtensions()
+                                        .stream()
+                                        .map(ext -> "*." + ext)
+                                        .toArray(String[]::new)
+                        )
+                ).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**

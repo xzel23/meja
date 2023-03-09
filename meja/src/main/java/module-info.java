@@ -22,7 +22,7 @@ module com.dua3.meja {
 
     requires java.desktop;
     requires com.dua3.utility;
-    
+
     requires static com.dua3.cabe.annotations;
     requires org.slf4j;
 

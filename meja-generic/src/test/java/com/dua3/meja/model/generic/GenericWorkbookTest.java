@@ -51,10 +51,10 @@ class GenericWorkbookTest {
 
     @Test
     public void testConvertToHtml() throws Exception {
-        String[] files = { "population by country_US.csv" };
+        String[] files = {"population by country_US.csv"};
         Path tempDir = Files.createTempDirectory("meja-test");
         try {
-            for (String inFileName: files) {
+            for (String inFileName : files) {
                 Path inFile = testdataDir.resolve(inFileName);
                 String outFileName = IoUtil.replaceExtension(inFileName, "html");
                 Path refFile = testdataDir.resolve(outFileName);
@@ -83,23 +83,23 @@ class GenericWorkbookTest {
 
         Sheet sheet = wb.getSheet(0);
         assertNotNull(sheet);
-        
+
         sheet.splitAt(1, 1); // split position cannot be set in CSV files. set it here so that at least part of the functionlaity can be verified.
-        
+
         assertEquals(0, sheet.getFirstRowNum());
         assertEquals(1, sheet.getSplitRow());
         assertEquals(1, sheet.getSplitRow());
 
-        Cell cChina = sheet.getCell(1,0);
+        Cell cChina = sheet.getCell(1, 0);
         assertNotNull(cChina);
         assertEquals("China", Objects.toString(cChina.get()));
         assertEquals("China", Objects.toString(cChina.getText()));
         assertEquals("China", cChina.toString());
 
         // note that percent values are treated as zero in this simple test
-        double[] sums = { 0.0, 7_794_798_739.0, 0.0, 81_330_639.0, 111_806.0, 130_094_083.0, 1_263.0, 541.3, 6_152.0, 0.0, 0.0 };
+        double[] sums = {0.0, 7_794_798_739.0, 0.0, 81_330_639.0, 111_806.0, 130_094_083.0, 1_263.0, 541.3, 6_152.0, 0.0, 0.0};
 
-        for (int j=0; j<sums.length; j++) {
+        for (int j = 0; j < sums.length; j++) {
             final int jj = j;
             double expected = sums[j];
             double actual = sheet.rows()
@@ -113,11 +113,11 @@ class GenericWorkbookTest {
     private static Workbook openWorkbookCsv(Path pathToWorkbook, Locale locale) throws IOException {
         return FileTypeCsv.instance()
                 .read(
-                    pathToWorkbook,
-                    t -> Arguments.of(
-                        Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
-                        Arguments.createEntry(IoOptions.locale(), locale)
-                    )
+                        pathToWorkbook,
+                        t -> Arguments.of(
+                                Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
+                                Arguments.createEntry(IoOptions.locale(), locale)
+                        )
                 );
     }
 
@@ -130,8 +130,8 @@ class GenericWorkbookTest {
     private void testRowGetLastColNumErrorHelper(Workbook wb) {
         Sheet sheet = wb.createSheet("index");
 
-        assertEquals( 0, sheet.getFirstRowNum());
-        assertEquals( 0, sheet.getFirstColNum());
+        assertEquals(0, sheet.getFirstRowNum());
+        assertEquals(0, sheet.getFirstColNum());
         assertEquals(-1, sheet.getLastRowNum());
         assertEquals(-1, sheet.getLastColNum());
 

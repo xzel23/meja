@@ -44,7 +44,6 @@ import javax.swing.text.ViewFactory;
 import java.util.Arrays;
 
 /**
- *
  * @author Axel Howind (axel@dua3.com)
  */
 @SuppressWarnings("serial")
@@ -90,7 +89,7 @@ public class CellEditorPane extends JTextPane {
                     offset = available;
                     increase = 0;
                 }
-                default -> throw new IllegalStateException("unexpected value: "+vAlign);
+                default -> throw new IllegalStateException("unexpected value: " + vAlign);
             }
 
             for (int i = 0; i < offsets.length; i++) {
@@ -120,17 +119,17 @@ public class CellEditorPane extends JTextPane {
             String kind = elem.getName();
             if (kind != null) {
                 switch (kind) {
-                case AbstractDocument.ContentElementName:
-                    return new LabelView(elem);
-                case AbstractDocument.ParagraphElementName:
-                    return new ParagraphView(elem);
-                case AbstractDocument.SectionElementName:
-                    return new AlignedBoxView(elem, View.Y_AXIS);
-                case StyleConstants.ComponentElementName:
-                    return new ComponentView(elem);
-                case StyleConstants.IconElementName:
-                    return new IconView(elem);
-                default:
+                    case AbstractDocument.ContentElementName:
+                        return new LabelView(elem);
+                    case AbstractDocument.ParagraphElementName:
+                        return new ParagraphView(elem);
+                    case AbstractDocument.SectionElementName:
+                        return new AlignedBoxView(elem, View.Y_AXIS);
+                    case StyleConstants.ComponentElementName:
+                        return new ComponentView(elem);
+                    case StyleConstants.IconElementName:
+                        return new IconView(elem);
+                    default:
                 }
             }
 
@@ -145,8 +144,7 @@ public class CellEditorPane extends JTextPane {
      *
      * @param hAlign the horizontal alignment
      * @param type   the cell type
-     * @return
-     *         <ul>
+     * @return <ul>
      *         <li>{@code hAlign}, if {@code hAlign!=HAlign.ALIGN_AUTOMATIC}</li>
      *         <li>otherwise the horizontal alignment to apply to cells of the given
      *         type</li>
@@ -189,7 +187,7 @@ public class CellEditorPane extends JTextPane {
             case ALIGN_RIGHT -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_RIGHT);
             case ALIGN_JUSTIFY -> StyleConstants.setAlignment(dfltAttr, StyleConstants.ALIGN_JUSTIFIED);
             // ALIGN_AUTOMATIC should already be resolved
-            default -> throw new IllegalStateException("unexpected value: "+hAlign);
+            default -> throw new IllegalStateException("unexpected value: " + hAlign);
         }
 
         return dfltAttr;
@@ -200,9 +198,9 @@ public class CellEditorPane extends JTextPane {
     /**
      * Set the editor content to the content of the given cell.
      *
-     * @param cell  the cell to display
-     * @param eval  set to true to display formula results instead of the formula
-     *              itself
+     * @param cell the cell to display
+     * @param eval set to true to display formula results instead of the formula
+     *             itself
      */
     public void setContent(Cell cell, double scale, boolean eval) {
         CellStyle cellStyle = cell.getCellStyle();
@@ -213,14 +211,14 @@ public class CellEditorPane extends JTextPane {
 
         setBackground(SwingUtil.toAwtColor(fg));
         setForeground(SwingUtil.toAwtColor(bg));
-        
+
         final RichText text;
         if (!eval && cell.getCellType() == CellType.FORMULA) {
             text = RichText.valueOf("=" + cell.getFormula());
         } else {
             text = cell.getAsText(getLocale());
         }
-        
+
         setDocument(
                 StyledDocumentConverter.create(
                         StyledDocumentConverter.addStyledAttributes(getCellAttributes(cellStyle, cell)),
@@ -234,5 +232,5 @@ public class CellEditorPane extends JTextPane {
         revalidate();
         repaint();
     }
-    
+
 }

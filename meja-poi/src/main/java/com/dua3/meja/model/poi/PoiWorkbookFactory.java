@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.net.URI;
 
 /**
- *
  * @author axel
  */
 public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
@@ -60,13 +59,11 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
     /**
      * Open Workbook from InputStream.
-     * @param in
-     *  the stream to read from
-     * @param uri
-     *  the URI to set
+     *
+     * @param in  the stream to read from
+     * @param uri the URI to set
      * @return the workbook
-     * @throws IOException
-     *  if an error occurs when reading
+     * @throws IOException if an error occurs when reading
      */
     private static PoiWorkbook open(InputStream in, @Nullable URI uri) throws IOException {
         try {
@@ -134,7 +131,6 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     /**
-     *
      * @param uri URI of the workbook to open
      * @return the workbook
      * @throws IOException if an error occurs

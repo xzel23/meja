@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
+
 import org.slf4j.Logger;
 
 import javax.swing.AbstractAction;
@@ -276,7 +277,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         private Rectangle getCellRectInViewCoordinates(Cell cell) {
             if (sheet == null) {
-                return new Rectangle(0,0,0,0);
+                return new Rectangle(0, 0, 0, 0);
             }
 
             boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
@@ -1029,10 +1030,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         sheetPane.setScrollable(false);
 
         final JComponent editorComp = editor.startEditing(cell);
-        
+
         final Rectangle cellRect = sheetPane.getCellRectInViewCoordinates(cell);
         editorComp.setBounds(rectS2D(cellRect));
-        
+
         sheetPane.add(editorComp);
         editorComp.validate();
         editorComp.setVisible(true);

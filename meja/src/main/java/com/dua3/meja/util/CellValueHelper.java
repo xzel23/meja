@@ -25,7 +25,6 @@ import java.util.Optional;
 import com.dua3.meja.model.Cell;
 
 /**
- *
  * @author Axel Howind (axel@dua3.com)
  */
 public class CellValueHelper {
@@ -42,64 +41,6 @@ public class CellValueHelper {
     public CellValueHelper(NumberFormat numberFormat, DateTimeFormatter dateFormatter) {
         this.numberFormat = numberFormat;
         this.dateFormatter = dateFormatter;
-    }
-
-    /**
-     * Parse a boolean value.
-     *
-     * @param text string representation of a boolean value
-     * @return {code Boolean.TRUE} or {Boolean.FALSE} respectively, if{@code text}
-     *         is equal to either "true" or "false" (ignoring case). {@code null}
-     *         otherwise.
-     */
-    private static Optional<Boolean> parseBoolean(String text) {
-        text = text.trim();
-        if (Boolean.FALSE.toString().equalsIgnoreCase(text)) {
-            return Optional.of(Boolean.FALSE);
-        }
-        if (Boolean.TRUE.toString().equalsIgnoreCase(text)) {
-            return Optional.of(Boolean.TRUE);
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Parse a date value.
-     *
-     * @param text string representation of a date
-     * @return Optional with {@link LocalDateTime} representing {@code value} or empty optional,
-     *         if {@code value} could not be fully parsed
-     */
-    private Optional<LocalDateTime> parseDate(String text) {
-        text = text.trim();
-        ParsePosition pos = new ParsePosition(0);
-
-        // dry run first: try a complete parse first, but do not resolve fields
-        // (to avoid exceptions if this is not a date)
-        TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);
-        if (ta == null || pos.getErrorIndex() >= 0 || pos.getIndex() != text.length()) {
-            // an error occurred or parsing did not use all available input
-            return Optional.empty();
-        }
-
-        // everything ok? then get the real data
-        ta = dateFormatter.parse(text);
-        LocalDateTime dateTime = LocalDateTime.from(ta);
-        return Optional.of(dateTime);
-    }
-
-    /**
-     * Parse a numeric value.
-     *
-     * @param text string representation of a numeric
-     * @return instance of {@link Number} representing {@code value} or
-     *         {@code null}, if {@code value} could not be fully parsed
-     */
-    private Optional<Number> parseNumber(String text) {
-        text = text.trim();
-        ParsePosition pos = new ParsePosition(0);
-        Number number = numberFormat.parse(text, pos);
-        return Optional.ofNullable(pos.getIndex() == text.length() ? number : null);
     }
 
     /**
@@ -144,6 +85,64 @@ public class CellValueHelper {
 
         // text
         cell.set(value);
+    }
+
+    /**
+     * Parse a boolean value.
+     *
+     * @param text string representation of a boolean value
+     * @return {code Boolean.TRUE} or {Boolean.FALSE} respectively, if{@code text}
+     * is equal to either "true" or "false" (ignoring case). {@code null}
+     * otherwise.
+     */
+    private static Optional<Boolean> parseBoolean(String text) {
+        text = text.trim();
+        if (Boolean.FALSE.toString().equalsIgnoreCase(text)) {
+            return Optional.of(Boolean.FALSE);
+        }
+        if (Boolean.TRUE.toString().equalsIgnoreCase(text)) {
+            return Optional.of(Boolean.TRUE);
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Parse a numeric value.
+     *
+     * @param text string representation of a numeric
+     * @return instance of {@link Number} representing {@code value} or
+     * {@code null}, if {@code value} could not be fully parsed
+     */
+    private Optional<Number> parseNumber(String text) {
+        text = text.trim();
+        ParsePosition pos = new ParsePosition(0);
+        Number number = numberFormat.parse(text, pos);
+        return Optional.ofNullable(pos.getIndex() == text.length() ? number : null);
+    }
+
+    /**
+     * Parse a date value.
+     *
+     * @param text string representation of a date
+     * @return Optional with {@link LocalDateTime} representing {@code value} or empty optional,
+     * if {@code value} could not be fully parsed
+     */
+    private Optional<LocalDateTime> parseDate(String text) {
+        text = text.trim();
+        ParsePosition pos = new ParsePosition(0);
+
+        // dry run first: try a complete parse first, but do not resolve fields
+        // (to avoid exceptions if this is not a date)
+        TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);
+        if (ta == null || pos.getErrorIndex() >= 0 || pos.getIndex() != text.length()) {
+            // an error occurred or parsing did not use all available input
+            return Optional.empty();
+        }
+
+        // everything ok? then get the real data
+        ta = dateFormatter.parse(text);
+        LocalDateTime dateTime = LocalDateTime.from(ta);
+        return Optional.of(dateTime);
     }
 
 }

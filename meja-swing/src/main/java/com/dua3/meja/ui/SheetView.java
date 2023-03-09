@@ -22,7 +22,6 @@ import java.beans.PropertyChangeListener;
 import java.util.function.IntFunction;
 
 /**
- *
  * @author axel
  */
 public interface SheetView {
@@ -136,7 +135,7 @@ public interface SheetView {
 
     /**
      * Get name for column.
-     * 
+     *
      * @param j the column number
      * @return the label text
      */
@@ -144,7 +143,7 @@ public interface SheetView {
 
     /**
      * Get name for row.
-     * 
+     *
      * @param i the row number
      * @return the label text
      */
@@ -152,14 +151,14 @@ public interface SheetView {
 
     /**
      * Set the column name provider.
-     * 
+     *
      * @param columnNames a function that maps column numbers to column names
      */
     void setColumnNames(IntFunction<String> columnNames);
 
     /**
      * Set the row name provider.
-     * 
+     *
      * @param rowNames a function that maps row numbers to row names
      */
     void setRowNames(IntFunction<String> rowNames);

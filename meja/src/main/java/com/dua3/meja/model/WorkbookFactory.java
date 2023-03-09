@@ -24,7 +24,6 @@ import com.dua3.utility.options.Arguments;
  * Abstract base class for workbook factories.
  *
  * @param <WORKBOOK> the concrete workbook class
- *
  * @author axel
  */
 public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
@@ -34,7 +33,7 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      *
      * @param other the source workbook
      * @return workbook instance of type {@code WORKBOOK} with the contents of
-     *         {@code workbook}
+     * {@code workbook}
      */
     public WORKBOOK copyOf(Workbook other) {
         WORKBOOK workbook = create();
@@ -92,7 +91,7 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * is possible to open a CSV file as Excel workbook.
      * </p>
      *
-     * @param uri           the workbook URI
+     * @param uri            the workbook URI
      * @param importSettings settings to configure the input process
      * @return workbook
      * @throws IOException if an input/output error occurs

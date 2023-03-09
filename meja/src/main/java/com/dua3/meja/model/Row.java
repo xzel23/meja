@@ -38,10 +38,11 @@ public interface Row extends Iterable<Cell> {
 
     /**
      * Create new cell to the right of the existing cells.
+     *
      * @return new Cell instance
      */
     default Cell createCell() {
-        return getCell(getLastCellNum()+1);
+        return getCell(getLastCellNum() + 1);
     }
 
     /**
@@ -49,30 +50,9 @@ public interface Row extends Iterable<Cell> {
      *
      * @param j the column number
      * @return this row's cell for the given column, missing cells are created on
-     *         the fly
+     * the fly
      */
     Cell getCell(int j);
-
-    /**
-     * Get cell.
-     *
-     * @param j the column number
-     * @return this row's cell for the given column or null if cell doesn't exist
-     */
-    Cell getCellIfExists(int j);
-
-    /**
-     * Get column number of first cell.
-     * <p>
-     * Workbooks have an area of used cells. All cells outside that area are
-     * blank. If the value returned by this method is greater than 0 that means that
-     * all the cells to the left of the column returned are blank. The opposite is
-     * not necessarily true, since the area of used cells might not be updated when
-     * a cell is cleared (because that would require a full sweep of all rows).
-     *
-     * @return number of first cell that potentially contains a value.
-     */
-    int getFirstCellNum();
 
     /**
      * Get column number of last cell.
@@ -87,6 +67,14 @@ public interface Row extends Iterable<Cell> {
      * @return number of last cell that potentially contains a value.
      */
     int getLastCellNum();
+
+    /**
+     * Get cell.
+     *
+     * @param j the column number
+     * @return this row's cell for the given column or null if cell doesn't exist
+     */
+    Cell getCellIfExists(int j);
 
     /**
      * Get row number.
@@ -108,6 +96,15 @@ public interface Row extends Iterable<Cell> {
      * @return the workbook
      */
     Workbook getWorkbook();
+
+    /**
+     * Create a stream of the cells in this row.
+     *
+     * @return stream of cells
+     */
+    default Stream<Cell> cells() {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
+    }
 
     /**
      * Create cell iterator.
@@ -142,11 +139,15 @@ public interface Row extends Iterable<Cell> {
     }
 
     /**
-     * Create a stream of the cells in this row.
+     * Get column number of first cell.
+     * <p>
+     * Workbooks have an area of used cells. All cells outside that area are
+     * blank. If the value returned by this method is greater than 0 that means that
+     * all the cells to the left of the column returned are blank. The opposite is
+     * not necessarily true, since the area of used cells might not be updated when
+     * a cell is cleared (because that would require a full sweep of all rows).
      *
-     * @return stream of cells
+     * @return number of first cell that potentially contains a value.
      */
-    default Stream<Cell> cells() {
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
-    }
+    int getFirstCellNum();
 }

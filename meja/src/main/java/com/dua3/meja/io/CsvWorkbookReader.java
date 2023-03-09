@@ -27,7 +27,6 @@ import com.dua3.utility.io.CsvReader.RowBuilder;
 import com.dua3.utility.options.Arguments;
 
 /**
- *
  * @author Axel Howind (axel@dua3.com)
  */
 public final class CsvWorkbookReader extends WorkbookReader {
@@ -50,10 +49,10 @@ public final class CsvWorkbookReader extends WorkbookReader {
      * Read from a BufferedReader. This is implemented because CSV is a character
      * format. The Encoding must be set correctly in the reader.
      *
-     * @param         <W> the Workbook implementation class to use
+     * @param <W>     the Workbook implementation class to use
      * @param factory the WorkbookFactory to use
      * @param in      the reader to read from
-     * @param uri    the URI of the source (for creating meaningful error messages)
+     * @param uri     the URI of the source (for creating meaningful error messages)
      * @return the workbook read
      * @throws IOException if an io-error occurs during reading
      */

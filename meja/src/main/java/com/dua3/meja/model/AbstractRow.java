@@ -17,18 +17,18 @@ public abstract class AbstractRow implements Row {
     public abstract AbstractCell getCell(int col);
 
     @Override
-    public AbstractSheet getSheet() {
-        return sheet;
-    }
-
-    @Override
-    public abstract AbstractWorkbook getWorkbook();
-
-    @Override
     public abstract AbstractCell getCellIfExists(int j);
 
     @Override
     public int getRowNumber() {
         return rowNumber;
     }
+
+    @Override
+    public AbstractSheet getSheet() {
+        return sheet;
+    }
+
+    @Override
+    public abstract AbstractWorkbook getWorkbook();
 }

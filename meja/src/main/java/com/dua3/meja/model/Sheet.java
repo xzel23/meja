@@ -35,21 +35,37 @@ import java.util.stream.StreamSupport;
  */
 public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
-    /** Property: zoom factor. */
+    /**
+     * Property: zoom factor.
+     */
     String PROPERTY_ZOOM = "ZOOM";
-    /** Property: layout change. */
+    /**
+     * Property: layout change.
+     */
     String PROPERTY_LAYOUT_CHANGED = "LAYOUT_CHANGED";
-    /** Property: split row in sheet. */
+    /**
+     * Property: split row in sheet.
+     */
     String PROPERTY_SPLIT = "SPLIT";
-    /** Property: active cell in sheet. */
+    /**
+     * Property: active cell in sheet.
+     */
     String PROPERTY_ACTIVE_CELL = "ACTIVE_CELL";
-    /** Property: cell content. */
+    /**
+     * Property: cell content.
+     */
     String PROPERTY_CELL_CONTENT = "CELL_CONTENT";
-    /** Property: cell style. */
+    /**
+     * Property: cell style.
+     */
     String PROPERTY_CELL_STYLE = "CELL_STYLE";
-    /** Property: rows added. */
+    /**
+     * Property: rows added.
+     */
     String PROPERTY_ROWS_ADDED = "ROWS_ADDED";
-    /** Property: columns added. */
+    /**
+     * Property: columns added.
+     */
     String PROPERTY_COLUMNS_ADDED = "COLUMNS_ADDED";
 
     record RowInfo(int firstRow, int lastRow) {
@@ -70,14 +86,16 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
      * Add property change listener to sheet.
+     *
      * @param listener the listener
      */
     void addPropertyChangeListener(PropertyChangeListener listener);
 
     /**
      * Add property change listener to sheet.
+     *
      * @param propertyName the property whose changes are to be tracked
-     * @param listener the listener
+     * @param listener     the listener
      */
     void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
@@ -177,7 +195,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @param rowNum the row number
      * @param colNum the column number
      * @return the merged region or null if the cell does not belong to a merged
-     *         region
+     * region
      */
     RectangularRegion getMergedRegion(int rowNum, int colNum);
 
@@ -215,7 +233,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * Get the frozen column.
      *
      * @return the number of the first column that will not remain at a fixed
-     *         position when scrolling
+     * position when scrolling
      */
     int getSplitColumn();
 
@@ -223,7 +241,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * Get the split row.
      *
      * @return the number of the first row that will not remain at a fixed position
-     *         when scrolling
+     * when scrolling
      */
     int getSplitRow();
 
@@ -243,10 +261,9 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
      * Create a new row at the bottom of the sheet.
-     * @param values
-     *  the values to insert (optional)
-     * @return
-     *  new row instance
+     *
+     * @param values the values to insert (optional)
+     * @return new row instance
      */
     default Row createRow(Object... values) {
         return createRowWith(List.of(values));
@@ -254,14 +271,13 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
      * Create a new row at the bottom of the sheet.
-     * @param values
-     *  the values to insert
-     * @return
-     *  new row instance
+     *
+     * @param values the values to insert
+     * @return new row instance
      */
     default <T, C extends Iterable<T>> Row createRowWith(C values) {
         Row row = getRow(getRowCount());
-        for (var value: values) {
+        for (var value : values) {
             row.createCell().set(value);
         }
         return row;
@@ -371,17 +387,17 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
         int splitRow = other.getSplitRow();
         int splitColumn = other.getSplitColumn();
         int autoFilterRow = other.getAutoFilterRow();
-        
+
         // copy column widths
         for (int j = other.getFirstColNum(); j <= other.getLastColNum(); j++) {
             setColumnWidth(j, other.getColumnWidth(j));
         }
-        
+
         // copy merged regions
         for (RectangularRegion rr : other.getMergedRegions()) {
             addMergedRegion(rr);
         }
-        
+
         // copy row data
         for (Row row : other) {
             final int i = row.getRowNumber();
@@ -389,10 +405,10 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
             setRowHeight(i, other.getRowHeight(i));
 
             // apply split and autofilter after row is written (POI restriction)
-            if (i==autoFilterRow) {
+            if (i == autoFilterRow) {
                 setAutofilterRow(autoFilterRow);
             }
-            if (i==splitRow) {
+            if (i == splitRow) {
                 splitAt(splitRow, splitColumn);
             }
         }

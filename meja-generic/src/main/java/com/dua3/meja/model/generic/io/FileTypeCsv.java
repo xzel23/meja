@@ -24,6 +24,7 @@ public class FileTypeCsv extends FileTypeWorkbook<GenericWorkbook> {
 
     /**
      * Return instance of this file type.
+     *
      * @return instance of file type
      */
     public static FileType<GenericWorkbook> instance() {

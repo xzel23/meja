@@ -34,6 +34,46 @@ import java.util.function.Function;
  */
 public class Cache<K, V> {
 
+    private final Function<? super K, ? extends V> compute;
+    private final Map<K, SoftReference<V>> items;
+
+    public Cache(Type type, Function<? super K, ? extends V> compute) {
+        this.compute = compute;
+        switch (type) {
+            case STRONG_KEYS -> items = new HashMap<>();
+            case WEAK_KEYS -> items = new WeakHashMap<>();
+            default -> throw new IllegalArgumentException("unexpected value: " + type);
+        }
+    }
+
+    /**
+     * Clear contents.
+     */
+    public void clear() {
+        items.clear();
+    }
+
+    public V get(@Nullable K key) {
+        if (key == null) {
+            return null;
+        }
+
+        SoftReference<V> weak = items.get(key);
+        V item = weak == null ? null : weak.get();
+
+        if (item == null) {
+            item = compute.apply(key);
+            items.put(key, new SoftReference<>(item));
+        }
+
+        return item;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Cache backed by %s [%d entries]", items.getClass().getSimpleName(), items.size());
+    }
+
     /**
      * Type controlling how keys should be treated in a cache.
      * <p>
@@ -67,46 +107,5 @@ public class Cache<K, V> {
          * Use weak keys.
          */
         WEAK_KEYS
-    }
-
-    private final Function<? super K, ? extends V> compute;
-
-    private final Map<K, SoftReference<V>> items;
-
-    public Cache(Type type, Function<? super K, ? extends V> compute) {
-        this.compute = compute;
-        switch (type) {
-            case STRONG_KEYS -> items = new HashMap<>();
-            case WEAK_KEYS -> items = new WeakHashMap<>();
-            default -> throw new IllegalArgumentException("unexpected value: "+type);
-        }
-    }
-
-    /**
-     * Clear contents.
-     */
-    public void clear() {
-        items.clear();
-    }
-
-    public V get(@Nullable K key) {
-        if (key == null) {
-            return null;
-        }
-
-        SoftReference<V> weak = items.get(key);
-        V item = weak == null ? null : weak.get();
-
-        if (item == null) {
-            item = compute.apply(key);
-            items.put(key, new SoftReference<>(item));
-        }
-
-        return item;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Cache backed by %s [%d entries]", items.getClass().getSimpleName(), items.size());
     }
 }

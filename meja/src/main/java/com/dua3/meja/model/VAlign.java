@@ -45,7 +45,7 @@ public enum VAlign {
     private final boolean wrap;
 
     private final String css;
-    
+
     VAlign(boolean wrap, String css) {
         this.wrap = wrap;
         this.css = css;
@@ -65,6 +65,7 @@ public enum VAlign {
 
     /**
      * Get CSS style definition.
+     *
      * @return CSS style (i.e. "vertical-align: ...;")
      */
     public String getCssStyle() {

@@ -21,9 +21,9 @@ import java.util.Iterator;
  * A helper class to convert iterators of derived classes to iterators of base
  * classes.
  *
- * @author Axel Howind (axel@dua3.com)
  * @param <T> the base class
  * @param <D> the derived class
+ * @author Axel Howind (axel@dua3.com)
  */
 public class IteratorAdapter<T, D extends T> implements Iterator<T> {
     private final Iterator<? extends D> iter;

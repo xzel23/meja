@@ -33,7 +33,7 @@ public final class CreateCalendar {
 
             writeCalendar(file);
         } catch (Throwable t) {
-            System.out.println("Exception: "+t.getMessage());
+            System.out.println("Exception: " + t.getMessage());
             t.printStackTrace(System.err);
         }
     }
@@ -98,7 +98,7 @@ public final class CreateCalendar {
     }
 
     private static void setStyle(Cell cell, LocalDate d) {
-        if (d.getMonth()==Month.DECEMBER && d.getDayOfMonth()==25) {
+        if (d.getMonth() == Month.DECEMBER && d.getDayOfMonth() == 25) {
             cell.setHyperlink(URI.create("https://en.wikipedia.org/wiki/Christmas"));
             CellStyle csHoliday = cell.getWorkbook().getCellStyle("holiday");
             csHoliday.setFillFgColor(Color.INDIANRED.brighter());

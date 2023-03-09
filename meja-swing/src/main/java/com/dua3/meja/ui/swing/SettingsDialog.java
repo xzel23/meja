@@ -58,8 +58,8 @@ public class SettingsDialog extends JDialog {
 
         add(new JButton(SwingUtil.createAction("OK", () -> {
             Deque<Arguments.Entry<?>> entries = new LinkedList<>();
-            int i=0;
-            for (Option option: options) {
+            int i = 0;
+            for (Option option : options) {
                 JComponent component = inputs.get(i++);
                 Object value;
                 if (option instanceof ChoiceOption) {

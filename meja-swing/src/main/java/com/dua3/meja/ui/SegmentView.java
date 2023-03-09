@@ -8,10 +8,9 @@ import java.util.concurrent.locks.Lock;
 import com.dua3.meja.model.Sheet;
 
 /**
- *
- * @author Axel Howind
  * @param <SV> the concrete class implementing SheetView
  * @param <GC> the concrete class implementing GraphicsContext
+ * @author Axel Howind
  */
 public interface SegmentView<SV extends SheetView, GC extends GraphicsContext> {
 

@@ -34,20 +34,19 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- *
  * @author Axel Howind (axel@dua3.com)
  */
 public class GenericCell extends AbstractCell {
     private static final int MAX_HORIZONTAL_SPAN = 0xefff;
     private static final int MAX_VERTICAL_SPAN = 0xef_ffff;
     private static final int MAX_COLUMN_NUMBER = 0xef_ffff;
-    
+
     /**
      * The precalculated initial value for the data field with rowspan=colspan=1 and
      * a cell type of blank.
      */
     private static final long INITIAL_DATA = ((/* spanX */ 1L) << 32) | ((/* spanY */ 1L) << 8)
-                                             | CellType.BLANK.ordinal();
+            | CellType.BLANK.ordinal();
     private Object value;
     private GenericCellStyle cellStyle;
     private Map<Attribute, Object> attributes = null;
@@ -56,7 +55,7 @@ public class GenericCell extends AbstractCell {
         LINK_URI,
         LABEL
     }
-    
+
     private Optional<Object> getAttribute(Attribute name) {
         if (attributes == null) {
             return Optional.empty();
@@ -65,8 +64,8 @@ public class GenericCell extends AbstractCell {
     }
 
     private void setAttribute(Attribute name, @Nullable Object value) {
-        if (value==null) {
-            if (attributes!=null) {
+        if (value == null) {
+            if (attributes != null) {
                 attributes.remove(name);
                 if (attributes.isEmpty()) {
                     attributes = null;
@@ -74,8 +73,8 @@ public class GenericCell extends AbstractCell {
             }
             return;
         }
-        
-        if (attributes==null) {
+
+        if (attributes == null) {
             attributes = new EnumMap<>(GenericCell.Attribute.class);
         }
 
@@ -106,7 +105,7 @@ public class GenericCell extends AbstractCell {
     public GenericCell(AbstractRow row, int colNr, GenericCellStyle cellStyle) {
         super(row);
 
-        LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER, () -> new CellException(this, "column number out of range: "+colNr));
+        LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER, () -> new CellException(this, "column number out of range: " + colNr));
 
         this.cellStyle = cellStyle;
         this.value = null;
@@ -241,7 +240,8 @@ public class GenericCell extends AbstractCell {
         return switch (getCellType()) {
             case BLANK -> RichText.emptyText();
             case TEXT -> (RichText) value;
-            default -> throw new CellException(this, "Cannot get text value from cell of type " + getCellType().name() + ".");
+            default ->
+                    throw new CellException(this, "Cannot get text value from cell of type " + getCellType().name() + ".");
         };
     }
 
@@ -256,7 +256,7 @@ public class GenericCell extends AbstractCell {
     }
 
     private void initData(int colNr) {
-        LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER, () -> new CellException(this, "column number out of range: "+colNr));
+        LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER, () -> new CellException(this, "column number out of range: " + colNr));
         data = (((long) colNr) << 48) | INITIAL_DATA;
     }
 
@@ -324,7 +324,7 @@ public class GenericCell extends AbstractCell {
     public GenericCell setCellStyle(CellStyle cellStyle) {
         //noinspection ObjectEquality
         LangUtil.check(cellStyle.getWorkbook() == getWorkbook(),
-                () ->  new CellException(this, "Cell style does not belong to this workbook."));
+                () -> new CellException(this, "Cell style does not belong to this workbook."));
 
         //noinspection ObjectEquality
         if (cellStyle != this.cellStyle) {
@@ -332,7 +332,7 @@ public class GenericCell extends AbstractCell {
             this.cellStyle = (GenericCellStyle) cellStyle;
             styleChanged(old, this.cellStyle);
         }
-        
+
         return this;
     }
 
@@ -358,7 +358,7 @@ public class GenericCell extends AbstractCell {
             try {
                 return Optional.of(new URI(obj.toString()));
             } catch (URISyntaxException e) {
-                throw new IllegalStateException("invalid link URI: "+obj, e);
+                throw new IllegalStateException("invalid link URI: " + obj, e);
             }
         });
     }
@@ -366,7 +366,7 @@ public class GenericCell extends AbstractCell {
     @Override
     protected void setHorizontalSpan(int spanX) {
         LangUtil.check(spanX >= 0 && spanX <= MAX_HORIZONTAL_SPAN,
-            () -> new CellException(this, "invalid value for horizontal span: "+spanX));
+                () -> new CellException(this, "invalid value for horizontal span: " + spanX));
 
         data = (data & 0xffff_0000_ffff_ffffL) | (((long) spanX) << 32);
     }
@@ -374,7 +374,7 @@ public class GenericCell extends AbstractCell {
     @Override
     protected void setVerticalSpan(int spanY) {
         LangUtil.check(spanY >= 0 && spanY <= MAX_VERTICAL_SPAN,
-                () -> new CellException(this, "invalid value for vertical span: "+spanY));
+                () -> new CellException(this, "invalid value for vertical span: " + spanY));
 
         data = (data & 0xffff_ffff_0000_00ffL) | (((long) spanY) << 8);
     }

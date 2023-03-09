@@ -36,6 +36,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
 
     /**
      * Get instance of factory.
+     *
      * @return factory instance
      */
     public static GenericWorkbookFactory instance() {

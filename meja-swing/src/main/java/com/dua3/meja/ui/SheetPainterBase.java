@@ -95,12 +95,12 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     /**
      * Array with column positions (x-axis) in pixels.
      */
-    private double[] columnPos = { 0 };
+    private double[] columnPos = {0};
 
     /**
      * Array with column positions (y-axis) in pixels.
      */
-    private double[] rowPos = { 0 };
+    private double[] rowPos = {0};
     private double sheetHeightInPoints = 0;
 
     private double sheetWidthInPoints = 0;
@@ -165,9 +165,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * Get the column number that the given x-coordinate belongs to.
      *
      * @param x x-coordinate
-     *
-     * @return
-     *         <ul>
+     * @return <ul>
      *         <li>-1, if the first column is displayed to the right of the given
      *         coordinate
      *         <li>number of columns, if the right edge of the last column is
@@ -223,9 +221,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * Get the row number that the given y-coordinate belongs to.
      *
      * @param y y-coordinate
-     *
-     * @return
-     *         <ul>
+     * @return <ul>
      *         <li>-1, if the first row is displayed below the given coordinate
      *         <li>number of rows, if the lower edge of the last row is displayed
      *         above the given coordinate
@@ -306,8 +302,8 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         if (sheet == null) {
             sheetWidthInPoints = 0;
             sheetHeightInPoints = 0;
-            rowPos = new double[] { 0 };
-            columnPos = new double[] { 0 };
+            rowPos = new double[]{0};
+            columnPos = new double[]{0};
             return;
         }
 

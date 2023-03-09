@@ -36,7 +36,6 @@ import java.time.format.FormatStyle;
 import java.util.Locale;
 
 /**
- *
  * @author axel
  */
 public abstract class PoiCellStyle implements CellStyle {
@@ -121,7 +120,7 @@ public abstract class PoiCellStyle implements CellStyle {
         @Override
         public short getRotation() {
             short r = poiCellStyle.getRotation();
-            return r==0xff ? 90 : r; // HSSF uses -90 to 90, special value 0xff for vertical
+            return r == 0xff ? 90 : r; // HSSF uses -90 to 90, special value 0xff for vertical
         }
     }
 
@@ -268,11 +267,11 @@ public abstract class PoiCellStyle implements CellStyle {
     @Override
     public String getDataFormat() {
         switch (poiCellStyle.getDataFormat()) {
-        case 0x0e:
-            return StandardDataFormats.MEDIUM.name();
-        default:
-            String fmt = poiCellStyle.getDataFormatString();
-            return fmt.equals("general") ? "0.##########" : fmt;
+            case 0x0e:
+                return StandardDataFormats.MEDIUM.name();
+            default:
+                String fmt = poiCellStyle.getDataFormatString();
+                return fmt.equals("general") ? "0.##########" : fmt;
         }
     }
 
@@ -381,10 +380,10 @@ public abstract class PoiCellStyle implements CellStyle {
 
     @Override
     public void setRotation(short angle) {
-        LangUtil.check(angle>=-90 && angle <=90, "angle must be in range [-90, 90]: %d", angle);
+        LangUtil.check(angle >= -90 && angle <= 90, "angle must be in range [-90, 90]: %d", angle);
         poiCellStyle.setRotation(angle);
     }
-    
+
     DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
         return switch (poiCellStyle.getDataFormat()) {
             case 0x0e -> DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);

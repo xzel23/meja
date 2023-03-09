@@ -38,13 +38,13 @@ public enum Direction {
      * West (left) direction.
      */
     WEST("left");
-    
+
     private final String cssName;
-    
+
     Direction(String cssName) {
         this.cssName = cssName;
     }
-    
+
     public String getCssName() {
         return cssName;
     }

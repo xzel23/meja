@@ -133,10 +133,11 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Get stream of cell styles contained in workbook.
+     *
      * @return stream of cell styles
      */
     Stream<? extends CellStyle> cellStyles();
-    
+
     /**
      * Get the current sheet.
      *
@@ -203,7 +204,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      */
     default Optional<Sheet> findSheetByName(String sheetName) {
         int idx = getSheetIndexByName(sheetName);
-        return idx>=0 ? Optional.of(getSheet(idx)) : Optional.empty();
+        return idx >= 0 ? Optional.of(getSheet(idx)) : Optional.empty();
     }
 
     /**
@@ -232,6 +233,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Get the sheet with the given name or create it if not yet contained in workbook.
+     *
      * @param sheetName the name of the sheet
      * @return the sheet with the name passed as argument
      */
@@ -310,6 +312,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Test whether object caching is enabled.
+     *
      * @return state of object caching
      */
     boolean isObjectCachingEnabled();
@@ -322,8 +325,8 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * adding calculated dates to a workbook with many cells containing instances representing the same values.
      * The effect on memory consumption may vary between different workbook implementations. When in doubt, measure
      * with realistic data for your use case.
-     * 
-     * @param enable flag indicating whether to en- or disable object caching 
+     *
+     * @param enable flag indicating whether to en- or disable object caching
      */
     void setObjectCaching(boolean enable);
 
@@ -373,11 +376,11 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * Writes the workbook to a Path using standard options.
      *
      * @param path the path to write to.
-     *            <p>
-     *            The file format to used is determined by the extension of
-     *            {@code path} which must be one of the extensions defined in
-     *            {@link FileType}.
-     *            </p>
+     *             <p>
+     *             The file format to used is determined by the extension of
+     *             {@code path} which must be one of the extensions defined in
+     *             {@link FileType}.
+     *             </p>
      * @throws IOException if an I/O error occurs
      */
     default void write(Path path) throws IOException {
@@ -411,7 +414,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
             write(type, out, options, updateProgress);
         }
     }
-    
+
     /**
      * Writes the workbook to a stream using default options.
      *

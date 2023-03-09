@@ -142,7 +142,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
     public void setWorkbook(@Nullable Workbook workbook) {
         content.removeAll();
 
-        if (this.workbook!=null) {
+        if (this.workbook != null) {
             this.workbook.removePropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
             this.workbook.removePropertyChangeListener(Workbook.PROPERTY_SHEET_REMOVED, this);
         }
@@ -170,7 +170,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
         //noinspection ObjectEquality
         if (evt.getSource() == content) {
             int idx = content.getSelectedIndex();
-            if (workbook != null && idx>=0) {
+            if (workbook != null && idx >= 0) {
                 workbook.setCurrentSheet(idx);
             }
         }
@@ -180,7 +180,8 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
     public void propertyChange(PropertyChangeEvent evt) {
         String property = evt.getPropertyName();
         switch (property) {
-            case Workbook.PROPERTY_SHEET_ADDED, Workbook.PROPERTY_SHEET_REMOVED -> SwingUtilities.invokeLater(() -> setWorkbook(workbook));
+            case Workbook.PROPERTY_SHEET_ADDED, Workbook.PROPERTY_SHEET_REMOVED ->
+                    SwingUtilities.invokeLater(() -> setWorkbook(workbook));
             default -> {
             }
         }

@@ -47,13 +47,13 @@ class PoiWorkbookTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "population by country.xlsx", "population by country.xls" })
+    @ValueSource(strings = {"population by country.xlsx", "population by country.xls"})
     public void testOpenWorkbook(String filename) throws Exception {
         testCountryWorkbook(testdataDir.resolve(filename));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "population by country.xlsx", "population by country.xls" })
+    @ValueSource(strings = {"population by country.xlsx", "population by country.xls"})
     public void testSaveAndReloadWorkbook(String filename) throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve(filename));
         Path pathToCopy = tempDir.resolve(filename);
@@ -82,7 +82,7 @@ class PoiWorkbookTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "population by country.xlsx", "Excel 2015 Calendar.xlsx" })
+    @ValueSource(strings = {"population by country.xlsx", "Excel 2015 Calendar.xlsx"})
     public void testConvertToHtml(String fileName) throws Exception {
         Path inFile = testdataDir.resolve(fileName);
         String outFileName = IoUtil.replaceExtension(fileName, "html");
@@ -111,7 +111,7 @@ class PoiWorkbookTest {
         assertEquals(1, sheet.getSplitRow());
         assertEquals(1, sheet.getSplitRow());
 
-        Cell cChina = sheet.getCell(1,0);
+        Cell cChina = sheet.getCell(1, 0);
         assertNotNull(cChina);
         assertEquals("China", Objects.toString(cChina.get()));
         assertEquals("China", Objects.toString(cChina.getText()));
@@ -121,9 +121,9 @@ class PoiWorkbookTest {
         assertNotNull(lChina);
         assertEquals(new URI("https://www.worldometers.info/world-population/china-population/"), lChina.get());
 
-        double[] sums = { 0.0, 7_794_798_739.0, 2.5957, 81_330_639.0, 111_806.0, 130_094_083.0, 1_263.0, 541.3, 6_152.0, 131.5, 0.9998 };
+        double[] sums = {0.0, 7_794_798_739.0, 2.5957, 81_330_639.0, 111_806.0, 130_094_083.0, 1_263.0, 541.3, 6_152.0, 131.5, 0.9998};
 
-        for (int j=0; j<sums.length; j++) {
+        for (int j = 0; j < sums.length; j++) {
             final int jj = j;
             double expected = sums[j];
             double actual = sheet.rows()
@@ -139,13 +139,13 @@ class PoiWorkbookTest {
         Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("Links.xlsx"));
         Sheet sheet = wb.getSheetByName("Links");
 
-        Cell cCalendar = sheet.getCell(0,1);
+        Cell cCalendar = sheet.getCell(0, 1);
         assertEquals("Calendar", cCalendar.toString());
         Optional<URI> lCalendar = cCalendar.getHyperlink();
         assertTrue(lCalendar.isPresent());
         assertEquals(wb.getUri().get().resolve("Excel%202015%20Calendar.xlsx"), lCalendar.get());
 
-        Cell cEmail = sheet.getCell(2,1);
+        Cell cEmail = sheet.getCell(2, 1);
         assertEquals("Email Developer", cEmail.toString());
         Optional<URI> lEmail = cEmail.getHyperlink();
         assertTrue(lEmail.isPresent());
@@ -154,27 +154,27 @@ class PoiWorkbookTest {
         Workbook wb2 = PoiWorkbookFactory.instance().createXlsx();
         Sheet sheet2 = wb2.createSheet("Links");
 
-        Cell cellLinkToFile = sheet2.getCell(0,0);
+        Cell cellLinkToFile = sheet2.getCell(0, 0);
         cellLinkToFile.setHyperlink(lCalendar.get());
         assertEquals(lCalendar.get(), cellLinkToFile.getHyperlink().get());
 
-        Cell cellLinkToEmail = sheet2.getCell(1,0);
+        Cell cellLinkToEmail = sheet2.getCell(1, 0);
         cellLinkToEmail.setHyperlink(lEmail.get());
         assertEquals(lEmail.get(), cellLinkToEmail.getHyperlink().get());
     }
-    
+
     @Test
     public void testHtmlExport() throws IOException {
         Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
-        
+
         // make sure workbook URI is the same independent of test environment
         wb.setUri(URI.create(""));
-        
-        for (Sheet sheet: wb) {
+
+        for (Sheet sheet : wb) {
             HtmlWorkbookWriter writer = HtmlWorkbookWriter.create();
 
             String refHtml = IoUtil.read(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
-            
+
             try (Formatter out = new Formatter()) {
                 writer.writeHtmlHeaderStart(out);
                 writer.writeCssForSingleSheet(out, sheet);
@@ -182,10 +182,10 @@ class PoiWorkbookTest {
                 writer.writeSheet(sheet, out, Locale.ROOT);
                 writer.writeHtmlFooter(out);
                 String actHtml = out.toString();
-                
+
                 boolean updateResult = false; // set to true to update reference files
                 if (updateResult) {
-                    IoUtil.write(testdataDir.resolve(sheet.getSheetName() + ".html"),actHtml);
+                    IoUtil.write(testdataDir.resolve(sheet.getSheetName() + ".html"), actHtml);
                 } else {
                     assertEquals(refHtml.replaceAll("\r\n", "\n"), actHtml.replaceAll("\r\n", "\n"));
                 }
@@ -208,8 +208,8 @@ class PoiWorkbookTest {
     private void testRowGetLastColNumErrorHelper(Workbook wb) {
         Sheet sheet = wb.createSheet("index");
 
-        assertEquals( 0, sheet.getFirstRowNum());
-        assertEquals( 0, sheet.getFirstColNum());
+        assertEquals(0, sheet.getFirstRowNum());
+        assertEquals(0, sheet.getFirstColNum());
         assertEquals(-1, sheet.getLastRowNum());
         assertEquals(-1, sheet.getLastColNum());
 

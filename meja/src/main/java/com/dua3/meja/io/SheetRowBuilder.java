@@ -60,21 +60,21 @@ public class SheetRowBuilder implements RowBuilder {
 
     @Override
     public void add(String value) {
-        LangUtil.check(currentRow!=null, "missing call to startRow()");
+        LangUtil.check(currentRow != null, "missing call to startRow()");
         Cell cell = currentRow.getCell(colNr++);
         helper.setCellValue(cell, value);
     }
 
     @Override
     public void endRow() {
-        LangUtil.check(currentRow!=null, "unexpected call to endRow()");
+        LangUtil.check(currentRow != null, "unexpected call to endRow()");
         currentRow = null;
         colNr = 0;
     }
 
     @Override
     public void startRow() {
-        LangUtil.check(currentRow==null, "unexpected call to startRow()");
+        LangUtil.check(currentRow == null, "unexpected call to startRow()");
         currentRow = sheet.getRow(sheet.getRowCount());
         colNr = 0;
     }

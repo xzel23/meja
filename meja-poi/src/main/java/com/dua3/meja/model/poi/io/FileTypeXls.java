@@ -23,6 +23,7 @@ public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
 
     /**
      * Get XLS file type instance.
+     *
      * @return instance of this file type
      */
     public static FileTypeXls instance() {
@@ -30,7 +31,7 @@ public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     private FileTypeXls() {
-        super("Excel 97-2003", OpenMode.READ_AND_WRITE, PoiHssfWorkbook.class,"xls");
+        super("Excel 97-2003", OpenMode.READ_AND_WRITE, PoiHssfWorkbook.class, "xls");
     }
 
     // loosen access to make init() callable by FileTypeExcel
@@ -45,7 +46,7 @@ public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
         LangUtil.check(wb instanceof PoiHssfWorkbook);
         return (PoiHssfWorkbook) wb;
     }
-    
+
     @Override
     public WorkbookFactory<PoiWorkbook> getWorkbookFactory() {
         return PoiWorkbookFactory.instance();

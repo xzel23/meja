@@ -28,7 +28,6 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import java.util.Objects;
 
 /**
- *
  * @author axel
  */
 public class PoiFont {

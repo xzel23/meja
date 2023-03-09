@@ -19,6 +19,7 @@ import com.dua3.utility.lang.LangUtil;
 
 /**
  * A rectangular region.
+ *
  * @param firstRow    first row
  * @param lastRow     last row {inclusive}
  * @param firstColumn first column
@@ -27,7 +28,7 @@ import com.dua3.utility.lang.LangUtil;
 public record RectangularRegion(int firstRow, int lastRow, int firstColumn, int lastColumn) {
 
     public RectangularRegion {
-        LangUtil.check(firstRow<=lastRow && firstColumn<=lastColumn);
+        LangUtil.check(firstRow <= lastRow && firstColumn <= lastColumn);
     }
 
     /**
@@ -50,7 +51,7 @@ public record RectangularRegion(int firstRow, int lastRow, int firstColumn, int 
      */
     public boolean intersects(RectangularRegion other) {
         return Math.min(lastRow, other.lastRow) - Math.max(firstRow, other.firstRow) >= 0
-               && Math.min(lastColumn, other.lastColumn) - Math.max(firstColumn, other.firstColumn) >= 0;
+                && Math.min(lastColumn, other.lastColumn) - Math.max(firstColumn, other.firstColumn) >= 0;
     }
 
 }

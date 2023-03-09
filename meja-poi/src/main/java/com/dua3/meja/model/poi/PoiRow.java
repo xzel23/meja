@@ -24,7 +24,6 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 
 /**
- *
  * @author axel
  */
 public final class PoiRow extends AbstractRow {
@@ -78,7 +77,7 @@ public final class PoiRow extends AbstractRow {
     @Override
     public int getLastCellNum() {
         // POI returns -1 for empty rows
-        return Math.max(0, poiRow.getLastCellNum())-1;
+        return Math.max(0, poiRow.getLastCellNum()) - 1;
     }
 
     @Override
@@ -89,8 +88,7 @@ public final class PoiRow extends AbstractRow {
     /**
      * Update first and last column numbers.
      *
-     * @param columnNumber
-     *  the column number
+     * @param columnNumber the column number
      */
     void setColumnUsed(int columnNumber) {
         getSheet().setColumnUsed(columnNumber);

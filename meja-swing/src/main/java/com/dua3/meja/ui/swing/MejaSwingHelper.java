@@ -61,7 +61,7 @@ public final class MejaSwingHelper {
         private final boolean firstRowIsHeader;
         @Serial
         private static final long serialVersionUID = 1L;
-        
+
         private final SheetListener sl;
 
         private SheetTableModel(Sheet sheet, boolean firstRowIsHeader) {
@@ -207,7 +207,7 @@ public final class MejaSwingHelper {
      * Show a file open dialog and load the selected workbook.
      *
      * @param parent the parent component to use for the dialog
-     * @param uri   the directory to set in the open dialog or the default path
+     * @param uri    the directory to set in the open dialog or the default path
      * @return the workbook the user chose or null if dialog was canceled
      * @throws IOException if a workbook was selected but could not be loaded
      */
@@ -233,7 +233,7 @@ public final class MejaSwingHelper {
 
     public static Optional<Workbook> openWorkbook(Component parent, URI uri) throws IOException {
         FileType<Workbook> fileType = FileType.forUri(uri, Workbook.class)
-                .orElseThrow(() -> new IllegalArgumentException("unknown filetype: "+uri));
+                .orElseThrow(() -> new IllegalArgumentException("unknown filetype: " + uri));
 
         // load
         return Optional.of(fileType.read(uri, t -> showOptionsDialog(parent, t)));
@@ -261,9 +261,9 @@ public final class MejaSwingHelper {
      *
      * @param parent   the parent component for the dialog
      * @param workbook the workbook to save
-     * @param uri     the URI to set the default path in the dialog
+     * @param uri      the URI to set the default path in the dialog
      * @return the URI the file was saved to or {@code null} if the user canceled
-     *         the dialog
+     * the dialog
      * @throws IOException if an exception occurs while saving
      */
     public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, URI uri)

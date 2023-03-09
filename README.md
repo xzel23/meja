@@ -4,7 +4,8 @@ Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
 ## Name
 
-As it's rather common to give everything Java related a name of indo/malay origin, I chose 'meja' which is the indonesian word for table (as in furniture).
+As it's rather common to give everything Java related a name of indo/malay origin, I chose 'meja' which is the
+indonesian word for table (as in furniture).
 
 ## Building
 
@@ -24,11 +25,13 @@ This is the base module providing functionality shared by different models.
 
 ### Module: com.dua3.meja.generic
 
-A generic Workbook implementation. Fast and memory efficient. Use this implementation when creating workbooks in memory. Also defines the CSV FileType.
+A generic Workbook implementation. Fast and memory efficient. Use this implementation when creating workbooks in memory.
+Also defines the CSV FileType.
 
 ### com.dua3.meja.poi
 
-An implementation backed by the Apache POI implementation of the Microsoft Office Excel file format. Defines FileTypes for xls and xlsx files. Use this implementation to read and modify Excel files.
+An implementation backed by the Apache POI implementation of the Microsoft Office Excel file format. Defines FileTypes
+for xls and xlsx files. Use this implementation to read and modify Excel files.
 
 ### com.dua3.meja.swing
 
@@ -44,4 +47,5 @@ Utilities for JavaFX.
 
 ## Logging
 
-Meja itself uses the SLF4J logging facade; the Apache POI library used for reading and writing Excel files uses the Log4J2 facade.
+Meja itself uses the SLF4J logging facade; the Apache POI library used for reading and writing Excel files uses the
+Log4J2 facade.

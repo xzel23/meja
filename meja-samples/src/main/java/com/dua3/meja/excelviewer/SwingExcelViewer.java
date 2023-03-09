@@ -198,7 +198,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
         mnOptions.add(mnLookAndFeel);
 
         JMenu mnZoom = new JMenu("Zoom");
-        for (final int zoom : new int[] { 25, 50, 75, 100, 125, 150, 200, 400 }) {
+        for (final int zoom : new int[]{25, 50, 75, 100, 125, 150, 200, 400}) {
             mnZoom.add(SwingUtil.createAction(zoom + "%", e -> setZoom(zoom / 100.0f)));
         }
         mnOptions.add(mnZoom);
@@ -268,7 +268,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
         try {
             UIManager.setLookAndFeel(lookAndFeelClassName);
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException
-                | IllegalAccessException ex) {
+                 | IllegalAccessException ex) {
             LOG.error("could not set look&feel", ex);
         }
         SwingUtilities.updateComponentTreeUI(this);

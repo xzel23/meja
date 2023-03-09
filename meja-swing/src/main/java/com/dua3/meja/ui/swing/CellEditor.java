@@ -20,7 +20,6 @@ import javax.swing.JComponent;
 import com.dua3.meja.model.Cell;
 
 /**
- *
  * @author Axel Howind (axel@dua3.com)
  */
 public interface CellEditor {

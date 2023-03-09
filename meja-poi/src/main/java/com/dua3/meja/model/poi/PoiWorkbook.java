@@ -268,13 +268,13 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             Font poiFont = poiWorkbook.getFontAt(i);
 
             if (poiFont.getFontName().equalsIgnoreCase(font.getFamily())
-                && poiFont.getFontHeightInPoints() == font.getSizeInPoints()
-                && poiFont.getBold() == font.isBold()
-                && poiFont.getItalic() == font.isItalic()
-                && (poiFont.getUnderline() != Font.U_NONE) == font.isUnderline()
-                && poiFont.getStrikeout() == font.isStrikeThrough()
-                && getColor(poiFont, Color.BLACK).equals(font.getColor())
-                && poiFont.getTypeOffset() == Font.SS_NONE) {
+                    && poiFont.getFontHeightInPoints() == font.getSizeInPoints()
+                    && poiFont.getBold() == font.isBold()
+                    && poiFont.getItalic() == font.isItalic()
+                    && (poiFont.getUnderline() != Font.U_NONE) == font.isUnderline()
+                    && poiFont.getStrikeout() == font.isStrikeThrough()
+                    && getColor(poiFont, Color.BLACK).equals(font.getColor())
+                    && poiFont.getTypeOffset() == Font.SS_NONE) {
                 return new PoiFont(this, poiFont);
             }
         }
@@ -404,7 +404,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     public Hyperlink createHyperLink(URI target) {
         HyperlinkType type;
-        String address=target.toString();
+        String address = target.toString();
         type = switch (target.getScheme().toLowerCase(Locale.ROOT)) {
             case "http", "https" -> HyperlinkType.URL;
             case "file" -> HyperlinkType.FILE;
@@ -418,8 +418,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     @Override
     public Stream<? extends PoiCellStyle> cellStyles() {
-        Iterator<?extends PoiCellStyle> iter = DataUtil.map(cellStyles.keySet().iterator(), this::getCellStyle);
-        Spliterator<?extends PoiCellStyle> spliterator = Spliterators.spliterator(iter, cellStyles.size(), 0);
+        Iterator<? extends PoiCellStyle> iter = DataUtil.map(cellStyles.keySet().iterator(), this::getCellStyle);
+        Spliterator<? extends PoiCellStyle> spliterator = Spliterators.spliterator(iter, cellStyles.size(), 0);
         return StreamSupport.stream(spliterator, false);
     }
 
@@ -510,8 +510,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
             int argb = color.argb();
             int r = (argb >> 16) & 0xff;
-            int g = (argb >>  8) & 0xff;
-            int b =  argb        & 0xff;
+            int g = (argb >> 8) & 0xff;
+            int b = argb & 0xff;
             return palette.findSimilarColor(r, g, b);
         }
 

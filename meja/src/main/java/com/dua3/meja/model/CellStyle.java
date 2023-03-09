@@ -29,7 +29,7 @@ public interface CellStyle {
      * Enumeration of standard data formats.
      */
     enum StandardDataFormats {
-        FULL, 
+        FULL,
         MEDIUM
     }
 
@@ -58,7 +58,7 @@ public interface CellStyle {
      *
      * @param d specifies the edge the border style applies to
      * @return the border style for the edge matching direction {@code d} used in
-     *         this cell style
+     * this cell style
      */
     BorderStyle getBorderStyle(Direction d);
 
@@ -198,14 +198,16 @@ public interface CellStyle {
 
     /**
      * Set text rotation.
+     *
      * @param angle the angle in degrees; valid range is -90 to 90
      */
     void setRotation(short angle);
 
     /**
      * Get text rotation.
+     *
      * @return rotation angle in degrees (-90 to 90)
      */
     short getRotation();
-    
+
 }

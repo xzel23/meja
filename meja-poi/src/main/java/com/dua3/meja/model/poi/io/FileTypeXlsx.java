@@ -23,6 +23,7 @@ public final class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
 
     /**
      * Get XLSX file type instance.
+     *
      * @return instance of this file type
      */
     public static FileTypeXlsx instance() {

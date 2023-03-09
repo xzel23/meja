@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.Serial;
 
 /**
- *
  * @author axel
  */
 public class FileFormatException extends IOException {

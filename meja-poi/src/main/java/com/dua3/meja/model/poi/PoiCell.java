@@ -57,7 +57,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- *
  * @author axel
  */
 public final class PoiCell extends AbstractCell {
@@ -75,7 +74,8 @@ public final class PoiCell extends AbstractCell {
             case NUMERIC -> CellType.NUMERIC;
             case STRING -> CellType.TEXT;
             case FORMULA -> CellType.FORMULA;
-            default -> throw new IllegalArgumentException("unknown value for org.apache.poi.ss.usermodel.CellType: " + poiType);
+            default ->
+                    throw new IllegalArgumentException("unknown value for org.apache.poi.ss.usermodel.CellType: " + poiType);
         };
     }
 
@@ -116,7 +116,7 @@ public final class PoiCell extends AbstractCell {
         // check time
         Instant instant = poiCell.getDateCellValue().toInstant();
         LocalTime time = instant.query(TemporalQueries.localTime());
-        return time !=null;
+        return time != null;
     }
 
     final org.apache.poi.ss.usermodel.Cell poiCell;
@@ -247,7 +247,7 @@ public final class PoiCell extends AbstractCell {
     @Override
     public LocalDate getDate() {
         if (isEmpty()) { // POI will throw for wrong CellType but return null
-                         // for empty cells
+            // for empty cells
             throw new CellException(this, "Cell does not contain a date.");
         }
         return poiCell.getLocalDateTimeCellValue().toLocalDate();
@@ -256,7 +256,7 @@ public final class PoiCell extends AbstractCell {
     @Override
     public LocalDateTime getDateTime() {
         if (isEmpty()) { // POI will throw for wrong CellType but return null
-                         // for empty cells
+            // for empty cells
             throw new CellException(this, "Cell does not contain datetime.");
         }
         return poiCell.getLocalDateTimeCellValue();
@@ -288,7 +288,7 @@ public final class PoiCell extends AbstractCell {
             case NUMERIC:
                 return poiCell.getNumericCellValue();
             case FORMULA:
-                LangUtil.check(getResultType()==CellType.NUMERIC, () -> new CellException(this, "formula does not yield a number"));
+                LangUtil.check(getResultType() == CellType.NUMERIC, () -> new CellException(this, "formula does not yield a number"));
                 return poiCell.getNumericCellValue();
             default:
                 throw new CellException(this, "cell does not contain a number.");
@@ -481,7 +481,7 @@ public final class PoiCell extends AbstractCell {
         Object old = getCellStyle();
         poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
         styleChanged(old, cellStyle);
-        
+
         return this;
     }
 
@@ -560,7 +560,7 @@ public final class PoiCell extends AbstractCell {
     public Optional<URI> getHyperlink() {
         Hyperlink link = poiCell.getHyperlink();
 
-        if (link==null) {
+        if (link == null) {
             return Optional.empty();
         }
         try {

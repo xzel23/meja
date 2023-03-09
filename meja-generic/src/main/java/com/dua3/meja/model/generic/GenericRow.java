@@ -24,7 +24,6 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.util.IteratorAdapter;
 
 /**
- *
  * @author Axel Howind (axel@dua3.com)
  */
 public class GenericRow extends AbstractRow {

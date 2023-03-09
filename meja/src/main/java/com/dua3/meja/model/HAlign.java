@@ -46,7 +46,7 @@ public enum HAlign {
     private final boolean wrap;
 
     private final String css;
-    
+
     HAlign(boolean wrap, String css) {
         this.wrap = wrap;
         this.css = css;
@@ -66,9 +66,10 @@ public enum HAlign {
 
     /**
      * Get CSS style definition.
+     *
      * @return CSS style (i.e. "text-align: ...;")
      */
     public String getCssStyle() {
-        return css; 
+        return css;
     }
 }

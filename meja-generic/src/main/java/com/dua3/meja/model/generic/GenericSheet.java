@@ -52,7 +52,8 @@ public class GenericSheet extends AbstractSheet {
 
     /**
      * Constructor
-     * @param workbook the workbook to add this sheet to
+     *
+     * @param workbook  the workbook to add this sheet to
      * @param sheetName the sheet name
      */
     public GenericSheet(GenericWorkbook workbook, String sheetName) {

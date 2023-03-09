@@ -37,7 +37,6 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 
 /**
- *
  * @author Axel Howind (axel@dua3.com)
  */
 public class GenericCellStyle implements CellStyle {
@@ -84,12 +83,12 @@ public class GenericCellStyle implements CellStyle {
             borderStyle[d.ordinal()] = defaultBorderStyle;
         }
     }
-    
+
     /**
      * Format datetime for output.
      *
      * @param locale the locale to use during formatting
-     * @param arg   the datetime to format
+     * @param arg    the datetime to format
      * @return text representation of {@code date}
      */
     public String format(LocalDateTime arg, Locale locale) {
@@ -113,7 +112,7 @@ public class GenericCellStyle implements CellStyle {
      * Format date for output.
      *
      * @param locale the locale to use during formatting
-     * @param arg the date to format
+     * @param arg    the date to format
      * @return text representation of {@code date}
      */
     public String format(TemporalAccessor arg, Locale locale) {
@@ -260,7 +259,7 @@ public class GenericCellStyle implements CellStyle {
 
     @Override
     public void setRotation(short angle) {
-        LangUtil.check(angle>=-90 && angle <=90, "angle must be in range [-90, 90]: %d", angle);
+        LangUtil.check(angle >= -90 && angle <= 90, "angle must be in range [-90, 90]: %d", angle);
         this.rotation = angle;
     }
 

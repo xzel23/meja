@@ -18,7 +18,6 @@ package com.dua3.meja.ui;
 import com.dua3.meja.model.Workbook;
 
 /**
- *
  * @author axel
  */
 public interface WorkbookView {

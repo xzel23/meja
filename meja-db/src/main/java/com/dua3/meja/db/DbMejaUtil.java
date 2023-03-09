@@ -15,7 +15,9 @@ import java.sql.SQLException;
  */
 public final class DbMejaUtil {
 
-    /** Logger */
+    /**
+     * Logger
+     */
     private static final Logger LOG = LoggerFactory.getLogger(DbMejaUtil.class);
     private static final String ERROR_TEXT = "###";
 
@@ -23,16 +25,12 @@ public final class DbMejaUtil {
      * Fill Sheet with data from {@link ResultSet}.
      * <p>
      * The result set data will be appended at the bottom of the sheet.
-     * @param sheet
-     *  the sheet to fill
-     * @param rs
-     *  the ResultSet
-     * @param addTableHeader
-     *  whether to generate a header row
-     * @return
-     *  the number of rows read
-     * @throws SQLException
-     *  if an error occurs while reading from the ResultSet.
+     *
+     * @param sheet          the sheet to fill
+     * @param rs             the ResultSet
+     * @param addTableHeader whether to generate a header row
+     * @return the number of rows read
+     * @throws SQLException if an error occurs while reading from the ResultSet.
      */
     public static int fill(Sheet sheet, ResultSet rs, boolean addTableHeader) throws SQLException {
         LOG.debug("populating Sheet with ResultSet data");
