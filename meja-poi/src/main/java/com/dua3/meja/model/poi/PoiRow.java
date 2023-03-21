@@ -23,6 +23,8 @@ import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 
+import java.util.Optional;
+
 /**
  * @author axel
  */
@@ -63,9 +65,9 @@ public final class PoiRow extends AbstractRow {
     }
 
     @Override
-    public PoiCell getCellIfExists(int col) {
+    public Optional<PoiCell> getCellIfExists(int col) {
         org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col);
-        return poiCell != null ? new PoiCell(this, poiCell) : null;
+        return Optional.ofNullable(poiCell != null ? new PoiCell(this, poiCell) : null);
     }
 
     @Override

@@ -74,10 +74,7 @@ public abstract class AbstractCell implements Cell {
         int originalSpanY = getVerticalSpan();
         for (int i = getRowNumber(); i < getRowNumber() + originalSpanY; i++) {
             for (int j = getColumnNumber(); j < getColumnNumber() + originalSpanX; j++) {
-                AbstractCell cell = getRow().getCellIfExists(j);
-                if (cell != null) {
-                    cell.removedFromMergedRegion();
-                }
+                getRow().getCellIfExists(j).ifPresent(AbstractCell::removedFromMergedRegion);
             }
         }
     }

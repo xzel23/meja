@@ -18,12 +18,7 @@ package com.dua3.meja.model;
 import com.dua3.meja.util.RectangularRegion;
 
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -200,12 +195,20 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     RectangularRegion getMergedRegion(int rowNum, int colNum);
 
     /**
-     * Get row.
+     * Get row, creating it if necessary.
      *
      * @param i the row number
      * @return the row with row number {@code i}
      */
     Row getRow(int i);
+
+    /**
+     * Get existent row.
+     *
+     * @param i the row number
+     * @return Optional containing the row with row number {@code i}
+     */
+    Optional<? extends Row> getRowIfExists(int i);
 
     /**
      * Get number of rows.
@@ -277,9 +280,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     default <T, C extends Iterable<T>> Row createRowWith(C values) {
         Row row = getRow(getRowCount());
-        for (var value : values) {
-            row.createCell().set(value);
-        }
+        values.forEach(row::createCell);
         return row;
     }
 

@@ -140,8 +140,8 @@ public final class MejaSwingHelper {
 
         @Override
         public Object getValueAt(int i, int j) {
-            Row row = sheet.getRow(getRowNumber(i));
-            return row == null ? null : row.getCell(j);
+            // use getXXXIfExists() to avoid side effects
+            return sheet.getRowIfExists(getRowNumber(i)).map(row -> row.getCellIfExists(j)).orElse(null);
         }
 
         @Override

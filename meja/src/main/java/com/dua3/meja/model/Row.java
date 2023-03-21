@@ -15,10 +15,7 @@
  */
 package com.dua3.meja.model;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -43,6 +40,17 @@ public interface Row extends Iterable<Cell> {
      */
     default Cell createCell() {
         return getCell(getLastCellNum() + 1);
+    }
+
+    /**
+     * Create new cell to the right of the existing cells.
+     *
+     * @return new Cell instance
+     */
+    default Cell createCell(Object value) {
+        Cell cell = getCell(getLastCellNum() + 1);
+        cell.set(value);
+        return cell;
     }
 
     /**
@@ -74,7 +82,7 @@ public interface Row extends Iterable<Cell> {
      * @param j the column number
      * @return this row's cell for the given column or null if cell doesn't exist
      */
-    Cell getCellIfExists(int j);
+    Optional<? extends Cell> getCellIfExists(int j);
 
     /**
      * Get row number.

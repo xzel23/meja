@@ -15,10 +15,7 @@
  */
 package com.dua3.meja.model.generic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import com.dua3.meja.model.AbstractSheet;
 import com.dua3.meja.model.Cell;
@@ -64,14 +61,11 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void autoSizeColumn(int j) {
-        float colWidth = 0;
-        for (Row row : this) {
-            Cell cell = row.getCellIfExists(j);
-            if (cell != null && cell.getCellType() != CellType.BLANK) {
-                float width = calcCellWidth(cell);
-                colWidth = Math.max(colWidth, width);
-            }
-        }
+        float colWidth = (float) rows().flatMap(Row::cells)
+                .filter(cell -> cell.getColumnNumber()==j && cell.getCellType() != CellType.BLANK)
+                .mapToDouble(GenericSheet::calcCellWidth)
+                .max()
+                .orElse(0.0);
         setColumnWidth(j, colWidth);
     }
 
@@ -82,15 +76,13 @@ public class GenericSheet extends AbstractSheet {
         float[] colWidth = new float[n];
         Arrays.fill(colWidth, 0.0f);
 
-        for (Row row : this) {
-            for (int j = 0; j < n; j++) {
-                Cell cell = row.getCellIfExists(j);
-                if (cell != null && cell.getCellType() != CellType.BLANK) {
-                    float width = calcCellWidth(cell);
-                    colWidth[j] = Math.max(colWidth[j], width);
-                }
+        rows().flatMap(Row::cells).forEach(cell -> {
+            if (cell.getCellType() != CellType.BLANK) {
+                int j = cell.getColumnNumber();
+                float width = calcCellWidth(cell);
+                colWidth[j] = Math.max(colWidth[j], width);
             }
-        }
+        });
 
         for (int j = 0; j < n; j++) {
             setColumnWidth(j, colWidth[j]);
@@ -166,6 +158,10 @@ public class GenericSheet extends AbstractSheet {
     public GenericRow getRow(int row) {
         reserve(row);
         return rows.get(row);
+    }
+
+    public Optional<GenericRow> getRowIfExists(int i) {
+        return Optional.ofNullable(i<=getLastRowNum() ? getRow(i) : null);
     }
 
     @Override

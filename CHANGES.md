@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 3.3.0 (work in progress)
+
+- BREAKING: Sheet.getRowIfExists() and Row.getCellIfExists() return Optional
+- fix: TableModel created by MejaSwingHelper.createTableModel() adds empty cells to sheet
+
 ## Version 3.2.1
 
 - parametrized unit tests

@@ -17,6 +17,7 @@ package com.dua3.meja.model.generic;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
 
 import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
@@ -55,8 +56,8 @@ public class GenericRow extends AbstractRow {
     }
 
     @Override
-    public GenericCell getCellIfExists(int col) {
-        return col < cells.size() ? cells.get(col) : null;
+    public Optional<GenericCell> getCellIfExists(int col) {
+        return Optional.ofNullable(col < cells.size() ? cells.get(col) : null);
     }
 
     @Override

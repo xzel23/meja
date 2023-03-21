@@ -12,6 +12,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -114,18 +115,21 @@ public abstract class AbstractSheet implements Sheet {
             if (rr.firstRow() == rowNumber && rr.firstColumn() == columnNumber) {
                 mergedRegions.remove(idx--);
                 for (int i = rr.firstRow(); i <= rr.lastRow(); i++) {
-                    Row row = getRow(i);
+                    AbstractRow row = getRow(i);
                     for (int j = rr.firstColumn(); j <= rr.lastColumn(); j++) {
-                        AbstractCell cell = (AbstractCell) row.getCellIfExists(j);
-                        if (cell != null) {
-                            cell.removedFromMergedRegion();
-                        }
+                        row.getCellIfExists(j).ifPresent(AbstractCell::removedFromMergedRegion);
                     }
                 }
             }
         }
         LOG.debug("removed merged region at [{},{}]", rowNumber, columnNumber);
     }
+
+    @Override
+    public abstract AbstractRow getRow(int i);
+
+    @Override
+    public abstract Optional<? extends AbstractRow> getRowIfExists(int i);
 
     @Override
     public abstract AbstractCell getCell(int i, int j);

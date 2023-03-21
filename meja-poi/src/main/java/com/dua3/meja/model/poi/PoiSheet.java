@@ -16,8 +16,10 @@
 package com.dua3.meja.model.poi;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.model.AbstractRow;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
@@ -187,6 +189,11 @@ public class PoiSheet extends AbstractSheet {
             firePropertyChange(PROPERTY_ROWS_ADDED, RowInfo.none(), new RowInfo(i, i));
         }
         return new PoiRow(this, poiRow);
+    }
+
+    @Override
+    public Optional<PoiRow> getRowIfExists(int i) {
+        return Optional.ofNullable(i<=getLastRowNum() ? getRow(i) : null);
     }
 
     @Override
