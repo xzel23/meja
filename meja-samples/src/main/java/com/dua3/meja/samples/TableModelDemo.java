@@ -15,9 +15,12 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import java.io.IOException;
+import java.io.Serial;
 import java.time.LocalDateTime;
 
 public class TableModelDemo extends JFrame {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = LoggerFactory.getLogger(TableModelDemo.class);
 
