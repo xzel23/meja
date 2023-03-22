@@ -1,7 +1,13 @@
 # Meja Changelog
 
-## Version 3.3.0 (work in progress)
+## Version 4.0.0 M2
 
+- fix: TableModel not updating last row when changes are made to sheet
+- TableModel created by MejaSwingHelper.createTableModel() allows editing; changes write through to the workbook
+
+## Version 4.0.0 M1
+
+- Sheet.egtCellIfExists()
 - BREAKING: Sheet.getRowIfExists() and Row.getCellIfExists() return Optional
 - fix: TableModel created by MejaSwingHelper.createTableModel() adds empty cells to sheet
 

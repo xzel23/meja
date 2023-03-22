@@ -9,6 +9,8 @@ indonesian word for table (as in furniture).
 
 ## Building
 
+The required Java version is 17.
+
 Clone the repository and run `./gradlew`. This will also install meja into your local maven repository.
 
 ## License
