@@ -3,7 +3,6 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.TableOptions;
-import com.dua3.utility.swing.SwingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,28 +40,50 @@ final class SheetTableModel extends AbstractTableModel {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            final Runnable dispatcher;
             switch (evt.getPropertyName()) {
                 case Sheet.PROPERTY_ROWS_ADDED -> {
                     Sheet.RowInfo ri = (Sheet.RowInfo) evt.getNewValue();
-                    dispatcher = () -> fireTableRowsInserted(getRowNumber(ri.firstRow()),
-                            getRowNumber(ri.lastRow()));
-                }
-                case Sheet.PROPERTY_CELL_CONTENT -> {
-                    if (firstRowIsHeader && ((Cell) evt.getSource()).getRowNumber() == 0) {
-                        dispatcher = SheetTableModel.this::fireTableStructureChanged;
+                    int firstRow = convertRowNumberSheetToJTable(ri.firstRow());
+                    int lastRow = convertRowNumberSheetToJTable(ri.lastRow());
+
+                    LOG.debug("rows added, firstRow={}, lastRow={}, firstRowIsHeader={}", firstRow, lastRow, firstRowIsHeader);
+
+                    if (firstRowIsHeader && firstRow == -1) {
+                        // header change!
+                        LOG.debug("head row added!");
+                        runOnEDT(SheetTableModel.this::fireTableStructureChanged);
                     } else {
-                        assert evt.getSource() instanceof Cell;
-                        Cell cell = (Cell) evt.getSource();
-                        int i = cell.getRowNumber();
-                        int j = cell.getColumnNumber();
-                        dispatcher = () -> fireTableCellUpdated(i, j);
+                        assert firstRow >= 0 : "invalid state detected, firstRowIsHeader="+firstRowIsHeader+", firstRow="+firstRow;
+                        runOnEDT(() -> fireTableRowsInserted(firstRow, lastRow));
                     }
                 }
-                case Sheet.PROPERTY_LAYOUT_CHANGED, Sheet.PROPERTY_COLUMNS_ADDED ->
-                        dispatcher = SheetTableModel.this::fireTableStructureChanged;
-                default -> dispatcher = () -> LOG.debug("ignored event: {}", evt);
+                case Sheet.PROPERTY_CELL_CONTENT -> {
+                    assert evt.getSource() instanceof Cell;
+                    Cell cell = (Cell) evt.getSource();
+                    int i = convertRowNumberSheetToJTable(cell.getRowNumber());
+                    int j = cell.getColumnNumber();
+
+                    LOG.debug("cell changed, table row={}, table column={}, firstRowIsHeader={}", i, j, firstRowIsHeader);
+
+                    if (firstRowIsHeader && i == -1) {
+                        // header change!
+                        LOG.debug("head row data changed!");
+                        runOnEDT(SheetTableModel.this::fireTableStructureChanged);
+                    } else {
+                        runOnEDT(() -> fireTableCellUpdated(i, j));
+                    }
+                }
+                case Sheet.PROPERTY_LAYOUT_CHANGED, Sheet.PROPERTY_COLUMNS_ADDED -> {
+                    LOG.debug("table structure changed, event: {}", evt);
+                    runOnEDT(SheetTableModel.this::fireTableStructureChanged);
+                }
+                default -> {
+                    LOG.debug("event igored: {}", evt);
+                }
             }
+        }
+
+        private void runOnEDT(Runnable dispatcher) {
             try {
                 if (SwingUtilities.isEventDispatchThread()) {
                     dispatcher.run();
@@ -112,7 +133,7 @@ final class SheetTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int i, int j) {
         // use getXXXIfExists() to avoid side effects
-        return sheet.getCellIfExists(getRowNumber(i), j).map(Cell::get).orElse(null);
+        return sheet.getCellIfExists(convertRowNumberJTableToSheet(i), j).map(Cell::get).orElse(null);
     }
 
     @Override
@@ -122,10 +143,24 @@ final class SheetTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object value, int i, int j) {
-        sheet.getCell(getRowNumber(i), j).set(value);
+        sheet.getCell(convertRowNumberSheetToJTable(i), j).set(value);
     }
 
-    private int getRowNumber(int i) {
+    /**
+     * Convert row number of the sheet to row number of the table.
+     * @param i row number in the sheet
+     * @return row number in the table
+     */
+    private int convertRowNumberSheetToJTable(int i) {
+        return firstRowIsHeader ? i - 1 : i;
+    }
+
+    /**
+     * Convert row number of the table to row number of the sheet.
+     * @param i row number in the sheet
+     * @return row number in the table
+     */
+    private int convertRowNumberJTableToSheet(int i) {
         return firstRowIsHeader ? i + 1 : i;
     }
 
