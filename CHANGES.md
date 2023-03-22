@@ -4,6 +4,7 @@
 
 - fix: TableModel not updating last row when changes are made to sheet
 - TableModel created by MejaSwingHelper.createTableModel() allows editing; changes write through to the workbook
+- update SLF4J to 2.0.7, JavaFX to 20, gradle to 8.0.2
 
 ## Version 4.0.0 M1
 
