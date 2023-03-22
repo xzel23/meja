@@ -1,5 +1,5 @@
 rootProject.name = "dua3-meja"
-val projectVersion = "4.0.0-M2-SNAPSHOT"
+val projectVersion = "4.0.0-M1"
 
 include("meja")
 include("meja-generic")
@@ -29,7 +29,7 @@ dependencyResolutionManagement {
             version("junit", "5.9.2")
             version("log4j", "2.20.0")
             version("poi", "5.2.3")
-            version("slf4j", "2.0.6")
+            version("slf4j", "2.0.7")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
