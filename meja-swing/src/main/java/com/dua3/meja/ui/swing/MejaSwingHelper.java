@@ -147,7 +147,7 @@ public final class MejaSwingHelper {
         @Override
         public Object getValueAt(int i, int j) {
             // use getXXXIfExists() to avoid side effects
-            return sheet.getCellIfExists(i,j).map(Cell::get).orElse(null);
+            return sheet.getCellIfExists(getRowNumber(i),j).map(Cell::get).orElse(null);
         }
 
         @Override
@@ -157,7 +157,7 @@ public final class MejaSwingHelper {
 
         @Override
         public void setValueAt(Object value, int i, int j) {
-            sheet.getCell(i,j).set(value);
+            sheet.getCell(getRowNumber(i),j).set(value);
         }
 
         private int getRowNumber(int i) {
