@@ -40,9 +40,7 @@ public class TableModelDemo extends JFrame {
         JTable table = new JTable();
         setContentPane(new JScrollPane(table));
 
-        wb = GenericWorkbookFactory.instance().create();
-        Sheet sheet = wb.createSheet("TableModelDemo");
-        sheet.createRow("Nr.", "Time");
+        sheet = createSheet();
 
         table.setModel(MejaSwingHelper.getTableModel(sheet, TableOptions.FIRST_ROW_IS_HEADER, TableOptions.EDITABLE));
 
@@ -58,12 +56,19 @@ public class TableModelDemo extends JFrame {
         }).start();
     }
 
-    private Workbook wb;
+    private Sheet sheet;
+
+    private Sheet createSheet() {
+        Workbook wb = GenericWorkbookFactory.instance().create();
+        Sheet sheet = wb.createSheet("TableModelDemo");
+        sheet.createRow("Nr.", "Time");
+        return sheet;
+    }
 
     @Override
     public void dispose() {
         try {
-            wb.close();
+            sheet.getWorkbook().close();
         } catch (IOException e) {
             LOG.error("exception occurred while closing workbook", e);
         }
