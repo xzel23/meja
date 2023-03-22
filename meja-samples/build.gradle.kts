@@ -17,7 +17,7 @@ dependencies {
     // route Log4J2 to SLF4J
     implementation(rootProject.libs.log4j.to.slf4j)
 
-    runtimeOnly(project(":meja-poi"))
+    implementation(project(":meja-poi"))
 }
 
 val runExcelViewer = task<JavaExec>("runExcelViewer") {
@@ -29,5 +29,11 @@ val runExcelViewer = task<JavaExec>("runExcelViewer") {
 val runKitchenSink = task<JavaExec>("runKitchenSink") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.samples.KitchenSink")
+    enableAssertions = true
+}
+
+val runTableModel = task<JavaExec>("runTableModel") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.meja.samples.TableModelDemo")
     enableAssertions = true
 }

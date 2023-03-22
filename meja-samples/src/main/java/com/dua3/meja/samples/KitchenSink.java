@@ -29,7 +29,7 @@ public final class KitchenSink extends JFrame {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LoggerFactory.getLogger(KitchenSink.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KitchenSink.class);
 
     private static void addColorSheet(Workbook wb) {
         Sheet sheet = wb.createSheet("colors");
@@ -128,7 +128,7 @@ public final class KitchenSink extends JFrame {
         try {
             wb.close();
         } catch (IOException e) {
-            logger.error("exception occurred while closing workbook", e);
+            LOG.error("exception occurred while closing workbook", e);
         }
         super.dispose();
     }
