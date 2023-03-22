@@ -134,6 +134,11 @@ public class PoiSheet extends AbstractSheet {
     }
 
     @Override
+    public Optional<PoiCell> getCellIfExists(int i, int j) {
+        return getRowIfExists(i).flatMap(row -> row.getCellIfExists(j));
+    }
+
+    @Override
     public int getColumnCount() {
         return lastColumn - firstColumn + 1;
     }

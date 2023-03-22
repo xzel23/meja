@@ -135,5 +135,8 @@ public abstract class AbstractSheet implements Sheet {
     public abstract AbstractCell getCell(int i, int j);
 
     @Override
+    public abstract Optional<? extends AbstractCell> getCellIfExists(int i, int j);
+
+    @Override
     public abstract AbstractWorkbook getWorkbook();
 }

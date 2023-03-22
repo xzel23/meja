@@ -16,10 +16,10 @@
 package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Sheet.RowInfo;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.util.TableOptions;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.io.OpenMode;
@@ -48,6 +48,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Helper class.
@@ -59,14 +60,19 @@ public final class MejaSwingHelper {
     private static final class SheetTableModel extends AbstractTableModel {
         private final Sheet sheet;
         private final boolean firstRowIsHeader;
+        private boolean editable = false;
         @Serial
         private static final long serialVersionUID = 1L;
 
         private final SheetListener sl;
 
-        private SheetTableModel(Sheet sheet, boolean firstRowIsHeader) {
+        private SheetTableModel(Sheet sheet, TableOptions... options) {
             this.sheet = sheet;
-            this.firstRowIsHeader = firstRowIsHeader;
+
+            Set<TableOptions> optionSet = Set.of(options);
+            this.firstRowIsHeader = optionSet.contains(TableOptions.FIRST_ROW_IS_HEADER);
+            this.editable = optionSet.contains(TableOptions.EDITABLE);
+
             sl = new SheetListener();
         }
 
@@ -141,17 +147,17 @@ public final class MejaSwingHelper {
         @Override
         public Object getValueAt(int i, int j) {
             // use getXXXIfExists() to avoid side effects
-            return sheet.getRowIfExists(getRowNumber(i)).map(row -> row.getCellIfExists(j)).orElse(null);
+            return sheet.getCellIfExists(i,j).map(Cell::get).orElse(null);
         }
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return false;
+            return editable;
         }
 
         @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        public void setValueAt(Object value, int i, int j) {
+            sheet.getCell(i,j).set(value);
         }
 
         private int getRowNumber(int i) {
@@ -185,23 +191,13 @@ public final class MejaSwingHelper {
      * Create a TableModel to be used with JTable.
      *
      * @param sheet the sheet to create a model for
+     * @param options the options to use
      * @return table model instance of {@code JTableModel} for the sheet
      */
-    public static TableModel getTableModel(final Sheet sheet) {
-        return new SheetTableModel(sheet, false);
+    public static TableModel getTableModel(final Sheet sheet, TableOptions... options) {
+        return new SheetTableModel(sheet, options);
     }
 
-    /**
-     * Create a TableModel to be used with JTable.
-     *
-     * @param sheet            the sheet to create a model for
-     * @param firstRowIsHeader if set to true, the first row of the sheet will be
-     *                         displayed as the table header
-     * @return table model instance of {@code JTableModel} for the sheet
-     */
-    public static TableModel getTableModel(final Sheet sheet, boolean firstRowIsHeader) {
-        return new SheetTableModel(sheet, firstRowIsHeader);
-    }
 
     /**
      * Show a file open dialog and load the selected workbook.

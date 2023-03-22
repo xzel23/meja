@@ -119,6 +119,11 @@ public class GenericSheet extends AbstractSheet {
     }
 
     @Override
+    public Optional<GenericCell> getCellIfExists(int i, int j) {
+        return getRowIfExists(i).flatMap(row -> row.getCellIfExists(j));
+    }
+
+    @Override
     public int getColumnCount() {
         return numberOfColumns;
     }

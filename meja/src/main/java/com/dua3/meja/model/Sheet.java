@@ -128,6 +128,15 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     Cell getCell(int i, int j);
 
     /**
+     * Get cell if exists.
+     *
+     * @param i the row number
+     * @param j the column number
+     * @return Optional holding the cell at row {@code i} and column {@code j}, or empty Optional
+     */
+    Optional<? extends Cell> getCellIfExists(int i, int j);
+
+    /**
      * Get number of columns.
      *
      * @return number of columns in this sheet
