@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 4.0.0 M3
+
+- fixes in SheetTableModel
+- refactorings
+
 ## Version 4.0.0 M2
 
 - fix: TableModel not updating last row when changes are made to sheet
