@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 final class SheetTableModel extends AbstractTableModel {
-    private static final Logger LOG = LoggerFactory.getLogger(MejaSwingHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SheetTableModel.class);
 
     private final Sheet sheet;
     private final boolean firstRowIsHeader;
@@ -53,7 +53,7 @@ final class SheetTableModel extends AbstractTableModel {
                         LOG.debug("head row added!");
                         runOnEDT(SheetTableModel.this::fireTableStructureChanged);
                     } else {
-                        assert firstRow >= 0 : "invalid state detected, firstRowIsHeader="+firstRowIsHeader+", firstRow="+firstRow;
+                        assert firstRow >= 0 : "invalid state detected, firstRowIsHeader=" + firstRowIsHeader + ", firstRow=" + firstRow;
                         runOnEDT(() -> fireTableRowsInserted(firstRow, lastRow));
                     }
                 }
@@ -148,6 +148,7 @@ final class SheetTableModel extends AbstractTableModel {
 
     /**
      * Convert row number of the sheet to row number of the table.
+     *
      * @param i row number in the sheet
      * @return row number in the table
      */
@@ -157,6 +158,7 @@ final class SheetTableModel extends AbstractTableModel {
 
     /**
      * Convert row number of the table to row number of the sheet.
+     *
      * @param i row number in the sheet
      * @return row number in the table
      */

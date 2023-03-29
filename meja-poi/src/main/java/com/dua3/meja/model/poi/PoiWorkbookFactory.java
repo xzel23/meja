@@ -123,7 +123,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     @Override
     public PoiWorkbook open(URI uri, Arguments importSettings) throws IOException {
         // Read Excel files directly using POI methods
-        // Do not use the create(File) method to avoid exception when trying
+        // Do not use the `create(File)` method to avoid exception when trying
         // to save the workbook again to the same file.
         try (InputStream in = new BufferedInputStream(uri.toURL().openStream())) {
             return open(in, uri);

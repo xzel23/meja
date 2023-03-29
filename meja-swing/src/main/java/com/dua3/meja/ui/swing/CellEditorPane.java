@@ -117,23 +117,18 @@ public class CellEditorPane extends JTextPane {
         @Override
         public View create(Element elem) {
             String kind = elem.getName();
-            if (kind != null) {
-                switch (kind) {
-                    case AbstractDocument.ContentElementName:
-                        return new LabelView(elem);
-                    case AbstractDocument.ParagraphElementName:
-                        return new ParagraphView(elem);
-                    case AbstractDocument.SectionElementName:
-                        return new AlignedBoxView(elem, View.Y_AXIS);
-                    case StyleConstants.ComponentElementName:
-                        return new ComponentView(elem);
-                    case StyleConstants.IconElementName:
-                        return new IconView(elem);
-                    default:
-                }
+            if (kind == null) {
+                return new LabelView(elem);
             }
 
-            return new LabelView(elem);
+            return switch (kind) {
+                case AbstractDocument.ContentElementName -> new LabelView(elem);
+                case AbstractDocument.ParagraphElementName -> new ParagraphView(elem);
+                case AbstractDocument.SectionElementName -> new AlignedBoxView(elem, View.Y_AXIS);
+                case StyleConstants.ComponentElementName -> new ComponentView(elem);
+                case StyleConstants.IconElementName -> new IconView(elem);
+                default -> new LabelView(elem);
+            };
         }
 
     }

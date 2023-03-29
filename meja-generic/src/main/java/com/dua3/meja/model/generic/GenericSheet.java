@@ -15,7 +15,11 @@
  */
 package com.dua3.meja.model.generic;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import com.dua3.meja.model.AbstractSheet;
 import com.dua3.meja.model.Cell;
@@ -62,7 +66,7 @@ public class GenericSheet extends AbstractSheet {
     @Override
     public void autoSizeColumn(int j) {
         float colWidth = (float) rows().flatMap(Row::cells)
-                .filter(cell -> cell.getColumnNumber()==j && cell.getCellType() != CellType.BLANK)
+                .filter(cell -> cell.getColumnNumber() == j && cell.getCellType() != CellType.BLANK)
                 .mapToDouble(GenericSheet::calcCellWidth)
                 .max()
                 .orElse(0.0);
@@ -166,7 +170,7 @@ public class GenericSheet extends AbstractSheet {
     }
 
     public Optional<GenericRow> getRowIfExists(int i) {
-        return Optional.ofNullable(i<=getLastRowNum() ? getRow(i) : null);
+        return Optional.ofNullable(i <= getLastRowNum() ? getRow(i) : null);
     }
 
     @Override

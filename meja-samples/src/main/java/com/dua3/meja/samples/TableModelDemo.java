@@ -45,7 +45,7 @@ public class TableModelDemo extends JFrame {
         table.setModel(MejaSwingHelper.getTableModel(sheet, TableOptions.FIRST_ROW_IS_HEADER, TableOptions.EDITABLE));
 
         new Thread(() -> {
-            for (int i=1; i<50; i++) {
+            for (int i = 1; i < 50; i++) {
                 sheet.createRow(i, LocalDateTime.now());
                 try {
                     Thread.sleep(100);
