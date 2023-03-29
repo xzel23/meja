@@ -173,7 +173,7 @@ class PoiWorkbookTest {
         for (Sheet sheet : wb) {
             HtmlWorkbookWriter writer = HtmlWorkbookWriter.create();
 
-            String refHtml = IoUtil.read(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
+            String refHtml = Files.readString(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
 
             try (Formatter out = new Formatter()) {
                 writer.writeHtmlHeaderStart(out);
@@ -185,7 +185,7 @@ class PoiWorkbookTest {
 
                 boolean updateResult = false; // set to true to update reference files
                 if (updateResult) {
-                    IoUtil.write(testdataDir.resolve(sheet.getSheetName() + ".html"), actHtml);
+                    Files.writeString(testdataDir.resolve(sheet.getSheetName() + ".html"), actHtml);
                 } else {
                     assertEquals(refHtml.replaceAll("\r\n", "\n"), actHtml.replaceAll("\r\n", "\n"));
                 }
