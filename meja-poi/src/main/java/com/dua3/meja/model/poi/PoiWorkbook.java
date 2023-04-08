@@ -215,7 +215,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     @Override
     public void setCurrentSheet(int idx) {
-        LangUtil.checkIndex(idx, sheets.size());
+        Objects.checkIndex(idx, sheets.size());
 
         int oldIdx = getCurrentSheetIndex();
         if (idx != oldIdx) {

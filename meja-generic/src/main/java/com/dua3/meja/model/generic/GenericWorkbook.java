@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.DoubleConsumer;
 import java.util.stream.Stream;
 
@@ -164,7 +165,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public void setCurrentSheet(int idx) {
-        LangUtil.checkIndex(idx, sheets.size());
+        Objects.checkIndex(idx, sheets.size());
 
         int oldIdx = currentSheetIdx;
         if (idx != oldIdx) {
