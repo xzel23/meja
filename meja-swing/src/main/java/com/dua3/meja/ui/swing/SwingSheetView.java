@@ -192,7 +192,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 options.add(SearchOptions.MATCH_COMPLETE_TEXT);
             }
 
-            Optional<Cell> oc = MejaHelper.find(sheet, getText(), options);
+            Optional<Cell> oc = MejaHelper.find(sheet, getText(), MejaHelper.SearchSettings.of(options));
             if (oc.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Text was not found.");
             } else {

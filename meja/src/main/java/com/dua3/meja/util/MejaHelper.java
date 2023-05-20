@@ -29,9 +29,11 @@ import com.dua3.utility.text.TextUtil.Alignment;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
@@ -46,16 +48,26 @@ public final class MejaHelper {
 
     public static final Pattern PATTERN_NEWLINE = Pattern.compile("\n|\r\n|\n\r");
 
-    /**
-     * Find cell containing text in row.
-     *
-     * @param row     the row
-     * @param text    the text to search for
-     * @param options the {@link SearchOptions} to use
-     * @return the cell found or {@code null} if nothing found
-     */
-    public static Optional<Cell> find(Row row, String text, SearchOptions... options) {
-        return find(row, text, LangUtil.enumSet(SearchOptions.class, options));
+    public record SearchSettings(
+            boolean searchFromCurrent,
+            boolean ignoreCase,
+            boolean matchComplete,
+            boolean updateCurrent,
+            boolean searchFormula
+    ) {
+        public static SearchSettings of(Collection<SearchOptions> options) {
+            boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
+            boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
+            boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
+            boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
+            boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMULA_TEXT);
+
+            return new SearchSettings(searchFromCurrent, ignoreCase, matchComplete, updateCurrent, searchFormula);
+        }
+
+        public static SearchSettings of(SearchOptions... options) {
+            return SearchSettings.of(List.of(options));
+        }
     }
 
     /**
@@ -63,21 +75,15 @@ public final class MejaHelper {
      *
      * @param row     the row
      * @param text    the text to search for
-     * @param options the {@link SearchOptions} to use
+     * @param ss      the {@link SearchSettings} to use
      * @return the cell found or {@code null} if nothing found
      */
-    public static Optional<Cell> find(Row row, String text, Collection<SearchOptions> options) {
-        boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
-        boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
-        boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
-        boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
-        boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMULA_TEXT);
-
-        if (ignoreCase) {
+    public static Optional<Cell> find(Row row, String text, SearchSettings ss) {
+        if (ss.ignoreCase()) {
             text = text.toLowerCase(Locale.ROOT);
         }
 
-        int jStart = searchFromCurrent ? row.getSheet().getCurrentCell().getColumnNumber() : row.getLastCellNum();
+        int jStart = ss.searchFromCurrent() ? row.getSheet().getCurrentCell().getColumnNumber() : row.getLastCellNum();
         int j = jStart;
         do {
             // move to next cell
@@ -91,19 +97,19 @@ public final class MejaHelper {
 
             // check cell content
             String cellText;
-            if (searchFormula && cell.getCellType() == CellType.FORMULA) {
+            if (ss.searchFormula() && cell.getCellType() == CellType.FORMULA) {
                 cellText = cell.getFormula();
             } else {
                 cellText = cell.toString();
             }
 
-            if (ignoreCase) {
+            if (ss.ignoreCase()) {
                 cellText = cellText.toLowerCase(Locale.ROOT);
             }
 
-            if (matchComplete ? cellText.equals(text) : cellText.contains(text)) {
+            if (ss.matchComplete() ? cellText.equals(text) : cellText.contains(text)) {
                 // found!
-                if (updateCurrent) {
+                if (ss.updateCurrent()) {
                     row.getSheet().setCurrentCell(cell);
                 }
                 return Optional.of(cell);
@@ -118,42 +124,24 @@ public final class MejaHelper {
      *
      * @param sheet   the sheet
      * @param text    the text to search for
-     * @param options the {@link SearchOptions} to use
-     * @return the cell found or {@code null} if nothing found
-     */
-    public static Optional<Cell> find(Sheet sheet, String text, SearchOptions... options) {
-        return find(sheet, text, LangUtil.enumSet(SearchOptions.class, options));
-    }
-
-    /**
-     * Find cell containing text in sheet.
-     *
-     * @param sheet   the sheet
-     * @param text    the text to search for
-     * @param options the {@link SearchOptions} to use
+     * @param ss      the {@link SearchSettings} to use
      * @return {@code Optional} holding the cell found or empty
      */
-    public static Optional<Cell> find(Sheet sheet, String text, Collection<SearchOptions> options) {
+    public static Optional<Cell> find(Sheet sheet, String text, SearchSettings ss) {
         Lock lock = sheet.readLock();
         lock.lock();
         try {
-            boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
-            boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
-            boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
-            boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
-            boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMULA_TEXT);
-
             if (isEmpty(sheet)) {
                 return Optional.empty();
             }
 
-            if (ignoreCase) {
+            if (ss.ignoreCase()) {
                 text = text.toLowerCase(Locale.ROOT);
             }
 
             Cell end = null;
             Cell cell;
-            if (searchFromCurrent) {
+            if (ss.searchFromCurrent()) {
                 cell = nextCell(sheet.getCurrentCell());
             } else {
                 cell = sheet.getCell(sheet.getFirstRowNum(), sheet.getFirstColNum());
@@ -168,19 +156,19 @@ public final class MejaHelper {
 
                 // check cell content
                 String cellText;
-                if (searchFormula && cell.getCellType() == CellType.FORMULA) {
+                if (ss.searchFormula() && cell.getCellType() == CellType.FORMULA) {
                     cellText = cell.getFormula();
                 } else {
                     cellText = cell.toString();
                 }
 
-                if (ignoreCase) {
+                if (ss.ignoreCase()) {
                     cellText = cellText.toLowerCase(Locale.ROOT);
                 }
 
-                if (matchComplete ? cellText.equals(text) : cellText.contains(text)) {
+                if (ss.matchComplete() ? cellText.equals(text) : cellText.contains(text)) {
                     // found!
-                    if (updateCurrent) {
+                    if (ss.updateCurrent()) {
                         sheet.setCurrentCell(cell);
                     }
                     return Optional.of(cell);
