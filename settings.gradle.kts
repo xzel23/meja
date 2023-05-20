@@ -21,10 +21,10 @@ dependencyResolutionManagement {
             plugin("test-logger", "com.adarshr.test-logger").version("3.2.0")
             plugin("spotbugs", "com.github.spotbugs").version("5.0.14")
             plugin("cabe", "com.dua3.cabe").version("1.2.0")
-            plugin("javafx", "org.openjfx.javafxplugin").version("0.0.13")
+            plugin("javafx", "org.openjfx.javafxplugin").version("0.0.14")
 
             version("cabe", "1.0.0")
-            version("dua3-utility", "11.0.0-M5")
+            version("dua3-utility", "11.0.0-M7")
             version("javafx", "20")
             version("junit", "5.9.2")
             version("log4j", "2.20.0")
