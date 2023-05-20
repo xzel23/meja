@@ -18,7 +18,7 @@ package com.dua3.meja.util;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
-import com.dua3.meja.model.SearchOptions;
+import com.dua3.meja.model.SearchSettings;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
@@ -29,11 +29,8 @@ import com.dua3.utility.text.TextUtil.Alignment;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Formatter;
-import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
@@ -47,28 +44,6 @@ import java.util.regex.Pattern;
 public final class MejaHelper {
 
     public static final Pattern PATTERN_NEWLINE = Pattern.compile("\n|\r\n|\n\r");
-
-    public record SearchSettings(
-            boolean searchFromCurrent,
-            boolean ignoreCase,
-            boolean matchComplete,
-            boolean updateCurrent,
-            boolean searchFormula
-    ) {
-        public static SearchSettings of(Collection<SearchOptions> options) {
-            boolean searchFromCurrent = options.contains(SearchOptions.SEARCH_FROM_CURRENT);
-            boolean ignoreCase = options.contains(SearchOptions.IGNORE_CASE);
-            boolean matchComplete = options.contains(SearchOptions.MATCH_COMPLETE_TEXT);
-            boolean updateCurrent = options.contains(SearchOptions.UPDATE_CURRENT_CELL_WHEN_FOUND);
-            boolean searchFormula = options.contains(SearchOptions.SEARCH_FORMULA_TEXT);
-
-            return new SearchSettings(searchFromCurrent, ignoreCase, matchComplete, updateCurrent, searchFormula);
-        }
-
-        public static SearchSettings of(SearchOptions... options) {
-            return SearchSettings.of(List.of(options));
-        }
-    }
 
     /**
      * Find cell containing text in row.

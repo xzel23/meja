@@ -38,6 +38,7 @@ import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 
+import com.dua3.meja.model.SearchSettings;
 import org.slf4j.Logger;
 
 import javax.swing.AbstractAction;
@@ -192,7 +193,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 options.add(SearchOptions.MATCH_COMPLETE_TEXT);
             }
 
-            Optional<Cell> oc = MejaHelper.find(sheet, getText(), MejaHelper.SearchSettings.of(options));
+            Optional<Cell> oc = MejaHelper.find(sheet, getText(), SearchSettings.of(options));
             if (oc.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Text was not found.");
             } else {
