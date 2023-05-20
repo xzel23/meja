@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 4.0.0 M6
+
+- introduce SearchSettings record
+- move MejaHelper.find() methods to Sheet/Row classes
+
 ## Version 4.0.0 M3
 
 - fixes in SheetTableModel

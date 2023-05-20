@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Spliterator;
@@ -162,4 +163,53 @@ public interface Row extends Iterable<Cell> {
      * @return number of first cell that potentially contains a value.
      */
     int getFirstCellNum();
+
+    /**
+     * Find cell containing text in row.
+     *
+     * @param text    the text to search for
+     * @param ss      the {@link SearchSettings} to use
+     * @return the cell found or {@code null} if nothing found
+     */
+    default Optional<Cell> find(String text, SearchSettings ss) {
+        if (ss.ignoreCase()) {
+            text = text.toLowerCase(Locale.ROOT);
+        }
+
+        int jStart = ss.searchFromCurrent() ? getSheet().getCurrentCell().getColumnNumber() : getLastCellNum();
+        int j = jStart;
+        do {
+            // move to next cell
+            if (j < getLastCellNum()) {
+                j++;
+            } else {
+                j = 0;
+            }
+
+            Cell cell = getCell(j);
+
+            // check cell content
+            String cellText;
+            if (ss.searchFormula() && cell.getCellType() == CellType.FORMULA) {
+                cellText = cell.getFormula();
+            } else {
+                cellText = cell.toString();
+            }
+
+            if (ss.ignoreCase()) {
+                cellText = cellText.toLowerCase(Locale.ROOT);
+            }
+
+            if (ss.matchComplete() ? cellText.equals(text) : cellText.contains(text)) {
+                // found!
+                if (ss.updateCurrent()) {
+                    getSheet().setCurrentCell(cell);
+                }
+                return Optional.of(cell);
+            }
+        } while (j != jStart);
+
+        return Optional.empty();
+    }
+
 }

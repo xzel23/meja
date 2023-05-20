@@ -70,7 +70,6 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.Rectangle;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 import org.slf4j.LoggerFactory;
@@ -193,7 +192,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 options.add(SearchOptions.MATCH_COMPLETE_TEXT);
             }
 
-            Optional<Cell> oc = MejaHelper.find(sheet, getText(), SearchSettings.of(options));
+            Optional<Cell> oc = sheet.find(getText(), SearchSettings.of(options));
             if (oc.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Text was not found.");
             } else {

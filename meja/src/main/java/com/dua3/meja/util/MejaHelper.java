@@ -15,10 +15,7 @@
  */
 package com.dua3.meja.util;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
-import com.dua3.meja.model.SearchSettings;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
@@ -32,8 +29,6 @@ import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.Formatter;
 import java.util.Locale;
-import java.util.Optional;
-import java.util.concurrent.locks.Lock;
 import java.util.regex.Pattern;
 
 /**
@@ -44,154 +39,6 @@ import java.util.regex.Pattern;
 public final class MejaHelper {
 
     public static final Pattern PATTERN_NEWLINE = Pattern.compile("\\R");
-
-    /**
-     * Find cell containing text in row.
-     *
-     * @param row     the row
-     * @param text    the text to search for
-     * @param ss      the {@link SearchSettings} to use
-     * @return the cell found or {@code null} if nothing found
-     */
-    public static Optional<Cell> find(Row row, String text, SearchSettings ss) {
-        if (ss.ignoreCase()) {
-            text = text.toLowerCase(Locale.ROOT);
-        }
-
-        int jStart = ss.searchFromCurrent() ? row.getSheet().getCurrentCell().getColumnNumber() : row.getLastCellNum();
-        int j = jStart;
-        do {
-            // move to next cell
-            if (j < row.getLastCellNum()) {
-                j++;
-            } else {
-                j = 0;
-            }
-
-            Cell cell = row.getCell(j);
-
-            // check cell content
-            String cellText;
-            if (ss.searchFormula() && cell.getCellType() == CellType.FORMULA) {
-                cellText = cell.getFormula();
-            } else {
-                cellText = cell.toString();
-            }
-
-            if (ss.ignoreCase()) {
-                cellText = cellText.toLowerCase(Locale.ROOT);
-            }
-
-            if (ss.matchComplete() ? cellText.equals(text) : cellText.contains(text)) {
-                // found!
-                if (ss.updateCurrent()) {
-                    row.getSheet().setCurrentCell(cell);
-                }
-                return Optional.of(cell);
-            }
-        } while (j != jStart);
-
-        return Optional.empty();
-    }
-
-    /**
-     * Find cell containing text in sheet.
-     *
-     * @param sheet   the sheet
-     * @param text    the text to search for
-     * @param ss      the {@link SearchSettings} to use
-     * @return {@code Optional} holding the cell found or empty
-     */
-    public static Optional<Cell> find(Sheet sheet, String text, SearchSettings ss) {
-        Lock lock = sheet.readLock();
-        lock.lock();
-        try {
-            if (isEmpty(sheet)) {
-                return Optional.empty();
-            }
-
-            if (ss.ignoreCase()) {
-                text = text.toLowerCase(Locale.ROOT);
-            }
-
-            Cell end = null;
-            Cell cell;
-            if (ss.searchFromCurrent()) {
-                cell = nextCell(sheet.getCurrentCell());
-            } else {
-                cell = sheet.getCell(sheet.getFirstRowNum(), sheet.getFirstColNum());
-            }
-
-            while (end == null || !(cell.getRowNumber() == end.getRowNumber()
-                    && cell.getColumnNumber() == end.getColumnNumber())) {
-                if (end == null) {
-                    // remember the first visited cell
-                    end = cell;
-                }
-
-                // check cell content
-                String cellText;
-                if (ss.searchFormula() && cell.getCellType() == CellType.FORMULA) {
-                    cellText = cell.getFormula();
-                } else {
-                    cellText = cell.toString();
-                }
-
-                if (ss.ignoreCase()) {
-                    cellText = cellText.toLowerCase(Locale.ROOT);
-                }
-
-                if (ss.matchComplete() ? cellText.equals(text) : cellText.contains(text)) {
-                    // found!
-                    if (ss.updateCurrent()) {
-                        sheet.setCurrentCell(cell);
-                    }
-                    return Optional.of(cell);
-                }
-
-                // move to next cell
-                cell = nextCell(cell);
-            }
-
-            // not found
-            return Optional.empty();
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * Test if sheet is empty.
-     *
-     * @param sheet the sheet to test
-     * @return true, if the sheet is empty
-     */
-    public static boolean isEmpty(Sheet sheet) {
-        return sheet.getRowCount() == 0;
-    }
-
-    private static Cell nextCell(Cell cell) {
-        // move to next cell
-        Row row = cell.getRow();
-        int j = cell.getColumnNumber();
-        if (j < row.getLastCellNum()) {
-            // cell is not the last one in row -> move right
-            return row.getCell(j + 1);
-        } else {
-            // cell is the last one in row...
-            Sheet sheet = row.getSheet();
-            int i = row.getRowNumber();
-            if (i < sheet.getLastRowNum()) {
-                // not the last row -> move to next row
-                row = sheet.getRow(i + 1);
-            } else {
-                // last row -> move to first row
-                row = sheet.getRow(sheet.getFirstRowNum());
-            }
-            // return the first cell of the new row
-            return row.getCell(row.getFirstCellNum());
-        }
-    }
 
     /**
      * Open workbook file.

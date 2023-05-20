@@ -1,7 +1,5 @@
 package com.dua3.meja.model;
 
-import com.dua3.meja.util.MejaHelper;
-
 import java.util.Collection;
 import java.util.List;
 

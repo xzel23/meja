@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
 
 import java.beans.PropertyChangeListener;
@@ -25,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -488,6 +490,104 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     static String getRowName(int i) {
         return Integer.toString(i + 1);
+    }
+
+    /**
+     * Test if sheet is empty.
+     *
+     * @return true, if the sheet is empty
+     */
+    default boolean isEmpty() {
+        return getRowCount() == 0;
+    }
+
+    /**
+     * Find cell containing text in sheet.
+     *
+     * @param text the text to search for
+     * @param ss   the {@link SearchSettings} to use
+     * @return {@code Optional} holding the cell found or empty
+     */
+    default Optional<Cell> find(String text, SearchSettings ss) {
+        Lock lock = readLock();
+        lock.lock();
+        try {
+            if (isEmpty()) {
+                return Optional.empty();
+            }
+
+            if (ss.ignoreCase()) {
+                text = text.toLowerCase(Locale.ROOT);
+            }
+
+            Cell end = null;
+            Cell cell;
+            if (ss.searchFromCurrent()) {
+                cell = nextCell(getCurrentCell());
+            } else {
+                cell = getCell(getFirstRowNum(), getFirstColNum());
+            }
+
+            while (end == null || !(cell.getRowNumber() == end.getRowNumber()
+                    && cell.getColumnNumber() == end.getColumnNumber())) {
+                if (end == null) {
+                    // remember the first visited cell
+                    end = cell;
+                }
+
+                // check cell content
+                String cellText;
+                if (ss.searchFormula() && cell.getCellType() == CellType.FORMULA) {
+                    cellText = cell.getFormula();
+                } else {
+                    cellText = cell.toString();
+                }
+
+                if (ss.ignoreCase()) {
+                    cellText = cellText.toLowerCase(Locale.ROOT);
+                }
+
+                if (ss.matchComplete() ? cellText.equals(text) : cellText.contains(text)) {
+                    // found!
+                    if (ss.updateCurrent()) {
+                        setCurrentCell(cell);
+                    }
+                    return Optional.of(cell);
+                }
+
+                // move to next cell
+                cell = nextCell(cell);
+            }
+
+            // not found
+            return Optional.empty();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private Cell nextCell(@Nullable Cell cell) {
+        assert cell != null && cell.getSheet() == this;
+
+        // move to next cell
+        Row row = cell.getRow();
+        int j = cell.getColumnNumber();
+        if (j < row.getLastCellNum()) {
+            // cell is not the last one in row -> move right
+            return row.getCell(j + 1);
+        } else {
+            // cell is the last one in row...
+            int i = row.getRowNumber();
+            if (i < getLastRowNum()) {
+                // not the last row -> move to next row
+                row = getRow(i + 1);
+            } else {
+                // last row -> move to first row
+                row = getRow(getFirstRowNum());
+            }
+            // return the first cell of the new row
+            return row.getCell(row.getFirstCellNum());
+        }
     }
 
 }
