@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
  */
 public final class MejaHelper {
 
-    public static final Pattern PATTERN_NEWLINE = Pattern.compile("\n|\r\n|\n\r");
+    public static final Pattern PATTERN_NEWLINE = Pattern.compile("\\R");
 
     /**
      * Find cell containing text in row.
