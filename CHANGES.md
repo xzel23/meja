@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 4.0.0-M7
+
+- allow null values in Sheet.createRow()
+- add some unit tests
+
 ## Version 4.0.0 M6
 
 - introduce SearchSettings record
