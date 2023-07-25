@@ -319,11 +319,13 @@ public interface Cell {
      */
     @SuppressWarnings("UseOfObsoleteDateTimeApi")
     default Cell set(@Nullable Object arg) {
-        arg = getWorkbook().cache(arg);
-
         if (arg == null) {
             clear();
-        } else if (arg instanceof Number) {
+            return this;
+        }
+
+        arg = getWorkbook().cache(arg);
+        if (arg instanceof Number) {
             set((Number) arg);
         } else if (arg instanceof Boolean) {
             set((Boolean) arg);

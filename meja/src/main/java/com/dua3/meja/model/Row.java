@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.cabe.annotations.Nullable;
+
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -50,9 +52,10 @@ public interface Row extends Iterable<Cell> {
     /**
      * Create new cell to the right of the existing cells.
      *
+     * @param value the value to set, {@code null} for an empty cell
      * @return new Cell instance
      */
-    default Cell createCell(Object value) {
+    default Cell createCell(@Nullable Object value) {
         Cell cell = getCell(getLastCellNum() + 1);
         cell.set(value);
         return cell;
