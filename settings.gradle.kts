@@ -17,7 +17,7 @@ dependencyResolutionManagement {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("versions", "com.github.ben-manes.versions").version("0.46.0")
+            plugin("versions", "com.github.ben-manes.versions").version("0.47.0")
             plugin("test-logger", "com.adarshr.test-logger").version("3.2.0")
             plugin("spotbugs", "com.github.spotbugs").version("5.0.14")
             plugin("cabe", "com.dua3.cabe").version("1.2.0")
@@ -26,7 +26,7 @@ dependencyResolutionManagement {
             version("cabe", "1.0.0")
             version("dua3-utility", "11.0.0-M7")
             version("javafx", "20")
-            version("junit", "5.9.2")
+            version("junit", "5.10.0")
             version("log4j", "2.20.0")
             version("poi", "5.2.3")
             version("slf4j", "2.0.7")
