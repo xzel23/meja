@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 4.0.0-M8
+
+- update utility
+
 ## Version 4.0.0-M7
 
 - allow null values in Sheet.createRow()
