@@ -27,7 +27,7 @@
 
 ## Version 4.0.0 M1
 
-- Sheet.egtCellIfExists()
+- Sheet.getCellIfExists()
 - BREAKING: Sheet.getRowIfExists() and Row.getCellIfExists() return Optional
 - fix: TableModel created by MejaSwingHelper.createTableModel() adds empty cells to sheet
 
