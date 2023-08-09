@@ -260,19 +260,18 @@ public abstract class PoiCellStyle implements CellStyle {
             case MEDIUM, MEDIUM_DASHED, MEDIUM_DASH_DOT, MEDIUM_DASH_DOT_DOT -> 1.75f;
             case THICK -> 2;
             case DASHED, DOTTED, DOUBLE, HAIR, DASH_DOT, DASH_DOT_DOT, SLANTED_DASH_DOT -> 1;
-            default -> 1;
         };
     }
 
     @Override
     public String getDataFormat() {
-        switch (poiCellStyle.getDataFormat()) {
-            case 0x0e:
-                return StandardDataFormats.MEDIUM.name();
-            default:
+        return switch (poiCellStyle.getDataFormat()) {
+            case 0x0e -> StandardDataFormats.MEDIUM.name();
+            default -> {
                 String fmt = poiCellStyle.getDataFormatString();
-                return fmt.equals("general") ? "0.##########" : fmt;
-        }
+                yield fmt.equals("general") ? "0.##########" : fmt;
+            }
+        };
     }
 
     @Override

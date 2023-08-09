@@ -20,8 +20,18 @@ public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
         super(name, mode, cls, extensions);
     }
 
+    /**
+     * Returns a WorkbookWriter object.
+     *
+     * @return A WorkbookWriter object that can be used to write out a workbook.
+     */
     public abstract WorkbookWriter getWorkbookWriter();
 
+    /**
+     * Returns a WorkbookFactory object.
+     *
+     * @return A WorkbookFactory object that can be used to create a workbook.
+     */
     public abstract WorkbookFactory<? extends W> getWorkbookFactory();
 
     @Override

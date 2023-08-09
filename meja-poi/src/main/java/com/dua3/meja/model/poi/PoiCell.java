@@ -206,7 +206,6 @@ public final class PoiCell extends AbstractCell {
             case BOOLEAN -> poiCell.getBooleanCellValue();
             case TEXT -> getText();
             case ERROR -> ERROR_TEXT;
-            default -> throw new CellException(this, "unsupported cell type: " + poiCell.getCellType());
         };
     }
 
@@ -284,15 +283,14 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public Number getNumber() {
-        switch (getCellType()) {
-            case NUMERIC:
-                return poiCell.getNumericCellValue();
-            case FORMULA:
+        return switch (getCellType()) {
+            case NUMERIC -> poiCell.getNumericCellValue();
+            case FORMULA -> {
                 LangUtil.check(getResultType() == CellType.NUMERIC, () -> new CellException(this, "formula does not yield a number"));
-                return poiCell.getNumericCellValue();
-            default:
-                throw new CellException(this, "cell does not contain a number.");
-        }
+                yield poiCell.getNumericCellValue();
+            }
+            default -> throw new CellException(this, "cell does not contain a number.");
+        };
     }
 
     @Override
@@ -571,7 +569,6 @@ public final class PoiCell extends AbstractCell {
                         .or(() -> Optional.of(URI.create(link.getAddress())));
                 case NONE -> Optional.empty();
                 case DOCUMENT -> throw new UnsupportedOperationException("Unsupported link type: " + link.getType());
-                default -> throw new UnsupportedOperationException("Unsupported link type: " + link.getType());
             };
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);

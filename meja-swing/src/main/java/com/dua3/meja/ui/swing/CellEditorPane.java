@@ -153,7 +153,6 @@ public class CellEditorPane extends JTextPane {
         return switch (type) {
             case BLANK, BOOLEAN, ERROR, NUMERIC, DATE, DATE_TIME -> HAlign.ALIGN_RIGHT;
             case TEXT, FORMULA -> HAlign.ALIGN_LEFT;
-            default -> throw new IllegalStateException("unexpected value: type");
         };
     }
 

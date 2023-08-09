@@ -23,10 +23,24 @@ import java.util.function.Function;
 public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     private static final FileType<PoiWorkbook> INSTANCE = new FileTypeExcel();
 
+    /**
+     * Returns the instance of FileType for PoiWorkbook.
+     *
+     * @return the instance of FileType for PoiWorkbook
+     */
     public static FileType<PoiWorkbook> instance() {
         return INSTANCE;
     }
 
+    /**
+     * Constructs a new FileTypeExcel instance.
+     *
+     * The FileTypeExcel class represents the file type for Excel files.
+     * It supports reading Excel files in the .xlsx, .xls, and .xlsm formats.
+     *
+     * The FileTypeExcel instance is used to specify the file type when opening Excel files with the specified extensions.
+     * The file type is also used for identifying supported file types and filtering files in file selection dialogs.
+     */
     public FileTypeExcel() {
         super("All Excel files", OpenMode.READ, PoiWorkbook.class, "xlsx", "xls", "xlsm");
     }

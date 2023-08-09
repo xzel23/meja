@@ -43,7 +43,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * @author Axel Howind (axel@dua3.com)
+ * HtmlWorkbookWriter is a class that implements the WorkbookWriter interface.
+ * It is used to write a workbook as HTML.
  */
 public final class HtmlWorkbookWriter implements WorkbookWriter {
 
@@ -151,6 +152,19 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         return "WB_" + TextUtil.getMD5String(workbook.getUri().map(URI::toString).orElse(""));
     }
 
+    /**
+     * Write a sheet as HTML.
+     * <p>
+     * <em>NOTE:</em> This method does not add HTML header and body tags.
+     *
+     * @param sheet           the sheet to write
+     * @param out             the Formatter to write to
+     * @param locale          the locale to use
+     * @param totalRows       the total number of rows in the sheet
+     * @param processedRows   the number of rows already processed
+     * @param updateProgress  a DoubleConsumer that updates the progress (value between 0 and 1)
+     * @return the number of rows processed after writing the sheet
+     */
     private static long writeSheet(Sheet sheet, Formatter out, Locale locale, long totalRows, long processedRows, DoubleConsumer updateProgress) {
         Optional<URI> baseUri = sheet.getWorkbook().getUri().map(uri -> uri.resolve(""));
 
@@ -298,10 +312,20 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         }
     }
 
+    /**
+     * Write the start of the HTML header.
+     *
+     * @param out the Formatter to write the HTML header to
+     */
     public void writeHtmlHeaderStart(Formatter out) {
         out.format(Locale.ROOT, "<html>\n<head>\n  <meta charset=\"utf-8\">\n");
     }
 
+    /**
+     * Write the end of the HTML header.
+     *
+     * @param out the Formatter to write the HTML header to
+     */
     public void writeHtmlHeaderEnd(Formatter out) {
         out.format(Locale.ROOT, """
                 </head>
@@ -324,10 +348,21 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 """);
     }
 
+    /**
+     * Write the end of the HTML footer.
+     *
+     * @param out the Formatter to write the HTML footer to
+     */
     public void writeHtmlFooter(Formatter out) {
         out.format(Locale.ROOT, "</body>\n</html>\n");
     }
 
+    /**
+     * Write the CSS styles for the given Workbook to the provided Formatter.
+     *
+     * @param out the Formatter to write the CSS styles to
+     * @param workbook the Workbook containing the cell styles
+     */
     public void writeCss(Formatter out, Workbook workbook) {
         out.format(Locale.ROOT, "  <style>\n");
         writeCommonCss(out, workbook.getDefaultCellStyle());
@@ -335,6 +370,12 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         out.format(Locale.ROOT, "  </style>\n");
     }
 
+    /**
+     * Write the common CSS styles for the given CellStyle to the provided Formatter.
+     *
+     * @param out the Formatter to write the CSS styles to
+     * @param defaultCellStyle the default cell style
+     */
     private void writeCommonCss(Formatter out, CellStyle defaultCellStyle) {
         out.format(Locale.ROOT, """
                 .meja-tabbar {
@@ -389,6 +430,12 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 """);
     }
 
+    /**
+     * Write the CSS styles for a single sheet to the provided Formatter.
+     *
+     * @param out the Formatter to write the CSS styles to
+     * @param sheet the sheet for which to write the CSS styles
+     */
     public void writeCssForSingleSheet(Formatter out, Sheet sheet) {
         // determine styles used in this sheet
         out.format(Locale.ROOT, "  <style>\n");

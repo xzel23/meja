@@ -57,6 +57,12 @@ public abstract class WorkbookReader {
         }
     }
 
+    /**
+     * Set the import options for the reader. This method ignores the passed options; it is meant as a default
+     * implementation for Reader implementations that don't take options.
+     *
+     * @param importSettings the import settings to be set
+     */
     public void setOptions(Arguments importSettings) {
         // nop: empty default implementation for Readers that don't take options
     }

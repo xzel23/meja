@@ -32,8 +32,23 @@ import java.util.function.DoubleConsumer;
 @FunctionalInterface
 public interface WorkbookWriter {
 
+    /**
+     * This variable represents an indeterminate progress value.
+     *
+     * <p>
+     * In certain situations, there may be a need to indicate progress where
+     * the exact value is unknown or cannot be determined. In such cases,
+     * the value of {@code PROGRESS_INDETERMINATE} can be used.
+     * </p>
+     */
     double PROGRESS_INDETERMINATE = -1.0;
 
+    /**
+     * Sets the options for the method. This method ignores the passed options; it is meant as a default
+     * implementation for Writer implementations that don't take options.
+     *
+     * @param options the arguments containing the options to be set
+     */
     default void setOptions(Arguments options) {
         // empty implementation for writers not taking export options
     }

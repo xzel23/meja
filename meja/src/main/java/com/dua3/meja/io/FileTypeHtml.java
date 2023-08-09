@@ -19,10 +19,21 @@ import java.util.function.Function;
 public class FileTypeHtml extends FileTypeWorkbook<Workbook> {
     private static final FileType<Workbook> INSTANCE = new FileTypeHtml();
 
+    /**
+     * Returns the singleton instance of FileType for Workbooks in HTML format.
+     *
+     * @return The singleton instance of FileType for Workbooks in HTML format.
+     */
     public static FileType<Workbook> instance() {
         return INSTANCE;
     }
 
+    /**
+     * Constructs a new FileTypeHtml instance.
+     *
+     * Initializes the FileType with the name "HTML", open mode as "WRITE", associated class as Workbook,
+     * and file extensions "html" and "htm".
+     */
     public FileTypeHtml() {
         super("HTML", OpenMode.WRITE, Workbook.class, "html", "htm");
     }

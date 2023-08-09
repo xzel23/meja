@@ -47,8 +47,38 @@ import java.util.stream.StreamSupport;
  */
 public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
+    /**
+     * Represents the property name for the active sheet.
+     *
+     * <p>
+     * The active sheet is the currently selected sheet in a spreadsheet application.
+     * This property can be used to identify or manipulate the active sheet.
+     * </p>
+     * <p>
+     * This constant is typically used as a key when working with properties or as a notification
+     * to indicate that a sheet has been removed from a collection or container.
+     * </p>
+     */
     String PROPERTY_ACTIVE_SHEET = "ACTIVE_SHEET";
+    /**
+     * Constant variable representing the property key for indicating that a sheet has been added.
+     * The value of this constant is "SHEET_ADDED".
+     *
+     * <p>
+     * This constant is typically used as a key when working with properties or as a notification
+     * to indicate that a sheet has been removed from a collection or container.
+     * </p>
+     */
     String PROPERTY_SHEET_ADDED = "SHEET_ADDED";
+    /**
+     * Represents the name of the property for signaling that a sheet has been removed.
+     * The value of this constant is "SHEET_REMOVED".
+     *
+     * <p>
+     * This constant is typically used as a key when working with properties or as a notification
+     * to indicate that a sheet has been removed from a collection or container.
+     * </p>
+     */
     String PROPERTY_SHEET_REMOVED = "SHEET_REMOVED";
 
     /**
@@ -363,6 +393,23 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
         });
     }
 
+    /**
+     * Writes the workbook to a file at the given URI with the specified options,
+     * and updates the progress using the provided {@code DoubleConsumer}.
+     *
+     * @param uri            the URI to write to.
+     *                       <p>
+     *                       The file format to used is determined by the extension of
+     *                       {@code uri} which must be one of the extensions defined in
+     *                       {@link FileType}.
+     *                       </p>
+     * @param options        special options to use (supported options depend on the file
+     *                       type)
+     * @param updateProgress the consumer that will receive the progress value (a double between 0 and 1)
+     *                       periodically during the writing process
+     * @throws IOException if an I/O error occurs
+     * @throws IllegalArgumentException if the file type for the given URI cannot be determined
+     */
     default void write(URI uri, Arguments options, DoubleConsumer updateProgress) throws IOException {
         FileType<?> type = FileType
                 .forUri(uri)
@@ -406,6 +453,21 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     }
 
 
+    /**
+     * Writes the workbook to a file with progress update.
+     *
+     * @param path             the path to write to.
+     *                         <p>
+     *                         The file format to used is determined by the extension of
+     *                         {@code uri} which must be one of the extensions defined in
+     *                         {@link FileType}.
+     *                         </p>
+     * @param options          special options to use (supported options depend on the file type)
+     * @param updateProgress   a consumer that accepts a double value representing the progress of the write operation,
+     *                         where 0.0 indicates no progress and 1.0 indicates completion.
+     * @throws IOException     if an I/O error occurs
+     * @throws IllegalArgumentException if the file type cannot be determined for the given path
+     */
     default void write(Path path, Arguments options, DoubleConsumer updateProgress) throws IOException {
         FileType<?> type = FileType
                 .forExtension(IoUtil.getExtension(path))
