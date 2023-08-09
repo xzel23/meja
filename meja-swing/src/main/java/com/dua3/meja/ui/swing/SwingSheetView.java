@@ -609,7 +609,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     /**
      * The sheet displayed.
      */
-    private transient Sheet sheet = null;
+    private transient Sheet sheet;
 
     /**
      * The color to use for the grid lines.
@@ -619,12 +619,12 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     /**
      * Read-only mode.
      */
-    private boolean editable = false;
+    private boolean editable;
 
     /**
      * Editing state.
      */
-    private boolean editing = false;
+    private boolean editing;
 
     /**
      * Constructor.

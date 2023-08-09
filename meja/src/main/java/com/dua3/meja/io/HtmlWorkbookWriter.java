@@ -252,7 +252,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         return processedRows;
     }
 
-    private static <T> void writeAttribute(Formatter out, String attribute, Cell cell, Function<Cell, T> getter, Predicate<T> condition, Function<T, String> formatter) {
+    private static <T> void writeAttribute(Formatter out, String attribute, Cell cell, Function<Cell, ? extends T> getter, Predicate<? super T> condition, Function<? super T, String> formatter) {
         T v = getter.apply(cell);
         if (condition.test(v)) {
             writeAttribute(out, attribute, formatter.apply(v));

@@ -65,7 +65,7 @@ public class ExcelViewerModel {
     /**
      * The currently opened workbook.
      */
-    private Workbook workbook = null;
+    private Workbook workbook;
 
     /**
      * The current directory.

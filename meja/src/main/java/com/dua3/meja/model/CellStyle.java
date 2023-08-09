@@ -29,7 +29,13 @@ public interface CellStyle {
      * Enumeration of standard data formats.
      */
     enum StandardDataFormats {
+        /**
+         * Enum constant for the full date format.
+         */
         FULL,
+        /**
+         * Enum constant for the medium date format.
+         */
         MEDIUM
     }
 

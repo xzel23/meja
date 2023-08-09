@@ -90,7 +90,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     /**
      * Reference to the sheet.
      */
-    private Sheet sheet = null;
+    private Sheet sheet;
 
     /**
      * Array with column positions (x-axis) in pixels.
@@ -101,9 +101,9 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * Array with column positions (y-axis) in pixels.
      */
     private double[] rowPos = {0};
-    private double sheetHeightInPoints = 0;
+    private double sheetHeightInPoints;
 
-    private double sheetWidthInPoints = 0;
+    private double sheetWidthInPoints;
 
     protected SheetPainterBase(SV sheetView) {
         this.sheetView = sheetView;

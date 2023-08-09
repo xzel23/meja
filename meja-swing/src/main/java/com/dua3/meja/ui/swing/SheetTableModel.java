@@ -20,7 +20,7 @@ final class SheetTableModel extends AbstractTableModel {
 
     private final Sheet sheet;
     private final boolean firstRowIsHeader;
-    private boolean editable = false;
+    private boolean editable;
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -77,9 +77,7 @@ final class SheetTableModel extends AbstractTableModel {
                     LOG.debug("table structure changed, event: {}", evt);
                     runOnEDT(SheetTableModel.this::fireTableStructureChanged);
                 }
-                default -> {
-                    LOG.debug("event igored: {}", evt);
-                }
+                default -> LOG.debug("event igored: {}", evt);
             }
         }
 

@@ -23,7 +23,7 @@ public abstract class AbstractWorkbook implements Workbook {
     /**
      * The object cache used to reduce memory usage.
      */
-    private ObjectCache objectCache = null;
+    private ObjectCache objectCache;
 
     protected AbstractWorkbook(@Nullable URI uri) {
         this.uri = uri;

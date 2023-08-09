@@ -37,8 +37,8 @@ public class SheetRowBuilder implements RowBuilder {
 
     private final Sheet sheet;
     private final CellValueHelper helper;
-    private Row currentRow = null;
-    private int colNr = 0;
+    private Row currentRow;
+    private int colNr;
 
     /**
      * Construct a new {@code RowBuilder}.

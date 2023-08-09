@@ -56,7 +56,7 @@ public class TableModelDemo extends JFrame {
         }).start();
     }
 
-    private Sheet sheet;
+    private final Sheet sheet;
 
     private Sheet createSheet() {
         Workbook wb = GenericWorkbookFactory.instance().create();

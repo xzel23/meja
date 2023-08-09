@@ -22,8 +22,8 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, SwingGra
     private final CellRenderer cellRenderer;
     private final JLabel labelPainter = new JLabel();
 
-    private double labelHeight = 0;
-    private double labelWidth = 0;
+    private double labelHeight;
+    private double labelWidth;
 
     SwingSheetPainter(SwingSheetView sheetView, CellRenderer cellRenderer) {
         super(sheetView);

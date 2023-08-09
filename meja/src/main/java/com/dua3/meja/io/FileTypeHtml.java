@@ -30,7 +30,7 @@ public class FileTypeHtml extends FileTypeWorkbook<Workbook> {
 
     /**
      * Constructs a new FileTypeHtml instance.
-     *
+     * <p>
      * Initializes the FileType with the name "HTML", open mode as "WRITE", associated class as Workbook,
      * and file extensions "html" and "htm".
      */

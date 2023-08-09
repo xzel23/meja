@@ -46,7 +46,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     private final List<GenericSheet> sheets = new ArrayList<>();
     private final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
     private final GenericCellStyle defaultCellStyle;
-    private int currentSheetIdx = 0;
+    private int currentSheetIdx;
 
     /**
      * Construct a new {@code GenericWorkbook}.

@@ -43,12 +43,12 @@ public class GenericSheet extends AbstractSheet {
     private final List<GenericRow> rows = new ArrayList<>(4_000);
     private final ArrayList<Float> columnWidth = new ArrayList<>(200);
     private final ArrayList<Float> rowHeight = new ArrayList<>(4_000);
-    private int freezeRow = 0;
-    private int freezeColumn = 0;
+    private int freezeRow;
+    private int freezeColumn;
     private int autoFilterRow = -1;
     private int numberOfColumns;
-    private int currentRow = 0;
-    private int currentColumn = 0;
+    private int currentRow;
+    private int currentColumn;
     private float zoom = 1.0f;
 
     /**

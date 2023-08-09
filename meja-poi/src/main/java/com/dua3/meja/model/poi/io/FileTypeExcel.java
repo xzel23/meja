@@ -34,10 +34,10 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
 
     /**
      * Constructs a new FileTypeExcel instance.
-     *
+     * <p>
      * The FileTypeExcel class represents the file type for Excel files.
      * It supports reading Excel files in the .xlsx, .xls, and .xlsm formats.
-     *
+     * <p>
      * The FileTypeExcel instance is used to specify the file type when opening Excel files with the specified extensions.
      * The file type is also used for identifying supported file types and filtering files in file selection dialogs.
      */

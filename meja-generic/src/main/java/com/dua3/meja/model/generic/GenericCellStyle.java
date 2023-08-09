@@ -59,8 +59,8 @@ public class GenericCellStyle implements CellStyle {
     private short rotation;
 
     // formatting helper
-    private DateTimeFormatter dateFormatter = null;
-    private NumberFormat numberFormatter = null;
+    private DateTimeFormatter dateFormatter;
+    private NumberFormat numberFormatter;
 
     /**
      * Construct a new {@code GenericCellStyle}.

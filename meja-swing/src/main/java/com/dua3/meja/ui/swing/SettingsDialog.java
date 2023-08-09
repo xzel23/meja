@@ -27,7 +27,6 @@ import java.util.Vector;
 
 public class SettingsDialog extends JDialog {
 
-    private final JPanel settingsPanel;
     private Arguments result = Arguments.empty();
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -39,7 +38,7 @@ public class SettingsDialog extends JDialog {
 
         List<JComponent> inputs = new ArrayList<>(options.size());
 
-        settingsPanel = new JPanel();
+        JPanel settingsPanel = new JPanel();
         settingsPanel.setLayout(new GridLayout(options.size(), 2));
         for (Option<?> option : options) {
             settingsPanel.add(new JLabel(option.displayName()));
