@@ -181,6 +181,10 @@ public class PoiSheet extends AbstractSheet {
         return poiSheet.getLastRowNum();
     }
 
+    /**
+     * Get the underlying Apache POI sheet instance.
+     * @return the Apache POI sheet used ti store sheet data
+     */
     public Sheet getPoiSheet() {
         return poiSheet;
     }
