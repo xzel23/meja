@@ -104,11 +104,6 @@ final class SheetTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return Object.class;
-    }
-
-    @Override
     public int getColumnCount() {
         return sheet.getColumnCount();
     }
