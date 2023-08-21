@@ -196,6 +196,13 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         return new ArrayList<>(cellStyles.keySet());
     }
 
+    /**
+     * Get the color from the given POI color. If the POI color is null, return the default color.
+     *
+     * @param poiColor     the POI color
+     * @param defaultColor the default color
+     * @return the color
+     */
     public abstract Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor);
 
     /**

@@ -72,9 +72,17 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      */
     String PROPERTY_COLUMNS_ADDED = "COLUMNS_ADDED";
 
+    /**
+     * The RowInfo class represents information about a row range.
+     */
     record RowInfo(int firstRow, int lastRow) {
         private static final RowInfo NONE = new RowInfo(0, -1);
 
+        /**
+         * Returns a RowInfo object representing an empty range.
+         *
+         * @return a RowInfo object representing no information
+         */
         public static RowInfo none() {
             return NONE;
         }
@@ -293,6 +301,8 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     /**
      * Create a new row at the bottom of the sheet.
      *
+     * @param <T> the generic type of the items to insert into the row
+     * @param <C> the generic type of the {@link Iterable} holding the items to be set
      * @param values the values to insert
      * @return new row instance
      */
@@ -302,8 +312,19 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
         return row;
     }
 
+    /**
+     * Removes the specified listener from the list of property change listeners.
+     *
+     * @param listener the property change listener to be removed
+     */
     void removePropertyChangeListener(PropertyChangeListener listener);
 
+    /**
+     * Removes the specified listener from the list of property change listeners for the given property.
+     *
+     * @param propertyName the name of the property
+     * @param listener     the property change listener to be removed
+     */
     void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**

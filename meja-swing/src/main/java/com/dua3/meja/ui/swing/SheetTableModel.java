@@ -81,7 +81,7 @@ final class SheetTableModel extends AbstractTableModel {
             }
         }
 
-        private void runOnEDT(Runnable dispatcher) {
+        private static void runOnEDT(Runnable dispatcher) {
             try {
                 if (SwingUtilities.isEventDispatchThread()) {
                     dispatcher.run();

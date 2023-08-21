@@ -45,6 +45,11 @@ public enum Direction {
         this.cssName = cssName;
     }
 
+    /**
+     * Retrieves the CSS name associated with an element.
+     *
+     * @return The CSS name of the element.
+     */
     public String getCssName() {
         return cssName;
     }

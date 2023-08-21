@@ -37,19 +37,38 @@ import java.util.Optional;
  */
 public interface Cell {
 
+    /**
+     * The CellException class is an exception that extends the IllegalStateException class. It is used to indicate
+     * exceptional conditions related to a cell in a spreadsheet.
+     */
     class CellException extends IllegalStateException {
+        /**
+         * Constructs a new CellException with the given Cell, message, and cause.
+         *
+         * @param cell   The Cell associated with the exception.
+         * @param message   The detail message.
+         * @param cause   The cause of the exception.
+         */
         public CellException(Cell cell, String message, @Nullable Throwable cause) {
             super(messagePrefix(cell) + message, cause);
         }
 
+        /**
+         * Constructs a new CellException with the given Cell and message.
+         *
+         * @param cell   The Cell associated with the exception.
+         * @param message   The detail message.
+         */
         public CellException(Cell cell, String message) {
             super(messagePrefix(cell) + message);
         }
 
-        public CellException(Cell cell, @Nullable Throwable cause) {
-            super(messagePrefix(cell) + cause.getMessage(), cause);
-        }
-
+        /**
+         * Returns the message prefix for the given Cell. The message prefix is the cell reference in brackets.
+         *
+         * @param cell   The Cell for which the message prefix is required.
+         * @return The message prefix.
+         */
         private static String messagePrefix(Cell cell) {
             return "[" + cell.getCellRef(RefOption.WITH_SHEET) + "] ";
         }
