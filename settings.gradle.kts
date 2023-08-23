@@ -1,5 +1,5 @@
 rootProject.name = "dua3-meja"
-val projectVersion = "4.0.0-M11-SNAPSHOT"
+val projectVersion = "4.0.0-M10.1"
 
 include("meja")
 include("meja-generic")
@@ -24,7 +24,7 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.0.14")
 
             version("cabe", "1.0.0")
-            version("dua3-utility", "11.0.0-M11")
+            version("dua3-utility", "11.0.0-M12.1")
             version("javafx", "20")
             version("junit", "5.10.0")
             version("log4j", "2.20.0")
