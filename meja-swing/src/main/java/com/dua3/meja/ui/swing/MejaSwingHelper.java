@@ -89,6 +89,14 @@ public final class MejaSwingHelper {
         return openWorkbook(parent, jfc.getSelectedFile().toURI());
     }
 
+    /**
+     * Open a workbook from a given URI. A dialog to sepcify options is shown if required.
+     *
+     * @param parent the parent component to use
+     * @param uri the URI of the workbook to open
+     * @return an Optional containing the opened workbook, or an empty Optional if the dialog was canceled
+     * @throws IOException if the selected workbook could not be loaded
+     */
     public static Optional<Workbook> openWorkbook(Component parent, URI uri) throws IOException {
         FileType<Workbook> fileType = FileType.forUri(uri, Workbook.class)
                 .orElseThrow(() -> new IllegalArgumentException("unknown filetype: " + uri));

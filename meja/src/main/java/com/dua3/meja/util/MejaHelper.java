@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  */
 public final class MejaHelper {
 
-    public static final Pattern PATTERN_NEWLINE = Pattern.compile("\\R");
+    private static final Pattern PATTERN_NEWLINE = Pattern.compile("\\R");
 
     /**
      * Open workbook file.

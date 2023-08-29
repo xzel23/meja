@@ -252,11 +252,11 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 // nop: cell is always visible!
             } else if (aboveSplit) {
                 // only scroll x
-                java.awt.Rectangle r = new java.awt.Rectangle(xS2D(cellRect.getX()), 1, wS2D(cellRect.getW()), 1);
+                java.awt.Rectangle r = new java.awt.Rectangle(xS2D(cellRect.getX()), 1, wS2D(cellRect.getWidth()), 1);
                 bottomRightQuadrant.scrollRectToVisible(r);
             } else if (toLeftOfSplit) {
                 // only scroll y
-                java.awt.Rectangle r = new java.awt.Rectangle(1, yS2D(cellRect.getY()), 1, hS2D(cellRect.getH()));
+                java.awt.Rectangle r = new java.awt.Rectangle(1, yS2D(cellRect.getY()), 1, hS2D(cellRect.getHeight()));
                 bottomRightQuadrant.scrollRectToVisible(r);
             } else {
                 bottomRightQuadrant.scrollRectToVisible(rectS2D(cellRect));

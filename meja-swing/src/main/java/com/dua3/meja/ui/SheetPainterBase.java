@@ -272,8 +272,8 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     public Rectangle getSelectionRect(Cell cell) {
         Rectangle cellRect = getCellRect(cell.getLogicalCell());
         double extra = (getSelectionStrokeWidth() + 1) / 2;
-        return new Rectangle(cellRect.getX() - extra, cellRect.getY() - extra, cellRect.getW() + 2 * extra,
-                cellRect.getH() + 2 * extra);
+        return new Rectangle(cellRect.getX() - extra, cellRect.getY() - extra, cellRect.getWidth() + 2 * extra,
+                cellRect.getHeight() + 2 * extra);
     }
 
     public double getSheetHeightInPoints() {
@@ -341,7 +341,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
         // draw grid lines
         g.setColor(getGridColor());
-        g.drawRect(cr.getX(), cr.getY(), cr.getW(), cr.getH());
+        g.drawRect(cr.getX(), cr.getY(), cr.getWidth(), cr.getHeight());
 
         CellStyle style = cell.getCellStyle();
         FillPattern pattern = style.getFillPattern();
@@ -353,14 +353,14 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         Color fillFgColor = style.getFillFgColor();
         if (fillFgColor != null) {
             g.setColor(fillFgColor);
-            g.fillRect(cr.getX(), cr.getY(), cr.getW(), cr.getH());
+            g.fillRect(cr.getX(), cr.getY(), cr.getWidth(), cr.getHeight());
         }
 
         if (pattern != FillPattern.SOLID) {
             Color fillBgColor = style.getFillBgColor();
             if (fillBgColor != null) {
                 g.setColor(fillBgColor);
-                g.fillRect(cr.getX(), cr.getY(), cr.getW(), cr.getH());
+                g.fillRect(cr.getX(), cr.getY(), cr.getWidth(), cr.getHeight());
             }
         }
     }
@@ -421,8 +421,8 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
         // the rectangle used for positioning the text
         Rectangle textRect = getCellRect(cell);
-        textRect = new Rectangle(textRect.getX() + paddingX, textRect.getY() + paddingY, textRect.getW() - 2 * paddingX,
-                textRect.getH() - 2 * paddingY);
+        textRect = new Rectangle(textRect.getX() + paddingX, textRect.getY() + paddingY, textRect.getWidth() - 2 * paddingX,
+                textRect.getHeight() - 2 * paddingY);
 
         // the clipping rectangle
         final Rectangle clipRect;
@@ -445,7 +445,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                 }
                 clipXMax = getColumnPos(j + 1) - paddingX;
             }
-            clipRect = new Rectangle(clipXMin, textRect.getY(), clipXMax - clipXMin, textRect.getH());
+            clipRect = new Rectangle(clipXMin, textRect.getY(), clipXMax - clipXMin, textRect.getHeight());
         }
 
         render(g, cell, textRect, clipRect);
@@ -467,7 +467,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
         gc.setXOR(useXorDrawing);
         gc.setStroke(SELECTION_COLOR, getSelectionStrokeWidth());
-        gc.drawRect(rect.getX(), rect.getY(), rect.getW(), rect.getH());
+        gc.drawRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
         gc.setXOR(false);
     }
 
@@ -499,7 +499,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         Rectangle r = new Rectangle(-getRowLabelWidth(), 0, getRowLabelWidth(), 0);
         for (int i = startRow; i < endRow; i++) {
             r.setY(getRowPos(i));
-            r.setH(getRowPos(i + 1) - r.getY());
+            r.setHeight(getRowPos(i + 1) - r.getY());
             String text = getRowName(i);
             drawLabel(gc, r, text);
         }
@@ -508,7 +508,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         r = new Rectangle(0, -getColumnLabelHeight(), 0, getColumnLabelHeight());
         for (int j = startColumn; j < endColumn; j++) {
             r.setX(getColumnPos(j));
-            r.setW(getColumnPos(j + 1) - r.getX());
+            r.setWidth(getColumnPos(j + 1) - r.getX());
             String text = getColumnName(j);
             drawLabel(gc, r, text);
         }

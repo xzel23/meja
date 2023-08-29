@@ -27,6 +27,15 @@ import com.dua3.utility.lang.LangUtil;
  */
 public record RectangularRegion(int firstRow, int lastRow, int firstColumn, int lastColumn) {
 
+    /**
+     * Creates a RectangularRegion object.
+     *
+     * @param firstRow     the index of the first row in the region
+     * @param lastRow      the index of the last row in the region
+     * @param firstColumn  the index of the first column in the region
+     * @param lastColumn   the index of the last column in the region
+     * @throws IllegalArgumentException if the indices are not in a valid range
+     */
     public RectangularRegion {
         LangUtil.check(firstRow <= lastRow && firstColumn <= lastColumn);
     }

@@ -193,6 +193,7 @@ public class CellEditorPane extends JTextPane {
      * Set the editor content to the content of the given cell.
      *
      * @param cell the cell to display
+     * @param scale the font scaling factor to use
      * @param eval set to true to display formula results instead of the formula
      *             itself
      */
