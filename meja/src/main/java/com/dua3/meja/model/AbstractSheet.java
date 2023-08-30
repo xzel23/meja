@@ -3,6 +3,7 @@ package com.dua3.meja.model;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.geometry.Dimension2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +11,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -139,4 +141,53 @@ public abstract class AbstractSheet implements Sheet {
 
     @Override
     public abstract AbstractWorkbook getWorkbook();
+
+    @Override
+    public void autoSizeColumn(int j) {
+        float colWidth = (float) rows().flatMap(Row::cells)
+                .filter(cell -> cell.getColumnNumber() == j && cell.getCellType() != CellType.BLANK)
+                .map(Cell::calcCellDimension)
+                .mapToDouble(Dimension2f::width)
+                .max()
+                .orElse(0.0);
+        setColumnWidth(j, colWidth);
+    }
+
+    @Override
+    public void autoSizeColumns() {
+        final int n = getColumnCount();
+
+        float[] colWidth = new float[n];
+        Arrays.fill(colWidth, 0.0f);
+
+        rows().flatMap(Row::cells).forEach(cell -> {
+            if (cell.getCellType() != CellType.BLANK) {
+                int j = cell.getColumnNumber();
+                float width = cell.calcCellDimension().width();
+                colWidth[j] = Math.max(colWidth[j], width);
+            }
+        });
+
+        List<PropertyChangeListener> listeners = List.of(pcs.getPropertyChangeListeners(PROPERTY_LAYOUT_CHANGED));
+        listeners.forEach(pcs::removePropertyChangeListener);
+        for (int j = 0; j < n; j++) {
+            setColumnWidth(j, colWidth[j]);
+        }
+        listeners.forEach(pcs::addPropertyChangeListener);
+        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
+    }
+
+    @Override
+    public void autoSizeRow(int i) {
+        getRowIfExists(i).ifPresent(row -> {
+            float rowHeight = (float) row.cells()
+                    .filter(cell->!cell.isEmpty())
+                    .map(Cell::calcCellDimension)
+                    .mapToDouble(Dimension2f::height)
+                    .max()
+                    .orElse(0.0);
+            setRowHeight(i, rowHeight);
+        });
+    }
+
 }

@@ -53,6 +53,12 @@ public class Cache<K, V> {
         items.clear();
     }
 
+    /**
+     * Gets the value associated with the specified key.
+     *
+     * @param key the key whose associated value is to be retrieved
+     * @return the value to which the specified key is mapped, or null if this map contains no mapping for the key
+     */
     public V get(@Nullable K key) {
         if (key == null) {
             return null;

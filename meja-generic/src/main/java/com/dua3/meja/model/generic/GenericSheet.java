@@ -15,20 +15,15 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.meja.model.AbstractSheet;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Sheet;
+import com.dua3.utility.lang.LangUtil;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import com.dua3.meja.model.AbstractSheet;
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellType;
-import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
-import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.Font;
-import com.dua3.utility.text.TextUtil;
 
 /**
  * A generic implementation of {@link Sheet}.
@@ -61,49 +56,6 @@ public class GenericSheet extends AbstractSheet {
         this.workbook = workbook;
         this.sheetName = sheetName;
         this.numberOfColumns = 0;
-    }
-
-    @Override
-    public void autoSizeColumn(int j) {
-        float colWidth = (float) rows().flatMap(Row::cells)
-                .filter(cell -> cell.getColumnNumber() == j && cell.getCellType() != CellType.BLANK)
-                .mapToDouble(GenericSheet::calcCellWidth)
-                .max()
-                .orElse(0.0);
-        setColumnWidth(j, colWidth);
-    }
-
-    @Override
-    public void autoSizeColumns() {
-        final int n = numberOfColumns;
-
-        float[] colWidth = new float[n];
-        Arrays.fill(colWidth, 0.0f);
-
-        rows().flatMap(Row::cells).forEach(cell -> {
-            if (cell.getCellType() != CellType.BLANK) {
-                int j = cell.getColumnNumber();
-                float width = calcCellWidth(cell);
-                colWidth[j] = Math.max(colWidth[j], width);
-            }
-        });
-
-        for (int j = 0; j < n; j++) {
-            setColumnWidth(j, colWidth[j]);
-        }
-    }
-
-    // helper method used to calculate a cell's width
-    private static float calcCellWidth(Cell cell) {
-        // calculate the exact width
-        String text = cell.toString();
-        Font font = cell.getCellStyle().getFont();
-        float width = (float) TextUtil.getTextWidth(text, font);
-
-        // add half the font size as spacing on the sides
-        width += font.getSizeInPoints() / 2;
-
-        return width;
     }
 
     @Override

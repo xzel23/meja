@@ -124,7 +124,14 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     void autoSizeColumns();
 
     /**
-     * Remove all content from sheet.
+     * Adjusts the size of the row to its contents.
+     *
+     * @param i the row to resize
+     */
+    void autoSizeRow(int i);
+
+    /**
+     * Remove all content from the sheet.
      */
     void clear();
 

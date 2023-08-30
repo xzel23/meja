@@ -19,7 +19,10 @@ package com.dua3.meja.model;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.TextUtil;
 
 import java.net.URI;
 import java.time.LocalDate;
@@ -426,6 +429,37 @@ public interface Cell {
      * @return an Optional with the Hyperlink or empty Optional
      */
     Optional<URI> getHyperlink();
+
+    /**
+     * Calculate the dimension of the cell based on the cell's content.
+     *
+     * @return the calculated dimension of the cell
+     */
+    default Dimension2f calcCellDimension() {
+        // calculate the exact width
+        String text = toString();
+        CellStyle cellStyle = getCellStyle();
+        Font font = cellStyle.getFont();
+        Dimension2f dim = TextUtil.getTextDimension(text, font);
+
+        // add some space on the sides
+        float w = dim.width() + font.getSizeInPoints() / 2;
+        float h = (float) (dim.height() + font.getSpaceWidth() / 2);
+
+        // take rotation into account
+        short rotation = cellStyle.getRotation();
+        if (rotation == 0) {
+            return new Dimension2f(w, h);
+        }
+
+        double alpha = rotation / 180.0 * Math.PI;
+        double cosAbs = Math.abs(Math.cos(alpha));
+        double sinAbs = Math.abs(Math.sin(alpha));
+        return new Dimension2f(
+                (float) (cosAbs * w + sinAbs * h),
+                (float) (sinAbs * w + cosAbs * h)
+        );
+    }
 
     /**
      * Return string representation of cell content.

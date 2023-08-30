@@ -1,5 +1,15 @@
 # Meja Changelog
 
+## Version 4.0.0-M12
+
+- common implementation for autoSizeColumn()
+- add Sheet.austoSizeRow()
+- fix Sheet.clear() not firing change event
+
+## Version 4.0.0-M9 - 4.0.0-M11
+
+- code cleanup and javadoc updates
+
 ## Version 4.0.0-M8
 
 - update utility

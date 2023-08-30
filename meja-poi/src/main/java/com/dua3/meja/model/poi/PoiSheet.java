@@ -15,21 +15,19 @@
  */
 package com.dua3.meja.model.poi;
 
-import java.util.Objects;
-import java.util.Optional;
-
 import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.model.AbstractSheet;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.lang.LangUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
 
-import com.dua3.meja.model.AbstractSheet;
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.util.RectangularRegion;
-import com.dua3.utility.lang.LangUtil;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * POI implementation of the {@link com.dua3.meja.model.Sheet} interface.
@@ -63,44 +61,6 @@ public class PoiSheet extends AbstractSheet {
     }
 
     @Override
-    public void autoSizeColumn(int j) {
-        // for streaming implementation, only tracked columns can be autosized!
-        if (poiSheet instanceof SXSSFSheet sxssfSheet) {
-            if (!sxssfSheet.isColumnTrackedForAutoSizing(j)) {
-                return;
-            }
-        }
-
-        poiSheet.autoSizeColumn(j);
-        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
-    }
-
-    @Override
-    public void autoSizeColumns() {
-        boolean layoutChanged = false;
-
-        // for streaming implementation, only tracked columns can be autosized!
-        if (poiSheet instanceof SXSSFSheet sxssfSheet) {
-            for (int j = 0; j < getColumnCount(); j++) {
-                if (sxssfSheet.isColumnTrackedForAutoSizing(j)) {
-                    poiSheet.autoSizeColumn(j);
-                    layoutChanged = true;
-                }
-            }
-        } else {
-            for (int j = 0; j < getColumnCount(); j++) {
-                poiSheet.autoSizeColumn(j);
-                layoutChanged = true;
-            }
-        }
-
-        // inform listeners
-        if (layoutChanged) {
-            firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
-        }
-    }
-
-    @Override
     public void clear() {
         // determine sheet number
         int sheetNr = workbook.poiWorkbook.getSheetIndex(poiSheet);
@@ -115,6 +75,8 @@ public class PoiSheet extends AbstractSheet {
         workbook.poiWorkbook.setSheetOrder(sheetName, sheetNr);
 
         init();
+
+        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
     }
 
     @Override

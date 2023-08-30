@@ -30,11 +30,11 @@ public final class Rectangle {
 
     /**
      * Constructs a new Rectangle object with the given coordinates and dimensions.
-     *
+     * <p>
      * The x-coordinate represents the horizontal position of the rectangle.
-     *
+     * <p>
      * The y-coordinate represents the vertical position of the rectangle.
-     *
+     * <p>
      * The width (w) and height (h) represent the dimensions of the rectangle.
      *
      * @param x the x-coordinate of the rectangle
