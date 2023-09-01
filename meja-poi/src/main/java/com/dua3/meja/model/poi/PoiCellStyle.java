@@ -287,6 +287,11 @@ public abstract class PoiCellStyle implements CellStyle {
         return font.getFont();
     }
 
+    /**
+     * Get the POI font for this PoiFont object.
+     *
+     * @return the POI font
+     */
     public PoiFont getPoiFont() {
         return font;
     }

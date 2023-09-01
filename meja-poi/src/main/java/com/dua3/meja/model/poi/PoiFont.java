@@ -93,6 +93,12 @@ public class PoiFont {
         this.poiFont = poiFont;
     }
 
+    /**
+     * Derives a new font from the current font with the specified FontDef.
+     *
+     * @param fd the FontDef to derive the font from
+     * @return a new PoiFont instance with the derived font
+     */
     public PoiFont deriveFont(FontDef fd) {
         Font derivedFont = this.font.deriveFont(fd);
         return workbook.createFont(derivedFont);
@@ -103,6 +109,11 @@ public class PoiFont {
         return obj instanceof PoiFont && Objects.equals(poiFont, ((PoiFont) obj).poiFont);
     }
 
+    /**
+     * Returns the current font.
+     *
+     * @return the current font stored in the instance of the class
+     */
     public Font getFont() {
         return font;
     }

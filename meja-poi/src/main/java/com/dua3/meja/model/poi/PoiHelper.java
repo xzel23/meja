@@ -29,6 +29,12 @@ public final class PoiHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PoiHelper.class);
 
+    /**
+     * Converts a custom horizontal alignment value to a corresponding Apache POI HorizontalAlignment value.
+     *
+     * @param hAlign the custom horizontal alignment value to be converted
+     * @return the converted Apache POI HorizontalAlignment value
+     */
     public static HorizontalAlignment hAlignToPoi(HAlign hAlign) {
         return switch (hAlign) {
             case ALIGN_LEFT -> HorizontalAlignment.LEFT;
@@ -39,6 +45,12 @@ public final class PoiHelper {
         };
     }
 
+    /**
+     * Converts an Apache POI HorizontalAlignment value to a corresponding custom horizontal alignment value.
+     *
+     * @param alignment the Apache POI HorizontalAlignment value to be converted
+     * @return the converted custom horizontal alignment value
+     */
     public static HAlign poiToHAlign(HorizontalAlignment alignment) {
         return switch (alignment) {
             case LEFT -> HAlign.ALIGN_LEFT;
@@ -52,6 +64,12 @@ public final class PoiHelper {
         };
     }
 
+    /**
+     * Converts an Apache POI VerticalAlignment value to a corresponding custom vertical alignment value.
+     *
+     * @param alignment the Apache POI VerticalAlignment value to be converted
+     * @return the converted custom vertical alignment value
+     */
     public static VAlign poiToVAlign(VerticalAlignment alignment) {
         return switch (alignment) {
             case TOP -> VAlign.ALIGN_TOP;
@@ -62,6 +80,12 @@ public final class PoiHelper {
         };
     }
 
+    /**
+     * Converts a custom vertical alignment value to a corresponding Apache POI VerticalAlignment value.
+     *
+     * @param vAlign the custom vertical alignment value to be converted
+     * @return the converted Apache POI VerticalAlignment value
+     */
     public static VerticalAlignment vAlignToPoi(VAlign vAlign) {
         return switch (vAlign) {
             case ALIGN_TOP -> VerticalAlignment.TOP;

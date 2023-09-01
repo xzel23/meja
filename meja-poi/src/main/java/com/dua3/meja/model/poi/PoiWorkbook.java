@@ -351,10 +351,20 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
     }
 
+    /**
+     * Returns the flag indicating whether force formula recalculation is enabled.
+     *
+     * @return true if force formula recalculation is enabled, false otherwise.
+     */
     public boolean getForceFormulaRecalculation() {
         return poiWorkbook.getForceFormulaRecalculation();
     }
 
+    /**
+     * Sets the flag indicating whether force formula recalculation is enabled.
+     *
+     * @param flag the flag to set. Pass true to enable force formula recalculation, false to disable it.
+     */
     public void setForceFormulaRecalculation(boolean flag) {
         poiWorkbook.setForceFormulaRecalculation(flag);
         LOGGER.debug("setForceFormulaRecalculation({})", flag);
@@ -408,6 +418,13 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
     }
 
+    /**
+     * Creates a hyperlink based on the target URI.
+     *
+     * @param target the target URI for the hyperlink.
+     * @return a Hyperlink object representing the created hyperlink.
+     * @throws IllegalArgumentException if the target URI's protocol is not supported.
+     */
     public Hyperlink createHyperLink(URI target) {
         HyperlinkType type;
         String address = target.toString();
@@ -502,6 +519,12 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             return defaultCellStyle;
         }
 
+        /**
+         * Retrieves the font at the given index.
+         *
+         * @param idx the index of the font to retrieve
+         * @return the PoiFont instance representing the font at the given index
+         */
         public PoiFont getFont(int idx) {
             return getFont(poiWorkbook.getFontAt(idx));
         }

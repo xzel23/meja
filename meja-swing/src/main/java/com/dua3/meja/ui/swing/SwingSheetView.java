@@ -248,6 +248,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             cellRect.translate(toLeftOfSplit ? 0 : -sheetPainter.getSplitX(),
                     aboveSplit ? 0 : -sheetPainter.getSplitY());
 
+            //noinspection StatementWithEmptyBody
             if (aboveSplit && toLeftOfSplit) {
                 // nop: cell is always visible!
             } else if (aboveSplit) {

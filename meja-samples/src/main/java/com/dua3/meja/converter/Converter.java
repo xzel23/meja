@@ -23,6 +23,13 @@ public final class Converter {
     private Converter() {
     }
 
+    /**
+     * The main method is the entry point of the program.
+     *
+     * @param args an array of strings representing the command line arguments.
+     *             The first argument should be the path of the input file,
+     *             and the second argument should be the path of the output file.
+     */
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         if (args.length != 2) {

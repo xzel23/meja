@@ -123,6 +123,12 @@ public final class PoiCell extends AbstractCell {
     int spanX;
     int spanY;
 
+    /**
+     * Initializes a new instance of the PoiCell class.
+     *
+     * @param row The PoiRow object to which the cell belongs.
+     * @param cell The org.apache.poi.ss.usermodel.Cell object representing the cell.
+     */
     public PoiCell(PoiRow row, org.apache.poi.ss.usermodel.Cell cell) {
         super(row);
         this.poiCell = cell;
@@ -575,6 +581,12 @@ public final class PoiCell extends AbstractCell {
         }
     }
 
+    /**
+     * Converts a RichTextString to a RichText object.
+     *
+     * @param rts The RichTextString to convert.
+     * @return The converted RichText object.
+     */
     public RichText toRichText(RichTextString rts) {
         String text = rts.getString();
         // TODO: properly process tabs

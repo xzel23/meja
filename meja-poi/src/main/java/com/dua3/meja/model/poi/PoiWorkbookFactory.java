@@ -75,6 +75,12 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
         }
     }
 
+    /**
+     * PoiWorkbookFactory constructor.
+     * Initializes the FileType instances for Excel, XLSX, and XLS.
+     *   It suppresses the warning for ignoring the result of the method call.
+     *   Use this constructor to create an instance of PoiWorkbookFactory.
+     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public PoiWorkbookFactory() {
         // force initialization of FileType instances

@@ -25,6 +25,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+/**
+ * A dialog box for setting options.
+ * This dialog is a subclass of JDialog and provides a user interface for
+ * configuring settings using various options.
+ */
 public class SettingsDialog extends JDialog {
 
     private Arguments result = Arguments.empty();

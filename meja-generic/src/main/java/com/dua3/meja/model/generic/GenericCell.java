@@ -118,7 +118,7 @@ public class GenericCell extends AbstractCell {
         Object old = value;
         setCellType(CellType.BLANK);
         this.value = null;
-        valueChanged(old, this.value);
+        valueChanged(old, null);
     }
 
     @Override

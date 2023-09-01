@@ -62,7 +62,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         return new HtmlWorkbookWriter();
     }
 
-    private static void writeSheets(Workbook workbook, Formatter out, Locale locale, DoubleConsumer updateProgress) throws IOException {
+    private static void writeSheets(Workbook workbook, Formatter out, Locale locale, DoubleConsumer updateProgress) {
         long totalRows = 0;
         out.format("<div class=\"meja-tabbar\">\n");
         for (Sheet sheet : workbook) {
