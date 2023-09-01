@@ -1,45 +1,23 @@
 # Meja Changelog
 
-## Version 4.0.0-M12
+## Version 4.0.0
 
+- BREAKING: Sheet.getRowIfExists() and Row.getCellIfExists() return Optional
+- BREAKING: move MejaHelper.find() methods to Sheet/Row classes
+- FIX: TableModel created by MejaSwingHelper.createTableModel() adds empty cells to sheet
+- FIX: Sheet.clear() not firing change event
+- FIX: TableModel not updating last row when changes are made to sheet
+- NEW: Sheet.austoSizeRow(), takes into account rotated text
+- NEW: Sheet.getCellIfExists()
+- NEW: introduce SearchSettings record
+- NEW: TableModel created by MejaSwingHelper.createTableModel() allows editing; changes write through to the workbook
+- Javadoc updates and additions
+- added more unit tests
+- update dependencies
 - common implementation for autoSizeColumn()
-- add Sheet.austoSizeRow()
-- fix Sheet.clear() not firing change event
-
-## Version 4.0.0-M9 - 4.0.0-M11
-
-- code cleanup and javadoc updates
-
-## Version 4.0.0-M8
-
-- update utility
-
-## Version 4.0.0-M7
-
 - allow null values in Sheet.createRow()
-- add some unit tests
-
-## Version 4.0.0 M6
-
-- introduce SearchSettings record
-- move MejaHelper.find() methods to Sheet/Row classes
-
-## Version 4.0.0 M3
-
 - fixes in SheetTableModel
 - refactorings
-
-## Version 4.0.0 M2
-
-- fix: TableModel not updating last row when changes are made to sheet
-- TableModel created by MejaSwingHelper.createTableModel() allows editing; changes write through to the workbook
-- update SLF4J to 2.0.7, JavaFX to 20, gradle to 8.0.2
-
-## Version 4.0.0 M1
-
-- Sheet.getCellIfExists()
-- BREAKING: Sheet.getRowIfExists() and Row.getCellIfExists() return Optional
-- fix: TableModel created by MejaSwingHelper.createTableModel() adds empty cells to sheet
 
 ## Version 3.2.1
 
