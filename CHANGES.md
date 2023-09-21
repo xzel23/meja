@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 4.0.1
+
+- Excel: make sure cells are date or date/time formatted when setting value to a LocalDate or LocalDateTime
+
 ## Version 4.0.0
 
 - BREAKING: Sheet.getRowIfExists() and Row.getCellIfExists() return Optional

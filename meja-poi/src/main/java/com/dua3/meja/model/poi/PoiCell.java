@@ -178,14 +178,8 @@ public final class PoiCell extends AbstractCell {
             case ERROR -> setFormula("1/0"); // FIXME
             case FORMULA -> setFormula(other.getFormula());
             case NUMERIC -> set(other.getNumber());
-            case DATE -> {
-                setCellStyleDate(cellStyle);
-                set(other.getDate());
-            }
-            case DATE_TIME -> {
-                setCellStyleDateTime(cellStyle);
-                set(other.getDateTime());
-            }
+            case DATE -> set(other.getDate());
+            case DATE_TIME -> set(other.getDateTime());
             case TEXT -> set(other.getText());
             default -> throw new CellException(other, "Unsupported Cell Type: " + other.getCellType());
         }
@@ -399,11 +393,7 @@ public final class PoiCell extends AbstractCell {
             clear();
         } else {
             poiCell.setCellValue(arg);
-            if (!isCellDateFormatted()) {
-                // Excel does not have a cell type for dates!
-                // Warn if cell is not date formatted
-                LOGGER.warn("cell is not date formatted!");
-            }
+            setCellStyleDate();
         }
         updateRow();
         valueChanged(old, arg);
@@ -417,11 +407,7 @@ public final class PoiCell extends AbstractCell {
             clear();
         } else {
             poiCell.setCellValue(arg);
-            if (!isCellDateFormatted()) {
-                // Excel does not have a cell type for dates!
-                // Warn if cell is not date formatted
-                LOGGER.warn("cell is not date formatted!");
-            }
+            setCellStyleDateTime();
         }
         updateRow();
         valueChanged(old, arg);
@@ -487,7 +473,9 @@ public final class PoiCell extends AbstractCell {
         return this;
     }
 
-    private void setCellStyleDate(PoiCellStyle cellStyle) {
+    private void setCellStyleDate() {
+        PoiCellStyle cellStyle = getCellStyle();
+
         if (isDateFormat(cellStyle)) {
             // nothing to do
             return;
@@ -497,6 +485,7 @@ public final class PoiCell extends AbstractCell {
         String dateStyleName = cellStyle.getName() + "#DATE#";
         if (!getWorkbook().hasCellStyle(dateStyleName)) {
             // if that doesn't exist, create a new format
+            LOGGER.debug("setting cell style to a date compatible format");
             PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
             dateStyle.copyStyle(cellStyle);
             String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, null,
@@ -506,7 +495,9 @@ public final class PoiCell extends AbstractCell {
         setCellStyle(getWorkbook().getCellStyle(dateStyleName));
     }
 
-    private void setCellStyleDateTime(PoiCellStyle cellStyle) {
+    private void setCellStyleDateTime() {
+        PoiCellStyle cellStyle = getCellStyle();
+
         if (isDateTimeFormat(cellStyle)) {
             // nothing to do
             return;
@@ -516,6 +507,7 @@ public final class PoiCell extends AbstractCell {
         String dateTimeStyleName = cellStyle.getName() + "#DATETIME#";
         if (!getWorkbook().hasCellStyle(dateTimeStyleName)) {
             // if that doesn't exist, create a new format
+            LOGGER.debug("setting cell style to a date/time compatible format");
             PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateTimeStyleName);
             dateStyle.copyStyle(cellStyle);
             String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, FormatStyle.SHORT,
