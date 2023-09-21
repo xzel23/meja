@@ -1,5 +1,7 @@
 # Meja Changelog
 
+## Version 4.0.2 (to be released)
+
 ## Version 4.0.1
 
 - Excel: make sure cells are date or date/time formatted when setting value to a LocalDate or LocalDateTime
