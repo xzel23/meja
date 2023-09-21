@@ -81,7 +81,7 @@ public final class PoiCell extends AbstractCell {
 
     private static CellType getCellType(org.apache.poi.ss.usermodel.Cell poiCell, org.apache.poi.ss.usermodel.CellType poiType) {
         CellType type = translateCellType(poiType);
-        // because excel annoyingly store dates as doubles, we have to check for dates using some tricks
+        // because Excel annoyingly store dates as doubles, we have to check for dates using some tricks
         if (type == CellType.NUMERIC) {
             // since formulas returning dates should return CellType.FORMULA
             // rather than CellType.DATE, only test for dates if cell is numeric.
@@ -251,17 +251,15 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public LocalDate getDate() {
-        if (isEmpty()) { // POI will throw for wrong CellType but return null
-            // for empty cells
-            throw new CellException(this, "Cell does not contain a date.");
+        if (isEmpty()) { // POI will throw an exception for the wrong CellType but return null for empty cells
+            throw new CellException(this, "the cell does not contain a date.");
         }
         return poiCell.getLocalDateTimeCellValue().toLocalDate();
     }
 
     @Override
     public LocalDateTime getDateTime() {
-        if (isEmpty()) { // POI will throw for wrong CellType but return null
-            // for empty cells
+        if (isEmpty()) { // POI will throw an exception for the wrong CellType but return null for empty cells
             throw new CellException(this, "Cell does not contain datetime.");
         }
         return poiCell.getLocalDateTimeCellValue();
@@ -295,7 +293,7 @@ public final class PoiCell extends AbstractCell {
                 LangUtil.check(getResultType() == CellType.NUMERIC, () -> new CellException(this, "formula does not yield a number"));
                 yield poiCell.getNumericCellValue();
             }
-            default -> throw new CellException(this, "cell does not contain a number.");
+            default -> throw new CellException(this, "the cell does not contain a number.");
         };
     }
 
@@ -542,7 +540,7 @@ public final class PoiCell extends AbstractCell {
                     if (wb.getForceFormulaRecalculation()) {
                         LOGGER.debug("an unsupported Excel function was used (workbook already flagged as needing recalculation)", e);
                     } else {
-                        LOGGER.warn("an unsupported Excel function was used. Flagged workbook as needing recalculation", e);
+                        LOGGER.warn("an unsupported Excel function was used; flagged workbook as needing recalculation", e);
                         wb.setForceFormulaRecalculation(true);
                     }
                 }
@@ -633,7 +631,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     /**
-     * Format the cell content as a String, with number and date format applied.
+     * Format the cell content as a String, with the number and date formats applied.
      *
      * @return cell content with format applied
      */
@@ -663,7 +661,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     /**
-     * Update sheet data, i.e. first and last cell numbers.
+     * Update sheet data i.e., first and last cell numbers.
      */
     private void updateRow() {
         if (getCellType() != CellType.BLANK) {
