@@ -92,20 +92,7 @@ public class GenericCellStyle implements CellStyle {
      * @return text representation of {@code date}
      */
     public String format(LocalDateTime arg, Locale locale) {
-        if (dateFormatter == null) {
-            try {
-                if (dataFormat == null || dataFormat.isEmpty()) {
-                    dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
-                } else {
-                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
-                }
-            } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
-                LOGGER.warn("not a date pattern: '{}'", dataFormat);
-                dateFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM).withLocale(locale);
-            }
-        }
-
-        return dateFormatter.format(arg);
+        return getDateFormatter(locale).format(arg);
     }
 
     /**
@@ -116,20 +103,23 @@ public class GenericCellStyle implements CellStyle {
      * @return text representation of {@code date}
      */
     public String format(TemporalAccessor arg, Locale locale) {
+        return getDateFormatter(locale).format(arg);
+    }
+
+    private DateTimeFormatter getDateFormatter(Locale locale) {
         if (dateFormatter == null) {
             try {
                 if (dataFormat == null || dataFormat.isEmpty()) {
-                    dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+                    dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
                 } else {
-                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
+                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat);
                 }
             } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
                 LOGGER.warn("not a date pattern: '{}'", dataFormat);
-                dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+                dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
             }
         }
-
-        return dateFormatter.format(arg);
+        return dateFormatter.localizedBy(locale);
     }
 
     /**
@@ -140,18 +130,16 @@ public class GenericCellStyle implements CellStyle {
      * @return text representation of {@code n}
      */
     public String format(Number n, Locale locale) {
-        if (numberFormatter == null) {
-            try {
-                String fmt = dataFormat == null || dataFormat.isEmpty() ? "0.##########" : dataFormat;
-                DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
-                numberFormatter = new DecimalFormat(fmt, symbols);
-            } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
-                LOGGER.warn("not a number pattern: '{}'", dataFormat);
-                numberFormatter = NumberFormat.getInstance(locale);
-                numberFormatter.setGroupingUsed(false);
-            }
+        String fmt = dataFormat == null || dataFormat.isEmpty() ? "0.##########" : dataFormat;
+        NumberFormat numberFormatter;
+        try {
+            DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
+            numberFormatter = new DecimalFormat(fmt, symbols);
+        } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
+            LOGGER.warn("not a number pattern: '{}'", fmt);
+            numberFormatter = NumberFormat.getInstance(locale);
+            numberFormatter.setGroupingUsed(false);
         }
-
         return numberFormatter.format(n);
     }
 

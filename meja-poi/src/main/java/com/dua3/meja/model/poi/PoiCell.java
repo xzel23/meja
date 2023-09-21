@@ -488,9 +488,7 @@ public final class PoiCell extends AbstractCell {
             LOGGER.debug("setting cell style to a date compatible format");
             PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
             dateStyle.copyStyle(cellStyle);
-            String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, null,
-                    IsoChronology.INSTANCE, Locale.ROOT);
-            dateStyle.setDataFormat(pattern);
+            dateStyle.setDataFormat(CellStyle.StandardDataFormats.MEDIUM.name());
         }
         setCellStyle(getWorkbook().getCellStyle(dateStyleName));
     }

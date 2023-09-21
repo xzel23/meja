@@ -2,6 +2,8 @@
 
 ## Version 4.0.2 (to be released)
 
+- fix locale dependent formatting of dates and numbers in both Excel and generic implementations when same cell is queried several times with different locales
+
 ## Version 4.0.1
 
 - Excel: make sure cells are date or date/time formatted when setting value to a LocalDate or LocalDateTime

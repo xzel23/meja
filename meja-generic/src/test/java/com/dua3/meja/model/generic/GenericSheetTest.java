@@ -7,6 +7,7 @@ import com.dua3.meja.model.Sheet;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,7 +39,7 @@ public class GenericSheetTest {
         GenericWorkbook wb = GenericWorkbookFactory.instance().create();
         Sheet s = wb.createSheet("Test");
 
-        Row r = s.createRow("a", 123, null, LocalDate.of(2023, 1, 1), true);
+        Row r = s.createRow("a", 123.5, null, LocalDate.of(2023, 1, 1), true);
 
         assertEquals(1, s.getRowCount());
 
@@ -48,7 +49,10 @@ public class GenericSheetTest {
 
         Cell c1 = r.getCell(1);
         assertEquals(CellType.NUMERIC, c1.getCellType());
-        assertEquals(123.0, c1.getNumber().doubleValue());
+        assertEquals(123.5, c1.getNumber().doubleValue());
+        assertEquals("123.5", c1.toString(Locale.US));
+        assertEquals("123,5", c1.toString(Locale.GERMANY));
+        assertEquals("123,5", c1.toString(Locale.FRANCE));
 
         Cell c2 = r.getCell(2);
         assertEquals(CellType.BLANK, c2.getCellType());
@@ -56,6 +60,9 @@ public class GenericSheetTest {
         Cell c3 = r.getCell(3);
         assertEquals(CellType.DATE, c3.getCellType());
         assertEquals(LocalDate.of(2023, 1,1), c3.getDate());
+        assertEquals("Jan 1, 2023", c3.toString(Locale.US));
+        assertEquals("01.01.2023", c3.toString(Locale.GERMANY));
+        assertEquals("1 janv. 2023", c3.toString(Locale.FRANCE));
 
         Cell c4 = r.getCell(4);
         assertEquals(CellType.BOOLEAN, c4.getCellType());
