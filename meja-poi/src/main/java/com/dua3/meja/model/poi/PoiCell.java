@@ -65,6 +65,7 @@ public final class PoiCell extends AbstractCell {
 
     private static final char NON_BREAKING_SPACE = 160;
     private static final char TAB = '\t';
+    public static final String CELLSTYLE_MARKER_DATETIME = "#DATETIME";
 
     private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
         return switch (poiType) {
@@ -336,27 +337,11 @@ public final class PoiCell extends AbstractCell {
         return poiCell.hashCode();
     }
 
-    private boolean isCellDateFormatted() {
-        /*
-         * DateUtil.isCellDateFormatted() throws IllegalStateException when cell is not
-         * numeric, so we have to work around this. TODO create SCCSE and report bug
-         * against POI
-         */
-        org.apache.poi.ss.usermodel.CellType poiType = poiCell.getCellType();
-        if (poiType == org.apache.poi.ss.usermodel.CellType.FORMULA) {
-            poiType = poiCell.getCachedFormulaResultType();
-        }
-        return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC && DateUtil.isCellDateFormatted(poiCell);
-    }
-
-    static boolean isDateFormat(PoiCellStyle cellStyle) {
-        org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
-        int i = style.getDataFormat();
-        String f = style.getDataFormatString();
-        return DateUtil.isADateFormat(i, f);
-    }
-
     static boolean isDateTimeFormat(PoiCellStyle cellStyle) {
+        if (cellStyle.getName().endsWith(CELLSTYLE_MARKER_DATETIME)) {
+            return true;
+        }
+
         org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
         int i = style.getDataFormat();
         String f = style.getDataFormatString();
@@ -380,6 +365,7 @@ public final class PoiCell extends AbstractCell {
             clear();
         } else {
             poiCell.setCellValue(arg);
+            setCellStylePlain();
         }
         updateRow();
         valueChanged(old, arg);
@@ -393,7 +379,7 @@ public final class PoiCell extends AbstractCell {
             clear();
         } else {
             poiCell.setCellValue(arg);
-            setCellStyleDate();
+            setCellStyleDateTime();
         }
         updateRow();
         valueChanged(old, arg);
@@ -422,11 +408,7 @@ public final class PoiCell extends AbstractCell {
             clear();
         } else {
             poiCell.setCellValue(arg.doubleValue());
-            if (isCellDateFormatted()) {
-                // Excel does not have a cell type for dates!
-                // Warn if cell is date formatted, but a plain number is stored
-                LOGGER.warn("cell is date formatted, but plain number written!");
-            }
+            setCellStylePlain();
         }
         updateRow();
         valueChanged(old, null);
@@ -444,6 +426,7 @@ public final class PoiCell extends AbstractCell {
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
         poiCell.setCellValue(richText);
+        setCellStylePlain();
 
         updateRow();
 
@@ -457,6 +440,7 @@ public final class PoiCell extends AbstractCell {
         arg = getWorkbook().cache(arg);
         Object old = get();
         poiCell.setCellValue(arg);
+        setCellStylePlain();
         updateRow();
         valueChanged(old, null);
         return this;
@@ -473,26 +457,6 @@ public final class PoiCell extends AbstractCell {
         return this;
     }
 
-    private void setCellStyleDate() {
-        PoiCellStyle cellStyle = getCellStyle();
-
-        if (isDateFormat(cellStyle)) {
-            // nothing to do
-            return;
-        }
-
-        // try to get a version adapted to dates
-        String dateStyleName = cellStyle.getName() + "#DATE#";
-        if (!getWorkbook().hasCellStyle(dateStyleName)) {
-            // if that doesn't exist, create a new format
-            LOGGER.debug("setting cell style to a date compatible format");
-            PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
-            dateStyle.copyStyle(cellStyle);
-            dateStyle.setDataFormat(CellStyle.StandardDataFormats.MEDIUM.name());
-        }
-        setCellStyle(getWorkbook().getCellStyle(dateStyleName));
-    }
-
     private void setCellStyleDateTime() {
         PoiCellStyle cellStyle = getCellStyle();
 
@@ -502,17 +466,37 @@ public final class PoiCell extends AbstractCell {
         }
 
         // try to get a version adapted to dates
-        String dateTimeStyleName = cellStyle.getName() + "#DATETIME#";
-        if (!getWorkbook().hasCellStyle(dateTimeStyleName)) {
+        String dateStyleName = cellStyle.getName() + CELLSTYLE_MARKER_DATETIME;
+        if (!getWorkbook().hasCellStyle(dateStyleName)) {
             // if that doesn't exist, create a new format
             LOGGER.debug("setting cell style to a date/time compatible format");
-            PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateTimeStyleName);
+            PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
             dateStyle.copyStyle(cellStyle);
-            String pattern = DateTimeFormatterBuilder.getLocalizedDateTimePattern(FormatStyle.MEDIUM, FormatStyle.SHORT,
-                    IsoChronology.INSTANCE, Locale.ROOT);
-            dateStyle.setDataFormat(pattern);
+            dateStyle.setDataFormat(CellStyle.StandardDataFormats.MEDIUM.name());
         }
-        setCellStyle(getWorkbook().getCellStyle(dateTimeStyleName));
+        setCellStyle(getWorkbook().getCellStyle(dateStyleName));
+    }
+
+    private void setCellStylePlain() {
+        PoiCellStyle style = getCellStyle();
+
+        String styleName = style.getName();
+        if (!styleName.endsWith(CELLSTYLE_MARKER_DATETIME)) {
+            // nothing to do
+            return;
+        }
+
+        styleName = styleName.substring(0, styleName.length()-CELLSTYLE_MARKER_DATETIME.length());
+
+        // try to get a version adapted to dates
+        if (!getWorkbook().hasCellStyle(styleName)) {
+            // if that doesn't exist, create a new format
+            LOGGER.debug("setting cell style to a standard format");
+            CellStyle newStyle = getWorkbook().getCellStyle(styleName);
+            newStyle.copyStyle(style);
+            newStyle.setDataFormat("GENERAL");
+        }
+        setCellStyle(getWorkbook().getCellStyle(styleName));
     }
 
     @Override
