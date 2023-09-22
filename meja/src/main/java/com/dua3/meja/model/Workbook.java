@@ -413,7 +413,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     default void write(URI uri, Arguments options, DoubleConsumer updateProgress) throws IOException {
         FileType<?> type = FileType
                 .forUri(uri)
-                .orElseThrow(() -> new IllegalArgumentException("cannot determine file type for " + uri));
+                .orElseThrow(() -> new IllegalArgumentException("cannot determine the file type for " + uri));
         try (OutputStream out = new BufferedOutputStream(Files.newOutputStream(IoUtil.toPath(uri)))) {
             write(type, out, options, updateProgress);
         }

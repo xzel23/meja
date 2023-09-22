@@ -158,14 +158,9 @@ public final class MejaSwingHelper {
             }
         }
 
-        Optional<FileType<Workbook>> type = FileType.forUri(file.toURI(), Workbook.class);
-        if (type.isPresent()) {
-            type.get().write(file.toURI(), workbook);
-        } else {
-            workbook.write(file.toURI());
-        }
-
-        return Optional.of(file.toURI());
+        URI targetUri = file.toURI();
+        workbook.write(targetUri);
+        return Optional.of(targetUri);
     }
 
     private MejaSwingHelper() {
