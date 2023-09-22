@@ -28,7 +28,7 @@ dependencyResolutionManagement {
             version("javafx", "20")
             version("junit", "5.10.0")
             version("log4j", "2.20.0")
-            version("poi", "5.2.3")
+            version("poi", "5.2.4")
             version("slf4j", "2.0.9")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
