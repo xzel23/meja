@@ -3,6 +3,8 @@
 ## Version 4.0.2 (to be released)
 
 - fix locale dependent formatting of dates and numbers in both Excel and generic implementations when same cell is queried several times with different locales
+- update Apache POI to 5.2.4
+- update JavaFX to 21
 
 ## Version 4.0.1
 
