@@ -443,8 +443,8 @@ public interface Cell {
         Dimension2f dim = TextUtil.getTextDimension(text, font);
 
         // add some space on the sides
-        float w = dim.width() + font.getSizeInPoints() / 2;
-        float h = (float) (dim.height() + font.getSpaceWidth() / 2);
+        float w = dim.width() + font.getSizeInPoints();
+        float h = (float) (dim.height() + font.getSpaceWidth());
 
         // take rotation into account
         short rotation = cellStyle.getRotation();
