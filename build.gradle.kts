@@ -27,17 +27,17 @@ plugins {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-object meta {
-    val group = "com.dua3.meja"
-    val scm = "https://github.com/xzel23/meja.git"
-    val repo = "public"
-    val licenseName = "The Apache Software License, Version 2.0"
-    val licenseUrl = "https://www.apache.org/licenses/LICENSE-2.0.txt"
-    val developerId = "axh"
-    val developerName = "Axel Howind"
-    val developerEmail = "axh@dua3.com"
-    val organization = "dua3"
-    val organizationUrl = "https://www.dua3.com"
+object Meta {
+    const val GROUP = "com.dua3.meja"
+    const val SCM = "https://github.com/xzel23/meja.git"
+    const val REPO = "public"
+    const val LICENSE_NAME = "The Apache Software License, Version 2.0"
+    const val LICENSE_URL = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    const val DEVELOPER_ID = "axh"
+    const val DEVELOPER_NAME = "Axel Howind"
+    const val DEVELOPER_EMAIL = "axh@dua3.com"
+    const val ORGANIZATION_NAME = "dua3"
+    const val ORGANIZATION_URL = "https://www.dua3.com"
 }
 /////////////////////////////////////////////////////////////////////////////
 
@@ -82,8 +82,8 @@ subprojects {
     idea {
         module {
             inheritOutputDirs = false
-            outputDir = file("$buildDir/classes/java/main/")
-            testOutputDir = file("$buildDir/classes/java/test/")
+            outputDir = project.layout.buildDirectory.file("classes/java/main/").get().asFile
+            testOutputDir = project.layout.buildDirectory.file("classes/java/test/").get().asFile
         }
     }
 
@@ -113,7 +113,7 @@ subprojects {
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                groupId = meta.group
+                groupId = Meta.GROUP
                 artifactId = project.name
                 version = project.version.toString()
 
@@ -124,27 +124,27 @@ subprojects {
                         val root = asNode()
                         root.appendNode("description", project.description)
                         root.appendNode("name", project.name)
-                        root.appendNode("url", meta.scm)
+                        root.appendNode("url", Meta.SCM)
                     }
 
                     licenses {
                         license {
-                            name.set(meta.licenseName)
-                            url.set(meta.licenseUrl)
+                            name.set(Meta.LICENSE_NAME)
+                            url.set(Meta.LICENSE_URL)
                         }
                     }
                     developers {
                         developer {
-                            id.set(meta.developerId)
-                            name.set(meta.developerName)
-                            email.set(meta.developerEmail)
-                            organization.set(meta.organization)
-                            organizationUrl.set(meta.organizationUrl)
+                            id.set(Meta.DEVELOPER_ID)
+                            name.set(Meta.DEVELOPER_NAME)
+                            email.set(Meta.DEVELOPER_EMAIL)
+                            organization.set(Meta.ORGANIZATION_NAME)
+                            organizationUrl.set(Meta.ORGANIZATION_URL)
                         }
                     }
 
                     scm {
-                        url.set(meta.scm)
+                        url.set(Meta.SCM)
                     }
                 }
             }
@@ -173,10 +173,19 @@ subprojects {
     // === SPOTBUGS ===
     spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
 
+    configurations.named("spotbugs").configure {
+        resolutionStrategy.eachDependency {
+            if (requested.group == "org.ow2.asm") {
+                useVersion("9.5")
+                because("Asm 9.5 is required for JDK 21 support")
+            }
+        }
+    }
+
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask>() {
         reports.create("html") {
             required.set(true)
-            outputLocation.set(file("$buildDir/reports/spotbugs.html"))
+            outputLocation = project.layout.buildDirectory.file("reports/spotbugs.html").get().asFile
             setStylesheet("fancy-hist.xsl")
         }
     }
