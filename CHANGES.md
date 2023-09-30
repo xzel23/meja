@@ -1,8 +1,8 @@
 # Meja Changelog
 
-## Version 4.0.2 (to be released)
+## Version 4.0.2
 
-- fix locale dependent formatting of dates and numbers in both Excel and generic implementations when same cell is queried several times with different locales
+- fix locale dependent formatting of dates and numbers in both Excel and generic implementations when the same cell is queried multiple times with different locales
 - update Apache POI to 5.2.4
 - update JavaFX to 21
 - code cleanup
