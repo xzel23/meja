@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 4.0.3
+
+- update utility and log4j to latest versions for better JPMS support
+
 ## Version 4.0.2
 
 - fix locale dependent formatting of dates and numbers in both Excel and generic implementations when the same cell is queried multiple times with different locales
