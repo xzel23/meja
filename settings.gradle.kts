@@ -24,10 +24,10 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("cabe", "1.0.0")
-            version("dua3-utility", "11.1.2")
+            version("dua3-utility", "11.1.3")
             version("javafx", "21")
             version("junit", "5.10.0")
-            version("log4j", "2.20.0")
+            version("log4j", "2.21.0")
             version("poi", "5.2.4")
             version("slf4j", "2.0.9")
 
