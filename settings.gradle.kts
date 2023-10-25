@@ -1,5 +1,5 @@
 rootProject.name = "dua3-meja"
-val projectVersion = "4.0.3"
+val projectVersion = "4.0.4-SNAPSHOT"
 
 include("meja")
 include("meja-generic")
@@ -27,7 +27,7 @@ dependencyResolutionManagement {
             version("dua3-utility", "11.1.3")
             version("javafx", "21")
             version("junit", "5.10.0")
-            version("log4j", "2.21.0")
+            version("log4j", "2.21.1")
             version("poi", "5.2.4")
             version("slf4j", "2.0.9")
 
