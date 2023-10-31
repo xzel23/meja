@@ -7,8 +7,8 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URI;
@@ -34,7 +34,7 @@ public class ExcelViewerModel {
         ERROR, INFO
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExcelViewerModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExcelViewerModel.class);
 
     private static final String LICENSE = """
             Copyright %d %s

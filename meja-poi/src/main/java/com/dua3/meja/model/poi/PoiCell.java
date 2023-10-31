@@ -36,8 +36,8 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -58,7 +58,7 @@ import java.util.Optional;
  */
 public final class PoiCell extends AbstractCell {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PoiCell.class);
+    private static final Logger LOGGER = LogManager.getLogger(PoiCell.class);
 
     private static final char NON_BREAKING_SPACE = 160;
     private static final char TAB = '\t';

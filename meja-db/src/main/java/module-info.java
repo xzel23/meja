@@ -7,5 +7,5 @@ module com.dua3.meja.db {
     requires com.dua3.utility;
 
     requires static com.dua3.cabe.annotations;
-    requires org.slf4j;
+    requires org.apache.logging.log4j;
 }

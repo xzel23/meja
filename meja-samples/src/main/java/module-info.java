@@ -4,5 +4,5 @@ module com.dua3.meja.samples {
     requires com.dua3.meja.swing;
     requires com.dua3.utility;
     requires com.dua3.utility.swing;
-    requires org.slf4j;
+    requires org.apache.logging.log4j;
 }

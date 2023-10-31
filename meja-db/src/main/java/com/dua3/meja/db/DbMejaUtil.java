@@ -2,8 +2,8 @@ package com.dua3.meja.db;
 
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Clob;
 import java.sql.ResultSet;
@@ -18,7 +18,7 @@ public final class DbMejaUtil {
     /**
      * Logger
      */
-    private static final Logger LOG = LoggerFactory.getLogger(DbMejaUtil.class);
+    private static final Logger LOG = LogManager.getLogger(DbMejaUtil.class);
     private static final String ERROR_TEXT = "###";
 
     /**

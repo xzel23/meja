@@ -12,10 +12,7 @@ dependencies {
     implementation(rootProject.libs.dua3.utility)
     implementation(rootProject.libs.dua3.utility.swing)
 
-    // include utility-logging as implementation for SLF4J
-    implementation(rootProject.libs.dua3.utility.logging)
-    // route Log4J2 to SLF4J
-    implementation(rootProject.libs.log4j.to.slf4j)
+    implementation(rootProject.libs.log4j.core)
 
     implementation(project(":meja-poi"))
 }

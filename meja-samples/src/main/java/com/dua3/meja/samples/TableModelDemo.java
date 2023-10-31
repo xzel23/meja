@@ -6,8 +6,8 @@ import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.ui.swing.MejaSwingHelper;
 import com.dua3.meja.util.TableOptions;
 import com.dua3.utility.swing.SwingUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -22,7 +22,7 @@ public class TableModelDemo extends JFrame {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(TableModelDemo.class);
+    private static final Logger LOG = LogManager.getLogger(TableModelDemo.class);
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

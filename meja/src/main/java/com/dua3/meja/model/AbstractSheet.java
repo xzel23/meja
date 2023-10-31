@@ -4,8 +4,8 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -24,7 +24,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public abstract class AbstractSheet implements Sheet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractSheet.class);
+    private static final Logger LOG = LogManager.getLogger(AbstractSheet.class);
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final ReadWriteLock lock = new ReentrantReadWriteLock();

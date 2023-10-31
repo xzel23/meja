@@ -39,7 +39,6 @@ import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 
 import com.dua3.meja.model.SearchSettings;
-import org.slf4j.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -72,7 +71,8 @@ import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -588,7 +588,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(SwingSheetView.class);
+    private static final Logger LOG = LogManager.getLogger(SwingSheetView.class);
 
     private transient IntFunction<String> columnNames = Sheet::getColumnName;
 

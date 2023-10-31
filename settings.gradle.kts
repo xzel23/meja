@@ -1,5 +1,5 @@
 rootProject.name = "dua3-meja"
-val projectVersion = "4.0.4-SNAPSHOT"
+val projectVersion = "4.1.0-SNAPSHOT"
 
 include("meja")
 include("meja-generic")
@@ -24,22 +24,22 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("cabe", "1.0.0")
-            version("dua3-utility", "11.1.3")
+            version("dua3-utility", "12.0.0-SNAPSHOT")
             version("javafx", "21")
             version("junit", "5.10.0")
             version("log4j", "2.21.1")
             version("poi", "5.2.4")
-            version("slf4j", "2.0.9")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
             library("dua3-utility-db", "com.dua3.utility", "utility-db").versionRef("dua3-utility")
             library("dua3-utility-logging", "com.dua3.utility", "utility-logging").versionRef("dua3-utility")
             library("dua3-utility-swing", "com.dua3.utility", "utility-swing").versionRef("dua3-utility")
-            library("slf4j-api", "org.slf4j", "slf4j-api").versionRef("slf4j")
-            library("slf4j-simple", "org.slf4j", "slf4j-simple").versionRef("slf4j")
-            library("jul-to-slf4j", "org.slf4j", "jul-to-slf4j").versionRef("slf4j")
-            library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").versionRef("log4j")
+            library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
+            library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
+            library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").versionRef("log4j")
+            library("log4j-jcl", "org.apache.logging.log4j", "log4j-jcl").versionRef("log4j")
+            library("log4j-slf4j2-impl", "org.apache.logging.log4j", "log4j-slf4j2-impl").versionRef("log4j")
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
             library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
             library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")

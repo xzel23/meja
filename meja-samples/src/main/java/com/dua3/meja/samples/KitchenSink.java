@@ -12,8 +12,8 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -29,7 +29,7 @@ public final class KitchenSink extends JFrame {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(KitchenSink.class);
+    private static final Logger LOG = LogManager.getLogger(KitchenSink.class);
 
     private static void addColorSheet(Workbook wb) {
         Sheet sheet = wb.createSheet("colors");

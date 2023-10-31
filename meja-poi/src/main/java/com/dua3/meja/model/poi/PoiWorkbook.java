@@ -50,8 +50,8 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -75,7 +75,7 @@ import java.util.stream.StreamSupport;
  */
 public abstract class PoiWorkbook extends AbstractWorkbook {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PoiWorkbook.class);
+    private static final Logger LOGGER = LogManager.getLogger(PoiWorkbook.class);
     /**
      *
      */

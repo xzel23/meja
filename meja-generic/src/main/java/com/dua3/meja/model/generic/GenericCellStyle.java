@@ -24,8 +24,8 @@ import com.dua3.meja.model.VAlign;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -43,7 +43,7 @@ public class GenericCellStyle implements CellStyle {
 
     private static final BorderStyle defaultBorderStyle = new BorderStyle(0.0f, Color.BLACK);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenericCellStyle.class);
+    private static final Logger LOGGER = LogManager.getLogger(GenericCellStyle.class);
 
     private final GenericWorkbook workbook;
 

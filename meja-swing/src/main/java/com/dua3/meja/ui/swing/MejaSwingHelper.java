@@ -24,8 +24,8 @@ import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.swing.SwingFileFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -47,7 +47,7 @@ import java.util.Optional;
  */
 public final class MejaSwingHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MejaSwingHelper.class);
+    private static final Logger LOG = LogManager.getLogger(MejaSwingHelper.class);
 
     /**
      * Create a TableModel to be used with JTable.

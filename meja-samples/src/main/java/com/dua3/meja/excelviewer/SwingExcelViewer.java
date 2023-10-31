@@ -23,8 +23,8 @@ import com.dua3.meja.ui.swing.MejaSwingHelper;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.swing.SwingUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -64,7 +64,7 @@ import java.util.Optional;
 @SuppressWarnings("serial")
 public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SwingExcelViewer.class);
+    private static final Logger LOG = LogManager.getLogger(SwingExcelViewer.class);
 
     private static final int STATUS_ERROR = 1;
 

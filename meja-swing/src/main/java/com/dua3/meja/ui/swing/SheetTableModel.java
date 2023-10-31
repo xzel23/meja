@@ -3,8 +3,8 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.TableOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelListener;
@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 final class SheetTableModel extends AbstractTableModel {
-    private static final Logger LOG = LoggerFactory.getLogger(SheetTableModel.class);
+    private static final Logger LOG = LogManager.getLogger(SheetTableModel.class);
 
     private final Sheet sheet;
     private final boolean firstRowIsHeader;

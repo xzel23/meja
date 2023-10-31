@@ -20,8 +20,8 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.utility.options.Arguments;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,7 +33,7 @@ import java.util.function.DoubleConsumer;
  */
 public final class XlsxWorkbookWriter implements WorkbookWriter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XlsxWorkbookWriter.class);
+    private static final Logger LOGGER = LogManager.getLogger(XlsxWorkbookWriter.class);
 
     private static final XlsxWorkbookWriter INSTANCE = new XlsxWorkbookWriter();
 
