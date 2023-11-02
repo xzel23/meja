@@ -49,5 +49,4 @@ Utilities for JavaFX.
 
 ## Logging
 
-Meja itself uses the SLF4J logging facade; the Apache POI library used for reading and writing Excel files uses the
-Log4J2 facade.
+Meja uses Log4J2-API for logging facade, the same as the Apache POI library used for reading and writing Excel files.
