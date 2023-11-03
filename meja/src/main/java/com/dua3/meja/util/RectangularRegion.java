@@ -37,7 +37,13 @@ public record RectangularRegion(int firstRow, int lastRow, int firstColumn, int 
      * @throws IllegalArgumentException if the indices are not in a valid range
      */
     public RectangularRegion {
-        LangUtil.check(firstRow <= lastRow && firstColumn <= lastColumn);
+        LangUtil.check(firstRow <= lastRow && firstColumn <= lastColumn,
+                () -> new IllegalArgumentException(
+                        "firstRow="+firstRow
+                        +", lastRow="+lastRow
+                        +", firstColumn="+firstColumn
+                        +", lastColumn="+lastColumn
+                ));
     }
 
     /**
