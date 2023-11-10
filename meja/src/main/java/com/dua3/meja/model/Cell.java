@@ -495,7 +495,7 @@ public interface Cell {
     }
 
     /**
-     * Merge cell with neighbouring cells.
+     * Merge cell with neighboring cells.
      *
      * @param spanX the horizontal span
      * @param spanY the vertical span
