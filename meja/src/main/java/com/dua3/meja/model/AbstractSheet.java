@@ -181,7 +181,7 @@ public abstract class AbstractSheet implements Sheet {
     public void autoSizeRow(int i) {
         getRowIfExists(i).ifPresent(row -> {
             float rowHeight = (float) row.cells()
-                    .filter(cell->!cell.isEmpty())
+                    .filter(cell -> !cell.isEmpty())
                     .map(Cell::calcCellDimension)
                     .mapToDouble(Dimension2f::height)
                     .max()

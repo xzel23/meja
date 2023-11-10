@@ -29,7 +29,7 @@ public interface CellRenderer {
     /**
      * Render cell content.
      *
-     * @param g        the {@link Graphics2D} to use for rendering
+     * @param g        the {@link Graphics2D} used for rendering
      * @param cell     the cell whose content shall be rendered
      * @param cellRect the rectangle taken up by the cell
      * @param clipRect the clipping rectangle

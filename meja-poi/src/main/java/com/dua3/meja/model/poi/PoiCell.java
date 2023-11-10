@@ -483,7 +483,7 @@ public final class PoiCell extends AbstractCell {
             return;
         }
 
-        styleName = styleName.substring(0, styleName.length()-CELLSTYLE_MARKER_DATETIME.length());
+        styleName = styleName.substring(0, styleName.length() - CELLSTYLE_MARKER_DATETIME.length());
 
         // try to get a version adapted to dates
         if (!getWorkbook().hasCellStyle(styleName)) {

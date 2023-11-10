@@ -503,8 +503,8 @@ public interface Cell {
      */
     default Cell merge(int spanX, int spanY) {
         LangUtil.check(!isMerged(), "Cell is already merged.");
-        LangUtil.check(spanX >= 1, () -> new IllegalArgumentException("spanX must be positive: "+spanX));
-        LangUtil.check(spanY >= 1, () -> new IllegalArgumentException("spanY must be positive: "+spanY));
+        LangUtil.check(spanX >= 1, () -> new IllegalArgumentException("spanX must be positive: " + spanX));
+        LangUtil.check(spanY >= 1, () -> new IllegalArgumentException("spanY must be positive: " + spanY));
 
         if (spanX == 1 && spanY == 1) {
             // ignore

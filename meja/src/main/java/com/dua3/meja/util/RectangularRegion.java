@@ -39,10 +39,10 @@ public record RectangularRegion(int firstRow, int lastRow, int firstColumn, int 
     public RectangularRegion {
         LangUtil.check(firstRow <= lastRow && firstColumn <= lastColumn,
                 () -> new IllegalArgumentException(
-                        "firstRow="+firstRow
-                        +", lastRow="+lastRow
-                        +", firstColumn="+firstColumn
-                        +", lastColumn="+lastColumn
+                        "firstRow=" + firstRow
+                                + ", lastRow=" + lastRow
+                                + ", firstColumn=" + firstColumn
+                                + ", lastColumn=" + lastColumn
                 ));
     }
 
