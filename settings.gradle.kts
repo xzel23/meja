@@ -1,6 +1,8 @@
+// define project name and version
 rootProject.name = "dua3-meja"
 val projectVersion = "4.1.0-SNAPSHOT"
 
+// define subprojects
 include("meja")
 include("meja-generic")
 include("meja-poi")
@@ -9,6 +11,12 @@ include("meja-fx")
 include("meja-db")
 include("meja-samples")
 
+// use plugin to add JVM toolchain repository
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
+}
+
+// define dependency versions and repositories
 dependencyResolutionManagement {
 
     val isSnapshot = projectVersion.endsWith("SNAPSHOT")
@@ -24,7 +32,7 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("cabe", "1.0.0")
-            version("dua3-utility", "12.0.0-beta2")
+            version("dua3-utility", "12.0.0-beta3")
             version("javafx", "21.0.1")
             version("junit", "5.10.1")
             version("log4j", "2.21.1")
