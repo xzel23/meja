@@ -2,6 +2,7 @@
 
 ## Version 4.1.0 (to be released)
 
+- vulnerability scanning using GitHub CodeQL
 - internal logging was migrated from SLF4J to Log4j-api
 - small fixes and enhancements
 
