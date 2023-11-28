@@ -1,17 +1,20 @@
 <FindBugsFilter>
     <Match>
-        <Bug code="FS"/>
+        <Or>
+            <Bug code="FS"/>
+            <Bug code="EI"/>
+            <Bug code="EI2"/>
+            <Bug code="MS"/>
+            <Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
+            <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+            <!-- this bug pattern is currently completely broken / https://github.com/spotbugs/spotbugs/issues/1601 -->
+            <Bug pattern="EI_EXPOSE_REP"/>
+            <Bug pattern="EI_EXPOSE_REP2"/>
+            <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
+        </Or>
     </Match>
-    <Match>
-        <Bug code="EI"/>
-    </Match>
-    <Match>
-        <Bug code="EI2"/>
-    </Match>
-    <Match>
-        <Bug code="MS"/>
-    </Match>
-    <Match>
+
+‚    <Match>
         <Bug code="RCN"/>
         <Class name="com.dua3.meja.converter.Converter"/>
         <Method name="main"/>

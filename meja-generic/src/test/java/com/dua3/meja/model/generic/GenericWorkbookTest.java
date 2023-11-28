@@ -11,6 +11,7 @@ import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
@@ -61,8 +62,8 @@ class GenericWorkbookTest {
                 Path outFile = tempDir.resolve(outFileName);
                 copyToHtml(inFile, outFile, Locale.US);
                 assertLinesMatch(
-                        maskUriHash(Files.readString(refFile)).lines(),
-                        maskUriHash(Files.readString(outFile)).lines()
+                        maskUriHash(Files.readString(refFile, StandardCharsets.UTF_8)).lines(),
+                        maskUriHash(Files.readString(outFile, StandardCharsets.UTF_8)).lines()
                 );
             }
         } finally {

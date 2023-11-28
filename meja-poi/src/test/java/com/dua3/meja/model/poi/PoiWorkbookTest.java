@@ -90,8 +90,8 @@ class PoiWorkbookTest {
         Path outFile = tempDir.resolve(outFileName);
         copyToHtml(inFile, outFile, Locale.US);
         assertLinesMatch(
-                maskUriHash(Files.readString(refFile)).lines(),
-                maskUriHash(Files.readString(outFile)).lines()
+                maskUriHash(Files.readString(refFile, StandardCharsets.UTF_8)).lines(),
+                maskUriHash(Files.readString(outFile, StandardCharsets.UTF_8)).lines()
         );
     }
 
@@ -185,7 +185,7 @@ class PoiWorkbookTest {
 
                 boolean updateResult = false; // set to true to update reference files
                 if (updateResult) {
-                    Files.writeString(testdataDir.resolve(sheet.getSheetName() + ".html"), actHtml);
+                    Files.writeString(testdataDir.resolve(sheet.getSheetName() + ".html"), actHtml, StandardCharsets.UTF_8);
                 } else {
                     assertEquals(refHtml.replaceAll("\r\n", "\n"), actHtml.replaceAll("\r\n", "\n"));
                 }

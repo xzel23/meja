@@ -173,15 +173,6 @@ subprojects {
     // === SPOTBUGS ===
     spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
 
-    configurations.named("spotbugs").configure {
-        resolutionStrategy.eachDependency {
-            if (requested.group == "org.ow2.asm") {
-                useVersion("9.5")
-                because("Asm 9.5 is required for JDK 21 support")
-            }
-        }
-    }
-
     tasks.withType<com.github.spotbugs.snom.SpotBugsTask>() {
         reports.create("html") {
             required.set(true)
