@@ -127,7 +127,7 @@ public class GenericCell extends AbstractCell {
         switch (other.getCellType()) {
             case BLANK -> clear();
             case BOOLEAN -> set(other.getBoolean());
-            case ERROR -> set(Double.NaN);
+            case ERROR -> setError();
             case FORMULA -> set(other.getFormula());
             case NUMERIC -> set(other.getNumber());
             case DATE -> set(other.getDate());
@@ -349,6 +349,13 @@ public class GenericCell extends AbstractCell {
     @Override
     public Cell setHyperlink(@Nullable URI target) {
         setAttribute(Attribute.LINK_URI, target);
+        return this;
+    }
+
+    @Override
+    public Cell setError() {
+        setCellType(CellType.ERROR);
+        value = null;
         return this;
     }
 

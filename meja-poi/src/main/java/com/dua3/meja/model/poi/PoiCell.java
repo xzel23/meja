@@ -32,6 +32,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -173,7 +174,7 @@ public final class PoiCell extends AbstractCell {
         switch (other.getCellType()) {
             case BLANK -> clear();
             case BOOLEAN -> set(other.getBoolean());
-            case ERROR -> setFormula("1/0"); // FIXME
+            case ERROR -> setError();
             case FORMULA -> setFormula(other.getFormula());
             case NUMERIC -> set(other.getNumber());
             case DATE -> set(other.getDate());
@@ -548,6 +549,12 @@ public final class PoiCell extends AbstractCell {
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    @Override
+    public Cell setError() {
+        poiCell.setCellErrorValue(FormulaError.NA.getCode());
+        return this;
     }
 
     /**

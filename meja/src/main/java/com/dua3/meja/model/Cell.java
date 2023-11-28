@@ -431,6 +431,21 @@ public interface Cell {
     Optional<URI> getHyperlink();
 
     /**
+     * Set error.
+     *
+     * @return this cell
+     */
+    Cell setError();
+
+    /**
+     * Check for error.
+     * @return true, if cell type is ERROR
+     */
+    default boolean isError() {
+        return getCellType()==CellType.ERROR;
+    }
+
+    /**
      * Calculate the dimension of the cell based on the cell's content.
      *
      * @return the calculated dimension of the cell
