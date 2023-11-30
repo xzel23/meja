@@ -6,6 +6,7 @@
 - vulnerability scanning using GitHub CodeQL
 - add Cell.setError(), Cell.isError()
 - small fixes and enhancements
+- update dependencies
 
 ## Version 4.0.3
 
