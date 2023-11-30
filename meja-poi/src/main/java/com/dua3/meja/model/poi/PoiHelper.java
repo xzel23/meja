@@ -54,13 +54,10 @@ public final class PoiHelper {
     public static HAlign poiToHAlign(HorizontalAlignment alignment) {
         return switch (alignment) {
             case LEFT -> HAlign.ALIGN_LEFT;
-            case CENTER -> HAlign.ALIGN_CENTER;
+            case CENTER, CENTER_SELECTION -> HAlign.ALIGN_CENTER;
             case RIGHT -> HAlign.ALIGN_RIGHT;
-            case CENTER_SELECTION -> HAlign.ALIGN_CENTER;
             case GENERAL -> HAlign.ALIGN_AUTOMATIC;
-            case FILL -> HAlign.ALIGN_JUSTIFY;
-            case JUSTIFY -> HAlign.ALIGN_JUSTIFY;
-            case DISTRIBUTED -> HAlign.ALIGN_JUSTIFY;
+            case FILL, JUSTIFY, DISTRIBUTED -> HAlign.ALIGN_JUSTIFY;
         };
     }
 

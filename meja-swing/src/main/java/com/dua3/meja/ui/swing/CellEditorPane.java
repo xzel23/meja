@@ -73,7 +73,7 @@ public class CellEditorPane extends JTextPane {
                     offset = 0;
                     increase = 0;
                 }
-                case ALIGN_BOTTOM -> {
+                case ALIGN_BOTTOM, ALIGN_DISTRIBUTED -> {
                     offset = available;
                     increase = 0;
                 }
@@ -84,10 +84,6 @@ public class CellEditorPane extends JTextPane {
                 case ALIGN_JUSTIFY -> {
                     offset = (float) available / spans.length;
                     increase = offset;
-                }
-                case ALIGN_DISTRIBUTED -> {
-                    offset = available;
-                    increase = 0;
                 }
                 default -> throw new IllegalStateException("unexpected value: " + vAlign);
             }
