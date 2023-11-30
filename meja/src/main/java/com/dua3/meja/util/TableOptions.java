@@ -1,5 +1,10 @@
 package com.dua3.meja.util;
 
+/**
+ * The TableOptions enum represents the options that can be used when creating a table model.
+ * These options control the behavior of the table, such as whether the first row is treated as a header row,
+ * and whether the table is editable or not.
+ */
 public enum TableOptions {
     /**
      * Indicates whether the first row in a table is a header row.
