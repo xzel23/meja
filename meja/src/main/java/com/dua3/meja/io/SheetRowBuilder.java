@@ -20,7 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import com.dua3.utility.io.IoOptions;
-import com.dua3.utility.io.PredefinedDateFormat;
+import com.dua3.utility.io.PredefinedDateTimeFormat;
 import com.dua3.utility.io.CsvReader.RowBuilder;
 
 import com.dua3.meja.model.Cell;
@@ -50,10 +50,10 @@ public class SheetRowBuilder implements RowBuilder {
         this.sheet = sheet;
 
         Locale locale = IoOptions.getLocale(options);
-        PredefinedDateFormat dateFormat = IoOptions.getDateFormat(options);
+        PredefinedDateTimeFormat dateFormat = IoOptions.getDateFormat(options);
 
         NumberFormat numberFormat = NumberFormat.getInstance(locale);
-        DateTimeFormatter dateFormatter = dateFormat.getFormatter(locale);
+        DateTimeFormatter dateFormatter = dateFormat.getDateFormatter(locale);
 
         this.helper = new CellValueHelper(numberFormat, dateFormatter);
     }

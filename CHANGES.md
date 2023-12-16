@@ -3,6 +3,7 @@
 ## Version 4.1.0 (to be released)
 
 - internal logging was migrated from SLF4J to Log4j-api
+- removed unused interface IRowBuilder
 - vulnerability scanning using GitHub CodeQL
 - add Cell.setError(), Cell.isError()
 - small fixes and enhancements
