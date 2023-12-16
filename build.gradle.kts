@@ -53,10 +53,7 @@ subprojects {
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "com.github.spotbugs")
-
-    if (!name.endsWith("-fx") && !name.endsWith("-swing")) {
-        apply(plugin = "com.dua3.cabe")
-    }
+    apply(plugin = "com.dua3.cabe")
 
     java {
         toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
