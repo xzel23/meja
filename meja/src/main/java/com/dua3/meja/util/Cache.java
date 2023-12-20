@@ -17,10 +17,12 @@ package com.dua3.meja.util;
 
 import com.dua3.cabe.annotations.Nullable;
 
+import java.lang.ref.Cleaner;
+import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
-import java.util.HashMap;
+import java.lang.ref.WeakReference;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
@@ -34,8 +36,11 @@ import java.util.function.Function;
  */
 public class Cache<K, V> {
 
+    private static final Cleaner CLEANER = Cleaner.create();
+
+    private final Function<V, Reference<V>> newReference;
     private final Function<? super K, ? extends V> compute;
-    private final Map<K, SoftReference<V>> items;
+    private final Map<K, Reference<V>> items = new ConcurrentHashMap<>();
 
     /**
      * Constructs a new Cache object with the given type and compute function.
@@ -44,20 +49,12 @@ public class Cache<K, V> {
      * @param compute a function that computes the value for the given key if it is not already present in the cache
      * @throws IllegalArgumentException if the type is not STRONG_KEYS or WEAK_KEYS
      */
-    public Cache(Type type, Function<? super K, ? extends V> compute) {
+    public Cache(ReferenceType type, Function<? super K, ? extends V> compute) {
         this.compute = compute;
-        switch (type) {
-            case STRONG_KEYS -> items = new HashMap<>();
-            case WEAK_KEYS -> items = new WeakHashMap<>();
-            default -> throw new IllegalArgumentException("unexpected value: " + type);
-        }
-    }
-
-    /**
-     * Clear contents.
-     */
-    public void clear() {
-        items.clear();
+        this.newReference = switch (type) {
+            case SOFT_REFERENCES -> SoftReference::new;
+            case WEAK_REFERENCES -> WeakReference::new;
+        };
     }
 
     /**
@@ -71,12 +68,19 @@ public class Cache<K, V> {
             return null;
         }
 
-        SoftReference<V> weak = items.get(key);
+        Reference<V> weak = items.get(key);
         V item = weak == null ? null : weak.get();
 
         if (item == null) {
-            item = compute.apply(key);
-            items.put(key, new SoftReference<>(item));
+            synchronized (items) {
+                item = weak == null ? null : weak.get();
+                if (item == null) {
+                    item = compute.apply(key);
+                    Reference<V> ref = newReference.apply(item);
+                    CLEANER.register(item, () -> items.remove(key));
+                    items.put(key, ref);
+                }
+            }
         }
 
         return item;
@@ -87,38 +91,16 @@ public class Cache<K, V> {
         return String.format("Cache backed by %s [%d entries]", items.getClass().getSimpleName(), items.size());
     }
 
-    /**
-     * Type controlling how keys should be treated in a cache.
-     * <p>
-     * Values are held as instances of {@link SoftReference}. That means values can
-     * be garbage collected at any time. When a value is requested via the
-     * {@link Cache#get(Object)} method, it will be created on-the-fly if
-     * no entry for the key exists or the corresponding value has been garbage
-     * collected.
-     * </p>
-     * <p>
-     * There are two modes of operation:
-     * <ul>
-     * <li>When using <em>strong keys</em>, the keys are normal references.</li>
-     * <li>When using <em>weak keys</em>, keys are also held using soft references.
-     * This is necessary if the value itself holds a reference to the key in which
-     * case entries could never be garbage collected when using strong keys. This
-     * can be used for some sort of reverse mapping when there is need to store
-     * additional data for instances of classes that both cannot easily be extended
-     * to hold the additional data, and when there is no direct control over the
-     * lifetime of these instances.
-     * </ul>
-     */
-    public enum Type {
+    public enum ReferenceType {
 
         /**
-         * Use strong keys.
+         * Use {@link SoftReference}.
          */
-        STRONG_KEYS,
+        SOFT_REFERENCES,
 
         /**
-         * Use weak keys.
+         * Use {@link java.lang.ref.WeakReference}.
          */
-        WEAK_KEYS
+        WEAK_REFERENCES
     }
 }

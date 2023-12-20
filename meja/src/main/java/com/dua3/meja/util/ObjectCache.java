@@ -2,10 +2,10 @@ package com.dua3.meja.util;
 
 import java.util.function.Function;
 
-import com.dua3.meja.util.Cache.Type;
+import com.dua3.meja.util.Cache.ReferenceType;
 
 /**
- * A simple object cache used to avoid creating unnecessary instances of some implementation classes, notably
+ * A simple object cache used to avoid holding unnecessary instances of some implementation classes, notably
  * in the POI implementation.
  */
 public class ObjectCache {
@@ -14,10 +14,10 @@ public class ObjectCache {
 
     /**
      * Initializes a new instance of the ObjectCache class.
-     * This constructor initializes the cache using weak keys and a function identity mapper.
+     * This constructor initializes the cache using a function identity mapper.
      */
     public ObjectCache() {
-        cache = new Cache<>(Type.WEAK_KEYS, Function.identity());
+        cache = new Cache<>(ReferenceType.WEAK_REFERENCES, Function.identity());
     }
 
     /**
