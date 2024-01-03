@@ -11,6 +11,8 @@
             <Bug pattern="EI_EXPOSE_REP"/>
             <Bug pattern="EI_EXPOSE_REP2"/>
             <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_BASIC_EXCEPTION"/>
+            <!-- Spotbugs will complain when a Parameter in an overridden method (like equals()) is marked as @Nullable -->
+            <Bug pattern="NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION"/>
         </Or>
     </Match>
 
