@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * The com.dua3.meja.poi module provides MS Excel compatible implementations of Workbooks etc. based on Apache POI.
+ */
 module com.dua3.meja.poi {
     exports com.dua3.meja.model.poi;
     opens com.dua3.meja.model.poi;

@@ -91,6 +91,9 @@ public class Cache<K, V> {
         return String.format("Cache backed by %s [%d entries]", items.getClass().getSimpleName(), items.size());
     }
 
+    /**
+     * Enum representing the different types of reference to be used in the Cache class.
+     */
     public enum ReferenceType {
 
         /**

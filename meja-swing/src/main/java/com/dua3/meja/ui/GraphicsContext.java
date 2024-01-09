@@ -25,30 +25,30 @@ public interface GraphicsContext {
     /**
      * Draws a line between two points.
      *
-     * @param x1  the x-coordinate of the starting point
-     * @param y1  the y-coordinate of the starting point
-     * @param x2  the x-coordinate of the ending point
-     * @param y2 the y-coordinate of the ending point
+     * @param x1 the start point's x-coordinate
+     * @param y1 the start point's y-coordinate
+     * @param x2 the end point's x-coordinate
+     * @param y2 the end point's y-coordinate
      */
     void drawLine(double x1, double y1, double x2, double y2);
 
     /**
      * Draws a rectangle with the specified position and size.
      *
-     * @param x      the x-coordinate of the upper-left corner of the rectangle
-     * @param y      the y-coordinate of the upper-left corner of the rectangle
-     * @param width  the width of the rectangle
-     * @param height the height of the rectangle
+     * @param x      the rectangle's upper-left corner x-coordinate
+     * @param y      the rectangle's upper-left corner y-coordinate
+     * @param width  the rectangle's width
+     * @param height the rectangle's height
      */
     void drawRect(double x, double y, double width, double height);
 
     /**
      * Fills a rectangle with the specified position and size.
      *
-     * @param x      the x-coordinate of the upper-left corner of the rectangle
-     * @param y      the y-coordinate of the upper-left corner of the rectangle
-     * @param width  the width of the rectangle
-     * @param height the height of the rectangle
+     * @param x      the rectangle's upper-left corner x-coordinate
+     * @param y      the rectangle's upper-left corner y-coordinate
+     * @param width  the rectangle's width
+     * @param height the rectangle's height
      */
     void fillRect(double x, double y, double width, double height);
 

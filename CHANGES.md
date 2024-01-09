@@ -190,8 +190,7 @@
 ## Version 2.0.8
 
 - update utility dependency
-- fix hyperlinks - links are now passed by URI as problems with absolute paths on Windows could not be resolved with
-  URLs
+- fix hyperlinks - pass links by URI as problems with absolute paths on Windows could not be resolved with URLs
 
 ## Version 2.0.7
 

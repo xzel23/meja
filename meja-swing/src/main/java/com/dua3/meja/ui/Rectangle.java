@@ -63,9 +63,9 @@ public final class Rectangle {
     }
 
     /**
-     * Returns the vertical coordinate of the bottom edge of this Rectangle.
+     * Returns the rectangle's bottom vertical coordinate
      *
-     * @return the vertical coordinate of the bottom edge
+     * @return the rectangle's bottom vertical coordinate
      */
     public double getBottom() {
         return y + h;
@@ -100,7 +100,7 @@ public final class Rectangle {
 
     /**
      * Returns the top coordinate of the rectangle.
-     * The top coordinate is the y-coordinate of the upper-left corner of the rectangle.
+     * The top coordinate is y-coordinate of the rectangle's upper-left corner.
      *
      * @return the top coordinate of the rectangle
      */
@@ -154,7 +154,7 @@ public final class Rectangle {
     }
 
     /**
-     * Sets the horizontal coordinate of the top left corner of this Rectangle to the specified value.
+     * Sets the horizontal coordinate of the rectangle's top left corner to the specified value.
      *
      * @param x the horizontal coordinate to set
      */
@@ -163,7 +163,7 @@ public final class Rectangle {
     }
 
     /**
-     * Sets the vertical coordinate of the top left corner of this Rectangle to the specified value.
+     * Sets the vertical coordinate of the rectangle's top left corner to the specified value.
      *
      * @param y the vertical coordinate to set
      */

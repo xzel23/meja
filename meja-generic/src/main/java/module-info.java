@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * The com.dua3.meja.generic module provides generic implementations of Workbooks etc.
+ */
 module com.dua3.meja.generic {
     exports com.dua3.meja.model.generic;
     opens com.dua3.meja.model.generic;

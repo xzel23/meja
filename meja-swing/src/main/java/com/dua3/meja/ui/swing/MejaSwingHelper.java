@@ -150,7 +150,7 @@ public final class MejaSwingHelper {
 
         if (file.exists()) {
             rc = JOptionPane.showConfirmDialog(parent,
-                    "File '" + file.getAbsolutePath() + "' already exists. Overwrite?", "File exists",
+                    "The file '" + file.getAbsolutePath() + "' already exists. Overwrite?", "File exists",
                     JOptionPane.YES_NO_OPTION);
             if (rc != JOptionPane.YES_OPTION) {
                 LOG.debug("user chose not to overwrite file");
