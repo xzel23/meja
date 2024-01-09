@@ -60,7 +60,6 @@ public class GenericCellStyle implements CellStyle {
 
     // formatting helper
     private DateTimeFormatter dateFormatter;
-    private NumberFormat numberFormatter;
 
     /**
      * Construct a new {@code GenericCellStyle}.
@@ -207,7 +206,6 @@ public class GenericCellStyle implements CellStyle {
     public void setDataFormat(String format) {
         this.dataFormat = format;
         this.dateFormatter = null;
-        this.numberFormatter = null;
     }
 
     @Override

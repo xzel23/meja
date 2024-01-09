@@ -74,7 +74,7 @@ public class SettingsDialog extends JDialog {
                 entries.add(Arguments.createEntry(option, value));
             }
             result = Arguments.of(entries.toArray(Arguments.Entry[]::new));
-            this.dispose();
+            dispose();
         })), BorderLayout.PAGE_END);
         pack();
 

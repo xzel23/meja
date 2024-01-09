@@ -63,7 +63,7 @@ public final class PoiCell extends AbstractCell {
 
     private static final char NON_BREAKING_SPACE = 160;
     private static final char TAB = '\t';
-    public static final String CELLSTYLE_MARKER_DATETIME = "#DATETIME";
+    private static final String CELLSTYLE_MARKER_DATETIME = "#DATETIME";
 
     private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
         return switch (poiType) {

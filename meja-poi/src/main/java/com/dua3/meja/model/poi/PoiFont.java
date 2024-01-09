@@ -100,7 +100,7 @@ public class PoiFont {
      * @return a new PoiFont instance with the derived font
      */
     public PoiFont deriveFont(FontDef fd) {
-        Font derivedFont = this.font.deriveFont(fd);
+        Font derivedFont = font.deriveFont(fd);
         return workbook.createFont(derivedFont);
     }
 

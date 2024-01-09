@@ -30,6 +30,7 @@ import com.dua3.utility.text.TextUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Formatter;
@@ -252,7 +253,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         return processedRows;
     }
 
-    private static <T> void writeAttribute(Formatter out, String attribute, Cell cell, Function<Cell, ? extends T> getter, Predicate<? super T> condition, Function<? super T, String> formatter) {
+    private static <T> void writeAttribute(Formatter out, String attribute, Cell cell, Function<? super Cell, ? extends T> getter, Predicate<? super T> condition, Function<? super T, String> formatter) {
         T v = getter.apply(cell);
         if (condition.test(v)) {
             writeAttribute(out, attribute, formatter.apply(v));
@@ -277,7 +278,11 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @throws IOException if an input/output error occurs
      */
     public void write(Workbook workbook, Formatter out, Locale locale) throws IOException {
-        writeSheets(workbook, out, locale, p -> {});
+        try {
+            writeSheets(workbook, out, locale, p -> {});
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 
     /**
@@ -290,7 +295,11 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @throws IOException if an input/output error occurs
      */
     public void write(Workbook workbook, Formatter out, Locale locale, DoubleConsumer updateProgress) throws IOException {
-        writeSheets(workbook, out, locale, updateProgress);
+        try {
+            writeSheets(workbook, out, locale, updateProgress);
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 
     /**

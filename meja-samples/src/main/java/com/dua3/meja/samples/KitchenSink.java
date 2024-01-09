@@ -136,7 +136,7 @@ public final class KitchenSink extends JFrame {
     private void init() {
         setSize(800, 600);
         final SwingWorkbookView view = new SwingWorkbookView();
-        this.setContentPane(view);
+        setContentPane(view);
 
         wb = createWorkbook(GenericWorkbookFactory.instance());
 

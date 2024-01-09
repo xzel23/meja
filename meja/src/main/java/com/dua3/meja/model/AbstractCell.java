@@ -27,8 +27,7 @@ public abstract class AbstractCell implements Cell {
         LangUtil.check(!isMerged(), () -> new CellException(this, "Cell is already merged."));
         LangUtil.check(spanX <= Short.MAX_VALUE, () -> new CellException(this, "Maximum horizontal span number is " + Short.MAX_VALUE));
 
-        if (this.getRowNumber() == topLeftCell.getRowNumber()
-                && this.getColumnNumber() == topLeftCell.getColumnNumber()) {
+        if (getRowNumber() == topLeftCell.getRowNumber() && getColumnNumber() == topLeftCell.getColumnNumber()) {
             setHorizontalSpan(spanX);
             setVerticalSpan(spanY);
         } else {
