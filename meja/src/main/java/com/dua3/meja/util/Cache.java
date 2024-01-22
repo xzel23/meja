@@ -38,6 +38,7 @@ public class Cache<K, V> {
 
     private static final Cleaner CLEANER = Cleaner.create();
 
+    private final Object lock = new Object();
     private final Function<V, Reference<V>> newReference;
     private final Function<? super K, ? extends V> compute;
     private final Map<K, Reference<V>> items = new ConcurrentHashMap<>();
@@ -72,7 +73,7 @@ public class Cache<K, V> {
         V item = weak == null ? null : weak.get();
 
         if (item == null) {
-            synchronized (items) {
+            synchronized (lock) {
                 item = weak == null ? null : weak.get();
                 if (item == null) {
                     item = compute.apply(key);
