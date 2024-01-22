@@ -1,6 +1,6 @@
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "4.1.0-beta4"
+val projectVersion = "4.1.0-beta5"
 
 // define subprojects
 include("meja")
@@ -13,7 +13,7 @@ include("meja-samples")
 
 // use plugin to add JVM toolchain repository
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
 // define dependency versions and repositories
@@ -28,11 +28,11 @@ dependencyResolutionManagement {
             plugin("versions", "com.github.ben-manes.versions").version("0.50.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.0.6")
-            plugin("cabe", "com.dua3.cabe").version("2.0")
+            plugin("cabe", "com.dua3.cabe").version("2.1-rc2")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("cabe", "2.0")
-            version("dua3-utility", "12.0.1")
+            version("dua3-utility", "12.0.3")
             version("javafx", "21.0.1")
             version("junit", "5.10.1")
             version("log4j", "2.22.1")

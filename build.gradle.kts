@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import java.net.URI
 import com.adarshr.gradle.testlogger.theme.ThemeType
+import com.dua3.cabe.processor.Config
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import java.net.URI
 
 plugins {
     id("java-library")
@@ -60,6 +61,14 @@ subprojects {
         toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
         withJavadocJar()
         withSourcesJar()
+    }
+
+    cabe {
+        if (isReleaseVersion) {
+            config.set(Config.StandardConfig.STANDARD.config)
+        } else {
+            config.set(Config.StandardConfig.DEVELOPMENT.config)
+        }
     }
 
     // dependencies
