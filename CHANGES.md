@@ -1,6 +1,6 @@
 # Meja Changelog
 
-## Version 4.1.0 (to be released)
+## Version 4.1.0
 
 - internal logging was migrated from SLF4J to Log4j-api
 - removed unused interface IRowBuilder
