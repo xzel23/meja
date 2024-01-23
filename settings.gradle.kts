@@ -1,6 +1,6 @@
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "4.1.0"
+val projectVersion = "4.1.1-SNAPSHOT"
 
 // define subprojects
 include("meja")
