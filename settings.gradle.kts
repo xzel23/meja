@@ -25,14 +25,14 @@ dependencyResolutionManagement {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("versions", "com.github.ben-manes.versions").version("0.50.0")
+            plugin("versions", "com.github.ben-manes.versions").version("0.51.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.0.6")
-            plugin("cabe", "com.dua3.cabe").version("2.1-rc2")
+            plugin("spotbugs", "com.github.spotbugs").version("6.0.7")
+            plugin("cabe", "com.dua3.cabe").version("2.1")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("cabe", "2.0")
-            version("dua3-utility", "12.0.5")
+            version("dua3-utility", "12.0.6")
             version("javafx", "21.0.2")
             version("junit", "5.10.1")
             version("log4j", "2.22.1")
