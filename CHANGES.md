@@ -1,5 +1,14 @@
 # Meja Changelog
 
+## Version 4.1.2
+
+- add missing package-info, annotations
+- update gradle, cabe, dependencies
+
+## Version 4.1.1
+
+- dependency updates
+
 ## Version 4.1.0
 
 - internal logging was migrated from SLF4J to Log4j-api
