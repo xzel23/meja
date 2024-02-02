@@ -5,4 +5,5 @@ module com.dua3.meja.samples {
     requires com.dua3.utility;
     requires com.dua3.utility.swing;
     requires org.apache.logging.log4j;
+    requires static com.dua3.cabe.annotations;
 }

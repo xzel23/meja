@@ -3,6 +3,7 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
@@ -52,7 +53,7 @@ public class ExcelViewerModel {
             limitations under the License.
             """;
 
-    private static Optional<URI> getUri(Workbook workbook) {
+    private static Optional<URI> getUri(@Nullable Workbook workbook) {
         return workbook == null ? Optional.empty() : workbook.getUri();
     }
 
@@ -85,13 +86,13 @@ public class ExcelViewerModel {
      *
      * @param view the view
      */
-    protected void adjustColumns(SheetView view) {
+    protected void adjustColumns(@Nullable SheetView view) {
         if (view != null) {
             view.getSheet().autoSizeColumns();
         }
     }
 
-    protected void freezeAtCurrentCell(SheetView view) {
+    protected void freezeAtCurrentCell(@Nullable SheetView view) {
         if (view != null) {
             final Sheet sheet = view.getSheet();
             Cell cell = sheet.getCurrentCell();
@@ -145,7 +146,7 @@ public class ExcelViewerModel {
      *
      * @param workbook the workbook
      */
-    public void setWorkbook(Workbook workbook) {
+    public void setWorkbook(@Nullable Workbook workbook) {
         if (this.workbook != null) {
             try {
                 this.workbook.close();

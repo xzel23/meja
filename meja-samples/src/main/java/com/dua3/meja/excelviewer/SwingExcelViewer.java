@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.excelviewer.ExcelViewerModel.ExcelViewer;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
@@ -52,7 +53,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -124,7 +124,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
      */
     public SwingExcelViewer(ExcelViewerModel model) {
         super(APPLICATION_NAME);
-        this.model = Objects.requireNonNull(model);
+        this.model = model;
         createMenu();
         createContent();
         pack();
@@ -331,7 +331,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
         }
     }
 
-    private void updateUri(URI path) {
+    private void updateUri(@Nullable URI path) {
         if (path != null) {
             setTitle(APPLICATION_NAME + " - " + path);
             model.setUri(path);
@@ -341,7 +341,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
     }
 
     @Override
-    public void workbookChanged(URI oldUri, URI newUri) {
+    public void workbookChanged(@Nullable URI oldUri, @Nullable URI newUri) {
         firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
         workbookView.setWorkbook(model.getWorkbook());
         updateUri(newUri);

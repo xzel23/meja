@@ -6,4 +6,5 @@ module com.dua3.meja.fx {
 
     requires transitive com.dua3.meja;
     requires com.dua3.utility;
+    requires com.dua3.cabe.annotations;
 }
