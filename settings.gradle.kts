@@ -1,6 +1,6 @@
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "4.1.2"
+val projectVersion = "4.1.3-SNAPSHOT"
 
 // define subprojects
 include("meja")
@@ -32,7 +32,7 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("cabe", "2.0")
-            version("dua3-utility", "12.0.7")
+            version("dua3-utility", "12.0.8-SNAPSHOT")
             version("javafx", "21.0.2")
             version("junit", "5.10.1")
             version("log4j", "2.22.1")
