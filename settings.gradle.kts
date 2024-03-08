@@ -34,8 +34,8 @@ dependencyResolutionManagement {
             version("cabe", "2.0")
             version("dua3-utility", "12.0.8-SNAPSHOT")
             version("javafx", "21.0.2")
-            version("junit", "5.10.1")
-            version("log4j", "2.22.1")
+            version("junit", "5.10.2")
+            version("log4j", "2.23.1")
             version("poi", "5.2.5")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
