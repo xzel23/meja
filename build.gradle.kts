@@ -78,12 +78,6 @@ subprojects {
 
         // LOG4J2
         implementation(rootProject.libs.log4j.api)
-        testRuntimeOnly(rootProject.libs.log4j.core)
-
-        // JUnit
-        testImplementation(rootProject.libs.junit.jupiter.api)
-        testImplementation(rootProject.libs.junit.jupiter.params)
-        testRuntimeOnly(rootProject.libs.junit.jupiter.engine)
     }
 
     idea {
@@ -94,10 +88,17 @@ subprojects {
         }
     }
 
-    tasks.test {
-        useJUnitPlatform()
-    }
+    testing {
+        suites {
+            val test by getting(JvmTestSuite::class) {
+                useJUnitJupiter()
 
+                dependencies {
+                    implementation(rootProject.libs.log4j.core)
+                }
+            }
+        }
+    }
     testlogger {
         theme = ThemeType.STANDARD
     }

@@ -34,7 +34,6 @@ dependencyResolutionManagement {
             version("cabe", "2.0")
             version("dua3-utility", "12.1.0")
             version("javafx", "21.0.2")
-            version("junit", "5.10.2")
             version("log4j", "2.23.1")
             version("poi", "5.2.5")
 
@@ -45,9 +44,6 @@ dependencyResolutionManagement {
             library("dua3-utility-swing", "com.dua3.utility", "utility-swing").versionRef("dua3-utility")
             library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
-            library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
-            library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
-            library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")
             library("poi", "org.apache.poi", "poi").versionRef("poi")
             library("poi-ooxml", "org.apache.poi", "poi-ooxml").versionRef("poi")
         }
