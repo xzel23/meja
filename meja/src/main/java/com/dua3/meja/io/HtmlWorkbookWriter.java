@@ -423,7 +423,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         );
         writeCellStyleAttributes(out, defaultCellStyle);
         out.format(Locale.ROOT, """
-                                
+                
                 }
                 table.meja-sheet td,th {
                   border: 1px solid #d4d4d4;
