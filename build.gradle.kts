@@ -19,6 +19,7 @@ import java.net.URI
 
 plugins {
     id("java-library")
+    id("jvm-test-suite")
     id("maven-publish")
     id("signing")
     id("idea")
@@ -49,6 +50,7 @@ subprojects {
     val isReleaseVersion = !project.getVersion().toString().endsWith("SNAPSHOT")
 
     apply(plugin = "java-library")
+    apply(plugin = "jvm-test-suite")
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
     apply(plugin = "idea")
