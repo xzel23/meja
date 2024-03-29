@@ -1,4 +1,4 @@
-# Meja spreadsheet library [![CI](https://github.com/xzel23/meja/actions/workflows/gradle.yml/badge.svg)](https://github.com/xzel23/meja/actions/workflows/gradle.yml)
+# Meja spreadsheet library [![CI](https://github.com/xzel23/meja/actions/workflows/gradle.yml/badge.svg)](https://github.com/xzel23/meja/actions/workflows/CI.yml)
 
 Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
