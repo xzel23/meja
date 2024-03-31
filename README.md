@@ -1,4 +1,7 @@
-# Meja spreadsheet library [![CI](https://github.com/xzel23/meja/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/meja/actions/workflows/CI.yml)
+# Meja spreadsheet library
+[![Apache License](https://img.shields.io/badge/license-Apache-blue)](LICENSE)
+[![Language](https://img.shields.io/badge/language-Java-blue.svg?style=flat-square)](https://github.com/topics/java)
+[![build](https://github.com/xzel23/meja/actions/workflows/CI.yml/badge.svg)](https://github.com/xzel23/utility/actions/workflows/CI.yml)
 
 Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
