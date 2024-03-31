@@ -37,11 +37,6 @@ jobs:
         with:
           path: spotbugs.xml
 
-    # disabled - fails with TypeError
-    #      - uses: jwgmeligmeyling/spotbugs-github-action@master
-    #        with:
-    #          path: '**/spotbugs.xml'
-
   qodana:
     runs-on: ubuntu-latest
     steps:
