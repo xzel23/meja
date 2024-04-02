@@ -1,5 +1,14 @@
 # Meja Changelog
 
+## Version 4.1.4
+
+- override transitive Apache POI dependency on commons-compress to non vulnerable version 1.26.1
+- update utility
+
+## Version 4.1.3
+
+- dependency updates
+
 ## Version 4.1.2
 
 - add missing package-info, annotations
