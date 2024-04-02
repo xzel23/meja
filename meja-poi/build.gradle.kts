@@ -16,4 +16,10 @@ dependencies {
         exclude(group = "org.apache.pdfbox", module = "fontbox")
         exclude(group = "de.rototor.pdfbox", module = "graphics2d")
     }
+
+    constraints {
+        implementation(libs.commons.compress) {
+            because("CVE-2024-26308, CVE-2024-25710")
+        }
+    }
 }

@@ -1,6 +1,6 @@
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "4.1.3"
+val projectVersion = "4.1.4-SNASHOT"
 
 // define subprojects
 include("meja")
@@ -46,6 +46,11 @@ dependencyResolutionManagement {
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
             library("poi", "org.apache.poi", "poi").versionRef("poi")
             library("poi-ooxml", "org.apache.poi", "poi-ooxml").versionRef("poi")
+
+            // version overrides for libraries
+
+            // use a newer version of commons-compress because of CVE-2024-26308, CVE-2024-25710
+            library("commons-compress", "org.apache.commons", "commons-compress").version("1.26.1")
         }
     }
 
