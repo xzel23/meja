@@ -26,7 +26,10 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 class PoiWorkbookTest {
@@ -141,7 +144,14 @@ class PoiWorkbookTest {
 
         Cell cCalendar = sheet.getCell(0, 1);
         assertEquals("Calendar", cCalendar.toString());
+
+        // test relative hyperlink
         Optional<URI> lCalendar = cCalendar.getHyperlink();
+        assertTrue(lCalendar.isPresent());
+        assertEquals(URI.create("Excel%202015%20Calendar.xlsx"), lCalendar.get());
+
+        // test resolving relative hyperlink
+        lCalendar = cCalendar.getResolvedHyperlink();
         assertTrue(lCalendar.isPresent());
         assertEquals(wb.getUri().get().resolve("Excel%202015%20Calendar.xlsx"), lCalendar.get());
 

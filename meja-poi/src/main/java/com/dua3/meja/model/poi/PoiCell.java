@@ -546,9 +546,7 @@ public final class PoiCell extends AbstractCell {
         try {
             return switch (link.getType()) {
                 case URL, EMAIL -> Optional.of(new URI(link.getAddress()));
-                case FILE -> getWorkbook().getUri()
-                        .map(wbUri -> wbUri.resolve(URI.create(link.getAddress())))
-                        .or(() -> Optional.of(URI.create(link.getAddress())));
+                case FILE -> Optional.of(URI.create(link.getAddress()));
                 case NONE -> Optional.empty();
                 case DOCUMENT -> throw new UnsupportedOperationException("Unsupported link type: " + link.getType());
             };
