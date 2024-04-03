@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 4.1.5
+
+- allow workbook-relative hyperlinks
+
 ## Version 4.1.4
 
 - override transitive Apache POI dependency on commons-compress to non vulnerable version 1.26.1
