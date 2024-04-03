@@ -29,6 +29,8 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.options.Arguments;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -50,8 +52,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -64,6 +64,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.DoubleConsumer;
@@ -428,10 +429,11 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     public Hyperlink createHyperLink(URI target) {
         HyperlinkType type;
         String address = target.toString();
-        type = switch (target.getScheme().toLowerCase(Locale.ROOT)) {
+        type = switch (Optional.ofNullable(target.getScheme()).map(s -> s.toLowerCase(Locale.ROOT)).orElse("")) {
             case "http", "https" -> HyperlinkType.URL;
             case "file" -> HyperlinkType.FILE;
             case "mailto" -> HyperlinkType.EMAIL;
+            case "" -> HyperlinkType.FILE; // workbook-relative link
             default -> throw new IllegalArgumentException("unsupported protocol: " + target.getScheme());
         };
         Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(type);

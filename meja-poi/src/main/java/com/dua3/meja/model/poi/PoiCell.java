@@ -28,6 +28,8 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
 import com.dua3.utility.text.Style;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -37,8 +39,6 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -524,9 +524,15 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public PoiCell setHyperlink(@Nullable URI target) {
+    public PoiCell setHyperlink(URI target) {
         Hyperlink link = getWorkbook().createHyperLink(target);
         poiCell.setHyperlink(link);
+        return this;
+    }
+
+    @Override
+    public PoiCell clearHyperlink() {
+        poiCell.removeHyperlink();
         return this;
     }
 

@@ -18,6 +18,7 @@ package com.dua3.meja.model;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.text.Font;
@@ -25,6 +26,7 @@ import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.TextUtil;
 
 import java.net.URI;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -424,11 +426,49 @@ public interface Cell {
     Cell setHyperlink(URI target);
 
     /**
+     * Set Hyperlink.
+     *
+     * @param target the link target
+     * @return this cell
+     */
+    default Cell setHyperlink(Path target) {
+        return setHyperlink(IoUtil.toURI(target));
+    }
+
+    /**
+     * Remove Hyperlink.
+     *
+     * @return this cell
+     */
+    Cell clearHyperlink();
+
+    /**
      * Get Hyperlink.
      *
      * @return an Optional with the Hyperlink or empty Optional
      */
     Optional<URI> getHyperlink();
+
+    /**
+     * Get resolved Hyperlink.
+     * <p>
+     * For absolute URIs, the Hyperlink is returned unchanged.
+     * Relative links are resolved against the workbook URI.
+     * @return an Optional with the resolved Hyperlink or an empty Optional
+     */
+    default Optional<URI> getResolvedHyperlink() {
+        return getHyperlink().map(link -> {
+           if (link.getScheme() != null) {
+               // relative URIs have scheme set to null, absolute URIs require a valid scheme
+               return link;
+           }
+
+           return getWorkbook()
+                   .getUri()
+                   .orElseThrow(() -> new IllegalStateException("cannot resolve relative link because workbook URI is not set"))
+                   .resolve(link);
+        });
+    }
 
     /**
      * Set error.

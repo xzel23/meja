@@ -25,7 +25,6 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
@@ -347,8 +346,14 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public Cell setHyperlink(@Nullable URI target) {
+    public Cell setHyperlink(URI target) {
         setAttribute(Attribute.LINK_URI, target);
+        return this;
+    }
+
+    @Override
+    public Cell clearHyperlink() {
+        setAttribute(Attribute.LINK_URI, null);
         return this;
     }
 
@@ -361,11 +366,11 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public Optional<URI> getHyperlink() {
-        return getAttribute(Attribute.LINK_URI).flatMap(obj -> {
-            try {
-                return Optional.of(new URI(obj.toString()));
-            } catch (URISyntaxException e) {
-                throw new IllegalStateException("invalid link URI: " + obj, e);
+        return getAttribute(Attribute.LINK_URI).map(obj -> {
+            if (obj instanceof URI uri) {
+                return uri;
+            } else {
+                throw new IllegalStateException("attribute value should be of type URI, but is " + obj.getClass());
             }
         });
     }
