@@ -29,7 +29,6 @@ public final class CreateCalendar {
     public static void main(String[] args) {
         try {
             Path file = Paths.get("calendar.html");
-            //LangUtil.check(!Files.exists(file), "outputfile exists: " + file);
 
             writeCalendar(file);
         } catch (Throwable t) {

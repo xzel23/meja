@@ -46,11 +46,8 @@ public final class Rectangle {
     public Rectangle(double x, double y, double w, double h) {
         this.x = x;
         this.y = y;
-        this.w = w;
-        this.h = h;
-
-        LangUtil.check(w >= 0, "negative with: ", w);
-        LangUtil.check(h >= 0, "negative height: ", h);
+        this.w = LangUtil.requireNonNegative(w);
+        this.h = LangUtil.requireNonNegative(h);
     }
 
     /**
