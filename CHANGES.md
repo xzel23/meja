@@ -2,6 +2,10 @@
 
 ## Version 4.1.5
 
+- fixes for workbook-relative hyperlinks in excel implementation
+
+## Version 4.1.5
+
 - allow workbook-relative hyperlinks
 
 ## Version 4.1.4
