@@ -32,7 +32,5 @@ module com.dua3.meja.generic {
     requires static com.dua3.cabe.annotations;
     requires org.apache.logging.log4j;
 
-    uses com.dua3.utility.text.FontUtil;
-
     provides com.dua3.utility.io.FileType with com.dua3.meja.model.generic.io.FileTypeCsv;
 }

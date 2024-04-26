@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 4.2.0
+
+- update utility to next major version
+
 ## Version 4.1.5
 
 - fixes for workbook-relative hyperlinks in excel implementation

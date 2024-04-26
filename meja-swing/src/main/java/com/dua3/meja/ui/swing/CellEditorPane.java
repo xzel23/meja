@@ -22,10 +22,8 @@ import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.swing.StyledDocumentConverter;
-import com.dua3.utility.swing.SwingFontUtil;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
-import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 
 import javax.swing.JTextPane;
@@ -182,8 +180,6 @@ public class CellEditorPane extends JTextPane {
 
         return dfltAttr;
     }
-
-    private static final FontUtil<java.awt.Font> fontUtil = new SwingFontUtil();
 
     /**
      * Set the editor content to the content of the given cell.
