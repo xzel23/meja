@@ -3,9 +3,9 @@
  */
 package com.dua3.meja.ui;
 
-import java.util.concurrent.locks.Lock;
-
 import com.dua3.meja.model.Sheet;
+
+import java.util.concurrent.locks.Lock;
 
 /**
  * @param <SV> the concrete class implementing SheetView
@@ -42,7 +42,7 @@ public interface SegmentView<SV extends SheetView, GC extends GraphicsContext> {
         return getEndColumn() > 0 && getEndColumn() <= getSheet().getLastColNum();
     }
 
-    void setViewSize(double width, double height);
+    void setViewSize(float width, float height);
 
     default void updateLayout() {
         Sheet sheet = getSheet();
@@ -57,7 +57,7 @@ public interface SegmentView<SV extends SheetView, GC extends GraphicsContext> {
             SheetPainterBase<SV, GC> sheetPainter = getSheetPainter();
 
             // the width is the width for the labels showing row names ...
-            double width = hasRowHeaders() ? sheetPainter.getRowLabelWidth() : 1;
+            float width = hasRowHeaders() ? sheetPainter.getRowLabelWidth() : 1;
 
             // ... plus the width of the columns displayed ...
             width += sheetPainter.getColumnPos(getEndColumn()) - sheetPainter.getColumnPos(getBeginColumn());
@@ -68,7 +68,7 @@ public interface SegmentView<SV extends SheetView, GC extends GraphicsContext> {
             }
 
             // the height is the height for the labels showing column names ...
-            double height = hasColumnHeaders() ? sheetPainter.getColumnLabelHeight() : 1;
+            float height = hasColumnHeaders() ? sheetPainter.getColumnLabelHeight() : 1;
 
             // ... plus the height of the rows displayed ...
             height += sheetPainter.getRowPos(getEndRow()) - sheetPainter.getRowPos(getBeginRow());

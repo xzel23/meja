@@ -15,8 +15,6 @@
  */
 package com.dua3.meja.ui;
 
-import java.util.concurrent.locks.Lock;
-
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
@@ -26,6 +24,9 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.Rectangle2f;
+
+import java.util.concurrent.locks.Lock;
 
 /**
  * A helper class that implements the actual drawing algorithm.
@@ -57,12 +58,12 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     /**
      * Horizontal padding.
      */
-    protected static final int PADDING_X = 2;
+    protected static final float PADDING_X = 2;
 
     /**
      * Vertical padding.
      */
-    protected static final int PADDING_Y = 1;
+    protected static final float PADDING_Y = 1;
 
     /**
      * Color used to draw the selection rectangle.
@@ -72,7 +73,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     /**
      * Width of the selection rectangle borders.
      */
-    protected static final int SELECTION_STROKE_WIDTH = 4;
+    protected static final float SELECTION_STROKE_WIDTH = 4;
 
     /**
      * Test whether style uses text wrapping. While there is a property for text
@@ -95,15 +96,15 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     /**
      * Array with column positions (x-axis) in pixels.
      */
-    private double[] columnPos = {0};
+    private float[] columnPos = {0};
 
     /**
      * Array with column positions (y-axis) in pixels.
      */
-    private double[] rowPos = {0};
-    private double sheetHeightInPoints;
+    private float[] rowPos = {0};
+    private float sheetHeightInPoints;
 
-    private double sheetWidthInPoints;
+    private float sheetWidthInPoints;
 
     protected SheetPainterBase(SV sheetView) {
         this.sheetView = sheetView;
@@ -140,16 +141,16 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * @param cell the cell whose area is requested
      * @return the rectangle the cell takes up in screen coordinates
      */
-    public Rectangle getCellRect(Cell cell) {
+    public Rectangle2f getCellRect(Cell cell) {
         final int i = cell.getRowNumber();
         final int j = cell.getColumnNumber();
 
-        final double x = getColumnPos(j);
-        final double w = getColumnPos(j + cell.getHorizontalSpan()) - x;
-        final double y = getRowPos(i);
-        final double h = getRowPos(i + cell.getVerticalSpan()) - y;
+        final float x = getColumnPos(j);
+        final float w = getColumnPos(j + cell.getHorizontalSpan()) - x;
+        final float y = getRowPos(i);
+        final float h = getRowPos(i + cell.getVerticalSpan()) - y;
 
-        return new Rectangle(x, y, w, h);
+        return new Rectangle2f(x, y, w, h);
     }
 
     /**
@@ -204,7 +205,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * @param j the column number
      * @return the columnPos
      */
-    public double getColumnPos(int j) {
+    public float getColumnPos(int j) {
         return columnPos[Math.min(columnPos.length - 1, j)];
     }
 
@@ -259,7 +260,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * @param i the row number
      * @return the rowPos
      */
-    public double getRowPos(int i) {
+    public float getRowPos(int i) {
         return rowPos[Math.min(rowPos.length - 1, i)];
     }
 
@@ -269,26 +270,25 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * @param cell the selected cell
      * @return selection rectangle in display coordinates
      */
-    public Rectangle getSelectionRect(Cell cell) {
-        Rectangle cellRect = getCellRect(cell.getLogicalCell());
-        double extra = (getSelectionStrokeWidth() + 1) / 2;
-        return new Rectangle(cellRect.getX() - extra, cellRect.getY() - extra, cellRect.getWidth() + 2 * extra,
-                cellRect.getHeight() + 2 * extra);
+    public Rectangle2f getSelectionRect(Cell cell) {
+        Rectangle2f cellRect = getCellRect(cell.getLogicalCell());
+        float extra = (getSelectionStrokeWidth() + 1) / 2;
+        return cellRect.addMargin(extra);
     }
 
-    public double getSheetHeightInPoints() {
+    public float getSheetHeightInPoints() {
         return sheetHeightInPoints;
     }
 
-    public double getSheetWidthInPoints() {
+    public float getSheetWidthInPoints() {
         return sheetWidthInPoints;
     }
 
-    public double getSplitX() {
+    public float getSplitX() {
         return getColumnPos(sheet.getSplitColumn());
     }
 
-    public double getSplitY() {
+    public float getSplitY() {
         return getRowPos(sheet.getSplitRow());
     }
 
@@ -302,8 +302,8 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         if (sheet == null) {
             sheetWidthInPoints = 0;
             sheetHeightInPoints = 0;
-            rowPos = new double[]{0};
-            columnPos = new double[]{0};
+            rowPos = new float[]{0};
+            columnPos = new float[]{0};
             return;
         }
 
@@ -311,7 +311,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         readLock.lock();
         try {
             sheetHeightInPoints = 0;
-            rowPos = new double[2 + sheet.getLastRowNum()];
+            rowPos = new float[2 + sheet.getLastRowNum()];
             rowPos[0] = 0;
             for (int i = 1; i < rowPos.length; i++) {
                 sheetHeightInPoints += sheet.getRowHeight(i - 1);
@@ -319,7 +319,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             }
 
             sheetWidthInPoints = 0;
-            columnPos = new double[2 + sheet.getLastColNum()];
+            columnPos = new float[2 + sheet.getLastColNum()];
             columnPos[0] = 0;
             for (int j = 1; j < columnPos.length; j++) {
                 sheetWidthInPoints += sheet.getColumnWidth(j - 1);
@@ -337,11 +337,11 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      * @param cell cell to draw
      */
     private void drawCellBackground(GC g, Cell cell) {
-        Rectangle cr = getCellRect(cell);
+        Rectangle2f cr = getCellRect(cell);
 
         // draw grid lines
         g.setColor(getGridColor());
-        g.drawRect(cr.getX(), cr.getY(), cr.getWidth(), cr.getHeight());
+        g.drawRect(cr);
 
         CellStyle style = cell.getCellStyle();
         FillPattern pattern = style.getFillPattern();
@@ -353,14 +353,14 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         Color fillFgColor = style.getFillFgColor();
         if (fillFgColor != null) {
             g.setColor(fillFgColor);
-            g.fillRect(cr.getX(), cr.getY(), cr.getWidth(), cr.getHeight());
+            g.fillRect(cr);
         }
 
         if (pattern != FillPattern.SOLID) {
             Color fillBgColor = style.getFillBgColor();
             if (fillBgColor != null) {
                 g.setColor(fillBgColor);
-                g.fillRect(cr.getX(), cr.getY(), cr.getWidth(), cr.getHeight());
+                g.fillRect(cr);
             }
         }
     }
@@ -378,7 +378,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                 .getCell(cell.getColumnNumber() + cell.getHorizontalSpan() - 1);
         CellStyle styleBottomRight = cellBottomRight.getCellStyle();
 
-        Rectangle cr = getCellRect(cell);
+        Rectangle2f cr = getCellRect(cell);
 
         // draw border
         for (Direction d : Direction.values()) {
@@ -397,10 +397,10 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             g.setStroke(color, b.width());
 
             switch (d) {
-                case NORTH -> g.drawLine(cr.getLeft(), cr.getTop(), cr.getRight(), cr.getTop());
-                case EAST -> g.drawLine(cr.getRight(), cr.getTop(), cr.getRight(), cr.getBottom());
-                case SOUTH -> g.drawLine(cr.getLeft(), cr.getBottom(), cr.getRight(), cr.getBottom());
-                case WEST -> g.drawLine(cr.getLeft(), cr.getTop(), cr.getLeft(), cr.getBottom());
+                case NORTH -> g.drawLine(cr.xMin(), cr.yMin(), cr.xMax(), cr.yMin());
+                case EAST -> g.drawLine(cr.xMax(), cr.yMin(), cr.xMax(), cr.yMax());
+                case SOUTH -> g.drawLine(cr.xMin(), cr.yMax(), cr.xMax(), cr.yMax());
+                case WEST -> g.drawLine(cr.xMin(), cr.yMin(), cr.xMin(), cr.yMax());
             }
         }
     }
@@ -416,36 +416,34 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             return;
         }
 
-        double paddingX = getPaddingX();
-        double paddingY = getPaddingY();
+        float paddingX = getPaddingX();
+        float paddingY = getPaddingY();
 
         // the rectangle used for positioning the text
-        Rectangle textRect = getCellRect(cell);
-        textRect = new Rectangle(textRect.getX() + paddingX, textRect.getY() + paddingY, textRect.getWidth() - 2 * paddingX,
-                textRect.getHeight() - 2 * paddingY);
+        Rectangle2f textRect = getCellRect(cell).addMargin(-paddingX, -paddingY);
 
         // the clipping rectangle
-        final Rectangle clipRect;
+        final Rectangle2f clipRect;
         final CellStyle style = cell.getCellStyle();
         if (isWrapping(style)) {
             clipRect = textRect;
         } else {
             Row row = cell.getRow();
-            double clipXMin = textRect.getX();
+            float clipXMin = textRect.xMin();
             for (int j = cell.getColumnNumber() - 1; j > 0; j--) {
                 if (!row.getCell(j).isEmpty()) {
                     break;
                 }
                 clipXMin = getColumnPos(j) + paddingX;
             }
-            double clipXMax = textRect.getRight();
+            float clipXMax = textRect.xMax();
             for (int j = cell.getColumnNumber() + 1; j < getColumnCount(); j++) {
                 if (!row.getCell(j).isEmpty()) {
                     break;
                 }
                 clipXMax = getColumnPos(j + 1) - paddingX;
             }
-            clipRect = new Rectangle(clipXMin, textRect.getY(), clipXMax - clipXMin, textRect.getHeight());
+            clipRect = new Rectangle2f(clipXMin, textRect.yMin(), clipXMax - clipXMin, textRect.height());
         }
 
         render(g, cell, textRect, clipRect);
@@ -463,11 +461,11 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         }
 
         Cell logicalCell = sheet.getCurrentCell().getLogicalCell();
-        Rectangle rect = getCellRect(logicalCell);
+        Rectangle2f rect = getCellRect(logicalCell);
 
         gc.setXOR(useXorDrawing);
         gc.setStroke(SELECTION_COLOR, getSelectionStrokeWidth());
-        gc.drawRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+        gc.drawRect(rect);
         gc.setXOR(false);
     }
 
@@ -485,30 +483,33 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
     protected abstract void drawBackground(GC gc);
 
-    protected abstract void drawLabel(GC gc, Rectangle rect, String text);
+    protected abstract void drawLabel(GC gc, Rectangle2f rect, String text);
 
     protected void drawLabels(GC gc) {
         // determine visible rows and columns
-        Rectangle clipBounds = gc.getClipBounds();
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.getTop()));
-        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.getBottom()));
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.getLeft()));
-        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.getRight()));
+        Rectangle2f clipBounds = gc.getClipBounds();
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.yMin()));
+        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.yMax()));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.xMin()));
+        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.xMax()));
 
         // draw row labels
-        Rectangle r = new Rectangle(-getRowLabelWidth(), 0, getRowLabelWidth(), 0);
         for (int i = startRow; i < endRow; i++) {
-            r.setY(getRowPos(i));
-            r.setHeight(getRowPos(i + 1) - r.getY());
+            float x = -getRowLabelWidth();
+            float w = getRowLabelWidth();
+            float y = getRowPos(i);
+            float h = getRowPos(i + 1) - y;
+            Rectangle2f r = new Rectangle2f(x, y, w, h);
             String text = getRowName(i);
             drawLabel(gc, r, text);
         }
 
         // draw column labels
-        r = new Rectangle(0, -getColumnLabelHeight(), 0, getColumnLabelHeight());
         for (int j = startColumn; j < endColumn; j++) {
-            r.setX(getColumnPos(j));
-            r.setWidth(getColumnPos(j + 1) - r.getX());
+            float x = getColumnPos(j);
+            float y = -getColumnLabelHeight();
+            float w = getColumnPos(j + 1) - x;
+            Rectangle2f r = new Rectangle2f(x, y, w, getColumnLabelHeight());
             String text = getColumnName(j);
             drawLabel(gc, r, text);
         }
@@ -518,31 +519,31 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         // nop
     }
 
-    protected abstract double getColumnLabelHeight();
+    protected abstract float getColumnLabelHeight();
 
     protected Color getGridColor() {
         return sheetView.getGridColor();
     }
 
-    protected double getPaddingX() {
+    protected float getPaddingX() {
         return PADDING_X;
     }
 
-    protected double getPaddingY() {
+    protected float getPaddingY() {
         return PADDING_Y;
     }
 
-    protected abstract double getRowLabelWidth();
+    protected abstract float getRowLabelWidth();
 
     protected Color getSelectionColor() {
         return SELECTION_COLOR;
     }
 
-    protected double getSelectionStrokeWidth() {
+    protected float getSelectionStrokeWidth() {
         return SELECTION_STROKE_WIDTH;
     }
 
-    protected abstract void render(GC g, Cell cell, Rectangle textRect, Rectangle clipRect);
+    protected abstract void render(GC g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect);
 
     /**
      * Draw cells.
@@ -567,13 +568,13 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
         double maxWidth = SheetView.MAX_COLUMN_WIDTH;
 
-        Rectangle clipBounds = g.getClipBounds();
+        Rectangle2f clipBounds = g.getClipBounds();
 
         // determine visible rows and columns
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.getTop()));
-        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.getBottom()));
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.getLeft()));
-        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.getRight()));
+        int startRow = Math.max(0, getRowNumberFromY(clipBounds.yMin()));
+        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.yMax()));
+        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.xMin()));
+        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.xMax()));
 
         // Collect cells to be drawn
         for (int i = startRow; i < endRow; i++) {
@@ -587,12 +588,12 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
             int first = startColumn;
-            while (first > 0 && getColumnPos(first) + maxWidth > clipBounds.getLeft() && row.getCell(first).isEmpty()) {
+            while (first > 0 && getColumnPos(first) + maxWidth > clipBounds.xMin() && row.getCell(first).isEmpty()) {
                 first--;
             }
 
             int end = endColumn;
-            while (end < getColumnCount() && getColumnPos(end) - maxWidth < clipBounds.getRight()
+            while (end < getColumnCount() && getColumnPos(end) - maxWidth < clipBounds.xMax()
                     && (end <= 0 || row.getCell(end - 1).isEmpty())) {
                 end++;
             }

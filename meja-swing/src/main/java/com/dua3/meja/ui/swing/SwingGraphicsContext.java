@@ -3,14 +3,14 @@
  */
 package com.dua3.meja.ui.swing;
 
+import com.dua3.meja.ui.GraphicsContext;
+import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.swing.SwingUtil;
+
 import java.awt.BasicStroke;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-import com.dua3.meja.ui.GraphicsContext;
-import com.dua3.meja.ui.Rectangle;
-import com.dua3.utility.data.Color;
-import com.dua3.utility.swing.SwingUtil;
 
 public final class SwingGraphicsContext implements GraphicsContext {
 
@@ -23,12 +23,12 @@ public final class SwingGraphicsContext implements GraphicsContext {
     }
 
     @Override
-    public void drawLine(double x1, double y1, double x2, double y2) {
+    public void drawLine(float x1, float y1, float x2, float y2) {
         g.drawLine(xS2D(x1), yS2D(y1), wS2D(x2), hS2D(y2));
     }
 
     @Override
-    public void drawRect(double x, double y, double width, double height) {
+    public void drawRect(float x, float y, float width, float height) {
         final int xd = xS2D(x);
         final int yd = yS2D(y);
         final int wd = xS2D(x + width) - xd;
@@ -37,7 +37,7 @@ public final class SwingGraphicsContext implements GraphicsContext {
     }
 
     @Override
-    public void fillRect(double x, double y, double width, double height) {
+    public void fillRect(float x, float y, float width, float height) {
         final int xd = xS2D(x);
         final int yd = yS2D(y);
         final int wd = xS2D(x + width) - xd;
@@ -46,7 +46,7 @@ public final class SwingGraphicsContext implements GraphicsContext {
     }
 
     @Override
-    public Rectangle getClipBounds() {
+    public Rectangle2f getClipBounds() {
         return view.rectD2S(g.getClipBounds());
     }
 
@@ -54,8 +54,8 @@ public final class SwingGraphicsContext implements GraphicsContext {
         return g;
     }
 
-    private int hS2D(double d) {
-        return view.hS2D(d);
+    private int hS2D(float f) {
+        return view.hS2D(f);
     }
 
     @Override
@@ -64,7 +64,7 @@ public final class SwingGraphicsContext implements GraphicsContext {
     }
 
     @Override
-    public void setStroke(Color color, double width) {
+    public void setStroke(Color color, float width) {
         g.setColor(SwingUtil.toAwtColor(color));
         g.setStroke(new BasicStroke((float) width));
     }
@@ -78,16 +78,16 @@ public final class SwingGraphicsContext implements GraphicsContext {
         }
     }
 
-    private int wS2D(double d) {
-        return view.wS2D(d);
+    private int wS2D(float f) {
+        return view.wS2D(f);
     }
 
-    private int xS2D(double d) {
-        return view.xS2D(d);
+    private int xS2D(float f) {
+        return view.xS2D(f);
     }
 
-    private int yS2D(double d) {
-        return view.yS2D(d);
+    private int yS2D(float f) {
+        return view.yS2D(f);
     }
 
 }

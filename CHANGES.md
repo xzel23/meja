@@ -3,6 +3,8 @@
 ## Version 4.2.0
 
 - update utility to next major version
+- use Rectangle2f from utility; changes coordinates to float
+- code cleanup
 
 ## Version 4.1.5
 

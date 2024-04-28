@@ -15,6 +15,40 @@
  */
 package com.dua3.meja.ui.swing;
 
+import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Direction;
+import com.dua3.meja.model.SearchOptions;
+import com.dua3.meja.model.SearchSettings;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.ui.SegmentView;
+import com.dua3.meja.ui.SheetView;
+import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.swing.SwingUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ActionMap;
+import javax.swing.BorderFactory;
+import javax.swing.InputMap;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JViewport;
+import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import java.awt.BasicStroke;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -37,42 +71,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
-
-import com.dua3.meja.model.SearchSettings;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.BorderFactory;
-import javax.swing.InputMap;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JViewport;
-import javax.swing.KeyStroke;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.Scrollable;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-
-import com.dua3.cabe.annotations.Nullable;
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Direction;
-import com.dua3.meja.model.SearchOptions;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.ui.Rectangle;
-import com.dua3.meja.ui.SegmentView;
-import com.dua3.meja.ui.SheetView;
-import com.dua3.utility.data.Color;
-import com.dua3.utility.swing.SwingUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -241,23 +239,25 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 return;
             }
 
-            final Rectangle cellRect = sheetPainter.getCellRect(cell);
-            boolean aboveSplit = getSplitY() >= cellRect.getBottom();
-            boolean toLeftOfSplit = getSplitX() >= cellRect.getRight();
+            Rectangle2f cellRect = sheetPainter.getCellRect(cell);
+            boolean aboveSplit = getSplitY() >= cellRect.xMax();
+            boolean toLeftOfSplit = getSplitX() >= cellRect.xMax();
 
-            cellRect.translate(toLeftOfSplit ? 0 : -sheetPainter.getSplitX(),
-                    aboveSplit ? 0 : -sheetPainter.getSplitY());
+            cellRect = cellRect.translate(
+                    toLeftOfSplit ? 0 : -sheetPainter.getSplitX(),
+                    aboveSplit ? 0 : -sheetPainter.getSplitY()
+            );
 
             //noinspection StatementWithEmptyBody
             if (aboveSplit && toLeftOfSplit) {
                 // nop: cell is always visible!
             } else if (aboveSplit) {
                 // only scroll x
-                java.awt.Rectangle r = new java.awt.Rectangle(xS2D(cellRect.getX()), 1, wS2D(cellRect.getWidth()), 1);
+                java.awt.Rectangle r = new java.awt.Rectangle(xS2D(cellRect.x()), 1, wS2D(cellRect.width()), 1);
                 bottomRightQuadrant.scrollRectToVisible(r);
             } else if (toLeftOfSplit) {
                 // only scroll y
-                java.awt.Rectangle r = new java.awt.Rectangle(1, yS2D(cellRect.getY()), 1, hS2D(cellRect.getHeight()));
+                java.awt.Rectangle r = new java.awt.Rectangle(1, yS2D(cellRect.y()), 1, hS2D(cellRect.height()));
                 bottomRightQuadrant.scrollRectToVisible(r);
             } else {
                 bottomRightQuadrant.scrollRectToVisible(rectS2D(cellRect));
@@ -276,9 +276,9 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             super.validate();
         }
 
-        private Rectangle getCellRectInViewCoordinates(Cell cell) {
+        private Rectangle2f getCellRectInViewCoordinates(Cell cell) {
             if (sheet == null) {
-                return new Rectangle(0, 0, 0, 0);
+                return new Rectangle2f(0, 0, 0, 0);
             }
 
             boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
@@ -298,10 +298,10 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
             int i = cell.getRowNumber();
             int j = cell.getColumnNumber();
-            double x = sheetPainter.getColumnPos(j);
-            double w = sheetPainter.getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
-            double y = sheetPainter.getRowPos(i);
-            double h = sheetPainter.getRowPos(i + cell.getVerticalSpan()) - y + 1;
+            float x = sheetPainter.getColumnPos(j);
+            float w = sheetPainter.getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
+            float y = sheetPainter.getRowPos(i);
+            float h = sheetPainter.getRowPos(i + cell.getVerticalSpan()) - y + 1;
             x -= quadrant.getXMinInViewCoordinates();
             x += parent.getX();
             x -= pos.x;
@@ -309,7 +309,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             y += parent.getY();
             y -= pos.y;
 
-            return new Rectangle(x, y, w, h);
+            return new Rectangle2f(x, y, w, h);
         }
 
         private int getColumnCount() {
@@ -340,7 +340,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             setViewportBorder(BorderFactory.createEmptyBorder());
         }
 
-        private void repaintSheet(Rectangle rect) {
+        private void repaintSheet(Rectangle2f rect) {
             topLeftQuadrant.repaintSheet(rect);
             topRightQuadrant.repaintSheet(rect);
             bottomLeftQuadrant.repaintSheet(rect);
@@ -438,7 +438,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                 // scroll vertical
                 if (direction < 0) {
                     // scroll up
-                    final double y = yD2S(visibleRect.y);
+                    final float y = yD2S(visibleRect.y);
                     final int yD = yS2D(y);
                     int i = sheetPainter.getRowNumberFromY(y);
                     int posD = yD;
@@ -448,7 +448,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     return yD - posD;
                 } else {
                     // scroll down
-                    final double y = yD2S(visibleRect.y + visibleRect.height);
+                    final float y = yD2S(visibleRect.y + visibleRect.height);
                     final int yD = yS2D(y);
                     int i = sheetPainter.getRowNumberFromY(y);
                     int posD = yD;
@@ -461,7 +461,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             {
                 if (direction < 0) {
                     // scroll left
-                    final double x = xD2S(visibleRect.x);
+                    final float x = xD2S(visibleRect.x);
                     final int xD = xS2D(x);
                     int j = sheetPainter.getColumnNumberFromX(x);
                     int posD = xD;
@@ -471,7 +471,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
                     return xD - posD;
                 } else {
                     // scroll right
-                    final double x = xD2S(visibleRect.x + visibleRect.width);
+                    final float x = xD2S(visibleRect.x + visibleRect.width);
                     int xD = xS2D(x);
                     int j = sheetPainter.getColumnNumberFromX(x);
                     int posD = xD;
@@ -499,7 +499,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         @Override
-        public void setViewSize(double wd, double hd) {
+        public void setViewSize(float wd, float hd) {
             int w = wS2D(wd);
             int h = hS2D(hd);
             Dimension d = new Dimension(w, h);
@@ -562,7 +562,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         int getXMinInViewCoordinates() {
-            double x = sheetPainter.getColumnPos(getBeginColumn());
+            float x = sheetPainter.getColumnPos(getBeginColumn());
             if (hasRowHeaders()) {
                 x -= sheetPainter.getRowLabelWidth();
             }
@@ -570,14 +570,14 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
 
         int getYMinInViewCoordinates() {
-            double y = sheetPainter.getRowPos(getBeginRow());
+            float y = sheetPainter.getRowPos(getBeginRow());
             if (hasColumnHeaders()) {
                 y -= sheetPainter.getColumnLabelHeight();
             }
             return yS2D(y);
         }
 
-        void repaintSheet(Rectangle rect) {
+        void repaintSheet(Rectangle2f rect) {
             java.awt.Rectangle rect2 = rectS2D(rect);
             rect2.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
             repaint(rect2);
@@ -605,7 +605,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
-    private double scale = 1.0f;
+    private float scale = 1.0f;
 
     /**
      * The sheet displayed.
@@ -1032,7 +1032,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         final JComponent editorComp = editor.startEditing(cell);
 
-        final Rectangle cellRect = sheetPane.getCellRectInViewCoordinates(cell);
+        final Rectangle2f cellRect = sheetPane.getCellRectInViewCoordinates(cell);
         editorComp.setBounds(rectS2D(cellRect));
 
         sheetPane.add(editorComp);
@@ -1051,7 +1051,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
 
         // scale according to screen resolution
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-        double scaleDpi = dpi / 72.0; // 1 point = 1/72 inch
+        float scaleDpi = dpi / 72.0f; // 1 point = 1/72 inch
         scale = sheet.getZoom() * scaleDpi;
 
         sheetPainter.update(sheet);
@@ -1060,7 +1060,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         repaint();
     }
 
-    double getScale() {
+    float getScale() {
         return scale;
     }
 
@@ -1069,7 +1069,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      *
      * @return x coordinate of split
      */
-    double getSplitX() {
+    float getSplitX() {
         return sheet == null ? 0 : sheetPainter.getColumnPos(sheet.getSplitColumn());
     }
 
@@ -1078,15 +1078,15 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      *
      * @return y coordinate of split
      */
-    double getSplitY() {
+    float getSplitY() {
         return sheet == null ? 0 : sheetPainter.getRowPos(sheet.getSplitRow());
     }
 
-    double hD2S(int h) {
+    float hD2S(int h) {
         return h / scale;
     }
 
-    int hS2D(double h) {
+    int hS2D(float h) {
         return (int) Math.round(scale * h);
     }
 
@@ -1112,43 +1112,43 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
     }
 
-    Rectangle rectD2S(java.awt.Rectangle r) {
-        final double x1 = xD2S(r.x);
-        final double y1 = yD2S(r.y);
-        final double x2 = xD2S(r.x + r.width);
-        final double y2 = yD2S(r.y + r.height);
-        return new Rectangle(x1, y1, x2 - x1, y2 - y1);
+    Rectangle2f rectD2S(java.awt.Rectangle r) {
+        final float x1 = xD2S(r.x);
+        final float y1 = yD2S(r.y);
+        final float x2 = xD2S(r.x + r.width);
+        final float y2 = yD2S(r.y + r.height);
+        return new Rectangle2f(x1, y1, x2 - x1, y2 - y1);
     }
 
-    java.awt.Rectangle rectS2D(Rectangle r) {
-        final int x1 = xS2D(r.getLeft());
-        final int y1 = yS2D(r.getTop());
-        final int x2 = xS2D(r.getRight());
-        final int y2 = yS2D(r.getBottom());
+    java.awt.Rectangle rectS2D(Rectangle2f r) {
+        final int x1 = xS2D(r.xMin());
+        final int y1 = yS2D(r.yMin());
+        final int x2 = xS2D(r.xMax());
+        final int y2 = yS2D(r.yMax());
         return new java.awt.Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
-    double wD2S(int w) {
+    float wD2S(int w) {
         return w / scale;
     }
 
-    int wS2D(double w) {
+    int wS2D(float w) {
         return (int) Math.round(scale * w);
     }
 
-    double xD2S(int x) {
+    float xD2S(int x) {
         return x / scale;
     }
 
-    int xS2D(double x) {
+    int xS2D(float x) {
         return (int) Math.round(scale * x);
     }
 
-    double yD2S(int y) {
+    float yD2S(int y) {
         return y / scale;
     }
 
-    int yS2D(double y) {
+    int yS2D(float y) {
         return (int) Math.round(scale * y);
     }
 }
