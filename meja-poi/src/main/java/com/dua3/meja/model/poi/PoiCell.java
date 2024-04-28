@@ -187,7 +187,7 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof PoiCell && Objects.equals(poiCell, ((PoiCell) obj).poiCell);
+        return obj instanceof PoiCell other && Objects.equals(poiCell, other.poiCell);
     }
 
     @Override
@@ -446,10 +446,11 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public PoiCell setCellStyle(CellStyle cellStyle) {
-        LangUtil.check((cellStyle instanceof PoiCellStyle), "Incompatible implementation.");
-
+        if (!(cellStyle instanceof PoiCellStyle poiCellStyle)) {
+            throw new IllegalStateException("Incompatible implementation: " + cellStyle.getClass());
+        }
         Object old = getCellStyle();
-        poiCell.setCellStyle(((PoiCellStyle) cellStyle).poiCellStyle);
+        poiCell.setCellStyle(poiCellStyle.poiCellStyle);
         styleChanged(old, cellStyle);
 
         return this;

@@ -16,10 +16,10 @@
  */
 package com.dua3.meja.ui.swing;
 
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.ui.WorkbookView;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -27,12 +27,10 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import com.dua3.cabe.annotations.Nullable;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.ui.WorkbookView;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
@@ -63,18 +61,16 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
     @Override
     public SwingSheetView getCurrentView() {
         Component component = content != null ? content.getSelectedComponent() : null;
-        return component instanceof SwingSheetView ? (SwingSheetView) component : null;
+        return component instanceof SwingSheetView swingSheetView ? swingSheetView : null;
     }
 
     public SwingSheetView getViewForSheet(Sheet sheet) {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
-            if (view != null) {
-                assert view instanceof SwingSheetView;
-                SwingSheetView sheetView = (SwingSheetView) view;
+            if (view instanceof SwingSheetView swingSheetView) {
                 //noinspection ObjectEquality
-                if (sheet == sheetView.getSheet()) {
-                    return sheetView;
+                if (sheet == swingSheetView.getSheet()) {
+                    return swingSheetView;
                 }
             }
         }
@@ -91,11 +87,9 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
     public SwingSheetView getViewForSheet(String sheetName) {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
-            if (view != null) {
-                assert view instanceof SwingSheetView;
-                SwingSheetView sheetView = (SwingSheetView) view;
-                if (sheetView.getSheet().getSheetName().equals(sheetName)) {
-                    return sheetView;
+            if (view instanceof SwingSheetView swingSheetView) {
+                if (swingSheetView.getSheet().getSheetName().equals(sheetName)) {
+                    return swingSheetView;
                 }
             }
         }
@@ -126,9 +120,8 @@ public class SwingWorkbookView extends JComponent implements WorkbookView, Chang
 
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
-            if (view != null) {
-                assert view instanceof SwingSheetView;
-                ((SheetView) view).setEditable(editable);
+            if (view instanceof SwingSheetView swingSheetView) {
+                swingSheetView.setEditable(editable);
             }
         }
     }

@@ -58,8 +58,9 @@ final class SheetTableModel extends AbstractTableModel {
                     }
                 }
                 case Sheet.PROPERTY_CELL_CONTENT -> {
-                    assert evt.getSource() instanceof Cell;
-                    Cell cell = (Cell) evt.getSource();
+                    if (!(evt.getSource() instanceof Cell cell)) {
+                        throw new IllegalStateException("event source is not a Cell: " + evt.getSource().getClass());
+                    }
                     int i = convertRowNumberSheetToJTable(cell.getRowNumber());
                     int j = cell.getColumnNumber();
 

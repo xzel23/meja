@@ -349,18 +349,18 @@ public interface Cell {
         }
 
         arg = getWorkbook().cache(arg);
-        if (arg instanceof Number) {
-            set((Number) arg);
-        } else if (arg instanceof Boolean) {
-            set((Boolean) arg);
-        } else if (arg instanceof LocalDateTime) {
-            set((LocalDateTime) arg);
-        } else if (arg instanceof LocalDate) {
-            set((LocalDate) arg);
-        } else if (arg instanceof RichText) {
-            set((RichText) arg);
-        } else if (arg instanceof Date) {
-            LocalDateTime dt = LocalDateTime.ofInstant(((Date) arg).toInstant(), ZoneId.systemDefault());
+        if (arg instanceof Number n) {
+            set(n);
+        } else if (arg instanceof Boolean b) {
+            set(b);
+        } else if (arg instanceof LocalDateTime ldt) {
+            set(ldt);
+        } else if (arg instanceof LocalDate ld) {
+            set(ld);
+        } else if (arg instanceof RichText rt) {
+            set(rt);
+        } else if (arg instanceof Date date) {
+            LocalDateTime dt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
             LocalTime t = dt.toLocalTime();
             if (t.toNanoOfDay() == 0) {
                 // set to DATE

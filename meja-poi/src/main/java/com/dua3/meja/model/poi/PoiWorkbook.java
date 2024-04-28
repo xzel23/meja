@@ -114,8 +114,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     @Override
     public void close() throws IOException {
         poiWorkbook.close();
-        if (poiWorkbook instanceof SXSSFWorkbook) {
-            ((SXSSFWorkbook) poiWorkbook).dispose();
+        if (poiWorkbook instanceof SXSSFWorkbook sxssfWorkbook) {
+            sxssfWorkbook.dispose();
         }
     }
 
@@ -165,7 +165,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof PoiWorkbook && Objects.equals(poiWorkbook, ((PoiWorkbook) obj).poiWorkbook);
+        return obj instanceof PoiWorkbook other && Objects.equals(poiWorkbook, other.poiWorkbook);
     }
 
     @Override
@@ -410,8 +410,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             updateProgress.accept(WorkbookWriter.PROGRESS_INDETERMINATE);
             poiWorkbook.write(out);
             updateProgress.accept(1.0);
-        } else if (type instanceof FileTypeWorkbook) {
-            WorkbookWriter writer = ((FileTypeWorkbook<?>) type).getWorkbookWriter();
+        } else if (type instanceof FileTypeWorkbook<?> fileTypeWorkbook) {
+            WorkbookWriter writer = fileTypeWorkbook.getWorkbookWriter();
             writer.setOptions(options);
             writer.write(this, out, updateProgress);
         } else {

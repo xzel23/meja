@@ -16,7 +16,6 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.cabe.annotations.Nullable;
-
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
@@ -67,7 +66,7 @@ public class PoiFont {
         } else {
             // it should both either be XSSF _or_ HSSF implementations so this
             // line should never be reached.
-            throw new IllegalStateException("font and color types incompatible");
+            throw new IllegalStateException("font and color types incompatible: " + poiFont.getClass() + " and " + poiTextColor.getClass());
         }
 
         poiFont.setBold(other.isBold());
@@ -106,7 +105,7 @@ public class PoiFont {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof PoiFont && Objects.equals(poiFont, ((PoiFont) obj).poiFont);
+        return obj instanceof PoiFont other && Objects.equals(poiFont, other.poiFont);
     }
 
     /**

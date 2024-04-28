@@ -43,8 +43,8 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     private static final PoiWorkbookFactory INSTANCE = new PoiWorkbookFactory();
 
     private static PoiWorkbook createWorkbook(final org.apache.poi.ss.usermodel.Workbook poiWorkbook, @Nullable URI uri) {
-        if (poiWorkbook instanceof HSSFWorkbook) {
-            return new PoiHssfWorkbook((HSSFWorkbook) poiWorkbook, uri);
+        if (poiWorkbook instanceof HSSFWorkbook hssfWorkbook) {
+            return new PoiHssfWorkbook(hssfWorkbook, uri);
         } else {
             return new PoiXssfWorkbook(poiWorkbook, uri);
         }
