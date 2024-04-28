@@ -34,3 +34,9 @@ val runTableModel = task<JavaExec>("runTableModel") {
     mainClass.set("com.dua3.meja.samples.TableModelDemo")
     enableAssertions = true
 }
+
+val runShowTestXlsx = task<JavaExec>("runShowTestXlsx") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.meja.samples.ShowTestXlsx")
+    enableAssertions = true
+}
