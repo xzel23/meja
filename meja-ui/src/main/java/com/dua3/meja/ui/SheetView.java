@@ -18,7 +18,6 @@ package com.dua3.meja.ui;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
 
-import java.beans.PropertyChangeListener;
 import java.util.function.IntFunction;
 
 /**
@@ -32,21 +31,6 @@ public interface SheetView {
      * property "sheet".
      */
     String PROPERTY_SHEET = "sheet";
-
-    /**
-     * Add a new listener.
-     *
-     * @param listener listener to be added
-     */
-    void addPropertyChangeListener(PropertyChangeListener listener);
-
-    /**
-     * Add a new listener for the given property.
-     *
-     * @param propertyName the property
-     * @param listener     the listener
-     */
-    void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Get the grid color.
@@ -75,21 +59,6 @@ public interface SheetView {
      * @return true, if a cell is being edited.
      */
     boolean isEditing();
-
-    /**
-     * Remove a listener.
-     *
-     * @param listener the listener
-     */
-    void removePropertyChangeListener(PropertyChangeListener listener);
-
-    /**
-     * Remove a listener.
-     *
-     * @param propertyName the property
-     * @param listener     the listener
-     */
-    void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Scroll the currently selected cell into view.

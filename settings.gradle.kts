@@ -6,6 +6,7 @@ val projectVersion = "4.2.0-SNAPSHOT"
 include("meja")
 include("meja-generic")
 include("meja-poi")
+include("meja-ui")
 include("meja-swing")
 include("meja-fx")
 include("meja-db")
