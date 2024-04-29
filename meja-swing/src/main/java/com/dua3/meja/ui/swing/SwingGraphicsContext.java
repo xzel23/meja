@@ -66,7 +66,7 @@ public final class SwingGraphicsContext implements GraphicsContext {
     @Override
     public void setStroke(Color color, float width) {
         g.setColor(SwingUtil.toAwtColor(color));
-        g.setStroke(new BasicStroke((float) width));
+        g.setStroke(new BasicStroke(width));
     }
 
     /*

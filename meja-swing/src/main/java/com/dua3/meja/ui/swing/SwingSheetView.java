@@ -1075,7 +1075,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     }
 
     int hS2D(float h) {
-        return (int) Math.round(scale * h);
+        return Math.round(scale * h);
     }
 
     void onMousePressed(int x, int y) {
@@ -1121,7 +1121,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     }
 
     int wS2D(float w) {
-        return (int) Math.round(scale * w);
+        return Math.round(scale * w);
     }
 
     float xD2S(int x) {
@@ -1129,7 +1129,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     }
 
     int xS2D(float x) {
-        return (int) Math.round(scale * x);
+        return Math.round(scale * x);
     }
 
     float yD2S(int y) {
@@ -1137,6 +1137,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     }
 
     int yS2D(float y) {
-        return (int) Math.round(scale * y);
+        return Math.round(scale * y);
     }
 }

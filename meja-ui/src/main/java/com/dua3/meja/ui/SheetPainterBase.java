@@ -39,8 +39,6 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
     public static final String MEJA_USE_XOR_DRAWING = "MEJA_USE_XOR_DRAWING";
 
-    private final boolean useXorDrawing = System.getProperty(MEJA_USE_XOR_DRAWING, "true").equalsIgnoreCase("true");
-
     enum CellDrawMode {
         /**
          *

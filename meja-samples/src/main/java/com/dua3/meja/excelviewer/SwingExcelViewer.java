@@ -89,7 +89,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
         SwingUtil.setNativeLookAndFeel(APPLICATION_NAME);
 
         SwingUtilities.invokeLater(() -> {
-            ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
+            ExcelViewerModel<SwingWorkbookView, SwingSheetView> model = new ExcelViewerModel<>(APPLICATION_NAME, YEAR, AUTHOR);
             SwingExcelViewer viewer = new SwingExcelViewer(model);
 
             if (args.length > 1) {
@@ -113,7 +113,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
         });
     }
 
-    private final ExcelViewerModel model;
+    private final ExcelViewerModel<SwingWorkbookView, SwingSheetView> model;
 
     private SwingWorkbookView workbookView;
 
@@ -122,7 +122,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
      *
      * @param model the model
      */
-    public SwingExcelViewer(ExcelViewerModel model) {
+    public SwingExcelViewer(ExcelViewerModel<SwingWorkbookView, SwingSheetView> model) {
         super(APPLICATION_NAME);
         this.model = model;
         createMenu();

@@ -31,10 +31,6 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
         void workbookChanged(URI oldUri, URI newUri);
     }
 
-    enum MessageType {
-        ERROR, INFO
-    }
-
     private static final Logger LOGGER = LogManager.getLogger(ExcelViewerModel.class);
 
     private static final String LICENSE = """
