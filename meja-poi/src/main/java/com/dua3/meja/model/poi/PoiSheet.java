@@ -110,17 +110,16 @@ public class PoiSheet extends AbstractSheet {
     }
 
     @Override
-    public PoiCell getCurrentCell() {
+    public Optional<PoiCell> getCurrentCell() {
         final int currentRow, currentColumn;
         CellAddress cellRef = poiSheet.getActiveCell();
         if (cellRef != null) {
             currentRow = Math.max(getFirstRowNum(), Math.min(getLastRowNum(), cellRef.getRow()));
             currentColumn = Math.max(firstColumn, Math.min(lastColumn, cellRef.getColumn()));
         } else {
-            currentRow = poiSheet.getTopRow();
-            currentColumn = poiSheet.getLeftCol();
+            return Optional.empty();
         }
-        return getCell(currentRow, currentColumn);
+        return Optional.of(getCell(currentRow, currentColumn));
     }
 
     @Override
@@ -275,7 +274,7 @@ public class PoiSheet extends AbstractSheet {
         //noinspection ObjectEquality
         LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
-        Cell old = getCurrentCell();
+        Cell old = getCurrentCell().orElse(null);
 
         ((PoiCell) cell).poiCell.setAsActiveCell();
 

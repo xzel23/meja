@@ -152,7 +152,7 @@ public final class MejaHelper {
                 int[] align = new int[sheet.getColumnCount()];
                 for (int j = 0; j < sheet.getColumnCount(); j++) {
                     data[j] = PATTERN_NEWLINE.split(row.getCell(j).toString(locale));
-                    align[j] = row.getCell(j).get() instanceof Number ? 1 : -1;
+                    align[j] = row.getCell(j).getOrDefault(null) instanceof Number ? 1 : -1;
                     lines = Math.max(lines, data[j].length);
                 }
 

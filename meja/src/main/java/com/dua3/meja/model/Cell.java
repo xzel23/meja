@@ -101,7 +101,16 @@ public interface Cell {
      *
      * @return cell value
      */
-    Object get();
+    default Optional<Object> get() {
+        return Optional.ofNullable(getOrDefault(null));
+    }
+
+    /**
+     * Return raw cell value.
+     *
+     * @return cell value if cell is not empty, {@code defaultValue otherwise}
+     */
+    Object getOrDefault(@Nullable Object defaultValue);
 
     /**
      * Return text representation of value.

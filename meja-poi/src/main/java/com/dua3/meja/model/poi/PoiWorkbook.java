@@ -216,8 +216,13 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     public abstract Color getColor(Font poiFont, Color dfltColor);
 
     @Override
-    public Sheet getCurrentSheet() {
-        return getSheet(getCurrentSheetIndex());
+    public Optional<PoiSheet> getCurrentSheet() {
+        int currentSheetIdx = getCurrentSheetIndex();
+        if (currentSheetIdx < sheets.size()) {
+            return Optional.of(getSheet(currentSheetIdx));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override

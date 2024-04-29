@@ -4,6 +4,7 @@
 package com.dua3.meja.ui;
 
 import com.dua3.meja.model.Sheet;
+import com.dua3.utility.ui.GraphicsContext;
 
 import java.util.concurrent.locks.Lock;
 

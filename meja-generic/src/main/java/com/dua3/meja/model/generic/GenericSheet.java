@@ -91,8 +91,8 @@ public class GenericSheet extends AbstractSheet {
     }
 
     @Override
-    public GenericCell getCurrentCell() {
-        return getCell(currentRow, currentColumn);
+    public Optional<GenericCell> getCurrentCell() {
+        return getCellIfExists(currentRow, currentColumn);
     }
 
     @Override
@@ -208,7 +208,7 @@ public class GenericSheet extends AbstractSheet {
         //noinspection ObjectEquality
         LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
-        Cell old = getCurrentCell();
+        Cell old = getCurrentCell().orElse(null);
 
         currentRow = cell.getRowNumber();
         currentColumn = cell.getColumnNumber();

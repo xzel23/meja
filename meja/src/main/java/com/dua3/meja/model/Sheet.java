@@ -143,7 +143,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     int getAutoFilterRow();
 
     /**
-     * Get cell.
+     * Get cell at given position, creating a new one if it does not exist yet.
      *
      * @param i the row number
      * @param j the column number
@@ -180,7 +180,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      *
      * @return the current cell
      */
-    Cell getCurrentCell();
+    Optional<? extends Cell> getCurrentCell();
 
     /**
      * Get number of first used column.
@@ -552,7 +552,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
             Cell end = null;
             Cell cell;
             if (ss.searchFromCurrent()) {
-                cell = nextCell(getCurrentCell());
+                cell = getCurrentCell().map(this::nextCell).orElse(getCell(getFirstRowNum(), getFirstColNum()));
             } else {
                 cell = getCell(getFirstRowNum(), getFirstColNum());
             }

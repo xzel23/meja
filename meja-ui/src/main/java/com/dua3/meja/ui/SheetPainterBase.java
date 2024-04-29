@@ -25,6 +25,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.ui.GraphicsContext;
 
 import java.util.concurrent.locks.Lock;
 
@@ -68,7 +69,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     /**
      * Color used to draw the selection rectangle.
      */
-    protected static final Color SELECTION_COLOR = Color.BLACK;
+    private Color selectionColor = Color.LIGHTBLUE;
 
     /**
      * Width of the selection rectangle borders.
@@ -350,18 +351,18 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             return;
         }
 
-        Color fillFgColor = style.getFillFgColor();
-        if (fillFgColor != null) {
-            g.setColor(fillFgColor);
-            g.fillRect(cr);
-        }
-
         if (pattern != FillPattern.SOLID) {
             Color fillBgColor = style.getFillBgColor();
             if (fillBgColor != null) {
                 g.setColor(fillBgColor);
                 g.fillRect(cr);
             }
+        }
+
+        Color fillFgColor = style.getFillFgColor();
+        if (fillFgColor != null) {
+            g.setColor(fillFgColor);
+            g.fillRect(cr);
         }
     }
 
@@ -460,13 +461,12 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             return;
         }
 
-        Cell logicalCell = sheet.getCurrentCell().getLogicalCell();
-        Rectangle2f rect = getCellRect(logicalCell);
-
-        gc.setXOR(useXorDrawing);
-        gc.setStroke(SELECTION_COLOR, getSelectionStrokeWidth());
-        gc.drawRect(rect);
-        gc.setXOR(false);
+        sheet.getCurrentCell().map(Cell::getLogicalCell)
+                .ifPresent(lc -> {
+                    Rectangle2f rect = getCellRect(lc);
+                    gc.setStroke(getSelectionColor(), getSelectionStrokeWidth());
+                    gc.drawRect(rect);
+                });
     }
 
     private String getColumnName(int j) {
@@ -536,7 +536,12 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     protected abstract float getRowLabelWidth();
 
     protected Color getSelectionColor() {
-        return SELECTION_COLOR;
+        return selectionColor;
+    }
+
+    protected void setSelectionColor(Color selectionColor) {
+        this.selectionColor = selectionColor;
+        update(sheet);
     }
 
     protected float getSelectionStrokeWidth() {

@@ -15,34 +15,46 @@
  */
 package com.dua3.meja.ui;
 
+import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+
+import java.util.Optional;
 
 /**
  * @author axel
  */
-public interface WorkbookView {
+public interface WorkbookView<SV extends SheetView> {
 
     /**
      * Get the {@link SheetView} that is currently visible.
      *
      * @return the {@link SheetView} displayed on the visible tab of this view
      */
-    SheetView getCurrentView();
+    Optional<SV> getCurrentView();
 
     /**
      * Get view for sheet.
      *
      * @param sheetName name of the sheet
-     * @return the view for the requested sheet or {@code null} if not found
+     * @return the view for the requested sheet
      */
-    SheetView getViewForSheet(String sheetName);
+    Optional<SV> getViewForSheet(String sheetName);
+
+    /**
+     * Get view for sheet.
+     *
+     * @param sheet the sheet
+     * @return the view for the requested sheet
+     */
+    Optional<SV> getViewForSheet(Sheet sheet);
 
     /**
      * Get Workbook.
      *
      * @return the workbook displayed
      */
-    Workbook getWorkbook();
+    Optional<Workbook> getWorkbook();
 
     /**
      * Set editable state.
@@ -57,6 +69,6 @@ public interface WorkbookView {
      *
      * @param workbook the workbook to display
      */
-    void setWorkbook(Workbook workbook);
+    void setWorkbook(@Nullable Workbook workbook);
 
 }

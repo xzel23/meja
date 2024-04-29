@@ -1,7 +1,8 @@
 # Meja Changelog
 
-## Version 4.2.0
+## Version 5.0
 
+- Methods that previously might return null have been changed to return Optional instead
 - update utility to next major version
 - use Rectangle2f from utility; changes coordinates to float
 - code cleanup

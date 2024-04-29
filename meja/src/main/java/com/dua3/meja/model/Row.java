@@ -62,11 +62,10 @@ public interface Row extends Iterable<Cell> {
     }
 
     /**
-     * Get cell.
+     * Get cell at given column, creating a new one if it does not exist.
      *
      * @param j the column number
-     * @return this row's cell for the given column, missing cells are created on
-     * the fly
+     * @return this row's cell for the given column
      */
     Cell getCell(int j);
 
@@ -179,7 +178,7 @@ public interface Row extends Iterable<Cell> {
             text = text.toLowerCase(Locale.ROOT);
         }
 
-        int jStart = ss.searchFromCurrent() ? getSheet().getCurrentCell().getColumnNumber() : getLastCellNum();
+        int jStart = ss.searchFromCurrent() ? getSheet().getCurrentCell().map(Cell::getColumnNumber).orElse(getLastCellNum()) : getLastCellNum();
         int j = jStart;
         do {
             // move to next cell

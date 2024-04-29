@@ -138,8 +138,8 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public Object get() {
-        return value;
+    public Object getOrDefault(@Nullable Object defaultValue) {
+        return value != null ? value : defaultValue;
     }
 
     @Override

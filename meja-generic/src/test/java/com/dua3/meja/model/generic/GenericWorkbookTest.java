@@ -17,7 +17,9 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class GenericWorkbookTest {
 
@@ -93,7 +95,7 @@ class GenericWorkbookTest {
 
         Cell cChina = sheet.getCell(1, 0);
         assertNotNull(cChina);
-        assertEquals("China", Objects.toString(cChina.get()));
+        assertEquals("China", Objects.toString(cChina.getOrDefault(null)));
         assertEquals("China", Objects.toString(cChina.getText()));
         assertEquals("China", cChina.toString());
 

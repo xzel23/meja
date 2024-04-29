@@ -1,6 +1,6 @@
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "4.2.0-SNAPSHOT"
+val projectVersion = "5.0-SNAPSHOT"
 
 // define subprojects
 include("meja")
@@ -8,7 +8,7 @@ include("meja-generic")
 include("meja-poi")
 include("meja-ui")
 include("meja-swing")
-include("meja-fx")
+//include("meja-fx")
 include("meja-db")
 include("meja-samples")
 
@@ -44,6 +44,7 @@ dependencyResolutionManagement {
             library("dua3-utility-db", "com.dua3.utility", "utility-db").versionRef("dua3-utility")
             library("dua3-utility-logging", "com.dua3.utility", "utility-logging").versionRef("dua3-utility")
             library("dua3-utility-swing", "com.dua3.utility", "utility-swing").versionRef("dua3-utility")
+            library("dua3-utility-fx", "com.dua3.utility", "utility-fx").versionRef("dua3-utility")
             library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
             library("poi", "org.apache.poi", "poi").versionRef("poi")

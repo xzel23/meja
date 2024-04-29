@@ -159,7 +159,7 @@ public final class PoiCell extends AbstractCell {
     @Override
     public void clear() {
         if (!isEmpty()) {
-            Object old = get();
+            Object old = getOrDefault(null);
             poiCell.setBlank();
             updateRow();
             valueChanged(old, null);
@@ -191,11 +191,7 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public Object get() {
-        if (isEmpty()) {
-            return null;
-        }
-
+    public Object getOrDefault(@Nullable Object defaultValue) {
         return switch (getCellType()) {
             case BLANK -> null;
             case DATE -> poiCell.getLocalDateTimeCellValue().toLocalDate();
@@ -358,7 +354,7 @@ public final class PoiCell extends AbstractCell {
     @Override
     public PoiCell set(@Nullable Boolean arg) {
         arg = getWorkbook().cache(arg);
-        Object old = get();
+        Object old = getOrDefault(null);
         if (arg == null) {
             clear();
         } else {
@@ -372,7 +368,7 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public PoiCell set(@Nullable LocalDate arg) {
-        Object old = get();
+        Object old = getOrDefault(null);
         if (arg == null) {
             clear();
         } else {
@@ -386,7 +382,7 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public PoiCell set(@Nullable LocalDateTime arg) {
-        Object old = get();
+        Object old = getOrDefault(null);
         if (arg == null) {
             clear();
         } else {
@@ -401,7 +397,7 @@ public final class PoiCell extends AbstractCell {
     @Override
     public PoiCell set(@Nullable Number arg) {
         arg = getWorkbook().cache(arg);
-        Object old = get();
+        Object old = getOrDefault(null);
         if (arg == null) {
             clear();
         } else {
@@ -416,7 +412,7 @@ public final class PoiCell extends AbstractCell {
     @Override
     public Cell set(@Nullable RichText s) {
         s = getWorkbook().cache(s);
-        Object old = get();
+        Object old = getOrDefault(null);
 
         RichTextString richText = getWorkbook().createRichTextString(s.toString());
         for (Run run : s) {
@@ -436,7 +432,7 @@ public final class PoiCell extends AbstractCell {
     @Override
     public PoiCell set(@Nullable String arg) {
         arg = getWorkbook().cache(arg);
-        Object old = get();
+        Object old = getOrDefault(null);
         poiCell.setCellValue(arg);
         setCellStylePlain();
         updateRow();
@@ -500,7 +496,7 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public PoiCell setFormula(@Nullable String arg) {
-        Object old = get();
+        Object old = getOrDefault(null);
         if (arg == null) {
             clear();
         } else {

@@ -14,12 +14,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.dua3.meja.ui.swing;
+package com.dua3.meja.ui.fx;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.WorkbookView;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.BorderPane;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -31,53 +34,46 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
  *
  * @author axel
  */
-public class SwingWorkbookView extends JComponent implements WorkbookView<SwingSheetView>, ChangeListener, PropertyChangeListener {
+public class FxWorkbookView extends BorderPane implements WorkbookView {
 
     private Workbook workbook;
-    private final JTabbedPane content;
+    private final TabPane content;
 
     /**
      * Construct a new {@code WorkbookView}.
      */
-    public SwingWorkbookView() {
-        setLayout(new CardLayout());
-
-        content = new JTabbedPane(SwingConstants.BOTTOM);
-        content.addChangeListener(this);
-        add(content);
+    public FxWorkbookView() {
+        content = new TabPane();
+        setCenter(content);
     }
 
     /**
-     * Get the {@link SwingSheetView} that is currently visible.
+     * Get the {@link FxSheetView} that is currently visible.
      *
-     * @return the {@link SwingSheetView} displayed on the visible tab of this view
+     * @return the {@link FxSheetView} displayed on the visible tab of this view
      */
     @Override
-    public Optional<SwingSheetView> getCurrentView() {
-        Component component = content != null ? content.getSelectedComponent() : null;
-        return component instanceof SwingSheetView swingSheetView ? Optional.of(swingSheetView) : Optional.empty();
+    public FxSheetView getCurrentView() {
+        return content.getSelectionModel().getSelectedItem();
     }
 
-    @Override
-    public Optional<SwingSheetView> getViewForSheet(Sheet sheet) {
+    public FxSheetView getViewForSheet(Sheet sheet) {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
-            if (view instanceof SwingSheetView swingSheetView) {
+            if (view instanceof FxSheetView fxSheetView) {
                 //noinspection ObjectEquality
-                if (sheet == swingSheetView.getSheet().orElse(null)) {
-                    return Optional.of(swingSheetView);
+                if (sheet == fxSheetView.getSheet()) {
+                    return fxSheetView;
                 }
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     /**
@@ -87,16 +83,16 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
      * @return the view for the requested sheet or {@code null} if not found
      */
     @Override
-    public Optional<SwingSheetView> getViewForSheet(String sheetName) {
+    public FxSheetView getViewForSheet(String sheetName) {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
-            if (view instanceof SwingSheetView swingSheetView) {
-                if (Objects.equals(swingSheetView.getSheet().map(Sheet::getSheetName).orElse(null), sheetName)) {
-                    return Optional.of(swingSheetView);
+            if (view instanceof FxSheetView fxSheetView) {
+                if (fxSheetView.getSheet().getSheetName().equals(sheetName)) {
+                    return fxSheetView;
                 }
             }
         }
-        return Optional.empty();
+        return null;
     }
 
     /**
@@ -105,8 +101,8 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
      * @return the workbook displayed
      */
     @Override
-    public Optional<Workbook> getWorkbook() {
-        return Optional.ofNullable(workbook);
+    public Workbook getWorkbook() {
+        return workbook;
     }
 
     /**
@@ -123,8 +119,8 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
 
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
-            if (view instanceof SwingSheetView swingSheetView) {
-                swingSheetView.setEditable(editable);
+            if (view instanceof FxSheetView fxSheetView) {
+                fxSheetView.setEditable(editable);
             }
         }
     }
@@ -148,7 +144,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
         if (workbook != null) {
             for (int i = 0; i < workbook.getSheetCount(); i++) {
                 Sheet sheet = workbook.getSheet(i);
-                final SwingSheetView sheetView = new SwingSheetView(sheet);
+                final FxSheetView sheetView = new FxSheetView(sheet);
                 content.addTab(sheet.getSheetName(), sheetView);
             }
             if (workbook.getSheetCount() > 0) {

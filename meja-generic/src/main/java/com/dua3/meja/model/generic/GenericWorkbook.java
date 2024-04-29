@@ -15,6 +15,16 @@
  */
 package com.dua3.meja.model.generic;
 
+import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.io.FileTypeWorkbook;
+import com.dua3.meja.io.WorkbookWriter;
+import com.dua3.meja.model.AbstractWorkbook;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.Workbook;
+import com.dua3.utility.io.FileType;
+import com.dua3.utility.options.Arguments;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -25,18 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.DoubleConsumer;
 import java.util.stream.Stream;
-
-import com.dua3.cabe.annotations.Nullable;
-import com.dua3.meja.io.FileTypeWorkbook;
-import com.dua3.meja.io.WorkbookWriter;
-import com.dua3.meja.model.AbstractWorkbook;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Sheet;
-import com.dua3.meja.model.Workbook;
-import com.dua3.utility.io.FileType;
-import com.dua3.utility.options.Arguments;
 
 /**
  * Generic implementation of {@link Workbook}.
@@ -105,8 +106,12 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public Sheet getCurrentSheet() {
-        return getSheet(currentSheetIdx);
+    public Optional<GenericSheet> getCurrentSheet() {
+        if (currentSheetIdx < sheets.size()) {
+            return Optional.of(getSheet(currentSheetIdx));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override

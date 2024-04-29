@@ -67,7 +67,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         long totalRows = 0;
         out.format("<div class=\"meja-tabbar\">\n");
         for (Sheet sheet : workbook) {
-            boolean isActive = sheet == sheet.getWorkbook().getCurrentSheet();
+            boolean isActive = sheet == sheet.getWorkbook().getCurrentSheet().orElse(null);
 
             String cls = isActive ? "meja-tablink active" : "meja-tablink";
 
@@ -169,7 +169,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     private static long writeSheet(Sheet sheet, Formatter out, Locale locale, long totalRows, long processedRows, DoubleConsumer updateProgress) {
         Optional<URI> baseUri = sheet.getWorkbook().getUri().map(uri -> uri.resolve(""));
 
-        boolean isActive = sheet == sheet.getWorkbook().getCurrentSheet();
+        boolean isActive = sheet == sheet.getWorkbook().getCurrentSheet().orElse(null);
 
         // open DIV for sheet
         String sheetId = id(sheet);

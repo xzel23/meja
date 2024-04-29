@@ -126,8 +126,7 @@ final class SheetTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int i, int j) {
-        // use getXXXIfExists() to avoid side effects
-        return sheet.getCellIfExists(convertRowNumberJTableToSheet(i), j).map(Cell::get).orElse(null);
+        return sheet.getCellIfExists(convertRowNumberJTableToSheet(i), j).flatMap(Cell::get).orElse(null);
     }
 
     @Override

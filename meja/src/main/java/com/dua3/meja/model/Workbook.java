@@ -172,10 +172,8 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * Get the current sheet.
      *
      * @return the current sheet.
-     * @throws IllegalArgumentException if the current sheet does not exist (i.e.
-     *                                  the workbook does not contain any sheets)
      */
-    Sheet getCurrentSheet();
+    Optional<? extends Sheet> getCurrentSheet();
 
     /**
      * Set the current sheet.

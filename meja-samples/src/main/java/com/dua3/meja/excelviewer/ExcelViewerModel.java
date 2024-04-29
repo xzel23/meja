@@ -4,10 +4,10 @@
 package com.dua3.meja.excelviewer;
 
 import com.dua3.cabe.annotations.Nullable;
-import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
+import com.dua3.meja.ui.WorkbookView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,12 +19,12 @@ import java.util.Optional;
 /**
  * @author axel
  */
-public class ExcelViewerModel {
+public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView> {
 
-    interface ExcelViewer {
-        SheetView getCurrentView();
+    interface ExcelViewer<WV extends WorkbookView<SV>, SV extends SheetView> {
+        Optional<SV> getCurrentView();
 
-        SheetView getViewForSheet(Sheet sheet);
+        Optional<SV> getViewForSheet(Sheet sheet);
 
         void setEditable(boolean b);
 
@@ -88,15 +88,15 @@ public class ExcelViewerModel {
      */
     protected void adjustColumns(@Nullable SheetView view) {
         if (view != null) {
-            view.getSheet().autoSizeColumns();
+            view.getSheet().ifPresent(Sheet::autoSizeColumns);
         }
     }
 
     protected void freezeAtCurrentCell(@Nullable SheetView view) {
         if (view != null) {
-            final Sheet sheet = view.getSheet();
-            Cell cell = sheet.getCurrentCell();
-            sheet.splitAt(cell.getRowNumber(), cell.getColumnNumber());
+            view.getSheet()
+                    .flatMap(Sheet::getCurrentCell)
+                    .ifPresent(cell -> cell.getSheet().splitAt(cell.getRowNumber(), cell.getColumnNumber()));
         }
     }
 

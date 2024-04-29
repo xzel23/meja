@@ -1,30 +1,27 @@
 /*
  *
  */
-package com.dua3.meja.ui.swing;
+package com.dua3.meja.ui.fx;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
-import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.ui.GraphicsContext;
+import javafx.scene.paint.Paint;
 
-import java.awt.BasicStroke;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+public final class FxGraphicsContext implements GraphicsContext {
 
-public final class SwingGraphicsContext implements GraphicsContext {
+    private final javafx.scene.canvas.GraphicsContext g;
+    private final FxSheetView view;
 
-    private final Graphics2D g;
-    private final SwingSheetView view;
-
-    SwingGraphicsContext(Graphics g, SwingSheetView view) {
-        this.g = (Graphics2D) g;
+    FxGraphicsContext(javafx.scene.canvas.GraphicsContext g, FxSheetView view) {
+        this.g = g;
         this.view = view;
     }
 
     @Override
     public void drawLine(float x1, float y1, float x2, float y2) {
-        g.drawLine(xS2D(x1), yS2D(y1), wS2D(x2), hS2D(y2));
+        g.strokeLine(xS2D(x1), yS2D(y1), wS2D(x2), hS2D(y2));
     }
 
     @Override
@@ -33,7 +30,7 @@ public final class SwingGraphicsContext implements GraphicsContext {
         final int yd = yS2D(y);
         final int wd = xS2D(x + width) - xd;
         final int hd = yS2D(y + height) - yd;
-        g.drawRect(xd, yd, wd, hd);
+        g.rect(xd, yd, wd, hd);
     }
 
     @Override
@@ -50,7 +47,7 @@ public final class SwingGraphicsContext implements GraphicsContext {
         return view.rectD2S(g.getClipBounds());
     }
 
-    public Graphics2D graphics() {
+    public javafx.scene.canvas.GraphicsContext graphics() {
         return g;
     }
 
@@ -60,25 +57,14 @@ public final class SwingGraphicsContext implements GraphicsContext {
 
     @Override
     public void setColor(Color color) {
-        g.setColor(SwingUtil.toAwtColor(color));
+        g.setFill(FxUtil.getInstance().(color));
     }
 
     @Override
     public void setStroke(Color color, float width) {
-        g.setColor(SwingUtil.toAwtColor(color));
-        g.setStroke(new BasicStroke((float) width));
+        g.setFill(FxUtil.getInstance().(color));
+        g.setLineWidth(width);
     }
-
-    /*
-    @Override
-    public void setXOR(boolean on) {
-        if (on) {
-            g.setXORMode(SwingUtil.toAwtColor(Color.WHITE));
-        } else {
-            g.setPaintMode();
-        }
-    }
-     */
 
     private int wS2D(float f) {
         return view.wS2D(f);

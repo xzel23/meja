@@ -19,8 +19,8 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.excelviewer.ExcelViewerModel.ExcelViewer;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.ui.swing.MejaSwingHelper;
+import com.dua3.meja.ui.swing.SwingSheetView;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.swing.SwingUtil;
@@ -62,7 +62,7 @@ import java.util.Optional;
  * @author axel
  */
 @SuppressWarnings("serial")
-public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetListener {
+public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkbookView, SwingSheetView>, DropTargetListener {
 
     private static final Logger LOG = LogManager.getLogger(SwingExcelViewer.class);
 
@@ -179,7 +179,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
 
         // Edit menu
         JMenu mnEdit = new JMenu("Edit");
-        mnEdit.add(SwingUtil.createAction("Adjust all column widths", e -> model.adjustColumns(getCurrentView())));
+        mnEdit.add(SwingUtil.createAction("Adjust all column widths", e -> getCurrentView().ifPresent(model::adjustColumns)));
         menuBar.add(mnEdit);
 
         // Options menu
@@ -205,7 +205,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
 
         mnOptions.addSeparator();
 
-        mnOptions.add(SwingUtil.createAction("Freeze", e -> model.freezeAtCurrentCell(getCurrentView())));
+        mnOptions.add(SwingUtil.createAction("Freeze", e -> getCurrentView().ifPresent(model::freezeAtCurrentCell)));
 
         menuBar.add(mnOptions);
 
@@ -223,12 +223,12 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer, DropTargetL
     }
 
     @Override
-    public SheetView getCurrentView() {
+    public Optional<SwingSheetView> getCurrentView() {
         return workbookView.getCurrentView();
     }
 
     @Override
-    public SheetView getViewForSheet(Sheet sheet) {
+    public Optional<SwingSheetView> getViewForSheet(Sheet sheet) {
         return workbookView.getViewForSheet(sheet);
     }
 

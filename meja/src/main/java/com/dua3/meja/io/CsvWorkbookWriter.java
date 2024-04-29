@@ -63,7 +63,7 @@ public final class CsvWorkbookWriter implements WorkbookWriter {
 
             for (Row row : sheet) {
                 for (Cell cell : row) {
-                    writer.addField(cell.get());
+                    writer.addField(cell.getOrDefault(null));
                 }
                 updateProgress.accept((double) processedRows / totalRows);
                 writer.nextRow();

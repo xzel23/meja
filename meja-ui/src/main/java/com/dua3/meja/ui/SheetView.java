@@ -18,6 +18,7 @@ package com.dua3.meja.ui;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
 
+import java.util.Optional;
 import java.util.function.IntFunction;
 
 /**
@@ -44,7 +45,7 @@ public interface SheetView {
      *
      * @return the sheet
      */
-    Sheet getSheet();
+    Optional<Sheet> getSheet();
 
     /**
      * Check whether editing is enabled.
