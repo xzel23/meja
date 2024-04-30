@@ -37,8 +37,6 @@ import java.util.concurrent.locks.Lock;
  */
 public abstract class SheetPainterBase<SV extends SheetView, GC extends GraphicsContext> {
 
-    public static final String MEJA_USE_XOR_DRAWING = "MEJA_USE_XOR_DRAWING";
-
     enum CellDrawMode {
         /**
          *
@@ -174,25 +172,29 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      *         </ul>
      */
     public int getColumnNumberFromX(double x) {
-        if (columnPos.length == 0) {
+        return getPositionIndexFromCoordinste(columnPos, x, sheetWidthInPoints);
+    }
+
+    private int getPositionIndexFromCoordinste(float[] positions, double coord, float sizeInPoints) {
+        if (positions.length == 0) {
             return 0;
         }
 
         // guess position
-        int j = (int) (columnPos.length * x / sheetWidthInPoints);
+        int j = (int) (positions.length * coord / sizeInPoints);
         if (j < 0) {
             j = 0;
-        } else if (j >= columnPos.length) {
-            j = columnPos.length - 1;
+        } else if (j >= positions.length) {
+            j = positions.length - 1;
         }
 
         // linear search from here
-        if (getColumnPos(j) > x) {
-            while (j > 0 && getColumnPos(j - 1) > x) {
+        if (positions[Math.min(positions.length - 1, j)] > coord) {
+            while (j > 0 && getColumnPos(j - 1) > coord) {
                 j--;
             }
         } else {
-            while (j < columnPos.length && getColumnPos(j) <= x) {
+            while (j < positions.length && positions[Math.min(positions.length - 1, j)] <= coord) {
                 j++;
             }
         }
@@ -229,30 +231,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
      *         </ul>
      */
     public int getRowNumberFromY(double y) {
-        if (rowPos.length == 0) {
-            return 0;
-        }
-
-        // guess position
-        int i = (int) (rowPos.length * y / sheetHeightInPoints);
-        if (i < 0) {
-            i = 0;
-        } else if (i >= rowPos.length) {
-            i = rowPos.length - 1;
-        }
-
-        // linear search from here
-        if (getRowPos(i) > y) {
-            while (i > 0 && getRowPos(i - 1) > y) {
-                i--;
-            }
-        } else {
-            while (i < rowPos.length && getRowPos(i) <= y) {
-                i++;
-            }
-        }
-
-        return i - 1;
+        return getPositionIndexFromCoordinste(rowPos, y, sheetHeightInPoints);
     }
 
     /**
@@ -483,16 +462,26 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
     protected abstract void drawLabel(GC gc, Rectangle2f rect, String text);
 
+    protected final class VisibleArea {
+        public final int startRow;
+        public final int endRow;
+        public final int startColumn;
+        public final int endColumn;
+
+        public VisibleArea(Rectangle2f clipBounds) {
+            this.startRow = Math.max(0, getRowNumberFromY(clipBounds.yMin()));
+            this.endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.yMax()));
+            this.startColumn = Math.max(0, getColumnNumberFromX(clipBounds.xMin()));
+            this.endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.xMax()));
+        }
+    }
+
     protected void drawLabels(GC gc) {
         // determine visible rows and columns
-        Rectangle2f clipBounds = gc.getClipBounds();
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.yMin()));
-        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.yMax()));
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.xMin()));
-        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.xMax()));
+        VisibleArea va = new VisibleArea(gc.getClipBounds());
 
         // draw row labels
-        for (int i = startRow; i < endRow; i++) {
+        for (int i = va.startRow; i < va.endRow; i++) {
             float x = -getRowLabelWidth();
             float w = getRowLabelWidth();
             float y = getRowPos(i);
@@ -503,7 +492,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         }
 
         // draw column labels
-        for (int j = startColumn; j < endColumn; j++) {
+        for (int j = va.startColumn; j < va.endColumn; j++) {
             float x = getColumnPos(j);
             float y = -getColumnLabelHeight();
             float w = getColumnPos(j + 1) - x;
@@ -571,16 +560,12 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
         double maxWidth = SheetView.MAX_COLUMN_WIDTH;
 
-        Rectangle2f clipBounds = g.getClipBounds();
-
         // determine visible rows and columns
-        int startRow = Math.max(0, getRowNumberFromY(clipBounds.yMin()));
-        int endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.yMax()));
-        int startColumn = Math.max(0, getColumnNumberFromX(clipBounds.xMin()));
-        int endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.xMax()));
+        Rectangle2f clipBounds = g.getClipBounds();
+        VisibleArea va = new VisibleArea(clipBounds);
 
         // Collect cells to be drawn
-        for (int i = startRow; i < endRow; i++) {
+        for (int i = va.startRow; i < va.endRow; i++) {
             Row row = sheet.getRow(i);
 
             if (row == null) {
@@ -590,12 +575,12 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             // if first/last displayed cell of row is empty, start drawing at
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
-            int first = startColumn;
+            int first = va.startColumn;
             while (first > 0 && getColumnPos(first) + maxWidth > clipBounds.xMin() && row.getCell(first).isEmpty()) {
                 first--;
             }
 
-            int end = endColumn;
+            int end = va.endColumn;
             while (end < getColumnCount() && getColumnPos(end) - maxWidth < clipBounds.xMax()
                     && (end <= 0 || row.getCell(end - 1).isEmpty())) {
                 end++;
@@ -612,9 +597,9 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                     // merged region, then it is visible
                     visible = true;
                 } else {
-                    // otherwise calculate row and column numbers of the
+                    // otherwise, calculate row and column numbers of the
                     // first visible cell of the merged region
-                    int iCell = Math.max(startRow, logicalCell.getRowNumber());
+                    int iCell = Math.max(va.startRow, logicalCell.getRowNumber());
                     int jCell = Math.max(first, logicalCell.getColumnNumber());
                     visible = i == iCell && j == jCell;
                     // skip the other cells of this row that belong to the same
@@ -622,7 +607,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
                     j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
                     // filter out cells that cannot overflow into the visible
                     // region
-                    if (j < startColumn && isWrapping(cell.getCellStyle())) {
+                    if (j < va.startColumn && isWrapping(cell.getCellStyle())) {
                         continue;
                     }
                 }

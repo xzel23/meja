@@ -7,7 +7,6 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.ui.GraphicsContext;
-import javafx.scene.paint.Paint;
 
 public final class FxGraphicsContext implements GraphicsContext {
 
@@ -57,12 +56,12 @@ public final class FxGraphicsContext implements GraphicsContext {
 
     @Override
     public void setColor(Color color) {
-        g.setFill(FxUtil.getInstance().(color));
+        g.setFill(FxUtil.convert(color));
     }
 
     @Override
     public void setStroke(Color color, float width) {
-        g.setFill(FxUtil.getInstance().(color));
+        g.setFill(FxUtil.convert(color));
         g.setLineWidth(width);
     }
 

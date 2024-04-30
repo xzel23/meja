@@ -70,11 +70,7 @@ public final class MejaSwingHelper {
      * @throws IOException if a workbook was selected but could not be loaded
      */
     public static Optional<Workbook> showDialogAndOpenWorkbook(Component parent, URI uri) throws IOException {
-        Path path = IoUtil.toPath(uri);
-        boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
-        File file = defaultFS ? path.toFile() : new File(".");
-
-        JFileChooser jfc = new JFileChooser(file.isDirectory() ? file : file.getParentFile());
+        JFileChooser jfc = createJFileChooser(uri);
 
         for (FileFilter filter : SwingFileFilter.getFilters(OpenMode.READ, Workbook.class)) {
             jfc.addChoosableFileFilter(filter);
@@ -87,6 +83,13 @@ public final class MejaSwingHelper {
         }
 
         return openWorkbook(parent, jfc.getSelectedFile().toURI());
+    }
+
+    private static JFileChooser createJFileChooser(URI uri) {
+        Path path = IoUtil.toPath(uri);
+        boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
+        File file = defaultFS ? path.toFile() : new File(".");
+        return new JFileChooser(file.isDirectory() ? file : file.getParentFile());
     }
 
     /**
@@ -134,11 +137,7 @@ public final class MejaSwingHelper {
      */
     public static Optional<URI> showDialogAndSaveWorkbook(Component parent, Workbook workbook, URI uri)
             throws IOException {
-        Path path = IoUtil.toPath(uri);
-        boolean defaultFS = path.getFileSystem().equals(FileSystems.getDefault());
-        File file = defaultFS ? path.toFile() : new File(".");
-
-        JFileChooser jfc = new JFileChooser(file.isDirectory() ? file : file.getParentFile());
+        JFileChooser jfc = createJFileChooser(uri);
 
         int rc = jfc.showSaveDialog(parent);
 
@@ -146,7 +145,7 @@ public final class MejaSwingHelper {
             return Optional.empty();
         }
 
-        file = jfc.getSelectedFile();
+        File file = jfc.getSelectedFile();
 
         if (file.exists()) {
             rc = JOptionPane.showConfirmDialog(parent,
@@ -164,5 +163,6 @@ public final class MejaSwingHelper {
     }
 
     private MejaSwingHelper() {
+        // nop
     }
 }
