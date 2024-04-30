@@ -377,7 +377,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
         }
     }
 
-    final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, SwingGraphicsContext> {
+    final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, Graphics2D> {
         private final IntSupplier startRow;
         private final IntSupplier endRow;
         private final IntSupplier startColumn;
@@ -548,7 +548,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             final int height = getHeight();
 
             // draw sheet
-            sheetPainter.drawSheet(new SwingGraphicsContext(g2d, SwingSheetView.this));
+            sheetPainter.drawSheet(g2d);
 
             // draw split lines
             g2d.setColor(SwingUtil.toAwtColor(Color.BLACK));

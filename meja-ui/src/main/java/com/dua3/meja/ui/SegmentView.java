@@ -4,16 +4,15 @@
 package com.dua3.meja.ui;
 
 import com.dua3.meja.model.Sheet;
-import com.dua3.utility.ui.GraphicsContext;
 
 import java.util.concurrent.locks.Lock;
 
 /**
  * @param <SV> the concrete class implementing SheetView
- * @param <GC> the concrete class implementing GraphicsContext
+ * @param <G> the concrete class implementing GraphicsContext
  * @author Axel Howind
  */
-public interface SegmentView<SV extends SheetView, GC extends GraphicsContext> {
+public interface SegmentView<SV extends SheetView, G> {
 
     int getBeginColumn();
 
@@ -25,7 +24,7 @@ public interface SegmentView<SV extends SheetView, GC extends GraphicsContext> {
 
     Sheet getSheet();
 
-    SheetPainterBase<SV, GC> getSheetPainter();
+    SheetPainterBase<SV, G> getSheetPainter();
 
     default boolean hasColumnHeaders() {
         return getEndRow() <= getSheet().getSplitRow();
@@ -55,7 +54,7 @@ public interface SegmentView<SV extends SheetView, GC extends GraphicsContext> {
         lock.lock();
         try {
 
-            SheetPainterBase<SV, GC> sheetPainter = getSheetPainter();
+            SheetPainterBase<SV, G> sheetPainter = getSheetPainter();
 
             // the width is the width for the labels showing row names ...
             float width = hasRowHeaders() ? sheetPainter.getRowLabelWidth() : 1;

@@ -25,7 +25,6 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
-import com.dua3.utility.ui.GraphicsContext;
 
 import java.util.concurrent.locks.Lock;
 
@@ -35,7 +34,7 @@ import java.util.concurrent.locks.Lock;
  * @param <SV> the concrete class implementing SheetView
  * @param <GC> the concrete class implementing GraphicsContext
  */
-public abstract class SheetPainterBase<SV extends SheetView, GC extends GraphicsContext> {
+public abstract class SheetPainterBase<SV extends SheetView, GC> {
 
     enum CellDrawMode {
         /**
@@ -102,6 +101,27 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     private float sheetHeightInPoints;
 
     private float sheetWidthInPoints;
+
+    protected abstract float getRowLabelWidth();
+    protected abstract float getColumnLabelHeight();
+    protected abstract Rectangle2f getClipBounds(GC g);
+    protected abstract void drawBackground(GC g);
+    protected abstract void drawLabel(GC g, Rectangle2f rect, String text);
+    protected abstract void setColor(GC g, Color color);
+    protected abstract void strokeLine(GC g, float v, float v1, float v2, float v3);
+
+    protected abstract void strokeRect(GC g, float x, float y, float w, float h);
+    protected void strokeRect(GC g, Rectangle2f r) {
+        strokeRect(g, r.x(), r.y(), r.width(), r.height());
+    }
+
+    protected abstract void fillRect(GC g, float x, float y, float w, float h);
+    protected void fillRect(GC g, Rectangle2f r) {
+        fillRect(g, r.x(), r.y(), r.width(), r.height());
+    }
+
+    protected abstract void setStroke(GC g, Color color, float width);
+    protected abstract void render(GC g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect);
 
     protected SheetPainterBase(SV sheetView) {
         this.sheetView = sheetView;
@@ -318,8 +338,8 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         Rectangle2f cr = getCellRect(cell);
 
         // draw grid lines
-        g.setColor(getGridColor());
-        g.drawRect(cr);
+        setColor(g, getGridColor());
+        strokeRect(g, cr);
 
         CellStyle style = cell.getCellStyle();
         FillPattern pattern = style.getFillPattern();
@@ -331,15 +351,15 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         if (pattern != FillPattern.SOLID) {
             Color fillBgColor = style.getFillBgColor();
             if (fillBgColor != null) {
-                g.setColor(fillBgColor);
-                g.fillRect(cr);
+                setColor(g, fillBgColor);
+                fillRect(g, cr);
             }
         }
 
         Color fillFgColor = style.getFillFgColor();
         if (fillFgColor != null) {
-            g.setColor(fillFgColor);
-            g.fillRect(cr);
+            setColor(g, fillFgColor);
+            fillRect(g, cr);
         }
     }
 
@@ -372,13 +392,13 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
             if (color == null) {
                 color = Color.BLACK;
             }
-            g.setStroke(color, b.width());
+            setStroke(g, color, b.width());
 
             switch (d) {
-                case NORTH -> g.drawLine(cr.xMin(), cr.yMin(), cr.xMax(), cr.yMin());
-                case EAST -> g.drawLine(cr.xMax(), cr.yMin(), cr.xMax(), cr.yMax());
-                case SOUTH -> g.drawLine(cr.xMin(), cr.yMax(), cr.xMax(), cr.yMax());
-                case WEST -> g.drawLine(cr.xMin(), cr.yMin(), cr.xMin(), cr.yMax());
+                case NORTH -> strokeLine(g, cr.xMin(), cr.yMin(), cr.xMax(), cr.yMin());
+                case EAST -> strokeLine(g, cr.xMax(), cr.yMin(), cr.xMax(), cr.yMax());
+                case SOUTH -> strokeLine(g, cr.xMin(), cr.yMax(), cr.xMax(), cr.yMax());
+                case WEST -> strokeLine(g, cr.xMin(), cr.yMin(), cr.xMin(), cr.yMax());
             }
         }
     }
@@ -441,8 +461,8 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         sheet.getCurrentCell().map(Cell::getLogicalCell)
                 .ifPresent(lc -> {
                     Rectangle2f rect = getCellRect(lc);
-                    gc.setStroke(getSelectionColor(), getSelectionStrokeWidth());
-                    gc.drawRect(rect);
+                    setStroke(gc, getSelectionColor(), getSelectionStrokeWidth());
+                    strokeRect(gc, rect);
                 });
     }
 
@@ -457,10 +477,6 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     protected void beginDraw(GC gc) {
         // nop
     }
-
-    protected abstract void drawBackground(GC gc);
-
-    protected abstract void drawLabel(GC gc, Rectangle2f rect, String text);
 
     protected final class VisibleArea {
         public final int startRow;
@@ -478,7 +494,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
 
     protected void drawLabels(GC gc) {
         // determine visible rows and columns
-        VisibleArea va = new VisibleArea(gc.getClipBounds());
+        VisibleArea va = new VisibleArea(getClipBounds(gc));
 
         // draw row labels
         for (int i = va.startRow; i < va.endRow; i++) {
@@ -506,8 +522,6 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         // nop
     }
 
-    protected abstract float getColumnLabelHeight();
-
     protected Color getGridColor() {
         return sheetView.getGridColor();
     }
@@ -519,8 +533,6 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     protected float getPaddingY() {
         return PADDING_Y;
     }
-
-    protected abstract float getRowLabelWidth();
 
     protected Color getSelectionColor() {
         return selectionColor;
@@ -534,8 +546,6 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
     protected float getSelectionStrokeWidth() {
         return SELECTION_STROKE_WIDTH;
     }
-
-    protected abstract void render(GC g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect);
 
     /**
      * Draw cells.
@@ -561,7 +571,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC extends Graphics
         double maxWidth = SheetView.MAX_COLUMN_WIDTH;
 
         // determine visible rows and columns
-        Rectangle2f clipBounds = g.getClipBounds();
+        Rectangle2f clipBounds = getClipBounds(g);
         VisibleArea va = new VisibleArea(clipBounds);
 
         // Collect cells to be drawn
