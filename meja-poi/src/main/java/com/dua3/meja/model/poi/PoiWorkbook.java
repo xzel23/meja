@@ -514,7 +514,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             int r = triplet[0];
             int g = triplet[1];
             int b = triplet[2];
-            return Color.rgb(r, g, b, a);
+            return Color.rgba(r, g, b, a);
         }
 
         Color getColor(short idx) {
@@ -623,7 +623,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
                     int r = rgb[1] & 0xFF;
                     int g = rgb[2] & 0xFF;
                     int b = rgb[3] & 0xFF;
-                    return Color.rgb(r, g, b, a);
+                    return Color.rgba(r, g, b, a);
                 } else {
                     int r = rgb[0] & 0xFF;
                     int g = rgb[1] & 0xFF;
