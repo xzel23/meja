@@ -15,6 +15,7 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.options.Arguments;
@@ -45,6 +46,11 @@ import java.util.stream.StreamSupport;
  * @author axel
  */
 public interface Workbook extends AutoCloseable, Iterable<Sheet> {
+
+    interface WorkbookEvent {
+        Workbook workbook();
+        default String eventType() { return getClass().getSimpleName(); }
+    }
 
     /**
      * Subscribes a subscriber to receive events of a specified class.
