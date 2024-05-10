@@ -15,12 +15,11 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.options.Arguments;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.Flow;
 import java.util.function.DoubleConsumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -47,57 +47,51 @@ import java.util.stream.StreamSupport;
  */
 public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
-    /**
-     * Represents the property name for the active sheet.
-     *
-     * <p>
-     * The active sheet is the currently selected sheet in a spreadsheet application.
-     * This property can be used to identify or manipulate the active sheet.
-     * </p>
-     * <p>
-     * This constant is typically used as a key when working with properties or as a notification
-     * to indicate that a sheet has been removed from a collection or container.
-     * </p>
-     */
-    String PROPERTY_ACTIVE_SHEET = "ACTIVE_SHEET";
-    /**
-     * Constant variable representing the property key for indicating that a sheet has been added.
-     * The value of this constant is "SHEET_ADDED".
-     *
-     * <p>
-     * This constant is typically used as a key when working with properties or as a notification
-     * to indicate that a sheet has been removed from a collection or container.
-     * </p>
-     */
-    String PROPERTY_SHEET_ADDED = "SHEET_ADDED";
-    /**
-     * Represents the name of the property for signaling that a sheet has been removed.
-     * The value of this constant is "SHEET_REMOVED".
-     *
-     * <p>
-     * This constant is typically used as a key when working with properties or as a notification
-     * to indicate that a sheet has been removed from a collection or container.
-     * </p>
-     */
-    String PROPERTY_SHEET_REMOVED = "SHEET_REMOVED";
+    interface WorkbookEvent {
+        Workbook workbook();
+        default String eventType() { return getClass().getSimpleName(); }
+    }
 
     /**
-     * Add property change listener.
+     * Event sent when the active sheet changes.
      *
-     * @param listener the listener
-     * @see PropertyChangeSupport#addPropertyChangeListener(PropertyChangeListener)
+     * @param workbook thw workbook
+     * @param idxOld the old active sheet index
+     * @param idxNew the new active sheet index
      */
-    void addPropertyChangeListener(PropertyChangeListener listener);
+    record ActiveSheetChanged(Workbook workbook, int idxOld, int idxNew) implements WorkbookEvent {}
 
     /**
-     * Add property change listener.
+     * Event sent when a sheet is added to the workbook.
      *
-     * @param propertyName the property name
-     * @param listener     the listener
-     * @see PropertyChangeSupport#addPropertyChangeListener(String,
-     * PropertyChangeListener)
+     * @param workbook thw workbook
+     * @param idx the sheet index
      */
-    void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
+    record SheetAdded(Workbook workbook, int idx) implements WorkbookEvent {}
+
+    /**
+     * Event sent when a sheet is removed from the workbook.
+     *
+     * @param workbook thw workbook
+     * @param idx the index of the removed sheet
+     */
+    record SheetRemoved(Workbook workbook, int idx) implements WorkbookEvent {}
+
+    /**
+     * Event sent when the workbook URI changes.
+     *
+     * @param workbook thw workbook
+     * @param oldUri the old URI
+     * @param newUri the new URI
+     */
+    record UriChanged(Workbook workbook, @Nullable URI oldUri, @Nullable URI newUri) implements WorkbookEvent {}
+
+    /**
+     * Subscribes a subscriber to receive events of a specified class.
+     *
+     * @param subscriber   the subscriber to receive the events
+     */
+    void subscribe(Flow.Subscriber<WorkbookEvent> subscriber);
 
     /**
      * Close workbook.
@@ -295,24 +289,6 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @return true, if style is present
      */
     boolean hasCellStyle(String name);
-
-    /**
-     * Remove property change listener.
-     *
-     * @param listener the listener
-     * @see PropertyChangeSupport#removePropertyChangeListener(PropertyChangeListener)
-     */
-    void removePropertyChangeListener(PropertyChangeListener listener);
-
-    /**
-     * Remove property change listener.
-     *
-     * @param propertyName the name of the property
-     * @param listener     the listener
-     * @see PropertyChangeSupport#removePropertyChangeListener(String,
-     * PropertyChangeListener)
-     */
-    void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Remove sheet by number.

@@ -3,17 +3,16 @@ package com.dua3.meja.model;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.ObjectCache;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
+import java.util.concurrent.Flow;
+import java.util.concurrent.SubmissionPublisher;
 
 /**
  * Abstract base class for implementations of the {@link Workbook} interface.
  */
 public abstract class AbstractWorkbook implements Workbook {
-
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     /**
      * The path of this workbook.
@@ -25,18 +24,31 @@ public abstract class AbstractWorkbook implements Workbook {
      */
     private ObjectCache objectCache;
 
+    private final SubmissionPublisher<WorkbookEvent> publisher = new SubmissionPublisher<>();
+
+    protected void activeSheetChanged(int idxOld, int idxNew) {
+        publisher.submit(new ActiveSheetChanged(this, idxOld, idxNew));
+    }
+
+    protected void sheetAdded(int idx) {
+        publisher.submit(new SheetAdded(this, idx));
+    }
+
+    protected void sheetRemoved(int idx) {
+        publisher.submit(new SheetRemoved(this, idx));
+    }
+
+    protected void uriChanged(@Nullable URI oldUri, @Nullable URI newUri) {
+        publisher.submit(new UriChanged(this, oldUri, newUri));
+    }
+
     protected AbstractWorkbook(@Nullable URI uri) {
         this.uri = uri;
     }
 
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
-    }
-
-    @Override
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(propertyName, listener);
+    public void subscribe(Flow.Subscriber<WorkbookEvent> subscriber) {
+        publisher.subscribe(subscriber);
     }
 
     @Override
@@ -59,16 +71,6 @@ public abstract class AbstractWorkbook implements Workbook {
         return objectCache != null;
     }
 
-    @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(propertyName, listener);
-    }
-
     /**
      * Enable or disable object caching.
      *
@@ -84,11 +86,11 @@ public abstract class AbstractWorkbook implements Workbook {
     public void setUri(URI uri) {
         URI oldUri = this.uri;
         this.uri = uri;
-        firePropertyChange(PROPERTY_ACTIVE_SHEET, oldUri, this.uri);
+        uriChanged(oldUri, uri);
     }
 
-    protected void firePropertyChange(String propertyName, @Nullable Object oldValue, @Nullable Object newValue) {
-        pcs.firePropertyChange(propertyName, oldValue, newValue);
+    @Override
+    public void close() throws IOException {
+        publisher.close();
     }
-
 }

@@ -61,11 +61,6 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void close() {
-        // nop
-    }
-
-    @Override
     public GenericCellStyle copyCellStyle(String styleName, CellStyle style) {
         GenericCellStyle cellStyle = getCellStyle(styleName);
         cellStyle.copyStyle(style);
@@ -76,7 +71,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     public GenericSheet createSheet(String sheetName) {
         final GenericSheet sheet = new GenericSheet(this, sheetName);
         sheets.add(sheet);
-        firePropertyChange(PROPERTY_SHEET_ADDED, null, sheets.size() - 1);
+        sheetAdded(sheets.size() - 1);
         return sheet;
     }
 
@@ -164,7 +159,7 @@ public class GenericWorkbook extends AbstractWorkbook {
     @Override
     public void removeSheet(int sheetNr) {
         sheets.remove(sheetNr);
-        firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
+        sheetRemoved(sheetNr);
     }
 
     @Override
@@ -174,7 +169,7 @@ public class GenericWorkbook extends AbstractWorkbook {
         int oldIdx = currentSheetIdx;
         if (idx != oldIdx) {
             currentSheetIdx = idx;
-            firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
+            activeSheetChanged(oldIdx, idx);
         }
     }
 
