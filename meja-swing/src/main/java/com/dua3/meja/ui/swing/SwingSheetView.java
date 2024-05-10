@@ -784,7 +784,7 @@ public class SwingSheetView extends JPanel implements SheetView, Flow.Subscriber
      */
     @Override
     public void scrollToCurrentCell() {
-        getCurrentLogicalCell().ifPresent(sheetPane::ensureCellIsVisible);
+        SwingUtilities.invokeLater(() -> getCurrentLogicalCell().ifPresent(sheetPane::ensureCellIsVisible));
     }
 
     @Override
@@ -1067,10 +1067,11 @@ public class SwingSheetView extends JPanel implements SheetView, Flow.Subscriber
         float scaleDpi = dpi / 72.0f; // 1 point = 1/72 inch
         scale = sheet.getZoom() * scaleDpi;
 
-        sheetPainter.update(sheet);
-
-        revalidate();
-        repaint();
+        SwingUtilities.invokeLater(() -> {
+            sheetPainter.update(sheet);
+            revalidate();
+            repaint();
+        });
     }
 
     float getScale() {
