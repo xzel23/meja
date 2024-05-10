@@ -19,23 +19,28 @@ package com.dua3.meja.ui.fx;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookEvent;
 import com.dua3.meja.ui.WorkbookView;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.concurrent.Flow;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
  *
  * @author axel
  */
-public class FxWorkbookView extends BorderPane implements WorkbookView {
+public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetView>, Flow.Subscriber<WorkbookEvent> {
+    private static final Logger LOG = LogManager.getLogger(FxWorkbookView.class);
 
-    private Workbook workbook;
+    private transient Workbook workbook;
     private final TabPane content;
 
     /**
@@ -44,6 +49,11 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
     public FxWorkbookView() {
         content = new TabPane();
         setCenter(content);
+        content.getSelectionModel().selectedIndexProperty().addListener((v,o,n) -> {
+            if (workbook != null) {
+                workbook.setCurrentSheet(n.intValue());
+            }
+        });
     }
 
     /**
@@ -53,22 +63,20 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
      */
     @Override
     public Optional<FxSheetView> getCurrentView() {
-
-        return Optional.ofNullable(
-                content.getSelectionModel().getSelectedItem())
+        return Optional.ofNullable(content)
+                .map(TabPane::getSelectionModel)
+                .map(SelectionModel::getSelectedItem)
                 .map(Tab::getContent)
-                .map(node -> node instanceof FxSheetView fxsv ? fxsv : null);
+                .map(content -> content instanceof FxSheetView sv ? sv : null);
     }
 
-    /**
-     * Get view for sheet.
-     *
-     * @param sheet the sheet
-     * @return the view for the requested sheet or {@code null} if not found
-     */
+    @Override
     public Optional<FxSheetView> getViewForSheet(Sheet sheet) {
-        return streamSheetViews()
-                .filter(sv -> sv.getSheet().filter(s -> s == sheet).isPresent())
+        return content.getTabs().stream()
+                .map(Tab::getContent)
+                .map(content -> content instanceof FxSheetView sv ? sv : null)
+                .filter(Objects::nonNull)
+                .filter(sv -> sv.getSheet().orElse(null) == sheet)
                 .findFirst();
     }
 
@@ -80,20 +88,12 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
      */
     @Override
     public Optional<FxSheetView> getViewForSheet(String sheetName) {
-        return streamSheetViews()
-                .filter(sv -> sv.getSheet().filter(s -> Objects.equals(s.getSheetName(), sheetName)).isPresent())
+        return content.getTabs().stream()
+                .map(Tab::getContent)
+                .map(content -> content instanceof FxSheetView sv ? sv : null)
+                .filter(Objects::nonNull)
+                .filter(sv -> Objects.equals(sv.getSheet().map(Sheet::getSheetName).orElse(null), sheetName))
                 .findFirst();
-    }
-
-    /**
-     * Stream the {@link FxSheetView} objects from the content tabs.
-     *
-     * @return a stream of {@link FxSheetView} objects from the content tabs
-     */
-    private Stream<FxSheetView> streamSheetViews() {
-        return content.getTabs().stream().map(Tab::getContent)
-                .map(node -> node instanceof FxSheetView fxsv ? fxsv : null)
-                .filter(Objects::nonNull);
     }
 
     /**
@@ -118,11 +118,11 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
             return;
         }
 
-        content.getTabs().stream().map(Tab::getContent).forEach( node -> {
-            if (node instanceof FxSheetView fxsv) {
-                fxsv.setEditable(editable);
-            }
-        });
+        content.getTabs().stream()
+                .map(Tab::getContent)
+                .map(content -> content instanceof FxSheetView sv ? sv : null)
+                .filter(Objects::nonNull)
+                .forEach(sv -> sv.setEditable(editable));
     }
 
     /**
@@ -134,25 +134,57 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
     public void setWorkbook(@Nullable Workbook workbook) {
         content.getTabs().clear();
 
-        if (this.workbook != null) {
-            this.workbook.removePropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
-            this.workbook.removePropertyChangeListener(Workbook.PROPERTY_SHEET_REMOVED, this);
+        if (this.subscription != null) {
+            this.subscription.cancel();
+            this.subscription = null;
         }
 
         this.workbook = workbook;
 
         if (workbook != null) {
-            for (int i = 0; i < workbook.getSheetCount(); i++) {
-                Sheet sheet = workbook.getSheet(i);
-                final FxSheetView sheetView = new FxSheetView(sheet);
-                content.getTabs().add(new Tab(sheet.getSheetName(), sheetView));
-            }
+            content.getTabs().setAll(
+                workbook.sheets()
+                        .map(sheet -> new Tab(sheet.getSheetName(), new FxSheetView(sheet)))
+                        .toList()
+            );
             if (workbook.getSheetCount() > 0) {
                 content.getSelectionModel().select(workbook.getCurrentSheetIndex());
             }
 
-            workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
-            workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_REMOVED, this);
+            workbook.subscribe(this);
         }
+    }
+
+    private transient Flow.Subscription subscription = null;
+
+    @Override
+    public void onSubscribe(Flow.Subscription subscription) {
+        if (this.subscription != null) {
+            this.subscription.cancel();
+        }
+        this.subscription = subscription;
+        this.subscription.request(Long.MAX_VALUE);
+    }
+
+    @Override
+    public void onNext(WorkbookEvent item) {
+        switch (item.type()) {
+            case WorkbookEvent.SHEET_ADDED, WorkbookEvent.SHEET_REMOVED -> {
+                LOG.debug("handling event: {}", item);
+                setWorkbook(item.source());
+            }
+            default -> {}
+        }
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        LOG.error("error with subscription", throwable);
+    }
+
+    @Override
+    public void onComplete() {
+        LOG.debug("subscription completed");
+        this.subscription = null;
     }
 }
