@@ -41,10 +41,10 @@ import java.util.concurrent.Flow;
  *
  * @author axel
  */
-public class SwingWorkbookView extends JComponent implements WorkbookView<SwingSheetView>, ChangeListener, Flow.Subscriber<Workbook.WorkbookEvent> {
+public class SwingWorkbookView extends JComponent implements WorkbookView<SwingSheetView>, ChangeListener, Flow.Subscriber<WorkbookEvent> {
     private static final Logger LOG = LogManager.getLogger(SwingWorkbookView.class);
 
-    private Workbook workbook;
+    private transient Workbook workbook;
     private final JTabbedPane content;
 
     /**
@@ -174,7 +174,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
         }
     }
 
-    private Flow.Subscription subscription = null;
+    private transient Flow.Subscription subscription = null;
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
@@ -192,6 +192,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
                 LOG.debug("handling event: {}", item);
                 SwingUtilities.invokeLater(() -> setWorkbook(item.source()));
             }
+            default -> {}
         }
     }
 

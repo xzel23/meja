@@ -27,19 +27,19 @@ public abstract class AbstractWorkbook implements Workbook {
     private final SubmissionPublisher<WorkbookEvent> publisher = new SubmissionPublisher<>();
 
     protected void activeSheetChanged(int idxOld, int idxNew) {
-        publisher.submit(new ActiveSheetChanged(this, idxOld, idxNew));
+        publisher.submit(new WorkbookEvent.ActiveSheetChanged(this, idxOld, idxNew));
     }
 
     protected void sheetAdded(int idx) {
-        publisher.submit(new SheetAdded(this, idx));
+        publisher.submit(new WorkbookEvent.SheetAdded(this, idx));
     }
 
     protected void sheetRemoved(int idx) {
-        publisher.submit(new SheetRemoved(this, idx));
+        publisher.submit(new WorkbookEvent.SheetRemoved(this, idx));
     }
 
     protected void uriChanged(@Nullable URI oldUri, @Nullable URI newUri) {
-        publisher.submit(new UriChanged(this, oldUri, newUri));
+        publisher.submit(new WorkbookEvent.UriChanged(this, oldUri, newUri));
     }
 
     protected AbstractWorkbook(@Nullable URI uri) {

@@ -78,7 +78,8 @@ import java.util.function.IntSupplier;
 @SuppressWarnings("serial")
 public class SwingSheetView extends JPanel implements SheetView, Flow.Subscriber<SheetEvent> {
 
-    private Flow.Subscription subscription;
+    private transient Flow.Subscription subscription;
+
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
         if (this.subscription != null) {
