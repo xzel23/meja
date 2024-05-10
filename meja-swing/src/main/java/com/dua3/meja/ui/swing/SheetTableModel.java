@@ -2,6 +2,7 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.util.TableOptions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,11 +10,10 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.Serial;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
+import java.util.concurrent.Flow;
 
 final class SheetTableModel extends AbstractTableModel {
     private static final Logger LOG = LogManager.getLogger(SheetTableModel.class);
@@ -36,51 +36,7 @@ final class SheetTableModel extends AbstractTableModel {
         sl = new SheetListener();
     }
 
-    final class SheetListener implements PropertyChangeListener {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            switch (evt.getPropertyName()) {
-                case Sheet.PROPERTY_ROWS_ADDED -> {
-                    Sheet.RowInfo ri = (Sheet.RowInfo) evt.getNewValue();
-                    int firstRow = convertRowNumberSheetToJTable(ri.firstRow());
-                    int lastRow = convertRowNumberSheetToJTable(ri.lastRow());
-
-                    LOG.debug("rows added, firstRow={}, lastRow={}, firstRowIsHeader={}", firstRow, lastRow, firstRowIsHeader);
-
-                    if (firstRowIsHeader && firstRow == -1) {
-                        // header change!
-                        LOG.debug("head row added!");
-                        runOnEDT(SheetTableModel.this::fireTableStructureChanged);
-                    } else {
-                        assert firstRow >= 0 : "invalid state detected, firstRowIsHeader=" + firstRowIsHeader + ", firstRow=" + firstRow;
-                        runOnEDT(() -> fireTableRowsInserted(firstRow, lastRow));
-                    }
-                }
-                case Sheet.PROPERTY_CELL_CONTENT -> {
-                    if (!(evt.getSource() instanceof Cell cell)) {
-                        throw new IllegalStateException("event source is not a Cell: " + evt.getSource().getClass());
-                    }
-                    int i = convertRowNumberSheetToJTable(cell.getRowNumber());
-                    int j = cell.getColumnNumber();
-
-                    LOG.debug("cell changed, table row={}, table column={}, firstRowIsHeader={}", i, j, firstRowIsHeader);
-
-                    if (firstRowIsHeader && i == -1) {
-                        // header change!
-                        LOG.debug("head row data changed!");
-                        runOnEDT(SheetTableModel.this::fireTableStructureChanged);
-                    } else {
-                        runOnEDT(() -> fireTableCellUpdated(i, j));
-                    }
-                }
-                case Sheet.PROPERTY_LAYOUT_CHANGED, Sheet.PROPERTY_COLUMNS_ADDED -> {
-                    LOG.debug("table structure changed, event: {}", evt);
-                    runOnEDT(SheetTableModel.this::fireTableStructureChanged);
-                }
-                default -> LOG.debug("event igored: {}", evt);
-            }
-        }
+    final class SheetListener implements Flow.Subscriber<SheetEvent> {
 
         private static void runOnEDT(Runnable dispatcher) {
             try {
@@ -95,12 +51,76 @@ final class SheetTableModel extends AbstractTableModel {
             }
         }
 
-        public void detach() {
-            sheet.removePropertyChangeListener(this);
+        private Flow.Subscription subscription;
+
+        @Override
+        public void onSubscribe(Flow.Subscription subscription) {
+            if (this.subscription != null) {
+                this.subscription.cancel();
+            }
+
+            this.subscription = subscription;
+            this.subscription.request(Long.MAX_VALUE);
+        }
+
+        @Override
+        public void onNext(SheetEvent item) {
+            switch (item.type()) {
+                case SheetEvent.ROWS_ADDED -> {
+                    SheetEvent.RowsAdded event = (SheetEvent.RowsAdded) item;
+                    int firstRow = convertRowNumberSheetToJTable(event.first());
+                    int lastRow = convertRowNumberSheetToJTable(event.last());
+                    if (firstRowIsHeader && firstRow == -1) {
+                        // header change!
+                        LOG.debug("head row added!");
+                        runOnEDT(SheetTableModel.this::fireTableStructureChanged);
+                    } else {
+                        assert firstRow >= 0 : "invalid state detected, firstRowIsHeader=" + firstRowIsHeader + ", first=" + firstRow;
+                        runOnEDT(() -> fireTableRowsInserted(firstRow, lastRow));
+                    }
+                }
+                case SheetEvent.CELL_VALUE_CHANGED -> {
+                    SheetEvent.CellValueChanged event = (SheetEvent.CellValueChanged) item;
+                    Cell cell = event.cell();
+                    int i = convertRowNumberSheetToJTable(cell.getRowNumber());
+                    int j = cell.getColumnNumber();
+
+                    LOG.debug("cell changed, table row={}, table column={}, firstRowIsHeader={}", i, j, firstRowIsHeader);
+
+                    if (firstRowIsHeader && i == -1) {
+                        // header change!
+                        LOG.debug("head row data changed!");
+                        runOnEDT(SheetTableModel.this::fireTableStructureChanged);
+                    } else {
+                        runOnEDT(() -> fireTableCellUpdated(i, j));
+                    }
+                }
+                case SheetEvent.LAYOUT_CHANGED, SheetEvent.COLUMNS_ADDED -> {
+                    LOG.debug("table structure changed, event: {}", item);
+                    runOnEDT(SheetTableModel.this::fireTableStructureChanged);
+                }
+                default -> LOG.debug("event igored: {}", item);
+            }
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+            LOG.error("error with subscription", throwable);
+        }
+
+        @Override
+        public void onComplete() {
+            LOG.debug("subscription completed");
+            this.subscription = null;
         }
 
         public void attach() {
-            sheet.addPropertyChangeListener(this);
+            sheet.subscribe(this);
+        }
+
+        public void detach() {
+            subscription.cancel();
+            subscription = null;
         }
     }
 
@@ -164,7 +184,8 @@ final class SheetTableModel extends AbstractTableModel {
         super.removeTableModelListener(l);
 
         if (listenerList.getListenerCount() == 0) {
-            sl.detach();
+            sl.subscription.cancel();
+            sl.subscription = null;
             LOG.debug("last TableModelListener was removed, detaching sheet listener from sheet");
         }
     }

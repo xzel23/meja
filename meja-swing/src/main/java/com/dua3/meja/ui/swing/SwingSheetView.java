@@ -21,6 +21,7 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.SearchOptions;
 import com.dua3.meja.model.SearchSettings;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.data.Color;
@@ -64,10 +65,9 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.EnumSet;
 import java.util.Optional;
+import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
@@ -76,7 +76,50 @@ import java.util.function.IntSupplier;
  * Swing component for displaying instances of {@link Sheet}.
  */
 @SuppressWarnings("serial")
-public class SwingSheetView extends JPanel implements SheetView, PropertyChangeListener {
+public class SwingSheetView extends JPanel implements SheetView, Flow.Subscriber<SheetEvent> {
+
+    private Flow.Subscription subscription;
+    @Override
+    public void onSubscribe(Flow.Subscription subscription) {
+        if (this.subscription != null) {
+            this.subscription.cancel();
+        }
+        this.subscription = subscription;
+        this.subscription.request(Long.MAX_VALUE);
+    }
+
+    @Override
+    public void onNext(SheetEvent item) {
+        switch (item.type()) {
+            case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED -> updateContent();
+            case SheetEvent.SPLIT_CHANGED -> {
+                updateContent();
+                scrollToCurrentCell();
+            }
+            case SheetEvent.ACTIVE_CELL_CHANGED -> {
+                SheetEvent.ActiveCellChanged evt = (SheetEvent.ActiveCellChanged) item;
+                scrollToCurrentCell();
+                repaintCell(evt.valueOld());
+                repaintCell(evt.valueNew());
+            }
+            case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED -> {
+                repaintCell(((SheetEvent.CellChanged<?>) item).cell());
+            }
+            default -> {
+            }
+        }
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        LOG.error("error with subscription", throwable);
+    }
+
+    @Override
+    public void onComplete() {
+        LOG.debug("subscription completed");
+        this.subscription = null;
+    }
 
     private final class SearchDialog extends JDialog {
 
@@ -724,26 +767,6 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        String property = evt.getPropertyName();
-        switch (property) {
-            case Sheet.PROPERTY_ZOOM, Sheet.PROPERTY_LAYOUT_CHANGED, Sheet.PROPERTY_ROWS_ADDED -> updateContent();
-            case Sheet.PROPERTY_SPLIT -> {
-                updateContent();
-                scrollToCurrentCell();
-            }
-            case Sheet.PROPERTY_ACTIVE_CELL -> {
-                scrollToCurrentCell();
-                repaintCell((Cell) evt.getOldValue());
-                repaintCell((Cell) evt.getNewValue());
-            }
-            case Sheet.PROPERTY_CELL_CONTENT, Sheet.PROPERTY_CELL_STYLE -> repaintCell((Cell) evt.getSource());
-            default -> {
-            }
-        }
-    }
-
-    @Override
     public void removeNotify() {
         searchDialog.dispose();
         super.removeNotify();
@@ -834,8 +857,9 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
      */
     @Override
     public final void setSheet(@Nullable Sheet sheet) {
-        if (this.sheet != null) {
-            this.sheet.removePropertyChangeListener(this);
+        if (this.subscription != null) {
+            this.subscription.cancel();
+            this.subscription = null;
         }
 
         //noinspection ObjectEquality
@@ -846,7 +870,7 @@ public class SwingSheetView extends JPanel implements SheetView, PropertyChangeL
             LOG.debug("sheet changed");
 
             if (this.sheet != null) {
-                this.sheet.addPropertyChangeListener(this);
+                this.sheet.subscribe(this);
             }
 
             updateContent();

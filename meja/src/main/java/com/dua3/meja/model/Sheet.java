@@ -18,7 +18,6 @@ package com.dua3.meja.model;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
 
-import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.Flow;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Stream;
@@ -40,53 +40,11 @@ import java.util.stream.StreamSupport;
 public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
     /**
-     * Property: zoom factor.
+     * Subscribes a subscriber to receive events of a specified class.
+     *
+     * @param subscriber   the subscriber to receive the events
      */
-    String PROPERTY_ZOOM = "ZOOM";
-    /**
-     * Property: layout change.
-     */
-    String PROPERTY_LAYOUT_CHANGED = "LAYOUT_CHANGED";
-    /**
-     * Property: split row in sheet.
-     */
-    String PROPERTY_SPLIT = "SPLIT";
-    /**
-     * Property: active cell in sheet.
-     */
-    String PROPERTY_ACTIVE_CELL = "ACTIVE_CELL";
-    /**
-     * Property: cell content.
-     */
-    String PROPERTY_CELL_CONTENT = "CELL_CONTENT";
-    /**
-     * Property: cell style.
-     */
-    String PROPERTY_CELL_STYLE = "CELL_STYLE";
-    /**
-     * Property: rows added.
-     */
-    String PROPERTY_ROWS_ADDED = "ROWS_ADDED";
-    /**
-     * Property: columns added.
-     */
-    String PROPERTY_COLUMNS_ADDED = "COLUMNS_ADDED";
-
-    /**
-     * The RowInfo class represents information about a row range.
-     */
-    record RowInfo(int firstRow, int lastRow) {
-        private static final RowInfo NONE = new RowInfo(0, -1);
-
-        /**
-         * Returns a RowInfo object representing an empty range.
-         *
-         * @return a RowInfo object representing no information
-         */
-        public static RowInfo none() {
-            return NONE;
-        }
-    }
+    void subscribe(Flow.Subscriber<SheetEvent> subscriber);
 
     /**
      * Add new merged region.
@@ -95,21 +53,6 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @throws IllegalStateException if the region already contains merged cells
      */
     void addMergedRegion(RectangularRegion cells);
-
-    /**
-     * Add property change listener to sheet.
-     *
-     * @param listener the listener
-     */
-    void addPropertyChangeListener(PropertyChangeListener listener);
-
-    /**
-     * Add property change listener to sheet.
-     *
-     * @param propertyName the property whose changes are to be tracked
-     * @param listener     the listener
-     */
-    void addPropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Adjusts the size of the column to its contents.
@@ -318,21 +261,6 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
         values.forEach(row::createCell);
         return row;
     }
-
-    /**
-     * Removes the specified listener from the list of property change listeners.
-     *
-     * @param listener the property change listener to be removed
-     */
-    void removePropertyChangeListener(PropertyChangeListener listener);
-
-    /**
-     * Removes the specified listener from the list of property change listeners for the given property.
-     *
-     * @param propertyName the name of the property
-     * @param listener     the property change listener to be removed
-     */
-    void removePropertyChangeListener(String propertyName, PropertyChangeListener listener);
 
     /**
      * Sets an automatic filter on the given row (optional operation).

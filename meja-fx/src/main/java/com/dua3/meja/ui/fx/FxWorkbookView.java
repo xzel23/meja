@@ -24,16 +24,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 
-import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
@@ -59,21 +52,24 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
      * @return the {@link FxSheetView} displayed on the visible tab of this view
      */
     @Override
-    public FxSheetView getCurrentView() {
-        return content.getSelectionModel().getSelectedItem();
+    public Optional<FxSheetView> getCurrentView() {
+
+        return Optional.ofNullable(
+                content.getSelectionModel().getSelectedItem())
+                .map(Tab::getContent)
+                .map(node -> node instanceof FxSheetView fxsv ? fxsv : null);
     }
 
-    public FxSheetView getViewForSheet(Sheet sheet) {
-        for (int i = 0; i < content.getTabCount(); i++) {
-            Component view = content.getComponentAt(i);
-            if (view instanceof FxSheetView fxSheetView) {
-                //noinspection ObjectEquality
-                if (sheet == fxSheetView.getSheet()) {
-                    return fxSheetView;
-                }
-            }
-        }
-        return null;
+    /**
+     * Get view for sheet.
+     *
+     * @param sheet the sheet
+     * @return the view for the requested sheet or {@code null} if not found
+     */
+    public Optional<FxSheetView> getViewForSheet(Sheet sheet) {
+        return streamSheetViews()
+                .filter(sv -> sv.getSheet().filter(s -> s == sheet).isPresent())
+                .findFirst();
     }
 
     /**
@@ -83,16 +79,21 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
      * @return the view for the requested sheet or {@code null} if not found
      */
     @Override
-    public FxSheetView getViewForSheet(String sheetName) {
-        for (int i = 0; i < content.getTabCount(); i++) {
-            Component view = content.getComponentAt(i);
-            if (view instanceof FxSheetView fxSheetView) {
-                if (fxSheetView.getSheet().getSheetName().equals(sheetName)) {
-                    return fxSheetView;
-                }
-            }
-        }
-        return null;
+    public Optional<FxSheetView> getViewForSheet(String sheetName) {
+        return streamSheetViews()
+                .filter(sv -> sv.getSheet().filter(s -> Objects.equals(s.getSheetName(), sheetName)).isPresent())
+                .findFirst();
+    }
+
+    /**
+     * Stream the {@link FxSheetView} objects from the content tabs.
+     *
+     * @return a stream of {@link FxSheetView} objects from the content tabs
+     */
+    private Stream<FxSheetView> streamSheetViews() {
+        return content.getTabs().stream().map(Tab::getContent)
+                .map(node -> node instanceof FxSheetView fxsv ? fxsv : null)
+                .filter(Objects::nonNull);
     }
 
     /**
@@ -101,8 +102,8 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
      * @return the workbook displayed
      */
     @Override
-    public Workbook getWorkbook() {
-        return workbook;
+    public Optional<Workbook> getWorkbook() {
+        return Optional.ofNullable(workbook);
     }
 
     /**
@@ -117,12 +118,11 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
             return;
         }
 
-        for (int i = 0; i < content.getTabCount(); i++) {
-            Component view = content.getComponentAt(i);
-            if (view instanceof FxSheetView fxSheetView) {
-                fxSheetView.setEditable(editable);
+        content.getTabs().stream().map(Tab::getContent).forEach( node -> {
+            if (node instanceof FxSheetView fxsv) {
+                fxsv.setEditable(editable);
             }
-        }
+        });
     }
 
     /**
@@ -132,7 +132,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
      */
     @Override
     public void setWorkbook(@Nullable Workbook workbook) {
-        content.removeAll();
+        content.getTabs().clear();
 
         if (this.workbook != null) {
             this.workbook.removePropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
@@ -145,37 +145,14 @@ public class FxWorkbookView extends BorderPane implements WorkbookView {
             for (int i = 0; i < workbook.getSheetCount(); i++) {
                 Sheet sheet = workbook.getSheet(i);
                 final FxSheetView sheetView = new FxSheetView(sheet);
-                content.addTab(sheet.getSheetName(), sheetView);
+                content.getTabs().add(new Tab(sheet.getSheetName(), sheetView));
             }
             if (workbook.getSheetCount() > 0) {
-                content.setSelectedIndex(workbook.getCurrentSheetIndex());
+                content.getSelectionModel().select(workbook.getCurrentSheetIndex());
             }
-            revalidate();
 
             workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
             workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_REMOVED, this);
-        }
-    }
-
-    @Override
-    public void stateChanged(ChangeEvent evt) {
-        //noinspection ObjectEquality
-        if (evt.getSource() == content) {
-            int idx = content.getSelectedIndex();
-            if (workbook != null && idx >= 0) {
-                workbook.setCurrentSheet(idx);
-            }
-        }
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        String property = evt.getPropertyName();
-        switch (property) {
-            case Workbook.PROPERTY_SHEET_ADDED, Workbook.PROPERTY_SHEET_REMOVED ->
-                    SwingUtilities.invokeLater(() -> setWorkbook(workbook));
-            default -> {
-            }
         }
     }
 }

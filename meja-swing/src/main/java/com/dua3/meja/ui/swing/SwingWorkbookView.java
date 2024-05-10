@@ -19,7 +19,10 @@ package com.dua3.meja.ui.swing;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookEvent;
 import com.dua3.meja.ui.WorkbookView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
@@ -29,17 +32,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Flow;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
  *
  * @author axel
  */
-public class SwingWorkbookView extends JComponent implements WorkbookView<SwingSheetView>, ChangeListener, PropertyChangeListener {
+public class SwingWorkbookView extends JComponent implements WorkbookView<SwingSheetView>, ChangeListener, Flow.Subscriber<WorkbookEvent> {
+    private static final Logger LOG = LogManager.getLogger(SwingWorkbookView.class);
 
     private Workbook workbook;
     private final JTabbedPane content;
@@ -138,9 +141,9 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
     public void setWorkbook(@Nullable Workbook workbook) {
         content.removeAll();
 
-        if (this.workbook != null) {
-            this.workbook.removePropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
-            this.workbook.removePropertyChangeListener(Workbook.PROPERTY_SHEET_REMOVED, this);
+        if (this.subscription != null) {
+            this.subscription.cancel();
+            this.subscription = null;
         }
 
         this.workbook = workbook;
@@ -156,8 +159,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
             }
             revalidate();
 
-            workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_ADDED, this);
-            workbook.addPropertyChangeListener(Workbook.PROPERTY_SHEET_REMOVED, this);
+            workbook.subscribe(this);
         }
     }
 
@@ -172,14 +174,35 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
         }
     }
 
+    private Flow.Subscription subscription = null;
+
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        String property = evt.getPropertyName();
-        switch (property) {
-            case Workbook.PROPERTY_SHEET_ADDED, Workbook.PROPERTY_SHEET_REMOVED ->
-                    SwingUtilities.invokeLater(() -> setWorkbook(workbook));
-            default -> {
+    public void onSubscribe(Flow.Subscription subscription) {
+        if (this.subscription != null) {
+            this.subscription.cancel();
+        }
+        this.subscription = subscription;
+        this.subscription.request(Long.MAX_VALUE);
+    }
+
+    @Override
+    public void onNext(WorkbookEvent item) {
+        switch (item.type()) {
+            case WorkbookEvent.SHEET_ADDED, WorkbookEvent.SHEET_REMOVED -> {
+                LOG.debug("handling event: {}", item);
+                SwingUtilities.invokeLater(() -> setWorkbook(item.source()));
             }
         }
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        LOG.error("error with subscription", throwable);
+    }
+
+    @Override
+    public void onComplete() {
+        LOG.debug("subscription completed");
+        this.subscription = null;
     }
 }

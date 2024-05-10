@@ -2,19 +2,19 @@ package com.dua3.meja.model;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Flow;
+import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -26,31 +26,49 @@ public abstract class AbstractSheet implements Sheet {
 
     private static final Logger LOG = LogManager.getLogger(AbstractSheet.class);
 
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final List<RectangularRegion> mergedRegions = new ArrayList<>();
+
+    private final SubmissionPublisher<SheetEvent> publisher = new SubmissionPublisher<>();
 
     protected AbstractSheet() {
     }
 
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(listener);
+    public void subscribe(Flow.Subscriber<SheetEvent> subscriber) {
+        publisher.subscribe(subscriber);
     }
 
-    @Override
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.addPropertyChangeListener(propertyName, listener);
+    protected void activeCellChanged(Cell old, Cell arg) {
+        publisher.submit(new SheetEvent.ActiveCellChanged(this, old, arg));
     }
 
-    protected void cellStyleChanged(AbstractCell cell, Object old, Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_STYLE, old, arg);
-        pcs.firePropertyChange(evt);
+    protected void cellStyleChanged(Cell cell, Object old, Object arg) {
+        publisher.submit(new SheetEvent.CellStyleChanged(this, cell, old, arg));
     }
 
-    void cellValueChanged(AbstractCell cell, @Nullable Object old, @Nullable Object arg) {
-        PropertyChangeEvent evt = new PropertyChangeEvent(cell, PROPERTY_CELL_CONTENT, old, arg);
-        pcs.firePropertyChange(evt);
+    protected void cellValueChanged(Cell cell, @Nullable Object old, @Nullable Object arg) {
+        publisher.submit(new SheetEvent.CellValueChanged(this, cell, old, arg));
+    }
+
+    protected void layoutChanged() {
+        publisher.submit(new SheetEvent.LayoutChanged(this));
+    }
+
+    protected void rowsAdded(int firstAddedRow, int lastAddedRow) {
+        publisher.submit(new SheetEvent.RowsAdded(this, firstAddedRow, lastAddedRow));
+    }
+
+    protected void columnsAdded(int first, int last) {
+        publisher.submit(new SheetEvent.ColumnsAdded(this, first, last));
+    }
+
+    protected void zoomChanged(double valueOld, double valueNew) {
+        publisher.submit(new SheetEvent.ZoomChanged(this, valueOld, valueNew));
+    }
+
+    protected void splitChanged(Pair<Integer, Integer> oldSplit, Pair<Integer, Integer> newSplit) {
+        publisher.submit(new SheetEvent.SplitSet(this, oldSplit, newSplit));
     }
 
     @Override
@@ -59,22 +77,8 @@ public abstract class AbstractSheet implements Sheet {
     }
 
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(listener);
-    }
-
-    @Override
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        pcs.removePropertyChangeListener(propertyName, listener);
-    }
-
-    @Override
     public Lock writeLock() {
         return lock.writeLock();
-    }
-
-    protected <T> void firePropertyChange(String property, @Nullable T oldValue, @Nullable T newValue) {
-        pcs.firePropertyChange(property, oldValue, newValue);
     }
 
     @Override
@@ -168,13 +172,10 @@ public abstract class AbstractSheet implements Sheet {
             }
         });
 
-        List<PropertyChangeListener> listeners = List.of(pcs.getPropertyChangeListeners(PROPERTY_LAYOUT_CHANGED));
-        listeners.forEach(pcs::removePropertyChangeListener);
         for (int j = 0; j < n; j++) {
             setColumnWidth(j, colWidth[j]);
         }
-        listeners.forEach(pcs::addPropertyChangeListener);
-        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
+        layoutChanged();
     }
 
     @Override

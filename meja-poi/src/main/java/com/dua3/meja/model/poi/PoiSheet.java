@@ -19,6 +19,7 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.AbstractSheet;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -76,7 +77,7 @@ public class PoiSheet extends AbstractSheet {
 
         init();
 
-        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
+        layoutChanged();
     }
 
     @Override
@@ -155,7 +156,7 @@ public class PoiSheet extends AbstractSheet {
         Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
             poiRow = poiSheet.createRow(i);
-            firePropertyChange(PROPERTY_ROWS_ADDED, RowInfo.none(), new RowInfo(i, i));
+            rowsAdded(i, i);
         }
         return new PoiRow(this, poiRow);
     }
@@ -259,14 +260,14 @@ public class PoiSheet extends AbstractSheet {
         lastColumn = Math.max(lastColumn, columnNumber);
 
         if (lastColumn != oldValue) {
-            firePropertyChange(PROPERTY_COLUMNS_ADDED, oldValue, lastColumn);
+            columnsAdded(oldValue, lastColumn);
         }
     }
 
     @Override
     public void setColumnWidth(int j, float width) {
         poiSheet.setColumnWidth(j, pointsToPoiColumnWidth(width));
-        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
+        layoutChanged();
     }
 
     @Override
@@ -278,7 +279,7 @@ public class PoiSheet extends AbstractSheet {
 
         ((PoiCell) cell).poiCell.setAsActiveCell();
 
-        firePropertyChange(PROPERTY_ACTIVE_CELL, old, cell);
+        activeCellChanged(old, cell);
     }
 
     @Override
@@ -288,7 +289,7 @@ public class PoiSheet extends AbstractSheet {
             poiRow = poiSheet.createRow(i);
         }
         poiRow.setHeightInPoints(height);
-        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
+        layoutChanged();
     }
 
     @Override
@@ -301,14 +302,16 @@ public class PoiSheet extends AbstractSheet {
             // translate zoom factor into percent
             int pmZoom = Math.max(1, Math.round(zoom * 100));
             poiSheet.setZoom(pmZoom);
-            firePropertyChange(PROPERTY_ZOOM, oldZoom, zoom);
+            zoomChanged(oldZoom, zoom);
         }
     }
 
     @Override
     public void splitAt(int i, int j) {
+        Pair<Integer, Integer> old = Pair.of(getSplitRow(), getSplitColumn());
+        Pair<Integer, Integer> newSplit = Pair.of(i,j);
         poiSheet.createFreezePane(j, i);
-        firePropertyChange(PROPERTY_SPLIT, null, null);
+        splitChanged(old, newSplit);
     }
 
     private void init() {

@@ -18,6 +18,7 @@ package com.dua3.meja.model.generic;
 import com.dua3.meja.model.AbstractSheet;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
+import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 
 import java.util.ArrayList;
@@ -170,7 +171,7 @@ public class GenericSheet extends AbstractSheet {
         }
 
         if (lastAddedRow >= firstAddedRow) {
-            firePropertyChange(PROPERTY_ROWS_ADDED, RowInfo.none(), new RowInfo(firstAddedRow, lastAddedRow));
+            rowsAdded(firstAddedRow, lastAddedRow);
         }
     }
 
@@ -178,7 +179,7 @@ public class GenericSheet extends AbstractSheet {
         int oldValue = numberOfColumns;
         numberOfColumns = Math.max(col + 1, numberOfColumns);
         if (numberOfColumns != oldValue) {
-            firePropertyChange(PROPERTY_COLUMNS_ADDED, oldValue, numberOfColumns);
+            columnsAdded(oldValue, numberOfColumns);
         }
     }
 
@@ -191,7 +192,7 @@ public class GenericSheet extends AbstractSheet {
     public void setColumnWidth(int j, float width) {
         if (j < columnWidth.size()) {
             if (!Objects.equals(columnWidth.set(j, width), width)) { // use Objects.equals to avoid NPE!
-                firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
+                layoutChanged();
             }
         } else {
             columnWidth.ensureCapacity(j + 1);
@@ -199,7 +200,7 @@ public class GenericSheet extends AbstractSheet {
                 columnWidth.add(null); // use default width
             }
             columnWidth.add(width);
-            firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
+            layoutChanged();
         }
     }
 
@@ -213,7 +214,7 @@ public class GenericSheet extends AbstractSheet {
         currentRow = cell.getRowNumber();
         currentColumn = cell.getColumnNumber();
 
-        firePropertyChange(PROPERTY_ACTIVE_CELL, old, cell);
+        activeCellChanged(old, cell);
     }
 
     @Override
@@ -227,7 +228,7 @@ public class GenericSheet extends AbstractSheet {
             }
             rowHeight.add(height);
         }
-        firePropertyChange(PROPERTY_LAYOUT_CHANGED, null, null);
+        layoutChanged();
     }
 
     @Override
@@ -237,15 +238,16 @@ public class GenericSheet extends AbstractSheet {
         if (zoom != this.zoom) {
             float oldZoom = this.zoom;
             this.zoom = zoom;
-            firePropertyChange(PROPERTY_ZOOM, oldZoom, zoom);
+            zoomChanged(oldZoom, zoom);
         }
     }
 
     @Override
     public void splitAt(int i, int j) {
+        Pair<Integer, Integer> oldSplit = Pair.of(getSplitRow(),  getSplitColumn());
         freezeRow = i;
         freezeColumn = j;
-        firePropertyChange(PROPERTY_SPLIT, null, null);
+        splitChanged(oldSplit, Pair.of(i, j));
     }
 
 }

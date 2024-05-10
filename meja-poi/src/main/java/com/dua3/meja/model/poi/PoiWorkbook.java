@@ -159,7 +159,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         org.apache.poi.ss.usermodel.Sheet poiSheet = poiWorkbook.createSheet(sheetName);
         PoiSheet sheet = new PoiSheet(this, poiSheet);
         sheets.add(sheet);
-        firePropertyChange(PROPERTY_SHEET_ADDED, null, sheets.size() - 1);
+        sheetAdded(sheets.size() - 1);
         return sheet;
     }
 
@@ -232,7 +232,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         int oldIdx = getCurrentSheetIndex();
         if (idx != oldIdx) {
             poiWorkbook.setActiveSheet(idx);
-            firePropertyChange(PROPERTY_ACTIVE_SHEET, oldIdx, idx);
+            activeSheetChanged(oldIdx, idx);
         }
     }
 
@@ -402,7 +402,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     public void removeSheet(int sheetNr) {
         sheets.remove(sheetNr);
         poiWorkbook.removeSheetAt(sheetNr);
-        firePropertyChange(PROPERTY_SHEET_REMOVED, sheetNr, null);
+        sheetRemoved(sheetNr);
     }
 
     @Override
