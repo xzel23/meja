@@ -19,7 +19,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, Graphics2D> {
+public class SwingSheetPainter extends SheetPainterBase<Graphics2D> {
 
     private final CellRenderer cellRenderer;
     private final JLabel labelPainter = new JLabel();
@@ -28,7 +28,7 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, Graphics
     private float labelWidth;
 
     SwingSheetPainter(SwingSheetView sheetView, CellRenderer cellRenderer) {
-        super(sheetView);
+        super(sheetView.getDelegate());
 
         this.cellRenderer = cellRenderer;
 
@@ -39,36 +39,16 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, Graphics
         labelPainter.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, SwingUtil.toAwtColor(getGridColor())));
     }
 
-    private int xS2D(float x) {
-        return sheetView.xS2D(x);
-    }
-
-    private int yS2D(float y) {
-        return sheetView.yS2D(y);
-    }
-
-    private int wS2D(float w) {
-        return sheetView.wS2D(w);
-    }
-
-    private int hS2D(float h) {
-        return sheetView.hS2D(h);
-    }
-
-    private Rectangle2f rectD2S(Rectangle r) {
-        return sheetView.rectD2S(r);
-    }
-
     @Override
     protected void drawBackground(Graphics2D g) {
         Rectangle r = g.getClipBounds();
-        g.setColor(sheetView.getBackground().brighter());
+        g.setColor(SwingUtil.toAwtColor(delegate.getBackground().brighter()));
         g.fillRect(r.x, r.y, r.width, r.height);
     }
 
     @Override
     protected void drawLabel(Graphics2D g, Rectangle2f r, String text) {
-        final java.awt.Rectangle rd = sheetView.rectS2D(r);
+        final java.awt.Rectangle rd = rectS2D(r);
         labelPainter.setBounds(0, 0, rd.width, rd.height);
         labelPainter.setText(text);
         labelPainter.paint(g.create(rd.x, rd.y, rd.width, rd.height));
@@ -81,24 +61,24 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, Graphics
 
     @Override
     protected void strokeLine(Graphics2D g, float x1, float y1, float x2, float y2) {
-        g.drawLine(xS2D(x1), yS2D(y1), wS2D(x2), hS2D(y2));
+        g.drawLine(delegate.xS2D(x1), delegate.yS2D(y1), delegate.wS2D(x2), delegate.hS2D(y2));
     }
 
     @Override
     protected void strokeRect(Graphics2D g, float x, float y, float width, float height) {
-        final int xd = xS2D(x);
-        final int yd = yS2D(y);
-        final int wd = xS2D(x + width) - xd;
-        final int hd = yS2D(y + height) - yd;
+        final int xd = delegate.xS2D(x);
+        final int yd = delegate.yS2D(y);
+        final int wd = delegate.xS2D(x + width) - xd;
+        final int hd = delegate.yS2D(y + height) - yd;
         g.drawRect(xd, yd, wd, hd);
     }
 
     @Override
     protected void fillRect(Graphics2D g, float x, float y, float width, float height) {
-        final int xd = xS2D(x);
-        final int yd = yS2D(y);
-        final int wd = xS2D(x + width) - xd;
-        final int hd = yS2D(y + height) - yd;
+        final int xd = delegate.xS2D(x);
+        final int yd = delegate.yS2D(y);
+        final int wd = delegate.xS2D(x + width) - xd;
+        final int hd = delegate.yS2D(y + height) - yd;
         g.fillRect(xd, yd, wd, hd);
     }
 
@@ -113,6 +93,24 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, Graphics
         return rectD2S(g.getClipBounds());
     }
 
+    private Rectangle2f rectD2S(Rectangle r) {
+        return Rectangle2f.of(
+                delegate.xD2S(r.x),
+                delegate.yD2S(r.y),
+                delegate.wD2S(r.width),
+                delegate.hD2S(r.height)
+        );
+    }
+
+    private Rectangle rectS2D(Rectangle2f r) {
+        return new Rectangle(
+                delegate.xS2D(r.x()),
+                delegate.yS2D(r.y()),
+                delegate.wS2D(r.width()),
+                delegate.hS2D(r.height())
+        );
+    }
+
     @Override
     protected float getColumnLabelHeight() {
         return labelHeight;
@@ -125,10 +123,10 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, Graphics
 
     @Override
     protected void render(Graphics2D g, Cell cell, Rectangle2f rect, Rectangle2f clipRect) {
-        java.awt.Rectangle rectD = sheetView.rectS2D(rect);
-        java.awt.Rectangle clipRectD = sheetView.rectS2D(clipRect);
+        java.awt.Rectangle rectD = rectS2D(rect);
+        java.awt.Rectangle clipRectD = rectS2D(clipRect);
 
-        cellRenderer.render(g, cell, rectD, clipRectD, sheetView.getScale());
+        cellRenderer.render(g, cell, rectD, clipRectD, delegate.getScale());
     }
 
     @Override
@@ -146,8 +144,8 @@ public class SwingSheetPainter extends SheetPainterBase<SwingSheetView, Graphics
             }
             labelPainter.setText(new String(sb));
             final Dimension labelSize = labelPainter.getPreferredSize();
-            labelWidth = sheetView.wD2S(labelSize.width);
-            labelHeight = sheetView.hD2S(labelSize.height);
+            labelWidth = delegate.wD2S(labelSize.width);
+            labelHeight = delegate.hD2S(labelSize.height);
         }
     }
 

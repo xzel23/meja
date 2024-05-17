@@ -1,9 +1,47 @@
 package com.dua3.meja.ui.fx;
 
+import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
-import javafx.scene.Node;
+import com.dua3.meja.ui.SheetViewDelegate;
+import javafx.scene.layout.Pane;
 
-public class FxSheetView extends Node implements SheetView {
-    public FxSheetView(Sheet sheet) {}
+public class FxSheetView extends Pane implements SheetView {
+
+    private final SheetViewDelegate delegate;
+
+    public FxSheetView() {
+        this(null);
+    }
+
+    public FxSheetView(@Nullable Sheet sheet) {
+        this.delegate = new SheetViewDelegate(this::scrollToCurrentCell, this::updateContent, this::repaintCell);
+        delegate.setSheet(sheet);
+    }
+
+    @Override
+    public SheetViewDelegate getDelegate() {
+        return delegate;
+    }
+
+    @Override
+    public void scrollToCurrentCell() {
+
+    }
+
+    @Override
+    public void stopEditing(boolean commit) {
+
+    }
+
+    @Override
+    public void repaintCell(Cell cell) {
+
+    }
+
+    @Override
+    public void updateContent() {
+
+    }
 }

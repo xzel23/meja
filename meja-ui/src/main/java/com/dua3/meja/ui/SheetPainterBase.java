@@ -31,10 +31,9 @@ import java.util.concurrent.locks.Lock;
 /**
  * A helper class that implements the actual drawing algorithm.
  *
- * @param <SV> the concrete class implementing SheetView
  * @param <GC> the concrete class implementing GraphicsContext
  */
-public abstract class SheetPainterBase<SV extends SheetView, GC> {
+public abstract class SheetPainterBase<GC> {
 
     enum CellDrawMode {
         /**
@@ -82,7 +81,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC> {
         return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
     }
 
-    protected final SV sheetView;
+    protected final SheetViewDelegate delegate;
 
     /**
      * Reference to the sheet.
@@ -123,8 +122,8 @@ public abstract class SheetPainterBase<SV extends SheetView, GC> {
     protected abstract void setStroke(GC g, Color color, float width);
     protected abstract void render(GC g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect);
 
-    protected SheetPainterBase(SV sheetView) {
-        this.sheetView = sheetView;
+    protected SheetPainterBase(SheetViewDelegate delegate) {
+        this.delegate = delegate;
     }
 
     public void drawSheet(GC gc) {
@@ -467,11 +466,11 @@ public abstract class SheetPainterBase<SV extends SheetView, GC> {
     }
 
     private String getColumnName(int j) {
-        return sheetView.getColumnName(j);
+        return delegate.getColumnName(j);
     }
 
     private String getRowName(int i) {
-        return sheetView.getRowName(i);
+        return delegate.getRowName(i);
     }
 
     protected void beginDraw(GC gc) {
@@ -523,7 +522,7 @@ public abstract class SheetPainterBase<SV extends SheetView, GC> {
     }
 
     protected Color getGridColor() {
-        return sheetView.getGridColor();
+        return delegate.getGridColor();
     }
 
     protected float getPaddingX() {

@@ -24,7 +24,7 @@ public interface SegmentView<SV extends SheetView, G> {
 
     Sheet getSheet();
 
-    SheetPainterBase<SV, G> getSheetPainter();
+    SheetPainterBase<G> getSheetPainter();
 
     default boolean hasColumnHeaders() {
         return getEndRow() <= getSheet().getSplitRow();
@@ -54,7 +54,7 @@ public interface SegmentView<SV extends SheetView, G> {
         lock.lock();
         try {
 
-            SheetPainterBase<SV, G> sheetPainter = getSheetPainter();
+            SheetPainterBase<G> sheetPainter = getSheetPainter();
 
             // the width is the width for the labels showing row names ...
             float width = hasRowHeaders() ? sheetPainter.getRowLabelWidth() : 1;

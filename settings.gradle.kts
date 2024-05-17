@@ -8,9 +8,10 @@ include("meja-generic")
 include("meja-poi")
 include("meja-ui")
 include("meja-swing")
-//include("meja-fx")
+include("meja-fx")
 include("meja-db")
 include("meja-samples")
+include("meja-samples-fx")
 
 // use plugin to add JVM toolchain repository
 plugins {
