@@ -192,6 +192,8 @@ public interface SheetView {
 
     void updateContent();
 
+    boolean requestFocusInWindow();
+
     /**
      * Actions for key bindings.
      */

@@ -12,7 +12,7 @@ import java.util.concurrent.locks.Lock;
  * @param <G> the concrete class implementing GraphicsContext
  * @author Axel Howind
  */
-public interface SegmentView<SV extends SheetView, G> {
+public interface SegmentView<SV extends SheetView, G, R> {
 
     int getBeginColumn();
 
@@ -24,7 +24,7 @@ public interface SegmentView<SV extends SheetView, G> {
 
     Sheet getSheet();
 
-    SheetPainterBase<G> getSheetPainter();
+    SheetPainterBase<G, R> getSheetPainter();
 
     default boolean hasColumnHeaders() {
         return getEndRow() <= getSheet().getSplitRow();
@@ -54,7 +54,7 @@ public interface SegmentView<SV extends SheetView, G> {
         lock.lock();
         try {
 
-            SheetPainterBase<G> sheetPainter = getSheetPainter();
+            SheetPainterBase<G, R> sheetPainter = getSheetPainter();
 
             // the width is the width for the labels showing row names ...
             float width = hasRowHeaders() ? sheetPainter.getRowLabelWidth() : 1;

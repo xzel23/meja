@@ -33,7 +33,7 @@ import java.util.concurrent.locks.Lock;
  *
  * @param <GC> the concrete class implementing GraphicsContext
  */
-public abstract class SheetPainterBase<GC> {
+public abstract class SheetPainterBase<GC, R> {
 
     enum CellDrawMode {
         /**
@@ -81,7 +81,7 @@ public abstract class SheetPainterBase<GC> {
         return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
     }
 
-    protected final SheetViewDelegate delegate;
+    protected final SheetViewDelegate<GC, R> delegate;
 
     /**
      * Reference to the sheet.
@@ -101,8 +101,8 @@ public abstract class SheetPainterBase<GC> {
 
     private float sheetWidthInPoints;
 
-    protected abstract float getRowLabelWidth();
-    protected abstract float getColumnLabelHeight();
+    public abstract float getRowLabelWidth();
+    public abstract float getColumnLabelHeight();
     protected abstract Rectangle2f getClipBounds(GC g);
     protected abstract void drawBackground(GC g);
     protected abstract void drawLabel(GC g, Rectangle2f rect, String text);

@@ -6,11 +6,13 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 import java.util.concurrent.Flow;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 
 /**
@@ -19,10 +21,11 @@ import java.util.function.IntFunction;
  * A delegate is used instead of an abstract base class because user interface components might have to be derived from
  * existing UI classes.
  */
-public class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
+public abstract class SheetViewDelegate<GC, R> implements Flow.Subscriber<SheetEvent> {
     private static final Logger LOG = LogManager.getLogger(SheetViewDelegate.class);
 
     private final SheetView owner;
+    private final SheetPainterBase<GC, R> sheetPainter;
 
     /**
      * Flow-API {@link java.util.concurrent.Flow.Subscription} instance.
@@ -62,8 +65,9 @@ public class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     private boolean editing;
 
-    public SheetViewDelegate(SheetView owner) {
+    public SheetViewDelegate(SheetView owner, Function<? super SheetViewDelegate<GC,R>, ? extends SheetPainterBase<GC, R>> sheetPainterFactory) {
         this.owner = owner;
+        this.sheetPainter = sheetPainterFactory.apply(this);
     }
 
     @Override
@@ -335,6 +339,62 @@ public class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     public void movePage(Direction d) {
         move(d); // TODO
+    }
+
+    public SheetPainterBase<GC, R> getSheetPainter() {
+        return sheetPainter;
+    }
+
+    public abstract Rectangle2f rectD2S(R r);
+
+    public abstract R rectS2D(Rectangle2f r);
+
+    public void onMousePressed(int x, int y) {
+        // make the cell under pointer the current cell
+        int row = getSheetPainter().getRowNumberFromY(yD2S(y));
+        int col = getSheetPainter().getColumnNumberFromX(xD2S(x));
+        boolean currentCellChanged = setCurrentCell(row, col);
+        requestFocusInWindow();
+
+        if (currentCellChanged) {
+            // if cell changed, stop cell editing
+            if (isEditing()) {
+                owner.stopEditing(true);
+                setEditing(false);
+            }
+        } else {
+            // otherwise start cell editing
+            if (isEditable()) {
+                owner.startEditing();
+                setEditing(true);
+            }
+        }
+    }
+
+    public void requestFocusInWindow() {
+        owner.requestFocusInWindow();
+    }
+
+    /**
+     * Get x-coordinate of split.
+     *
+     * @return x coordinate of split
+     */
+    public float getSplitX() {
+        return getSheet()
+                .map(sheet -> getSheetPainter().getColumnPos(sheet.getSplitColumn()))
+                .orElse(0f);
+    }
+
+    /**
+     * Get y-coordinate of split.
+     *
+     * @return y coordinate of split
+     */
+    public float getSplitY() {
+        return getSheet()
+                .map(sheet -> getSheetPainter().getRowPos(sheet.getSplitRow()))
+                .orElse(0f);
     }
 
 }
