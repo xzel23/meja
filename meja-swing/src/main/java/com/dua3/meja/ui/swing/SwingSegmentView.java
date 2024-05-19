@@ -23,8 +23,8 @@ import java.awt.event.MouseEvent;
 import java.util.function.IntSupplier;
 
 final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, Graphics2D, Rectangle> {
-    private final SheetViewDelegate<Graphics2D, Rectangle> svDelegate;
-    private final SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> ssvDelegate;
+    private final transient SheetViewDelegate<Graphics2D, Rectangle> svDelegate;
+    private final transient SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> ssvDelegate;
 
     SwingSegmentView(
             SheetViewDelegate<Graphics2D, Rectangle> sheetViewDelegate,
