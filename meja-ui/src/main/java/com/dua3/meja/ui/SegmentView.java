@@ -16,6 +16,6 @@ public interface SegmentView<SV extends SheetView, G, R> {
 
     Sheet getSheet();
 
-    void setViewSizeOnDisplay(int w, int h);
+    void setViewSizeOnDisplay(float w, float h);
 
 }

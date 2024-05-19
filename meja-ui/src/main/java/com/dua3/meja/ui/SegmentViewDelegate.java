@@ -54,12 +54,12 @@ public class SegmentViewDelegate<SV extends SheetView, GC, R> {
     }
 
     public void setViewSize(float wd, float hd) {
-        int w = svDelegate.wS2D(wd);
-        int h = svDelegate.hS2D(hd);
+        float w = svDelegate.wS2D(wd);
+        float h = svDelegate.hS2D(hd);
         owner.setViewSizeOnDisplay(w,h);
     }
 
-    public int getXMinInViewCoordinates() {
+    public float getXMinInViewCoordinates() {
         float x = svDelegate.getSheetPainter().getColumnPos(getBeginColumn());
         if (hasRowHeaders()) {
             x -= svDelegate.getSheetPainter().getRowLabelWidth();
@@ -67,7 +67,7 @@ public class SegmentViewDelegate<SV extends SheetView, GC, R> {
         return svDelegate.xS2D(x);
     }
 
-    public int getYMinInViewCoordinates() {
+    public float getYMinInViewCoordinates() {
         float y = svDelegate.getSheetPainter().getRowPos(getBeginRow());
         if (hasColumnHeaders()) {
             y -= svDelegate.getSheetPainter().getColumnLabelHeight();

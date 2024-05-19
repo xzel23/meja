@@ -70,21 +70,21 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
             if (direction < 0) {
                 // scroll up
                 final float y = svDelegate.yD2S(visibleRect.y);
-                final int yD = svDelegate.yS2D(y);
+                final int yD = svDelegate.yS2Di(y);
                 int i = svDelegate.getSheetPainter().getRowNumberFromY(y);
                 int posD = yD;
                 while (i >= 0 && yD <= posD) {
-                    posD = svDelegate.yS2D(svDelegate.getSheetPainter().getRowPos(i--));
+                    posD = svDelegate.yS2Di(svDelegate.getSheetPainter().getRowPos(i--));
                 }
                 return yD - posD;
             } else {
                 // scroll down
                 final float y = svDelegate.yD2S(visibleRect.y + visibleRect.height);
-                final int yD = svDelegate.yS2D(y);
+                final int yD = svDelegate.yS2Di(y);
                 int i = svDelegate.getSheetPainter().getRowNumberFromY(y);
                 int posD = yD;
                 while (i <= svDelegate.getSheetPainter().getRowCount() && posD <= yD) {
-                    posD = svDelegate.yS2D(svDelegate.getSheetPainter().getRowPos(i++));
+                    posD = svDelegate.yS2Di(svDelegate.getSheetPainter().getRowPos(i++));
                 }
                 return posD - yD;
             }
@@ -93,21 +93,21 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
             if (direction < 0) {
                 // scroll left
                 final float x = svDelegate.xD2S(visibleRect.x);
-                final int xD = svDelegate.xS2D(x);
+                final int xD = svDelegate.xS2Di(x);
                 int j = svDelegate.getSheetPainter().getColumnNumberFromX(x);
                 int posD = xD;
                 while (j >= 0 && xD <= posD) {
-                    posD = svDelegate.xS2D(svDelegate.getSheetPainter().getColumnPos(j--));
+                    posD = svDelegate.xS2Di(svDelegate.getSheetPainter().getColumnPos(j--));
                 }
                 return xD - posD;
             } else {
                 // scroll right
                 final float x = svDelegate.xD2S(visibleRect.x + visibleRect.width);
-                int xD = svDelegate.xS2D(x);
+                int xD = svDelegate.xS2Di(x);
                 int j = svDelegate.getSheetPainter().getColumnNumberFromX(x);
                 int posD = xD;
                 while (j <= svDelegate.getSheetPainter().getColumnCount() && posD <= xD) {
-                    posD = svDelegate.xS2D(svDelegate.getSheetPainter().getColumnPos(j++));
+                    posD = svDelegate.xS2Di(svDelegate.getSheetPainter().getColumnPos(j++));
                 }
                 return posD - xD;
             }
@@ -120,8 +120,8 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
     }
 
     @Override
-    public void setViewSizeOnDisplay(int w, int h) {
-        Dimension dimension = new Dimension(w, h);
+    public void setViewSizeOnDisplay(float w, float h) {
+        Dimension dimension = new Dimension(Math.round(w), Math.round(h));
         setSize(dimension);
         setPreferredSize(dimension);
     }
@@ -160,8 +160,8 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
 
         svDelegate.getSheet().ifPresent(sheet -> {
             // set transformation
-            final int x = ssvDelegate.getXMinInViewCoordinates();
-            final int y = ssvDelegate.getYMinInViewCoordinates();
+            final int x = Math.round(ssvDelegate.getXMinInViewCoordinates());
+            final int y = Math.round(ssvDelegate.getYMinInViewCoordinates());
             g2d.translate(-x, -y);
 
             // get dimensions
@@ -185,11 +185,17 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
 
     void repaintSheet(Rectangle2f rect) {
         java.awt.Rectangle rect2 = svDelegate.rectS2D(rect);
-        rect2.translate(-ssvDelegate.getXMinInViewCoordinates(), -ssvDelegate.getYMinInViewCoordinates());
+        rect2.translate(
+                -Math.round(ssvDelegate.getXMinInViewCoordinates()),
+                -Math.round(ssvDelegate.getYMinInViewCoordinates())
+        );
         repaint(rect2);
     }
 
     void translateMousePosition(Point p) {
-        p.translate(ssvDelegate.getXMinInViewCoordinates(), ssvDelegate.getYMinInViewCoordinates());
+        p.translate(
+                Math.round(ssvDelegate.getXMinInViewCoordinates()),
+                Math.round(ssvDelegate.getYMinInViewCoordinates())
+        );
     }
 }

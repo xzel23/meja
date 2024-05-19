@@ -16,7 +16,7 @@ public class FxSheetView extends Pane implements SheetView {
     }
 
     public FxSheetView(@Nullable Sheet sheet) {
-        this.delegate = new SheetViewDelegate(this::scrollToCurrentCell, this::updateContent, this::repaintCell);
+        this.delegate = new FxSheetViewDelegate(this, d -> new FxSheetPainter(d));
         delegate.setSheet(sheet);
     }
 
@@ -42,6 +42,26 @@ public class FxSheetView extends Pane implements SheetView {
 
     @Override
     public void updateContent() {
+
+    }
+
+    @Override
+    public boolean requestFocusInWindow() {
+        return false;
+    }
+
+    @Override
+    public void copyToClipboard() {
+
+    }
+
+    @Override
+    public void showSearchDialog() {
+
+    }
+
+    @Override
+    public void startEditing() {
 
     }
 }

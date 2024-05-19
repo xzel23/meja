@@ -81,7 +81,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      * @return the sheetHeight
      */
     public int getSheetHeight() {
-        return delegate.hS2D(delegate.getSheetPainter().getSheetHeightInPoints());
+        return Math.round(delegate.hS2D(delegate.getSheetPainter().getSheetHeightInPoints()));
     }
 
     public Dimension getSheetSize() {
@@ -92,7 +92,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      * @return the sheetWidth
      */
     public int getSheetWidth() {
-        return delegate.wS2D(delegate.getSheetPainter().getSheetWidthInPoints());
+        return Math.round(delegate.wS2D(delegate.getSheetPainter().getSheetWidthInPoints()));
     }
 
     @Override
@@ -185,7 +185,10 @@ public class SwingSheetView extends JPanel implements SheetView {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                delegate.onMousePressed(e.getX() + delegate.xS2D(delegate.getSplitX()), e.getY() + delegate.yS2D(delegate.getSplitY()));
+                delegate.onMousePressed(
+                        e.getX() + delegate.xS2Di(delegate.getSplitX()),
+                        e.getY() + delegate.yS2Di(delegate.getSplitY())
+                );
             }
         });
         // make focusable

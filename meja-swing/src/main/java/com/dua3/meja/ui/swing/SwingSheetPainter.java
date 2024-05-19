@@ -62,24 +62,29 @@ public class SwingSheetPainter extends SheetPainterBase<Graphics2D, Rectangle> {
 
     @Override
     protected void strokeLine(Graphics2D g, float x1, float y1, float x2, float y2) {
-        g.drawLine(delegate.xS2D(x1), delegate.yS2D(y1), delegate.wS2D(x2), delegate.hS2D(y2));
+        g.drawLine(
+                delegate.xS2Di(x1),
+                delegate.yS2Di(y1),
+                delegate.wS2Di(x2),
+                delegate.hS2Di(y2)
+        );
     }
 
     @Override
     protected void strokeRect(Graphics2D g, float x, float y, float width, float height) {
-        final int xd = delegate.xS2D(x);
-        final int yd = delegate.yS2D(y);
-        final int wd = delegate.xS2D(x + width) - xd;
-        final int hd = delegate.yS2D(y + height) - yd;
+        final int xd = delegate.xS2Di(x);
+        final int yd = delegate.yS2Di(y);
+        final int wd = delegate.xS2Di(x + width) - xd;
+        final int hd = delegate.yS2Di(y + height) - yd;
         g.drawRect(xd, yd, wd, hd);
     }
 
     @Override
     protected void fillRect(Graphics2D g, float x, float y, float width, float height) {
-        final int xd = delegate.xS2D(x);
-        final int yd = delegate.yS2D(y);
-        final int wd = delegate.xS2D(x + width) - xd;
-        final int hd = delegate.yS2D(y + height) - yd;
+        final int xd = delegate.xS2Di(x);
+        final int yd = delegate.yS2Di(y);
+        final int wd = delegate.xS2Di(x + width) - xd;
+        final int hd = delegate.yS2Di(y + height) - yd;
         g.fillRect(xd, yd, wd, hd);
     }
 

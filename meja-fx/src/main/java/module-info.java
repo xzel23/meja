@@ -10,4 +10,5 @@ module com.dua3.meja.fx {
     requires com.dua3.utility.fx;
     requires com.dua3.cabe.annotations;
     requires org.apache.logging.log4j;
+    requires java.desktop;
 }

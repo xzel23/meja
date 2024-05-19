@@ -241,36 +241,52 @@ public abstract class SheetViewDelegate<GC, R> implements Flow.Subscriber<SheetE
         this.scale = scale;
     }
 
-    public float hD2S(int h) {
+    public final float hD2S(float h) {
         return h / scale;
     }
 
-    public int hS2D(float h) {
-        return Math.round(scale * h);
+    public final float hS2D(float h) {
+        return scale * h;
     }
 
-    public float wD2S(int w) {
+    public final int hS2Di(float h) {
+        return Math.round(hS2D(h));
+    }
+    
+    public final float wD2S(float w) {
         return w / scale;
     }
 
-    public int wS2D(float w) {
-        return Math.round(scale * w);
+    public final float wS2D(float w) {
+        return scale * w;
     }
 
-    public float xD2S(int x) {
+    public final int wS2Di(float w) {
+        return Math.round(wS2D(w));
+    }
+    
+    public final float xD2S(float x) {
         return x / scale;
     }
 
-    public int xS2D(float x) {
+    public final float xS2D(float x) {
         return Math.round(scale * x);
     }
 
-    public float yD2S(int y) {
+    public final int xS2Di(float x) {
+        return Math.round(xS2D(x));
+    }
+
+    public final float yD2S(float y) {
         return y / scale;
     }
 
-    public int yS2D(float y) {
-        return Math.round(scale * y);
+    public final float yS2D(float y) {
+        return scale * y;
+    }
+    
+    public final int yS2Di(float y) {
+        return Math.round(yS2D(y));
     }
 
     public Color getBackground() {

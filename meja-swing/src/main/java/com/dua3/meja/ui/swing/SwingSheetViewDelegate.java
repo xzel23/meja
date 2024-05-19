@@ -27,10 +27,10 @@ public class SwingSheetViewDelegate extends SheetViewDelegate<Graphics2D, java.a
 
     @Override
     public java.awt.Rectangle rectS2D(Rectangle2f r) {
-        final int x1 = xS2D(r.xMin());
-        final int y1 = yS2D(r.yMin());
-        final int x2 = xS2D(r.xMax());
-        final int y2 = yS2D(r.yMax());
+        final int x1 = Math.round(xS2D(r.xMin()));
+        final int y1 = Math.round(yS2D(r.yMin()));
+        final int x2 = Math.round(xS2D(r.xMax()));
+        final int y2 = Math.round(yS2D(r.yMax()));
         return new java.awt.Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 }
