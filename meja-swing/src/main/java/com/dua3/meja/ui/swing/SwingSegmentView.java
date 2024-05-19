@@ -3,7 +3,6 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
-import com.dua3.meja.ui.SheetPainterBase;
 import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
@@ -42,26 +41,6 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
     @Override
     public SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> getDelegate() {
         return ssvDelegate;
-    }
-
-    @Override
-    public int getBeginColumn() {
-        return ssvDelegate.getBeginColumn();
-    }
-
-    @Override
-    public int getBeginRow() {
-        return ssvDelegate.getBeginRow();
-    }
-
-    @Override
-    public int getEndColumn() {
-        return ssvDelegate.getEndColumn();
-    }
-
-    @Override
-    public int getEndRow() {
-        return ssvDelegate.getEndRow();
     }
 
     @Override
@@ -141,29 +120,15 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
     }
 
     @Override
-    public SheetPainterBase<Graphics2D, Rectangle> getSheetPainter() {
-        return svDelegate.getSheetPainter();
-    }
-
-    @Override
     public void setViewSizeOnDisplay(int w, int h) {
         Dimension dimension = new Dimension(w, h);
-        setPreferredSize(dimension);
         setSize(dimension);
+        setPreferredSize(dimension);
     }
 
     @Override
     public boolean isOptimizedDrawingEnabled() {
         return true;
-    }
-
-    @Override
-    public void setViewSize(float wd, float hd) {
-        int w = svDelegate.wS2D(wd);
-        int h = svDelegate.hS2D(hd);
-        Dimension d = new Dimension(w, h);
-        setSize(d);
-        setPreferredSize(d);
     }
 
     @Override

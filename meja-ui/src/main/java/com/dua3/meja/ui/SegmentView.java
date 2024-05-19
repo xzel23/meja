@@ -14,20 +14,8 @@ public interface SegmentView<SV extends SheetView, G, R> {
 
     SegmentViewDelegate<SV, G, R> getDelegate();
 
-    int getBeginColumn();
-
-    int getBeginRow();
-
-    int getEndColumn();
-
-    int getEndRow();
-
     Sheet getSheet();
 
-    SheetPainterBase<G, R> getSheetPainter();
-
     void setViewSizeOnDisplay(int w, int h);
-
-    void setViewSize(float width, float height);
 
 }
