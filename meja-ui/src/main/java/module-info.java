@@ -14,5 +14,4 @@ module com.dua3.meja.ui {
 
     requires static com.dua3.cabe.annotations;
     requires org.apache.logging.log4j;
-    requires java.desktop;
 }

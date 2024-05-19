@@ -2,7 +2,6 @@ package com.dua3.meja.ui;
 
 import com.dua3.meja.model.Sheet;
 
-import java.awt.Point;
 import java.util.concurrent.locks.Lock;
 import java.util.function.IntSupplier;
 
@@ -74,10 +73,6 @@ public class SegmentViewDelegate<SV extends SheetView, GC, R> {
             y -= svDelegate.getSheetPainter().getColumnLabelHeight();
         }
         return svDelegate.yS2D(y);
-    }
-
-    public void translateMousePosition(Point p) {
-        p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
     }
 
     public boolean hasRowHeaders() {
