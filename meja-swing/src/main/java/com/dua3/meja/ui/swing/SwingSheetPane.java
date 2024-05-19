@@ -110,10 +110,10 @@ final class SwingSheetPane extends JScrollPane {
             float w = svDelegate.getSheetPainter().getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
             float y = svDelegate.getSheetPainter().getRowPos(i);
             float h = svDelegate.getSheetPainter().getRowPos(i + cell.getVerticalSpan()) - y + 1;
-            x -= quadrant.getXMinInViewCoordinates();
+            x -= quadrant.getDelegate().getXMinInViewCoordinates();
             x += parent.getX();
             x -= pos.x;
-            y -= quadrant.getYMinInViewCoordinates();
+            y -= quadrant.getDelegate().getYMinInViewCoordinates();
             y += parent.getY();
             y -= pos.y;
 

@@ -2,6 +2,7 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SegmentView;
+import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.meja.ui.SheetPainterBase;
 import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.data.Color;
@@ -23,39 +24,44 @@ import java.util.function.IntSupplier;
 
 final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, Graphics2D, Rectangle> {
     private final SheetViewDelegate<Graphics2D, Rectangle> svDelegate;
-    private final IntSupplier startRow;
-    private final IntSupplier endRow;
-    private final IntSupplier startColumn;
-    private final IntSupplier endColumn;
+    private final SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> ssvDelegate;
 
-    SwingSegmentView(SheetViewDelegate<Graphics2D, Rectangle> sheetViewDelegate, IntSupplier startRow, IntSupplier endRow, IntSupplier startColumn, IntSupplier endColumn) {
+    SwingSegmentView(
+            SheetViewDelegate<Graphics2D, Rectangle> sheetViewDelegate,
+            IntSupplier startRow,
+            IntSupplier endRow,
+            IntSupplier startColumn,
+            IntSupplier endColumn
+    ) {
         super(null, false);
         this.svDelegate = sheetViewDelegate;
-        this.startRow = startRow;
-        this.endRow = endRow;
-        this.startColumn = startColumn;
-        this.endColumn = endColumn;
+        this.ssvDelegate = new SwingSegmentViewDelegate(this, svDelegate, startRow, endRow, startColumn, endColumn);
         init();
     }
 
     @Override
+    public SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> getDelegate() {
+        return ssvDelegate;
+    }
+
+    @Override
     public int getBeginColumn() {
-        return startColumn.getAsInt();
+        return ssvDelegate.getBeginColumn();
     }
 
     @Override
     public int getBeginRow() {
-        return startRow.getAsInt();
+        return ssvDelegate.getBeginRow();
     }
 
     @Override
     public int getEndColumn() {
-        return endColumn.getAsInt();
+        return ssvDelegate.getEndColumn();
     }
 
     @Override
     public int getEndRow() {
-        return endRow.getAsInt();
+        return ssvDelegate.getEndRow();
     }
 
     @Override
@@ -131,12 +137,19 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
 
     @Override
     public Sheet getSheet() {
-        return svDelegate.getSheet().orElse(null);
+        return ssvDelegate.getSheet();
     }
 
     @Override
     public SheetPainterBase<Graphics2D, Rectangle> getSheetPainter() {
         return svDelegate.getSheetPainter();
+    }
+
+    @Override
+    public void setViewSizeOnDisplay(int w, int h) {
+        Dimension dimension = new Dimension(w, h);
+        setPreferredSize(dimension);
+        setSize(dimension);
     }
 
     @Override
@@ -155,7 +168,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
 
     @Override
     public void validate() {
-        updateLayout();
+        ssvDelegate.updateLayout();
         super.validate();
     }
 
@@ -182,8 +195,8 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
 
         svDelegate.getSheet().ifPresent(sheet -> {
             // set transformation
-            final int x = getXMinInViewCoordinates();
-            final int y = getYMinInViewCoordinates();
+            final int x = ssvDelegate.getXMinInViewCoordinates();
+            final int y = ssvDelegate.getYMinInViewCoordinates();
             g2d.translate(-x, -y);
 
             // get dimensions
@@ -196,38 +209,22 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
             // draw split lines
             g2d.setColor(SwingUtil.toAwtColor(Color.BLACK));
             g2d.setStroke(new BasicStroke());
-            if (hasHLine()) {
+            if (ssvDelegate.hasHLine()) {
                 g2d.drawLine(x, height + y - 1, width + x - 1, height + y - 1);
             }
-            if (hasVLine()) {
+            if (ssvDelegate.hasVLine()) {
                 g2d.drawLine(width + x - 1, y, width + x - 1, height + y - 1);
             }
         });
     }
 
-    int getXMinInViewCoordinates() {
-        float x = svDelegate.getSheetPainter().getColumnPos(getBeginColumn());
-        if (hasRowHeaders()) {
-            x -= svDelegate.getSheetPainter().getRowLabelWidth();
-        }
-        return svDelegate.xS2D(x);
-    }
-
-    int getYMinInViewCoordinates() {
-        float y = svDelegate.getSheetPainter().getRowPos(getBeginRow());
-        if (hasColumnHeaders()) {
-            y -= svDelegate.getSheetPainter().getColumnLabelHeight();
-        }
-        return svDelegate.yS2D(y);
-    }
-
     void repaintSheet(Rectangle2f rect) {
         java.awt.Rectangle rect2 = svDelegate.rectS2D(rect);
-        rect2.translate(-getXMinInViewCoordinates(), -getYMinInViewCoordinates());
+        rect2.translate(-ssvDelegate.getXMinInViewCoordinates(), -ssvDelegate.getYMinInViewCoordinates());
         repaint(rect2);
     }
 
     void translateMousePosition(Point p) {
-        p.translate(getXMinInViewCoordinates(), getYMinInViewCoordinates());
+        p.translate(ssvDelegate.getXMinInViewCoordinates(), ssvDelegate.getYMinInViewCoordinates());
     }
 }

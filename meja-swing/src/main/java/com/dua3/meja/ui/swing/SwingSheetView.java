@@ -113,8 +113,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      */
     @Override
     public void scrollToCurrentCell() {
-        delegate.getCurrentLogicalCell()
-                .ifPresent(cell -> SwingUtilities.invokeLater(() -> sheetPane.ensureCellIsVisible(cell)));
+        SwingUtilities.invokeLater(() -> delegate.getCurrentLogicalCell().ifPresent(sheetPane::ensureCellIsVisible));
     }
 
     /**
