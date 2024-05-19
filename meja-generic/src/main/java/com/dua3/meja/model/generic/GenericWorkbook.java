@@ -164,7 +164,9 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public void setCurrentSheet(int idx) {
-        Objects.checkIndex(idx, sheets.size());
+        if (idx >= 0) {
+            Objects.checkIndex(idx, sheets.size());
+        }
 
         int oldIdx = currentSheetIdx;
         if (idx != oldIdx) {
