@@ -35,8 +35,6 @@ import java.util.concurrent.locks.Lock;
  */
 public abstract class SheetPainterBase<GC, R> {
 
-    public static final String MEJA_USE_XOR_DRAWING = "MEJA_USE_XOR_DRAWING";
-
     enum CellDrawMode {
         /**
          *
@@ -193,25 +191,44 @@ public abstract class SheetPainterBase<GC, R> {
      *         </ul>
      */
     public int getColumnNumberFromX(double x) {
-        if (columnPos.length == 0) {
+        return getPositionIndexFromCoordinate(columnPos, x, sheetWidthInPoints);
+    }
+
+    /**
+     * Get the row number that the given y-coordinate belongs to.
+     *
+     * @param y y-coordinate
+     * @return <ul>
+     *         <li>-1, if the first row is displayed below the given coordinate
+     *         <li>number of rows, if the lower edge of the last row is displayed
+     *         above the given coordinate
+     *         <li>the number of the row that belongs to the given coordinate
+     *         </ul>
+     */
+    public int getRowNumberFromY(double y) {
+        return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
+    }
+
+    private int getPositionIndexFromCoordinate(float[] positions, double coord, float sizeInPoints) {
+        if (positions.length == 0) {
             return 0;
         }
 
         // guess position
-        int j = (int) (columnPos.length * x / sheetWidthInPoints);
+        int j = (int) (positions.length * coord / sizeInPoints);
         if (j < 0) {
             j = 0;
-        } else if (j >= columnPos.length) {
-            j = columnPos.length - 1;
+        } else if (j >= positions.length) {
+            j = positions.length - 1;
         }
 
         // linear search from here
-        if (getColumnPos(j) > x) {
-            while (j > 0 && getColumnPos(j - 1) > x) {
+        if (positions[Math.min(positions.length - 1, j)] > coord) {
+            while (j > 0 && positions[j - 1] > coord) {
                 j--;
             }
         } else {
-            while (j < columnPos.length && getColumnPos(j) <= x) {
+            while (j < positions.length && positions[Math.min(positions.length - 1, j)] <= coord) {
                 j++;
             }
         }
@@ -234,44 +251,6 @@ public abstract class SheetPainterBase<GC, R> {
      */
     public int getRowCount() {
         return rowPos.length - 1;
-    }
-
-    /**
-     * Get the row number that the given y-coordinate belongs to.
-     *
-     * @param y y-coordinate
-     * @return <ul>
-     *         <li>-1, if the first row is displayed below the given coordinate
-     *         <li>number of rows, if the lower edge of the last row is displayed
-     *         above the given coordinate
-     *         <li>the number of the row that belongs to the given coordinate
-     *         </ul>
-     */
-    public int getRowNumberFromY(double y) {
-        if (rowPos.length == 0) {
-            return 0;
-        }
-
-        // guess position
-        int i = (int) (rowPos.length * y / sheetHeightInPoints);
-        if (i < 0) {
-            i = 0;
-        } else if (i >= rowPos.length) {
-            i = rowPos.length - 1;
-        }
-
-        // linear search from here
-        if (getRowPos(i) > y) {
-            while (i > 0 && getRowPos(i - 1) > y) {
-                i--;
-            }
-        } else {
-            while (i < rowPos.length && getRowPos(i) <= y) {
-                i++;
-            }
-        }
-
-        return i - 1;
     }
 
     /**
