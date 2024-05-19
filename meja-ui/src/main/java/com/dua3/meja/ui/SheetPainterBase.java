@@ -35,6 +35,8 @@ import java.util.concurrent.locks.Lock;
  */
 public abstract class SheetPainterBase<GC, R> {
 
+    public static final String MEJA_USE_XOR_DRAWING = "MEJA_USE_XOR_DRAWING";
+
     enum CellDrawMode {
         /**
          *
@@ -122,7 +124,7 @@ public abstract class SheetPainterBase<GC, R> {
     protected abstract void setStroke(GC g, Color color, float width);
     protected abstract void render(GC g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect);
 
-    protected SheetPainterBase(SheetViewDelegate delegate) {
+    protected SheetPainterBase(SheetViewDelegate<GC, R> delegate) {
         this.delegate = delegate;
     }
 
@@ -191,29 +193,25 @@ public abstract class SheetPainterBase<GC, R> {
      *         </ul>
      */
     public int getColumnNumberFromX(double x) {
-        return getPositionIndexFromCoordinste(columnPos, x, sheetWidthInPoints);
-    }
-
-    private int getPositionIndexFromCoordinste(float[] positions, double coord, float sizeInPoints) {
-        if (positions.length == 0) {
+        if (columnPos.length == 0) {
             return 0;
         }
 
         // guess position
-        int j = (int) (positions.length * coord / sizeInPoints);
+        int j = (int) (columnPos.length * x / sheetWidthInPoints);
         if (j < 0) {
             j = 0;
-        } else if (j >= positions.length) {
-            j = positions.length - 1;
+        } else if (j >= columnPos.length) {
+            j = columnPos.length - 1;
         }
 
         // linear search from here
-        if (positions[Math.min(positions.length - 1, j)] > coord) {
-            while (j > 0 && getColumnPos(j - 1) > coord) {
+        if (getColumnPos(j) > x) {
+            while (j > 0 && getColumnPos(j - 1) > x) {
                 j--;
             }
         } else {
-            while (j < positions.length && positions[Math.min(positions.length - 1, j)] <= coord) {
+            while (j < columnPos.length && getColumnPos(j) <= x) {
                 j++;
             }
         }
@@ -250,7 +248,30 @@ public abstract class SheetPainterBase<GC, R> {
      *         </ul>
      */
     public int getRowNumberFromY(double y) {
-        return getPositionIndexFromCoordinste(rowPos, y, sheetHeightInPoints);
+        if (rowPos.length == 0) {
+            return 0;
+        }
+
+        // guess position
+        int i = (int) (rowPos.length * y / sheetHeightInPoints);
+        if (i < 0) {
+            i = 0;
+        } else if (i >= rowPos.length) {
+            i = rowPos.length - 1;
+        }
+
+        // linear search from here
+        if (getRowPos(i) > y) {
+            while (i > 0 && getRowPos(i - 1) > y) {
+                i--;
+            }
+        } else {
+            while (i < rowPos.length && getRowPos(i) <= y) {
+                i++;
+            }
+        }
+
+        return i - 1;
     }
 
     /**
