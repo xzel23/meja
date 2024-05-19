@@ -63,12 +63,12 @@ public abstract class SheetPainterBase<GC, R> {
     /**
      * Color used to draw the selection rectangle.
      */
-    private Color selectionColor = Color.LIGHTBLUE;
+    private Color selectionColor = Color.GREEN;
 
     /**
      * Width of the selection rectangle borders.
      */
-    protected static final float SELECTION_STROKE_WIDTH = 4;
+    protected static final float SELECTION_STROKE_WIDTH = 2;
 
     /**
      * Test whether style uses text wrapping. While there is a property for text
