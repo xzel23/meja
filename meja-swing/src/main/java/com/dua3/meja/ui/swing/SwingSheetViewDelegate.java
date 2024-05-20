@@ -9,11 +9,18 @@ import java.util.function.Function;
 
 public class SwingSheetViewDelegate extends SheetViewDelegate<Graphics2D, java.awt.Rectangle> {
 
+    private final SwingSheetPainter sheetPainter;
+
     public SwingSheetViewDelegate(
             SwingSheetView owner,
             Function<? super SheetViewDelegate<Graphics2D, Rectangle>, SwingSheetPainter> sheetPainterFactory
     ) {
-        super(owner, sheetPainterFactory);
+        super(owner);
+        this.sheetPainter = sheetPainterFactory.apply(this);
+    }
+
+    public SwingSheetPainter getSheetPainter() {
+        return sheetPainter;
     }
 
     @Override
@@ -33,4 +40,28 @@ public class SwingSheetViewDelegate extends SheetViewDelegate<Graphics2D, java.a
         final int y2 = Math.round(yS2D(r.yMax()));
         return new java.awt.Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
+
+    public int getColumnNumberFromX(float x) {
+        return sheetPainter.getColumnNumberFromX(x);
+    }
+
+    public int getRowNumberFromY(float v) {
+        return sheetPainter.getRowNumberFromY(v);
+    }
+
+    public float getColumnPos(int column) {
+        return sheetPainter.getColumnPos(column);
+    }
+
+    public float getRowPos(int row) {
+        return sheetPainter.getRowPos(row);
+    }
+
+    public float getRowLabelWidth() {
+        return sheetPainter.getRowLabelWidth();
+    }
+    public float getColumnLabelHeight() {
+        return sheetPainter.getColumnLabelHeight();
+    }
+
 }

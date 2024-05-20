@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 import java.util.concurrent.Flow;
-import java.util.function.Function;
 import java.util.function.IntFunction;
 
 /**
@@ -25,7 +24,6 @@ public abstract class SheetViewDelegate<GC, R> implements Flow.Subscriber<SheetE
     private static final Logger LOG = LogManager.getLogger(SheetViewDelegate.class);
 
     private final SheetView owner;
-    private final SheetPainterBase<GC, R> sheetPainter;
 
     /**
      * Flow-API {@link java.util.concurrent.Flow.Subscription} instance.
@@ -65,9 +63,8 @@ public abstract class SheetViewDelegate<GC, R> implements Flow.Subscriber<SheetE
      */
     private boolean editing;
 
-    public SheetViewDelegate(SheetView owner, Function<? super SheetViewDelegate<GC,R>, ? extends SheetPainterBase<GC, R>> sheetPainterFactory) {
+    public SheetViewDelegate(SheetView owner) {
         this.owner = owner;
-        this.sheetPainter = sheetPainterFactory.apply(this);
     }
 
     @Override
@@ -357,18 +354,14 @@ public abstract class SheetViewDelegate<GC, R> implements Flow.Subscriber<SheetE
         move(d); // TODO
     }
 
-    public SheetPainterBase<GC, R> getSheetPainter() {
-        return sheetPainter;
-    }
-
     public abstract Rectangle2f rectD2S(R r);
 
     public abstract R rectS2D(Rectangle2f r);
 
     public void onMousePressed(int x, int y) {
         // make the cell under pointer the current cell
-        int row = getSheetPainter().getRowNumberFromY(yD2S(y));
-        int col = getSheetPainter().getColumnNumberFromX(xD2S(x));
+        int row = getRowNumberFromY(yD2S(y));
+        int col = getColumnNumberFromX(xD2S(x));
         boolean currentCellChanged = setCurrentCell(row, col);
         requestFocusInWindow();
 
@@ -398,7 +391,7 @@ public abstract class SheetViewDelegate<GC, R> implements Flow.Subscriber<SheetE
      */
     public float getSplitX() {
         return getSheet()
-                .map(sheet -> getSheetPainter().getColumnPos(sheet.getSplitColumn()))
+                .map(sheet -> getColumnPos(sheet.getSplitColumn()))
                 .orElse(0f);
     }
 
@@ -409,8 +402,14 @@ public abstract class SheetViewDelegate<GC, R> implements Flow.Subscriber<SheetE
      */
     public float getSplitY() {
         return getSheet()
-                .map(sheet -> getSheetPainter().getRowPos(sheet.getSplitRow()))
+                .map(sheet -> getRowPos(sheet.getSplitRow()))
                 .orElse(0f);
     }
 
+    public abstract int getColumnNumberFromX(float x);
+    public abstract int getRowNumberFromY(float v);
+    public abstract float getColumnPos(int column);
+    public abstract float getRowPos(int row);
+    public abstract float getRowLabelWidth();
+    public abstract float getColumnLabelHeight();
 }

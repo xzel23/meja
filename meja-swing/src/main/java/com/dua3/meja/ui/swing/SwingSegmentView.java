@@ -3,7 +3,6 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
-import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.swing.SwingUtil;
@@ -22,11 +21,11 @@ import java.awt.event.MouseEvent;
 import java.util.function.IntSupplier;
 
 final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, Graphics2D, Rectangle> {
-    private final transient SheetViewDelegate<Graphics2D, Rectangle> svDelegate;
+    private final transient SwingSheetViewDelegate svDelegate;
     private final transient SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> ssvDelegate;
 
     SwingSegmentView(
-            SheetViewDelegate<Graphics2D, Rectangle> sheetViewDelegate,
+            SwingSheetViewDelegate sheetViewDelegate,
             IntSupplier startRow,
             IntSupplier endRow,
             IntSupplier startColumn,
@@ -71,20 +70,20 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
                 // scroll up
                 final float y = svDelegate.yD2S(visibleRect.y);
                 final int yD = svDelegate.yS2Di(y);
-                int i = svDelegate.getSheetPainter().getRowNumberFromY(y);
+                int i = svDelegate.getRowNumberFromY(y);
                 int posD = yD;
                 while (i >= 0 && yD <= posD) {
-                    posD = svDelegate.yS2Di(svDelegate.getSheetPainter().getRowPos(i--));
+                    posD = svDelegate.yS2Di(svDelegate.getRowPos(i--));
                 }
                 return yD - posD;
             } else {
                 // scroll down
                 final float y = svDelegate.yD2S(visibleRect.y + visibleRect.height);
                 final int yD = svDelegate.yS2Di(y);
-                int i = svDelegate.getSheetPainter().getRowNumberFromY(y);
+                int i = svDelegate.getRowNumberFromY(y);
                 int posD = yD;
-                while (i <= svDelegate.getSheetPainter().getRowCount() && posD <= yD) {
-                    posD = svDelegate.yS2Di(svDelegate.getSheetPainter().getRowPos(i++));
+                while (i <= svDelegate.getRowCount() && posD <= yD) {
+                    posD = svDelegate.yS2Di(svDelegate.getRowPos(i++));
                 }
                 return posD - yD;
             }
@@ -94,20 +93,20 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
                 // scroll left
                 final float x = svDelegate.xD2S(visibleRect.x);
                 final int xD = svDelegate.xS2Di(x);
-                int j = svDelegate.getSheetPainter().getColumnNumberFromX(x);
+                int j = svDelegate.getColumnNumberFromX(x);
                 int posD = xD;
                 while (j >= 0 && xD <= posD) {
-                    posD = svDelegate.xS2Di(svDelegate.getSheetPainter().getColumnPos(j--));
+                    posD = svDelegate.xS2Di(svDelegate.getColumnPos(j--));
                 }
                 return xD - posD;
             } else {
                 // scroll right
                 final float x = svDelegate.xD2S(visibleRect.x + visibleRect.width);
                 int xD = svDelegate.xS2Di(x);
-                int j = svDelegate.getSheetPainter().getColumnNumberFromX(x);
+                int j = svDelegate.getColumnNumberFromX(x);
                 int posD = xD;
-                while (j <= svDelegate.getSheetPainter().getColumnCount() && posD <= xD) {
-                    posD = svDelegate.xS2Di(svDelegate.getSheetPainter().getColumnPos(j++));
+                while (j <= svDelegate.getColumnCount() && posD <= xD) {
+                    posD = svDelegate.xS2Di(svDelegate.getColumnPos(j++));
                 }
                 return posD - xD;
             }

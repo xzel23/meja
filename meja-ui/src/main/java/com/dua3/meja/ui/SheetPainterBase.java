@@ -35,21 +35,6 @@ import java.util.concurrent.locks.Lock;
  */
 public abstract class SheetPainterBase<GC, R> {
 
-    enum CellDrawMode {
-        /**
-         *
-         */
-        DRAW_CELL_BACKGROUND,
-        /**
-         *
-         */
-        DRAW_CELL_BORDER,
-        /**
-         *
-         */
-        DRAW_CELL_FOREGROUND
-    }
-
     /**
      * Horizontal padding.
      */
@@ -140,9 +125,7 @@ public abstract class SheetPainterBase<GC, R> {
 
             drawLabels(gc);
 
-            drawCells(gc, CellDrawMode.DRAW_CELL_BACKGROUND);
-            drawCells(gc, CellDrawMode.DRAW_CELL_BORDER);
-            drawCells(gc, CellDrawMode.DRAW_CELL_FOREGROUND);
+            drawCells(gc);
             drawSelection(gc);
 
             endDraw(gc);
@@ -559,9 +542,8 @@ public abstract class SheetPainterBase<GC, R> {
      * This is controlled by {@code cellDrawMode}.
      *
      * @param g            the graphics object to use
-     * @param cellDrawMode the draw mode to use
      */
-    void drawCells(GC g, CellDrawMode cellDrawMode) {
+    void drawCells(GC g) {
         // no sheet, no drawing
         if (sheet == null) {
             return;
@@ -623,13 +605,10 @@ public abstract class SheetPainterBase<GC, R> {
 
                 // draw cell
                 if (visible) {
-                    switch (cellDrawMode) {
-                        case DRAW_CELL_BACKGROUND -> drawCellBackground(g, logicalCell);
-                        case DRAW_CELL_BORDER -> drawCellBorder(g, logicalCell);
-                        case DRAW_CELL_FOREGROUND -> drawCellForeground(g, logicalCell);
-                    }
+                    drawCellBackground(g, logicalCell);
+                    drawCellBorder(g, logicalCell);
+                    drawCellForeground(g, logicalCell);
                 }
-
             }
         }
     }

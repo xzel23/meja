@@ -13,7 +13,7 @@ public class FxSheetViewDelegate extends SheetViewDelegate<Canvas, Rectangle2D> 
             FxSheetView owner,
             Function<? super SheetViewDelegate<Canvas, Rectangle2D>, FxSheetPainter> sheetPainterFactory
     ) {
-        super(owner, sheetPainterFactory);
+        super(owner);
     }
 
     @Override
@@ -32,5 +32,35 @@ public class FxSheetViewDelegate extends SheetViewDelegate<Canvas, Rectangle2D> 
         float x2 = xS2D(r.xMax());
         float y2 = yS2D(r.yMax());
         return new Rectangle2D(x1, y1, x2 - x1, y2 - y1);
+    }
+
+    @Override
+    public int getColumnNumberFromX(float x) {
+        return 0;
+    }
+
+    @Override
+    public int getRowNumberFromY(float v) {
+        return 0;
+    }
+
+    @Override
+    public float getColumnPos(int column) {
+        return 0;
+    }
+
+    @Override
+    public float getRowPos(int row) {
+        return 0;
+    }
+
+    @Override
+    public float getRowLabelWidth() {
+        return 0;
+    }
+
+    @Override
+    public float getColumnLabelHeight() {
+        return 0;
     }
 }
