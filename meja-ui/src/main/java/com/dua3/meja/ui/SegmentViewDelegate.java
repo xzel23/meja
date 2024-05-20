@@ -96,7 +96,6 @@ public class SegmentViewDelegate {
         Lock lock = sheet.readLock();
         lock.lock();
         try {
-
             // the width is the width for the labels showing row names ...
             float width = hasRowHeaders() ? svDelegate.getRowLabelWidth() : 1;
 

@@ -79,7 +79,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      * @return the sheetHeight
      */
     public int getSheetHeight() {
-        return Math.round(delegate.hS2D(delegate.getSheetPainter().getSheetHeightInPoints()));
+        return Math.round(delegate.hS2D(delegate.getSheetHeightInPoints()));
     }
 
     public Dimension getSheetSize() {
@@ -90,7 +90,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      * @return the sheetWidth
      */
     public int getSheetWidth() {
-        return Math.round(delegate.wS2D(delegate.getSheetPainter().getSheetWidthInPoints()));
+        return Math.round(delegate.wS2D(delegate.getSheetWidthInPoints()));
     }
 
     @Override

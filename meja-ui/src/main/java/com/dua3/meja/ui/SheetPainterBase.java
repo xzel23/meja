@@ -73,19 +73,6 @@ public abstract class SheetPainterBase<G> {
      */
     private Sheet sheet;
 
-    /**
-     * Array with column positions (x-axis) in pixels.
-     */
-    private float[] columnPos = {0};
-
-    /**
-     * Array with column positions (y-axis) in pixels.
-     */
-    private float[] rowPos = {0};
-    private float sheetHeightInPoints;
-
-    private float sheetWidthInPoints;
-
     public abstract float getRowLabelWidth();
     public abstract float getColumnLabelHeight();
     protected abstract Rectangle2f getClipBounds(G g);
@@ -133,179 +120,11 @@ public abstract class SheetPainterBase<G> {
         }
     }
 
-    /**
-     * Calculate the rectangle the cell occupies on screen.
-     *
-     * @param cell the cell whose area is requested
-     * @return the rectangle the cell takes up in screen coordinates
-     */
-    public Rectangle2f getCellRect(Cell cell) {
-        final int i = cell.getRowNumber();
-        final int j = cell.getColumnNumber();
-
-        final float x = getColumnPos(j);
-        final float w = getColumnPos(j + cell.getHorizontalSpan()) - x;
-        final float y = getRowPos(i);
-        final float h = getRowPos(i + cell.getVerticalSpan()) - y;
-
-        return new Rectangle2f(x, y, w, h);
-    }
-
-    /**
-     * Get number of columns for the currently loaded sheet.
-     *
-     * @return number of columns
-     */
-    public int getColumnCount() {
-        return columnPos.length - 1;
-    }
-
-    /**
-     * Get the column number that the given x-coordinate belongs to.
-     *
-     * @param x x-coordinate
-     * @return <ul>
-     *         <li>-1, if the first column is displayed to the right of the given
-     *         coordinate
-     *         <li>number of columns, if the right edge of the last column is
-     *         displayed to the left of the given coordinate
-     *         <li>the number of the column that belongs to the given coordinate
-     *         </ul>
-     */
-    public int getColumnNumberFromX(double x) {
-        return getPositionIndexFromCoordinate(columnPos, x, sheetWidthInPoints);
-    }
-
-    /**
-     * Get the row number that the given y-coordinate belongs to.
-     *
-     * @param y y-coordinate
-     * @return <ul>
-     *         <li>-1, if the first row is displayed below the given coordinate
-     *         <li>number of rows, if the lower edge of the last row is displayed
-     *         above the given coordinate
-     *         <li>the number of the row that belongs to the given coordinate
-     *         </ul>
-     */
-    public int getRowNumberFromY(double y) {
-        return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
-    }
-
-    private int getPositionIndexFromCoordinate(float[] positions, double coord, float sizeInPoints) {
-        if (positions.length == 0) {
-            return 0;
-        }
-
-        // guess position
-        int j = (int) (positions.length * coord / sizeInPoints);
-        if (j < 0) {
-            j = 0;
-        } else if (j >= positions.length) {
-            j = positions.length - 1;
-        }
-
-        // linear search from here
-        if (positions[Math.min(positions.length - 1, j)] > coord) {
-            while (j > 0 && positions[j - 1] > coord) {
-                j--;
-            }
-        } else {
-            while (j < positions.length && positions[Math.min(positions.length - 1, j)] <= coord) {
-                j++;
-            }
-        }
-
-        return j - 1;
-    }
-
-    /**
-     * @param j the column number
-     * @return the columnPos
-     */
-    public float getColumnPos(int j) {
-        return columnPos[Math.min(columnPos.length - 1, j)];
-    }
-
-    /**
-     * Get number of rows for the currently loaded sheet.
-     *
-     * @return number of rows
-     */
-    public int getRowCount() {
-        return rowPos.length - 1;
-    }
-
-    /**
-     * @param i the row number
-     * @return the rowPos
-     */
-    public float getRowPos(int i) {
-        return rowPos[Math.min(rowPos.length - 1, i)];
-    }
-
-    /**
-     * Get display coordinates of selection rectangle.
-     *
-     * @param cell the selected cell
-     * @return selection rectangle in display coordinates
-     */
-    public Rectangle2f getSelectionRect(Cell cell) {
-        Rectangle2f cellRect = getCellRect(cell.getLogicalCell());
-        float extra = (getSelectionStrokeWidth() + 1) / 2;
-        return cellRect.addMargin(extra);
-    }
-
-    public float getSheetHeightInPoints() {
-        return sheetHeightInPoints;
-    }
-
-    public float getSheetWidthInPoints() {
-        return sheetWidthInPoints;
-    }
-
-    public float getSplitX() {
-        return getColumnPos(sheet.getSplitColumn());
-    }
-
-    public float getSplitY() {
-        return getRowPos(sheet.getSplitRow());
-    }
 
     public void update(@Nullable Sheet sheet) {
         //noinspection ObjectEquality
         if (sheet != this.sheet) {
             this.sheet = sheet;
-        }
-
-        // determine sheet dimensions
-        if (sheet == null) {
-            sheetWidthInPoints = 0;
-            sheetHeightInPoints = 0;
-            rowPos = new float[]{0};
-            columnPos = new float[]{0};
-            return;
-        }
-
-        Lock readLock = sheet.readLock();
-        readLock.lock();
-        try {
-            sheetHeightInPoints = 0;
-            rowPos = new float[2 + sheet.getLastRowNum()];
-            rowPos[0] = 0;
-            for (int i = 1; i < rowPos.length; i++) {
-                sheetHeightInPoints += sheet.getRowHeight(i - 1);
-                rowPos[i] = sheetHeightInPoints;
-            }
-
-            sheetWidthInPoints = 0;
-            columnPos = new float[2 + sheet.getLastColNum()];
-            columnPos[0] = 0;
-            for (int j = 1; j < columnPos.length; j++) {
-                sheetWidthInPoints += sheet.getColumnWidth(j - 1);
-                columnPos[j] = sheetWidthInPoints;
-            }
-        } finally {
-            readLock.unlock();
         }
     }
 
@@ -342,6 +161,10 @@ public abstract class SheetPainterBase<G> {
             setColor(g, fillFgColor);
             fillRect(g, cr);
         }
+    }
+
+    private Rectangle2f getCellRect(Cell cell) {
+        return getDelegate().getCellRect(cell);
     }
 
     /**
@@ -413,14 +236,14 @@ public abstract class SheetPainterBase<G> {
                 if (!row.getCell(j).isEmpty()) {
                     break;
                 }
-                clipXMin = getColumnPos(j) + paddingX;
+                clipXMin = getDelegate().getColumnPos(j) + paddingX;
             }
             float clipXMax = textRect.xMax();
-            for (int j = cell.getColumnNumber() + 1; j < getColumnCount(); j++) {
+            for (int j = cell.getColumnNumber() + 1; j < getDelegate().getColumnCount(); j++) {
                 if (!row.getCell(j).isEmpty()) {
                     break;
                 }
-                clipXMax = getColumnPos(j + 1) - paddingX;
+                clipXMax = getDelegate().getColumnPos(j + 1) - paddingX;
             }
             clipRect = new Rectangle2f(clipXMin, textRect.yMin(), clipXMax - clipXMin, textRect.height());
         }
@@ -446,6 +269,18 @@ public abstract class SheetPainterBase<G> {
                     strokeRect(g, rect);
                 });
     }
+    /**
+     * Get display coordinates of selection rectangle.
+     *
+     * @param cell the selected cell
+     * @return selection rectangle in display coordinates
+     */
+    public Rectangle2f getSelectionRect(Cell cell) {
+        Rectangle2f cellRect = getCellRect(cell.getLogicalCell());
+        float extra = (getSelectionStrokeWidth() + 1) / 2;
+        return cellRect.addMargin(extra);
+    }
+
 
     protected void beginDraw(G g) {
         // nop
@@ -458,10 +293,10 @@ public abstract class SheetPainterBase<G> {
         public final int endColumn;
 
         public VisibleArea(Rectangle2f clipBounds) {
-            this.startRow = Math.max(0, getRowNumberFromY(clipBounds.yMin()));
-            this.endRow = Math.min(getRowCount(), 1 + getRowNumberFromY(clipBounds.yMax()));
-            this.startColumn = Math.max(0, getColumnNumberFromX(clipBounds.xMin()));
-            this.endColumn = Math.min(getColumnCount(), 1 + getColumnNumberFromX(clipBounds.xMax()));
+            this.startRow = Math.max(0, getDelegate().getRowNumberFromY(clipBounds.yMin()));
+            this.endRow = Math.min(getDelegate().getRowCount(), 1 + getDelegate().getRowNumberFromY(clipBounds.yMax()));
+            this.startColumn = Math.max(0, getDelegate().getColumnNumberFromX(clipBounds.xMin()));
+            this.endColumn = Math.min(getDelegate().getColumnCount(), 1 + getDelegate().getColumnNumberFromX(clipBounds.xMax()));
         }
     }
 
@@ -475,8 +310,8 @@ public abstract class SheetPainterBase<G> {
         for (int i = va.startRow; i < va.endRow; i++) {
             float x = -getRowLabelWidth();
             float w = getRowLabelWidth();
-            float y = getRowPos(i);
-            float h = getRowPos(i + 1) - y;
+            float y = getDelegate().getRowPos(i);
+            float h = getDelegate().getRowPos(i + 1) - y;
             Rectangle2f r = new Rectangle2f(x, y, w, h);
             String text = delegate.getRowName(i);
             drawLabel(g, r, text);
@@ -484,9 +319,9 @@ public abstract class SheetPainterBase<G> {
 
         // draw column labels
         for (int j = va.startColumn; j < va.endColumn; j++) {
-            float x = getColumnPos(j);
+            float x = getDelegate().getColumnPos(j);
             float y = -getColumnLabelHeight();
-            float w = getColumnPos(j + 1) - x;
+            float w = getDelegate().getColumnPos(j + 1) - x;
             Rectangle2f r = new Rectangle2f(x, y, w, getColumnLabelHeight());
             String text = delegate.getColumnName(j);
             drawLabel(g, r, text);
@@ -560,12 +395,12 @@ public abstract class SheetPainterBase<G> {
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
             int first = va.startColumn;
-            while (first > 0 && getColumnPos(first) + maxWidth > clipBounds.xMin() && row.getCell(first).isEmpty()) {
+            while (first > 0 && getDelegate().getColumnPos(first) + maxWidth > clipBounds.xMin() && row.getCell(first).isEmpty()) {
                 first--;
             }
 
             int end = va.endColumn;
-            while (end < getColumnCount() && getColumnPos(end) - maxWidth < clipBounds.xMax()
+            while (end < getDelegate().getColumnCount() && getDelegate().getColumnPos(end) - maxWidth < clipBounds.xMax()
                     && (end <= 0 || row.getCell(end - 1).isEmpty())) {
                 end++;
             }

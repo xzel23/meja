@@ -6,11 +6,13 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 import java.util.concurrent.Flow;
+import java.util.concurrent.locks.Lock;
 import java.util.function.IntFunction;
 
 /**
@@ -23,6 +25,51 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private static final Logger LOG = LogManager.getLogger(SheetViewDelegate.class);
 
     private final SheetView owner;
+
+    /**
+     * The sheet displayed.
+     */
+    private transient Sheet sheet;
+
+    /**
+     * Array with column positions (x-axis) in pixels.
+     */
+    private float[] columnPos = {0};
+
+    /**
+     * Array with column positions (y-axis) in pixels.
+     */
+    private float[] rowPos = {0};
+
+    private float sheetHeightInPoints;
+
+    private float sheetWidthInPoints;
+
+    public float getSheetHeightInPoints() {
+        return sheetHeightInPoints;
+    }
+
+    public float getSheetWidthInPoints() {
+        return sheetWidthInPoints;
+    }
+
+    /**
+     * Get x-coordinate of split.
+     *
+     * @return x coordinate of split
+     */
+    public float getSplitX() {
+        return getColumnPos(sheet.getSplitColumn());
+    }
+
+    /**
+     * Get y-coordinate of split.
+     *
+     * @return y coordinate of split
+     */
+    public float getSplitY() {
+        return getRowPos(sheet.getSplitRow());
+    }
 
     /**
      * Flow-API {@link java.util.concurrent.Flow.Subscription} instance.
@@ -46,10 +93,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     private float scale = 1.0f;
     /**
-     * The sheet displayed.
-     */
-    private transient Sheet sheet;
-    /**
      * The color to use for the grid lines.
      */
     private transient Color gridColor = Color.LIGHTGRAY;
@@ -64,6 +107,97 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
     public SheetViewDelegate(SheetView owner) {
         this.owner = owner;
+    }
+    /**
+     * Get number of columns for the currently loaded sheet.
+     *
+     * @return number of columns
+     */
+    public int getColumnCount() {
+        return columnPos.length - 1;
+    }
+
+    /**
+     * Get the column number that the given x-coordinate belongs to.
+     *
+     * @param x x-coordinate
+     * @return <ul>
+     *         <li>-1, if the first column is displayed to the right of the given
+     *         coordinate
+     *         <li>number of columns, if the right edge of the last column is
+     *         displayed to the left of the given coordinate
+     *         <li>the number of the column that belongs to the given coordinate
+     *         </ul>
+     */
+    public int getColumnNumberFromX(double x) {
+        return getPositionIndexFromCoordinate(columnPos, x, sheetWidthInPoints);
+    }
+
+    /**
+     * Get the row number that the given y-coordinate belongs to.
+     *
+     * @param y y-coordinate
+     * @return <ul>
+     *         <li>-1, if the first row is displayed below the given coordinate
+     *         <li>number of rows, if the lower edge of the last row is displayed
+     *         above the given coordinate
+     *         <li>the number of the row that belongs to the given coordinate
+     *         </ul>
+     */
+    public int getRowNumberFromY(double y) {
+        return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
+    }
+
+    private int getPositionIndexFromCoordinate(float[] positions, double coord, float sizeInPoints) {
+        if (positions.length == 0) {
+            return 0;
+        }
+
+        // guess position
+        int j = (int) (positions.length * coord / sizeInPoints);
+        if (j < 0) {
+            j = 0;
+        } else if (j >= positions.length) {
+            j = positions.length - 1;
+        }
+
+        // linear search from here
+        if (positions[Math.min(positions.length - 1, j)] > coord) {
+            while (j > 0 && positions[j - 1] > coord) {
+                j--;
+            }
+        } else {
+            while (j < positions.length && positions[Math.min(positions.length - 1, j)] <= coord) {
+                j++;
+            }
+        }
+
+        return j - 1;
+    }
+
+    /**
+     * @param j the column number
+     * @return the columnPos
+     */
+    public float getColumnPos(int j) {
+        return columnPos[Math.min(columnPos.length - 1, j)];
+    }
+
+    /**
+     * Get number of rows for the currently loaded sheet.
+     *
+     * @return number of rows
+     */
+    public int getRowCount() {
+        return rowPos.length - 1;
+    }
+
+    /**
+     * @param i the row number
+     * @return the rowPos
+     */
+    public float getRowPos(int i) {
+        return rowPos[Math.min(rowPos.length - 1, i)];
     }
 
     @Override
@@ -125,6 +259,24 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return Optional.ofNullable(sheet);
     }
 
+    /**
+     * Calculate the rectangle the cell occupies on screen.
+     *
+     * @param cell the cell whose area is requested
+     * @return the rectangle the cell takes up in screen coordinates
+     */
+    public Rectangle2f getCellRect(Cell cell) {
+        final int i = cell.getRowNumber();
+        final int j = cell.getColumnNumber();
+
+        final float x = getColumnPos(j);
+        final float w = getColumnPos(j + cell.getHorizontalSpan()) - x;
+        final float y = getRowPos(i);
+        final float h = getRowPos(i + cell.getVerticalSpan()) - y;
+
+        return new Rectangle2f(x, y, w, h);
+    }
+
     public void setSheet(@Nullable Sheet sheet) {
         //noinspection ObjectEquality
         if (sheet != this.sheet) {
@@ -136,8 +288,36 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             this.sheet = sheet;
             LOG.debug("sheet changed");
 
-            if (this.sheet != null) {
-                this.sheet.subscribe(this);
+            // determine sheet dimensions
+            if (sheet == null) {
+                sheetWidthInPoints = 0;
+                sheetHeightInPoints = 0;
+                rowPos = new float[]{0};
+                columnPos = new float[]{0};
+                return;
+            } else {
+                Lock lock = sheet.readLock();
+                lock.lock();
+                try {
+                    sheetHeightInPoints = 0;
+                    rowPos = new float[2 + sheet.getLastRowNum()];
+                    rowPos[0] = 0;
+                    for (int i = 1; i < rowPos.length; i++) {
+                        sheetHeightInPoints += sheet.getRowHeight(i - 1);
+                        rowPos[i] = sheetHeightInPoints;
+                    }
+
+                    sheetWidthInPoints = 0;
+                    columnPos = new float[2 + sheet.getLastColNum()];
+                    columnPos[0] = 0;
+                    for (int j = 1; j < columnPos.length; j++) {
+                        sheetWidthInPoints += sheet.getColumnWidth(j - 1);
+                        columnPos[j] = sheetWidthInPoints;
+                    }
+                    this.sheet.subscribe(this);
+                } finally {
+                  lock.unlock();
+                }
             }
 
             owner.updateContent();
@@ -164,15 +344,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public String getRowName(int i) {
         return rowNames.apply(i);
     }
-
-    public int getColumnCount() {
-        return sheet == null ? 0 : 1 + sheet.getLastColNum();
-    }
-
-    public int getRowCount() {
-        return sheet == null ? 0 : 1 + sheet.getLastRowNum();
-    }
-
 
     /**
      * Check whether editing is enabled.
@@ -379,32 +550,14 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         owner.requestFocusInWindow();
     }
 
-    /**
-     * Get x-coordinate of split.
-     *
-     * @return x coordinate of split
-     */
-    public float getSplitX() {
-        return getSheet()
-                .map(sheet -> getColumnPos(sheet.getSplitColumn()))
-                .orElse(0f);
+    public int getColumnNumberFromX(float x) {
+        return getPositionIndexFromCoordinate(columnPos, x, sheetWidthInPoints);
     }
 
-    /**
-     * Get y-coordinate of split.
-     *
-     * @return y coordinate of split
-     */
-    public float getSplitY() {
-        return getSheet()
-                .map(sheet -> getRowPos(sheet.getSplitRow()))
-                .orElse(0f);
+    public int getRowNumberFromY(float y) {
+        return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
     }
 
-    public abstract int getColumnNumberFromX(float x);
-    public abstract int getRowNumberFromY(float v);
-    public abstract float getColumnPos(int column);
-    public abstract float getRowPos(int row);
     public abstract float getRowLabelWidth();
     public abstract float getColumnLabelHeight();
 }

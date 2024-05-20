@@ -37,22 +37,6 @@ public class SwingSheetViewDelegate extends SheetViewDelegate {
         return new java.awt.Rectangle(x1, y1, x2 - x1, y2 - y1);
     }
 
-    public int getColumnNumberFromX(float x) {
-        return sheetPainter.getColumnNumberFromX(x);
-    }
-
-    public int getRowNumberFromY(float v) {
-        return sheetPainter.getRowNumberFromY(v);
-    }
-
-    public float getColumnPos(int column) {
-        return sheetPainter.getColumnPos(column);
-    }
-
-    public float getRowPos(int row) {
-        return sheetPainter.getRowPos(row);
-    }
-
     public float getRowLabelWidth() {
         return sheetPainter.getRowLabelWidth();
     }

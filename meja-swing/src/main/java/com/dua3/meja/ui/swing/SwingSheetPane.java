@@ -50,13 +50,13 @@ final class SwingSheetPane extends JScrollPane {
             return;
         }
 
-        Rectangle2f cellRect = svDelegate.getSheetPainter().getCellRect(cell);
+        Rectangle2f cellRect = svDelegate.getCellRect(cell);
         boolean aboveSplit = svDelegate.getSplitY() >= cellRect.xMax();
         boolean toLeftOfSplit = svDelegate.getSplitX() >= cellRect.xMax();
 
         cellRect = cellRect.translate(
-                toLeftOfSplit ? 0 : -svDelegate.getSheetPainter().getSplitX(),
-                aboveSplit ? 0 : -svDelegate.getSheetPainter().getSplitY()
+                toLeftOfSplit ? 0 : -svDelegate.getSplitX(),
+                aboveSplit ? 0 : -svDelegate.getSplitY()
         );
 
         //noinspection StatementWithEmptyBody
@@ -112,10 +112,10 @@ final class SwingSheetPane extends JScrollPane {
 
             int i = cell.getRowNumber();
             int j = cell.getColumnNumber();
-            float x = svDelegate.getSheetPainter().getColumnPos(j);
-            float w = svDelegate.getSheetPainter().getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
-            float y = svDelegate.getSheetPainter().getRowPos(i);
-            float h = svDelegate.getSheetPainter().getRowPos(i + cell.getVerticalSpan()) - y + 1;
+            float x = svDelegate.getColumnPos(j);
+            float w = svDelegate.getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
+            float y = svDelegate.getRowPos(i);
+            float h = svDelegate.getRowPos(i + cell.getVerticalSpan()) - y + 1;
             x -= quadrant.getDelegate().getXMinInViewCoordinates();
             x += parent.getX();
             x -= pos.x;

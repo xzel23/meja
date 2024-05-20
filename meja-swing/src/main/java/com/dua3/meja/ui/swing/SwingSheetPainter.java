@@ -132,7 +132,7 @@ public class SwingSheetPainter extends SheetPainterBase<Graphics2D> {
             // of zeroes instead of the last row number because a proportional
             // font might be used)
             StringBuilder sb = new StringBuilder("0");
-            for (int i = 1; i <= getRowCount(); i *= 10) {
+            for (int i = 1; i <= delegate.getRowCount(); i *= 10) {
                 sb.append('0');
             }
             labelPainter.setText(new String(sb));
