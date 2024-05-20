@@ -16,7 +16,7 @@ public class FxSheetView extends Pane implements SheetView {
     }
 
     public FxSheetView(@Nullable Sheet sheet) {
-        this.delegate = new FxSheetViewDelegate(this, d -> new FxSheetPainter(d));
+        this.delegate = new FxSheetViewDelegate(this, FxSheetPainter::new);
         delegate.setSheet(sheet);
     }
 

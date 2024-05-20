@@ -3,28 +3,36 @@
  */
 package com.dua3.meja.ui.fx;
 
+import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetPainterBase;
 import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
-
-import java.awt.Canvas;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 
 public class FxSheetPainter extends SheetPainterBase<Canvas, Rectangle2D> {
+
+    private float labelHeight;
+    private float labelWidth;
+    private Label labelPainter = new Label();
+
     protected FxSheetPainter(SheetViewDelegate<Canvas, Rectangle2D> delegate) {
         super(delegate);
     }
 
     @Override
-    public float getRowLabelWidth() {
-        return 0;
+    public float getColumnLabelHeight() {
+        return labelHeight;
     }
 
     @Override
-    public float getColumnLabelHeight() {
-        return 0;
+    public float getRowLabelWidth() {
+        return labelWidth;
     }
 
     @Override
@@ -39,7 +47,6 @@ public class FxSheetPainter extends SheetPainterBase<Canvas, Rectangle2D> {
 
     @Override
     protected void drawLabel(Canvas g, Rectangle2f rect, String text) {
-
     }
 
     @Override
@@ -71,4 +78,26 @@ public class FxSheetPainter extends SheetPainterBase<Canvas, Rectangle2D> {
     protected void render(Canvas g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect) {
 
     }
+
+    @Override
+    public void update(@Nullable Sheet sheet) {
+        super.update(sheet);
+
+        if (sheet != null) {
+            // create a string with the maximum number of digits needed to
+            // represent the highest row number (use a string only consisting
+            // of zeroes instead of the last row number because a proportional
+            // font might be used)
+            StringBuilder sb = new StringBuilder("0");
+            for (int i = 1; i <= getRowCount(); i *= 10) {
+                sb.append('0');
+            }
+            labelPainter.setText(new String(sb));
+            labelPainter.autosize();
+            Bounds bounds = labelPainter.getLayoutBounds();
+            labelWidth = delegate.wD2S((float) bounds.getWidth());
+            labelHeight = delegate.hD2S((float) bounds.getHeight());
+        }
+    }
+
 }

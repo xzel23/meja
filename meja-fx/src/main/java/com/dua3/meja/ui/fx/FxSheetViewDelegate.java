@@ -3,8 +3,8 @@ package com.dua3.meja.ui.fx;
 import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.canvas.Canvas;
 
-import java.awt.Canvas;
 import java.util.function.Function;
 
 public class FxSheetViewDelegate extends SheetViewDelegate<Canvas, Rectangle2D> {
