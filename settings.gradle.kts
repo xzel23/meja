@@ -34,11 +34,10 @@ dependencyResolutionManagement {
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("cabe", "2.0")
-            version("dua3-utility", "13.0-BETA2")
+            version("dua3-utility", "13.0-BETA3")
             version("javafx", "21.0.2")
             version("log4j", "2.23.1")
             version("poi", "5.2.5")
-            version("controlsfx", "11.2.1")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
@@ -50,7 +49,6 @@ dependencyResolutionManagement {
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
             library("poi", "org.apache.poi", "poi").versionRef("poi")
             library("poi-ooxml", "org.apache.poi", "poi-ooxml").versionRef("poi")
-            library("controlsfx", "org.controlsfx", "controlsfx").versionRef("controlsfx")
 
             // version overrides for libraries
 

@@ -6,6 +6,7 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +45,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private float sheetHeightInPoints;
 
     private float sheetWidthInPoints;
+    private float rowLabelWidth;
+    private float columnLabelHeight;
 
     public float getSheetHeightInPoints() {
         return sheetHeightInPoints;
@@ -299,6 +302,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
                 Lock lock = sheet.readLock();
                 lock.lock();
                 try {
+                    // determine row and column positions
                     sheetHeightInPoints = 0;
                     rowPos = new float[2 + sheet.getLastRowNum()];
                     rowPos[0] = 0;
@@ -314,6 +318,15 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
                         sheetWidthInPoints += sheet.getColumnWidth(j - 1);
                         columnPos[j] = sheetWidthInPoints;
                     }
+
+                    // create a string with the maximum number of digits needed to
+                    // represent the highest row number, using only the digit 9.
+                    String sMax = "9".repeat(String.valueOf(getRowLabelWidth()).length());
+                    Dimension2f dim = calculateLabelDimension(sMax);
+                    rowLabelWidth = hD2S(dim.width());
+                    columnLabelHeight = wD2S(dim.height());
+
+                    // subscribe to the Flow API
                     this.sheet.subscribe(this);
                 } finally {
                   lock.unlock();
@@ -558,6 +571,14 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
     }
 
-    public abstract float getRowLabelWidth();
-    public abstract float getColumnLabelHeight();
+    protected abstract Dimension2f calculateLabelDimension(String text);
+
+    public float getRowLabelWidth() {
+        return rowLabelWidth;
+    }
+
+    public float getColumnLabelHeight() {
+        return columnLabelHeight;
+    }
+
 }

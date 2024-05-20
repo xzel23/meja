@@ -73,8 +73,14 @@ public abstract class SheetPainterBase<G> {
      */
     private Sheet sheet;
 
-    public abstract float getRowLabelWidth();
-    public abstract float getColumnLabelHeight();
+    public float getRowLabelWidth() {
+        return getDelegate().getRowLabelWidth();
+    }
+
+    public float getColumnLabelHeight() {
+        return getDelegate().getColumnLabelHeight();
+    }
+
     protected abstract Rectangle2f getClipBounds(G g);
     protected abstract void drawBackground(G g);
     protected abstract void drawLabel(G g, Rectangle2f rect, String text);

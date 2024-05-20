@@ -3,9 +3,7 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetPainterBase;
 import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.data.Color;
@@ -16,7 +14,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.BasicStroke;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
@@ -25,9 +22,6 @@ public class SwingSheetPainter extends SheetPainterBase<Graphics2D> {
     private final CellRenderer cellRenderer;
     private final JLabel labelPainter = new JLabel();
     private final SwingSheetViewDelegate delegate;
-
-    private float labelHeight;
-    private float labelWidth;
 
     SwingSheetPainter(SwingSheetViewDelegate svDelegate, CellRenderer cellRenderer) {
         this.delegate = svDelegate;
@@ -100,18 +94,8 @@ public class SwingSheetPainter extends SheetPainterBase<Graphics2D> {
     }
 
     @Override
-    public float getColumnLabelHeight() {
-        return labelHeight;
-    }
-
-    @Override
     protected SheetViewDelegate getDelegate() {
         return delegate;
-    }
-
-    @Override
-    public float getRowLabelWidth() {
-        return labelWidth;
     }
 
     @Override
@@ -120,26 +104,6 @@ public class SwingSheetPainter extends SheetPainterBase<Graphics2D> {
         java.awt.Rectangle clipRectD = delegate.rectS2D(clipRect);
 
         cellRenderer.render(g, cell, rectD, clipRectD, delegate.getScale());
-    }
-
-    @Override
-    public void update(@Nullable Sheet sheet) {
-        super.update(sheet);
-
-        if (sheet != null) {
-            // create a string with the maximum number of digits needed to
-            // represent the highest row number (use a string only consisting
-            // of zeroes instead of the last row number because a proportional
-            // font might be used)
-            StringBuilder sb = new StringBuilder("0");
-            for (int i = 1; i <= delegate.getRowCount(); i *= 10) {
-                sb.append('0');
-            }
-            labelPainter.setText(new String(sb));
-            final Dimension labelSize = labelPainter.getPreferredSize();
-            labelWidth = delegate.wD2S(labelSize.width);
-            labelHeight = delegate.hD2S(labelSize.height);
-        }
     }
 
 }
