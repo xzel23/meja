@@ -89,7 +89,6 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
      * @param sheetName name of the sheet
      * @return the view for the requested sheet or {@code null} if not found
      */
-    @Override
     public Optional<SwingSheetView> getViewForSheet(String sheetName) {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);

@@ -11,11 +11,10 @@ import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import javafx.geometry.Bounds;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 
-public class FxSheetPainter extends SheetPainterBase<Canvas, Rectangle2D> {
+public class FxSheetPainter extends SheetPainterBase<Canvas> {
 
     private float labelHeight;
     private float labelWidth;

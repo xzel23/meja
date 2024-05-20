@@ -20,7 +20,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class SwingSheetPainter extends SheetPainterBase<Graphics2D, Rectangle> {
+public class SwingSheetPainter extends SheetPainterBase<Graphics2D> {
 
     private final CellRenderer cellRenderer;
     private final JLabel labelPainter = new JLabel();

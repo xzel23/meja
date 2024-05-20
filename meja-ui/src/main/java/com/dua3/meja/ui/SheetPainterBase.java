@@ -31,9 +31,9 @@ import java.util.concurrent.locks.Lock;
 /**
  * A helper class that implements the actual drawing algorithm.
  *
- * @param <GC> the concrete class implementing GraphicsContext
+ * @param <G> the concrete class implementing GraphicsContext
  */
-public abstract class SheetPainterBase<GC, R> {
+public abstract class SheetPainterBase<G> {
 
     /**
      * Horizontal padding.
@@ -88,29 +88,29 @@ public abstract class SheetPainterBase<GC, R> {
 
     public abstract float getRowLabelWidth();
     public abstract float getColumnLabelHeight();
-    protected abstract Rectangle2f getClipBounds(GC g);
-    protected abstract void drawBackground(GC g);
-    protected abstract void drawLabel(GC g, Rectangle2f rect, String text);
-    protected abstract void setColor(GC g, Color color);
-    protected abstract void strokeLine(GC g, float v, float v1, float v2, float v3);
+    protected abstract Rectangle2f getClipBounds(G g);
+    protected abstract void drawBackground(G g);
+    protected abstract void drawLabel(G g, Rectangle2f rect, String text);
+    protected abstract void setColor(G g, Color color);
+    protected abstract void strokeLine(G g, float v, float v1, float v2, float v3);
 
-    protected abstract void strokeRect(GC g, float x, float y, float w, float h);
-    protected void strokeRect(GC g, Rectangle2f r) {
+    protected abstract void strokeRect(G g, float x, float y, float w, float h);
+    protected void strokeRect(G g, Rectangle2f r) {
         strokeRect(g, r.x(), r.y(), r.width(), r.height());
     }
 
-    protected abstract void fillRect(GC g, float x, float y, float w, float h);
-    protected void fillRect(GC g, Rectangle2f r) {
+    protected abstract void fillRect(G g, float x, float y, float w, float h);
+    protected void fillRect(G g, Rectangle2f r) {
         fillRect(g, r.x(), r.y(), r.width(), r.height());
     }
 
-    protected abstract void setStroke(GC g, Color color, float width);
-    protected abstract void render(GC g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect);
+    protected abstract void setStroke(G g, Color color, float width);
+    protected abstract void render(G g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect);
 
     protected SheetPainterBase() {
     }
 
-    public void drawSheet(GC gc) {
+    public void drawSheet(G g) {
         if (sheet == null) {
             return;
         }
@@ -118,16 +118,16 @@ public abstract class SheetPainterBase<GC, R> {
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {
-            beginDraw(gc);
+            beginDraw(g);
 
-            drawBackground(gc);
+            drawBackground(g);
 
-            drawLabels(gc);
+            drawLabels(g);
 
-            drawCells(gc);
-            drawSelection(gc);
+            drawCells(g);
+            drawSelection(g);
 
-            endDraw(gc);
+            endDraw(g);
         } finally {
             readLock.unlock();
         }
@@ -315,7 +315,7 @@ public abstract class SheetPainterBase<GC, R> {
      * @param g    the graphics context to use
      * @param cell cell to draw
      */
-    private void drawCellBackground(GC g, Cell cell) {
+    private void drawCellBackground(G g, Cell cell) {
         Rectangle2f cr = getCellRect(cell);
 
         // draw grid lines
@@ -350,7 +350,7 @@ public abstract class SheetPainterBase<GC, R> {
      * @param g    the graphics context to use
      * @param cell cell to draw
      */
-    private void drawCellBorder(GC g, Cell cell) {
+    private void drawCellBorder(G g, Cell cell) {
         CellStyle styleTopLeft = cell.getCellStyle();
 
         Cell cellBottomRight = sheet.getRow(cell.getRowNumber() + cell.getVerticalSpan() - 1)
@@ -390,7 +390,7 @@ public abstract class SheetPainterBase<GC, R> {
      * @param g    the graphics context to use
      * @param cell cell to draw
      */
-    private void drawCellForeground(GC g, Cell cell) {
+    private void drawCellForeground(G g, Cell cell) {
         if (cell.isEmpty()) {
             return;
         }
@@ -431,9 +431,9 @@ public abstract class SheetPainterBase<GC, R> {
     /**
      * Draw frame around current selection.
      *
-     * @param gc graphics object used for drawing
+     * @param g graphics object used for drawing
      */
-    private void drawSelection(GC gc) {
+    private void drawSelection(G g) {
         // no sheet, no drawing
         if (sheet == null) {
             return;
@@ -442,12 +442,12 @@ public abstract class SheetPainterBase<GC, R> {
         sheet.getCurrentCell().map(Cell::getLogicalCell)
                 .ifPresent(lc -> {
                     Rectangle2f rect = getCellRect(lc);
-                    setStroke(gc, getSelectionColor(), getSelectionStrokeWidth());
-                    strokeRect(gc, rect);
+                    setStroke(g, getSelectionColor(), getSelectionStrokeWidth());
+                    strokeRect(g, rect);
                 });
     }
 
-    protected void beginDraw(GC gc) {
+    protected void beginDraw(G g) {
         // nop
     }
 
@@ -465,11 +465,11 @@ public abstract class SheetPainterBase<GC, R> {
         }
     }
 
-    protected void drawLabels(GC gc) {
+    protected void drawLabels(G g) {
         SheetViewDelegate delegate = getDelegate();
 
         // determine visible rows and columns
-        VisibleArea va = new VisibleArea(getClipBounds(gc));
+        VisibleArea va = new VisibleArea(getClipBounds(g));
 
         // draw row labels
         for (int i = va.startRow; i < va.endRow; i++) {
@@ -479,7 +479,7 @@ public abstract class SheetPainterBase<GC, R> {
             float h = getRowPos(i + 1) - y;
             Rectangle2f r = new Rectangle2f(x, y, w, h);
             String text = delegate.getRowName(i);
-            drawLabel(gc, r, text);
+            drawLabel(g, r, text);
         }
 
         // draw column labels
@@ -489,11 +489,11 @@ public abstract class SheetPainterBase<GC, R> {
             float w = getColumnPos(j + 1) - x;
             Rectangle2f r = new Rectangle2f(x, y, w, getColumnLabelHeight());
             String text = delegate.getColumnName(j);
-            drawLabel(gc, r, text);
+            drawLabel(g, r, text);
         }
     }
 
-    protected void endDraw(GC gc) {
+    protected void endDraw(G g) {
         // nop
     }
 
@@ -536,7 +536,7 @@ public abstract class SheetPainterBase<GC, R> {
      *
      * @param g            the graphics object to use
      */
-    void drawCells(GC g) {
+    void drawCells(G g) {
         // no sheet, no drawing
         if (sheet == null) {
             return;

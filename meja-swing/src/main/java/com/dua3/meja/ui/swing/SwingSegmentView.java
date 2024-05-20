@@ -15,14 +15,13 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.IntSupplier;
 
-final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<SwingSheetView, Graphics2D, Rectangle> {
+final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
     private final transient SwingSheetViewDelegate svDelegate;
-    private final transient SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> ssvDelegate;
+    private final transient SegmentViewDelegate ssvDelegate;
 
     SwingSegmentView(
             SwingSheetViewDelegate sheetViewDelegate,
@@ -38,7 +37,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView<S
     }
 
     @Override
-    public SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> getDelegate() {
+    public SegmentViewDelegate getDelegate() {
         return ssvDelegate;
     }
 

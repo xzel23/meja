@@ -4,12 +4,10 @@ import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.meja.ui.SheetViewDelegate;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.util.function.IntSupplier;
 
-public class SwingSegmentViewDelegate extends SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> {
-    public SwingSegmentViewDelegate(SegmentView<SwingSheetView, Graphics2D, Rectangle> owner, SheetViewDelegate sheetViewDelegate, IntSupplier startRow, IntSupplier endRow, IntSupplier startColumn, IntSupplier endColumn) {
+public class SwingSegmentViewDelegate extends SegmentViewDelegate {
+    public SwingSegmentViewDelegate(SegmentView owner, SheetViewDelegate sheetViewDelegate, IntSupplier startRow, IntSupplier endRow, IntSupplier startColumn, IntSupplier endColumn) {
         super(owner, sheetViewDelegate, startRow, endRow, startColumn, endColumn);
     }
 }
