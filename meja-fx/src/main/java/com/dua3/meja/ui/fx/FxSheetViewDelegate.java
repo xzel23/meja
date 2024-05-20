@@ -4,13 +4,10 @@ import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import javafx.geometry.Rectangle2D;
 
-import java.util.function.Function;
-
 public class FxSheetViewDelegate extends SheetViewDelegate {
 
     public FxSheetViewDelegate(
-            FxSheetView owner,
-            Function<? super SheetViewDelegate, FxSheetPainter> sheetPainterFactory
+            FxSheetView owner
     ) {
         super(owner);
     }
