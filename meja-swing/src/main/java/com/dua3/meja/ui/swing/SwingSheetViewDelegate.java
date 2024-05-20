@@ -5,7 +5,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 
 import java.util.function.Function;
 
-public class SwingSheetViewDelegate extends SheetViewDelegate<java.awt.Rectangle> {
+public class SwingSheetViewDelegate extends SheetViewDelegate {
 
     private final SwingSheetPainter sheetPainter;
 

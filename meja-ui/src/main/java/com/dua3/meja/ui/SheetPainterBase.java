@@ -66,7 +66,7 @@ public abstract class SheetPainterBase<GC, R> {
         return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
     }
 
-    protected abstract SheetViewDelegate<R> getDelegate();
+    protected abstract SheetViewDelegate getDelegate();
 
     /**
      * Reference to the sheet.
@@ -466,7 +466,7 @@ public abstract class SheetPainterBase<GC, R> {
     }
 
     protected void drawLabels(GC gc) {
-        SheetViewDelegate<R> delegate = getDelegate();
+        SheetViewDelegate delegate = getDelegate();
 
         // determine visible rows and columns
         VisibleArea va = new VisibleArea(getClipBounds(gc));

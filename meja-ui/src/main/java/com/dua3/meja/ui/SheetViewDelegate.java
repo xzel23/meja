@@ -19,7 +19,7 @@ import java.util.function.IntFunction;
  * A delegate is used instead of an abstract base class because user interface components might have to be derived from
  * existing UI classes.
  */
-public abstract class SheetViewDelegate<R> implements Flow.Subscriber<SheetEvent> {
+public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private static final Logger LOG = LogManager.getLogger(SheetViewDelegate.class);
 
     private final SheetView owner;

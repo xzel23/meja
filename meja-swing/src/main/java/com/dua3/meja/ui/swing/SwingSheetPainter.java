@@ -105,7 +105,7 @@ public class SwingSheetPainter extends SheetPainterBase<Graphics2D, Rectangle> {
     }
 
     @Override
-    protected SheetViewDelegate<Rectangle> getDelegate() {
+    protected SheetViewDelegate getDelegate() {
         return delegate;
     }
 

@@ -9,7 +9,7 @@ import java.awt.Rectangle;
 import java.util.function.IntSupplier;
 
 public class SwingSegmentViewDelegate extends SegmentViewDelegate<SwingSheetView, Graphics2D, Rectangle> {
-    public SwingSegmentViewDelegate(SegmentView<SwingSheetView, Graphics2D, Rectangle> owner, SheetViewDelegate<Rectangle> sheetViewDelegate, IntSupplier startRow, IntSupplier endRow, IntSupplier startColumn, IntSupplier endColumn) {
+    public SwingSegmentViewDelegate(SegmentView<SwingSheetView, Graphics2D, Rectangle> owner, SheetViewDelegate sheetViewDelegate, IntSupplier startRow, IntSupplier endRow, IntSupplier startColumn, IntSupplier endColumn) {
         super(owner, sheetViewDelegate, startRow, endRow, startColumn, endColumn);
     }
 }

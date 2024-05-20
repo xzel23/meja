@@ -21,7 +21,7 @@ public class FxSheetPainter extends SheetPainterBase<Canvas, Rectangle2D> {
     private float labelWidth;
     private Label labelPainter = new Label();
 
-    protected FxSheetPainter(SheetViewDelegate<Rectangle2D> delegate) {
+    protected FxSheetPainter(SheetViewDelegate delegate) {
         super();
     }
 
@@ -31,7 +31,7 @@ public class FxSheetPainter extends SheetPainterBase<Canvas, Rectangle2D> {
     }
 
     @Override
-    protected SheetViewDelegate<Rectangle2D> getDelegate() {
+    protected SheetViewDelegate getDelegate() {
         return null;
     }
 

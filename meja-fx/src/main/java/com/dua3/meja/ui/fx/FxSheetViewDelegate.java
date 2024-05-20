@@ -6,11 +6,11 @@ import javafx.geometry.Rectangle2D;
 
 import java.util.function.Function;
 
-public class FxSheetViewDelegate extends SheetViewDelegate<Rectangle2D> {
+public class FxSheetViewDelegate extends SheetViewDelegate {
 
     public FxSheetViewDelegate(
             FxSheetView owner,
-            Function<? super SheetViewDelegate<Rectangle2D>, FxSheetPainter> sheetPainterFactory
+            Function<? super SheetViewDelegate, FxSheetPainter> sheetPainterFactory
     ) {
         super(owner);
     }
