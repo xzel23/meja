@@ -29,26 +29,6 @@ public class FxSheetViewDelegate extends SheetViewDelegate {
     }
 
     @Override
-    public int getColumnNumberFromX(float x) {
-        return 0;
-    }
-
-    @Override
-    public int getRowNumberFromY(float v) {
-        return 0;
-    }
-
-    @Override
-    public float getColumnPos(int column) {
-        return 0;
-    }
-
-    @Override
-    public float getRowPos(int row) {
-        return 0;
-    }
-
-    @Override
     public float getRowLabelWidth() {
         return 0;
     }
