@@ -19,11 +19,9 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
-import com.dua3.utility.data.Color;
 
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.IntFunction;
 
 /**
  * @author axel
@@ -33,44 +31,12 @@ public interface SheetView {
     double MAX_COLUMN_WIDTH = 800;
 
     /**
-     * property "sheet".
-     */
-    String PROPERTY_SHEET = "sheet";
-
-    /**
-     * Get the grid color.
-     *
-     * @return color of grid
-     */
-    default Color getGridColor() {
-        return getDelegate().getGridColor();
-    }
-
-    /**
      * Get the sheet for this view.
      *
      * @return the sheet
      */
     default Optional<Sheet> getSheet() {
         return getDelegate().getSheet();
-    }
-
-    /**
-     * Check whether editing is enabled.
-     *
-     * @return true if this SheetView allows editing.
-     */
-    default boolean isEditable() {
-        return getDelegate().isEditable();
-    }
-
-    /**
-     * Check editing state.
-     *
-     * @return true, if a cell is being edited.
-     */
-    default boolean isEditing() {
-        return getDelegate().isEditing();
     }
 
     /**
@@ -99,15 +65,6 @@ public interface SheetView {
     }
 
     /**
-     * Set the grid color.
-     *
-     * @param gridColor the color for th grid
-     */
-    default void setGridColor(Color gridColor) {
-        getDelegate().setGridColor(gridColor);
-    }
-
-    /**
      * Set sheet to display.
      *
      * @param sheet the sheet to display
@@ -122,69 +79,6 @@ public interface SheetView {
      * @param commit true if the content of the edited cell is to be updated
      */
     void stopEditing(boolean commit);
-
-    /**
-     * Get name for column.
-     *
-     * @param j the column number
-     * @return the label text
-     */
-    default String getColumnName(int j) {
-        return getDelegate().getColumnName(j);
-    }
-
-    /**
-     * Get name for row.
-     *
-     * @param i the row number
-     * @return the label text
-     */
-    default String getRowName(int i) {
-        return getDelegate().getRowName(i);
-    }
-
-    /**
-     * Set the column name provider.
-     *
-     * @param columnNames a function that maps column numbers to column names
-     */
-    default void setColumnNames(IntFunction<String> columnNames) {
-        getDelegate().setColumnNames(columnNames);
-    }
-
-    /**
-     * Set the row name provider.
-     *
-     * @param rowNames a function that maps row numbers to row names
-     */
-    default void setRowNames(IntFunction<String> rowNames) {
-        getDelegate().setRowNames(rowNames);
-    }
-
-    /**
-     * Set the current column number.
-     *
-     * @param colNum number of column to be set
-     */
-    default void setCurrentColNum(int colNum) {
-        getSheet().ifPresent(sheet -> {
-            int rowNum = sheet.getCurrentCell().map(Cell::getRowNumber).orElse(0);
-            setCurrentCell(rowNum, colNum);
-        });
-    }
-
-    /**
-     * Set the current row number.
-     *
-     * @param rowNum number of row to be set
-     */
-    default void setCurrentRowNum(int rowNum) {
-        getSheet().ifPresent(sheet -> {
-            int colNum = sheet.getCurrentCell().map(Cell::getColumnNumber).orElse(0);
-            setCurrentCell(rowNum, colNum);
-        });
-    }
-
 
     SheetViewDelegate getDelegate();
 

@@ -36,14 +36,6 @@ public interface WorkbookView<SV extends SheetView> {
     /**
      * Get view for sheet.
      *
-     * @param sheetName name of the sheet
-     * @return the view for the requested sheet
-     */
-    Optional<SV> getViewForSheet(String sheetName);
-
-    /**
-     * Get view for sheet.
-     *
      * @param sheet the sheet
      * @return the view for the requested sheet
      */
