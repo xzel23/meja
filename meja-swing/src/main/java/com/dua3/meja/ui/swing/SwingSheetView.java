@@ -19,7 +19,6 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.swing.SwingUtil;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
@@ -252,7 +250,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     }
 
     @Override
-    public SheetViewDelegate<Graphics2D, java.awt.Rectangle> getDelegate() {
+    public SwingSheetViewDelegate getDelegate() {
         return delegate;
     }
 }

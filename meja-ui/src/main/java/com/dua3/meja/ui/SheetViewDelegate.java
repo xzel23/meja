@@ -6,7 +6,6 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +19,7 @@ import java.util.function.IntFunction;
  * A delegate is used instead of an abstract base class because user interface components might have to be derived from
  * existing UI classes.
  */
-public abstract class SheetViewDelegate<GC, R> implements Flow.Subscriber<SheetEvent> {
+public abstract class SheetViewDelegate<R> implements Flow.Subscriber<SheetEvent> {
     private static final Logger LOG = LogManager.getLogger(SheetViewDelegate.class);
 
     private final SheetView owner;
@@ -353,10 +352,6 @@ public abstract class SheetViewDelegate<GC, R> implements Flow.Subscriber<SheetE
     public void movePage(Direction d) {
         move(d); // TODO
     }
-
-    public abstract Rectangle2f rectD2S(R r);
-
-    public abstract R rectS2D(Rectangle2f r);
 
     public void onMousePressed(int x, int y) {
         // make the cell under pointer the current cell

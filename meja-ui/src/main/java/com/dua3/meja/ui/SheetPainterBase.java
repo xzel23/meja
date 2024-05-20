@@ -66,7 +66,7 @@ public abstract class SheetPainterBase<GC, R> {
         return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
     }
 
-    protected final SheetViewDelegate<GC, R> delegate;
+    protected abstract SheetViewDelegate<R> getDelegate();
 
     /**
      * Reference to the sheet.
@@ -107,8 +107,7 @@ public abstract class SheetPainterBase<GC, R> {
     protected abstract void setStroke(GC g, Color color, float width);
     protected abstract void render(GC g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect);
 
-    protected SheetPainterBase(SheetViewDelegate<GC, R> delegate) {
-        this.delegate = delegate;
+    protected SheetPainterBase() {
     }
 
     public void drawSheet(GC gc) {
@@ -448,14 +447,6 @@ public abstract class SheetPainterBase<GC, R> {
                 });
     }
 
-    private String getColumnName(int j) {
-        return delegate.getColumnName(j);
-    }
-
-    private String getRowName(int i) {
-        return delegate.getRowName(i);
-    }
-
     protected void beginDraw(GC gc) {
         // nop
     }
@@ -475,6 +466,8 @@ public abstract class SheetPainterBase<GC, R> {
     }
 
     protected void drawLabels(GC gc) {
+        SheetViewDelegate<R> delegate = getDelegate();
+
         // determine visible rows and columns
         VisibleArea va = new VisibleArea(getClipBounds(gc));
 
@@ -485,7 +478,7 @@ public abstract class SheetPainterBase<GC, R> {
             float y = getRowPos(i);
             float h = getRowPos(i + 1) - y;
             Rectangle2f r = new Rectangle2f(x, y, w, h);
-            String text = getRowName(i);
+            String text = delegate.getRowName(i);
             drawLabel(gc, r, text);
         }
 
@@ -495,7 +488,7 @@ public abstract class SheetPainterBase<GC, R> {
             float y = -getColumnLabelHeight();
             float w = getColumnPos(j + 1) - x;
             Rectangle2f r = new Rectangle2f(x, y, w, getColumnLabelHeight());
-            String text = getColumnName(j);
+            String text = delegate.getColumnName(j);
             drawLabel(gc, r, text);
         }
     }
@@ -505,7 +498,7 @@ public abstract class SheetPainterBase<GC, R> {
     }
 
     protected Color getGridColor() {
-        return delegate.getGridColor();
+        return getDelegate().getGridColor();
     }
 
     protected float getPaddingX() {

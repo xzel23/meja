@@ -3,17 +3,15 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.math.geometry.Rectangle2f;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.util.function.Function;
 
-public class SwingSheetViewDelegate extends SheetViewDelegate<Graphics2D, java.awt.Rectangle> {
+public class SwingSheetViewDelegate extends SheetViewDelegate<java.awt.Rectangle> {
 
     private final SwingSheetPainter sheetPainter;
 
     public SwingSheetViewDelegate(
             SwingSheetView owner,
-            Function<? super SheetViewDelegate<Graphics2D, Rectangle>, SwingSheetPainter> sheetPainterFactory
+            Function<SwingSheetViewDelegate, SwingSheetPainter> sheetPainterFactory
     ) {
         super(owner);
         this.sheetPainter = sheetPainterFactory.apply(this);
@@ -23,7 +21,6 @@ public class SwingSheetViewDelegate extends SheetViewDelegate<Graphics2D, java.a
         return sheetPainter;
     }
 
-    @Override
     public Rectangle2f rectD2S(java.awt.Rectangle r) {
         final float x1 = xD2S(r.x);
         final float y1 = yD2S(r.y);
@@ -32,7 +29,6 @@ public class SwingSheetViewDelegate extends SheetViewDelegate<Graphics2D, java.a
         return new Rectangle2f(x1, y1, x2 - x1, y2 - y1);
     }
 
-    @Override
     public java.awt.Rectangle rectS2D(Rectangle2f r) {
         final int x1 = Math.round(xS2D(r.xMin()));
         final int y1 = Math.round(yS2D(r.yMin()));

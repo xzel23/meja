@@ -21,13 +21,18 @@ public class FxSheetPainter extends SheetPainterBase<Canvas, Rectangle2D> {
     private float labelWidth;
     private Label labelPainter = new Label();
 
-    protected FxSheetPainter(SheetViewDelegate<Canvas, Rectangle2D> delegate) {
-        super(delegate);
+    protected FxSheetPainter(SheetViewDelegate<Rectangle2D> delegate) {
+        super();
     }
 
     @Override
     public float getColumnLabelHeight() {
         return labelHeight;
+    }
+
+    @Override
+    protected SheetViewDelegate<Rectangle2D> getDelegate() {
+        return null;
     }
 
     @Override
@@ -95,8 +100,8 @@ public class FxSheetPainter extends SheetPainterBase<Canvas, Rectangle2D> {
             labelPainter.setText(new String(sb));
             labelPainter.autosize();
             Bounds bounds = labelPainter.getLayoutBounds();
-            labelWidth = delegate.wD2S((float) bounds.getWidth());
-            labelHeight = delegate.hD2S((float) bounds.getHeight());
+            labelWidth = getDelegate().wD2S((float) bounds.getWidth());
+            labelHeight = getDelegate().hD2S((float) bounds.getHeight());
         }
     }
 

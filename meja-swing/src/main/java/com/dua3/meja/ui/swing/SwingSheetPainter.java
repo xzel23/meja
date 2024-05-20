@@ -24,13 +24,13 @@ public class SwingSheetPainter extends SheetPainterBase<Graphics2D, Rectangle> {
 
     private final CellRenderer cellRenderer;
     private final JLabel labelPainter = new JLabel();
+    private final SwingSheetViewDelegate delegate;
 
     private float labelHeight;
     private float labelWidth;
 
-    SwingSheetPainter(SheetViewDelegate<Graphics2D, Rectangle> svDelegate, CellRenderer cellRenderer) {
-        super(svDelegate);
-
+    SwingSheetPainter(SwingSheetViewDelegate svDelegate, CellRenderer cellRenderer) {
+        this.delegate = svDelegate;
         this.cellRenderer = cellRenderer;
 
         // setup painter for row and column headers
@@ -102,6 +102,11 @@ public class SwingSheetPainter extends SheetPainterBase<Graphics2D, Rectangle> {
     @Override
     public float getColumnLabelHeight() {
         return labelHeight;
+    }
+
+    @Override
+    protected SheetViewDelegate<Rectangle> getDelegate() {
+        return delegate;
     }
 
     @Override

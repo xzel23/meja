@@ -7,7 +7,7 @@ import java.util.function.IntSupplier;
 
 public class SegmentViewDelegate<SV extends SheetView, GC, R> {
     private final SegmentView<SV, GC, R> owner;
-    private final SheetViewDelegate<GC, R> svDelegate;
+    private final SheetViewDelegate<R> svDelegate;
     private final IntSupplier startRow;
     private final IntSupplier endRow;
     private final IntSupplier startColumn;
@@ -15,7 +15,7 @@ public class SegmentViewDelegate<SV extends SheetView, GC, R> {
 
     public SegmentViewDelegate(
             SegmentView<SV, GC, R> owner,
-            SheetViewDelegate<GC, R> sheetViewDelegate,
+            SheetViewDelegate<R> sheetViewDelegate,
             IntSupplier startRow,
             IntSupplier endRow,
             IntSupplier startColumn,
