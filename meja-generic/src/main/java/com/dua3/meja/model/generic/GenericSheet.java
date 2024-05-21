@@ -163,15 +163,14 @@ public class GenericSheet extends AbstractSheet {
     }
 
     private void reserve(int row) {
-        int firstAddedRow = rows.size();
-        int lastAddedRow = -1;
+        int first = rows.size();
         for (int rowNum = rows.size(); rowNum <= row; rowNum++) {
             rows.add(new GenericRow(this, rowNum));
-            lastAddedRow = rowNum;
         }
+        int last = rows.size();
 
-        if (lastAddedRow >= firstAddedRow) {
-            rowsAdded(firstAddedRow, lastAddedRow);
+        if (last > first) {
+            rowsAdded(first, last);
         }
     }
 

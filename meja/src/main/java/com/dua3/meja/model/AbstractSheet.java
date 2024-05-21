@@ -55,10 +55,22 @@ public abstract class AbstractSheet implements Sheet {
         publisher.submit(new SheetEvent.LayoutChanged(this));
     }
 
-    protected void rowsAdded(int firstAddedRow, int lastAddedRow) {
-        publisher.submit(new SheetEvent.RowsAdded(this, firstAddedRow, lastAddedRow));
+    /**
+     * Broadcast event: rows added.
+     *
+     * @param first the index (inclusive) of the first added row
+     * @param last the index (exclusive) of the last added row
+     */
+    protected void rowsAdded(int first, int last) {
+        publisher.submit(new SheetEvent.RowsAdded(this, first, last));
     }
 
+    /**
+     * Broadcast event: columns added.
+     *
+     * @param first the index (inclusive) of the first added column
+     * @param last the index (exclusive) of the last added column
+     */
     protected void columnsAdded(int first, int last) {
         publisher.submit(new SheetEvent.ColumnsAdded(this, first, last));
     }

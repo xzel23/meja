@@ -156,7 +156,7 @@ public class PoiSheet extends AbstractSheet {
         Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
             poiRow = poiSheet.createRow(i);
-            rowsAdded(i, i);
+            rowsAdded(i, i+1);
         }
         return new PoiRow(this, poiRow);
     }
@@ -254,13 +254,14 @@ public class PoiSheet extends AbstractSheet {
      * @param columnNumber the column number
      */
     void setColumnUsed(int columnNumber) {
-        int oldValue = lastColumn;
+        int first = lastColumn + 1;
 
         firstColumn = Math.min(firstColumn, columnNumber);
         lastColumn = Math.max(lastColumn, columnNumber);
 
-        if (lastColumn != oldValue) {
-            columnsAdded(oldValue, lastColumn);
+        int last = lastColumn + 1;
+        if (first != last) {
+            columnsAdded(first, last);
         }
     }
 

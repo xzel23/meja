@@ -1,13 +1,20 @@
 package com.dua3.meja.ui.fx;
 
+import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
-import javafx.scene.layout.Pane;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 
 import java.util.function.IntSupplier;
+import java.util.stream.IntStream;
 
-public class FxSegmentView extends Pane implements SegmentView {
+public class FxSegmentView extends TableView<Row> implements SegmentView {
     private final FxSheetViewDelegate svDelegate;
     private final FxSegmentViewDelegate fsvDelegate;
 
@@ -18,9 +25,28 @@ public class FxSegmentView extends Pane implements SegmentView {
             IntSupplier startColumn,
             IntSupplier endColumn
     ) {
+        super(sheetViewDelegate.getSheet()
+                .<ObservableList<Row>>map(ObservableSheet::new)
+                .orElse(FXCollections.emptyObservableList())
+        );
+
+        TableColumn<Row, Integer> colRowNumber = new TableColumn<>("");
+        colRowNumber.setCellValueFactory(cdf -> new SimpleObjectProperty<>(cdf.getValue().getRowNumber()));
+        getColumns().setAll(colRowNumber);
+        sheetViewDelegate.getSheet().ifPresent(sheet -> {
+            getColumns().addAll(
+                IntStream.range(0, sheet.getColumnCount())
+                        .mapToObj(j -> {
+                            TableColumn<Row, Cell> col = new TableColumn<>(Sheet.getColumnName(j));
+                            col.setCellValueFactory(cdf -> new SimpleObjectProperty<>(cdf.getValue().getCell(j)));
+                            return col;
+                        })
+                        .toList()
+            );
+        });
+
         this.svDelegate = sheetViewDelegate;
         this.fsvDelegate = new FxSegmentViewDelegate(this, svDelegate, startRow, endRow, startColumn, endColumn);
-        init();
     }
 
     private void init() {
