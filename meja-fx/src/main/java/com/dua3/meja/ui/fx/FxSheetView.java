@@ -2,11 +2,12 @@ package com.dua3.meja.ui.fx;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.layout.GridPane;
-
-import java.util.function.IntSupplier;
 
 public class FxSheetView extends GridPane implements SheetView {
 
@@ -25,20 +26,16 @@ public class FxSheetView extends GridPane implements SheetView {
         this.delegate = new FxSheetViewDelegate(this);
         delegate.setSheet(sheet);
 
-        // determine row and column ranges per quadrant
-        final IntSupplier startColumn = () -> 0;
-        final IntSupplier splitColumn = () -> sheet != null ? sheet.getSplitColumn() : 0;
-        final IntSupplier endColumn = () -> sheet != null ? sheet.getColumnCount() : 0;
-
-        final IntSupplier startRow = () -> 0;
-        final IntSupplier splitRow = () -> sheet != null ? sheet.getSplitRow() : 0;
-        final IntSupplier endRow = () -> sheet != null ? sheet.getRowCount() : 0;
-
         // create quadrants
-        topLeftQuadrant = new FxSegmentView(delegate, startRow, splitRow, startColumn, splitColumn);
-        topRightQuadrant = new FxSegmentView(delegate, startRow, splitRow, splitColumn, endColumn);
-        bottomLeftQuadrant = new FxSegmentView(delegate, splitRow, endRow, startColumn, splitColumn);
-        bottomRightQuadrant = new FxSegmentView(delegate, splitRow, endRow, splitColumn, endColumn);
+        ObservableList<Row> rows = delegate.getSheet().map(ObservableSheet::new).map(s -> (ObservableList<Row>) s).orElse(FXCollections.emptyObservableList());
+
+        final int splitRow = sheet != null ? sheet.getSplitRow() : 0;
+        final int splitColumn = sheet != null ? sheet.getSplitColumn() : 0;
+
+        topLeftQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_LEFT, rows, splitRow, splitColumn);
+        topRightQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_RIGHT, rows, splitRow, splitColumn);
+        bottomLeftQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.BOTTOM_LEFT, rows, splitRow, splitColumn);
+        bottomRightQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.BOTTOM_RIGHT, rows, splitRow, splitColumn);
 
         // add to grid
         add(topLeftQuadrant, 0, 0);

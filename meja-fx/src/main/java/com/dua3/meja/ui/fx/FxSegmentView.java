@@ -6,36 +6,79 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-import java.util.function.IntSupplier;
 import java.util.stream.IntStream;
 
 public class FxSegmentView extends TableView<Row> implements SegmentView {
+
+    public enum Quadrant {
+        TOP_LEFT(true, true),
+        TOP_RIGHT(true, false),
+        BOTTOM_LEFT(false, true),
+        BOTTOM_RIGHT(false, false);
+
+        private final boolean isTop;
+        private final boolean isLeft;
+
+        Quadrant(boolean isTop, boolean isLeft) {
+            this.isTop = isTop;
+            this.isLeft = isLeft;
+        }
+
+        public boolean isTop() {
+            return isTop;
+        }
+
+        public boolean isLeft() {
+            return isLeft;
+        }
+
+        /**
+         * Get an {@link ObservableList} containing the rows belonging to this quadrant
+         * @param rows all rows
+         * @param splitRow the split row, i.e., rows above this row belong to the upper half
+         * @return the filtered {@link ObservableList} of rows
+         */
+        public ObservableList<Row> filterRows(ObservableList<Row> rows, int splitRow) {
+            return new FilteredList<>(rows, row -> isTop == (row.getRowNumber() < splitRow));
+        }
+
+        /**
+         * Get a stream of the column numbers for this quadrant.
+         * @param columnCount the total column count
+         * @param splitColumn the split column
+         * @return IntStream containing the column indexes for this quadrant
+         */
+        public IntStream filterColumns(int columnCount, int splitColumn) {
+            return isLeft ? IntStream.range(0, splitColumn) : IntStream.range(splitColumn, columnCount);
+        }
+    }
+
     private final FxSheetViewDelegate svDelegate;
-    private final FxSegmentViewDelegate fsvDelegate;
 
-    FxSegmentView(
-            FxSheetViewDelegate sheetViewDelegate,
-            IntSupplier startRow,
-            IntSupplier endRow,
-            IntSupplier startColumn,
-            IntSupplier endColumn
-    ) {
-        super(sheetViewDelegate.getSheet()
-                .<ObservableList<Row>>map(ObservableSheet::new)
-                .orElse(FXCollections.emptyObservableList())
-        );
+    private final Quadrant quadrant;
 
-        TableColumn<Row, Integer> colRowNumber = new TableColumn<>("");
-        colRowNumber.setCellValueFactory(cdf -> new SimpleObjectProperty<>(cdf.getValue().getRowNumber()));
-        getColumns().setAll(colRowNumber);
-        sheetViewDelegate.getSheet().ifPresent(sheet -> {
+    public FxSegmentView(FxSheetViewDelegate delegate, Quadrant quadrant, ObservableList<Row> rows, int splitRow, int splitColumn) {
+        super(quadrant.filterRows(rows, delegate.getSplitRow()));
+
+        this.svDelegate = delegate;
+        this.quadrant = quadrant;
+
+        getColumns().clear();
+
+        if (quadrant.isLeft) {
+            TableColumn<Row, Integer> colRowNumber = new TableColumn<>("");
+            colRowNumber.setCellValueFactory(cdf -> new SimpleObjectProperty<>(cdf.getValue().getRowNumber() + 1));
+            getColumns().add(colRowNumber);
+        }
+
+        svDelegate.getSheet().ifPresent(sheet -> {
             getColumns().addAll(
-                IntStream.range(0, sheet.getColumnCount())
+                    quadrant.filterColumns(delegate.getColumnCount(), delegate.getSplitColumn())
                         .mapToObj(j -> {
                             TableColumn<Row, Cell> col = new TableColumn<>(Sheet.getColumnName(j));
                             col.setCellValueFactory(cdf -> new SimpleObjectProperty<>(cdf.getValue().getCell(j)));
@@ -44,9 +87,6 @@ public class FxSegmentView extends TableView<Row> implements SegmentView {
                         .toList()
             );
         });
-
-        this.svDelegate = sheetViewDelegate;
-        this.fsvDelegate = new FxSegmentViewDelegate(this, svDelegate, startRow, endRow, startColumn, endColumn);
     }
 
     private void init() {
