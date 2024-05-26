@@ -214,4 +214,7 @@ public interface Row extends Iterable<Cell> {
         return Optional.empty();
     }
 
+    default float getRowHeight() {
+        return getSheet().getRowHeight(getRowNumber());
+    }
 }

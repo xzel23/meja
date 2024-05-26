@@ -48,12 +48,12 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     public FxWorkbookView() {
         content = new TabPane();
-        setCenter(content);
         content.getSelectionModel().selectedIndexProperty().addListener((v,o,n) -> {
             if (workbook != null) {
                 workbook.setCurrentSheet(n.intValue());
             }
         });
+        setCenter(content);
     }
 
     /**

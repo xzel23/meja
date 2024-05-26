@@ -1,20 +1,28 @@
 package com.dua3.meja.ui.fx;
 
-import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
-import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SegmentView;
-import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.utility.math.geometry.Dimension2f;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.Control;
+import javafx.scene.control.SkinBase;
+import javafx.scene.control.skin.VirtualFlow;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.stream.IntStream;
 
-public class FxSegmentView extends TableView<Row> implements SegmentView {
+public class FxSegmentView extends Control implements SegmentView {
+
+    private static final Logger LOG = LogManager.getLogger(FxSegmentView.class);
+
+    private class FxSegmentViewSkin extends SkinBase<FxSegmentView> {
+        protected FxSegmentViewSkin(FxSegmentView control) {
+            super(control);
+            getChildren().add(control.flow);
+        }
+    }
 
     public enum Quadrant {
         TOP_LEFT(true, true),
@@ -88,34 +96,56 @@ public class FxSegmentView extends TableView<Row> implements SegmentView {
     }
 
     private final FxSheetViewDelegate svDelegate;
-
     private final Quadrant quadrant;
+    private final VirtualFlow<FxRow> flow;
+    private final ObservableList<Row> rows;
 
-    public FxSegmentView(FxSheetViewDelegate delegate, Quadrant quadrant, ObservableList<Row> rows, int splitRow, int splitColumn) {
-        super(quadrant.filterRows(rows, delegate.getSplitRow()));
-
-        this.svDelegate = delegate;
+    public FxSegmentView(FxSheetViewDelegate svDelegate, Quadrant quadrant, ObservableList<Row> sheetRows) {
+        this.svDelegate = svDelegate;
         this.quadrant = quadrant;
+        this.rows = quadrant.filterRows(sheetRows, svDelegate.getSplitRow());
+        this.flow = new VirtualFlow<>();
 
-        getColumns().clear();
-
-        if (quadrant.isLeft) {
-            TableColumn<Row, Integer> colRowNumber = new TableColumn<>("");
-            colRowNumber.setCellValueFactory(cdf -> new SimpleObjectProperty<>(cdf.getValue().getRowNumber() + 1));
-            getColumns().add(colRowNumber);
-        }
+        setSkin(new FxSegmentViewSkin(this));
 
         svDelegate.getSheet().ifPresent(sheet -> {
-            getColumns().addAll(
-                    quadrant.filterColumns(delegate.getColumnCount(), delegate.getSplitColumn())
-                        .mapToObj(j -> {
-                            TableColumn<Row, Cell> col = new TableColumn<>(Sheet.getColumnName(j));
-                            col.setCellValueFactory(cdf -> new SimpleObjectProperty<>(cdf.getValue().getCell(j)));
-                            return col;
-                        })
-                        .toList()
-            );
+            double width = IntStream.range(
+                    quadrant.startColumn(svDelegate.getColumnCount(), svDelegate.getSplitColumn()),
+                    quadrant.endColumn(svDelegate.getColumnCount(), svDelegate.getSplitColumn())
+            ).mapToDouble(sheet::getColumnWidth).sum();
+            double height = IntStream.range(
+                    quadrant.startRow(svDelegate.getRowCount(), svDelegate.getSplitRow()),
+                    quadrant.endRow(svDelegate.getRowCount(), svDelegate.getSplitRow())
+            ).mapToDouble(sheet::getRowHeight).sum();
+
+            flow.setCellFactory(f -> new FxRow(rows, width));
+            flow.setCellCount(rows.size());
+
+            switch (quadrant) {
+                case TOP_LEFT -> {
+                    setMinSize(width, height);
+                    setMaxSize(width, height);
+                    setPrefSize(width, height);
+                }
+                case TOP_RIGHT -> {
+                    setMinHeight(height);
+                    setMaxHeight(height);
+                    setPrefHeight(height);
+                }
+                case BOTTOM_LEFT -> {
+                    setMinWidth(width);
+                    setMaxWidth(width);
+                    setPrefWidth(width);
+                }
+                case BOTTOM_RIGHT -> {
+                    // nop
+                }
+            }
         });
+
+        if (quadrant != Quadrant.BOTTOM_RIGHT) {
+            flow.setStyle(".scroll-bar { -fx-max-width: 0; -fx-max-height: 0; }");
+        }
     }
 
     private void init() {
@@ -130,16 +160,6 @@ public class FxSegmentView extends TableView<Row> implements SegmentView {
             }
         });
          */
-    }
-
-    @Override
-    public SegmentViewDelegate getDelegate() {
-        return null;
-    }
-
-    @Override
-    public Sheet getSheet() {
-        return null;
     }
 
     @Override

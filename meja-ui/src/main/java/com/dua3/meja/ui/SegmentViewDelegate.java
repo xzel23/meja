@@ -5,9 +5,9 @@ import com.dua3.meja.model.Sheet;
 import java.util.concurrent.locks.Lock;
 import java.util.function.IntSupplier;
 
-public class SegmentViewDelegate {
+public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
     private final SegmentView owner;
-    private final SheetViewDelegate svDelegate;
+    private final SVD svDelegate;
     private final IntSupplier startRow;
     private final IntSupplier endRow;
     private final IntSupplier startColumn;
@@ -15,7 +15,7 @@ public class SegmentViewDelegate {
 
     public SegmentViewDelegate(
             SegmentView owner,
-            SheetViewDelegate sheetViewDelegate,
+            SVD sheetViewDelegate,
             IntSupplier startRow,
             IntSupplier endRow,
             IntSupplier startColumn,
@@ -27,6 +27,10 @@ public class SegmentViewDelegate {
         this.endRow = endRow;
         this.startColumn = startColumn;
         this.endColumn = endColumn;
+    }
+
+    public SVD getSvDelegate() {
+        return svDelegate;
     }
 
     public int getBeginColumn() {

@@ -29,19 +29,23 @@ public class FxSheetView extends GridPane implements SheetView {
         // create quadrants
         ObservableList<Row> rows = delegate.getSheet().map(ObservableSheet::new).map(s -> (ObservableList<Row>) s).orElse(FXCollections.emptyObservableList());
 
-        final int splitRow = sheet != null ? sheet.getSplitRow() : 0;
-        final int splitColumn = sheet != null ? sheet.getSplitColumn() : 0;
-
-        topLeftQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_LEFT, rows, splitRow, splitColumn);
-        topRightQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_RIGHT, rows, splitRow, splitColumn);
-        bottomLeftQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.BOTTOM_LEFT, rows, splitRow, splitColumn);
-        bottomRightQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.BOTTOM_RIGHT, rows, splitRow, splitColumn);
+        topLeftQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_LEFT, rows);
+        topRightQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_RIGHT, rows);
+        bottomLeftQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.BOTTOM_LEFT, rows);
+        bottomRightQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.BOTTOM_RIGHT, rows);
 
         // add to grid
         add(topLeftQuadrant, 0, 0);
         add(topRightQuadrant, 1, 0);
         add(bottomLeftQuadrant, 0, 1);
         add(bottomRightQuadrant, 1, 1);
+
+        // bind size properties
+        double wFixed = topLeftQuadrant.getMinWidth();
+        double hFixed = topLeftQuadrant.getMinHeight();
+
+        topRightQuadrant.prefWidthProperty().bind(widthProperty().subtract(wFixed));
+        bottomLeftQuadrant.prefHeightProperty().bind(heightProperty().subtract(hFixed));
     }
 
     @Override

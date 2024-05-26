@@ -1,6 +1,5 @@
 package com.dua3.meja.ui.swing;
 
-import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.utility.data.Color;
@@ -36,8 +35,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
         init();
     }
 
-    @Override
-    public SegmentViewDelegate getDelegate() {
+    public SegmentViewDelegate getSvDelegate() {
         return ssvDelegate;
     }
 
@@ -110,11 +108,6 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 return posD - xD;
             }
         }
-    }
-
-    @Override
-    public Sheet getSheet() {
-        return ssvDelegate.getSheet();
     }
 
     @Override
