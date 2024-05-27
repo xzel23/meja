@@ -21,6 +21,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookEvent;
 import com.dua3.meja.ui.WorkbookView;
+import javafx.geometry.Side;
 import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -48,6 +49,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     public FxWorkbookView() {
         content = new TabPane();
+        content.setSide(Side.BOTTOM);
         content.getSelectionModel().selectedIndexProperty().addListener((v,o,n) -> {
             if (workbook != null) {
                 workbook.setCurrentSheet(n.intValue());
