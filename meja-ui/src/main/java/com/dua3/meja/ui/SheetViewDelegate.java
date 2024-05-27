@@ -47,6 +47,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private float sheetWidthInPoints;
     private float rowLabelWidth;
     private float columnLabelHeight;
+    private float defaultRowHeight = 12f;
 
     public float getSheetHeightInPoints() {
         return sheetHeightInPoints;
@@ -581,4 +582,15 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return columnLabelHeight;
     }
 
+    public float getRowHeightInPoints(int i) {
+        return rowPos[i+1] - rowPos[i];
+    }
+
+    public float getColumnWidthInPoints(int j) {
+        return columnPos[j+1] - columnPos[j];
+    }
+
+    public double getDefaultRowHeight() {
+        return defaultRowHeight;
+    }
 }

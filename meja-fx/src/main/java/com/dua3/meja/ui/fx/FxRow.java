@@ -9,22 +9,20 @@ import javafx.scene.control.Skin;
 public class FxRow extends IndexedCell<Row> {
     private final ObservableList<Row> rows;
 
-    private double defaultRowHeight = 12;
+    private FxSheetViewDelegate delegate;
 
-    private double rowWidth;
-    private double rowHeight;
-
-    public FxRow(ObservableList<Row> rows, double width) {
+    public FxRow(ObservableList<Row> rows, FxSheetViewDelegate delegate) {
         this.rows = rows;
-        this.rowWidth = width;
+        this.delegate = delegate;
     }
 
     public double getRowWidth() {
-        return rowWidth;
+        return delegate.getSheetWidthInPoints();
     }
 
     public double getRowHeight() {
-        return rowHeight;
+        int idx = getIndex();
+        return idx < 0 ? delegate.getDefaultRowHeight() : delegate.getRowHeightInPoints(rows.get(idx).getRowNumber());
     }
 
     @Override
@@ -40,12 +38,13 @@ public class FxRow extends IndexedCell<Row> {
         if (empty || item == null) {
             setText(null);
             setGraphic(null);
-            rowHeight = defaultRowHeight;
+            setWidth(delegate.getSheetWidthInPoints());
+            setHeight(delegate.getDefaultRowHeight());
         } else {
-            setWidth(rowWidth);
-            setHeight(item.getSheet().getRowHeight(item.getRowNumber()));
-            setText("row " + item.getRowNumber());
-            rowHeight=item.getRowHeight();
+            setText(null);
+            setGraphic(null);
+            setWidth(delegate.getSheetWidthInPoints());
+            setHeight(delegate.getRowHeightInPoints(item.getRowNumber()));
         }
     }
 
@@ -54,5 +53,7 @@ public class FxRow extends IndexedCell<Row> {
         return new FxRowSkin(this);
     }
 
-
+    public FxSheetViewDelegate getDelegate() {
+        return delegate;
+    }
 }

@@ -118,7 +118,7 @@ public class FxSegmentView extends Control implements SegmentView {
                     quadrant.endRow(svDelegate.getRowCount(), svDelegate.getSplitRow())
             ).mapToDouble(sheet::getRowHeight).sum();
 
-            flow.setCellFactory(f -> new FxRow(rows, width));
+            flow.setCellFactory(f -> new FxRow(rows, svDelegate));
             flow.setCellCount(rows.size());
 
             switch (quadrant) {
