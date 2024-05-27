@@ -59,7 +59,7 @@ public class FxRowSkin implements Skin<FxRow> {
             float w = delegate.getColumnWidthInPoints(j);
 
             CellStyle cellStyle = cell.getCellStyle();
-            g.setFill(FxUtil.convert(cellStyle.getFillBgColor()));
+            g.setFill(FxUtil.convert(cellStyle.getFillFgColor()));
             g.fillRect(x, 0, w, h);
 
             g.setStroke(Color.GRAY);
@@ -69,7 +69,7 @@ public class FxRowSkin implements Skin<FxRow> {
             if (text != null) {
                 double textX = x + 5;
                 double textY = h;
-                g.setFill(Color.BLACK);
+                g.setFill(FxUtil.convert(cellStyle.getFont().getColor()));
                 g.fillText(text.toString(), textX, textY);
             }
         }
