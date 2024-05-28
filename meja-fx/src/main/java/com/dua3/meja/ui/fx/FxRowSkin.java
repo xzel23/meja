@@ -69,6 +69,7 @@ public class FxRowSkin implements Skin<FxRow> {
             if (text != null) {
                 double textX = x + 5;
                 double textY = h;
+                g.setFont(FxUtil.convert(cellStyle.getFont()));
                 g.setFill(FxUtil.convert(cellStyle.getFont().getColor()));
                 g.fillText(text.toString(), textX, textY);
             }
