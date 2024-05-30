@@ -142,11 +142,11 @@ public abstract class SheetPainterBase {
         public final int startColumn;
         public final int endColumn;
 
-        public VisibleArea(Rectangle2f clipBounds) {
-            this.startRow = Math.max(0, getDelegate().getRowNumberFromY(clipBounds.yMin()));
-            this.endRow = Math.min(getDelegate().getRowCount(), 1 + getDelegate().getRowNumberFromY(clipBounds.yMax()));
-            this.startColumn = Math.max(0, getDelegate().getColumnNumberFromX(clipBounds.xMin()));
-            this.endColumn = Math.min(getDelegate().getColumnCount(), 1 + getDelegate().getColumnNumberFromX(clipBounds.xMax()));
+        public VisibleArea(Rectangle2f boundsInSheet) {
+            this.startRow = Math.max(0, getDelegate().getRowNumberFromY(boundsInSheet.yMin()));
+            this.endRow = Math.min(getDelegate().getRowCount(), 1 + getDelegate().getRowNumberFromY(boundsInSheet.yMax()));
+            this.startColumn = Math.max(0, getDelegate().getColumnNumberFromX(boundsInSheet.xMin()));
+            this.endColumn = Math.min(getDelegate().getColumnCount(), 1 + getDelegate().getColumnNumberFromX(boundsInSheet.xMax()));
         }
     }
 
@@ -154,7 +154,10 @@ public abstract class SheetPainterBase {
         SheetViewDelegate delegate = getDelegate();
 
         // determine visible rows and columns
-        VisibleArea va = new VisibleArea(g.getBounds());
+        float s = delegate.getScale();
+        Graphics.Transformation t = g.getTransformation();
+        Rectangle2f boundsInSheet = g.getBounds().translate(-t.dx() * s, -t.dy() * s);
+        VisibleArea va = new VisibleArea(boundsInSheet);
 
         // draw row labels
         for (int i = va.startRow; i < va.endRow; i++) {
@@ -218,8 +221,10 @@ public abstract class SheetPainterBase {
         double maxWidth = SheetView.MAX_COLUMN_WIDTH;
 
         // determine visible rows and columns
-        Rectangle2f clipBounds = g.getBounds();
-        VisibleArea va = new VisibleArea(clipBounds);
+        float s = getDelegate().getScale();
+        Graphics.Transformation t = g.getTransformation();
+        Rectangle2f boundsInSheet = g.getBounds().translate(-t.dx() * s, -t.dy() * s);
+        VisibleArea va = new VisibleArea(boundsInSheet);
 
         // Collect cells to be drawn
         for (int i = va.startRow; i < va.endRow; i++) {
@@ -233,12 +238,12 @@ public abstract class SheetPainterBase {
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
             int first = va.startColumn;
-            while (first > 0 && getDelegate().getColumnPos(first) + maxWidth > clipBounds.xMin() && row.getCell(first).isEmpty()) {
+            while (first > 0 && getDelegate().getColumnPos(first) + maxWidth > boundsInSheet.xMin() && row.getCell(first).isEmpty()) {
                 first--;
             }
 
             int end = va.endColumn;
-            while (end < getDelegate().getColumnCount() && getDelegate().getColumnPos(end) - maxWidth < clipBounds.xMax()
+            while (end < getDelegate().getColumnCount() && getDelegate().getColumnPos(end) - maxWidth < boundsInSheet.xMax()
                     && (end <= 0 || row.getCell(end - 1).isEmpty())) {
                 end++;
             }
