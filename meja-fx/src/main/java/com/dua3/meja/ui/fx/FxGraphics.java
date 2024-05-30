@@ -7,6 +7,7 @@ import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Paint;
 
 public class FxGraphics implements Graphics {
     public static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
@@ -18,6 +19,7 @@ public class FxGraphics implements Graphics {
     private float dx;
     private float dy;
     private float s;
+    private javafx.scene.paint.Color textColor = javafx.scene.paint.Color.BLACK;
 
     public FxGraphics(GraphicsContext gc, float w, float h) {
         this.gc = gc;
@@ -43,8 +45,19 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
+    public Rectangle2f getTextDimension(String text, float s) {
+        Rectangle2f dimension = FONT_UTIL.getTextDimension(text, gc.getFont());
+        return Rectangle2f.of(dimension.x() * s, dimension.y() * s, dimension.width() * s, dimension.height() * s);
+    }
+
+    @Override
     public Rectangle2f getBounds() {
         return new Rectangle2f(0, 0, w, h);
+    }
+
+    @Override
+    public Rectangle2f getTextDimension(String text) {
+        return null;
     }
 
     @Override
@@ -99,12 +112,47 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void setFont(Font font) {
-        gc.setFont(FONT_UTIL.convert(font.withSize(s*font.getSizeInPoints())));
+        textColor = FxUtil.convert(font.getColor());
+        gc.setFont(FONT_UTIL.convert(font.scaledBy(s)));
     }
 
     @Override
     public void drawText(String text, float x, float y) {
+        Paint oldPaint = gc.getFill();
+        gc.setFill(textColor);
         gc.fillText(text, xL2D(x), yL2D(y));
+        gc.setFill(oldPaint);
+    }
+
+    @Override
+    public void drawText(String text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
+        // fastpath
+        if (hAnchor == HAnchor.LEFT && vAnchor == VAnchor.TOP) {
+            drawText(text, x, y);
+        }
+
+        Rectangle2f r = getTextDimension(text, 1/s);
+
+        float tx = 0;
+        float ty = 0;
+
+        tx = switch (hAnchor) {
+            case LEFT -> x;
+            case RIGHT -> x - r.width();
+            case CENTER -> x - r.width() / 2;
+        };
+
+        ty = switch (vAnchor) {
+            case TOP -> y - r.height() - r.yMax();
+            case BOTTOM -> y - r.yMax();
+            case BASELINE -> y;
+            case MIDDLE -> y + r.height() / 2 - r.yMax();
+        };
+
+        Paint oldPaint = gc.getFill();
+        gc.setFill(textColor);
+        gc.strokeText(text, xL2D(tx), yL2D(ty));
+        gc.setFill(oldPaint);
     }
 
     @Override

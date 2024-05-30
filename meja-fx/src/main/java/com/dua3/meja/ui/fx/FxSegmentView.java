@@ -122,15 +122,21 @@ public class FxSegmentView extends Control implements SegmentView {
         svDelegate.getSheet().ifPresent(sheet -> {
             float scale = svDelegate.getScale();
 
-            double width = IntStream.range(
-                    quadrant.startColumn(svDelegate.getColumnCount(), svDelegate.getSplitColumn()),
-                    quadrant.endColumn(svDelegate.getColumnCount(), svDelegate.getSplitColumn())
-            ).mapToDouble(j -> scale * sheet.getColumnWidth(j)).sum();
+            double width = scale * (
+                    (quadrant.isLeft() ? svDelegate.getRowLabelWidth() : 0)
+                    + IntStream.range(
+                            quadrant.startColumn(svDelegate.getColumnCount(), svDelegate.getSplitColumn()),
+                            quadrant.endColumn(svDelegate.getColumnCount(), svDelegate.getSplitColumn())
+                    ).mapToDouble(sheet::getColumnWidth).sum()
+            );
 
-            double height = IntStream.range(
-                    quadrant.startRow(svDelegate.getRowCount(), svDelegate.getSplitRow()),
-                    quadrant.endRow(svDelegate.getRowCount(), svDelegate.getSplitRow())
-            ).mapToDouble(i -> scale * sheet.getRowHeight(i)).sum();
+            double height = scale * (
+                    (quadrant.isTop() ? svDelegate.getColumnLabelHeight() : 0)
+                    + IntStream.range(
+                        quadrant.startRow(svDelegate.getRowCount(), svDelegate.getSplitRow()),
+                        quadrant.endRow(svDelegate.getRowCount(), svDelegate.getSplitRow())
+                    ).mapToDouble(sheet::getRowHeight).sum()
+            );
 
             flow.setCellFactory(f -> new FxRow(rows, svDelegate));
             flow.setCellCount(rows.size());

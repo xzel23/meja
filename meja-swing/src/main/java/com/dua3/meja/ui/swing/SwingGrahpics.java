@@ -18,6 +18,7 @@ public class SwingGrahpics implements Graphics {
     private float dx = 0f;
     private float dy = 0f;
     private float s = 1f;
+    private java.awt.Color textColor = java.awt.Color.BLACK;
 
     public SwingGrahpics(Graphics2D g2d) {
         this.g2d = g2d;
@@ -128,11 +129,57 @@ public class SwingGrahpics implements Graphics {
 
     @Override
     public void setFont(Font font) {
-        g2d.setFont(FONT_UTIL.convert(font));
+        textColor = (SwingUtil.toAwtColor(font.getColor()));
+        g2d.setFont(FONT_UTIL.convert(font.scaledBy(s)));
     }
 
     @Override
     public void drawText(String text, float x, float y) {
-        g2d.drawString(text, x, y);
+        java.awt.Color oldColor = g2d.getColor();
+        g2d.setColor(textColor);
+        g2d.drawString(text, xL2D(x), yL2D(y));
+        g2d.setColor(oldColor);
+    }
+
+    @Override
+    public void drawText(String text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
+        // fastpath
+        if (hAnchor == HAnchor.LEFT && vAnchor == VAnchor.TOP) {
+            drawText(text, x, y);
+        }
+
+        Rectangle2f r = getTextDimension(text, 1/s);
+
+        float tx = 0;
+        float ty = 0;
+
+        tx = switch (hAnchor) {
+            case LEFT -> x;
+            case RIGHT -> x - r.width();
+            case CENTER -> x - r.width() / 2;
+        };
+
+        ty = switch (vAnchor) {
+            case TOP -> y;
+            case BOTTOM -> y + r.height();
+            case BASELINE -> y + r.height() - r.y();
+            case MIDDLE -> y + r.height() / 2 - r.yMax();
+        };
+
+        java.awt.Color oldColor = g2d.getColor();
+        g2d.setColor(textColor);
+        g2d.drawString(text, xL2D(tx), yL2D(ty));
+        g2d.setColor(oldColor);
+    }
+
+    @Override
+    public Rectangle2f getTextDimension(String text) {
+        return FONT_UTIL.getTextDimension(text, g2d.getFont());
+    }
+
+    @Override
+    public Rectangle2f getTextDimension(String text, float s) {
+        Rectangle2f dimension = FONT_UTIL.getTextDimension(text, g2d.getFont());
+        return Rectangle2f.of(dimension.x() * s, dimension.y() * s, dimension.width() * s, dimension.height() * s);
     }
 }

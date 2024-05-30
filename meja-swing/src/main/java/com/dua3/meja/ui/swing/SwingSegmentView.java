@@ -150,9 +150,9 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             sg.scale(svDelegate.getScale());
 
             // set transformation
-            final int x = Math.round(ssvDelegate.getXMinInViewCoordinates());
-            final int y = Math.round(ssvDelegate.getYMinInViewCoordinates());
-            sg.translate(-x, -y);
+            final int x = Math.round(ssvDelegate.getXOffset());
+            final int y = Math.round(ssvDelegate.getYOffset());
+            sg.translate(x, y);
 
             // get dimensions
             final int width = getWidth();

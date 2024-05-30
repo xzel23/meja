@@ -21,6 +21,7 @@ import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.TextUtil;
@@ -504,7 +505,7 @@ public interface Cell {
         String text = toString();
         CellStyle cellStyle = getCellStyle();
         Font font = cellStyle.getFont();
-        Dimension2f dim = TextUtil.getTextDimension(text, font);
+        Rectangle2f dim = TextUtil.getTextDimension(text, font);
 
         // add some space on the sides
         float w = dim.width() + font.getSizeInPoints();

@@ -59,10 +59,28 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
         owner.setViewSizeOnDisplay(w,h);
     }
 
+    /**
+     * Get the Offset by which the x-coordinate is shifted due to row labels.
+     *
+     * @return the x-offset
+     */
+    public float getXOffset() {
+        return hasRowHeaders() ? svDelegate.getRowLabelWidth() : 0;
+    }
+
+    /**
+     * Get the Offset by which the y-coordinate is shifted due to column labels.
+     *
+     * @return the y-offset
+     */
+    public float getYOffset() {
+        return hasColumnHeaders() ? svDelegate.getColumnLabelHeight() : 0;
+    }
+
     public float getXMinInViewCoordinates() {
         float x = svDelegate.getColumnPos(getBeginColumn());
         if (hasRowHeaders()) {
-            x -= svDelegate.getRowLabelWidth();
+            x += getXOffset();
         }
         return svDelegate.xS2D(x);
     }
@@ -70,7 +88,7 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
     public float getYMinInViewCoordinates() {
         float y = svDelegate.getRowPos(getBeginRow());
         if (hasColumnHeaders()) {
-            y -= svDelegate.getColumnLabelHeight();
+            y += getYOffset();
         }
         return svDelegate.yS2D(y);
     }

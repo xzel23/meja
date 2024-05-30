@@ -63,9 +63,14 @@ public abstract class SheetPainterBase {
     }
 
     public void drawLabel(Graphics g, Rectangle2f r, String text) {
-        g.setColor(Color.BLACK);
+        g.setColor(getDelegate().getLabelBackgroundColor());
+        g.fillRect(r);
+
+        g.setColor(getDelegate().getLabelBorderColor());
         g.strokeRect(r);
-        g.drawText(text, r.x(), r.y());
+
+        g.setFont(getDelegate().getLabelFont());
+        g.drawText(text, r.xCenter(), r.yCenter(), Graphics.HAnchor.CENTER, Graphics.VAnchor.MIDDLE);
     }
 
     protected SheetPainterBase(CellRenderer cellRenderer) {

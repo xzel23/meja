@@ -6,8 +6,9 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,6 +60,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private float rowLabelWidth;
     private float columnLabelHeight;
     private float defaultRowHeight = 12f;
+    private Font labelFont = new Font().withSize(8);
+    private Color labelBackgroundColor = Color.WHITESMOKE;
+    private Color labelBorderColor = labelBackgroundColor.darker();
 
     public float getSheetHeightInPoints() {
         return sheetHeightInPoints;
@@ -122,6 +126,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
     public SheetViewDelegate(SheetView owner) {
         this.owner = owner;
+        updateLayout();
     }
 
     /**
@@ -149,6 +154,10 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return getPositionIndexFromCoordinate(columnPos, x, sheetWidthInPoints);
     }
 
+    public int getColumnNumberFromX(float x) {
+        return getPositionIndexFromCoordinate(columnPos, x, sheetWidthInPoints);
+    }
+
     /**
      * Get the row number that the given dy-coordinate belongs to.
      *
@@ -161,6 +170,10 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      *         </ul>
      */
     public int getRowNumberFromY(double y) {
+        return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
+    }
+
+    public int getRowNumberFromY(float y) {
         return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
     }
 
@@ -302,51 +315,53 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             }
 
             this.sheet = sheet;
-            LOG.debug("sheet changed");
 
-            // determine sheet dimensions
-            if (sheet == null) {
-                sheetWidthInPoints = 0;
-                sheetHeightInPoints = 0;
-                rowPos = new float[]{0};
-                columnPos = new float[]{0};
-                return;
-            } else {
-                Lock lock = sheet.readLock();
-                lock.lock();
-                try {
-                    // determine row and column positions
-                    sheetHeightInPoints = 0;
-                    rowPos = new float[2 + sheet.getLastRowNum()];
-                    rowPos[0] = 0;
-                    for (int i = 1; i < rowPos.length; i++) {
-                        sheetHeightInPoints += sheet.getRowHeight(i - 1);
-                        rowPos[i] = sheetHeightInPoints;
-                    }
-
-                    sheetWidthInPoints = 0;
-                    columnPos = new float[2 + sheet.getLastColNum()];
-                    columnPos[0] = 0;
-                    for (int j = 1; j < columnPos.length; j++) {
-                        sheetWidthInPoints += sheet.getColumnWidth(j - 1);
-                        columnPos[j] = sheetWidthInPoints;
-                    }
-
-                    // create a string with the maximum number of digits needed to
-                    // represent the highest row number, using only the digit 9.
-                    String sMax = "9".repeat(String.valueOf(getRowLabelWidth()).length());
-                    Dimension2f dim = calculateLabelDimension(sMax);
-                    rowLabelWidth = hD2S(dim.width());
-                    columnLabelHeight = wD2S(dim.height());
-
-                    // subscribe to the Flow API
-                    this.sheet.subscribe(this);
-                } finally {
-                  lock.unlock();
-                }
-            }
-
+            updateLayout();
             owner.updateContent();
+
+            LOG.debug("sheet changed");
+        }
+    }
+
+    private void updateLayout() {
+        if (sheet == null) {
+            sheetWidthInPoints = 0;
+            sheetHeightInPoints = 0;
+            rowPos = new float[]{0};
+            columnPos = new float[]{0};
+        } else {
+            Lock lock = sheet.readLock();
+            lock.lock();
+            try {
+                // determine row and column positions
+                sheetHeightInPoints = 0;
+                rowPos = new float[2 + sheet.getLastRowNum()];
+                rowPos[0] = 0;
+                for (int i = 1; i < rowPos.length; i++) {
+                    sheetHeightInPoints += sheet.getRowHeight(i - 1);
+                    rowPos[i] = sheetHeightInPoints;
+                }
+
+                sheetWidthInPoints = 0;
+                columnPos = new float[2 + sheet.getLastColNum()];
+                columnPos[0] = 0;
+                for (int j = 1; j < columnPos.length; j++) {
+                    sheetWidthInPoints += sheet.getColumnWidth(j - 1);
+                    columnPos[j] = sheetWidthInPoints;
+                }
+
+                // create a string with the maximum number of digits needed to
+                // represent the highest row number, using only the digit 9.
+                String sMax = "9".repeat(String.valueOf(getRowLabelWidth()).length());
+                Rectangle2f dim = calculateLabelDimension(sMax);
+                rowLabelWidth = dim.width() + 2 * PADDING_X;
+                columnLabelHeight = dim.height() + 2 * PADDING_Y;
+
+                // subscribe to the Flow API
+                this.sheet.subscribe(this);
+            } finally {
+              lock.unlock();
+            }
         }
     }
 
@@ -576,10 +591,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         owner.requestFocusInWindow();
     }
 
-    public int getColumnNumberFromX(float x) {
-        return getPositionIndexFromCoordinate(columnPos, x, sheetWidthInPoints);
-    }
-
     /**
      * Get the horizontal padding.
      *
@@ -598,11 +609,17 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return PADDING_Y;
     }
 
-    public int getRowNumberFromY(float y) {
-        return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
+    protected Rectangle2f calculateLabelDimension(String text) {
+        return FontUtil.getInstance().getTextDimension(text, getLabelFont());
     }
 
-    protected abstract Dimension2f calculateLabelDimension(String text);
+    public Font getLabelFont() {
+        return labelFont;
+    }
+
+    public void setLabelFont(Font labelFont) {
+        this.labelFont = labelFont;
+    }
 
     public float getRowLabelWidth() {
         return rowLabelWidth;
@@ -626,5 +643,21 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
     public Locale getLocale() {
         return owner.getLocale();
+    }
+
+    public Color getLabelBorderColor() {
+        return labelBorderColor;
+    }
+
+    public void setLabelBorderColor(Color labelBorderColor) {
+        this.labelBorderColor = labelBorderColor;
+    }
+
+    public Color getLabelBackgroundColor() {
+        return labelBackgroundColor;
+    }
+
+    public void setLabelBackgroundColor(Color labelBackgroundColor) {
+        this.labelBackgroundColor = labelBackgroundColor;
     }
 }

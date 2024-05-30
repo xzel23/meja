@@ -1,10 +1,8 @@
 package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.ui.SheetViewDelegate;
-import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Label;
 
 public class FxSheetViewDelegate extends SheetViewDelegate {
 
@@ -30,9 +28,4 @@ public class FxSheetViewDelegate extends SheetViewDelegate {
         return new Rectangle2D(x1, y1, x2 - x1, y2 - y1);
     }
 
-    @Override
-    protected Dimension2f calculateLabelDimension(String text) {
-        Label label = new Label(text);
-        return new Dimension2f(wD2S((float) label.getWidth()), hD2S((float) label.getHeight()));
-    }
 }

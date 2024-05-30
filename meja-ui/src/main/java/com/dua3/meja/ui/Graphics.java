@@ -6,6 +6,8 @@ import com.dua3.utility.text.Font;
 
 public interface Graphics {
 
+    Rectangle2f getTextDimension(String text, float s);
+
     record Transformation(float dx, float dy, float s) {}
 
     /**
@@ -14,6 +16,13 @@ public interface Graphics {
      * @return the bounding rectangle
      */
     Rectangle2f getBounds();
+
+    /**
+     * Get text dimensions using the current font.
+     *
+     * @return the text dimensions
+     */
+    Rectangle2f getTextDimension(String text);
 
     /**
      * Start drawing.
@@ -56,6 +65,16 @@ public interface Graphics {
     void setFont(Font f);
 
     void drawText(String text, float x, float y);
+
+    enum HAnchor {
+        LEFT, RIGHT, CENTER
+    }
+
+    enum VAnchor {
+        TOP, BOTTOM, BASELINE, MIDDLE
+    }
+
+    void drawText(String text, float x, float y, HAnchor hAnchor, VAnchor vAnchor);
 
     Transformation getTransformation();
 

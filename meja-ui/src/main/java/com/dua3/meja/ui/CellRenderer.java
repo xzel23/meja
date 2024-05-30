@@ -9,7 +9,6 @@ import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.Row;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
@@ -25,10 +24,6 @@ public class CellRenderer {
 
     private SheetViewDelegate getDelegate() {
         return delegate;
-    }
-
-    public void drawLabel(Graphics g, Rectangle2f r, String text) {
-        // todo
     }
 
     /**
@@ -154,21 +149,26 @@ public class CellRenderer {
 
         RichText text = cell.getAsText(delegate.getLocale());
         Font font = cs.getFont();
-        Dimension2f d = FONT_UTIL.getRichTextDimension(text, font);
+        Rectangle2f d = FONT_UTIL.getRichTextDimension(text, font);
 
-        float y = r.y() + font.getSizeInPoints() + switch (cs.getVAlign()) {
-            case ALIGN_TOP -> 0;
-            case ALIGN_BOTTOM -> r.height() - d.height();
-            default -> (r.height() - d.height()) / 2;
-        };
-        float x = r.x() + switch (effectiveHAlign(cs.getHAlign(), cell.getCellType())) {
-            case ALIGN_LEFT, ALIGN_JUSTIFY -> 0;
-            case ALIGN_RIGHT -> r.width() - d.width();
-            default -> (r.width() - d.width()) / 2;
-        };
+        float x, y;
+        Graphics.HAnchor hAnchor;
+        Graphics.VAnchor vAnchor;
 
-        g.setColor(font.getColor());
-        g.drawText(text.toString(), x, y);
+        switch (effectiveHAlign(cs.getHAlign(), cell.getCellType())) {
+            default -> { x = r.xMin(); hAnchor = Graphics.HAnchor.LEFT; }
+            case ALIGN_CENTER -> { x = r.xCenter(); hAnchor = Graphics.HAnchor.CENTER; }
+            case ALIGN_RIGHT -> { x = r.xMax(); hAnchor = Graphics.HAnchor.RIGHT; }
+        }
+
+        switch (cs.getVAlign()) {
+            default -> { y = r.yMax(); vAnchor = Graphics.VAnchor.BOTTOM; }
+            case ALIGN_TOP, ALIGN_DISTRIBUTED -> { y = r.yMin(); vAnchor = Graphics.VAnchor.TOP; }
+            case ALIGN_MIDDLE, ALIGN_JUSTIFY -> { y = r.yCenter(); vAnchor = Graphics.VAnchor.MIDDLE; }
+        }
+
+        g.setFont(font);
+        g.drawText(text.toString(), x, y, hAnchor, vAnchor);
     }
 
     private static HAlign effectiveHAlign(HAlign hAlign, CellType cellType) {
