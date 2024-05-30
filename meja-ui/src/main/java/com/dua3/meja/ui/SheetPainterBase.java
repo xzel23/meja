@@ -31,16 +31,6 @@ public abstract class SheetPainterBase {
 
     private final CellRenderer cellRenderer;
 
-    /**
-     * Color used to draw the selection rectangle.
-     */
-    private Color selectionColor = Color.GREEN;
-
-    /**
-     * Width of the selection rectangle borders.
-     */
-    protected static final float SELECTION_STROKE_WIDTH = 2;
-
     protected abstract SheetViewDelegate getDelegate();
 
     /**
@@ -120,10 +110,11 @@ public abstract class SheetPainterBase {
         sheet.getCurrentCell().map(Cell::getLogicalCell)
                 .ifPresent(lc -> {
                     Rectangle2f rect = getDelegate().getCellRect(lc);
-                    g.setStroke(getSelectionColor(), getSelectionStrokeWidth());
+                    g.setStroke(getDelegate().getSelectionColor(), getDelegate().getSelectionStrokeWidth());
                     g.strokeRect(rect);
                 });
     }
+
     /**
      * Get display coordinates of selection rectangle.
      *
@@ -132,7 +123,7 @@ public abstract class SheetPainterBase {
      */
     public Rectangle2f getSelectionRect(Cell cell) {
         Rectangle2f cellRect = getDelegate().getCellRect(cell.getLogicalCell());
-        float extra = (getSelectionStrokeWidth() + 1) / 2;
+        float extra = getDelegate().getSelectionStrokeWidth() / 2;
         return cellRect.addMargin(extra);
     }
 
@@ -183,19 +174,6 @@ public abstract class SheetPainterBase {
 
     protected Color getGridColor() {
         return getDelegate().getGridColor();
-    }
-
-    protected Color getSelectionColor() {
-        return selectionColor;
-    }
-
-    protected void setSelectionColor(Color selectionColor) {
-        this.selectionColor = selectionColor;
-        update(sheet);
-    }
-
-    protected float getSelectionStrokeWidth() {
-        return SELECTION_STROKE_WIDTH;
     }
 
     /**

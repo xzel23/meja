@@ -103,7 +103,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     @Override
     public void repaintCell(@Nullable Cell cell) {
         if (cell != null) {
-            SwingUtilities.invokeLater(() -> sheetPane.repaintSheet(delegate.getCellRect(cell)));
+            sheetPane.repaintSheet(delegate.getSheetPainter().getSelectionRect(cell));
         }
     }
 

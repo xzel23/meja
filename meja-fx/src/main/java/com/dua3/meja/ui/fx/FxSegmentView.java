@@ -2,7 +2,6 @@ package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.model.Row;
 import com.dua3.meja.ui.SegmentView;
-import com.dua3.utility.math.geometry.Dimension2f;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Control;
@@ -60,18 +59,6 @@ public class FxSegmentView extends Control implements SegmentView {
 
         public int endRow(int rowCount, int splitRow) {
             return isTop ? splitRow: rowCount;
-        }
-
-        public Dimension2f getDimension(FxSheetViewDelegate delegate) {
-            int nc = delegate.getColumnCount();
-            int sc = delegate.getSplitColumn();
-            int nr = delegate.getRowCount();
-            int sr = delegate.getSplitRow();
-
-            float w = delegate.getColumnPos(endColumn(nc, sc)) - delegate.getColumnPos(startColumn(nc, sc));
-            float h = delegate.getRowPos(endRow(nr, sr)) - delegate.getRowPos(startRow(nr, sr));
-
-            return new Dimension2f(w, h);
         }
 
         /**

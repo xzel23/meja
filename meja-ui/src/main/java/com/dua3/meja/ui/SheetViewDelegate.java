@@ -37,12 +37,22 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     /**
      * Horizontal padding.
      */
-    protected static final float PADDING_X = 2;
+    private static final float PADDING_X = 2;
 
     /**
      * Vertical padding.
      */
-    protected static final float PADDING_Y = 1;
+    private static final float PADDING_Y = 1;
+
+    /**
+     * Color used to draw the selection rectangle.
+     */
+    private Color selectionColor = Color.GREEN;
+
+    /**
+     * Width of the selection rectangle borders.
+     */
+    private float SELECTION_STROKE_WIDTH = 2;
 
     /**
      * Array with column positions (dx-axis) in pixels.
@@ -88,6 +98,18 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     public float getSplitY() {
         return getRowPos(sheet.getSplitRow());
+    }
+
+    protected Color getSelectionColor() {
+        return selectionColor;
+    }
+
+    protected void setSelectionColor(Color selectionColor) {
+        this.selectionColor = selectionColor;
+    }
+
+    protected float getSelectionStrokeWidth() {
+        return SELECTION_STROKE_WIDTH;
     }
 
     /**

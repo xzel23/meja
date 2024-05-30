@@ -128,7 +128,7 @@ final class SwingSheetPane extends JScrollPane {
     }
 
     private void init() {
-        setDoubleBuffered(true);
+        setDoubleBuffered(false);
 
         // set quadrant painters
         setViewportView(bottomRightQuadrant);

@@ -98,8 +98,8 @@ public class SwingGrahpics implements Graphics {
         g2d.drawLine(
                 xL2D(x1),
                 yL2D(y1),
-                wL2D(x2),
-                hL2D(y2)
+                xL2D(x2),
+                yL2D(y2)
         );
     }
 
