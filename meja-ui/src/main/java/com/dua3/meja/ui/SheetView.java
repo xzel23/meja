@@ -20,6 +20,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -87,6 +88,8 @@ public interface SheetView {
     void updateContent();
 
     boolean requestFocusInWindow();
+
+    Locale getLocale();
 
     /**
      * Actions for key bindings.

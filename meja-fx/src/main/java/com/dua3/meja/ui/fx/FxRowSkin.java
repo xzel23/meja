@@ -1,17 +1,10 @@
 package com.dua3.meja.ui.fx;
 
-import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Row;
-import com.dua3.utility.fx.FxUtil;
-import com.dua3.utility.text.RichText;
+import com.dua3.meja.ui.CellRenderer;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Skin;
-import javafx.scene.paint.Color;
-
-import java.util.Locale;
 
 public class FxRowSkin implements Skin<FxRow> {
     private final FxRow skinnable;
@@ -30,49 +23,51 @@ public class FxRowSkin implements Skin<FxRow> {
     @Override
     public Node getNode() {
         FxRow fxRow = getSkinnable();
-        Row row = fxRow.getItem();
         render(fxRow);
         return canvas;
     }
 
     private void render(FxRow fxRow) {
-        canvas.setWidth(fxRow.getRowWidth());
-        canvas.setHeight(fxRow.getRowHeight());
+        FxSheetViewDelegate delegate = fxRow.getDelegate();
 
-        GraphicsContext g = canvas.getGraphicsContext2D();
-        g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        float w = (float) fxRow.getRowWidth();
+        float h = (float) fxRow.getRowHeight();
+
+        float s = delegate.getScale();
+        canvas.setWidth(w * s);
+        canvas.setHeight(h * s);
+
+        CellRenderer cr = new CellRenderer(delegate);
+
+        FxGraphics g = new FxGraphics(canvas.getGraphicsContext2D(), (float) canvas.getWidth(), (float) canvas.getHeight());
+
+        // clear background
+        g.setColor(delegate.getBackground());
+        g.fillRect(g.getBounds());
 
         Row row = fxRow.getItem();
         if (row == null) {
             return;
         }
 
-        FxSheetViewDelegate delegate = fxRow.getDelegate();
-
-        int i = row.getRowNumber();
-        float h = delegate.getRowHeightInPoints(i);
-
+        // draw grid lines
+        g.setColor(delegate.getGridColor());
+        g.strokeLine(0, h, w, h);
+        g.strokeLine(0, 0, w, 0);
         for (int j=0; j<delegate.getColumnCount(); j++) {
-            Cell cell = row.getCell(j);
-
             float x = delegate.getColumnPos(j);
-            float w = delegate.getColumnWidthInPoints(j);
+            g.strokeLine(x, 0, x, h);
+        }
+        g.strokeLine(w, 0, w, h);
 
-            CellStyle cellStyle = cell.getCellStyle();
-            g.setFill(FxUtil.convert(cellStyle.getFillFgColor()));
-            g.fillRect(x, 0, w, h);
-
-            g.setStroke(Color.GRAY);
-            g.strokeRect(x, 0, w, h);
-
-            RichText text = cell.getAsText(Locale.getDefault());
-            if (text != null) {
-                double textX = x + 5;
-                double textY = h;
-                g.setFont(FxUtil.convert(cellStyle.getFont()));
-                g.setFill(FxUtil.convert(cellStyle.getFont().getColor()));
-                g.fillText(text.toString(), textX, textY);
-            }
+        //  draw cells
+        g.setTranslate(0, -delegate.getRowPos(row.getRowNumber()));
+        for (int j=0; j<delegate.getColumnCount(); j++) {
+            row.getCellIfExists(j).ifPresent(cell -> {
+                cr.drawCellBackground(g, cell);
+                cr.drawCellBorder(g, cell);
+                cr.drawCellForeground(g, cell);
+            });
         }
     }
 

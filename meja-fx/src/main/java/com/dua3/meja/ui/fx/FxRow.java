@@ -4,7 +4,6 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Row;
 import javafx.collections.ObservableList;
 import javafx.scene.control.IndexedCell;
-import javafx.scene.control.Skin;
 
 public class FxRow extends IndexedCell<Row> {
     private final ObservableList<Row> rows;
@@ -49,7 +48,7 @@ public class FxRow extends IndexedCell<Row> {
     }
 
     @Override
-    protected Skin<FxRow> createDefaultSkin() {
+    protected FxRowSkin createDefaultSkin() {
         return new FxRowSkin(this);
     }
 

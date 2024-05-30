@@ -4,12 +4,10 @@ import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
-import com.dua3.utility.swing.SwingUtil;
 
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
-import java.awt.BasicStroke;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -144,32 +142,32 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
 
     @Override
     protected void paintComponent(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-
         // clear background by calling super method
-        super.paintComponent(g2d);
+        super.paintComponent(g);
 
         svDelegate.getSheet().ifPresent(sheet -> {
+            SwingGrahpics sg = new SwingGrahpics((Graphics2D) g);
+            sg.scale(svDelegate.getScale());
+
             // set transformation
             final int x = Math.round(ssvDelegate.getXMinInViewCoordinates());
             final int y = Math.round(ssvDelegate.getYMinInViewCoordinates());
-            g2d.translate(-x, -y);
+            sg.translate(-x, -y);
 
             // get dimensions
             final int width = getWidth();
             final int height = getHeight();
 
             // draw sheet
-            svDelegate.getSheetPainter().drawSheet(g2d);
+            svDelegate.getSheetPainter().drawSheet(sg);
 
             // draw split lines
-            g2d.setColor(SwingUtil.toAwtColor(Color.BLACK));
-            g2d.setStroke(new BasicStroke());
+            sg.setStroke(Color.BLACK, 1);
             if (ssvDelegate.hasHLine()) {
-                g2d.drawLine(x, height + y - 1, width + x - 1, height + y - 1);
+                sg.strokeLine(x, height + y - 1, width + x - 1, height + y - 1);
             }
             if (ssvDelegate.hasVLine()) {
-                g2d.drawLine(width + x - 1, y, width + x - 1, height + y - 1);
+                sg.strokeLine(width + x - 1, y, width + x - 1, height + y - 1);
             }
         });
     }

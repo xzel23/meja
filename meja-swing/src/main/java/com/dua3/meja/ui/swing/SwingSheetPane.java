@@ -63,14 +63,14 @@ final class SwingSheetPane extends JScrollPane {
         if (aboveSplit && toLeftOfSplit) {
             // nop: cell is always visible!
         } else if (aboveSplit) {
-            // only scroll x
+            // only scroll dx
             java.awt.Rectangle r = new java.awt.Rectangle(
                     svDelegate.xS2Di(cellRect.x()), 1,
                     svDelegate.wS2Di(cellRect.width()), 1
             );
             bottomRightQuadrant.scrollRectToVisible(r);
         } else if (toLeftOfSplit) {
-            // only scroll y
+            // only scroll dy
             java.awt.Rectangle r = new java.awt.Rectangle(
                     1, svDelegate.yS2Di(cellRect.y()),
                     1, svDelegate.hS2Di(cellRect.height())

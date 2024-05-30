@@ -15,15 +15,12 @@ public class SwingGrahpics implements Graphics {
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
 
     private Graphics2D g2d;
-    private float dx;
-    private float dy;
-    private float s;
+    private float dx = 0f;
+    private float dy = 0f;
+    private float s = 1f;
 
     public SwingGrahpics(Graphics2D g2d) {
         this.g2d = g2d;
-        this.dx = 0f;
-        this.dy = 0f;
-        this.s = 1f;
     }
 
     public int xL2D(float x) {
@@ -74,13 +71,8 @@ public class SwingGrahpics implements Graphics {
     }
 
     @Override
-    public void setFgColor(Color color) {
+    public void setColor(Color color) {
         g2d.setColor(SwingUtil.toAwtColor(color));
-    }
-
-    @Override
-    public void setBgColor(Color color) {
-        g2d.setBackground(SwingUtil.toAwtColor(color));
     }
 
     @Override
@@ -90,13 +82,14 @@ public class SwingGrahpics implements Graphics {
     }
 
     @Override
-    public void scale(float s) {
-        this.s = s;
+    public void setTranslate(float dx, float dy) {
+        this.dx = dx;
+        this.dy = dy;
     }
 
     @Override
-    public Graphics create(float x, float y, float w, float h) {
-        return new SwingGrahpics((Graphics2D) g2d.create(Math.round(x), Math.round(y), Math.round(w), Math.round(h)));
+    public void scale(float s) {
+        this.s = s;
     }
 
     @Override

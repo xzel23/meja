@@ -45,13 +45,11 @@ public interface Graphics {
 
     void fillRect(float x, float y, float w, float h);
 
-    void strokeLine(float v, float v1, float v2, float v3);
+    void strokeLine(float x1, float y1, float x2, float y2);
 
     void setStroke(Color c, float width);
 
-    void setFgColor(Color c);
-
-    void setBgColor(Color c);
+    void setColor(Color c);
 
     void setTransformation(Transformation t);
 
@@ -63,7 +61,7 @@ public interface Graphics {
 
     void translate(float dx, float dy);
 
-    void scale(float s);
+    void setTranslate(float v, float v1);
 
-    Graphics create(float x, float y, float w, float h);
+    void scale(float s);
 }

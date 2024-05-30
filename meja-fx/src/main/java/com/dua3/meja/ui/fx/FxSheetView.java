@@ -9,6 +9,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.layout.GridPane;
 
+import java.util.Locale;
+
 public class FxSheetView extends GridPane implements SheetView {
 
     private final FxSheetViewDelegate delegate;
@@ -51,6 +53,11 @@ public class FxSheetView extends GridPane implements SheetView {
     @Override
     public FxSheetViewDelegate getDelegate() {
         return delegate;
+    }
+
+    @Override
+    public Locale getLocale() {
+        return Locale.getDefault();
     }
 
     @Override

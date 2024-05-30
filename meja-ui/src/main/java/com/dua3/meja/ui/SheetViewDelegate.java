@@ -11,6 +11,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.concurrent.locks.Lock;
@@ -33,12 +34,22 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private transient Sheet sheet;
 
     /**
-     * Array with column positions (x-axis) in pixels.
+     * Horizontal padding.
+     */
+    protected static final float PADDING_X = 2;
+
+    /**
+     * Vertical padding.
+     */
+    protected static final float PADDING_Y = 1;
+
+    /**
+     * Array with column positions (dx-axis) in pixels.
      */
     private float[] columnPos = {0};
 
     /**
-     * Array with column positions (y-axis) in pixels.
+     * Array with column positions (dy-axis) in pixels.
      */
     private float[] rowPos = {0};
 
@@ -58,18 +69,18 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     /**
-     * Get x-coordinate of split.
+     * Get dx-coordinate of split.
      *
-     * @return x coordinate of split
+     * @return dx coordinate of split
      */
     public float getSplitX() {
         return getColumnPos(sheet.getSplitColumn());
     }
 
     /**
-     * Get y-coordinate of split.
+     * Get dy-coordinate of split.
      *
-     * @return y coordinate of split
+     * @return dy coordinate of split
      */
     public float getSplitY() {
         return getRowPos(sheet.getSplitRow());
@@ -95,7 +106,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
-    private float scale = 1.0f;
+    private float scale = 1f;
     /**
      * The color to use for the grid lines.
      */
@@ -112,6 +123,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public SheetViewDelegate(SheetView owner) {
         this.owner = owner;
     }
+
     /**
      * Get number of columns for the currently loaded sheet.
      *
@@ -122,9 +134,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     /**
-     * Get the column number that the given x-coordinate belongs to.
+     * Get the column number that the given dx-coordinate belongs to.
      *
-     * @param x x-coordinate
+     * @param x dx-coordinate
      * @return <ul>
      *         <li>-1, if the first column is displayed to the right of the given
      *         coordinate
@@ -138,9 +150,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     /**
-     * Get the row number that the given y-coordinate belongs to.
+     * Get the row number that the given dy-coordinate belongs to.
      *
-     * @param y y-coordinate
+     * @param y dy-coordinate
      * @return <ul>
      *         <li>-1, if the first row is displayed below the given coordinate
      *         <li>number of rows, if the lower edge of the last row is displayed
@@ -568,6 +580,24 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return getPositionIndexFromCoordinate(columnPos, x, sheetWidthInPoints);
     }
 
+    /**
+     * Get the horizontal padding.
+     *
+     * @return horizontal padding
+     */
+    public float getPaddingX() {
+        return PADDING_X;
+    }
+
+    /**
+     * Get the vertical padding.
+     *
+     * @return vertical padding
+     */
+    public float getPaddingY() {
+        return PADDING_Y;
+    }
+
     public int getRowNumberFromY(float y) {
         return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
     }
@@ -592,5 +622,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
     public double getDefaultRowHeight() {
         return defaultRowHeight;
+    }
+
+    public Locale getLocale() {
+        return owner.getLocale();
     }
 }

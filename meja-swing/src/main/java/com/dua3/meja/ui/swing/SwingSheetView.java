@@ -18,6 +18,7 @@ package com.dua3.meja.ui.swing;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.ui.CellRenderer;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.swing.SwingUtil;
@@ -70,7 +71,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      */
     public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
-        this.delegate = new SwingSheetViewDelegate(this, d -> new SwingSheetPainter(d, new DefaultCellRenderer()));
+        this.delegate = new SwingSheetViewDelegate(this, CellRenderer::new);
         this.sheetPane = new SwingSheetPane(delegate);
         init(sheet);
     }
@@ -102,7 +103,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     @Override
     public void repaintCell(@Nullable Cell cell) {
         if (cell != null) {
-            SwingUtilities.invokeLater(() -> sheetPane.repaintSheet(delegate.getSheetPainter().getSelectionRect(cell)));
+            SwingUtilities.invokeLater(() -> sheetPane.repaintSheet(delegate.getCellRect(cell)));
         }
     }
 

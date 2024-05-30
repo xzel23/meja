@@ -16,11 +16,7 @@
 package com.dua3.meja.ui;
 
 import com.dua3.cabe.annotations.Nullable;
-import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Direction;
-import com.dua3.meja.model.FillPattern;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
@@ -30,20 +26,10 @@ import java.util.concurrent.locks.Lock;
 
 /**
  * A helper class that implements the actual drawing algorithm.
- *
- * @param <G> the concrete class implementing GraphicsContext
  */
-public abstract class SheetPainterBase<G> {
+public abstract class SheetPainterBase {
 
-    /**
-     * Horizontal padding.
-     */
-    protected static final float PADDING_X = 2;
-
-    /**
-     * Vertical padding.
-     */
-    protected static final float PADDING_Y = 1;
+    private final CellRenderer cellRenderer;
 
     /**
      * Color used to draw the selection rectangle.
@@ -54,17 +40,6 @@ public abstract class SheetPainterBase<G> {
      * Width of the selection rectangle borders.
      */
     protected static final float SELECTION_STROKE_WIDTH = 2;
-
-    /**
-     * Test whether style uses text wrapping. While there is a property for text
-     * wrapping, the alignment settings have to be taken into account too.
-     *
-     * @param style style
-     * @return true if cell content should be displayed with text wrapping
-     */
-    static boolean isWrapping(CellStyle style) {
-        return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
-    }
 
     protected abstract SheetViewDelegate getDelegate();
 
@@ -81,29 +56,23 @@ public abstract class SheetPainterBase<G> {
         return getDelegate().getColumnLabelHeight();
     }
 
-    protected abstract Rectangle2f getClipBounds(G g);
-    protected abstract void drawBackground(G g);
-    protected abstract void drawLabel(G g, Rectangle2f rect, String text);
-    protected abstract void setColor(G g, Color color);
-    protected abstract void strokeLine(G g, float v, float v1, float v2, float v3);
-
-    protected abstract void strokeRect(G g, float x, float y, float w, float h);
-    protected void strokeRect(G g, Rectangle2f r) {
-        strokeRect(g, r.x(), r.y(), r.width(), r.height());
+    public void drawBackground(Graphics g) {
+        Rectangle2f r = g.getBounds();
+        g.setColor(getDelegate().getBackground().brighter());
+        g.fillRect(r.x(), r.y(), r.width(), r.height());
     }
 
-    protected abstract void fillRect(G g, float x, float y, float w, float h);
-    protected void fillRect(G g, Rectangle2f r) {
-        fillRect(g, r.x(), r.y(), r.width(), r.height());
+    public void drawLabel(Graphics g, Rectangle2f r, String text) {
+        g.setColor(Color.BLACK);
+        g.strokeRect(r);
+        g.drawText(text, r.x(), r.y());
     }
 
-    protected abstract void setStroke(G g, Color color, float width);
-    protected abstract void render(G g, Cell cell, Rectangle2f textRect, Rectangle2f clipRect);
-
-    protected SheetPainterBase() {
+    protected SheetPainterBase(CellRenderer cellRenderer) {
+        this.cellRenderer = cellRenderer;
     }
 
-    public void drawSheet(G g) {
+    public void drawSheet(Graphics g) {
         if (sheet == null) {
             return;
         }
@@ -111,16 +80,14 @@ public abstract class SheetPainterBase<G> {
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {
-            beginDraw(g);
+            g.beginDraw();
 
             drawBackground(g);
-
             drawLabels(g);
-
             drawCells(g);
             drawSelection(g);
 
-            endDraw(g);
+            g.endDraw();
         } finally {
             readLock.unlock();
         }
@@ -135,134 +102,11 @@ public abstract class SheetPainterBase<G> {
     }
 
     /**
-     * Draw cell background.
-     *
-     * @param g    the graphics context to use
-     * @param cell cell to draw
-     */
-    private void drawCellBackground(G g, Cell cell) {
-        Rectangle2f cr = getCellRect(cell);
-
-        // draw grid lines
-        setColor(g, getGridColor());
-        strokeRect(g, cr);
-
-        CellStyle style = cell.getCellStyle();
-        FillPattern pattern = style.getFillPattern();
-
-        if (pattern == FillPattern.NONE) {
-            return;
-        }
-
-        if (pattern != FillPattern.SOLID) {
-            Color fillBgColor = style.getFillBgColor();
-            if (fillBgColor != null) {
-                setColor(g, fillBgColor);
-                fillRect(g, cr);
-            }
-        }
-
-        Color fillFgColor = style.getFillFgColor();
-        if (fillFgColor != null) {
-            setColor(g, fillFgColor);
-            fillRect(g, cr);
-        }
-    }
-
-    private Rectangle2f getCellRect(Cell cell) {
-        return getDelegate().getCellRect(cell);
-    }
-
-    /**
-     * Draw cell border.
-     *
-     * @param g    the graphics context to use
-     * @param cell cell to draw
-     */
-    private void drawCellBorder(G g, Cell cell) {
-        CellStyle styleTopLeft = cell.getCellStyle();
-
-        Cell cellBottomRight = sheet.getRow(cell.getRowNumber() + cell.getVerticalSpan() - 1)
-                .getCell(cell.getColumnNumber() + cell.getHorizontalSpan() - 1);
-        CellStyle styleBottomRight = cellBottomRight.getCellStyle();
-
-        Rectangle2f cr = getCellRect(cell);
-
-        // draw border
-        for (Direction d : Direction.values()) {
-            boolean isTopLeft = d == Direction.NORTH || d == Direction.WEST;
-            CellStyle style = isTopLeft ? styleTopLeft : styleBottomRight;
-
-            BorderStyle b = style.getBorderStyle(d);
-            if (b.width() == 0) {
-                continue;
-            }
-
-            Color color = b.color();
-            if (color == null) {
-                color = Color.BLACK;
-            }
-            setStroke(g, color, b.width());
-
-            switch (d) {
-                case NORTH -> strokeLine(g, cr.xMin(), cr.yMin(), cr.xMax(), cr.yMin());
-                case EAST -> strokeLine(g, cr.xMax(), cr.yMin(), cr.xMax(), cr.yMax());
-                case SOUTH -> strokeLine(g, cr.xMin(), cr.yMax(), cr.xMax(), cr.yMax());
-                case WEST -> strokeLine(g, cr.xMin(), cr.yMin(), cr.xMin(), cr.yMax());
-            }
-        }
-    }
-
-    /**
-     * Draw cell foreground.
-     *
-     * @param g    the graphics context to use
-     * @param cell cell to draw
-     */
-    private void drawCellForeground(G g, Cell cell) {
-        if (cell.isEmpty()) {
-            return;
-        }
-
-        float paddingX = getPaddingX();
-        float paddingY = getPaddingY();
-
-        // the rectangle used for positioning the text
-        Rectangle2f textRect = getCellRect(cell).addMargin(-paddingX, -paddingY);
-
-        // the clipping rectangle
-        final Rectangle2f clipRect;
-        final CellStyle style = cell.getCellStyle();
-        if (isWrapping(style)) {
-            clipRect = textRect;
-        } else {
-            Row row = cell.getRow();
-            float clipXMin = textRect.xMin();
-            for (int j = cell.getColumnNumber() - 1; j > 0; j--) {
-                if (!row.getCell(j).isEmpty()) {
-                    break;
-                }
-                clipXMin = getDelegate().getColumnPos(j) + paddingX;
-            }
-            float clipXMax = textRect.xMax();
-            for (int j = cell.getColumnNumber() + 1; j < getDelegate().getColumnCount(); j++) {
-                if (!row.getCell(j).isEmpty()) {
-                    break;
-                }
-                clipXMax = getDelegate().getColumnPos(j + 1) - paddingX;
-            }
-            clipRect = new Rectangle2f(clipXMin, textRect.yMin(), clipXMax - clipXMin, textRect.height());
-        }
-
-        render(g, cell, textRect, clipRect);
-    }
-
-    /**
      * Draw frame around current selection.
      *
      * @param g graphics object used for drawing
      */
-    private void drawSelection(G g) {
+    private void drawSelection(Graphics g) {
         // no sheet, no drawing
         if (sheet == null) {
             return;
@@ -270,9 +114,9 @@ public abstract class SheetPainterBase<G> {
 
         sheet.getCurrentCell().map(Cell::getLogicalCell)
                 .ifPresent(lc -> {
-                    Rectangle2f rect = getCellRect(lc);
-                    setStroke(g, getSelectionColor(), getSelectionStrokeWidth());
-                    strokeRect(g, rect);
+                    Rectangle2f rect = getDelegate().getCellRect(lc);
+                    g.setStroke(getSelectionColor(), getSelectionStrokeWidth());
+                    g.strokeRect(rect);
                 });
     }
     /**
@@ -282,14 +126,9 @@ public abstract class SheetPainterBase<G> {
      * @return selection rectangle in display coordinates
      */
     public Rectangle2f getSelectionRect(Cell cell) {
-        Rectangle2f cellRect = getCellRect(cell.getLogicalCell());
+        Rectangle2f cellRect = getDelegate().getCellRect(cell.getLogicalCell());
         float extra = (getSelectionStrokeWidth() + 1) / 2;
         return cellRect.addMargin(extra);
-    }
-
-
-    protected void beginDraw(G g) {
-        // nop
     }
 
     protected final class VisibleArea {
@@ -306,11 +145,11 @@ public abstract class SheetPainterBase<G> {
         }
     }
 
-    protected void drawLabels(G g) {
+    protected void drawLabels(Graphics g) {
         SheetViewDelegate delegate = getDelegate();
 
         // determine visible rows and columns
-        VisibleArea va = new VisibleArea(getClipBounds(g));
+        VisibleArea va = new VisibleArea(g.getBounds());
 
         // draw row labels
         for (int i = va.startRow; i < va.endRow; i++) {
@@ -334,20 +173,8 @@ public abstract class SheetPainterBase<G> {
         }
     }
 
-    protected void endDraw(G g) {
-        // nop
-    }
-
     protected Color getGridColor() {
         return getDelegate().getGridColor();
-    }
-
-    protected float getPaddingX() {
-        return PADDING_X;
-    }
-
-    protected float getPaddingY() {
-        return PADDING_Y;
     }
 
     protected Color getSelectionColor() {
@@ -377,7 +204,7 @@ public abstract class SheetPainterBase<G> {
      *
      * @param g            the graphics object to use
      */
-    void drawCells(G g) {
+    void drawCells(Graphics g) {
         // no sheet, no drawing
         if (sheet == null) {
             return;
@@ -386,7 +213,7 @@ public abstract class SheetPainterBase<G> {
         double maxWidth = SheetView.MAX_COLUMN_WIDTH;
 
         // determine visible rows and columns
-        Rectangle2f clipBounds = getClipBounds(g);
+        Rectangle2f clipBounds = g.getBounds();
         VisibleArea va = new VisibleArea(clipBounds);
 
         // Collect cells to be drawn
@@ -432,16 +259,16 @@ public abstract class SheetPainterBase<G> {
                     j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
                     // filter out cells that cannot overflow into the visible
                     // region
-                    if (j < va.startColumn && isWrapping(cell.getCellStyle())) {
+                    if (j < va.startColumn && CellRenderer.isWrapping(cell.getCellStyle())) {
                         continue;
                     }
                 }
 
                 // draw cell
                 if (visible) {
-                    drawCellBackground(g, logicalCell);
-                    drawCellBorder(g, logicalCell);
-                    drawCellForeground(g, logicalCell);
+                    cellRenderer.drawCellBackground(g, logicalCell);
+                    cellRenderer.drawCellBorder(g, logicalCell);
+                    cellRenderer.drawCellForeground(g, logicalCell);
                 }
             }
         }

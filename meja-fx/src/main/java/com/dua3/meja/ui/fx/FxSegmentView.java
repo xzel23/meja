@@ -108,15 +108,29 @@ public class FxSegmentView extends Control implements SegmentView {
 
         setSkin(new FxSegmentViewSkin(this));
 
+        updateLayout();
+
+        if (quadrant != Quadrant.BOTTOM_RIGHT) {
+            flow.setStyle(".scroll-bar { -fx-max-width: 0; -fx-max-height: 0; }");
+        }
+    }
+
+    /**
+     * Update layout, i.e., when the scale or row and/or column sizes change.
+     */
+    private void updateLayout() {
         svDelegate.getSheet().ifPresent(sheet -> {
+            float scale = svDelegate.getScale();
+
             double width = IntStream.range(
                     quadrant.startColumn(svDelegate.getColumnCount(), svDelegate.getSplitColumn()),
                     quadrant.endColumn(svDelegate.getColumnCount(), svDelegate.getSplitColumn())
-            ).mapToDouble(sheet::getColumnWidth).sum();
+            ).mapToDouble(j -> scale * sheet.getColumnWidth(j)).sum();
+
             double height = IntStream.range(
                     quadrant.startRow(svDelegate.getRowCount(), svDelegate.getSplitRow()),
                     quadrant.endRow(svDelegate.getRowCount(), svDelegate.getSplitRow())
-            ).mapToDouble(sheet::getRowHeight).sum();
+            ).mapToDouble(i -> scale * sheet.getRowHeight(i)).sum();
 
             flow.setCellFactory(f -> new FxRow(rows, svDelegate));
             flow.setCellCount(rows.size());
@@ -142,10 +156,6 @@ public class FxSegmentView extends Control implements SegmentView {
                 }
             }
         });
-
-        if (quadrant != Quadrant.BOTTOM_RIGHT) {
-            flow.setStyle(".scroll-bar { -fx-max-width: 0; -fx-max-height: 0; }");
-        }
     }
 
     private void init() {
@@ -156,7 +166,7 @@ public class FxSegmentView extends Control implements SegmentView {
             public void mousePressed(MouseEvent e) {
                 Point p = e.getPoint();
                 translateMousePosition(p);
-                svDelegate.onMousePressed(p.x, p.y);
+                svDelegate.onMousePressed(p.dx, p.dy);
             }
         });
          */

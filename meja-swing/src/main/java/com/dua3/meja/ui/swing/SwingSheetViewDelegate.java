@@ -1,5 +1,6 @@
 package com.dua3.meja.ui.swing;
 
+import com.dua3.meja.ui.CellRenderer;
 import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
@@ -11,14 +12,16 @@ import java.util.function.Function;
 
 public class SwingSheetViewDelegate extends SheetViewDelegate {
 
+    private final CellRenderer cellRenderer;
     private final SwingSheetPainter sheetPainter;
 
     public SwingSheetViewDelegate(
             SwingSheetView owner,
-            Function<SwingSheetViewDelegate, SwingSheetPainter> sheetPainterFactory
+            Function<SwingSheetViewDelegate, CellRenderer> cellRendererFactory
     ) {
         super(owner);
-        this.sheetPainter = sheetPainterFactory.apply(this);
+        this.cellRenderer = cellRendererFactory.apply(this);
+        this.sheetPainter = new SwingSheetPainter(this, cellRenderer);
     }
 
     public SwingSheetPainter getSheetPainter() {
