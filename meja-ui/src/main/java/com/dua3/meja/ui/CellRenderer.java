@@ -13,9 +13,14 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CellRenderer {
-    public static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
+    private static final Logger LOG = LogManager.getLogger(CellRenderer.class);
+
+    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
+
     private final SheetViewDelegate delegate;
 
     public CellRenderer(SheetViewDelegate delegate) {
@@ -32,6 +37,8 @@ public class CellRenderer {
      * @param cell cell to draw
      */
     public void drawCellBackground(Graphics g, Cell cell) {
+        LOG.trace("drawCellBackground(): {}", cell::getCellRef);
+
         Rectangle2f cr = getCellRect(cell);
 
         // draw grid lines
@@ -66,6 +73,8 @@ public class CellRenderer {
      * @param cell cell to draw
      */
     public void drawCellBorder(Graphics g, Cell cell) {
+        LOG.trace("drawCellBorder(): {}", cell::getCellRef);
+
         CellStyle styleTopLeft = cell.getCellStyle();
         CellStyle styleBottomRight = cell.isMerged()
                 ? getDelegate().getSheet().orElseThrow()
@@ -107,6 +116,8 @@ public class CellRenderer {
      * @param cell cell to draw
      */
     public void drawCellForeground(Graphics g, Cell cell) {
+        LOG.trace("drawCellForeground(): {}", cell::getCellRef);
+
         if (cell.isEmpty()) {
             return;
         }
@@ -145,11 +156,12 @@ public class CellRenderer {
     }
 
     private void render(Graphics g, Cell cell, Rectangle2f r, Rectangle2f clipRect) {
+        LOG.trace("render(): {}", cell::getCellRef);
+
         CellStyle cs = cell.getCellStyle();
 
         RichText text = cell.getAsText(delegate.getLocale());
         Font font = cs.getFont();
-        Rectangle2f d = FONT_UTIL.getRichTextDimension(text, font);
 
         float x, y;
         Graphics.HAnchor hAnchor;

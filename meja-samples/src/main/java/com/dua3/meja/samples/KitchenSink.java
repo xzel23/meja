@@ -9,6 +9,9 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.logging.LogLevel;
+import com.dua3.utility.logging.log4j.LogUtilLog4J;
+import com.dua3.utility.swing.SwingLogFrame;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
@@ -26,12 +29,35 @@ import java.util.Map.Entry;
  * Kitchensink example.
  */
 public final class KitchenSink extends JFrame {
+    private static final Logger LOG;
+
+    private static final boolean  SHOW_LOG_WINDOW =  (true || System.getProperty("logwindow") != null);
+    static {
+        // this must be done before any logger is created!
+        if (SHOW_LOG_WINDOW) {
+            LogUtilLog4J.init(LogLevel.TRACE);
+            new SwingLogFrame("LOG").setVisible(true);
+        }
+
+        LOG = LogManager.getLogger("KitchenSink");
+    }
+
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = LogManager.getLogger(KitchenSink.class);
+    public static void main(String[] args) {
+        LOG.info("starting up ...");
+        SwingUtilities.invokeLater(() -> {
+            SwingUtil.setNativeLookAndFeel();
+            KitchenSink instance = new KitchenSink();
+            instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            instance.setVisible(true);
+        });
+    }
 
     private static void addColorSheet(Workbook wb) {
+        LOG.info("Adding color sheet");
+
         Sheet sheet = wb.createSheet("colors");
 
         Row row = sheet.getRow(0);
@@ -66,6 +92,8 @@ public final class KitchenSink extends JFrame {
     }
 
     private static void addTextColorSheet(Workbook wb) {
+        LOG.info("Adding text color sheet");
+
         Sheet sheet = wb.createSheet("text colors");
 
         Row row = sheet.getRow(0);
@@ -105,15 +133,6 @@ public final class KitchenSink extends JFrame {
         addTextColorSheet(wb);
 
         return wb;
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            SwingUtil.setNativeLookAndFeel();
-            KitchenSink instance = new KitchenSink();
-            instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            instance.setVisible(true);
-        });
     }
 
     private Workbook wb;

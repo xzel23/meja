@@ -43,10 +43,13 @@ dependencyResolutionManagement {
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
             library("dua3-utility-db", "com.dua3.utility", "utility-db").versionRef("dua3-utility")
             library("dua3-utility-logging", "com.dua3.utility", "utility-logging").versionRef("dua3-utility")
+            library("dua3-utility-logging-log4j", "com.dua3.utility", "utility-logging-log4j").versionRef("dua3-utility")
             library("dua3-utility-swing", "com.dua3.utility", "utility-swing").versionRef("dua3-utility")
             library("dua3-utility-fx", "com.dua3.utility", "utility-fx").versionRef("dua3-utility")
             library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
+            library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").versionRef("log4j")
+            library("log4j-jcl", "org.apache.logging.log4j", "log4j-jcl").versionRef("log4j")
             library("poi", "org.apache.poi", "poi").versionRef("poi")
             library("poi-ooxml", "org.apache.poi", "poi-ooxml").versionRef("poi")
 

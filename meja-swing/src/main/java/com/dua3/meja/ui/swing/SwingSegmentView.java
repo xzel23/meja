@@ -4,6 +4,8 @@ import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
@@ -17,6 +19,8 @@ import java.awt.event.MouseEvent;
 import java.util.function.IntSupplier;
 
 final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
+    private static final Logger LOG = LogManager.getLogger(SwingSegmentView.class);
+
     private final transient SwingSheetViewDelegate svDelegate;
     private final transient SegmentViewDelegate ssvDelegate;
 
@@ -142,6 +146,8 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
 
     @Override
     protected void paintComponent(Graphics g) {
+        LOG.trace("paintComponent()");
+        
         // clear background by calling super method
         super.paintComponent(g);
 

@@ -11,9 +11,14 @@ dependencies {
     implementation(project(":meja-swing"))
 
     implementation(rootProject.libs.dua3.utility)
+    implementation(rootProject.libs.dua3.utility.logging)
+    implementation(rootProject.libs.dua3.utility.logging.log4j)
     implementation(rootProject.libs.dua3.utility.swing)
 
+    implementation(rootProject.libs.log4j.api)
     implementation(rootProject.libs.log4j.core)
+    implementation(rootProject.libs.log4j.jul)
+    implementation(rootProject.libs.log4j.jcl)
 
     implementation(project(":meja-poi"))
 }
@@ -28,6 +33,7 @@ val runKitchenSink = task<JavaExec>("runKitchenSink") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.samples.KitchenSink")
     enableAssertions = true
+    systemProperty("logwindow", "1")
 }
 
 val runTableModel = task<JavaExec>("runTableModel") {

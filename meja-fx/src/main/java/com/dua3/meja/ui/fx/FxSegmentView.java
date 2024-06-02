@@ -16,7 +16,7 @@ public class FxSegmentView extends Control implements SegmentView {
 
     private static final Logger LOG = LogManager.getLogger(FxSegmentView.class);
 
-    private class FxSegmentViewSkin extends SkinBase<FxSegmentView> {
+    private static class FxSegmentViewSkin extends SkinBase<FxSegmentView> {
         protected FxSegmentViewSkin(FxSegmentView control) {
             super(control);
             getChildren().add(control.flow);

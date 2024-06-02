@@ -21,6 +21,8 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.locks.Lock;
 
@@ -28,6 +30,8 @@ import java.util.concurrent.locks.Lock;
  * A helper class that implements the actual drawing algorithm.
  */
 public abstract class SheetPainterBase {
+
+    private static final Logger LOGGER = LogManager.getLogger(SheetPainterBase.class);
 
     private final CellRenderer cellRenderer;
 
@@ -68,7 +72,10 @@ public abstract class SheetPainterBase {
     }
 
     public void drawSheet(Graphics g) {
+        LOGGER.trace("drawSheet()");
+
         if (sheet == null) {
+            LOGGER.trace("no sheet");
             return;
         }
 
@@ -102,6 +109,8 @@ public abstract class SheetPainterBase {
      * @param g graphics object used for drawing
      */
     private void drawSelection(Graphics g) {
+        LOGGER.trace("drawSelection()");
+
         // no sheet, no drawing
         if (sheet == null) {
             return;
@@ -110,6 +119,7 @@ public abstract class SheetPainterBase {
         sheet.getCurrentCell().map(Cell::getLogicalCell)
                 .ifPresent(lc -> {
                     Rectangle2f rect = getDelegate().getCellRect(lc);
+                    LOGGER.trace("drawing selection rectangle: {}", rect);
                     g.setStroke(getDelegate().getSelectionColor(), getDelegate().getSelectionStrokeWidth());
                     g.strokeRect(rect);
                 });
@@ -127,30 +137,30 @@ public abstract class SheetPainterBase {
         return cellRect.addMargin(extra);
     }
 
-    protected final class VisibleArea {
-        public final int startRow;
-        public final int endRow;
-        public final int startColumn;
-        public final int endColumn;
-
-        public VisibleArea(Rectangle2f boundsInSheet) {
-            this.startRow = Math.max(0, getDelegate().getRowNumberFromY(boundsInSheet.yMin()));
-            this.endRow = Math.min(getDelegate().getRowCount(), 1 + getDelegate().getRowNumberFromY(boundsInSheet.yMax()));
-            this.startColumn = Math.max(0, getDelegate().getColumnNumberFromX(boundsInSheet.xMin()));
-            this.endColumn = Math.min(getDelegate().getColumnCount(), 1 + getDelegate().getColumnNumberFromX(boundsInSheet.xMax()));
+    protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {
+        public VisibleArea(SheetViewDelegate delegate, Rectangle2f boundsInSheet) {
+            this(
+                    Math.max(0, delegate.getRowNumberFromY(boundsInSheet.yMin())),
+                    Math.min(delegate.getRowCount(), 1 + delegate.getRowNumberFromY(boundsInSheet.yMax())),
+                    Math.max(0, delegate.getColumnNumberFromX(boundsInSheet.xMin())),
+                    Math.min(delegate.getColumnCount(), 1 + delegate.getColumnNumberFromX(boundsInSheet.xMax()))
+            );
         }
     }
 
     protected void drawLabels(Graphics g) {
+        LOGGER.trace("drawLabels()");
         SheetViewDelegate delegate = getDelegate();
 
         // determine visible rows and columns
         float s = delegate.getScale();
         Graphics.Transformation t = g.getTransformation();
         Rectangle2f boundsInSheet = g.getBounds().translate(-t.dx() * s, -t.dy() * s);
-        VisibleArea va = new VisibleArea(boundsInSheet);
+        VisibleArea va = new VisibleArea(getDelegate(), boundsInSheet);
+        LOGGER.trace("draw labels - visible area: {}", va);
 
         // draw row labels
+        LOGGER.trace("draw row labels");
         for (int i = va.startRow; i < va.endRow; i++) {
             float x = -getRowLabelWidth();
             float w = getRowLabelWidth();
@@ -162,6 +172,7 @@ public abstract class SheetPainterBase {
         }
 
         // draw column labels
+        LOGGER.trace("draw column labels");
         for (int j = va.startColumn; j < va.endColumn; j++) {
             float x = getDelegate().getColumnPos(j);
             float y = -getColumnLabelHeight();
@@ -191,6 +202,8 @@ public abstract class SheetPainterBase {
      * @param g            the graphics object to use
      */
     void drawCells(Graphics g) {
+        LOGGER.trace("drawCells()");
+
         // no sheet, no drawing
         if (sheet == null) {
             return;
@@ -202,7 +215,8 @@ public abstract class SheetPainterBase {
         float s = getDelegate().getScale();
         Graphics.Transformation t = g.getTransformation();
         Rectangle2f boundsInSheet = g.getBounds().translate(-t.dx() * s, -t.dy() * s);
-        VisibleArea va = new VisibleArea(boundsInSheet);
+        VisibleArea va = new VisibleArea(getDelegate(), boundsInSheet);
+        LOGGER.trace("draw cells - visible area: {}", va);
 
         // Collect cells to be drawn
         for (int i = va.startRow; i < va.endRow; i++) {
