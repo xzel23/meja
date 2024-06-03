@@ -131,7 +131,7 @@ public abstract class SheetPainterBase {
      * @param cell the selected cell
      * @return selection rectangle in display coordinates
      */
-    public Rectangle2f getSelectionRect(Cell cell) {
+    private Rectangle2f getSelectionRect(Cell cell) {
         Rectangle2f cellRect = getDelegate().getCellRect(cell.getLogicalCell());
         float extra = getDelegate().getSelectionStrokeWidth() / 2;
         return cellRect.addMargin(extra);

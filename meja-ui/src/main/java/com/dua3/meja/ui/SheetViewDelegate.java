@@ -588,6 +588,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void onMousePressed(int x, int y) {
+        LOG.debug("onMousePressed({}, {})", x, y);
         // make the cell under pointer the current cell
         int row = getRowNumberFromY(yD2S(y));
         int col = getColumnNumberFromX(xD2S(x));
@@ -610,6 +611,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void requestFocusInWindow() {
+        LOG.trace("requestFocusInWindow()");
         owner.requestFocusInWindow();
     }
 

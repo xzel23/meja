@@ -4,6 +4,8 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
@@ -14,6 +16,8 @@ import java.awt.Point;
 import java.util.function.IntSupplier;
 
 final class SwingSheetPane extends JScrollPane {
+    private static final Logger LOG = LogManager.getLogger(SwingSheetPane.class);
+
     public static final Rectangle2f EMPTY_RECTANGLE = Rectangle2f.of(0, 0, 0, 0);
     private final SwingSheetViewDelegate svDelegate;
     final SwingSegmentView topLeftQuadrant;
@@ -140,6 +144,8 @@ final class SwingSheetPane extends JScrollPane {
     }
 
     public void repaintSheet(Rectangle2f rect) {
+        LOG.debug("repaintSheet('{}'): {}", svDelegate.getSheet().map(Sheet::getSheetName), rect);
+
         topLeftQuadrant.repaintSheet(rect);
         topRightQuadrant.repaintSheet(rect);
         bottomLeftQuadrant.repaintSheet(rect);

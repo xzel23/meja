@@ -137,6 +137,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                LOG.trace("mouse pressed: {}", e);
                 Point p = e.getPoint();
                 translateMousePosition(p);
                 svDelegate.onMousePressed(p.x, p.y);
@@ -146,7 +147,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
 
     @Override
     protected void paintComponent(Graphics g) {
-        LOG.trace("paintComponent()");
+        LOG.debug("paintComponent(): ({},{}) - ({},{})", ssvDelegate.getBeginRow(), ssvDelegate.getBeginColumn(), ssvDelegate.getEndRow(), ssvDelegate.getEndColumn());
         
         // clear background by calling super method
         super.paintComponent(g);
