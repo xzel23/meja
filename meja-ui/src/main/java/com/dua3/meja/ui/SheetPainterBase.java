@@ -137,31 +137,17 @@ public abstract class SheetPainterBase {
         return cellRect.addMargin(extra);
     }
 
-    protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {
-        public VisibleArea(SheetViewDelegate delegate, Rectangle2f boundsInSheet) {
-            this(
-                    Math.max(0, delegate.getRowNumberFromY(boundsInSheet.yMin())),
-                    Math.min(delegate.getRowCount(), 1 + delegate.getRowNumberFromY(boundsInSheet.yMax())),
-                    Math.max(0, delegate.getColumnNumberFromX(boundsInSheet.xMin())),
-                    Math.min(delegate.getColumnCount(), 1 + delegate.getColumnNumberFromX(boundsInSheet.xMax()))
-            );
-        }
-    }
-
     protected void drawLabels(Graphics g) {
         LOGGER.trace("drawLabels()");
         SheetViewDelegate delegate = getDelegate();
 
         // determine visible rows and columns
-        float s = delegate.getScale();
-        Graphics.Transformation t = g.getTransformation();
-        Rectangle2f boundsInSheet = g.getBounds().translate(-t.dx() * s, -t.dy() * s);
-        VisibleArea va = new VisibleArea(getDelegate(), boundsInSheet);
+        SheetViewDelegate.VisibleArea va = delegate.getVisibleAreaInSheet(g);
         LOGGER.trace("draw labels - visible area: {}", va);
 
         // draw row labels
         LOGGER.trace("draw row labels");
-        for (int i = va.startRow; i < va.endRow; i++) {
+        for (int i = va.startRow(); i < va.endRow(); i++) {
             float x = -getRowLabelWidth();
             float w = getRowLabelWidth();
             float y = getDelegate().getRowPos(i);
@@ -173,7 +159,7 @@ public abstract class SheetPainterBase {
 
         // draw column labels
         LOGGER.trace("draw column labels");
-        for (int j = va.startColumn; j < va.endColumn; j++) {
+        for (int j = va.startColumn(); j < va.endColumn(); j++) {
             float x = getDelegate().getColumnPos(j);
             float y = -getColumnLabelHeight();
             float w = getDelegate().getColumnPos(j + 1) - x;
@@ -215,11 +201,11 @@ public abstract class SheetPainterBase {
         float s = getDelegate().getScale();
         Graphics.Transformation t = g.getTransformation();
         Rectangle2f boundsInSheet = g.getBounds().translate(-t.dx() * s, -t.dy() * s);
-        VisibleArea va = new VisibleArea(getDelegate(), boundsInSheet);
+        SheetViewDelegate.VisibleArea va = new SheetViewDelegate.VisibleArea(getDelegate(), boundsInSheet);
         LOGGER.trace("draw cells - visible area: {}", va);
 
         // Collect cells to be drawn
-        for (int i = va.startRow; i < va.endRow; i++) {
+        for (int i = va.startRow(); i < va.endRow(); i++) {
             Row row = sheet.getRow(i);
 
             if (row == null) {
@@ -229,12 +215,12 @@ public abstract class SheetPainterBase {
             // if first/last displayed cell of row is empty, start drawing at
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
-            int first = va.startColumn;
+            int first = va.startColumn();
             while (first > 0 && getDelegate().getColumnPos(first) + maxWidth > boundsInSheet.xMin() && row.getCell(first).isEmpty()) {
                 first--;
             }
 
-            int end = va.endColumn;
+            int end = va.endColumn();
             while (end < getDelegate().getColumnCount() && getDelegate().getColumnPos(end) - maxWidth < boundsInSheet.xMax()
                     && (end <= 0 || row.getCell(end - 1).isEmpty())) {
                 end++;
@@ -253,7 +239,7 @@ public abstract class SheetPainterBase {
                 } else {
                     // otherwise, calculate row and column numbers of the
                     // first visible cell of the merged region
-                    int iCell = Math.max(va.startRow, logicalCell.getRowNumber());
+                    int iCell = Math.max(va.startRow(), logicalCell.getRowNumber());
                     int jCell = Math.max(first, logicalCell.getColumnNumber());
                     visible = i == iCell && j == jCell;
                     // skip the other cells of this row that belong to the same
@@ -261,7 +247,7 @@ public abstract class SheetPainterBase {
                     j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
                     // filter out cells that cannot overflow into the visible
                     // region
-                    if (j < va.startColumn && CellRenderer.isWrapping(cell.getCellStyle())) {
+                    if (j < va.startColumn() && CellRenderer.isWrapping(cell.getCellStyle())) {
                         continue;
                     }
                 }

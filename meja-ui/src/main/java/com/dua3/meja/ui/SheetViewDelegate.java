@@ -270,8 +270,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             }
             case SheetEvent.ACTIVE_CELL_CHANGED -> {
                 SheetEvent.ActiveCellChanged evt = (SheetEvent.ActiveCellChanged) item;
-                owner.repaintCell(evt.valueOld());
                 owner.scrollToCurrentCell();
+                owner.repaintCell(evt.valueOld());
                 owner.repaintCell(evt.valueNew());
             }
             case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED -> {
@@ -683,5 +683,25 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
     public void setLabelBackgroundColor(Color labelBackgroundColor) {
         this.labelBackgroundColor = labelBackgroundColor;
+    }
+
+    VisibleArea getVisibleAreaInSheet(Graphics g) {
+        float s = getScale();
+        Graphics.Transformation t = g.getTransformation();
+        Rectangle2f bounds = g.getBounds();
+        Rectangle2f boundsInSheet = bounds.translate(-t.dx() * s, -t.dy() * s);
+        VisibleArea va = new VisibleArea(this, boundsInSheet);
+        return va;
+    }
+
+    protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {
+        public VisibleArea(SheetViewDelegate delegate, Rectangle2f boundsInSheet) {
+            this(
+                    Math.max(0, delegate.getRowNumberFromY(boundsInSheet.yMin())),
+                    Math.min(delegate.getRowCount(), 1 + delegate.getRowNumberFromY(boundsInSheet.yMax())),
+                    Math.max(0, delegate.getColumnNumberFromX(boundsInSheet.xMin())),
+                    Math.min(delegate.getColumnCount(), 1 + delegate.getColumnNumberFromX(boundsInSheet.xMax()))
+            );
+        }
     }
 }
