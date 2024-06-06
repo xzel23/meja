@@ -1,14 +1,13 @@
 package com.dua3.meja.ui;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 
 public interface Graphics {
 
     Rectangle2f getTextDimension(String text, float s);
-
-    record Transformation(float dx, float dy, float s) {}
 
     /**
      * Get bounds.
@@ -60,7 +59,7 @@ public interface Graphics {
 
     void setColor(Color c);
 
-    void setTransformation(Transformation t);
+    void setTransformation(AffineTransformation2f t);
 
     void setFont(Font f);
 
@@ -76,11 +75,9 @@ public interface Graphics {
 
     void drawText(String text, float x, float y, HAnchor hAnchor, VAnchor vAnchor);
 
-    Transformation getTransformation();
+    AffineTransformation2f getTransformation();
 
     void translate(float dx, float dy);
-
-    void setTranslate(float v, float v1);
 
     void scale(float s);
 }

@@ -20,6 +20,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -199,8 +200,8 @@ public abstract class SheetPainterBase {
 
         // determine visible rows and columns
         float s = getDelegate().getScale();
-        Graphics.Transformation t = g.getTransformation();
-        Rectangle2f boundsInSheet = g.getBounds().translate(-t.dx() * s, -t.dy() * s);
+        AffineTransformation2f t = g.getTransformation();
+        Rectangle2f boundsInSheet = g.getBounds().translate(-t.getTranslateX() * t.getScaleX(), -t.getTranslateY() * t.getScaleY());
         SheetViewDelegate.VisibleArea va = new SheetViewDelegate.VisibleArea(getDelegate(), boundsInSheet);
         LOGGER.trace("draw cells - visible area: {}", va);
 

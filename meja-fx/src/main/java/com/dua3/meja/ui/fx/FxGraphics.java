@@ -4,6 +4,7 @@ import com.dua3.meja.ui.Graphics;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxFontUtil;
 import com.dua3.utility.fx.FxUtil;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import javafx.scene.canvas.GraphicsContext;
@@ -99,15 +100,13 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
-    public void setTransformation(Transformation t) {
-        this.dx = t.dx();
-        this.dy = t.dy();
-        this.s = t.s();
+    public void setTransformation(AffineTransformation2f t) {
+        gc.setTransform(FxUtil.convert(t));
     }
 
     @Override
-    public Transformation getTransformation() {
-        return new Transformation(dx, dy, s);
+    public AffineTransformation2f getTransformation() {
+        return FxUtil.convert(gc.getTransform());
     }
 
     @Override
@@ -159,12 +158,6 @@ public class FxGraphics implements Graphics {
     public void translate(float dx, float dy) {
         this.dx += dx;
         this.dy += dy;
-    }
-
-    @Override
-    public void setTranslate(float dx, float dy) {
-        this.dx = dx;
-        this.dy = dy;
     }
 
     @Override

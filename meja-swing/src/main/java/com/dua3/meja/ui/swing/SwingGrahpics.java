@@ -3,6 +3,7 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.ui.Graphics;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
@@ -10,34 +11,17 @@ import com.dua3.utility.text.Font;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 public class SwingGrahpics implements Graphics {
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
 
     private Graphics2D g2d;
-    private float dx = 0f;
-    private float dy = 0f;
-    private float s = 1f;
     private java.awt.Color textColor = java.awt.Color.BLACK;
 
     public SwingGrahpics(Graphics2D g2d) {
         this.g2d = g2d;
-    }
-
-    public int xL2D(float x) {
-        return Math.round(s*(x+dx));
-    }
-
-    public int yL2D(float y) {
-        return Math.round(s*(y+dy));
-    }
-
-    public int wL2D(float w) {
-        return Math.round(s*w);
-    }
-
-    public int hL2D(float h) {
-        return Math.round(s*h);
     }
 
     @Override
@@ -50,15 +34,13 @@ public class SwingGrahpics implements Graphics {
     }
 
     @Override
-    public void setTransformation(Transformation t) {
-        this.dx = t.dx();
-        this.dy = t.dy();
-        this.s = t.s();
+    public void setTransformation(AffineTransformation2f t) {
+        g2d.setTransform(SwingUtil.convert(t));
     }
 
     @Override
-    public Transformation getTransformation() {
-        return new Transformation(dx, dy, s);
+    public AffineTransformation2f getTransformation() {
+        return SwingUtil.convert(g2d.getTransform());
     }
 
     @Override
@@ -78,47 +60,27 @@ public class SwingGrahpics implements Graphics {
 
     @Override
     public void translate(float dx, float dy) {
-        this.dx += dx;
-        this.dy += dy;
-    }
-
-    @Override
-    public void setTranslate(float dx, float dy) {
-        this.dx = dx;
-        this.dy = dy;
+        g2d.translate(dx, dy);
     }
 
     @Override
     public void scale(float s) {
-        this.s = s;
+        g2d.scale(s, s);
     }
 
     @Override
     public void strokeLine(float x1, float y1, float x2, float y2) {
-        g2d.drawLine(
-                xL2D(x1),
-                yL2D(y1),
-                xL2D(x2),
-                yL2D(y2)
-        );
+        g2d.draw(new Line2D.Float(x1, y1, x2, y2));
     }
 
     @Override
     public void strokeRect(float x, float y, float width, float height) {
-        final int xd = xL2D(x);
-        final int yd = yL2D(y);
-        final int wd = xL2D(x + width) - xd;
-        final int hd = yL2D(y + height) - yd;
-        g2d.drawRect(xd, yd, wd, hd);
+        g2d.draw(new Rectangle2D.Float(x, y, width, height));
     }
 
     @Override
     public void fillRect(float x, float y, float width, float height) {
-        final int xd = xL2D(x);
-        final int yd = yL2D(y);
-        final int wd = xL2D(x + width) - xd;
-        final int hd = yL2D(y + height) - yd;
-        g2d.fillRect(xd, yd, wd, hd);
+        g2d.fill(new Rectangle2D.Float(x, y, width, height));
     }
 
     @Override
@@ -130,14 +92,14 @@ public class SwingGrahpics implements Graphics {
     @Override
     public void setFont(Font font) {
         textColor = (SwingUtil.toAwtColor(font.getColor()));
-        g2d.setFont(FONT_UTIL.convert(font.scaledBy(s)));
+        g2d.setFont(FONT_UTIL.convert(font));
     }
 
     @Override
     public void drawText(String text, float x, float y) {
         java.awt.Color oldColor = g2d.getColor();
         g2d.setColor(textColor);
-        g2d.drawString(text, xL2D(x), yL2D(y));
+        g2d.drawString(text, x, y);
         g2d.setColor(oldColor);
     }
 
@@ -148,7 +110,7 @@ public class SwingGrahpics implements Graphics {
             drawText(text, x, y);
         }
 
-        Rectangle2f r = getTextDimension(text, 1/s);
+        Rectangle2f r = getTextDimension(text);
 
         float tx = 0;
         float ty = 0;
@@ -168,7 +130,7 @@ public class SwingGrahpics implements Graphics {
 
         java.awt.Color oldColor = g2d.getColor();
         g2d.setColor(textColor);
-        g2d.drawString(text, xL2D(tx), yL2D(ty));
+        g2d.drawString(text, tx, ty);
         g2d.setColor(oldColor);
     }
 

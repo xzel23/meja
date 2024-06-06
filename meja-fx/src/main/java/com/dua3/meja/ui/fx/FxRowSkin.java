@@ -61,7 +61,7 @@ public class FxRowSkin implements Skin<FxRow> {
         g.strokeLine(w, 0, w, h);
 
         //  draw cells
-        g.setTranslate(0, -delegate.getRowPos(row.getRowNumber()));
+        g.translate(0, -delegate.getRowPos(row.getRowNumber()));
         for (int j=0; j<delegate.getColumnCount(); j++) {
             row.getCellIfExists(j).ifPresent(cell -> {
                 cr.drawCellBackground(g, cell);

@@ -6,6 +6,7 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
@@ -686,10 +687,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     VisibleArea getVisibleAreaInSheet(Graphics g) {
-        float s = getScale();
-        Graphics.Transformation t = g.getTransformation();
+        AffineTransformation2f t = g.getTransformation();
         Rectangle2f bounds = g.getBounds();
-        Rectangle2f boundsInSheet = bounds.translate(-t.dx() * s, -t.dy() * s);
+        Rectangle2f boundsInSheet = bounds.translate(-t.getTranslateX() * t.getScaleX(), -t.getTranslateY() * t.getScaleY());
         VisibleArea va = new VisibleArea(this, boundsInSheet);
         return va;
     }
