@@ -11,6 +11,7 @@ import com.dua3.utility.text.Font;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
@@ -19,6 +20,9 @@ public class SwingGrahpics implements Graphics {
 
     private Graphics2D g2d;
     private java.awt.Color textColor = java.awt.Color.BLACK;
+    private final Line2D.Float line = new Line2D.Float();
+    private final Rectangle2D.Float rect = new Rectangle2D.Float();
+    private final double[] double6 = new double[6];
 
     public SwingGrahpics(Graphics2D g2d) {
         this.g2d = g2d;
@@ -29,18 +33,47 @@ public class SwingGrahpics implements Graphics {
         return convert(g2d.getClipBounds());
     }
 
-    private Rectangle2f convert(Rectangle r) {
+    /**
+     * Convert a java.awt.Rectangle object to a Rectangle2f object.
+     *
+     * @param r the Rectangle object to convert
+     * @return a Rectangle2f object with the same position and size as the input
+     */
+    public static Rectangle2f convert(Rectangle r) {
         return Rectangle2f.of(r.x, r.y, r.width, r.height);
+    }
+
+    /**
+     * Convert an AffineTransformation2f object to an AffineTransform object.
+     *
+     * @param t the AffineTransformation2f object to convert
+     * @return an AffineTransform object with the same transformation as the input
+     */
+    public static AffineTransform convert(AffineTransformation2f t) {
+        return new AffineTransform(t.a(), t.b(), t.c(), t.d(), t.e(), t.f());
+    }
+
+    /**
+     * Converts an instance of {@link AffineTransform} to an instance of {@link AffineTransformation2f}.
+     *
+     * @param t the affine transform to convert
+     * @return the converted affine transformation
+     */
+    public AffineTransformation2f convert(AffineTransform t) {
+        t.getMatrix(double6);
+        return new AffineTransformation2f(
+                (float) double6[0], (float) double6[1], (float) double6[2], (float) double6[3], (float) double6[4], (float) double6[5]
+        );
     }
 
     @Override
     public void setTransformation(AffineTransformation2f t) {
-        g2d.setTransform(SwingUtil.convert(t));
+        g2d.setTransform(convert(t));
     }
 
     @Override
     public AffineTransformation2f getTransformation() {
-        return SwingUtil.convert(g2d.getTransform());
+        return convert(g2d.getTransform());
     }
 
     @Override
@@ -70,17 +103,20 @@ public class SwingGrahpics implements Graphics {
 
     @Override
     public void strokeLine(float x1, float y1, float x2, float y2) {
-        g2d.draw(new Line2D.Float(x1, y1, x2, y2));
+        line.setLine(x1, y1, x2, y2);
+        g2d.draw(line);
     }
 
     @Override
     public void strokeRect(float x, float y, float width, float height) {
-        g2d.draw(new Rectangle2D.Float(x, y, width, height));
+        rect.setRect(x, y, width, height);
+        g2d.draw(rect);
     }
 
     @Override
     public void fillRect(float x, float y, float width, float height) {
-        g2d.fill(new Rectangle2D.Float(x, y, width, height));
+        rect.setRect(x, y, width, height);
+        g2d.fill(rect);
     }
 
     @Override
