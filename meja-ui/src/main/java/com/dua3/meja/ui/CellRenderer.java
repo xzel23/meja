@@ -37,8 +37,6 @@ public class CellRenderer {
      * @param cell cell to draw
      */
     public void drawCellBackground(Graphics g, Cell cell) {
-        LOG.trace("drawCellBackground(): {}", cell::getCellRef);
-
         Rectangle2f cr = getCellRect(cell);
 
         // draw grid lines
@@ -73,8 +71,6 @@ public class CellRenderer {
      * @param cell cell to draw
      */
     public void drawCellBorder(Graphics g, Cell cell) {
-        LOG.trace("drawCellBorder(): {}", cell::getCellRef);
-
         CellStyle styleTopLeft = cell.getCellStyle();
         CellStyle styleBottomRight = cell.isMerged()
                 ? getDelegate().getSheet().orElseThrow()
@@ -116,8 +112,6 @@ public class CellRenderer {
      * @param cell cell to draw
      */
     public void drawCellForeground(Graphics g, Cell cell) {
-        LOG.trace("drawCellForeground(): {}", cell::getCellRef);
-
         if (cell.isEmpty()) {
             return;
         }
@@ -156,8 +150,6 @@ public class CellRenderer {
     }
 
     private void render(Graphics g, Cell cell, Rectangle2f r, Rectangle2f clipRect) {
-        LOG.trace("render(): {}", cell::getCellRef);
-
         CellStyle cs = cell.getCellStyle();
 
         RichText text = cell.getAsText(delegate.getLocale());
