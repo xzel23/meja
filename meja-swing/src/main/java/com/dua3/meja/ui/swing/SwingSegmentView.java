@@ -154,7 +154,6 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             public void mousePressed(MouseEvent e) {
                 LOG.trace("mouse pressed: {}", e);
                 Point p = e.getPoint();
-                translateMousePosition(p);
                 ssvDelegate.getTransformation().inverse().ifPresent( ti -> {
                     Vector2f q = ti.transform(p.x, p.y);
                     Cell cell = svDelegate.getCellAt(q.x(), q.y());
@@ -211,13 +210,6 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 t.transform(rect.max())
         );
         repaint(SwingGraphics.convertCovering(bounds));
-    }
-
-    void translateMousePosition(Point p) {
-        p.translate(
-                Math.round(ssvDelegate.getXMinInViewCoordinates()),
-                Math.round(ssvDelegate.getYMinInViewCoordinates())
-        );
     }
 
     public void scrollIntoView(Cell cell) {
