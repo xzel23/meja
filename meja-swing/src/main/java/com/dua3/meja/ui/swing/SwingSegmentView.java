@@ -1,9 +1,12 @@
 package com.dua3.meja.ui.swing;
 
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.math.geometry.Vector2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,8 +17,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.locks.Lock;
+import java.util.function.Function;
 import java.util.function.IntSupplier;
 
 final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
@@ -63,26 +69,36 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
 
     @Override
     public int getScrollableUnitIncrement(java.awt.Rectangle visibleRect, int orientation, int direction) {
+        AffineTransformation2f t = ssvDelegate.getTransformation();
+        AffineTransformation2f ti = t.inverse().orElse(AffineTransformation2f.identity());
+
+        Function<Integer, Float> xD2S = x -> ti.transform(Vector2f.of(x, 0)).x();
+        Function<Float,Integer> xS2Di = x -> Math.round(t.transform(x, 0).x());
+
+        Function<Integer, Float> yD2S = y -> ti.transform(Vector2f.of(0, y)).y();
+        Function<Float,Integer> yS2Di = y -> Math.round(t.transform(0, y).y());
+
+        Vector2f p = ti.transform(Vector2f.of((float) visibleRect.getMinX(), (float) visibleRect.getMinY()));
         if (orientation == SwingConstants.VERTICAL) {
             // scroll vertical
             if (direction < 0) {
                 // scroll up
-                final float y = svDelegate.yD2S(visibleRect.y);
-                final int yD = svDelegate.yS2Di(y);
+                final float y = yD2S.apply(visibleRect.y);
+                final int yD = yS2Di.apply(y);
                 int i = svDelegate.getRowNumberFromY(y);
                 int posD = yD;
                 while (i >= 0 && yD <= posD) {
-                    posD = svDelegate.yS2Di(svDelegate.getRowPos(i--));
+                    posD = yS2Di.apply(svDelegate.getRowPos(i--));
                 }
                 return yD - posD;
             } else {
                 // scroll down
-                final float y = svDelegate.yD2S(visibleRect.y + visibleRect.height);
-                final int yD = svDelegate.yS2Di(y);
+                final float y = yD2S.apply(visibleRect.y + visibleRect.height);
+                final int yD = yS2Di.apply(y);
                 int i = svDelegate.getRowNumberFromY(y);
                 int posD = yD;
                 while (i <= svDelegate.getRowCount() && posD <= yD) {
-                    posD = svDelegate.yS2Di(svDelegate.getRowPos(i++));
+                    posD = yS2Di.apply(svDelegate.getRowPos(i++));
                 }
                 return posD - yD;
             }
@@ -90,22 +106,22 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
         {
             if (direction < 0) {
                 // scroll left
-                final float x = svDelegate.xD2S(visibleRect.x);
-                final int xD = svDelegate.xS2Di(x);
+                final float x = xD2S.apply(visibleRect.x);
+                final int xD = xS2Di.apply(x);
                 int j = svDelegate.getColumnNumberFromX(x);
                 int posD = xD;
                 while (j >= 0 && xD <= posD) {
-                    posD = svDelegate.xS2Di(svDelegate.getColumnPos(j--));
+                    posD = xS2Di.apply(svDelegate.getColumnPos(j--));
                 }
                 return xD - posD;
             } else {
                 // scroll right
-                final float x = svDelegate.xD2S(visibleRect.x + visibleRect.width);
-                int xD = svDelegate.xS2Di(x);
+                final float x = xD2S.apply(visibleRect.x + visibleRect.width);
+                int xD = xS2Di.apply(x);
                 int j = svDelegate.getColumnNumberFromX(x);
                 int posD = xD;
                 while (j <= svDelegate.getColumnCount() && posD <= xD) {
-                    posD = svDelegate.xS2Di(svDelegate.getColumnPos(j++));
+                    posD = xS2Di.apply(svDelegate.getColumnPos(j++));
                 }
                 return posD - xD;
             }
@@ -132,7 +148,6 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
 
     private void init() {
         setOpaque(true);
-        setDoubleBuffered(false);
         // listen to mouse events
         addMouseListener(new MouseAdapter() {
             @Override
@@ -140,7 +155,11 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 LOG.trace("mouse pressed: {}", e);
                 Point p = e.getPoint();
                 translateMousePosition(p);
-                svDelegate.onMousePressed(p.x, p.y);
+                ssvDelegate.getTransformation().inverse().ifPresent( ti -> {
+                    Vector2f q = ti.transform(p.x, p.y);
+                    Cell cell = svDelegate.getCellAt(q.x(), q.y());
+                    svDelegate.onMousePressed(cell);
+                });
             }
         });
     }
@@ -148,47 +167,50 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
     @Override
     protected void paintComponent(Graphics g) {
         LOG.debug("paintComponent(): ({},{}) - ({},{})", ssvDelegate.getBeginRow(), ssvDelegate.getBeginColumn(), ssvDelegate.getEndRow(), ssvDelegate.getEndColumn());
-        
-        // clear background by calling super method
-        super.paintComponent(g);
 
-        svDelegate.getSheet().ifPresent(sheet -> {
-            SwingGrahpics sg = new SwingGrahpics((Graphics2D) g);
-            sg.scale(svDelegate.getScale());
+        Lock lock = svDelegate.readLock();
+        lock.lock();
+        try {
+            // clear background by calling super method
+            super.paintComponent(g);
 
-            // set transformation
-            final int x = Math.round(ssvDelegate.getXOffset());
-            final int y = Math.round(ssvDelegate.getYOffset());
-            sg.translate(x, y);
+            svDelegate.getSheet().ifPresent(sheet -> {
+                Rectangle bounds = getBounds();
+                if (bounds.width == 0 || bounds.height == 0) {
+                    return;
+                }
 
-            // get dimensions
-            final int width = getWidth();
-            final int height = getHeight();
+                SwingGraphics sg = new SwingGraphics((Graphics2D) g.create(), bounds);
+                AffineTransformation2f t = ssvDelegate.getTransformation();
+                sg.setTransformation(t);
+                LOG.debug("paintComponent() - transformation:\n{}", t::toMatrixString);
 
-            // draw sheet
-            svDelegate.getSheetPainter().drawSheet(sg);
+                // draw sheet
+                svDelegate.getSheetPainter().drawSheet(sg);
 
-            // draw split lines
-            sg.setStroke(Color.BLACK, 1);
-            float onePixelInSheetUnits = 1 / svDelegate.getScale();
-            if (ssvDelegate.hasHLine()) {
-                float ySplit = svDelegate.getRowPos(svDelegate.getSplitRow()) + onePixelInSheetUnits;
-                sg.strokeLine(-svDelegate.getRowLabelWidth(), ySplit, svDelegate.getSheetWidthInPoints(), ySplit);
-            }
-            if (ssvDelegate.hasVLine()) {
-                float xSplit = svDelegate.getColumnPos(svDelegate.getSplitColumn()) + onePixelInSheetUnits;
-                sg.strokeLine(xSplit, -svDelegate.getColumnLabelHeight(), xSplit, svDelegate.getSheetHeightInPoints());
-            }
-        });
+                // draw split lines
+                sg.setStroke(Color.BLACK, 1);
+                if (ssvDelegate.hasHLine()) {
+                    float ySplit = svDelegate.getRowPos(svDelegate.getSplitRow()) + 1f / svDelegate.getScale().sy();
+                    sg.strokeLine(-svDelegate.getRowLabelWidth(), ySplit, svDelegate.getSheetWidthInPoints(), ySplit);
+                }
+                if (ssvDelegate.hasVLine()) {
+                    float xSplit = svDelegate.getColumnPos(svDelegate.getSplitColumn()) + 1f / svDelegate.getScale().sy();
+                    sg.strokeLine(xSplit, -svDelegate.getColumnLabelHeight(), xSplit, svDelegate.getSheetHeightInPoints());
+                }
+            });
+        } finally {
+            lock.unlock();
+        }
     }
 
     void repaintSheet(Rectangle2f rect) {
-        java.awt.Rectangle rect2 = svDelegate.rectS2D(rect);
-        rect2.translate(
-                -Math.round(ssvDelegate.getXMinInViewCoordinates()),
-                -Math.round(ssvDelegate.getYMinInViewCoordinates())
+        AffineTransformation2f t = ssvDelegate.getTransformation();
+        Rectangle2f bounds = Rectangle2f.withCorners(
+                t.transform(rect.min()),
+                t.transform(rect.max())
         );
-        repaint(rect2);
+        repaint(SwingGraphics.convertCovering(bounds));
     }
 
     void translateMousePosition(Point p) {
@@ -196,5 +218,24 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 Math.round(ssvDelegate.getXMinInViewCoordinates()),
                 Math.round(ssvDelegate.getYMinInViewCoordinates())
         );
+    }
+
+    public void scrollIntoView(Cell cell) {
+        if (ssvDelegate.isAboveSplit() || ssvDelegate.isAboveSplit()) {
+            // only the bottom right quadrant is responsible for srolling
+            return;
+        }
+
+        int i = cell.getRowNumber();
+        int j = cell.getColumnNumber();
+
+        Rectangle2f r = svDelegate.getCellRect(cell);
+        AffineTransformation2f t = ssvDelegate.getTransformation();
+        Rectangle bounds = SwingGraphics.convert(Rectangle2f.withCorners(
+                t.transform(r.min()),
+                t.transform(r.max())
+        ));
+
+        scrollRectToVisible(bounds);
     }
 }

@@ -17,10 +17,15 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.CellRenderer;
+import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.meja.ui.SheetView;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.swing.SwingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,13 +36,11 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -61,37 +64,10 @@ public class SwingSheetView extends JPanel implements SheetView {
      * No sheet is set.
      */
     public SwingSheetView() {
-        this(null);
-    }
-
-    /**
-     * Construct a new SheetView for the given sheet.
-     *
-     * @param sheet the sheet to display
-     */
-    public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
         this.delegate = new SwingSheetViewDelegate(this, CellRenderer::new);
         this.sheetPane = new SwingSheetPane(delegate);
-        init(sheet);
-    }
-
-    /**
-     * @return the sheetHeight
-     */
-    public int getSheetHeight() {
-        return Math.round(delegate.hS2D(delegate.getSheetHeightInPoints()));
-    }
-
-    public Dimension getSheetSize() {
-        return new Dimension(getSheetWidth() + 1, getSheetHeight() + 1);
-    }
-
-    /**
-     * @return the sheetWidth
-     */
-    public int getSheetWidth() {
-        return Math.round(delegate.wS2D(delegate.getSheetWidthInPoints()));
+        init();
     }
 
     @Override
@@ -103,7 +79,16 @@ public class SwingSheetView extends JPanel implements SheetView {
     @Override
     public void repaintCell(@Nullable Cell cell) {
         if (cell != null) {
-            sheetPane.repaintSheet(delegate.getCellRect(cell));
+            Rectangle2f r = delegate.getCellRect(cell);
+            float m = getDelegate().getSelectionStrokeWidth()/2f;
+            CellStyle cs = cell.getCellStyle();
+            r = r.addMargin(
+                    Math.max(m, cs.getBorderStyle(Direction.WEST).width()),
+                    Math.max(m, cs.getBorderStyle(Direction.NORTH).width()),
+                    Math.max(m, cs.getBorderStyle(Direction.EAST).width()),
+                    Math.max(m, cs.getBorderStyle(Direction.SOUTH).width())
+            );
+            sheetPane.repaintSheet(r);
         }
     }
 
@@ -153,7 +138,7 @@ public class SwingSheetView extends JPanel implements SheetView {
                 .ifPresent(t -> SwingUtil.setClipboardText(String.valueOf(t)));
     }
 
-    private void init(Sheet sheet) {
+    private void init() {
         add(sheetPane);
         // setup input map for ...
         final InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -180,20 +165,9 @@ public class SwingSheetView extends JPanel implements SheetView {
         for (Actions action : Actions.values()) {
             actionMap.put(action, SwingUtil.createAction(action.name(), () -> action.action().accept(this)));
         }
-        // listen to mouse events
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                delegate.onMousePressed(
-                        e.getX() + delegate.xS2Di(delegate.getSplitX()),
-                        e.getY() + delegate.yS2Di(delegate.getSplitY())
-                );
-            }
-        });
         // make focusable
         setFocusable(true);
         SwingUtilities.invokeLater(this::requestFocusInWindow);
-        setSheet(sheet);
     }
 
     /**
@@ -218,7 +192,13 @@ public class SwingSheetView extends JPanel implements SheetView {
             final JComponent editorComp = editor.startEditing(cell);
 
             final Rectangle2f cellRect = sheetPane.getCellRectInViewCoordinates(cell);
-            editorComp.setBounds(getDelegate().rectS2D(cellRect));
+            SwingSegmentView sv = getViewContainingCell(cell);
+            SegmentViewDelegate svDelegate = sv.getSvDelegate();
+            AffineTransformation2f t = svDelegate.getTransformation();
+            editorComp.setBounds(SwingGraphics.convert(Rectangle2f.withCorners(
+                    t.transform(cellRect.min()),
+                    t.transform(cellRect.max())
+            )));
 
             sheetPane.add(editorComp);
             editorComp.validate();
@@ -229,15 +209,34 @@ public class SwingSheetView extends JPanel implements SheetView {
         });
     }
 
+    private SwingSegmentView getViewContainingCell(Cell cell) {
+        int idx = (cell.getRowNumber() < getDelegate().getSplitRow() ? 0 : 2)
+                + (cell.getColumnNumber() < getDelegate().getSplitColumn() ? 0 : 1);
+
+        return switch(idx) {
+            case 0 -> sheetPane.topLeftQuadrant;
+            case 1 -> sheetPane.topRightQuadrant;
+            case 2 -> sheetPane.bottomLeftQuadrant;
+            case 3 -> sheetPane.bottomRightQuadrant;
+            default -> throw new IllegalStateException("Unexpected value: " + idx);
+        };
+    }
+
     public void updateContent() {
         LOG.debug("updating content");
 
         getSheet().ifPresent(sheet -> {
-            // scale according to screen resolution
-            int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-            float scaleDpi = dpi / 72.0f; // 1 point = 1/72 inch
-            delegate.setScale(sheet.getZoom() * scaleDpi);
-
+            Lock lock = delegate.writeLock();
+            lock.lock();
+            try {
+                int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+                Scale2f displayScale = SwingUtil.getDisplayScale(this);
+                delegate.setDisplayScale(displayScale);
+                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72f));
+                delegate.updateLayout();
+            } finally {
+                lock.unlock();
+            }
             SwingUtilities.invokeLater(() -> {
                 delegate.getSheetPainter().update(sheet);
                 revalidate();
@@ -246,7 +245,7 @@ public class SwingSheetView extends JPanel implements SheetView {
         });
     }
 
-    float getScale() {
+    Scale2f getScale() {
         return delegate.getScale();
     }
 

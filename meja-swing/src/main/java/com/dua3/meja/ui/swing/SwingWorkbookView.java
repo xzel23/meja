@@ -150,8 +150,9 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
         if (workbook != null) {
             for (int i = 0; i < workbook.getSheetCount(); i++) {
                 Sheet sheet = workbook.getSheet(i);
-                final SwingSheetView sheetView = new SwingSheetView(sheet);
+                final SwingSheetView sheetView = new SwingSheetView();
                 content.addTab(sheet.getSheetName(), sheetView);
+                sheetView.setSheet(sheet);
             }
             if (workbook.getSheetCount() > 0) {
                 content.setSelectedIndex(workbook.getCurrentSheetIndex());

@@ -112,7 +112,7 @@ public class FxGraphics implements Graphics {
     @Override
     public void setFont(Font font) {
         textColor = FxUtil.convert(font.getColor());
-        gc.setFont(FONT_UTIL.convert(font.scaledBy(s)));
+        gc.setFont(FONT_UTIL.convert(font.scaled(s)));
     }
 
     @Override
@@ -152,17 +152,6 @@ public class FxGraphics implements Graphics {
         gc.setFill(textColor);
         gc.strokeText(text, xL2D(tx), yL2D(ty));
         gc.setFill(oldPaint);
-    }
-
-    @Override
-    public void translate(float dx, float dy) {
-        this.dx += dx;
-        this.dy += dy;
-    }
-
-    @Override
-    public void scale(float s) {
-        this.s = s;
     }
 
 }

@@ -272,15 +272,19 @@ public class PoiSheet extends AbstractSheet {
     }
 
     @Override
-    public void setCurrentCell(Cell cell) {
+    public boolean setCurrentCell(Cell cell) {
         //noinspection ObjectEquality
         LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
         Cell old = getCurrentCell().orElse(null);
+        if (cell == old) {
+            return false;
+        }
 
         ((PoiCell) cell).poiCell.setAsActiveCell();
-
         activeCellChanged(old, cell);
+
+        return true;
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.model.Row;
 import com.dua3.meja.ui.CellRenderer;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
+import com.dua3.utility.math.geometry.Scale2f;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Skin;
@@ -33,9 +35,9 @@ public class FxRowSkin implements Skin<FxRow> {
         float w = (float) fxRow.getRowWidth();
         float h = (float) fxRow.getRowHeight();
 
-        float s = delegate.getScale();
-        canvas.setWidth(w * s);
-        canvas.setHeight(h * s);
+        Scale2f s = delegate.getScale();
+        canvas.setWidth(w * s.sx());
+        canvas.setHeight(h * s.sy());
 
         CellRenderer cr = new CellRenderer(delegate);
 
@@ -61,7 +63,7 @@ public class FxRowSkin implements Skin<FxRow> {
         g.strokeLine(w, 0, w, h);
 
         //  draw cells
-        g.translate(0, -delegate.getRowPos(row.getRowNumber()));
+        g.setTransformation(AffineTransformation2f.translate(0, -delegate.getRowPos(row.getRowNumber())));
         for (int j=0; j<delegate.getColumnCount(); j++) {
             row.getCellIfExists(j).ifPresent(cell -> {
                 cr.drawCellBackground(g, cell);

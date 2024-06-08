@@ -6,8 +6,10 @@ import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +19,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.IntFunction;
 
 /**
@@ -25,10 +29,13 @@ import java.util.function.IntFunction;
  * A delegate is used instead of an abstract base class because user interface components might have to be derived from
  * existing UI classes.
  */
-public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
+public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, ReadWriteLock {
     private static final Logger LOG = LogManager.getLogger(SheetViewDelegate.class);
 
     private final SheetView owner;
+    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+
+    private boolean layoutChanged = true;
 
     /**
      * The sheet displayed.
@@ -75,6 +82,16 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private Color labelBackgroundColor = Color.WHITESMOKE;
     private Color labelBorderColor = labelBackgroundColor.darker();
 
+    @Override
+    public Lock readLock() {
+        return readWriteLock.readLock();
+    }
+
+    @Override
+    public Lock writeLock() {
+        return readWriteLock.writeLock();
+    }
+
     public float getSheetHeightInPoints() {
         return sheetHeightInPoints;
     }
@@ -109,7 +126,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         this.selectionColor = selectionColor;
     }
 
-    protected float getSelectionStrokeWidth() {
+    public float getSelectionStrokeWidth() {
         return SELECTION_STROKE_WIDTH;
     }
 
@@ -133,7 +150,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
-    private float scale = 1f;
+    private Scale2f scale = Scale2f.identity();
     /**
      * The color to use for the grid lines.
      */
@@ -200,6 +217,11 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
     }
 
+    public Cell getCellAt(float x, float y) {
+        int i = getRowNumberFromY(y);
+        int j = getColumnNumberFromX(x);
+        return sheet.getCell(i,j);
+    }
     private int getPositionIndexFromCoordinate(float[] positions, double coord, float sizeInPoints) {
         if (positions.length == 0) {
             return 0;
@@ -271,8 +293,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             }
             case SheetEvent.ACTIVE_CELL_CHANGED -> {
                 SheetEvent.ActiveCellChanged evt = (SheetEvent.ActiveCellChanged) item;
-                owner.scrollToCurrentCell();
                 owner.repaintCell(evt.valueOld());
+                owner.scrollToCurrentCell();
                 owner.repaintCell(evt.valueNew());
             }
             case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED -> {
@@ -339,23 +361,23 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
             this.sheet = sheet;
 
-            updateLayout();
+            markLayoutChanged();
             owner.updateContent();
 
             LOG.debug("sheet changed");
         }
     }
 
-    private void updateLayout() {
-        if (sheet == null) {
-            sheetWidthInPoints = 0;
-            sheetHeightInPoints = 0;
-            rowPos = new float[]{0};
-            columnPos = new float[]{0};
-        } else {
-            Lock lock = sheet.readLock();
-            lock.lock();
-            try {
+    public void updateLayout() {
+        Lock lock = writeLock();
+        lock.lock();
+        try {
+            if (sheet == null) {
+                sheetWidthInPoints = 0;
+                sheetHeightInPoints = 0;
+                rowPos = new float[]{0};
+                columnPos = new float[]{0};
+            } else {
                 // determine row and column positions
                 sheetHeightInPoints = 0;
                 rowPos = new float[2 + sheet.getLastRowNum()];
@@ -374,17 +396,18 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
                 }
 
                 // create a string with the maximum number of digits needed to
-                // represent the highest row number, using only the digit 9.
-                String sMax = "9".repeat(String.valueOf(getRowLabelWidth()).length());
+                // represent the highest row number, using only the digit '9'.
+                String sMax = "9".repeat(String.valueOf(sheet.getLastRowNum()).length());
                 Rectangle2f dim = calculateLabelDimension(sMax);
                 rowLabelWidth = dim.width() + 2 * PADDING_X;
                 columnLabelHeight = dim.height() + 2 * PADDING_Y;
 
                 // subscribe to the Flow API
                 this.sheet.subscribe(this);
-            } finally {
-              lock.unlock();
             }
+        } finally {
+            layoutChanged = false;
+            lock.unlock();
         }
     }
 
@@ -436,7 +459,14 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setColumnNames(IntFunction<String> columnNames) {
-        this.columnNames = columnNames;
+        Lock lock = writeLock();
+        lock.lock();
+        try {
+            this.columnNames = columnNames;
+        } finally {
+            markLayoutChanged();
+            lock.unlock();
+        }
     }
 
     public int getSplitColumn() {
@@ -447,77 +477,44 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return sheet == null ? 0 : sheet.getSplitRow();
     }
 
-    public boolean setCurrentCell(int rowNum, int colNum) {
-        if (sheet == null) {
-            return false;
-        }
+    public boolean setCurrentCell(int i, int j) {
+        return sheet == null ? false : sheet.setCurrentCell(i, j);
+    }
 
-        Cell oldCell = sheet.getCurrentCell().orElse(null);
-        int newRowNum = Math.max(sheet.getFirstRowNum(), Math.min(sheet.getLastRowNum(), rowNum));
-        int newColNum = Math.max(sheet.getFirstColNum(), Math.min(sheet.getLastColNum(), colNum));
-        sheet.setCurrentCell(newRowNum, newColNum);
-
-        return sheet.getCurrentCell().orElse(null) != oldCell;
+    public boolean setCurrentCell(Cell cell) {
+        return sheet == null ? false : sheet.setCurrentCell(cell);
     }
 
     public void setRowNames(IntFunction<String> rowNames) {
-        this.rowNames = rowNames;
+        Lock lock = writeLock();
+        lock.lock();
+        try {
+            this.rowNames = rowNames;
+        } finally {
+            markLayoutChanged();
+            lock.unlock();
+        }
     }
 
-    public float getScale() {
+    public Scale2f getScale() {
         return scale;
     }
 
-    public void setScale(float scale) {
-        this.scale = scale;
+    public void setScale(Scale2f scale) {
+        Lock lock = writeLock();
+        lock.lock();
+        try {
+            if (!scale.equals(this.scale)) {
+                this.scale = scale;
+                markLayoutChanged();
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
-    public final float hD2S(float h) {
-        return h / scale;
-    }
-
-    public final float hS2D(float h) {
-        return scale * h;
-    }
-
-    public final int hS2Di(float h) {
-        return Math.round(hS2D(h));
-    }
-    
-    public final float wD2S(float w) {
-        return w / scale;
-    }
-
-    public final float wS2D(float w) {
-        return scale * w;
-    }
-
-    public final int wS2Di(float w) {
-        return Math.round(wS2D(w));
-    }
-    
-    public final float xD2S(float x) {
-        return x / scale;
-    }
-
-    public final float xS2D(float x) {
-        return Math.round(scale * x);
-    }
-
-    public final int xS2Di(float x) {
-        return Math.round(xS2D(x));
-    }
-
-    public final float yD2S(float y) {
-        return y / scale;
-    }
-
-    public final float yS2D(float y) {
-        return scale * y;
-    }
-    
-    public final int yS2Di(float y) {
-        return Math.round(yS2D(y));
+    private void markLayoutChanged() {
+        this.layoutChanged = true;
     }
 
     public Color getBackground() {
@@ -546,14 +543,14 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public void setCurrentColNum(int colNum) {
         getSheet().ifPresent(sheet -> {
             int rowNum = sheet.getCurrentCell().map(Cell::getRowNumber).orElse(0);
-            setCurrentCell(rowNum, colNum);
+            setCurrentCell(sheet.getCell(rowNum, MathUtil.clamp(sheet.getFirstColNum(), sheet.getLastColNum(), colNum)));
         });
     }
 
     public void setCurrentRowNum(int rowNum) {
         getSheet().ifPresent(sheet -> {
             int colNum = sheet.getCurrentCell().map(Cell::getColumnNumber).orElse(0);
-            setCurrentCell(rowNum, colNum);
+            setCurrentCell(MathUtil.clamp(sheet.getFirstRowNum(), sheet.getLastRowNum(), rowNum), colNum);
         });
     }
 
@@ -588,12 +585,11 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         move(d); // TODO
     }
 
-    public void onMousePressed(int x, int y) {
-        LOG.debug("onMousePressed({}, {})", x, y);
-        // make the cell under pointer the current cell
-        int row = getRowNumberFromY(yD2S(y));
-        int col = getColumnNumberFromX(xD2S(x));
-        boolean currentCellChanged = setCurrentCell(row, col);
+    public void onMousePressed(Cell cell) {
+        LOG.debug("onMousePressed({})", cell::getCellRef);
+
+        // make the cell the current cell
+        boolean currentCellChanged = setCurrentCell(cell);
         requestFocusInWindow();
 
         if (currentCellChanged) {
@@ -643,13 +639,30 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setLabelFont(Font labelFont) {
-        this.labelFont = labelFont;
+        Lock lock = writeLock();
+        lock.lock();
+        try {
+            this.labelFont = labelFont;
+        } finally {
+            markLayoutChanged();
+            lock.unlock();
+        }
     }
 
+    /**
+     * Get the width of Row labels in points.
+     *
+     * @return the width of row labels in points
+     */
     public float getRowLabelWidth() {
         return rowLabelWidth;
     }
 
+    /**
+     * Get the height of column labels in points.
+     *
+     * @return the height of cloumn labels in points
+     */
     public float getColumnLabelHeight() {
         return columnLabelHeight;
     }
@@ -687,14 +700,16 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     VisibleArea getVisibleAreaInSheet(Graphics g) {
-        AffineTransformation2f t = g.getTransformation();
-        Rectangle2f bounds = g.getBounds();
-        Rectangle2f boundsInSheet = bounds.translate(-t.getTranslateX() * t.getScaleX(), -t.getTranslateY() * t.getScaleY());
-        VisibleArea va = new VisibleArea(this, boundsInSheet);
-        return va;
+        return new VisibleArea(this, g.getBounds());
+    }
+
+    public AffineTransformation2f getTransformation() {
+        return AffineTransformation2f.scale(getScale());
     }
 
     protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {
+        private static final VisibleArea EMPTY = new VisibleArea(0, 0, 0, 0);
+
         public VisibleArea(SheetViewDelegate delegate, Rectangle2f boundsInSheet) {
             this(
                     Math.max(0, delegate.getRowNumberFromY(boundsInSheet.yMin())),
@@ -702,6 +717,10 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
                     Math.max(0, delegate.getColumnNumberFromX(boundsInSheet.xMin())),
                     Math.min(delegate.getColumnCount(), 1 + delegate.getColumnNumberFromX(boundsInSheet.xMax()))
             );
+        }
+
+        public static VisibleArea empty() {
+            return EMPTY;
         }
     }
 }

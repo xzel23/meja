@@ -282,7 +282,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      *
      * @param cell the cell to set as current
      */
-    void setCurrentCell(Cell cell);
+    boolean setCurrentCell(Cell cell);
 
     /**
      * Set the current cell.
@@ -290,8 +290,8 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @param i the row of the cell to set
      * @param j the column of the cell to set
      */
-    default void setCurrentCell(int i, int j) {
-        setCurrentCell(getCell(i, j));
+    default boolean setCurrentCell(int i, int j) {
+        return setCurrentCell(getCell(i, j));
     }
 
     /**

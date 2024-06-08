@@ -3,6 +3,7 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.ui.Graphics;
 import com.dua3.utility.awt.AwtFontUtil;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.swing.SwingUtil;
@@ -15,22 +16,30 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
-public class SwingGrahpics implements Graphics {
+public class SwingGraphics implements Graphics {
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
 
-    private Graphics2D g2d;
+    private final Graphics2D g2d;
+    private final Rectangle parentBounds;
+    private final AffineTransformation2f parentTransform;
+    private  AffineTransformation2f transform;
+    private  AffineTransformation2f inverseTransform;
     private java.awt.Color textColor = java.awt.Color.BLACK;
     private final Line2D.Float line = new Line2D.Float();
     private final Rectangle2D.Float rect = new Rectangle2D.Float();
     private final double[] double6 = new double[6];
 
-    public SwingGrahpics(Graphics2D g2d) {
+    public SwingGraphics(Graphics2D g2d, Rectangle bounds) {
         this.g2d = g2d;
+        this.parentBounds = bounds;
+        this.parentTransform = convert(g2d.getTransform());
+        this.transform = AffineTransformation2f.IDENTITY;
+        this.inverseTransform = AffineTransformation2f.IDENTITY;
     }
 
     @Override
     public Rectangle2f getBounds() {
-        return convert(g2d.getClipBounds());
+        return convert(LangUtil.orElse(g2d.getClipBounds(), parentBounds));
     }
 
     /**
@@ -44,13 +53,45 @@ public class SwingGrahpics implements Graphics {
     }
 
     /**
+     * Converts a {@link Rectangle} object to a {@link Rectangle2f} object.
+     *
+     * @param r the Rectangle object to convert
+     * @return a Rectangle2f object with the same position and size as the input
+     */
+    public static Rectangle convert(Rectangle2f r) {
+        return new Rectangle(
+                Math.round(r.x()), Math.round(r.y()),
+                Math.round(r.width()), Math.round(r.height())
+        );
+    }
+
+    /**
+     * Converts a {@link Rectangle2f} object to a Rectangle object.
+     *
+     *
+     * <p>The difference to the {@link #convert(Rectangle2f)} is that the returned rectangle will completeyly cover the
+     * area of the transformed source rectangle even if the covered area of pixels on the border only is covered
+     * to less than 50% by the transformed source rectangle.
+     *
+     * @param r the Rectangle2f object to convert
+     * @return a Rectangle object with the same position and size as the input
+     */
+    public static Rectangle convertCovering(Rectangle2f r) {
+        int xMin = (int) Math.floor(r.xMin());
+        int xMax = (int) Math.ceil(r.xMax());
+        int yMin = (int) Math.floor(r.yMin());
+        int yMax = (int) Math.ceil(r.yMax());
+        return new Rectangle(xMin, yMin, xMax-xMin, yMax-yMin);
+    }
+
+    /**
      * Convert an AffineTransformation2f object to an AffineTransform object.
      *
      * @param t the AffineTransformation2f object to convert
      * @return an AffineTransform object with the same transformation as the input
      */
     public static AffineTransform convert(AffineTransformation2f t) {
-        return new AffineTransform(t.a(), t.b(), t.c(), t.d(), t.e(), t.f());
+        return new AffineTransform(t.a(), t.d(), t.b(), t.e(), t.c(), t.f());
     }
 
     /**
@@ -62,18 +103,20 @@ public class SwingGrahpics implements Graphics {
     public AffineTransformation2f convert(AffineTransform t) {
         t.getMatrix(double6);
         return new AffineTransformation2f(
-                (float) double6[0], (float) double6[1], (float) double6[2], (float) double6[3], (float) double6[4], (float) double6[5]
+                (float) double6[0], (float) double6[2], (float) double6[4], (float) double6[1], (float) double6[3], (float) double6[5]
         );
     }
 
     @Override
     public void setTransformation(AffineTransformation2f t) {
-        g2d.setTransform(convert(t));
+        this.inverseTransform = t.inverse().orElseThrow();
+        this.transform = t;
+        g2d.setTransform(convert(t.append(parentTransform)));
     }
 
     @Override
     public AffineTransformation2f getTransformation() {
-        return convert(g2d.getTransform());
+        return transform;
     }
 
     @Override
@@ -89,16 +132,6 @@ public class SwingGrahpics implements Graphics {
     @Override
     public void setColor(Color color) {
         g2d.setColor(SwingUtil.toAwtColor(color));
-    }
-
-    @Override
-    public void translate(float dx, float dy) {
-        g2d.translate(dx, dy);
-    }
-
-    @Override
-    public void scale(float s) {
-        g2d.scale(s, s);
     }
 
     @Override

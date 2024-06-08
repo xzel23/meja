@@ -2,6 +2,7 @@ package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.model.Row;
 import com.dua3.meja.ui.SegmentView;
+import com.dua3.utility.math.geometry.Scale2f;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Control;
@@ -107,9 +108,9 @@ public class FxSegmentView extends Control implements SegmentView {
      */
     private void updateLayout() {
         svDelegate.getSheet().ifPresent(sheet -> {
-            float scale = svDelegate.getScale();
+            Scale2f scale = svDelegate.getScale();
 
-            double width = scale * (
+            double width = scale.sx() * (
                     (quadrant.isLeft() ? svDelegate.getRowLabelWidth() : 0)
                     + IntStream.range(
                             quadrant.startColumn(svDelegate.getColumnCount(), svDelegate.getSplitColumn()),
@@ -117,7 +118,7 @@ public class FxSegmentView extends Control implements SegmentView {
                     ).mapToDouble(sheet::getColumnWidth).sum()
             );
 
-            double height = scale * (
+            double height = scale.sy() * (
                     (quadrant.isTop() ? svDelegate.getColumnLabelHeight() : 0)
                     + IntStream.range(
                         quadrant.startRow(svDelegate.getRowCount(), svDelegate.getSplitRow()),

@@ -25,6 +25,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -52,9 +53,13 @@ public abstract class SheetPainterBase {
     }
 
     public void drawBackground(Graphics g) {
-        Rectangle2f r = g.getBounds();
+        AffineTransformation2f t = g.getTransformation();
+        g.setTransformation(AffineTransformation2f.IDENTITY);
+
         g.setColor(getDelegate().getBackground().brighter());
-        g.fillRect(r.x(), r.y(), r.width(), r.height());
+        g.fillRect(g.getBounds());
+
+        g.setTransformation(t);
     }
 
     public void drawLabel(Graphics g, Rectangle2f r, String text) {
@@ -83,13 +88,13 @@ public abstract class SheetPainterBase {
         Lock readLock = sheet.readLock();
         readLock.lock();
         try {
-            g.beginDraw();
+            LOGGER.debug("drawSheet - T =\n{}", () -> g.getTransformation().toMatrixString());
 
+            g.beginDraw();
             drawBackground(g);
             drawLabels(g);
             drawCells(g);
             drawSelection(g);
-
             g.endDraw();
         } finally {
             readLock.unlock();
@@ -199,10 +204,18 @@ public abstract class SheetPainterBase {
         double maxWidth = SheetView.MAX_COLUMN_WIDTH;
 
         // determine visible rows and columns
-        float s = getDelegate().getScale();
         AffineTransformation2f t = g.getTransformation();
-        Rectangle2f boundsInSheet = g.getBounds().translate(-t.getTranslateX() * t.getScaleX(), -t.getTranslateY() * t.getScaleY());
-        SheetViewDelegate.VisibleArea va = new SheetViewDelegate.VisibleArea(getDelegate(), boundsInSheet);
+        Optional<AffineTransformation2f> inverse = t.inverse();
+
+        if (inverse.isEmpty()) {
+            return;
+        }
+
+        AffineTransformation2f ti = inverse.orElseThrow();
+
+        Rectangle2f bounds = g.getBounds();
+
+        SheetViewDelegate.VisibleArea va = new SheetViewDelegate.VisibleArea(getDelegate(), bounds);
         LOGGER.trace("draw cells - visible area: {}", va);
 
         // Collect cells to be drawn
@@ -217,12 +230,12 @@ public abstract class SheetPainterBase {
             // the first non-empty cell to the left/right to make sure
             // overflowing text is visible.
             int first = va.startColumn();
-            while (first > 0 && getDelegate().getColumnPos(first) + maxWidth > boundsInSheet.xMin() && row.getCell(first).isEmpty()) {
+            while (first > 0 && getDelegate().getColumnPos(first) + maxWidth > bounds.xMin() && row.getCell(first).isEmpty()) {
                 first--;
             }
 
             int end = va.endColumn();
-            while (end < getDelegate().getColumnCount() && getDelegate().getColumnPos(end) - maxWidth < boundsInSheet.xMax()
+            while (end < getDelegate().getColumnCount() && getDelegate().getColumnPos(end) - maxWidth < bounds.xMax()
                     && (end <= 0 || row.getCell(end - 1).isEmpty())) {
                 end++;
             }

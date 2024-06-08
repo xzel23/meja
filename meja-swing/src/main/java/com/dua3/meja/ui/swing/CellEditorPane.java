@@ -21,6 +21,7 @@ import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.swing.StyledDocumentConverter;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
@@ -189,7 +190,7 @@ public class CellEditorPane extends JTextPane {
      * @param eval set to true to display formula results instead of the formula
      *             itself
      */
-    public void setContent(Cell cell, double scale, boolean eval) {
+    public void setContent(Cell cell, Scale2f scale, boolean eval) {
         CellStyle cellStyle = cell.getCellStyle();
 
         Color fg = cellStyle.getFillFgColor();
@@ -209,7 +210,7 @@ public class CellEditorPane extends JTextPane {
         setDocument(
                 StyledDocumentConverter.create(
                         StyledDocumentConverter.addStyledAttributes(getCellAttributes(cellStyle, cell)),
-                        StyledDocumentConverter.scale(scale),
+                        StyledDocumentConverter.scale(scale.sy()),
                         StyledDocumentConverter.defaultFont(font)
                 ).convert(text)
         );

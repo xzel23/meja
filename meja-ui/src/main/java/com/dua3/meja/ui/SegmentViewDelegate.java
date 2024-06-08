@@ -1,6 +1,8 @@
 package com.dua3.meja.ui;
 
 import com.dua3.meja.model.Sheet;
+import com.dua3.utility.math.geometry.AffineTransformation2f;
+import com.dua3.utility.math.geometry.Scale2f;
 
 import java.util.concurrent.locks.Lock;
 import java.util.function.IntSupplier;
@@ -54,8 +56,9 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
     }
 
     public void setViewSize(float wd, float hd) {
-        float w = svDelegate.wS2D(wd);
-        float h = svDelegate.hS2D(hd);
+        Scale2f s = getSvDelegate().getScale();
+        float w = s.sx() * wd;
+        float h = s.sy() * hd;
         owner.setViewSizeOnDisplay(w,h);
     }
 
@@ -65,7 +68,7 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
      * @return the x-offset
      */
     public float getXOffset() {
-        return (hasRowHeaders() ? svDelegate.getRowLabelWidth() : 0) - svDelegate.getColumnPos(getBeginColumn());
+        return (isLeftOfSplit() ? svDelegate.getRowLabelWidth() : 0) - svDelegate.getColumnPos(getBeginColumn());
     }
 
     /**
@@ -74,30 +77,24 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
      * @return the y-offset
      */
     public float getYOffset() {
-        return (hasColumnHeaders() ? svDelegate.getColumnLabelHeight() : 0) - svDelegate.getRowPos(getBeginRow());
+        return (isAboveSplit() ? svDelegate.getColumnLabelHeight() : 0) - svDelegate.getRowPos(getBeginRow());
     }
 
     public float getXMinInViewCoordinates() {
         float x = svDelegate.getColumnPos(getBeginColumn());
-        if (hasRowHeaders()) {
-            x += getXOffset();
-        }
-        return svDelegate.xS2D(x);
+        return getTransformation().transform(x,0).x();
     }
 
     public float getYMinInViewCoordinates() {
         float y = svDelegate.getRowPos(getBeginRow());
-        if (hasColumnHeaders()) {
-            y += getYOffset();
-        }
-        return svDelegate.yS2D(y);
+        return getTransformation().transform(0,y).y();
     }
 
-    public boolean hasRowHeaders() {
+    public boolean isLeftOfSplit() {
         return getEndColumn() <= getSheet().getSplitColumn();
     }
 
-    public boolean hasColumnHeaders() {
+    public boolean isAboveSplit() {
         return getEndRow() <= getSheet().getSplitRow();
     }
 
@@ -119,7 +116,7 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
         lock.lock();
         try {
             // the width is the width for the labels showing row names ...
-            float width = hasRowHeaders() ? svDelegate.getRowLabelWidth() : 1;
+            float width = isLeftOfSplit() ? svDelegate.getRowLabelWidth() : 1;
 
             // ... plus the width of the columns displayed ...
             width += svDelegate.getColumnPos(getEndColumn()) - svDelegate.getColumnPos(getBeginColumn());
@@ -130,7 +127,7 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
             }
 
             // the height is the height for the labels showing column names ...
-            float height = hasColumnHeaders() ? svDelegate.getColumnLabelHeight() : 1;
+            float height = isAboveSplit() ? svDelegate.getColumnLabelHeight() : 1;
 
             // ... plus the height of the rows displayed ...
             height += svDelegate.getRowPos(getEndRow()) - svDelegate.getRowPos(getBeginRow());
@@ -147,4 +144,16 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
         }
     }
 
+    public AffineTransformation2f getTransformation() {
+        return AffineTransformation2f.combine(
+                AffineTransformation2f.translate(getXOffset(), getYOffset()),
+                svDelegate.getTransformation()
+        );
+    }
+
+    @Override
+    public String toString() {
+        return (isAboveSplit() ? "TOP_" : "BOTTOM_")
+                + (isLeftOfSplit() ? "LEFT" : "RIGHT");
+    }
 }
