@@ -30,6 +30,7 @@ public class FxSheetView extends GridPane implements SheetView {
 
         // create quadrants
         ObservableList<Row> rows = delegate.getSheet().map(ObservableSheet::new).map(s -> (ObservableList<Row>) s).orElse(FXCollections.emptyObservableList());
+        delegate.updateLayout();
 
         topLeftQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_LEFT, rows);
         topRightQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_RIGHT, rows);
