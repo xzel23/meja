@@ -13,10 +13,12 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.Run;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CellRenderer {
@@ -151,6 +153,8 @@ public class CellRenderer {
 
     private void render(Graphics g, Cell cell, Rectangle2f r, Rectangle2f clipRect) {
         CellStyle cs = cell.getCellStyle();
+        boolean wrapping = cs.isWrap() || cs.getVAlign().isWrap() || cs.getHAlign().isWrap();
+        float wrapWidth = wrapping ? r.width() : Float.MAX_VALUE;
 
         RichText text = cell.getAsText(delegate.getLocale());
         Font font = cs.getFont();
@@ -165,14 +169,27 @@ public class CellRenderer {
             float lineHeight = 0f;
             float lineWidth = 0f;
             float lineBaseLine = 0f;
-            for (var run: line) {
+            boolean wrapAllowed = false;
+            for (var run: splitLine(line, wrapping)) {
                 Font f = font.deriveFont(run.getFontDef());
                 Rectangle2f tr = FONT_UTIL.getTextDimension(run, f);
-                fragments.add(new Fragment(xAct, textHeight, f, run));
-                xAct += tr.width();
-                lineWidth += tr.width();
-                lineHeight = Math.max(lineHeight, tr.height());
-                lineBaseLine = Math.max(lineBaseLine, -tr.yMin());
+                if (wrapAllowed && xAct + tr.width() > wrapWidth) {
+                    xAct = 0f;
+                    textHeight += lineHeight;
+                    fragments.add(new Fragment(xAct, textHeight, f, run));
+                    xAct += tr.width();
+                    lineWidth = tr.width();
+                    lineHeight = tr.height();
+                    wrapAllowed = false;
+                    lineBaseLine = -tr.yMin();
+                } else {
+                    wrapAllowed = wrapping;
+                    fragments.add(new Fragment(xAct, textHeight, f, run));
+                    xAct += tr.width();
+                    lineWidth += tr.width();
+                    lineHeight = Math.max(lineHeight, tr.height());
+                    lineBaseLine = Math.max(lineBaseLine, -tr.yMin());
+                }
             }
             textWidth = Math.max(textWidth, lineWidth);
             textHeight += lineHeight;
@@ -197,6 +214,16 @@ public class CellRenderer {
             g.drawText(fragment.text.toString(), x+fragment.x, y+fragment.y+baseLine);
         }
 
+    }
+
+    private List<Run> splitLine(RichText line, boolean wrapping) {
+        if (!wrapping) {
+            return line.runs();
+        }
+
+        return Arrays.stream(line.split("(?<=\\s)|(?=\\s)"))
+                .flatMap(part -> part.runs().stream())
+                .toList();
     }
 
     private static HAlign effectiveHAlign(HAlign hAlign, CellType cellType) {
