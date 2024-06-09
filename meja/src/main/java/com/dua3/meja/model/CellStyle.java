@@ -111,6 +111,26 @@ public interface CellStyle {
     HAlign getHAlign();
 
     /**
+     * Get the effective HAlign for the given cell type.
+     *
+     * <p>For {@link HAlign#ALIGN_AUTOMATIC}, the default alignment for the cell type is returned. Other values are
+     * returned unchanged.
+     *
+     * @param cellType the cell type
+     * @return the default effective alignment
+     */
+    default HAlign effectiveHAlign(CellType cellType) {
+        HAlign hAlign = getHAlign();
+        if (hAlign == HAlign.ALIGN_AUTOMATIC) {
+            return switch (cellType) {
+                case TEXT -> HAlign.ALIGN_LEFT;
+                default -> HAlign.ALIGN_RIGHT;
+            };
+        }
+        return hAlign;
+    }
+
+    /**
      * Get name of cell style.
      *
      * @return the name of this cell style

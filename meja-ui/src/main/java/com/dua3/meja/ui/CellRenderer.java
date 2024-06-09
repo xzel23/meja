@@ -3,10 +3,8 @@ package com.dua3.meja.ui;
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
-import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.Row;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
@@ -14,12 +12,14 @@ import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.Run;
+import com.dua3.utility.text.TextUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 public class CellRenderer {
     private static final Logger LOG = LogManager.getLogger(CellRenderer.class);
@@ -151,6 +151,20 @@ public class CellRenderer {
         render(g, cell, textRect, clipRect);
     }
 
+    /**
+     * A text fragment that can't be split (i.e., contains no whitespace) and has a uniform font so that it can be
+     * drawn in a single operation.
+     *
+     * @param x the x-position
+     * @param y the y-position
+     * @param w the width
+     * @param h the height
+     * @param baseLine the basline value (of the line the fragment belongs to
+     * @param font the font
+     * @param text the text
+     */
+    private record Fragment (float x, float y, float w, float h, float baseLine, Font font, CharSequence text) {}
+
     private void render(Graphics g, Cell cell, Rectangle2f r, Rectangle2f clipRect) {
         CellStyle cs = cell.getCellStyle();
         boolean wrapping = cs.isWrap() || cs.getVAlign().isWrap() || cs.getHAlign().isWrap();
@@ -159,36 +173,55 @@ public class CellRenderer {
         RichText text = cell.getAsText(delegate.getLocale());
         Font font = cs.getFont();
 
-        record Fragment (float x, float y, Font font, CharSequence text) {}
+        Function<RichText, RichText> trimLine = switch (cs.effectiveHAlign(cell.getCellType())) {
+            case ALIGN_LEFT -> RichText::stripTrailing;
+            case ALIGN_RIGHT -> RichText::stripLeading;
+            case ALIGN_CENTER, ALIGN_JUSTIFY, ALIGN_AUTOMATIC -> RichText::strip;
+        };
+
+        // generate lists of chunks for each line
         List<List<Fragment>> fragmentLines = new ArrayList<>();
         float textWidth = 0f;
         float textHeight = 0f;
         float baseLine = 0f;
         for (RichText line: text.split("\n")) {
+            line = trimLine.apply(line);
+
             List<Fragment> fragments = new ArrayList<>();
             fragmentLines.add(fragments);
+
             float xAct = 0f;
             float lineHeight = 0f;
             float lineWidth = 0f;
             float lineBaseLine = 0f;
             boolean wrapAllowed = false;
+            boolean lineWrapped = false;
             for (var run: splitLine(line, wrapping)) {
                 Font f = font.deriveFont(run.getFontDef());
                 Rectangle2f tr = FONT_UTIL.getTextDimension(run, f);
                 if (wrapAllowed && xAct + tr.width() > wrapWidth) {
+                    if (!fragments.isEmpty() && TextUtil.isBlank(fragments.get(fragments.size() - 1).text())) {
+                        // remove trailing whitespace
+                        fragments.remove(fragments.size() - 1);
+                    } else if (TextUtil.isBlank(run)) {
+                        // skip leading whitespace after wrapped line
+                        continue;
+                    }
                     fragments = new ArrayList<>();
                     fragmentLines.add(fragments);
                     xAct = 0f;
                     textHeight += lineHeight;
-                    fragments.add(new Fragment(xAct, textHeight, f, run));
+                    fragments.add(new Fragment(xAct, textHeight, tr.width(), tr.height(), lineBaseLine, f, run));
                     xAct += tr.width();
                     lineWidth = tr.width();
                     lineHeight = tr.height();
                     wrapAllowed = false;
+                    lineWrapped = true;
                     lineBaseLine = -tr.yMin();
                 } else {
                     wrapAllowed = wrapping;
-                    fragments.add(new Fragment(xAct, textHeight, f, run));
+                    lineWrapped = false;
+                    fragments.add(new Fragment(xAct, textHeight, tr.width(), tr.height(), lineBaseLine, f, run));
                     xAct += tr.width();
                     lineWidth += tr.width();
                     lineHeight = Math.max(lineHeight, tr.height());
@@ -197,31 +230,48 @@ public class CellRenderer {
             }
             textWidth = Math.max(textWidth, lineWidth);
             textHeight += lineHeight;
-            baseLine = Math.max(baseLine, lineBaseLine);
+            baseLine = lineBaseLine;
         }
 
-        float x, y, fillerHeight = 0f;
-        switch (effectiveHAlign(cs.getHAlign(), cell.getCellType())) {
-            default -> { x = r.xMin(); }
-            case ALIGN_CENTER -> { x = r.xCenter() - textWidth/2; }
-            case ALIGN_RIGHT -> { x = r.xMax() - textWidth; }
-        }
+        renderFragments(g, cell, r, cs, textWidth, textHeight, baseLine, fragmentLines);
+    }
 
+    private static void renderFragments(Graphics g, Cell cell, Rectangle2f cr, CellStyle cs, float textWidth, float textHeight, float baseLine, List<List<Fragment>> fragmentLines) {
+        float y, fillerHeight = 0f;
         switch (cs.getVAlign()) {
-            default -> { y = r.yMax() - textHeight; }
-            case ALIGN_TOP -> { y = r.yMin(); }
-            case ALIGN_DISTRIBUTED -> { y = r.yMin(); fillerHeight =(r.height()-textHeight)/Math.max(1, fragmentLines.size()-1); }
-            case ALIGN_MIDDLE, ALIGN_JUSTIFY -> { y = r.yCenter() - textHeight/2; }
+            default -> { y = cr.yMax() - textHeight; }
+            case ALIGN_TOP -> { y = cr.yMin(); }
+            case ALIGN_DISTRIBUTED -> { y = cr.yMin(); fillerHeight =(cr.height()- textHeight)/Math.max(1, fragmentLines.size()-1); }
+            case ALIGN_MIDDLE, ALIGN_JUSTIFY -> { y = cr.yCenter() - textHeight /2; }
         }
 
+        record FragmentInfo(float text, float whiteSpace, int nSpace) {}
+        ;
         for (List<Fragment> fragments : fragmentLines) {
+            // determine the number and size of whitespace and text fragments
+            FragmentInfo fi = fragments.stream().map(fragment -> {
+                boolean isWS = TextUtil.isBlank(fragment.text());
+                return new FragmentInfo(isWS ? 0f: fragment.w(), isWS ? fragment.w() : 0f, isWS ? 1 : 0);
+            })
+                    .reduce((a,b) -> new FragmentInfo(a.text + b.text, a.whiteSpace + b.whiteSpace, a.nSpace + b.nSpace))
+                    .orElseGet(() -> new FragmentInfo(0f, 0f, 1));
+
+            float spaceToDistribute = cr.width() - fi.text - fi.whiteSpace;
+            float totalSpace = fi.whiteSpace + spaceToDistribute;
+
+            float x= cr.xMin();
             for (Fragment fragment : fragments) {
+                if (TextUtil.isBlank(fragment.text())) {
+                    x += switch (cs.effectiveHAlign(cell.getCellType())) {
+                        default -> fragment.w();
+                        case ALIGN_JUSTIFY -> fragment.w() * (totalSpace/fi.whiteSpace-1);
+                    };
+                }
                 g.setFont(fragment.font);
                 g.drawText(fragment.text.toString(), x + fragment.x, y + fragment.y + baseLine);
             }
             y += fillerHeight;
         }
-
     }
 
     private List<Run> splitLine(RichText line, boolean wrapping) {
@@ -232,17 +282,6 @@ public class CellRenderer {
         return Arrays.stream(line.split("(?<=\\s)|(?=\\s)"))
                 .flatMap(part -> part.runs().stream())
                 .toList();
-    }
-
-    private static HAlign effectiveHAlign(HAlign hAlign, CellType cellType) {
-        if (hAlign == HAlign.ALIGN_AUTOMATIC) {
-            return switch (cellType) {
-                case TEXT -> HAlign.ALIGN_LEFT;
-                default -> HAlign.ALIGN_RIGHT;
-            };
-        }
-
-        return hAlign;
     }
 
     /**
