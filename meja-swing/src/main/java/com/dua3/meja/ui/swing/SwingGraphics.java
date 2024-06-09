@@ -177,11 +177,6 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void drawText(String text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
-        // fastpath
-        if (hAnchor == HAnchor.LEFT && vAnchor == VAnchor.TOP) {
-            drawText(text, x, y);
-        }
-
         Rectangle2f r = getTextDimension(text);
 
         float tx = 0;
@@ -194,8 +189,8 @@ public class SwingGraphics implements Graphics {
         };
 
         ty = switch (vAnchor) {
-            case TOP -> y;
-            case BOTTOM -> y + r.height();
+            case TOP -> y - r.yMin();
+            case BOTTOM -> y - r.yMax();
             case BASELINE -> y + r.height() - r.y();
             case MIDDLE -> y + r.height() / 2 - r.yMax();
         };
