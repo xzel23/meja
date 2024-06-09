@@ -160,11 +160,13 @@ public class CellRenderer {
         Font font = cs.getFont();
 
         record Fragment (float x, float y, Font font, CharSequence text) {}
-        List<Fragment> fragments = new ArrayList<>();
+        List<List<Fragment>> fragmentLines = new ArrayList<>();
         float textWidth = 0f;
         float textHeight = 0f;
         float baseLine = 0f;
         for (RichText line: text.split("\n")) {
+            List<Fragment> fragments = new ArrayList<>();
+            fragmentLines.add(fragments);
             float xAct = 0f;
             float lineHeight = 0f;
             float lineWidth = 0f;
@@ -174,6 +176,8 @@ public class CellRenderer {
                 Font f = font.deriveFont(run.getFontDef());
                 Rectangle2f tr = FONT_UTIL.getTextDimension(run, f);
                 if (wrapAllowed && xAct + tr.width() > wrapWidth) {
+                    fragments = new ArrayList<>();
+                    fragmentLines.add(fragments);
                     xAct = 0f;
                     textHeight += lineHeight;
                     fragments.add(new Fragment(xAct, textHeight, f, run));
@@ -196,7 +200,7 @@ public class CellRenderer {
             baseLine = Math.max(baseLine, lineBaseLine);
         }
 
-        float x, y;
+        float x, y, fillerHeight = 0f;
         switch (effectiveHAlign(cs.getHAlign(), cell.getCellType())) {
             default -> { x = r.xMin(); }
             case ALIGN_CENTER -> { x = r.xCenter() - textWidth/2; }
@@ -205,13 +209,17 @@ public class CellRenderer {
 
         switch (cs.getVAlign()) {
             default -> { y = r.yMax() - textHeight; }
-            case ALIGN_TOP, ALIGN_DISTRIBUTED -> { y = r.yMin(); }
+            case ALIGN_TOP -> { y = r.yMin(); }
+            case ALIGN_DISTRIBUTED -> { y = r.yMin(); fillerHeight =(r.height()-textHeight)/Math.max(1, fragmentLines.size()-1); }
             case ALIGN_MIDDLE, ALIGN_JUSTIFY -> { y = r.yCenter() - textHeight/2; }
         }
 
-        for (Fragment fragment : fragments) {
-            g.setFont(fragment.font);
-            g.drawText(fragment.text.toString(), x+fragment.x, y+fragment.y+baseLine);
+        for (List<Fragment> fragments : fragmentLines) {
+            for (Fragment fragment : fragments) {
+                g.setFont(fragment.font);
+                g.drawText(fragment.text.toString(), x + fragment.x, y + fragment.y + baseLine);
+            }
+            y += fillerHeight;
         }
 
     }
