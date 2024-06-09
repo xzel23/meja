@@ -364,6 +364,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
             markLayoutChanged();
             owner.updateContent();
 
+            // subscribe to the Flow API
+            sheet.subscribe(this);
+
             LOG.debug("sheet changed");
         }
     }
@@ -401,9 +404,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
                 Rectangle2f dim = calculateLabelDimension(sMax);
                 rowLabelWidth = dim.width() + 2 * PADDING_X;
                 columnLabelHeight = dim.height() + 2 * PADDING_Y;
-
-                // subscribe to the Flow API
-                this.sheet.subscribe(this);
             }
         } finally {
             layoutChanged = false;
