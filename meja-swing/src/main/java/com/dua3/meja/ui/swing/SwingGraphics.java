@@ -130,7 +130,7 @@ public class SwingGraphics implements Graphics {
     }
 
     @Override
-    public void setColor(Color color) {
+    public void setFill(Color color) {
         g2d.setColor(SwingUtil.toAwtColor(color));
     }
 

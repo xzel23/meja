@@ -63,7 +63,7 @@ public interface Graphics {
 
     void setStroke(Color c, float width);
 
-    void setColor(Color c);
+    void setFill(Color c);
 
     void setTransformation(AffineTransformation2f t);
 

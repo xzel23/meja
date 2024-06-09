@@ -40,7 +40,7 @@ public class CellRenderer {
         Rectangle2f cr = getCellRect(cell);
 
         // draw grid lines
-        g.setColor(getGridColor());
+        g.setStroke(getGridColor(), delegate.get1Px());
         g.strokeRect(cr);
 
         CellStyle style = cell.getCellStyle();
@@ -53,14 +53,14 @@ public class CellRenderer {
         if (pattern != FillPattern.SOLID) {
             Color fillBgColor = style.getFillBgColor();
             if (fillBgColor != null) {
-                g.setColor(fillBgColor);
+                g.setFill(fillBgColor);
                 g.fillRect(cr);
             }
         }
 
         Color fillFgColor = style.getFillFgColor();
         if (fillFgColor != null) {
-            g.setColor(fillFgColor);
+            g.setFill(fillFgColor);
             g.fillRect(cr);
         }
     }

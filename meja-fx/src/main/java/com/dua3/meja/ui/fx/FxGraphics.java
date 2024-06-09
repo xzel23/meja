@@ -93,7 +93,7 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
-    public void setColor(Color c) {
+    public void setFill(Color c) {
         javafx.scene.paint.Color fxColor = FxUtil.convert(c);
         gc.setStroke(fxColor);
         gc.setFill(fxColor);

@@ -81,6 +81,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     private Font labelFont = new Font().withSize(8);
     private Color labelBackgroundColor = Color.WHITESMOKE;
     private Color labelBorderColor = labelBackgroundColor.darker();
+    private float labelBorderWidth = 1f;
 
     @Override
     public Lock readLock() {
@@ -699,12 +700,28 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         this.labelBackgroundColor = labelBackgroundColor;
     }
 
+    public float getLabelBorderWidth() {
+        return labelBorderWidth;
+    }
+
+    public void setLabelBorderWidth(float labelBorderWidth) {
+        this.labelBorderWidth = labelBorderWidth;
+    }
+
     VisibleArea getVisibleAreaInSheet(Graphics g) {
         return new VisibleArea(this, g.getBounds());
     }
 
     public AffineTransformation2f getTransformation() {
         return AffineTransformation2f.scale(getScale());
+    }
+
+    public float getSheetScale() {
+        return sheet == null ? 1f : sheet.getZoom();
+    }
+
+    public float get1Px() {
+        return 1f / (getSheetScale() * getScale().sy());
     }
 
     protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {

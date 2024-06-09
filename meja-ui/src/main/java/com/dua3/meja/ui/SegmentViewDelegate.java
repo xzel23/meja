@@ -123,7 +123,7 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
 
             // ... plus 1 pixel for drawing a line at the split position.
             if (hasVLine()) {
-                width += 1;
+                width += svDelegate.get1Px();
             }
 
             // the height is the height for the labels showing column names ...
@@ -135,7 +135,7 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
             // ... plus 1 pixel for drawing a line below the lines above the
             // split.
             if (hasHLine()) {
-                height += 1;
+                height += svDelegate.get1Px();
             }
 
             setViewSize(width, height);

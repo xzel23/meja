@@ -56,20 +56,22 @@ public abstract class SheetPainterBase {
         AffineTransformation2f t = g.getTransformation();
         g.setTransformation(AffineTransformation2f.IDENTITY);
 
-        g.setColor(getDelegate().getBackground().brighter());
+        g.setFill(getDelegate().getBackground().brighter());
         g.fillRect(g.getBounds());
 
         g.setTransformation(t);
     }
 
     public void drawLabel(Graphics g, Rectangle2f r, String text) {
-        g.setColor(getDelegate().getLabelBackgroundColor());
+        SheetViewDelegate delegate = getDelegate();
+
+        g.setFill(delegate.getLabelBackgroundColor());
         g.fillRect(r);
 
-        g.setColor(getDelegate().getLabelBorderColor());
+        g.setStroke(delegate.getLabelBorderColor(), delegate.getLabelBorderWidth()*delegate.get1Px());
         g.strokeRect(r);
 
-        g.setFont(getDelegate().getLabelFont());
+        g.setFont(delegate.getLabelFont());
         g.drawText(text, r.xCenter(), r.yCenter(), Graphics.HAnchor.CENTER, Graphics.VAnchor.MIDDLE);
     }
 
