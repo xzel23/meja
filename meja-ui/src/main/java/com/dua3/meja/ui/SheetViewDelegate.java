@@ -82,6 +82,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     private Color labelBackgroundColor = Color.WHITESMOKE;
     private Color labelBorderColor = labelBackgroundColor.darker();
     private float labelBorderWidth = 1f;
+    private float pixelWidth = 1f;
 
     @Override
     public Lock readLock() {
@@ -128,7 +129,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public float getSelectionStrokeWidth() {
-        return SELECTION_STROKE_WIDTH * get1Px();
+        return SELECTION_STROKE_WIDTH;
     }
 
     /**
@@ -287,7 +288,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     @Override
     public void onNext(SheetEvent item) {
         switch (item.type()) {
-            case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED -> owner.updateContent();
+            case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED -> {
+                owner.updateContent();
+            }
             case SheetEvent.SPLIT_CHANGED -> {
                 owner.updateContent();
                 owner.scrollToCurrentCell();
@@ -382,6 +385,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
                 rowPos = new float[]{0};
                 columnPos = new float[]{0};
             } else {
+                update1Px();
+
                 // determine row and column positions
                 sheetHeightInPoints = 0;
                 rowPos = new float[2 + sheet.getLastRowNum()];
@@ -507,6 +512,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         try {
             if (!scale.equals(this.scale)) {
                 this.scale = scale;
+                update1Px();
                 markLayoutChanged();
             }
         } finally {
@@ -721,7 +727,11 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public float get1Px() {
-        return 1f / (getSheetScale() * getScale().sy());
+        return pixelWidth;
+    }
+
+    private void update1Px() {
+        this.pixelWidth = 1f / (getSheetScale() * getScale().sy());
     }
 
     protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {

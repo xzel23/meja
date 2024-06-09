@@ -95,7 +95,7 @@ public class CellRenderer {
             if (color == null) {
                 color = Color.BLACK;
             }
-            g.setStroke(color, b.width());
+            g.setStroke(color, b.width()*delegate.get1Px());
 
             switch (d) {
                 case NORTH -> g.strokeLine(cr.xMin(), cr.yMin(), cr.xMax(), cr.yMin());

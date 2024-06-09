@@ -126,9 +126,10 @@ public abstract class SheetPainterBase {
 
         sheet.getCurrentCell().map(Cell::getLogicalCell)
                 .ifPresent(lc -> {
-                    Rectangle2f rect = getDelegate().getCellRect(lc);
+                    SheetViewDelegate delegate = getDelegate();
+                    Rectangle2f rect = delegate.getCellRect(lc);
                     LOGGER.trace("drawing selection rectangle: {}", rect);
-                    g.setStroke(getDelegate().getSelectionColor(), getDelegate().getSelectionStrokeWidth());
+                    g.setStroke(delegate.getSelectionColor(), delegate.getSelectionStrokeWidth()* delegate.get1Px());
                     g.strokeRect(rect);
                 });
     }
