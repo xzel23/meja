@@ -25,6 +25,8 @@ public class SwingGraphics implements Graphics {
     private  AffineTransformation2f transform;
     private  AffineTransformation2f inverseTransform;
     private java.awt.Color textColor = java.awt.Color.BLACK;
+    private java.awt.Color strokeColor = java.awt.Color.BLACK;
+    private java.awt.Color fillColor = java.awt.Color.BLACK;
     private final Line2D.Float line = new Line2D.Float();
     private final Rectangle2D.Float rect = new Rectangle2D.Float();
     private final double[] double6 = new double[6];
@@ -131,30 +133,12 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void setFill(Color color) {
-        g2d.setColor(SwingUtil.toAwtColor(color));
-    }
-
-    @Override
-    public void strokeLine(float x1, float y1, float x2, float y2) {
-        line.setLine(x1, y1, x2, y2);
-        g2d.draw(line);
-    }
-
-    @Override
-    public void strokeRect(float x, float y, float width, float height) {
-        rect.setRect(x, y, width, height);
-        g2d.draw(rect);
-    }
-
-    @Override
-    public void fillRect(float x, float y, float width, float height) {
-        rect.setRect(x, y, width, height);
-        g2d.fill(rect);
+        fillColor = SwingUtil.toAwtColor(color);
     }
 
     @Override
     public void setStroke(Color color, float width) {
-        g2d.setColor(SwingUtil.toAwtColor(color));
+        this.strokeColor = SwingUtil.toAwtColor(color);
         g2d.setStroke(new BasicStroke(width));
     }
 
@@ -165,11 +149,30 @@ public class SwingGraphics implements Graphics {
     }
 
     @Override
+    public void strokeLine(float x1, float y1, float x2, float y2) {
+        g2d.setColor(strokeColor);
+        line.setLine(x1, y1, x2, y2);
+        g2d.draw(line);
+    }
+
+    @Override
+    public void strokeRect(float x, float y, float width, float height) {
+        g2d.setColor(strokeColor);
+        rect.setRect(x, y, width, height);
+        g2d.draw(rect);
+    }
+
+    @Override
+    public void fillRect(float x, float y, float width, float height) {
+        g2d.setColor(fillColor);
+        rect.setRect(x, y, width, height);
+        g2d.fill(rect);
+    }
+
+    @Override
     public void drawText(String text, float x, float y) {
-        java.awt.Color oldColor = g2d.getColor();
         g2d.setColor(textColor);
         g2d.drawString(text, x, y);
-        g2d.setColor(oldColor);
     }
 
     @Override
@@ -197,10 +200,8 @@ public class SwingGraphics implements Graphics {
             case MIDDLE -> y + r.height() / 2 - r.yMax();
         };
 
-        java.awt.Color oldColor = g2d.getColor();
         g2d.setColor(textColor);
         g2d.drawString(text, tx, ty);
-        g2d.setColor(oldColor);
     }
 
     @Override

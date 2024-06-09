@@ -56,7 +56,7 @@ public interface SheetEvent extends Event<Sheet> {
     }
 
     class ActiveCellChanged extends EventValueChanged<Sheet, Cell> implements SheetEvent {
-        public ActiveCellChanged(Sheet source, Cell valueOld, Cell valueNew) {
+        public ActiveCellChanged(Sheet source, @Nullable Cell valueOld, @Nullable Cell valueNew) {
             super(source, ACTIVE_CELL_CHANGED, valueOld, valueNew);
         }
     }

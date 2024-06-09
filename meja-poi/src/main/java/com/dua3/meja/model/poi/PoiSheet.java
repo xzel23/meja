@@ -277,6 +277,8 @@ public class PoiSheet extends AbstractSheet {
         LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
         Cell old = getCurrentCell().orElse(null);
+
+        cell = cell.getLogicalCell();
         if (cell == old) {
             return false;
         }

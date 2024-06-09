@@ -39,7 +39,7 @@ public abstract class AbstractSheet implements Sheet {
         publisher.subscribe(subscriber);
     }
 
-    protected void activeCellChanged(Cell old, Cell arg) {
+    protected void activeCellChanged(@Nullable Cell old, @Nullable Cell arg) {
         publisher.submit(new SheetEvent.ActiveCellChanged(this, old, arg));
     }
 

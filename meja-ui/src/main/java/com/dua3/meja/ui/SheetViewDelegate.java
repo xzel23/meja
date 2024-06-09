@@ -128,7 +128,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public float getSelectionStrokeWidth() {
-        return SELECTION_STROKE_WIDTH;
+        return SELECTION_STROKE_WIDTH * get1Px();
     }
 
     /**

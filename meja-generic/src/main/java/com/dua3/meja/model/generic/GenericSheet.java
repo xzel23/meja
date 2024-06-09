@@ -210,6 +210,7 @@ public class GenericSheet extends AbstractSheet {
 
         Cell old = getCurrentCell().orElse(null);
 
+        cell = cell.getLogicalCell();
         if (cell == old) {
             return false;
         }

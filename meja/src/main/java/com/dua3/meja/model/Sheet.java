@@ -291,7 +291,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @param j the column of the cell to set
      */
     default boolean setCurrentCell(int i, int j) {
-        return setCurrentCell(getCell(i, j));
+        return setCurrentCell(getCell(i, j).getLogicalCell());
     }
 
     /**
