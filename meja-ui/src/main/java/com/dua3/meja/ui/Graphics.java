@@ -8,7 +8,7 @@ import com.dua3.utility.text.Font;
 
 public interface Graphics {
 
-    Rectangle2f getTextDimension(String text, float s);
+    Rectangle2f getTextDimension(CharSequence text, float s);
 
     /**
      * Get bounds.
@@ -22,7 +22,7 @@ public interface Graphics {
      *
      * @return the text dimensions
      */
-    Rectangle2f getTextDimension(String text);
+    Rectangle2f getTextDimension(CharSequence text);
 
     /**
      * Start drawing.
@@ -69,7 +69,7 @@ public interface Graphics {
 
     void setFont(Font f);
 
-    void drawText(String text, float x, float y);
+    void drawText(CharSequence text, float x, float y);
 
     default Rectangle2f getBoundsInLocal() {
         AffineTransformation2f ti = getTransformation().inverse().orElseThrow();
@@ -88,7 +88,7 @@ public interface Graphics {
         TOP, BOTTOM, BASELINE, MIDDLE
     }
 
-    void drawText(String text, float x, float y, HAnchor hAnchor, VAnchor vAnchor);
+    void drawText(CharSequence text, float x, float y, HAnchor hAnchor, VAnchor vAnchor);
 
     AffineTransformation2f getTransformation();
 }

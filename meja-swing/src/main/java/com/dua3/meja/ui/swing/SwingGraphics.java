@@ -170,13 +170,13 @@ public class SwingGraphics implements Graphics {
     }
 
     @Override
-    public void drawText(String text, float x, float y) {
+    public void drawText(CharSequence text, float x, float y) {
         g2d.setColor(textColor);
-        g2d.drawString(text, x, y);
+        g2d.drawString(text.toString(), x, y);
     }
 
     @Override
-    public void drawText(String text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
+    public void drawText(CharSequence text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
         Rectangle2f r = getTextDimension(text);
 
         float tx = 0;
@@ -196,16 +196,16 @@ public class SwingGraphics implements Graphics {
         };
 
         g2d.setColor(textColor);
-        g2d.drawString(text, tx, ty);
+        g2d.drawString(text.toString(), tx, ty);
     }
 
     @Override
-    public Rectangle2f getTextDimension(String text) {
+    public Rectangle2f getTextDimension(CharSequence text) {
         return FONT_UTIL.getTextDimension(text, g2d.getFont());
     }
 
     @Override
-    public Rectangle2f getTextDimension(String text, float s) {
+    public Rectangle2f getTextDimension(CharSequence text, float s) {
         Rectangle2f dimension = FONT_UTIL.getTextDimension(text, g2d.getFont());
         return Rectangle2f.of(dimension.x() * s, dimension.y() * s, dimension.width() * s, dimension.height() * s);
     }

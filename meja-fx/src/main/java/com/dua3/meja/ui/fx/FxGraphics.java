@@ -46,7 +46,7 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
-    public Rectangle2f getTextDimension(String text, float s) {
+    public Rectangle2f getTextDimension(CharSequence text, float s) {
         Rectangle2f dimension = FONT_UTIL.getTextDimension(text, gc.getFont());
         return Rectangle2f.of(dimension.x() * s, dimension.y() * s, dimension.width() * s, dimension.height() * s);
     }
@@ -57,7 +57,7 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
-    public Rectangle2f getTextDimension(String text) {
+    public Rectangle2f getTextDimension(CharSequence text) {
         return null;
     }
 
@@ -116,15 +116,15 @@ public class FxGraphics implements Graphics {
     }
 
     @Override
-    public void drawText(String text, float x, float y) {
+    public void drawText(CharSequence CharSequence, float x, float y) {
         Paint oldPaint = gc.getFill();
         gc.setFill(textColor);
-        gc.fillText(text, xL2D(x), yL2D(y));
+        gc.fillText(textColor.toString(), xL2D(x), yL2D(y));
         gc.setFill(oldPaint);
     }
 
     @Override
-    public void drawText(String text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
+    public void drawText(CharSequence text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
         // fastpath
         if (hAnchor == HAnchor.LEFT && vAnchor == VAnchor.TOP) {
             drawText(text, x, y);
@@ -150,7 +150,7 @@ public class FxGraphics implements Graphics {
 
         Paint oldPaint = gc.getFill();
         gc.setFill(textColor);
-        gc.strokeText(text, xL2D(tx), yL2D(ty));
+        gc.strokeText(text.toString(), xL2D(tx), yL2D(ty));
         gc.setFill(oldPaint);
     }
 

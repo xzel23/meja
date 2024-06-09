@@ -16,6 +16,9 @@ import com.dua3.utility.text.RichText;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CellRenderer {
     private static final Logger LOG = LogManager.getLogger(CellRenderer.class);
 
@@ -152,24 +155,48 @@ public class CellRenderer {
         RichText text = cell.getAsText(delegate.getLocale());
         Font font = cs.getFont();
 
-        float x, y;
-        Graphics.HAnchor hAnchor;
-        Graphics.VAnchor vAnchor;
+        record Fragment (float x, float y, Font font, CharSequence text) {}
+        List<Fragment> fragments = new ArrayList<>();
+        float textWidth = 0f;
+        float textHeight = 0f;
+        float baseLine = 0f;
+        for (RichText line: text.split("\n")) {
+            float xAct = 0f;
+            float lineHeight = 0f;
+            float lineWidth = 0f;
+            float lineBaseLine = 0f;
+            for (var run: line) {
+                Font f = font.deriveFont(run.getFontDef());
+                Rectangle2f tr = FONT_UTIL.getTextDimension(run, f);
+                fragments.add(new Fragment(xAct, textHeight, f, run));
+                xAct += tr.width();
+                lineWidth += tr.width();
+                lineHeight = Math.max(lineHeight, tr.height());
+                lineBaseLine = Math.max(lineBaseLine, -tr.yMin());
+            }
+            textWidth = Math.max(textWidth, lineWidth);
+            textHeight += lineHeight;
+            baseLine = Math.max(baseLine, lineBaseLine);
+        }
 
+        float x, y;
         switch (effectiveHAlign(cs.getHAlign(), cell.getCellType())) {
-            default -> { x = r.xMin(); hAnchor = Graphics.HAnchor.LEFT; }
-            case ALIGN_CENTER -> { x = r.xCenter(); hAnchor = Graphics.HAnchor.CENTER; }
-            case ALIGN_RIGHT -> { x = r.xMax(); hAnchor = Graphics.HAnchor.RIGHT; }
+            default -> { x = r.xMin(); }
+            case ALIGN_CENTER -> { x = r.xCenter() - textWidth/2; }
+            case ALIGN_RIGHT -> { x = r.xMax() - textWidth; }
         }
 
         switch (cs.getVAlign()) {
-            default -> { y = r.yMax(); vAnchor = Graphics.VAnchor.BOTTOM; }
-            case ALIGN_TOP, ALIGN_DISTRIBUTED -> { y = r.yMin(); vAnchor = Graphics.VAnchor.TOP; }
-            case ALIGN_MIDDLE, ALIGN_JUSTIFY -> { y = r.yCenter(); vAnchor = Graphics.VAnchor.MIDDLE; }
+            default -> { y = r.yMax() - textHeight; }
+            case ALIGN_TOP, ALIGN_DISTRIBUTED -> { y = r.yMin(); }
+            case ALIGN_MIDDLE, ALIGN_JUSTIFY -> { y = r.yCenter() - textHeight/2; }
         }
 
-        g.setFont(font);
-        g.drawText(text.toString(), x, y, hAnchor, vAnchor);
+        for (Fragment fragment : fragments) {
+            g.setFont(fragment.font);
+            g.drawText(fragment.text.toString(), x+fragment.x, y+fragment.y+baseLine);
+        }
+
     }
 
     private static HAlign effectiveHAlign(HAlign hAlign, CellType cellType) {
