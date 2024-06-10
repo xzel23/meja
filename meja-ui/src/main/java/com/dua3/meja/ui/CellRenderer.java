@@ -5,7 +5,9 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
+import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.Row;
+import com.dua3.meja.model.VAlign;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
@@ -165,15 +167,22 @@ public class CellRenderer {
      */
     private record Fragment (float x, float y, float w, float h, float baseLine, Font font, CharSequence text) {}
 
+    private record FragmentedText(List<List<Fragment>> fragmentLines, float textWidth, float textHeight, float baseLine) {}
+
     private void render(Graphics g, Cell cell, Rectangle2f r, Rectangle2f clipRect) {
         CellStyle cs = cell.getCellStyle();
-        boolean wrapping = cs.isWrap() || cs.getVAlign().isWrap() || cs.getHAlign().isWrap();
+        HAlign hAlign = cs.effectiveHAlign(cell.getCellType());
+        VAlign vAlign = cs.getVAlign();
+
+        FragmentedText fragments = generateFragments(cell.getAsText(delegate.getLocale()), r, cs.getFont(), hAlign, vAlign, cs.isWrap());
+        renderFragments(g, r, hAlign, vAlign, fragments.textWidth(), fragments.textHeight(), fragments.baseLine(), fragments.fragmentLines());
+    }
+
+    private FragmentedText generateFragments(RichText text, Rectangle2f r, Font font, HAlign hAlign, VAlign vAlign, boolean wrap) {
+        boolean wrapping = wrap || vAlign.isWrap() || hAlign.isWrap();
         float wrapWidth = wrapping ? r.width() : Float.MAX_VALUE;
 
-        RichText text = cell.getAsText(delegate.getLocale());
-        Font font = cs.getFont();
-
-        Function<RichText, RichText> trimLine = switch (cs.effectiveHAlign(cell.getCellType())) {
+        Function<RichText, RichText> trimLine = switch (hAlign) {
             case ALIGN_LEFT -> RichText::stripTrailing;
             case ALIGN_RIGHT -> RichText::stripLeading;
             case ALIGN_CENTER, ALIGN_JUSTIFY, ALIGN_AUTOMATIC -> RichText::strip;
@@ -195,7 +204,6 @@ public class CellRenderer {
             float lineWidth = 0f;
             float lineBaseLine = 0f;
             boolean wrapAllowed = false;
-            boolean lineWrapped = false;
             for (var run: splitLine(line, wrapping)) {
                 Font f = font.deriveFont(run.getFontDef());
                 Rectangle2f tr = FONT_UTIL.getTextDimension(run, f);
@@ -216,11 +224,9 @@ public class CellRenderer {
                     lineWidth = tr.width();
                     lineHeight = tr.height();
                     wrapAllowed = false;
-                    lineWrapped = true;
                     lineBaseLine = -tr.yMin();
                 } else {
                     wrapAllowed = wrapping;
-                    lineWrapped = false;
                     fragments.add(new Fragment(xAct, textHeight, tr.width(), tr.height(), lineBaseLine, f, run));
                     xAct += tr.width();
                     lineWidth += tr.width();
@@ -232,13 +238,13 @@ public class CellRenderer {
             textHeight += lineHeight;
             baseLine = lineBaseLine;
         }
-
-        renderFragments(g, cell, r, cs, textWidth, textHeight, baseLine, fragmentLines);
+        FragmentedText fragments = new FragmentedText(fragmentLines, textWidth, textHeight, baseLine);
+        return fragments;
     }
 
-    private static void renderFragments(Graphics g, Cell cell, Rectangle2f cr, CellStyle cs, float textWidth, float textHeight, float baseLine, List<List<Fragment>> fragmentLines) {
+    private static void renderFragments(Graphics g, Rectangle2f cr, HAlign hAlign, VAlign vAlign, float textWidth, float textHeight, float baseLine, List<List<Fragment>> fragmentLines) {
         float y, fillerHeight = 0f;
-        switch (cs.getVAlign()) {
+        switch (vAlign) {
             default -> { y = cr.yMax() - textHeight; }
             case ALIGN_TOP -> { y = cr.yMin(); }
             case ALIGN_DISTRIBUTED -> { y = cr.yMin(); fillerHeight =(cr.height()- textHeight)/Math.max(1, fragmentLines.size()-1); }
@@ -260,7 +266,7 @@ public class CellRenderer {
 
             float x= cr.xMin();
             for (Fragment fragment : fragments) {
-                switch (cs.effectiveHAlign(cell.getCellType())) {
+                switch (hAlign) {
                     case ALIGN_JUSTIFY -> {
                         // distribute remaining space by evenly expanding existind whitespace
                         if (TextUtil.isBlank(fragment.text())) {
