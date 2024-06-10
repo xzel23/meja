@@ -185,7 +185,6 @@ public class SwingGraphics implements Graphics {
         as.addAttribute(TextAttribute.STRIKETHROUGH, isStrikeThrough ? TextAttribute.STRIKETHROUGH_ON : null, 0, text.length());
 
         g2d.drawString(as.getIterator(), x, y);
-//        g2d.drawString(text.toString(), x, y);
     }
 
     @Override
