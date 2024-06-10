@@ -14,6 +14,7 @@ javafx {
 dependencies {
     implementation(project(":meja"))
     implementation(project(":meja-generic"))
+    implementation(project(":meja-poi"))
     implementation(project(":meja-ui"))
     implementation(project(":meja-fx"))
 
@@ -47,3 +48,8 @@ val runShowTestXlsx = task<JavaExec>("runShowTestXlsx") {
     enableAssertions = true
 }
 */
+val runShowTestXlsx = task<JavaExec>("runShowTestXlsx") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
+    enableAssertions = true
+}

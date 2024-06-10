@@ -1,4 +1,4 @@
-module com.dua3.meja.fx.samples {
+open module com.dua3.meja.fx.samples {
     exports com.dua3.meja.fx.samples;
 
     requires com.dua3.meja.generic;
