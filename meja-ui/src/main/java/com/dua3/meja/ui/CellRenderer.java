@@ -10,17 +10,10 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.Font;
-import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.VerticalAlignment;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class CellRenderer {
-    private static final Logger LOG = LogManager.getLogger(CellRenderer.class);
-
-    private static final FontUtil<?> FONT_UTIL = FontUtil.getInstance();
-
     private final SheetViewDelegate delegate;
 
     public CellRenderer(SheetViewDelegate delegate) {
@@ -122,7 +115,7 @@ public class CellRenderer {
         // the clipping rectangle
         final Rectangle2f clipRect;
         final CellStyle style = cell.getCellStyle();
-        if (isWrapping(style)) {
+        if (style.isStyleWrapping()) {
             clipRect = textRect;
         } else {
             Row row = cell.getRow();
@@ -169,16 +162,6 @@ public class CellRenderer {
         boolean wrapping = cs.isStyleWrapping();
 
         g.renderText(r, text, font, hAlign, vAlign, wrapping);
-    }
-    /**
-     * Test whether style uses text wrapping. While there is a property for text
-     * wrapping, the alignment settings have to be taken into account too.
-     *
-     * @param style style
-     * @return true if cell content should be displayed with text wrapping
-     */
-    public static boolean isWrapping(CellStyle style) {
-        return style.isWrap() || style.getHAlign().isWrap() || style.getVAlign().isWrap();
     }
 
     /**

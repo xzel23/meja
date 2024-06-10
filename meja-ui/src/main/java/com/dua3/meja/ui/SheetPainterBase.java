@@ -17,6 +17,7 @@ package com.dua3.meja.ui;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
@@ -262,8 +263,11 @@ public abstract class SheetPainterBase {
                     j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
                     // filter out cells that cannot overflow into the visible
                     // region
-                    if (j < va.startColumn() && CellRenderer.isWrapping(cell.getCellStyle())) {
-                        continue;
+                    if (j < va.startColumn()) {
+                        CellStyle style = cell.getCellStyle();
+                        if (style.isStyleWrapping()) {
+                            continue;
+                        }
                     }
                 }
 
