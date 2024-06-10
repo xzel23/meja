@@ -641,6 +641,11 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         return FontUtil.getInstance().getTextDimension(text, getLabelFont());
     }
 
+    /**
+     * Get the label font.
+     *
+     * @return the width of row labels in points
+     */
     public Font getLabelFont() {
         return labelFont;
     }

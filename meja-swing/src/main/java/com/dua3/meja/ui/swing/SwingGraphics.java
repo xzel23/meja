@@ -12,9 +12,11 @@ import com.dua3.utility.text.Font;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedString;
 
 public class SwingGraphics implements Graphics {
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
@@ -24,9 +26,12 @@ public class SwingGraphics implements Graphics {
     private final AffineTransformation2f parentTransform;
     private  AffineTransformation2f transform;
     private  AffineTransformation2f inverseTransform;
-    private java.awt.Color textColor = java.awt.Color.BLACK;
     private java.awt.Color strokeColor = java.awt.Color.BLACK;
     private java.awt.Color fillColor = java.awt.Color.BLACK;
+    private java.awt.Font font;
+    private java.awt.Color textColor = java.awt.Color.BLACK;
+    private boolean isUnderlined = false;
+    private boolean isStrikeThrough = false;
     private final Line2D.Float line = new Line2D.Float();
     private final Rectangle2D.Float rect = new Rectangle2D.Float();
     private final double[] double6 = new double[6];
@@ -145,7 +150,9 @@ public class SwingGraphics implements Graphics {
     @Override
     public void setFont(Font font) {
         textColor = (SwingUtil.toAwtColor(font.getColor()));
-        g2d.setFont(FONT_UTIL.convert(font));
+        isUnderlined = font.isUnderline();
+        isStrikeThrough = font.isStrikeThrough();
+        this.font = FONT_UTIL.convert(font);
     }
 
     @Override
@@ -172,7 +179,13 @@ public class SwingGraphics implements Graphics {
     @Override
     public void drawText(CharSequence text, float x, float y) {
         g2d.setColor(textColor);
-        g2d.drawString(text.toString(), x, y);
+        AttributedString as = new AttributedString(text.toString());
+        as.addAttribute(TextAttribute.FONT, font, 0, text.length());
+        as.addAttribute(TextAttribute.UNDERLINE, isUnderlined ? TextAttribute.UNDERLINE_ON : null, 0, text.length());
+        as.addAttribute(TextAttribute.STRIKETHROUGH, isStrikeThrough ? TextAttribute.STRIKETHROUGH_ON : null, 0, text.length());
+
+        g2d.drawString(as.getIterator(), x, y);
+//        g2d.drawString(text.toString(), x, y);
     }
 
     @Override
@@ -195,13 +208,12 @@ public class SwingGraphics implements Graphics {
             case MIDDLE -> y + r.height() / 2 - r.yMax();
         };
 
-        g2d.setColor(textColor);
-        g2d.drawString(text.toString(), tx, ty);
+        drawText(text, tx, ty);
     }
 
     @Override
     public Rectangle2f getTextDimension(CharSequence text) {
-        return FONT_UTIL.getTextDimension(text, g2d.getFont());
+        return FONT_UTIL.getTextDimension(text, font);
     }
 
     @Override
