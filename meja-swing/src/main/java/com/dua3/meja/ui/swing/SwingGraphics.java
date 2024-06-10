@@ -176,6 +176,10 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
+        if (text.isEmpty()) {
+            return;
+        }
+
         g2d.setColor(textColor);
         AttributedString as = new AttributedString(text.toString());
         as.addAttribute(TextAttribute.FONT, font, 0, text.length());
