@@ -8,6 +8,7 @@ import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
@@ -185,36 +186,12 @@ public class SwingGraphics implements Graphics {
     }
 
     @Override
-    public void drawText(CharSequence text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
-        Rectangle2f r = getTextDimension(text);
-
-        float tx = 0;
-        float ty = 0;
-
-        tx = switch (hAnchor) {
-            case LEFT -> x;
-            case RIGHT -> x - r.width();
-            case CENTER -> x - r.width() / 2;
-        };
-
-        ty = switch (vAnchor) {
-            case TOP -> y - r.yMin();
-            case BOTTOM -> y - r.yMax();
-            case BASELINE -> y + r.height() - r.y();
-            case MIDDLE -> y + r.height() / 2 - r.yMax();
-        };
-
-        drawText(text, tx, ty);
-    }
-
-    @Override
     public Rectangle2f getTextDimension(CharSequence text) {
         return FONT_UTIL.getTextDimension(text, font);
     }
 
     @Override
-    public Rectangle2f getTextDimension(CharSequence text, float s) {
-        Rectangle2f dimension = FONT_UTIL.getTextDimension(text, g2d.getFont());
-        return Rectangle2f.of(dimension.x() * s, dimension.y() * s, dimension.width() * s, dimension.height() * s);
+    public FontUtil<?> getFontUtil() {
+        return FONT_UTIL;
     }
 }
