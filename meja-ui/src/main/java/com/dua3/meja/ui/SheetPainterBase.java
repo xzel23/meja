@@ -303,9 +303,7 @@ public abstract class SheetPainterBase {
 
                 // draw cell
                 if (visible) {
-                    cellRenderer.drawCellBackground(g, logicalCell);
-                    cellRenderer.drawCellBorder(g, logicalCell);
-                    cellRenderer.drawCellForeground(g, logicalCell);
+                    cellRenderer.drawCell(g, logicalCell);
                 }
             }
         }

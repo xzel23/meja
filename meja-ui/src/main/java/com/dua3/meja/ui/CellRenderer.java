@@ -24,12 +24,18 @@ public class CellRenderer {
         return delegate;
     }
 
+    public void drawCell(Graphics g, Cell cell) {
+        drawCellBackground(g, cell);
+        drawCellBorder(g, cell);
+        drawCellForeground(g, cell);
+    }
+
     /**
      * Draw cell background.
      *
      * @param cell cell to draw
      */
-    public void drawCellBackground(Graphics g, Cell cell) {
+    private void drawCellBackground(Graphics g, Cell cell) {
         Rectangle2f cr = getCellRect(cell);
 
         CellStyle style = cell.getCellStyle();
@@ -59,7 +65,7 @@ public class CellRenderer {
      *
      * @param cell cell to draw
      */
-    public void drawCellBorder(Graphics g, Cell cell) {
+    private void drawCellBorder(Graphics g, Cell cell) {
         CellStyle styleTopLeft = cell.getCellStyle();
         CellStyle styleBottomRight = cell.isMerged()
                 ? getDelegate().getSheet().orElseThrow()
@@ -100,7 +106,7 @@ public class CellRenderer {
      *
      * @param cell cell to draw
      */
-    public void drawCellForeground(Graphics g, Cell cell) {
+    private void drawCellForeground(Graphics g, Cell cell) {
         if (cell.isEmpty()) {
             return;
         }
@@ -135,10 +141,10 @@ public class CellRenderer {
             clipRect = new Rectangle2f(clipXMin, textRect.yMin(), clipXMax - clipXMin, textRect.height());
         }
 
-        render(g, cell, textRect, clipRect);
+        renderCellContent(g, cell, textRect, clipRect);
     }
 
-    private void render(Graphics g, Cell cell, Rectangle2f r, Rectangle2f clipRect) {
+    private void renderCellContent(Graphics g, Cell cell, Rectangle2f r, Rectangle2f clipRect) {
         CellStyle cs = cell.getCellStyle();
 
         Alignment hAlign = switch (cs.effectiveHAlign(cell.getCellType())) {

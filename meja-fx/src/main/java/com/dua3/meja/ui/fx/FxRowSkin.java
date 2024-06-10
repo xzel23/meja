@@ -38,6 +38,7 @@ public class FxRowSkin implements Skin<FxRow> {
         Scale2f s = delegate.getScale();
         canvas.setWidth(w * s.sx());
         canvas.setHeight(h * s.sy());
+        canvas.getGraphicsContext2D().scale(fxRow.displayScale.sx(), fxRow.displayScale.sy());
 
         CellRenderer cr = new CellRenderer(delegate);
 
@@ -46,11 +47,6 @@ public class FxRowSkin implements Skin<FxRow> {
         // clear background
         g.setFill(delegate.getBackground());
         g.fillRect(g.getBounds());
-
-        Row row = fxRow.getItem();
-        if (row == null) {
-            return;
-        }
 
         // draw grid lines
         g.setStroke(delegate.getGridColor(), delegate.get1Px());
@@ -62,14 +58,15 @@ public class FxRowSkin implements Skin<FxRow> {
         }
         g.strokeLine(w, 0, w, h);
 
+        Row row = fxRow.getItem();
+        if (row == null) {
+            return;
+        }
+
         //  draw cells
         g.setTransformation(AffineTransformation2f.translate(0, -delegate.getRowPos(row.getRowNumber())));
         for (int j=0; j<delegate.getColumnCount(); j++) {
-            row.getCellIfExists(j).ifPresent(cell -> {
-                cr.drawCellBackground(g, cell);
-                cr.drawCellBorder(g, cell);
-                cr.drawCellForeground(g, cell);
-            });
+            row.getCellIfExists(j).ifPresent(cell -> cr.drawCell(g, cell));
         }
     }
 

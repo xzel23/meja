@@ -9,41 +9,31 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Paint;
 
 public class FxGraphics implements Graphics {
     public static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
+    public static final Font DEFAULT_FONT = new Font();
 
     private final GraphicsContext gc;
     private final float w;
     private final float h;
+    private final AffineTransformation2f parentTransform;
 
-    private float dx;
-    private float dy;
+    private AffineTransformation2f transform;
+
     private float s;
     private javafx.scene.paint.Color textColor = javafx.scene.paint.Color.BLACK;
+    private javafx.scene.text.Font font = FONT_UTIL.convert(DEFAULT_FONT);
+    private javafx.scene.paint.Paint strokeColor = javafx.scene.paint.Color.BLACK;
+    private double width = 1.0;
+    private javafx.scene.paint.Color fillColor = javafx.scene.paint.Color.BLACK;
 
     public FxGraphics(GraphicsContext gc, float w, float h) {
         this.gc = gc;
         this.w = w;
         this.h = h;
         this.s = 1f;
-    }
-
-    public int xL2D(float x) {
-        return Math.round(s*(x+dx));
-    }
-
-    public int yL2D(float y) {
-        return Math.round(s*(y+dy));
-    }
-
-    public int wL2D(float w) {
-        return Math.round(s*w);
-    }
-
-    public int hL2D(float h) {
-        return Math.round(s*h);
+        this.parentTransform = FxUtil.convert(gc.getTransform());
     }
 
     @Override
@@ -58,7 +48,7 @@ public class FxGraphics implements Graphics {
 
     @Override
     public Rectangle2f getTextDimension(CharSequence text) {
-        return null;
+        return FONT_UTIL.getTextDimension(text, font);
     }
 
     @Override
@@ -73,54 +63,57 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void strokeRect(float x, float y, float w, float h) {
-        gc.strokeRect(xL2D(x), yL2D(y), wL2D(w), hL2D(h));
+        gc.setStroke(strokeColor);
+        gc.setLineWidth(width);
+        gc.strokeRect(x, y, w, h);
     }
 
     @Override
     public void fillRect(float x, float y, float w, float h) {
-        gc.fillRect(xL2D(x), yL2D(y), wL2D(w), hL2D(h));
+        gc.setFill(fillColor);
+        gc.fillRect(x, y, w, h);
     }
 
     @Override
     public void strokeLine(float x1, float y1, float x2, float y2) {
-        gc.strokeLine(xL2D(x1), yL2D(y1), xL2D(x2), yL2D(y2));
+        gc.setStroke(strokeColor);
+        gc.setLineWidth(width);
+        gc.strokeLine(x1, y1, x2, y2);
     }
 
     @Override
     public void setStroke(Color c, float width) {
-        gc.setStroke(FxUtil.convert(c));
-        gc.setLineWidth(width);
+        this.strokeColor = FxUtil.convert(c);
+        this.width = width;
     }
 
     @Override
     public void setFill(Color c) {
-        javafx.scene.paint.Color fxColor = FxUtil.convert(c);
-        gc.setStroke(fxColor);
-        gc.setFill(fxColor);
+        this.fillColor = FxUtil.convert(c);
     }
 
     @Override
     public void setTransformation(AffineTransformation2f t) {
-        gc.setTransform(FxUtil.convert(t));
+        this.transform = t;
+        gc.setTransform(FxUtil.convert(t.append(parentTransform)));
     }
 
     @Override
     public AffineTransformation2f getTransformation() {
-        return FxUtil.convert(gc.getTransform());
+        return transform;
     }
 
     @Override
     public void setFont(Font font) {
-        textColor = FxUtil.convert(font.getColor());
-        gc.setFont(FONT_UTIL.convert(font.scaled(s)));
+        this.textColor = FxUtil.convert(font.getColor());
+        this.font = FONT_UTIL.convert(font.scaled(s));
     }
 
     @Override
-    public void drawText(CharSequence CharSequence, float x, float y) {
-        Paint oldPaint = gc.getFill();
+    public void drawText(CharSequence text, float x, float y) {
+        gc.setFont(font);
         gc.setFill(textColor);
-        gc.fillText(textColor.toString(), xL2D(x), yL2D(y));
-        gc.setFill(oldPaint);
+        gc.fillText(text.toString(), x, y);
     }
 
 }

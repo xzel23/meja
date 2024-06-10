@@ -21,6 +21,7 @@ import java.text.AttributedString;
 
 public class SwingGraphics implements Graphics {
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
+    public static final java.awt.Font DEFAULT_FONT = FONT_UTIL.convert(new Font());
 
     private final Graphics2D g2d;
     private final Rectangle parentBounds;
@@ -28,7 +29,7 @@ public class SwingGraphics implements Graphics {
     private  AffineTransformation2f transform;
     private java.awt.Color strokeColor = java.awt.Color.BLACK;
     private java.awt.Color fillColor = java.awt.Color.BLACK;
-    private java.awt.Font font;
+    private java.awt.Font font = DEFAULT_FONT;
     private java.awt.Color textColor = java.awt.Color.BLACK;
     private boolean isUnderlined = false;
     private boolean isStrikeThrough = false;
