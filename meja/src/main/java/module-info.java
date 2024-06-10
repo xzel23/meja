@@ -20,7 +20,6 @@ module com.dua3.meja {
     opens com.dua3.meja.model;
     opens com.dua3.meja.io;
 
-    requires java.desktop; // FIXME remove once all Properties are replaced by Flow API
     requires com.dua3.utility;
 
     requires static com.dua3.cabe.annotations;
