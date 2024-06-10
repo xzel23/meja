@@ -245,27 +245,41 @@ public class CellRenderer {
             case ALIGN_MIDDLE, ALIGN_JUSTIFY -> { y = cr.yCenter() - textHeight /2; }
         }
 
-        record FragmentInfo(float text, float whiteSpace, int nSpace) {}
-        ;
+        record LineStatistics(float text, float whiteSpace, int nSpace) {};
         for (List<Fragment> fragments : fragmentLines) {
             // determine the number and size of whitespace and text fragments
-            FragmentInfo fi = fragments.stream().map(fragment -> {
+            LineStatistics fi = fragments.stream().map(fragment -> {
                 boolean isWS = TextUtil.isBlank(fragment.text());
-                return new FragmentInfo(isWS ? 0f: fragment.w(), isWS ? fragment.w() : 0f, isWS ? 1 : 0);
+                return new LineStatistics(isWS ? 0f: fragment.w(), isWS ? fragment.w() : 0f, isWS ? 1 : 0);
             })
-                    .reduce((a,b) -> new FragmentInfo(a.text + b.text, a.whiteSpace + b.whiteSpace, a.nSpace + b.nSpace))
-                    .orElseGet(() -> new FragmentInfo(0f, 0f, 1));
+                    .reduce((a,b) -> new LineStatistics(a.text + b.text, a.whiteSpace + b.whiteSpace, a.nSpace + b.nSpace))
+                    .orElseGet(() -> new LineStatistics(0f, 0f, 1));
 
             float spaceToDistribute = cr.width() - fi.text - fi.whiteSpace;
             float totalSpace = fi.whiteSpace + spaceToDistribute;
 
             float x= cr.xMin();
             for (Fragment fragment : fragments) {
-                if (TextUtil.isBlank(fragment.text())) {
-                    x += switch (cs.effectiveHAlign(cell.getCellType())) {
-                        default -> fragment.w();
-                        case ALIGN_JUSTIFY -> fragment.w() * (totalSpace/fi.whiteSpace-1);
-                    };
+                switch (cs.effectiveHAlign(cell.getCellType())) {
+                    case ALIGN_JUSTIFY -> {
+                        // distribute remaining space by evenly expanding existind whitespace
+                        if (TextUtil.isBlank(fragment.text())) {
+                            x += fragment.w() * (totalSpace / fi.whiteSpace() - 1);
+                        }
+                    }
+                    case ALIGN_RIGHT -> {
+                        if (fragment.x() == 0f) {
+                            // push everything to the right
+                            x += spaceToDistribute;
+                        }
+                    }
+                    case ALIGN_CENTER -> {
+                        if (fragment.x() == 0f) {
+                            // push everything halfway right
+                            x += spaceToDistribute/2f;
+                        }
+                    }
+                    case ALIGN_LEFT, ALIGN_AUTOMATIC -> { /* nothing to do */}
                 }
                 g.setFont(fragment.font);
                 g.drawText(fragment.text.toString(), x + fragment.x, y + fragment.y + baseLine);
