@@ -77,15 +77,14 @@ public class CellRenderer {
 
             BorderStyle b = style.getBorderStyle(d);
             if (b.width() == 0) {
-                // draw grid line instead of border
-                g.setStroke(getGridColor(), delegate.get1Px());
-            } else {
-                Color color = b.color();
-                if (color == null) {
-                    color = Color.BLACK;
-                }
-                g.setStroke(color, b.width() * delegate.get1Px());
+                continue;
             }
+
+            Color color = b.color();
+            if (color == null) {
+                color = Color.BLACK;
+            }
+            g.setStroke(color, b.width() * delegate.get1Px());
 
             switch (d) {
                 case NORTH -> g.strokeLine(cr.xMin(), cr.yMin(), cr.xMax(), cr.yMin());

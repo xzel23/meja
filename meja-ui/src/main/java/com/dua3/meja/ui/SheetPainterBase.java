@@ -96,6 +96,7 @@ public abstract class SheetPainterBase {
             g.beginDraw();
             drawBackground(g);
             drawLabels(g);
+            drawGrid(g);
             drawCells(g);
             drawSelection(g);
             g.endDraw();
@@ -176,6 +177,35 @@ public abstract class SheetPainterBase {
             Rectangle2f r = new Rectangle2f(x, y, w, getColumnLabelHeight());
             String text = delegate.getColumnName(j);
             drawLabel(g, r, text);
+        }
+    }
+
+    protected void drawGrid(Graphics g) {
+        LOGGER.trace("drawGrid()");
+        SheetViewDelegate delegate = getDelegate();
+
+        // determine visible rows and columns
+        SheetViewDelegate.VisibleArea va = delegate.getVisibleAreaInSheet(g);
+        LOGGER.trace("draw labels - visible area: {}", va);
+
+        g.setStroke(delegate.getGridColor(), delegate.get1Px());
+
+        float w = getDelegate().getSheetWidthInPoints();
+        float h = getDelegate().getSheetHeightInPoints();
+
+        // draw row labels
+        LOGGER.trace("draw horizontal grid lines");
+        for (int i = va.startRow(); i < va.endRow(); i++) {
+            float y = getDelegate().getRowPos(i);
+            g.strokeLine(0, y, w, y);
+        }
+
+        // draw column labels
+        LOGGER.trace("draw vertical grid lines");
+        for (int j = va.startColumn(); j < va.endColumn(); j++) {
+            float x = getDelegate().getColumnPos(j);
+            float y = 0;
+            g.strokeLine(x, 0, x, h);
         }
     }
 
