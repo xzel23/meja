@@ -20,8 +20,8 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.TextUtil;
-import com.dua3.utility.text.TextUtil.Alignment;
 
 import java.io.IOException;
 import java.net.URI;

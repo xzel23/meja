@@ -469,8 +469,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         lock.lock();
         try {
             this.columnNames = columnNames;
-        } finally {
             markLayoutChanged();
+        } finally {
             lock.unlock();
         }
     }
@@ -496,8 +496,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         lock.lock();
         try {
             this.rowNames = rowNames;
-        } finally {
             markLayoutChanged();
+        } finally {
             lock.unlock();
         }
     }
@@ -655,8 +655,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         lock.lock();
         try {
             this.labelFont = labelFont;
-        } finally {
             markLayoutChanged();
+        } finally {
             lock.unlock();
         }
     }

@@ -25,7 +25,6 @@ public class SwingGraphics implements Graphics {
     private final Rectangle parentBounds;
     private final AffineTransformation2f parentTransform;
     private  AffineTransformation2f transform;
-    private  AffineTransformation2f inverseTransform;
     private java.awt.Color strokeColor = java.awt.Color.BLACK;
     private java.awt.Color fillColor = java.awt.Color.BLACK;
     private java.awt.Font font;
@@ -41,7 +40,6 @@ public class SwingGraphics implements Graphics {
         this.parentBounds = bounds;
         this.parentTransform = convert(g2d.getTransform());
         this.transform = AffineTransformation2f.IDENTITY;
-        this.inverseTransform = AffineTransformation2f.IDENTITY;
     }
 
     @Override
@@ -116,7 +114,6 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void setTransformation(AffineTransformation2f t) {
-        this.inverseTransform = t.inverse().orElseThrow();
         this.transform = t;
         g2d.setTransform(convert(t.append(parentTransform)));
     }

@@ -44,7 +44,7 @@ public class FxRowSkin implements Skin<FxRow> {
         FxGraphics g = new FxGraphics(canvas.getGraphicsContext2D(), (float) canvas.getWidth(), (float) canvas.getHeight());
 
         // clear background
-        g.setColor(delegate.getBackground());
+        g.setFill(delegate.getBackground());
         g.fillRect(g.getBounds());
 
         Row row = fxRow.getItem();
@@ -53,7 +53,7 @@ public class FxRowSkin implements Skin<FxRow> {
         }
 
         // draw grid lines
-        g.setColor(delegate.getGridColor());
+        g.setStroke(delegate.getGridColor(), delegate.get1Px());
         g.strokeLine(0, h, w, h);
         g.strokeLine(0, 0, w, 0);
         for (int j=0; j<delegate.getColumnCount(); j++) {

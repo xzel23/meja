@@ -214,8 +214,6 @@ public abstract class SheetPainterBase {
             return;
         }
 
-        AffineTransformation2f ti = inverse.orElseThrow();
-
         Rectangle2f bounds = g.getBounds();
 
         SheetViewDelegate.VisibleArea va = new SheetViewDelegate.VisibleArea(getDelegate(), bounds);

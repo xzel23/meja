@@ -159,6 +159,16 @@ public interface CellStyle {
     boolean isWrap();
 
     /**
+     * Deterine whether text should be wrapped. Zhis takes into account the value of {@link #isWrap()},
+     * {@link #getHAlign()} and {@link #getVAlign()}.
+     *
+     * @return true, if the text should be wrapped when displayed
+     */
+    default boolean isStyleWrapping() {
+        return isWrap() || getVAlign().isWrap() || getHAlign().isWrap();
+    }
+
+    /**
      * Set border style
      *
      * @param d           specifies the edge the border style is to be applied to

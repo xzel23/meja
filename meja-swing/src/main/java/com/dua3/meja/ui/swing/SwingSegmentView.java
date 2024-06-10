@@ -78,7 +78,6 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
         Function<Integer, Float> yD2S = y -> ti.transform(Vector2f.of(0, y)).y();
         Function<Float,Integer> yS2Di = y -> Math.round(t.transform(0, y).y());
 
-        Vector2f p = ti.transform(Vector2f.of((float) visibleRect.getMinX(), (float) visibleRect.getMinY()));
         if (orientation == SwingConstants.VERTICAL) {
             // scroll vertical
             if (direction < 0) {
@@ -217,9 +216,6 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             // only the bottom right quadrant is responsible for srolling
             return;
         }
-
-        int i = cell.getRowNumber();
-        int j = cell.getColumnNumber();
 
         Rectangle2f r = svDelegate.getCellRect(cell);
         AffineTransformation2f t = ssvDelegate.getTransformation();
