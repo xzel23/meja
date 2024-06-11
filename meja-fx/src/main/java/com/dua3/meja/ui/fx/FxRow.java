@@ -38,13 +38,8 @@ public class FxRow extends IndexedCell<Row> {
     @Override
     protected void updateItem(@Nullable Row item, boolean empty) {
         super.updateItem(item, empty);
-        if (empty || item == null) {
-            setText(null);
-            setGraphic(null);
-        } else {
-            setText(null);
-            setGraphic(null);
-        }
+        setText(null);
+        setGraphic(null);
         setWidth(getRowWidth());
         setHeight(getRowHeight());
     }
