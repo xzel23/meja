@@ -20,13 +20,12 @@ public class FxRow extends IndexedCell<Row> {
     }
 
     public double getRowWidth() {
-        getSkin();
         return displayScale.sx() * delegate.getSheetWidthInPoints();
     }
 
     public double getRowHeight() {
         int idx = getIndex();
-        return displayScale.sy() * (idx < 0 ? delegate.getDefaultRowHeight() : delegate.getRowHeightInPoints(rows.get(idx).getRowNumber()));
+        return displayScale.sy() * (idx < 0 || idx >=rows.size() ? delegate.getDefaultRowHeight() : delegate.getRowHeightInPoints(rows.get(idx).getRowNumber()));
     }
 
     @Override
@@ -42,14 +41,12 @@ public class FxRow extends IndexedCell<Row> {
         if (empty || item == null) {
             setText(null);
             setGraphic(null);
-            setWidth(delegate.getSheetWidthInPoints());
-            setHeight(delegate.getDefaultRowHeight());
         } else {
             setText(null);
             setGraphic(null);
-            setWidth(delegate.getSheetWidthInPoints());
-            setHeight(delegate.getRowHeightInPoints(item.getRowNumber()));
         }
+        setWidth(getRowWidth());
+        setHeight(getRowHeight());
     }
 
     @Override
