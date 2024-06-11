@@ -11,7 +11,7 @@ import javafx.stage.Screen;
 public class FxRow extends IndexedCell<Row> {
     private final ObservableList<Row> rows;
 
-    private FxSheetViewDelegate delegate;
+    private final FxSheetViewDelegate delegate;
     Scale2f displayScale = FxUtil.getDisplayScale(Screen.getPrimary());
 
     public FxRow(ObservableList<Row> rows, FxSheetViewDelegate delegate) {
