@@ -195,14 +195,14 @@ public abstract class SheetPainterBase {
 
         // draw row labels
         LOGGER.trace("draw horizontal grid lines");
-        for (int i = va.startRow(); i < va.endRow(); i++) {
+        for (int i = va.startRow(); i <= va.endRow(); i++) {
             float y = getDelegate().getRowPos(i);
             g.strokeLine(0, y, w, y);
         }
 
         // draw column labels
         LOGGER.trace("draw vertical grid lines");
-        for (int j = va.startColumn(); j < va.endColumn(); j++) {
+        for (int j = va.startColumn(); j <= va.endColumn(); j++) {
             float x = getDelegate().getColumnPos(j);
             float y = 0;
             g.strokeLine(x, 0, x, h);
