@@ -256,7 +256,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return the columnPos
      */
     public float getColumnPos(int j) {
-        return columnPos[Math.min(columnPos.length - 1, j)];
+        return columnPos[MathUtil.clamp(0, columnPos.length - 1, j)];
     }
 
     /**
@@ -273,7 +273,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return the rowPos
      */
     public float getRowPos(int i) {
-        return rowPos[Math.min(rowPos.length - 1, i)];
+        return rowPos[MathUtil.clamp(0, rowPos.length - 1, i)];
     }
 
     @Override
@@ -744,9 +744,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
 
         public static VisibleArea get(SheetViewDelegate delegate, Rectangle2f boundsInSheet) {
             return delegate.getSheet().map(sheet -> new VisibleArea(
-                    Math.max(sheet.getFirstRowNum(), delegate.getRowNumberFromY(boundsInSheet.yMin())),
+                    Math.max(0, delegate.getRowNumberFromY(boundsInSheet.yMin())),
                     Math.min(sheet.getLastRowNum() + 1, 1 + delegate.getRowNumberFromY(boundsInSheet.yMax())),
-                    Math.max(sheet.getFirstColNum(), delegate.getColumnNumberFromX(boundsInSheet.xMin())),
+                    Math.max(0, delegate.getColumnNumberFromX(boundsInSheet.xMin())),
                     Math.min(sheet.getLastColNum() + 1, 1 + delegate.getColumnNumberFromX(boundsInSheet.xMax()))
             )).orElse(EMPTY);
         }

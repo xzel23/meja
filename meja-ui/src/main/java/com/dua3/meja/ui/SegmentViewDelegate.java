@@ -36,11 +36,11 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
     }
 
     public int getBeginColumn() {
-        return startColumn.getAsInt();
+        return getStartColumn();
     }
 
     public int getBeginRow() {
-        return startRow.getAsInt();
+        return getStartRow();
     }
 
     public int getEndColumn() {
@@ -99,11 +99,11 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
     }
 
     public boolean hasHLine() {
-        return getEndRow() > 0 && getEndRow() <= getSheet().getLastRowNum();
+        return getEndRow() > 0 && getEndRow() < getSheet().getLastRowNum();
     }
 
     public boolean hasVLine() {
-        return getEndColumn() > 0 && getEndColumn() <= getSheet().getLastColNum();
+        return getEndColumn() > 0 && getEndColumn() < getSheet().getLastColNum();
     }
 
     public void updateLayout() {
@@ -116,10 +116,10 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
         lock.lock();
         try {
             // the width is the width for the labels showing row names ...
-            float width = isLeftOfSplit() ? svDelegate.getRowLabelWidth() : 1;
+            float width = isLeftOfSplit() ? svDelegate.getRowLabelWidth() : svDelegate.get1Px();
 
             // ... plus the width of the columns displayed ...
-            width += svDelegate.getColumnPos(getEndColumn()) - svDelegate.getColumnPos(getBeginColumn());
+            width += svDelegate.getColumnPos(getMaxColumn()+1) - svDelegate.getColumnPos(getMinColumn());
 
             // ... plus 1 pixel for drawing a line at the split position.
             if (hasVLine()) {
@@ -130,7 +130,7 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
             float height = isAboveSplit() ? svDelegate.getColumnLabelHeight() : 1;
 
             // ... plus the height of the rows displayed ...
-            height += svDelegate.getRowPos(getEndRow()) - svDelegate.getRowPos(getBeginRow());
+            height += svDelegate.getRowPos(getMaxRow()+1) - svDelegate.getRowPos(getMinRow());
 
             // ... plus 1 pixel for drawing a line below the lines above the
             // split.
@@ -142,6 +142,36 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
         } finally {
             lock.unlock();
         }
+    }
+
+    private int getStartRow() {
+        return startRow.getAsInt();
+    }
+
+    /**
+     * Get the index of the first row to display. This might return a row index smaller than the index of the first
+     * row contained in the sheet.
+     *
+     * @return row index
+     */
+    private int getMinRow() {
+        return isAboveSplit() ? 0 : getSheet().getSplitRow();
+    }
+
+    private int getMaxRow() {
+        return isAboveSplit() ? getSheet().getSplitRow()-1 : getSheet().getLastRowNum();
+    }
+
+    private int getStartColumn() {
+        return startColumn.getAsInt();
+    }
+
+    private int getMinColumn() {
+        return isLeftOfSplit() ? 0 : getSheet().getSplitColumn();
+    }
+
+    private int getMaxColumn() {
+        return isLeftOfSplit() ? getSheet().getSplitColumn()-1 : getSheet().getLastColNum();
     }
 
     public AffineTransformation2f getTransformation() {
