@@ -720,7 +720,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     VisibleArea getVisibleAreaInSheet(Graphics g) {
-        return new VisibleArea(this, g.getBounds());
+        return VisibleArea.get(this, g.getBounds());
     }
 
     public AffineTransformation2f getTransformation() {
@@ -742,17 +742,13 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {
         private static final VisibleArea EMPTY = new VisibleArea(0, 0, 0, 0);
 
-        public VisibleArea(SheetViewDelegate delegate, Rectangle2f boundsInSheet) {
-            this(
-                    Math.max(0, delegate.getRowNumberFromY(boundsInSheet.yMin())),
-                    Math.min(delegate.getRowCount(), 1 + delegate.getRowNumberFromY(boundsInSheet.yMax())),
-                    Math.max(0, delegate.getColumnNumberFromX(boundsInSheet.xMin())),
-                    Math.min(delegate.getColumnCount(), 1 + delegate.getColumnNumberFromX(boundsInSheet.xMax()))
-            );
-        }
-
-        public static VisibleArea empty() {
-            return EMPTY;
+        public static VisibleArea get(SheetViewDelegate delegate, Rectangle2f boundsInSheet) {
+            return delegate.getSheet().map(sheet -> new VisibleArea(
+                    Math.max(sheet.getFirstRowNum(), delegate.getRowNumberFromY(boundsInSheet.yMin())),
+                    Math.min(sheet.getLastRowNum() + 1, 1 + delegate.getRowNumberFromY(boundsInSheet.yMax())),
+                    Math.max(sheet.getFirstColNum(), delegate.getColumnNumberFromX(boundsInSheet.xMin())),
+                    Math.min(sheet.getLastColNum() + 1, 1 + delegate.getColumnNumberFromX(boundsInSheet.xMax()))
+            )).orElse(EMPTY);
         }
     }
 }

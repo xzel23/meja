@@ -247,7 +247,7 @@ public abstract class SheetPainterBase {
 
         Rectangle2f bounds = g.getBounds();
 
-        SheetViewDelegate.VisibleArea va = new SheetViewDelegate.VisibleArea(getDelegate(), bounds);
+        SheetViewDelegate.VisibleArea va = SheetViewDelegate.VisibleArea.get(getDelegate(), bounds);
         LOGGER.trace("draw cells - visible area: {}", va);
 
         // Collect cells to be drawn
