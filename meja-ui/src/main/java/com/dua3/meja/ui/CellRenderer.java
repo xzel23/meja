@@ -90,13 +90,25 @@ public class CellRenderer {
             if (color == null) {
                 color = Color.BLACK;
             }
-            g.setStroke(color, b.width() * delegate.get1Px());
+            g.setStroke(color, b.width() * delegate.get1PxWidth());
 
             switch (d) {
-                case NORTH -> g.strokeLine(cr.xMin(), cr.yMin(), cr.xMax(), cr.yMin());
-                case EAST -> g.strokeLine(cr.xMax(), cr.yMin(), cr.xMax(), cr.yMax());
-                case SOUTH -> g.strokeLine(cr.xMin(), cr.yMax(), cr.xMax(), cr.yMax());
-                case WEST -> g.strokeLine(cr.xMin(), cr.yMin(), cr.xMin(), cr.yMax());
+                case NORTH -> {
+                    g.setStroke(color, b.width() * delegate.get1PxHeight());
+                    g.strokeLine(cr.xMin(), cr.yMin(), cr.xMax(), cr.yMin());
+                }
+                case EAST -> {
+                    g.setStroke(color, b.width() * delegate.get1PxWidth());
+                    g.strokeLine(cr.xMax(), cr.yMin(), cr.xMax(), cr.yMax());
+                }
+                case SOUTH -> {
+                    g.setStroke(color, b.width() * delegate.get1PxHeight());
+                    g.strokeLine(cr.xMin(), cr.yMax(), cr.xMax(), cr.yMax());
+                }
+                case WEST -> {
+                    g.setStroke(color, b.width() * delegate.get1PxWidth());
+                    g.strokeLine(cr.xMin(), cr.yMin(), cr.xMin(), cr.yMax());
+                }
             }
         }
     }

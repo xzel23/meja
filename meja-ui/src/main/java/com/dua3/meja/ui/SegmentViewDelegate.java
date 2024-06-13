@@ -116,14 +116,14 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
         lock.lock();
         try {
             // the width is the width for the labels showing row names ...
-            float width = isLeftOfSplit() ? svDelegate.getRowLabelWidth() : svDelegate.get1Px();
+            float width = isLeftOfSplit() ? svDelegate.getRowLabelWidth() : svDelegate.get1PxWidth();
 
             // ... plus the width of the columns displayed ...
             width += svDelegate.getColumnPos(getMaxColumn()+1) - svDelegate.getColumnPos(getMinColumn());
 
             // ... plus 1 pixel for drawing a line at the split position.
             if (hasVLine()) {
-                width += svDelegate.get1Px();
+                width += svDelegate.get1PxWidth();
             }
 
             // the height is the height for the labels showing column names ...
@@ -135,7 +135,7 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
             // ... plus 1 pixel for drawing a line below the lines above the
             // split.
             if (hasHLine()) {
-                height += svDelegate.get1Px();
+                height += svDelegate.get1PxWidth();
             }
 
             setViewSize(width, height);

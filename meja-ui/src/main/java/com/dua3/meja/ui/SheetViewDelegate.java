@@ -83,6 +83,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     private Color labelBorderColor = labelBackgroundColor.darker();
     private float labelBorderWidth = 1f;
     private float pixelWidth = 1f;
+    private float pixelHeight = 1f;
 
     @Override
     public Lock readLock() {
@@ -731,12 +732,17 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         return sheet == null ? 1f : sheet.getZoom();
     }
 
-    public float get1Px() {
+    public float get1PxWidth() {
         return pixelWidth;
     }
 
+    public float get1PxHeight() {
+        return pixelHeight;
+    }
+
     private void update1Px() {
-        this.pixelWidth = 1f / (getSheetScale() * getScale().sy());
+        this.pixelWidth = 1f / (getSheetScale() * getScale().sx());
+        this.pixelHeight = 1f / (getSheetScale() * getScale().sy());
     }
 
     protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {

@@ -20,7 +20,6 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
-import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
@@ -69,7 +68,7 @@ public abstract class SheetPainterBase {
         g.setFill(delegate.getLabelBackgroundColor());
         g.fillRect(r);
 
-        g.setStroke(delegate.getLabelBorderColor(), delegate.getLabelBorderWidth()*delegate.get1Px());
+        g.setStroke(delegate.getLabelBorderColor(), delegate.getLabelBorderWidth()*delegate.get1PxWidth());
         g.strokeRect(r);
 
         g.setFont(delegate.getLabelFont());
@@ -131,7 +130,7 @@ public abstract class SheetPainterBase {
                     SheetViewDelegate delegate = getDelegate();
                     Rectangle2f rect = delegate.getCellRect(lc);
                     LOGGER.trace("drawing selection rectangle: {}", rect);
-                    g.setStroke(delegate.getSelectionColor(), delegate.getSelectionStrokeWidth()* delegate.get1Px());
+                    g.setStroke(delegate.getSelectionColor(), delegate.getSelectionStrokeWidth()* delegate.get1PxWidth());
                     g.strokeRect(rect);
                 });
     }
@@ -188,7 +187,7 @@ public abstract class SheetPainterBase {
         SheetViewDelegate.VisibleArea va = delegate.getVisibleAreaInSheet(g);
         LOGGER.trace("draw labels - visible area: {}", va);
 
-        g.setStroke(delegate.getGridColor(), delegate.get1Px());
+        g.setStroke(delegate.getGridColor(), delegate.get1PxWidth());
 
         float w = getDelegate().getSheetWidthInPoints();
         float h = getDelegate().getSheetHeightInPoints();
@@ -207,10 +206,6 @@ public abstract class SheetPainterBase {
             float y = 0;
             g.strokeLine(x, 0, x, h);
         }
-    }
-
-    protected Color getGridColor() {
-        return getDelegate().getGridColor();
     }
 
     /**

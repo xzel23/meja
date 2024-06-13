@@ -187,13 +187,14 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 svDelegate.getSheetPainter().drawSheet(sg);
 
                 // draw split lines
-                sg.setStroke(Color.BLACK, svDelegate.get1Px());
                 if (ssvDelegate.hasHLine()) {
-                    float ySplit = svDelegate.getRowPos(svDelegate.getSplitRow()) + 1f / svDelegate.getScale().sy();
+                    float ySplit = svDelegate.getRowPos(svDelegate.getSplitRow()) + svDelegate.get1PxWidth();
+                    sg.setStroke(Color.BLACK, svDelegate.get1PxHeight());
                     sg.strokeLine(-svDelegate.getRowLabelWidth(), ySplit, svDelegate.getSheetWidthInPoints(), ySplit);
                 }
                 if (ssvDelegate.hasVLine()) {
-                    float xSplit = svDelegate.getColumnPos(svDelegate.getSplitColumn()) + 1f / svDelegate.getScale().sy();
+                    float xSplit = svDelegate.getColumnPos(svDelegate.getSplitColumn()) + svDelegate.get1PxWidth();
+                    sg.setStroke(Color.BLACK, svDelegate.get1PxWidth());
                     sg.strokeLine(xSplit, -svDelegate.getColumnLabelHeight(), xSplit, svDelegate.getSheetHeightInPoints());
                 }
             });

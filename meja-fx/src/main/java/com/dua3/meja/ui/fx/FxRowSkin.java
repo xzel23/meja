@@ -49,11 +49,13 @@ public class FxRowSkin implements Skin<FxRow> {
         g.fillRect(g.getBounds());
 
         // draw grid lines
-        g.setStroke(delegate.getGridColor(), delegate.get1Px());
+        g.setStroke(delegate.getGridColor(), delegate.get1PxWidth());
         g.strokeLine(0, h, w, h);
+        g.setStroke(delegate.getGridColor(), delegate.get1PxHeight());
         g.strokeLine(0, 0, w, 0);
         for (int j=0; j<delegate.getColumnCount(); j++) {
             float x = delegate.getColumnPos(j);
+            g.setStroke(delegate.getGridColor(), delegate.get1PxWidth());
             g.strokeLine(x, 0, x, h);
         }
         g.strokeLine(w, 0, w, h);
