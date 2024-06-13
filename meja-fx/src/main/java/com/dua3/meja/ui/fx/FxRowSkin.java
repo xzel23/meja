@@ -68,7 +68,7 @@ public class FxRowSkin implements Skin<FxRow> {
         //  draw cells
         g.setTransformation(AffineTransformation2f.translate(0, -delegate.getRowPos(row.getRowNumber())));
         for (int j=0; j<delegate.getColumnCount(); j++) {
-            row.getCellIfExists(j).ifPresent(cell -> cr.drawCell(g, cell));
+            row.getCellIfExists(j).ifPresent(cell -> cr.drawCell(g, cell.getLogicalCell()));
         }
     }
 
