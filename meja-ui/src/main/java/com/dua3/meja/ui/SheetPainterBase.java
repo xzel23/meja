@@ -193,7 +193,7 @@ public abstract class SheetPainterBase {
 
         // determine visible rows and columns
         SheetViewDelegate.VisibleArea va = delegate.getVisibleAreaInSheet(g);
-        LOGGER.trace("draw labels - visible area: {}", va);
+        LOGGER.trace("drawDrid() - visible area: {}", va);
 
         g.setStroke(delegate.getGridColor(), delegate.get1PxWidth());
 

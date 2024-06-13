@@ -3,8 +3,8 @@ package com.dua3.meja.model;
 import com.dua3.cabe.annotations.Nullable;
 
 public interface Event<T> {
-    public T source();
-    public String type();
+    T source();
+    String type();
 
     abstract class AbstractEvent<T> implements Event<T> {
         private final T source;

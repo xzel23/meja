@@ -102,8 +102,7 @@ public interface Graphics {
     default void drawText(CharSequence text, float x, float y, HAnchor hAnchor, VAnchor vAnchor) {
         Rectangle2f r = getTextDimension(text);
 
-        float tx = 0;
-        float ty = 0;
+        float tx, ty;
 
         tx = switch (hAnchor) {
             case LEFT -> x;
@@ -220,20 +219,18 @@ public interface Graphics {
             textHeight += lineHeight;
             baseLine = lineBaseLine;
         }
-        FragmentedText fragments = new FragmentedText(fragmentLines, textWidth, textHeight, baseLine);
-        return fragments;
+        return new FragmentedText(fragmentLines, textWidth, textHeight, baseLine);
     }
 
     private void renderFragments(Rectangle2f cr, Alignment hAlign, VerticalAlignment vAlign, float textWidth, float textHeight, float baseLine, List<List<Fragment>> fragmentLines) {
         float y = switch (vAlign) {
-            case TOP -> cr.yMin();
+            case TOP, DISTRIBUTED -> cr.yMin();
             case MIDDLE -> cr.yCenter() - textHeight /2;
             case BOTTOM -> y = cr.yMax() - textHeight;
-            case DISTRIBUTED -> cr.yMin();
         };
         float fillerHeight = vAlign == VerticalAlignment.DISTRIBUTED ?  (cr.height()- textHeight)/Math.max(1, fragmentLines.size()-1) : 0f;
 
-        record LineStatistics(float text, float whiteSpace, int nSpace) {};
+        record LineStatistics(float text, float whiteSpace, int nSpace) {}
         for (List<Fragment> fragments : fragmentLines) {
             // determine the number and size of whitespace and text fragments
             LineStatistics fi = fragments.stream().map(fragment -> {

@@ -31,6 +31,7 @@ import java.util.function.IntFunction;
  */
 public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, ReadWriteLock {
     private static final Logger LOG = LogManager.getLogger(SheetViewDelegate.class);
+    public static final int DEFAULT_SELECTION_STROKE_WIDTH = 2;
 
     private final SheetView owner;
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -60,7 +61,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     /**
      * Width of the selection rectangle borders.
      */
-    private float SELECTION_STROKE_WIDTH = 2;
+    private float selectionStrokeWidth = DEFAULT_SELECTION_STROKE_WIDTH;
 
     /**
      * Array with column positions (dx-axis) in pixels.
@@ -130,7 +131,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public float getSelectionStrokeWidth() {
-        return SELECTION_STROKE_WIDTH;
+        return selectionStrokeWidth;
     }
 
     /**
@@ -489,7 +490,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public boolean setCurrentCell(Cell cell) {
-        return sheet == null ? false : sheet.setCurrentCell(cell);
+        return sheet != null && sheet.setCurrentCell(cell);
     }
 
     public void setRowNames(IntFunction<String> rowNames) {

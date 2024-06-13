@@ -25,7 +25,9 @@ public class FxRow extends IndexedCell<Row> {
 
     public double getRowHeight() {
         int idx = getIndex();
-        return displayScale.sy() * (idx < 0 || idx >=rows.size() ? delegate.getDefaultRowHeight() : delegate.getRowHeightInPoints(rows.get(idx).getRowNumber()));
+        return displayScale.sy() * (idx < 0 || idx >=rows.size()
+                ? delegate.getDefaultRowHeight()
+                : delegate.getRowHeightInPoints(rows.get(idx).getRowNumber()));
     }
 
     @Override
