@@ -130,8 +130,16 @@ public abstract class SheetPainterBase {
                     SheetViewDelegate delegate = getDelegate();
                     Rectangle2f rect = delegate.getCellRect(lc);
                     LOGGER.trace("drawing selection rectangle: {}", rect);
-                    g.setStroke(delegate.getSelectionColor(), delegate.getSelectionStrokeWidth()* delegate.get1PxWidth());
+
+                    float strokeWidth = delegate.getSelectionStrokeWidth();
+
+                    g.setStroke(delegate.getSelectionColor(), strokeWidth * delegate.get1PxWidth());
                     g.strokeRect(rect);
+
+                    if (strokeWidth > 1) {
+                        g.setStroke(delegate.getSelectionColor().brighter(), delegate.get1PxWidth());
+                        g.strokeRect(rect.addMargin(delegate.get1PxWidth() * strokeWidth/2));
+                    }
                 });
     }
 
