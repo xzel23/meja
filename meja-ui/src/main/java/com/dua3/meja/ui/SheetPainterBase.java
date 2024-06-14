@@ -138,6 +138,8 @@ public abstract class SheetPainterBase {
 
                     if (strokeWidth > 1) {
                         g.setStroke(delegate.getSelectionColor().brighter(), delegate.get1PxWidth());
+                        g.strokeRect(rect.addMargin(-delegate.get1PxWidth() * strokeWidth/2));
+                        g.setStroke(delegate.getSelectionColor().darker(), delegate.get1PxWidth());
                         g.strokeRect(rect.addMargin(delegate.get1PxWidth() * strokeWidth/2));
                     }
                 });
