@@ -13,6 +13,7 @@ import com.dua3.utility.text.FontUtil;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
@@ -42,6 +43,9 @@ public class SwingGraphics implements Graphics {
         this.parentBounds = bounds;
         this.parentTransform = convert(g2d.getTransform());
         this.transform = AffineTransformation2f.IDENTITY;
+
+        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     }
 
     @Override

@@ -145,18 +145,6 @@ public abstract class SheetPainterBase {
                 });
     }
 
-    /**
-     * Get display coordinates of selection rectangle.
-     *
-     * @param cell the selected cell
-     * @return selection rectangle in display coordinates
-     */
-    private Rectangle2f getSelectionRect(Cell cell) {
-        Rectangle2f cellRect = getDelegate().getCellRect(cell.getLogicalCell());
-        float extra = getDelegate().getSelectionStrokeWidth() / 2;
-        return cellRect.addMargin(extra);
-    }
-
     protected void drawLabels(Graphics g) {
         LOGGER.trace("drawLabels()");
         SheetViewDelegate delegate = getDelegate();
@@ -213,7 +201,6 @@ public abstract class SheetPainterBase {
         LOGGER.trace("draw vertical grid lines");
         for (int j = va.startColumn(); j <= va.endColumn(); j++) {
             float x = getDelegate().getColumnPos(j);
-            float y = 0;
             g.strokeLine(x, 0, x, h);
         }
     }
