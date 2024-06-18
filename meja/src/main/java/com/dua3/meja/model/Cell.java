@@ -586,4 +586,40 @@ public interface Cell {
 
         return this;
     }
+
+    /**
+     * Returns the effective border style for the specified direction.
+     * The effective border style is determined by the cell's border style and the border style of its neighboring cell.
+     *
+     * @param direction the direction of the border
+     * @return the effective border style for the specified direction
+     */
+    default BorderStyle getEffectiveBorderStyle(Direction direction) {
+        BorderStyle style = getLogicalCell().getCellStyle().getBorderStyle(direction);
+        // When drawing the right or lower edge of a cell, the border style of the current cell is used
+        if (!style.isNone() && direction==Direction.EAST || direction==Direction.SOUTH) {
+            return style;
+        }
+
+        // else it is determined by the neighboring cell's style
+        return  getNeighboringCell(direction)
+                .map(Cell::getCellStyle)
+                .map(cs -> cs.getBorderStyle(direction.inverse()))
+                .orElse(style);
+    }
+
+    /**
+     * Returns an optional neighboring cell based on the given direction.
+     *
+     * @param direction the direction in which to find the neighboring cell
+     * @return an optional containing the neighboring cell if it exists, otherwise an empty optional
+     */
+    private Optional<? extends Cell> getNeighboringCell(Direction direction) {
+        return switch (direction) {
+            case EAST -> getRow().getCellIfExists(getColumnNumber() + 1);
+            case WEST -> getRow().getCellIfExists(getColumnNumber() - 1);
+            case NORTH -> getSheet().getCellIfExists(getRowNumber() - 1, getColumnNumber());
+            case SOUTH -> getSheet().getCellIfExists(getRowNumber() + 1, getColumnNumber());
+        };
+    }
 }

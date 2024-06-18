@@ -53,4 +53,18 @@ public enum Direction {
     public String getCssName() {
         return cssName;
     }
+
+    /**
+     * Returns the inverse direction of the current direction.
+     *
+     * @return The inverse direction.
+     */
+    public Direction inverse() {
+        return switch (this) {
+            case NORTH -> SOUTH;
+            case EAST -> WEST;
+            case SOUTH -> NORTH;
+            case WEST -> EAST;
+        };
+    }
 }

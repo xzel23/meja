@@ -3,6 +3,7 @@ package com.dua3.meja.ui.swing;
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +14,6 @@ import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import java.awt.Container;
 import java.awt.Point;
-import java.util.function.IntSupplier;
 
 final class SwingSheetPane extends JScrollPane {
     private static final Logger LOG = LogManager.getLogger(SwingSheetPane.class);
@@ -27,19 +27,11 @@ final class SwingSheetPane extends JScrollPane {
 
     SwingSheetPane(SwingSheetViewDelegate svDelegate) {
         this.svDelegate = svDelegate;
-        // define row and column ranges and set up segments
-        final IntSupplier startColumn = () -> 0;
-        final IntSupplier splitColumn = () -> svDelegate.getSheet().map(Sheet::getSplitColumn).orElse(0);
-        final IntSupplier endColumn = () -> svDelegate.getSheet().map(Sheet::getColumnCount).orElse(0);
 
-        final IntSupplier startRow = () -> 0;
-        final IntSupplier splitRow = () -> svDelegate.getSheet().map(Sheet::getSplitRow).orElse(0);
-        final IntSupplier endRow = () -> svDelegate.getSheet().map(Sheet::getRowCount).orElse(0);
-
-        topLeftQuadrant = new SwingSegmentView(svDelegate, startRow, splitRow, startColumn, splitColumn);
-        topRightQuadrant = new SwingSegmentView(svDelegate, startRow, splitRow, splitColumn, endColumn);
-        bottomLeftQuadrant = new SwingSegmentView(svDelegate, splitRow, endRow, startColumn, splitColumn);
-        bottomRightQuadrant = new SwingSegmentView(svDelegate, splitRow, endRow, splitColumn, endColumn);
+        topLeftQuadrant = new SwingSegmentView(svDelegate, SheetView.Quadrant.TOP_LEFT);
+        topRightQuadrant = new SwingSegmentView(svDelegate, SheetView.Quadrant.TOP_RIGHT);
+        bottomLeftQuadrant = new SwingSegmentView(svDelegate, SheetView.Quadrant.BOTTOM_LEFT);
+        bottomRightQuadrant = new SwingSegmentView(svDelegate, SheetView.Quadrant.BOTTOM_RIGHT);
 
         init();
     }

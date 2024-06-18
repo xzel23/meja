@@ -20,6 +20,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
@@ -45,11 +46,11 @@ public abstract class SheetPainterBase {
     private Sheet sheet;
 
     public float getRowLabelWidth() {
-        return getDelegate().getRowLabelWidth();
+        return getDelegate().getRowLabelWidthInPoints();
     }
 
     public float getColumnLabelHeight() {
-        return getDelegate().getColumnLabelHeight();
+        return getDelegate().getColumnLabelHeightInPoints();
     }
 
     public void drawBackground(Graphics g) {
@@ -62,18 +63,6 @@ public abstract class SheetPainterBase {
         g.setTransformation(t);
     }
 
-    public void drawLabel(Graphics g, Rectangle2f r, String text) {
-        SheetViewDelegate delegate = getDelegate();
-
-        g.setFill(delegate.getLabelBackgroundColor());
-        g.fillRect(r);
-
-        g.setStroke(delegate.getLabelBorderColor(), delegate.getLabelBorderWidth()*delegate.get1PxWidth());
-        g.strokeRect(r);
-
-        g.setFont(delegate.getLabelFont());
-        g.drawText(text, r.xCenter(), r.yCenter(), Graphics.HAnchor.CENTER, Graphics.VAnchor.MIDDLE);
-    }
 
     protected SheetPainterBase(CellRenderer cellRenderer) {
         this.cellRenderer = cellRenderer;
@@ -98,6 +87,7 @@ public abstract class SheetPainterBase {
             drawGrid(g);
             drawCells(g);
             drawSelection(g);
+            drawSplitLines(g);
             g.endDraw();
         } finally {
             readLock.unlock();
@@ -133,14 +123,14 @@ public abstract class SheetPainterBase {
 
                     float strokeWidth = delegate.getSelectionStrokeWidth();
 
-                    g.setStroke(delegate.getSelectionColor(), strokeWidth * delegate.get1PxWidth());
+                    g.setStroke(delegate.getSelectionColor(), strokeWidth * delegate.get1PxWidthInPoints());
                     g.strokeRect(rect);
 
                     if (strokeWidth > 1) {
-                        g.setStroke(delegate.getSelectionColor().brighter(), delegate.get1PxWidth());
-                        g.strokeRect(rect.addMargin(-delegate.get1PxWidth() * strokeWidth/2));
-                        g.setStroke(delegate.getSelectionColor().darker(), delegate.get1PxWidth());
-                        g.strokeRect(rect.addMargin(delegate.get1PxWidth() * strokeWidth/2));
+                        g.setStroke(delegate.getSelectionColor().brighter(), delegate.get1PxWidthInPoints());
+                        g.strokeRect(rect.addMargin(-delegate.get1PxWidthInPoints() * strokeWidth/2));
+                        g.setStroke(delegate.getSelectionColor().darker(), delegate.get1PxWidthInPoints());
+                        g.strokeRect(rect.addMargin(delegate.get1PxWidthInPoints() * strokeWidth/2));
                     }
                 });
     }
@@ -162,7 +152,7 @@ public abstract class SheetPainterBase {
             float h = getDelegate().getRowPos(i + 1) - y;
             Rectangle2f r = new Rectangle2f(x, y, w, h);
             String text = delegate.getRowName(i);
-            drawLabel(g, r, text);
+            delegate.drawLabel(g, r, text);
         }
 
         // draw column labels
@@ -173,7 +163,7 @@ public abstract class SheetPainterBase {
             float w = getDelegate().getColumnPos(j + 1) - x;
             Rectangle2f r = new Rectangle2f(x, y, w, getColumnLabelHeight());
             String text = delegate.getColumnName(j);
-            drawLabel(g, r, text);
+            delegate.drawLabel(g, r, text);
         }
     }
 
@@ -185,19 +175,19 @@ public abstract class SheetPainterBase {
         SheetViewDelegate.VisibleArea va = delegate.getVisibleAreaInSheet(g);
         LOGGER.trace("drawDrid() - visible area: {}", va);
 
-        g.setStroke(delegate.getGridColor(), delegate.get1PxWidth());
+        g.setStroke(delegate.getGridColor(), delegate.get1PxWidthInPoints());
 
         float w = getDelegate().getSheetWidthInPoints();
         float h = getDelegate().getSheetHeightInPoints();
 
-        // draw row labels
+        // draw horizontal grid lines
         LOGGER.trace("draw horizontal grid lines");
         for (int i = va.startRow(); i <= va.endRow(); i++) {
             float y = getDelegate().getRowPos(i);
             g.strokeLine(0, y, w, y);
         }
 
-        // draw column labels
+        // draw vertical grid lines
         LOGGER.trace("draw vertical grid lines");
         for (int j = va.startColumn(); j <= va.endColumn(); j++) {
             float x = getDelegate().getColumnPos(j);
@@ -300,4 +290,24 @@ public abstract class SheetPainterBase {
             }
         }
     }
+
+    protected void drawSplitLines(Graphics g) {
+        LOGGER.trace("drawSplitLines()");
+        SheetViewDelegate delegate = getDelegate();
+
+        int splitColumn = delegate.getSplitColumn();
+        if (splitColumn > 0) {
+            g.setStroke(Color.BLACK, getDelegate().get1PxWidthInPoints());
+            float x = getDelegate().getColumnPos(splitColumn);
+            g.strokeLine(x, -getColumnLabelHeight(), x, getColumnLabelHeight() + delegate.getSheetHeightInPoints());
+        }
+
+        int splitRow = delegate.getSplitRow();
+        if (splitRow > 0) {
+            g.setStroke(Color.BLACK, getDelegate().get1PxHeightInPoints());
+            float y = getDelegate().getRowPos(splitRow);
+            g.strokeLine(-getRowLabelWidth(), y, getRowLabelWidth() + delegate.getSheetWidthInPoints(), y);
+        }
+    }
+
 }

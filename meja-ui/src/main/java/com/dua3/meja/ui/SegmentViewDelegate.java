@@ -5,61 +5,34 @@ import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Scale2f;
 
 import java.util.concurrent.locks.Lock;
-import java.util.function.IntSupplier;
 
-public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
+public class SegmentViewDelegate {
     private final SegmentView owner;
-    private final SVD svDelegate;
-    private final IntSupplier startRow;
-    private final IntSupplier endRow;
-    private final IntSupplier startColumn;
-    private final IntSupplier endColumn;
+    private final SheetViewDelegate sheetViewDelegate;
+    private final SheetView.Quadrant quadrant;
+    private float offsetX;
+    private float offsetY;
+    private float widthInPoints;
+    private float heightInPoints;
+    private float widthInPixels;
+    private float heightInPixels;
 
     public SegmentViewDelegate(
             SegmentView owner,
-            SVD sheetViewDelegate,
-            IntSupplier startRow,
-            IntSupplier endRow,
-            IntSupplier startColumn,
-            IntSupplier endColumn
+            SheetViewDelegate sheetViewDelegate,
+            SheetView.Quadrant quadrant
     ) {
         this.owner = owner;
-        this.svDelegate = sheetViewDelegate;
-        this.startRow = startRow;
-        this.endRow = endRow;
-        this.startColumn = startColumn;
-        this.endColumn = endColumn;
+        this.sheetViewDelegate = sheetViewDelegate;
+        this.quadrant = quadrant;
     }
 
-    public SVD getSvDelegate() {
-        return svDelegate;
-    }
-
-    public int getBeginColumn() {
-        return getStartColumn();
-    }
-
-    public int getBeginRow() {
-        return getStartRow();
-    }
-
-    public int getEndColumn() {
-        return endColumn.getAsInt();
-    }
-
-    public int getEndRow() {
-        return endRow.getAsInt();
+    public SheetViewDelegate getSheetViewDelegate() {
+        return sheetViewDelegate;
     }
 
     public Sheet getSheet() {
-        return svDelegate.getSheet().orElse(null);
-    }
-
-    public void setViewSize(float wd, float hd) {
-        Scale2f s = getSvDelegate().getScale();
-        float w = s.sx() * wd;
-        float h = s.sy() * hd;
-        owner.setViewSizeOnDisplay(w,h);
+        return sheetViewDelegate.getSheet().orElse(null);
     }
 
     /**
@@ -68,7 +41,7 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
      * @return the x-offset
      */
     public float getXOffset() {
-        return (isLeftOfSplit() ? svDelegate.getRowLabelWidth() : 0) - svDelegate.getColumnPos(getBeginColumn());
+        return offsetX;
     }
 
     /**
@@ -77,17 +50,33 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
      * @return the y-offset
      */
     public float getYOffset() {
-        return (isAboveSplit() ? svDelegate.getColumnLabelHeight() : 0) - svDelegate.getRowPos(getBeginRow());
+        return offsetY;
     }
 
     public float getXMinInViewCoordinates() {
-        float x = svDelegate.getColumnPos(getBeginColumn());
+        float x = sheetViewDelegate.getColumnPos(getStartColumn());
         return getTransformation().transform(x,0).x();
     }
 
     public float getYMinInViewCoordinates() {
-        float y = svDelegate.getRowPos(getBeginRow());
+        float y = sheetViewDelegate.getRowPos(getStartRow());
         return getTransformation().transform(0,y).y();
+    }
+
+    public float getWidthInPoints() {
+        return widthInPoints;
+    }
+
+    public float getHeightInPoints() {
+        return heightInPoints;
+    }
+
+    public float getWidthInPixels() {
+        return widthInPixels;
+    }
+
+    public float getHeightInPixels() {
+        return heightInPixels;
     }
 
     public boolean isLeftOfSplit() {
@@ -99,11 +88,11 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
     }
 
     public boolean hasHLine() {
-        return getEndRow() > 0 && getEndRow() < getSheet().getLastRowNum();
+        return isAboveSplit() && getSheet().getSplitRow() > 0;
     }
 
     public boolean hasVLine() {
-        return getEndColumn() > 0 && getEndColumn() < getSheet().getLastColNum();
+        return isLeftOfSplit() && getSheet().getSplitColumn() > 0;
     }
 
     public void updateLayout() {
@@ -116,36 +105,37 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
         lock.lock();
         try {
             // the width is the width for the labels showing row names ...
-            float width = isLeftOfSplit() ? svDelegate.getRowLabelWidth() : svDelegate.get1PxWidth();
+            float width = isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0;
+
+            // ... plus 1 Pixel for the splitline if there's a vertical split, and we are left of the split
+            width += hasVLine() ? sheetViewDelegate.get1PxWidthInPoints() : 0;
 
             // ... plus the width of the columns displayed ...
-            width += svDelegate.getColumnPos(getMaxColumn()+1) - svDelegate.getColumnPos(getMinColumn());
-
-            // ... plus 1 pixel for drawing a line at the split position.
-            if (hasVLine()) {
-                width += svDelegate.get1PxWidth();
-            }
+            width += sheetViewDelegate.getColumnPos(getEndColumn()) - sheetViewDelegate.getColumnPos(getStartColumn());
 
             // the height is the height for the labels showing column names ...
-            float height = isAboveSplit() ? svDelegate.getColumnLabelHeight() : 1;
+            float height = isAboveSplit() ? sheetViewDelegate.getColumnLabelHeightInPoints() : 0;
+
+            // ... plus 1 Pixel for the splitline if there's a horizontal split and we are above of the split
+            height += hasHLine() ? sheetViewDelegate.get1PxHeightInPoints() : 0;
 
             // ... plus the height of the rows displayed ...
-            height += svDelegate.getRowPos(getMaxRow()+1) - svDelegate.getRowPos(getMinRow());
+            height += sheetViewDelegate.getRowPos(getEndRow()) - sheetViewDelegate.getRowPos(getStartRow());
 
-            // ... plus 1 pixel for drawing a line below the lines above the
-            // split.
-            if (hasHLine()) {
-                height += svDelegate.get1PxWidth();
-            }
+            offsetX = (isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0) - sheetViewDelegate.getColumnPos(getStartColumn());
+            offsetY = (isAboveSplit() ? sheetViewDelegate.getColumnLabelHeightInPoints() : 0) - sheetViewDelegate.getRowPos(getStartRow());
 
-            setViewSize(width, height);
+            this.widthInPoints = width;
+            this.heightInPoints = height;
+
+            Scale2f s = getSheetViewDelegate().getScale();
+            this.widthInPixels = s.sx() * width;
+            this.heightInPixels = s.sy() * height;
+
+            owner.setViewSizeOnDisplay(widthInPixels, heightInPixels);
         } finally {
             lock.unlock();
         }
-    }
-
-    private int getStartRow() {
-        return startRow.getAsInt();
     }
 
     /**
@@ -154,30 +144,26 @@ public class SegmentViewDelegate<SVD extends SheetViewDelegate> {
      *
      * @return row index
      */
-    private int getMinRow() {
-        return isAboveSplit() ? 0 : getSheet().getSplitRow();
+    public int getStartColumn() {
+        return quadrant.startColumn(sheetViewDelegate.getColumnCount(), sheetViewDelegate.getSplitColumn());
     }
 
-    private int getMaxRow() {
-        return isAboveSplit() ? getSheet().getSplitRow()-1 : getSheet().getLastRowNum();
+    public int getStartRow() {
+        return quadrant.startRow(sheetViewDelegate.getRowCount(), sheetViewDelegate.getSplitRow());
     }
 
-    private int getStartColumn() {
-        return startColumn.getAsInt();
+    public int getEndColumn() {
+        return quadrant.endColumn(sheetViewDelegate.getColumnCount(), sheetViewDelegate.getSplitColumn());
     }
 
-    private int getMinColumn() {
-        return isLeftOfSplit() ? 0 : getSheet().getSplitColumn();
-    }
-
-    private int getMaxColumn() {
-        return isLeftOfSplit() ? getSheet().getSplitColumn()-1 : getSheet().getLastColNum();
+    public int getEndRow() {
+        return quadrant.endRow(sheetViewDelegate.getRowCount(), sheetViewDelegate.getSplitRow());
     }
 
     public AffineTransformation2f getTransformation() {
         return AffineTransformation2f.combine(
                 AffineTransformation2f.translate(getXOffset(), getYOffset()),
-                svDelegate.getTransformation()
+                sheetViewDelegate.getTransformation()
         );
     }
 

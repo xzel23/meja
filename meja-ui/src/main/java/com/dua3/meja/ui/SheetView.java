@@ -19,6 +19,7 @@ import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
+import com.dua3.utility.math.geometry.Scale2f;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -91,6 +92,8 @@ public interface SheetView {
 
     Locale getLocale();
 
+    Scale2f getDisplayScale();
+
     /**
      * Actions for key bindings.
      */
@@ -134,4 +137,44 @@ public interface SheetView {
     default void movePage(Direction direction) {
         getDelegate().movePage(direction);
     }
+
+    enum Quadrant {
+        TOP_LEFT(true, true),
+        TOP_RIGHT(true, false),
+        BOTTOM_LEFT(false, true),
+        BOTTOM_RIGHT(false, false);
+
+        private final boolean isTop;
+        private final boolean isLeft;
+
+        Quadrant(boolean isTop, boolean isLeft) {
+            this.isTop = isTop;
+            this.isLeft = isLeft;
+        }
+
+        public boolean isTop() {
+            return isTop;
+        }
+
+        public boolean isLeft() {
+            return isLeft;
+        }
+
+        public int startColumn(int columnCount, int splitColumn) {
+            return isLeft ? 0 : splitColumn;
+        }
+
+        public int endColumn(int columnCount, int splitColumn) {
+            return isLeft ? splitColumn : columnCount;
+        }
+
+        public int startRow(int rowCount, int splitRow) {
+            return isTop ? 0 : splitRow;
+        }
+
+        public int endRow(int rowCount, int splitRow) {
+            return isTop ? splitRow : rowCount;
+        }
+
+     }
 }

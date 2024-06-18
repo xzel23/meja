@@ -258,7 +258,7 @@ public abstract class PoiCellStyle implements CellStyle {
             case NONE -> 0;
             case THIN -> 0.75f;
             case MEDIUM, MEDIUM_DASHED, MEDIUM_DASH_DOT, MEDIUM_DASH_DOT_DOT -> 1.75f;
-            case THICK -> 2;
+            case THICK -> 2.25f;
             case DASHED, DOTTED, DOUBLE, HAIR, DASH_DOT, DASH_DOT_DOT, SLANTED_DASH_DOT -> 1;
         };
     }

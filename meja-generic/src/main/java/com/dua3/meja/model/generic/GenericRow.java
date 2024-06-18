@@ -15,14 +15,14 @@
  */
 package com.dua3.meja.model.generic;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Optional;
-
 import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.util.IteratorAdapter;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * @author Axel Howind (axel@dua3.com)
@@ -57,7 +57,7 @@ public class GenericRow extends AbstractRow {
 
     @Override
     public Optional<GenericCell> getCellIfExists(int col) {
-        return Optional.ofNullable(col < cells.size() ? cells.get(col) : null);
+        return Optional.ofNullable(0 <= col && col < cells.size() ? cells.get(col) : null);
     }
 
     @Override

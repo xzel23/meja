@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.IntFunction;
 
 /**
@@ -34,7 +33,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     public static final int DEFAULT_SELECTION_STROKE_WIDTH = 2;
 
     private final SheetView owner;
-    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     private boolean layoutChanged = true;
 
@@ -46,12 +44,12 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     /**
      * Horizontal padding.
      */
-    private static final float PADDING_X = 2;
+    private static final float PADDING_X_IN_POINTS = 2;
 
     /**
      * Vertical padding.
      */
-    private static final float PADDING_Y = 1;
+    private static final float PADDING_Y_IN_POINTS = 1;
 
     /**
      * Color used to draw the selection rectangle.
@@ -77,23 +75,23 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
 
     private float sheetWidthInPoints;
     private float rowLabelWidth;
-    private float columnLabelHeight;
-    private float defaultRowHeight = 12f;
+    private float columnLabelHeightInPoints;
+    private float defaultRowHeightInPoints = 12f;
     private Font labelFont = new Font().withSize(8);
     private Color labelBackgroundColor = Color.WHITESMOKE;
     private Color labelBorderColor = labelBackgroundColor.darker();
-    private float labelBorderWidth = 1f;
-    private float pixelWidth = 1f;
-    private float pixelHeight = 1f;
+    private float labelBorderWidthInPixels = 1f;
+    private float pixelWidthInPoints = 1f;
+    private float pixelHeightInPoints = 1f;
 
     @Override
     public Lock readLock() {
-        return readWriteLock.readLock();
+        return sheet.readLock();
     }
 
     @Override
     public Lock writeLock() {
-        return readWriteLock.writeLock();
+        return sheet.writeLock();
     }
 
     public float getSheetHeightInPoints() {
@@ -156,6 +154,10 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      */
     private Scale2f scale = Scale2f.identity();
     /**
+     * The scale used to calculate screen sizes dependent of display resolution.
+     */
+    private Scale2f displayScale = Scale2f.identity();
+    /**
      * The color to use for the grid lines.
      */
     private transient Color gridColor = Color.LIGHTGRAY;
@@ -170,6 +172,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
 
     public SheetViewDelegate(SheetView owner) {
         this.owner = owner;
+        this.displayScale = owner.getDisplayScale();
         updateLayout();
     }
 
@@ -378,43 +381,49 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public void updateLayout() {
+        if (!layoutChanged) {
+            return;
+        }
+
+        if (sheet == null) {
+            sheetWidthInPoints = 0;
+            sheetHeightInPoints = 0;
+            rowPos = new float[]{0};
+            columnPos = new float[]{0};
+            return;
+        }
+
         Lock lock = writeLock();
         lock.lock();
         try {
-            if (sheet == null) {
-                sheetWidthInPoints = 0;
-                sheetHeightInPoints = 0;
-                rowPos = new float[]{0};
-                columnPos = new float[]{0};
-            } else {
-                update1Px();
+            this.pixelWidthInPoints = 1f / scale.sx();
+            this.pixelHeightInPoints = 1f / scale.sy();
 
-                // determine row and column positions
-                sheetHeightInPoints = 0;
-                rowPos = new float[2 + sheet.getLastRowNum()];
-                rowPos[0] = 0;
-                for (int i = 1; i < rowPos.length; i++) {
-                    sheetHeightInPoints += sheet.getRowHeight(i - 1);
-                    rowPos[i] = sheetHeightInPoints;
-                }
-
-                sheetWidthInPoints = 0;
-                columnPos = new float[2 + sheet.getLastColNum()];
-                columnPos[0] = 0;
-                for (int j = 1; j < columnPos.length; j++) {
-                    sheetWidthInPoints += sheet.getColumnWidth(j - 1);
-                    columnPos[j] = sheetWidthInPoints;
-                }
-
-                // create a string with the maximum number of digits needed to
-                // represent the highest row number, using only the digit '9'.
-                String sMax = "9".repeat(String.valueOf(sheet.getLastRowNum()).length());
-                Rectangle2f dim = calculateLabelDimension(sMax);
-                rowLabelWidth = dim.width() + 2 * PADDING_X;
-                columnLabelHeight = dim.height() + 2 * PADDING_Y;
+            // determine row and column positions
+            sheetHeightInPoints = 0;
+            rowPos = new float[2 + sheet.getLastRowNum()];
+            rowPos[0] = 0;
+            for (int i = 1; i < rowPos.length; i++) {
+                sheetHeightInPoints += sheet.getRowHeight(i - 1);
+                rowPos[i] = sheetHeightInPoints;
             }
-        } finally {
+
+            sheetWidthInPoints = 0;
+            columnPos = new float[2 + sheet.getLastColNum()];
+            columnPos[0] = 0;
+            for (int j = 1; j < columnPos.length; j++) {
+                sheetWidthInPoints += sheet.getColumnWidth(j - 1);
+                columnPos[j] = sheetWidthInPoints;
+            }
+
+            // create a string with the maximum number of digits needed to
+            // represent the highest row number, using only the digit '9'.
+            String sMax = "9".repeat(String.valueOf(sheet.getLastRowNum()).length());
+            Rectangle2f dim = calculateLabelDimension(sMax);
+            rowLabelWidth = dim.width() + 2 * PADDING_X_IN_POINTS;
+            columnLabelHeightInPoints = dim.height() + 2 * PADDING_Y_IN_POINTS;
             layoutChanged = false;
+        } finally {
             lock.unlock();
         }
     }
@@ -514,7 +523,19 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         try {
             if (!scale.equals(this.scale)) {
                 this.scale = scale;
-                update1Px();
+                markLayoutChanged();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void setDisplayScale(Scale2f displayScale) {
+        Lock lock = writeLock();
+        lock.lock();
+        try {
+            if (!displayScale.equals(this.displayScale)) {
+                this.displayScale = displayScale;
                 markLayoutChanged();
             }
         } finally {
@@ -627,7 +648,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return horizontal padding
      */
     public float getPaddingX() {
-        return PADDING_X;
+        return PADDING_X_IN_POINTS;
     }
 
     /**
@@ -636,7 +657,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return vertical padding
      */
     public float getPaddingY() {
-        return PADDING_Y;
+        return PADDING_Y_IN_POINTS;
     }
 
     protected Rectangle2f calculateLabelDimension(String text) {
@@ -668,7 +689,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      *
      * @return the width of row labels in points
      */
-    public float getRowLabelWidth() {
+    public float getRowLabelWidthInPoints() {
         return rowLabelWidth;
     }
 
@@ -677,20 +698,24 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      *
      * @return the height of cloumn labels in points
      */
-    public float getColumnLabelHeight() {
-        return columnLabelHeight;
+    public float getColumnLabelHeightInPoints() {
+        return columnLabelHeightInPoints;
     }
 
     public float getRowHeightInPoints(int i) {
         return rowPos[i+1] - rowPos[i];
     }
 
+    public float getColumnLabelHeightInPixels() {
+        return columnLabelHeightInPoints * scale.sy();
+    }
+
     public float getColumnWidthInPoints(int j) {
         return columnPos[j+1] - columnPos[j];
     }
 
-    public double getDefaultRowHeight() {
-        return defaultRowHeight;
+    public float getDefaultRowHeightInPoints() {
+        return defaultRowHeightInPoints;
     }
 
     public Locale getLocale() {
@@ -713,12 +738,16 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         this.labelBackgroundColor = labelBackgroundColor;
     }
 
-    public float getLabelBorderWidth() {
-        return labelBorderWidth;
+    public float getLabelBorderWidthInPixels() {
+        return labelBorderWidthInPixels;
     }
 
-    public void setLabelBorderWidth(float labelBorderWidth) {
-        this.labelBorderWidth = labelBorderWidth;
+    public float getLabelBorderWidthInPoints() {
+        return labelBorderWidthInPixels* get1PxWidthInPoints();
+    }
+
+    public void setLabelBorderWidthInPixels(float labelBorderWidthInPixels) {
+        this.labelBorderWidthInPixels = labelBorderWidthInPixels;
     }
 
     VisibleArea getVisibleAreaInSheet(Graphics g) {
@@ -729,21 +758,20 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         return AffineTransformation2f.scale(getScale());
     }
 
-    public float getSheetScale() {
-        return sheet == null ? 1f : sheet.getZoom();
+    public float get1PxWidthInPoints() {
+        return pixelWidthInPoints;
     }
 
-    public float get1PxWidth() {
-        return pixelWidth;
+    public float get1PxHeightInPoints() {
+        return pixelHeightInPoints;
     }
 
-    public float get1PxHeight() {
-        return pixelHeight;
+    public float getDefaultRowHeightInPixels() {
+        return getScale().sy() * defaultRowHeightInPoints;
     }
 
-    private void update1Px() {
-        this.pixelWidth = 1f / (getSheetScale() * getScale().sx());
-        this.pixelHeight = 1f / (getSheetScale() * getScale().sy());
+    public Scale2f getDisplayScale() {
+        return displayScale;
     }
 
     protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {
@@ -758,4 +786,16 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
             )).orElse(EMPTY);
         }
     }
+
+    public void drawLabel(Graphics g, Rectangle2f r, String text) {
+        g.setFill(getLabelBackgroundColor());
+        g.fillRect(r);
+
+        g.setStroke(getLabelBorderColor(), getLabelBorderWidthInPixels()* get1PxWidthInPoints());
+        g.strokeRect(r);
+
+        g.setFont(getLabelFont());
+        g.drawText(text, r.xCenter(), r.yCenter(), Graphics.HAnchor.CENTER, Graphics.VAnchor.MIDDLE);
+    }
+
 }

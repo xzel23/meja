@@ -20,4 +20,9 @@ import com.dua3.utility.data.Color;
 /**
  * Definition of a cell border.
  */
-public record BorderStyle(float width, Color color) {}
+public record BorderStyle(float width, Color color) {
+    public boolean isNone() {
+        return width == 0f;
+    }
+}
+

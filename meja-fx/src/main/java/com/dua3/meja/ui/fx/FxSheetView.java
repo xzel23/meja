@@ -5,13 +5,27 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
+import com.dua3.utility.fx.FxUtil;
+import com.dua3.utility.math.geometry.Scale2f;
+import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
+import javafx.scene.Scene;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Screen;
+import javafx.stage.Window;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.awt.Toolkit;
 import java.util.Locale;
+import java.util.concurrent.locks.Lock;
+import java.util.function.Function;
 
 public class FxSheetView extends GridPane implements SheetView {
+    private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
 
     private final FxSheetViewDelegate delegate;
 
@@ -32,23 +46,50 @@ public class FxSheetView extends GridPane implements SheetView {
         ObservableList<Row> rows = delegate.getSheet().map(ObservableSheet::new).map(s -> (ObservableList<Row>) s).orElse(FXCollections.emptyObservableList());
         delegate.updateLayout();
 
-        topLeftQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_LEFT, rows);
-        topRightQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.TOP_RIGHT, rows);
-        bottomLeftQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.BOTTOM_LEFT, rows);
-        bottomRightQuadrant = new FxSegmentView(delegate, FxSegmentView.Quadrant.BOTTOM_RIGHT, rows);
+        topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, rows);
+        topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, rows);
+        bottomLeftQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_LEFT, rows);
+        bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, rows);
+
+        // create scrollbars
+        ScrollBar hScrollbar = new ScrollBar();
+        hScrollbar.setOrientation(Orientation.HORIZONTAL);
+        ScrollBar vScrollbar = new ScrollBar();
+        vScrollbar.setOrientation(javafx.geometry.Orientation.VERTICAL);
+
+        entangleScrollBars(hScrollbar, topRightQuadrant.flow.getHScrollbar(), bottomRightQuadrant.flow.getHScrollbar());
+        entangleScrollBars(vScrollbar, bottomLeftQuadrant.flow.getVScrollbar(), bottomRightQuadrant.flow.getVScrollbar());
 
         // add to grid
         add(topLeftQuadrant, 0, 0);
         add(topRightQuadrant, 1, 0);
         add(bottomLeftQuadrant, 0, 1);
         add(bottomRightQuadrant, 1, 1);
+        add(vScrollbar,2,1);
+        add(hScrollbar,1,2);
 
-        // bind size properties
-        double wFixed = topLeftQuadrant.getMinWidth();
-        double hFixed = topLeftQuadrant.getMinHeight();
+        updateContent();
+        layout();
+    }
 
-        topRightQuadrant.prefWidthProperty().bind(widthProperty().subtract(wFixed));
-        bottomLeftQuadrant.prefHeightProperty().bind(heightProperty().subtract(hFixed));
+    private void entangleScrollBars(ScrollBar mainScrollBar, ScrollBar... dependentScrollbars) {
+        for (ScrollBar scrollbar : dependentScrollbars) {
+            entangle(ScrollBar::minProperty, mainScrollBar, scrollbar);
+            entangle(ScrollBar::maxProperty, mainScrollBar, scrollbar);
+            entangle(ScrollBar::visibleAmountProperty, mainScrollBar, scrollbar);
+            entangle(ScrollBar::valueProperty, mainScrollBar, scrollbar);
+        }
+    }
+
+    private <T, U, P extends Property<U>> void entangle(Function<T,P> s, T a, T b) {
+        entangleProperties(s.apply(a), s.apply(b));
+    }
+
+    @SafeVarargs
+    private <T, P extends Property<T>> void entangleProperties(P pMain, P... pDependent) {
+        for (P p : pDependent) {
+            p.bindBidirectional(pMain);
+        }
     }
 
     @Override
@@ -59,6 +100,14 @@ public class FxSheetView extends GridPane implements SheetView {
     @Override
     public Locale getLocale() {
         return Locale.getDefault();
+    }
+
+    @Override
+    public Scale2f getDisplayScale() {
+        Scene scene = this.getScene();
+        Window window = scene == null ? null : scene.getWindow();
+        Screen screen = window == null ? Screen.getPrimary() : FxUtil.getScreen(window);
+        return FxUtil.getDisplayScale(screen);
     }
 
     @Override
@@ -78,7 +127,33 @@ public class FxSheetView extends GridPane implements SheetView {
 
     @Override
     public void updateContent() {
+        LOG.debug("updating content");
 
+        getSheet().ifPresent(sheet -> {
+            Lock lock = delegate.writeLock();
+            lock.lock();
+            try {
+                int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+                delegate.setDisplayScale(getDisplayScale());
+                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72f));
+                delegate.updateLayout();
+
+                if (topLeftQuadrant != null) {
+                    topLeftQuadrant.refresh();
+                }
+                if (topRightQuadrant != null) {
+                    topRightQuadrant.refresh();
+                }
+                if (bottomLeftQuadrant != null) {
+                    bottomLeftQuadrant.refresh();
+                }
+                if (bottomRightQuadrant != null) {
+                    bottomRightQuadrant.refresh();
+                }
+            } finally {
+                lock.unlock();
+            }
+        });
     }
 
     @Override

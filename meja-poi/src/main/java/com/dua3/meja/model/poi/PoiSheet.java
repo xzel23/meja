@@ -21,6 +21,8 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
@@ -163,7 +165,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public Optional<PoiRow> getRowIfExists(int i) {
-        return Optional.ofNullable(i <= getLastRowNum() ? getRow(i) : null);
+        return Optional.ofNullable(0 <= i && i <= getLastRowNum() ? getRow(i) : null);
     }
 
     @Override
@@ -355,8 +357,8 @@ public class PoiSheet extends AbstractSheet {
         }
 
         // determine default font size
-        short fontSize = workbook.poiWorkbook.getFontAt(0).getFontHeightInPoints();
-        factorWidth = fontSize * 0.525f / 256;
+        Font font = workbook.getFont(workbook.poiWorkbook.getFontAt(0)).font;
+        factorWidth = (float) FontUtil.getInstance().getTextWidth("0", font)/256;
     }
 
 }

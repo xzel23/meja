@@ -16,12 +16,10 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.cabe.annotations.Nullable;
-
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-
 import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
+import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
 import java.util.Optional;
 
@@ -66,7 +64,7 @@ public final class PoiRow extends AbstractRow {
 
     @Override
     public Optional<PoiCell> getCellIfExists(int col) {
-        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col);
+        org.apache.poi.ss.usermodel.Cell poiCell = col < 0 ? null : poiRow.getCell(col);
         return Optional.ofNullable(poiCell != null ? new PoiCell(this, poiCell) : null);
     }
 

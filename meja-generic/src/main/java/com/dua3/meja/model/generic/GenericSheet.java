@@ -123,7 +123,7 @@ public class GenericSheet extends AbstractSheet {
     }
 
     public Optional<GenericRow> getRowIfExists(int i) {
-        return Optional.ofNullable(i <= getLastRowNum() ? getRow(i) : null);
+        return Optional.ofNullable(0 <= i && i <= getLastRowNum() ? getRow(i) : null);
     }
 
     @Override

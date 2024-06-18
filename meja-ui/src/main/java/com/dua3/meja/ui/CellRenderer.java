@@ -66,23 +66,13 @@ public class CellRenderer {
      * @param cell cell to draw
      */
     private void drawCellBorder(Graphics g, Cell cell) {
-        CellStyle styleTopLeft = cell.getCellStyle();
-        CellStyle styleBottomRight = cell.isMerged()
-                ? getDelegate().getSheet().orElseThrow()
-                    .getRow(cell.getRowNumber() + cell.getVerticalSpan() - 1)
-                    .getCell(cell.getColumnNumber() + cell.getHorizontalSpan() - 1)
-                    .getCellStyle()
-                : styleTopLeft;
-
         Rectangle2f cr = getCellRect(cell);
 
         // draw border
         for (Direction d : Direction.values()) {
-            boolean isTopLeft = d == Direction.NORTH || d == Direction.WEST;
-            CellStyle style = isTopLeft ? styleTopLeft : styleBottomRight;
+            BorderStyle b = cell.getEffectiveBorderStyle(d);
 
-            BorderStyle b = style.getBorderStyle(d);
-            if (b.width() == 0) {
+            if (b.isNone()) {
                 continue;
             }
 
@@ -90,23 +80,23 @@ public class CellRenderer {
             if (color == null) {
                 color = Color.BLACK;
             }
-            g.setStroke(color, b.width() * delegate.get1PxWidth());
+            g.setStroke(color, b.width() * delegate.get1PxWidthInPoints());
 
             switch (d) {
                 case NORTH -> {
-                    g.setStroke(color, b.width() * delegate.get1PxHeight());
+                    g.setStroke(color, b.width() * delegate.get1PxHeightInPoints());
                     g.strokeLine(cr.xMin(), cr.yMin(), cr.xMax(), cr.yMin());
                 }
                 case EAST -> {
-                    g.setStroke(color, b.width() * delegate.get1PxWidth());
+                    g.setStroke(color, b.width() * delegate.get1PxWidthInPoints());
                     g.strokeLine(cr.xMax(), cr.yMin(), cr.xMax(), cr.yMax());
                 }
                 case SOUTH -> {
-                    g.setStroke(color, b.width() * delegate.get1PxHeight());
+                    g.setStroke(color, b.width() * delegate.get1PxHeightInPoints());
                     g.strokeLine(cr.xMin(), cr.yMax(), cr.xMax(), cr.yMax());
                 }
                 case WEST -> {
-                    g.setStroke(color, b.width() * delegate.get1PxWidth());
+                    g.setStroke(color, b.width() * delegate.get1PxWidthInPoints());
                     g.strokeLine(cr.xMin(), cr.yMin(), cr.xMin(), cr.yMax());
                 }
             }

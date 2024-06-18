@@ -3,6 +3,7 @@ package com.dua3.meja.ui.swing;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
+import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
@@ -22,7 +23,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Function;
-import java.util.function.IntSupplier;
 
 final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
     private static final Logger LOG = LogManager.getLogger(SwingSegmentView.class);
@@ -32,14 +32,11 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
 
     SwingSegmentView(
             SwingSheetViewDelegate sheetViewDelegate,
-            IntSupplier startRow,
-            IntSupplier endRow,
-            IntSupplier startColumn,
-            IntSupplier endColumn
+            SheetView.Quadrant quadrant
     ) {
         super(null, false);
         this.svDelegate = sheetViewDelegate;
-        this.ssvDelegate = new SwingSegmentViewDelegate(this, svDelegate, startRow, endRow, startColumn, endColumn);
+        this.ssvDelegate = new SegmentViewDelegate(this, svDelegate, quadrant);
         init();
     }
 
@@ -164,7 +161,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
 
     @Override
     protected void paintComponent(Graphics g) {
-        LOG.debug("paintComponent(): ({},{}) - ({},{})", ssvDelegate.getBeginRow(), ssvDelegate.getBeginColumn(), ssvDelegate.getEndRow(), ssvDelegate.getEndColumn());
+        LOG.debug("paintComponent(): ({},{}) - ({},{})", ssvDelegate.getStartRow(), ssvDelegate.getStartColumn(), ssvDelegate.getEndRow(), ssvDelegate.getEndColumn());
 
         Lock lock = svDelegate.readLock();
         lock.lock();
@@ -188,14 +185,14 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
 
                 // draw split lines
                 if (ssvDelegate.hasHLine()) {
-                    float ySplit = svDelegate.getRowPos(svDelegate.getSplitRow()) + svDelegate.get1PxWidth();
-                    sg.setStroke(Color.BLACK, svDelegate.get1PxHeight());
-                    sg.strokeLine(-svDelegate.getRowLabelWidth(), ySplit, svDelegate.getSheetWidthInPoints(), ySplit);
+                    float ySplit = svDelegate.getRowPos(svDelegate.getSplitRow()) + svDelegate.get1PxWidthInPoints();
+                    sg.setStroke(Color.BLACK, svDelegate.get1PxHeightInPoints());
+                    sg.strokeLine(-svDelegate.getRowLabelWidthInPoints(), ySplit, svDelegate.getSheetWidthInPoints(), ySplit);
                 }
                 if (ssvDelegate.hasVLine()) {
-                    float xSplit = svDelegate.getColumnPos(svDelegate.getSplitColumn()) + svDelegate.get1PxWidth();
-                    sg.setStroke(Color.BLACK, svDelegate.get1PxWidth());
-                    sg.strokeLine(xSplit, -svDelegate.getColumnLabelHeight(), xSplit, svDelegate.getSheetHeightInPoints());
+                    float xSplit = svDelegate.getColumnPos(svDelegate.getSplitColumn()) + svDelegate.get1PxWidthInPoints();
+                    sg.setStroke(Color.BLACK, svDelegate.get1PxWidthInPoints());
+                    sg.strokeLine(xSplit, -svDelegate.getColumnLabelHeightInPoints(), xSplit, svDelegate.getSheetHeightInPoints());
                 }
             });
         } finally {

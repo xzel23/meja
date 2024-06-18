@@ -147,9 +147,9 @@ public interface Graphics {
     /**
      * Split text into fragments.
      *
-     * <p>Split the text into fragments that are eihther whitespcae or free of whitespace and have uniform
+     * <p>Split the text into fragments that are either whitespace or free of whitespace and have uniform
      * text attributes (font, text decoration). For each line, a list of such fragments is generated and added
-     * to the list of fragmet lines (see {@link FragmentedText#fragmentLines()}).
+     * to the list of fragment lines (see {@link FragmentedText#fragmentLines()}).
      *
      * @param text      the text
      * @param r         the bounding rectangle to render the text into
@@ -226,28 +226,34 @@ public interface Graphics {
         float y = switch (vAlign) {
             case TOP, DISTRIBUTED -> cr.yMin();
             case MIDDLE -> cr.yCenter() - textHeight /2;
-            case BOTTOM -> y = cr.yMax() - textHeight;
+            case BOTTOM -> cr.yMax() - textHeight;
         };
         float fillerHeight = vAlign == VerticalAlignment.DISTRIBUTED ?  (cr.height()- textHeight)/Math.max(1, fragmentLines.size()-1) : 0f;
 
         record LineStatistics(float text, float whiteSpace, int nSpace) {}
-        for (List<Fragment> fragments : fragmentLines) {
+        for (int i = 0; i < fragmentLines.size(); i++) {
+            List<Fragment> fragments = fragmentLines.get(i);
+
             // determine the number and size of whitespace and text fragments
             LineStatistics fi = fragments.stream().map(fragment -> {
                         boolean isWS = TextUtil.isBlank(fragment.text());
-                        return new LineStatistics(isWS ? 0f: fragment.w(), isWS ? fragment.w() : 0f, isWS ? 1 : 0);
+                        return new LineStatistics(isWS ? 0f : fragment.w(), isWS ? fragment.w() : 0f, isWS ? 1 : 0);
                     })
-                    .reduce((a,b) -> new LineStatistics(a.text + b.text, a.whiteSpace + b.whiteSpace, a.nSpace + b.nSpace))
+                    .reduce((a, b) -> new LineStatistics(a.text + b.text, a.whiteSpace + b.whiteSpace, a.nSpace + b.nSpace))
                     .orElseGet(() -> new LineStatistics(0f, 0f, 1));
 
             float spaceToDistribute = cr.width() - fi.text - fi.whiteSpace;
             float totalSpace = fi.whiteSpace + spaceToDistribute;
 
-            float x= cr.xMin();
+            // when justify aligning text, use left alignment for the last line
+            boolean isLastLine = i == fragmentLines.size() - 1;
+            Alignment effectiveHAlign = (hAlign == Alignment.JUSTIFY && isLastLine) ? Alignment.LEFT : hAlign;
+
+            float x = cr.xMin();
             for (Fragment fragment : fragments) {
-                switch (hAlign) {
+                switch (effectiveHAlign) {
                     case JUSTIFY -> {
-                        // distribute remaining space by evenly expanding existind whitespace
+                        // distribute the remaining space by evenly expanding existind whitespace
                         if (TextUtil.isBlank(fragment.text())) {
                             x += fragment.w() * (totalSpace / fi.whiteSpace() - 1);
                         }
@@ -261,7 +267,7 @@ public interface Graphics {
                     case CENTER -> {
                         if (fragment.x() == 0f) {
                             // push everything halfway right
-                            x += spaceToDistribute/2f;
+                            x += spaceToDistribute / 2f;
                         }
                     }
                     case LEFT -> { /* nothing to do */}
