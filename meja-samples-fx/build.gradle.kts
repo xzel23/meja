@@ -20,16 +20,17 @@ dependencies {
 
     implementation(rootProject.libs.dua3.utility)
     implementation(rootProject.libs.dua3.utility.fx)
+    implementation(rootProject.libs.dua3.utility.fx.controls)
 
     implementation(rootProject.libs.log4j.core)
 }
-/*
+
 val runExcelViewer = task<JavaExec>("runExcelViewer") {
     classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.meja.excelviewer.SwingExcelViewer")
+    mainClass.set("com.dua3.meja.fx.samples.FxExcelViewer")
     enableAssertions = true
 }
-*/
+
 val runKitchenSink = task<JavaExec>("runKitchenSink") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxKitchenSink")

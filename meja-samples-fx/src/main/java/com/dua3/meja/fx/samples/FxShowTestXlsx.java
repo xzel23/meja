@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Kitchensink example.
+ * A simple demo application that just displays the file 'test.xlsx'.
  */
 public final class FxShowTestXlsx extends Application {
     private static final Logger LOG = LogManager.getLogger(FxShowTestXlsx.class);

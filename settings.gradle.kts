@@ -46,6 +46,7 @@ dependencyResolutionManagement {
             library("dua3-utility-logging-log4j", "com.dua3.utility", "utility-logging-log4j").versionRef("dua3-utility")
             library("dua3-utility-swing", "com.dua3.utility", "utility-swing").versionRef("dua3-utility")
             library("dua3-utility-fx", "com.dua3.utility", "utility-fx").versionRef("dua3-utility")
+            library("dua3-utility-fx-controls", "com.dua3.utility", "utility-fx-controls").versionRef("dua3-utility")
             library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
             library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").versionRef("log4j")
