@@ -8,7 +8,9 @@ import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
+import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.text.Text;
 
 public class FxGraphics implements Graphics {
     public static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
@@ -24,6 +26,8 @@ public class FxGraphics implements Graphics {
     private float s;
     private javafx.scene.paint.Color textColor = javafx.scene.paint.Color.BLACK;
     private javafx.scene.text.Font font = FONT_UTIL.convert(DEFAULT_FONT);
+    private boolean isStrikeThrough = false;
+    private boolean isUnderline = false;
     private javafx.scene.paint.Paint strokeColor = javafx.scene.paint.Color.BLACK;
     private double width = 1.0;
     private javafx.scene.paint.Color fillColor = javafx.scene.paint.Color.BLACK;
@@ -107,6 +111,8 @@ public class FxGraphics implements Graphics {
     public void setFont(Font font) {
         this.textColor = FxUtil.convert(font.getColor());
         this.font = FONT_UTIL.convert(font.scaled(s));
+        this.isStrikeThrough = font.isStrikeThrough();
+        this.isUnderline = font.isUnderline();
     }
 
     @Override
@@ -114,6 +120,28 @@ public class FxGraphics implements Graphics {
         gc.setFont(font);
         gc.setFill(textColor);
         gc.fillText(text.toString(), x, y);
+
+        if (isStrikeThrough || isUnderline) {
+            double strokeWidth = font.getSize() / 15f;
+
+            Text t = new Text(text.toString());
+            t.setFont(font);
+            Bounds r = t.getBoundsInLocal();
+            double xStroke = x;
+            double wStroke = r.getWidth();
+
+            gc.setStroke(textColor);
+            gc.setLineWidth(strokeWidth);
+
+            if (isUnderline) {
+                double yStroke = y + r.getMaxY()/2f;
+                gc.strokeLine(xStroke, yStroke, xStroke+wStroke, yStroke);
+            }
+            if (isStrikeThrough) {
+                double yStroke = y + r.getMinY()/2f + r.getMaxY();
+                gc.strokeLine(xStroke, yStroke, xStroke+wStroke, yStroke);
+            }
+        }
     }
 
 }
