@@ -1,7 +1,9 @@
 # Meja Changelog
 
-## Version 5.0
+## Version 5.0 (in development)
 
+- new JavaFX WorkbookView
+- rewritten large parts of the Swing sheet rendering code
 - Methods that previously might return null have been changed to return Optional instead
 - update utility to next major version
 - use Rectangle2f from utility; changes coordinates to float
