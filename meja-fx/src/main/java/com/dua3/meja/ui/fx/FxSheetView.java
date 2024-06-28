@@ -87,6 +87,9 @@ public class FxSheetView extends GridPane implements SheetView {
         add(bottomRightQuadrant, 1, 1);
         add(hScrollbar,0,2, 2, 1);
 
+        hScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getHScrollbar().visibleProperty());
+        vScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getVScrollbar().visibleProperty());
+
         updateContent();
         layout();
     }
