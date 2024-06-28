@@ -17,6 +17,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
@@ -27,15 +28,15 @@ import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.function.Function;
 
-public class FxSheetView extends GridPane implements SheetView {
+public class FxSheetView extends StackPane implements SheetView {
     private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
 
     private final FxSheetViewDelegate delegate;
-
-    final FxSegmentView topLeftQuadrant;
-    final FxSegmentView topRightQuadrant;
-    final FxSegmentView bottomLeftQuadrant;
-    final FxSegmentView bottomRightQuadrant;
+    private final FxSegmentView topLeftQuadrant;
+    private final FxSegmentView topRightQuadrant;
+    private final FxSegmentView bottomLeftQuadrant;
+    private final FxSegmentView bottomRightQuadrant;
+    private final GridPane gridPane;
 
     public FxSheetView() {
         this(null);
@@ -43,52 +44,55 @@ public class FxSheetView extends GridPane implements SheetView {
 
     public FxSheetView(@Nullable Sheet sheet) {
         this.delegate = new FxSheetViewDelegate(this);
-
         delegate.setSheet(sheet);
 
-        // create quadrants
+        // Initialize GridPane
+        gridPane = new GridPane();
+
+        // Create quadrants
         ObservableList<Row> rows = delegate.getSheet().map(ObservableSheet::new).map(s -> (ObservableList<Row>) s).orElse(FXCollections.emptyObservableList());
         delegate.updateLayout();
-
         topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, rows);
         topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, rows);
         bottomLeftQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_LEFT, rows);
         bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, rows);
 
-        // create scrollbars
+        // Create scrollbars
         ScrollBar hScrollbar = new ScrollBar();
         hScrollbar.setOrientation(Orientation.HORIZONTAL);
         ScrollBar vScrollbar = new ScrollBar();
-        vScrollbar.setOrientation(javafx.geometry.Orientation.VERTICAL);
-
+        vScrollbar.setOrientation(Orientation.VERTICAL);
         entangleScrollBars(hScrollbar, topRightQuadrant.flow.getHScrollbar(), bottomRightQuadrant.flow.getHScrollbar());
         entangleScrollBars(vScrollbar, bottomLeftQuadrant.flow.getVScrollbar(), bottomRightQuadrant.flow.getVScrollbar());
 
-        // set layout constraints
+        // Set layout constraints
         RowConstraints[] rc = {
                 rowConstraints(Priority.NEVER),
                 rowConstraints(Priority.ALWAYS),
                 rowConstraints(Priority.NEVER)
         };
-        getRowConstraints().setAll(rc);
+        gridPane.getRowConstraints().setAll(rc);
 
         ColumnConstraints[] cc = {
                 columnConstraints(Priority.NEVER),
                 columnConstraints(Priority.ALWAYS),
                 columnConstraints(Priority.NEVER)
         };
-        getColumnConstraints().setAll(cc);
+        gridPane.getColumnConstraints().setAll(cc);
 
-        // add to grid
-        add(topLeftQuadrant, 0, 0);
-        add(topRightQuadrant, 1, 0);
-        add(vScrollbar,2,0, 1,2);
-        add(bottomLeftQuadrant, 0, 1);
-        add(bottomRightQuadrant, 1, 1);
-        add(hScrollbar,0,2, 2, 1);
+        // Add to GridPane
+        gridPane.add(topLeftQuadrant, 0, 0);
+        gridPane.add(topRightQuadrant, 1, 0);
+        gridPane.add(vScrollbar, 2, 0, 1, 2);
+        gridPane.add(bottomLeftQuadrant, 0, 1);
+        gridPane.add(bottomRightQuadrant, 1, 1);
+        gridPane.add(hScrollbar, 0, 2, 2, 1);
 
         hScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getHScrollbar().visibleProperty());
         vScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getVScrollbar().visibleProperty());
+
+        // Add the GridPane to the StackPane
+        getChildren().add(gridPane);
 
         updateContent();
         layout();
@@ -115,7 +119,7 @@ public class FxSheetView extends GridPane implements SheetView {
         }
     }
 
-    private <T, U, P extends Property<U>> void entangle(Function<T,P> s, T a, T b) {
+    private <T, U, P extends Property<U>> void entangle(Function<T, P> s, T a, T b) {
         entangleProperties(s.apply(a), s.apply(b));
     }
 
@@ -146,23 +150,19 @@ public class FxSheetView extends GridPane implements SheetView {
 
     @Override
     public void scrollToCurrentCell() {
-
     }
 
     @Override
     public void stopEditing(boolean commit) {
-
     }
 
     @Override
     public void repaintCell(Cell cell) {
-
     }
 
     @Override
     public void updateContent() {
         LOG.debug("updating content");
-
         getSheet().ifPresent(sheet -> {
             Lock lock = delegate.writeLock();
             lock.lock();
@@ -171,7 +171,6 @@ public class FxSheetView extends GridPane implements SheetView {
                 delegate.setDisplayScale(getDisplayScale());
                 delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72f));
                 delegate.updateLayout();
-
                 if (topLeftQuadrant != null) {
                     topLeftQuadrant.refresh();
                 }
@@ -197,19 +196,16 @@ public class FxSheetView extends GridPane implements SheetView {
 
     @Override
     public void copyToClipboard() {
-
     }
 
     @Override
     public void showSearchDialog() {
-
     }
 
     @Override
     public void startEditing() {
-
     }
-    
+
     /**
      * Scroll cell into view.
      *
@@ -217,5 +213,4 @@ public class FxSheetView extends GridPane implements SheetView {
      */
     public void ensureCellIsVisible(@Nullable Cell cell) {
     }
-
 }
