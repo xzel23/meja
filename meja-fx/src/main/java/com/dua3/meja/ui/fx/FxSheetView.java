@@ -62,6 +62,7 @@ public class FxSheetView extends StackPane implements SheetView {
         hScrollbar.setOrientation(Orientation.HORIZONTAL);
         ScrollBar vScrollbar = new ScrollBar();
         vScrollbar.setOrientation(Orientation.VERTICAL);
+
         entangleScrollBars(hScrollbar, topRightQuadrant.flow.getHScrollbar(), bottomRightQuadrant.flow.getHScrollbar());
         entangleScrollBars(vScrollbar, bottomLeftQuadrant.flow.getVScrollbar(), bottomRightQuadrant.flow.getVScrollbar());
 
@@ -80,22 +81,27 @@ public class FxSheetView extends StackPane implements SheetView {
         };
         gridPane.getColumnConstraints().setAll(cc);
 
-        // Add to GridPane
+        // Add quadrants to GridPane
         gridPane.add(topLeftQuadrant, 0, 0);
         gridPane.add(topRightQuadrant, 1, 0);
-        gridPane.add(vScrollbar, 2, 0, 1, 2);
         gridPane.add(bottomLeftQuadrant, 0, 1);
         gridPane.add(bottomRightQuadrant, 1, 1);
-        gridPane.add(hScrollbar, 0, 2, 2, 1);
-
-        hScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getHScrollbar().visibleProperty());
-        vScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getVScrollbar().visibleProperty());
 
         // Add the GridPane to the StackPane
         getChildren().add(gridPane);
 
+        // Add scrollbars directly to the StackPane
+        getChildren().addAll(hScrollbar, vScrollbar);
+
+        // Bind visibility of scrollbars
+        hScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getHScrollbar().visibleProperty());
+        vScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getVScrollbar().visibleProperty());
+
+        // Position scrollbars
+        StackPane.setAlignment(hScrollbar, javafx.geometry.Pos.BOTTOM_CENTER);
+        StackPane.setAlignment(vScrollbar, javafx.geometry.Pos.CENTER_RIGHT);
+
         updateContent();
-        layout();
     }
 
     private static ColumnConstraints columnConstraints(Priority prio) {
