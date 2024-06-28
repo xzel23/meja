@@ -63,10 +63,10 @@ public class FxSheetView extends GridPane implements SheetView {
         // add to grid
         add(topLeftQuadrant, 0, 0);
         add(topRightQuadrant, 1, 0);
+        add(vScrollbar,2,0, 1,2);
         add(bottomLeftQuadrant, 0, 1);
         add(bottomRightQuadrant, 1, 1);
-        add(vScrollbar,2,1);
-        add(hScrollbar,1,2);
+        add(hScrollbar,0,2, 2, 1);
 
         updateContent();
         layout();
