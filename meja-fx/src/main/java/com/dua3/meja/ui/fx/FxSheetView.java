@@ -13,7 +13,10 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
@@ -40,6 +43,7 @@ public class FxSheetView extends GridPane implements SheetView {
 
     public FxSheetView(@Nullable Sheet sheet) {
         this.delegate = new FxSheetViewDelegate(this);
+
         delegate.setSheet(sheet);
 
         // create quadrants
@@ -60,6 +64,21 @@ public class FxSheetView extends GridPane implements SheetView {
         entangleScrollBars(hScrollbar, topRightQuadrant.flow.getHScrollbar(), bottomRightQuadrant.flow.getHScrollbar());
         entangleScrollBars(vScrollbar, bottomLeftQuadrant.flow.getVScrollbar(), bottomRightQuadrant.flow.getVScrollbar());
 
+        // set layout constraints
+        RowConstraints[] rc = {
+                rowConstraints(Priority.NEVER),
+                rowConstraints(Priority.ALWAYS),
+                rowConstraints(Priority.NEVER)
+        };
+        getRowConstraints().setAll(rc);
+
+        ColumnConstraints[] cc = {
+                columnConstraints(Priority.NEVER),
+                columnConstraints(Priority.ALWAYS),
+                columnConstraints(Priority.NEVER)
+        };
+        getColumnConstraints().setAll(cc);
+
         // add to grid
         add(topLeftQuadrant, 0, 0);
         add(topRightQuadrant, 1, 0);
@@ -70,6 +89,18 @@ public class FxSheetView extends GridPane implements SheetView {
 
         updateContent();
         layout();
+    }
+
+    private static ColumnConstraints columnConstraints(Priority prio) {
+        ColumnConstraints cc = new ColumnConstraints();
+        cc.setHgrow(prio);
+        return cc;
+    }
+
+    private static RowConstraints rowConstraints(Priority prio) {
+        RowConstraints rc = new RowConstraints();
+        rc.setVgrow(prio);
+        return rc;
     }
 
     private void entangleScrollBars(ScrollBar mainScrollBar, ScrollBar... dependentScrollbars) {
