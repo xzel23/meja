@@ -171,7 +171,7 @@ public class FxRow extends IndexedCell<RowProxy> {
                 : 0;
         gc.setTransform(s.sx(), 0, 0, s.sy(), translateX, translateY);
 
-        CellRenderer cr = new CellRenderer(sheetViewDelegate);
+        CellRenderer cellRenderer = new CellRenderer(sheetViewDelegate);
 
         FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight());
 
@@ -220,7 +220,7 @@ public class FxRow extends IndexedCell<RowProxy> {
             sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getColumnName(j));
 
             // draw cell
-            row.getCellIfExists(j).ifPresent(cell -> cr.drawCell(g, cell.getLogicalCell()));
+            row.getCellIfExists(j).ifPresent(cell -> cellRenderer.drawCell(g, cell.getLogicalCell()));
         }
 
         if (segmentViewDelegate.hasVLine()) {
@@ -229,6 +229,8 @@ public class FxRow extends IndexedCell<RowProxy> {
             y = sheetViewDelegate.getRowPos(i);
             g.strokeLine(x, y, x, y + getRowHeightInPoints());
         }
+
+        sheetViewDelegate.getCurrentLogicalCell().ifPresent( cell -> cellRenderer.drawSelection(g, cell));
     }
 
     private void renderColumnLabels() {

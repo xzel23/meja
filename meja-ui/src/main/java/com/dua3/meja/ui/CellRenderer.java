@@ -12,8 +12,12 @@ import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.VerticalAlignment;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class CellRenderer {
+    private static final Logger LOGGER = LogManager.getLogger(CellRenderer.class);
+
     private final SheetViewDelegate delegate;
 
     public CellRenderer(SheetViewDelegate delegate) {
@@ -206,5 +210,30 @@ public class CellRenderer {
      */
     private Rectangle2f getCellRect(Cell cell) {
         return getDelegate().getCellRect(cell);
+    }
+
+    /**
+     * Draw frame around current selection.
+     *
+     * @param g                graphics object used for drawing
+     */
+    public void drawSelection(Graphics g, Cell cell) {
+        LOGGER.trace("drawSelection()");
+
+        Cell lc = cell.getLogicalCell();
+
+        Rectangle2f r = getCellRect(lc);
+
+        float strokeWidth = delegate.getSelectionStrokeWidth();
+
+        g.setStroke(delegate.getSelectionColor(), strokeWidth * delegate.get1PxWidthInPoints());
+        g.strokeRect(r);
+
+        if (strokeWidth > 1) {
+            g.setStroke(delegate.getSelectionColor().brighter(), delegate.get1PxWidthInPoints());
+            g.strokeRect(r.addMargin(-delegate.get1PxWidthInPoints() * strokeWidth/2));
+            g.setStroke(delegate.getSelectionColor().darker(), delegate.get1PxWidthInPoints());
+            g.strokeRect(r.addMargin(delegate.get1PxWidthInPoints() * strokeWidth/2));
+        }
     }
 }

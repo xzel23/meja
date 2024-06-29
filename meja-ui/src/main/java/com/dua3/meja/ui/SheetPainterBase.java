@@ -86,7 +86,7 @@ public abstract class SheetPainterBase {
             drawLabels(g);
             drawGrid(g);
             drawCells(g);
-            drawSelection(g);
+            sheet.getCurrentCell().ifPresent( cell -> cellRenderer.drawSelection(g, cell));
             drawSplitLines(g);
             g.endDraw();
         } finally {
@@ -100,39 +100,6 @@ public abstract class SheetPainterBase {
         if (sheet != this.sheet) {
             this.sheet = sheet;
         }
-    }
-
-    /**
-     * Draw frame around current selection.
-     *
-     * @param g graphics object used for drawing
-     */
-    private void drawSelection(Graphics g) {
-        LOGGER.trace("drawSelection()");
-
-        // no sheet, no drawing
-        if (sheet == null) {
-            return;
-        }
-
-        sheet.getCurrentCell().map(Cell::getLogicalCell)
-                .ifPresent(lc -> {
-                    SheetViewDelegate delegate = getDelegate();
-                    Rectangle2f rect = delegate.getCellRect(lc);
-                    LOGGER.trace("drawing selection rectangle: {}", rect);
-
-                    float strokeWidth = delegate.getSelectionStrokeWidth();
-
-                    g.setStroke(delegate.getSelectionColor(), strokeWidth * delegate.get1PxWidthInPoints());
-                    g.strokeRect(rect);
-
-                    if (strokeWidth > 1) {
-                        g.setStroke(delegate.getSelectionColor().brighter(), delegate.get1PxWidthInPoints());
-                        g.strokeRect(rect.addMargin(-delegate.get1PxWidthInPoints() * strokeWidth/2));
-                        g.setStroke(delegate.getSelectionColor().darker(), delegate.get1PxWidthInPoints());
-                        g.strokeRect(rect.addMargin(delegate.get1PxWidthInPoints() * strokeWidth/2));
-                    }
-                });
     }
 
     protected void drawLabels(Graphics g) {
