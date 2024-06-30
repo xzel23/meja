@@ -70,18 +70,16 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
     }
 
     private void addArrowKeyFilter(EventTarget target) {
-        if (target != null) {
-            target.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                if (event.getCode().isArrowKey()) {
-                    getCurrentView().ifPresent(view -> {
-                        if (!event.isConsumed()) {
-                            view.onKeyPressed(event);
-                        }
-                    });
-                    event.consume();
-                }
-            });
-        }
+        target.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode().isArrowKey()) {
+                getCurrentView().ifPresent(view -> {
+                    if (!event.isConsumed()) {
+                        view.onKeyPressed(event);
+                    }
+                });
+                event.consume();
+            }
+        });
     }
 
     /**
