@@ -22,6 +22,7 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookEvent;
 import com.dua3.meja.ui.WorkbookView;
 import javafx.application.Platform;
+import javafx.event.EventTarget;
 import javafx.geometry.Side;
 import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Tab;
@@ -60,16 +61,27 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
                 );
             }
         });
+
+
         setCenter(content);
 
-        // disable handling of the arrow keys by the TabPane so that arrow keys work on the sheet
-        content.addEventFilter(
-                KeyEvent.ANY,
-                event -> {
-                    if (event.getCode().isArrowKey() && event.getTarget() == content) {
-                        event.consume();
-                    }
-                });
+        // prevent arrow keys from being consumed by the tab pane
+        addArrowKeyFilter(content);
+    }
+
+    private void addArrowKeyFilter(EventTarget target) {
+        if (target != null) {
+            target.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                if (event.getCode().isArrowKey()) {
+                    getCurrentView().ifPresent(view -> {
+                        if (!event.isConsumed()) {
+                            view.onKeyPressed(event);
+                        }
+                    });
+                    event.consume();
+                }
+            });
+        }
     }
 
     /**

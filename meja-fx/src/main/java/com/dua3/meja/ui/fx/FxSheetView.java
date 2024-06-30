@@ -107,7 +107,7 @@ public class FxSheetView extends StackPane implements SheetView {
         StackPane.setAlignment(vScrollbar, javafx.geometry.Pos.CENTER_RIGHT);
 
         setFocusTraversable(true);
-        setOnKeyTyped(e -> onKey(e));
+        setOnKeyPressed(this::onKeyPressed);
 
         updateContent();
     }
@@ -144,23 +144,28 @@ public class FxSheetView extends StackPane implements SheetView {
         }
     }
 
-    private void onKey(KeyEvent event) {
-        LOG.warn("onKeyTyped(): event = {}, focusOwner = {}", event, getScene().getFocusOwner());
+    void onKeyPressed(KeyEvent event) {
+        if (event.isConsumed()) {
+            LOG.trace("onKeyPressed(): KeyEvent already consumed: {}", event);
+            return;
+        }
+
+        LOG.trace("onKeyPressed(): event = {}, focusOwner = {}", event, getScene().getFocusOwner());
         if (isFocused()) {
-            switch (event.getCharacter()) {
-                case "w" -> {
+            switch (event.getCode()) {
+                case UP -> {
                     move(Direction.NORTH);
                     event.consume();
                 }
-                case "a" -> {
+                case LEFT -> {
                     move(Direction.WEST);
                     event.consume();
                 }
-                case "s" -> {
+                case DOWN -> {
                     move(Direction.SOUTH);
                     event.consume();
                 }
-                case "d" -> {
+                case RIGHT -> {
                     move(Direction.EAST);
                     event.consume();
                 }
