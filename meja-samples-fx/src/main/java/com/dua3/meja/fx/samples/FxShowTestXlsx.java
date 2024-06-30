@@ -5,7 +5,10 @@ import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.lang.LangUtil;
 import javafx.application.Application;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +29,13 @@ public final class FxShowTestXlsx extends Application {
     public void start(Stage primaryStage) throws Exception {
         final FxWorkbookView view = new FxWorkbookView();
         Scene scene = new Scene(view, 1000, 600);
+
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                System.err.println(event);
+            }
+        });
 
         primaryStage.setTitle(getClass().getSimpleName());
         primaryStage.setScene(scene);

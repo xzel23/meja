@@ -2,10 +2,12 @@ package com.dua3.meja.ui.fx;
 
 import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.fx.FxUtil;
+import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.Scale2f;
 import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
@@ -13,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -30,7 +33,6 @@ import java.util.function.Function;
 
 public class FxSheetView extends StackPane implements SheetView {
     private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
-
     private final FxSheetViewDelegate delegate;
     private final FxSegmentView topLeftQuadrant;
     private final FxSegmentView topRightQuadrant;
@@ -50,7 +52,9 @@ public class FxSheetView extends StackPane implements SheetView {
         gridPane = new GridPane();
 
         // Create quadrants
-        ObservableList<Row> rows = delegate.getSheet().map(ObservableSheet::new).map(s -> (ObservableList<Row>) s).orElse(FXCollections.emptyObservableList());
+        ObservableList<Row> rows = delegate.getSheet().map(ObservableSheet::new)
+                .map(s -> (ObservableList<Row>) s)
+                .orElse(FXCollections.emptyObservableList());
         delegate.updateLayout();
         topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, rows);
         topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, rows);
@@ -60,6 +64,7 @@ public class FxSheetView extends StackPane implements SheetView {
         // Create scrollbars
         ScrollBar hScrollbar = new ScrollBar();
         hScrollbar.setOrientation(Orientation.HORIZONTAL);
+
         ScrollBar vScrollbar = new ScrollBar();
         vScrollbar.setOrientation(Orientation.VERTICAL);
 
@@ -101,6 +106,9 @@ public class FxSheetView extends StackPane implements SheetView {
         StackPane.setAlignment(hScrollbar, javafx.geometry.Pos.BOTTOM_CENTER);
         StackPane.setAlignment(vScrollbar, javafx.geometry.Pos.CENTER_RIGHT);
 
+        setFocusTraversable(true);
+        setOnKeyTyped(e -> onKey(e));
+
         updateContent();
     }
 
@@ -136,6 +144,41 @@ public class FxSheetView extends StackPane implements SheetView {
         }
     }
 
+    private void onKey(KeyEvent event) {
+        LOG.warn("onKeyTyped(): event = {}, focusOwner = {}", event, getScene().getFocusOwner());
+        if (isFocused()) {
+            switch (event.getCharacter()) {
+                case "w" -> {
+                    move(Direction.NORTH);
+                    event.consume();
+                }
+                case "a" -> {
+                    move(Direction.WEST);
+                    event.consume();
+                }
+                case "s" -> {
+                    move(Direction.SOUTH);
+                    event.consume();
+                }
+                case "d" -> {
+                    move(Direction.EAST);
+                    event.consume();
+                }
+                default -> {
+                    // No action for other keys
+                }
+            }
+        }
+    }
+
+    private boolean isTabButtonFocused() {
+        Scene scene = getScene();
+        if (scene != null && scene.getFocusOwner() != null) {
+            return scene.getFocusOwner().getParent() instanceof javafx.scene.control.TabPane;
+        }
+        return false;
+    }
+
     @Override
     public FxSheetViewDelegate getDelegate() {
         return delegate;
@@ -164,6 +207,18 @@ public class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void repaintCell(Cell cell) {
+        Cell lc = cell.getLogicalCell();
+        int startRow = lc.getRowNumber();
+        int endRow = startRow + lc.getVerticalSpan() -1;
+
+        PlatformHelper.runLater(() ->{
+            for (int i=startRow; i<=endRow; i++) {
+                topLeftQuadrant.flow.getCell(i).requestLayout();
+                topRightQuadrant.flow.getCell(i).requestLayout();
+                bottomLeftQuadrant.flow.getCell(i).requestLayout();
+                bottomRightQuadrant.flow.getCell(i).requestLayout();
+            }
+        });
     }
 
     @Override

@@ -25,6 +25,7 @@ import javafx.geometry.Side;
 import javafx.scene.control.SelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,6 +57,15 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
             }
         });
         setCenter(content);
+
+        // disable handling of the arrow keys by the TabPane so that arrow keys work on the sheet
+        content.addEventFilter(
+                KeyEvent.ANY,
+                event -> {
+                    if (event.getCode().isArrowKey() && event.getTarget() == content) {
+                        event.consume();
+                    }
+                });
     }
 
     /**

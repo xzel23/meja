@@ -65,6 +65,7 @@ public class FxSegmentView extends Control implements SegmentView {
         this.rows = filterRows(sheetRows, sheetDelegate.getSplitRow());
 
         setSkin(new FxSegmentViewSkin(this));
+        setFocusTraversable(false);
 
         updateLayout();
     }
