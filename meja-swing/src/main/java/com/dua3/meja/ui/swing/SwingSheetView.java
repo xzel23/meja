@@ -168,7 +168,12 @@ public class SwingSheetView extends JPanel implements SheetView {
         }
         // make focusable
         setFocusable(true);
-        SwingUtilities.invokeLater(this::requestFocusInWindow);
+        SwingUtilities.invokeLater(this::focusView);
+    }
+
+    @Override
+    public void focusView() {
+        requestFocusInWindow();
     }
 
     /**

@@ -620,7 +620,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
 
         // make the cell the current cell
         boolean currentCellChanged = setCurrentCell(cell);
-        requestFocusInWindow();
+        requestFocus();
 
         if (currentCellChanged) {
             // if cell changed, stop cell editing
@@ -637,9 +637,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         }
     }
 
-    public void requestFocusInWindow() {
+    public void requestFocus() {
         LOG.trace("requestFocusInWindow()");
-        owner.requestFocusInWindow();
+        owner.focusView();
     }
 
     /**

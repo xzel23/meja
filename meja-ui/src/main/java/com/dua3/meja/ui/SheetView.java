@@ -88,7 +88,7 @@ public interface SheetView {
 
     void updateContent();
 
-    boolean requestFocusInWindow();
+    void focusView();
 
     Locale getLocale();
 

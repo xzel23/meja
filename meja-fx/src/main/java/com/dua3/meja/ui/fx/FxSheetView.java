@@ -9,6 +9,7 @@ import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.Scale2f;
+import com.dua3.utility.text.RichText;
 import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -169,6 +170,11 @@ public class FxSheetView extends StackPane implements SheetView {
                     move(Direction.EAST);
                     event.consume();
                 }
+                case C -> {
+                    if (event.isShortcutDown()) {
+                        copyToClipboard();
+                    }
+                }
                 default -> {
                     // No action for other keys
                 }
@@ -256,12 +262,16 @@ public class FxSheetView extends StackPane implements SheetView {
     }
 
     @Override
-    public boolean requestFocusInWindow() {
-        return false;
+    public void focusView() {
+        requestFocus();
     }
 
     @Override
     public void copyToClipboard() {
+        delegate.getCurrentLogicalCell().ifPresent(cell -> {
+            RichText text = cell.getAsText(getLocale());
+            FxUtil.copyToClipboard(text.toString());
+        });
     }
 
     @Override
