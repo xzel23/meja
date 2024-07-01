@@ -10,6 +10,7 @@ import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.text.RichText;
+import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,6 +41,8 @@ public class FxSheetView extends StackPane implements SheetView {
     private final FxSegmentView bottomLeftQuadrant;
     private final FxSegmentView bottomRightQuadrant;
     private final GridPane gridPane;
+    private ScrollBar hScrollbar;
+    private ScrollBar vScrollbar;
 
     public FxSheetView() {
         this(null);
@@ -63,10 +66,10 @@ public class FxSheetView extends StackPane implements SheetView {
         bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, rows);
 
         // Create scrollbars
-        ScrollBar hScrollbar = new ScrollBar();
+        hScrollbar = new ScrollBar();
         hScrollbar.setOrientation(Orientation.HORIZONTAL);
 
-        ScrollBar vScrollbar = new ScrollBar();
+        vScrollbar = new ScrollBar();
         vScrollbar.setOrientation(Orientation.VERTICAL);
 
         entangleScrollBars(hScrollbar, topRightQuadrant.flow.getHScrollbar(), bottomRightQuadrant.flow.getHScrollbar());
@@ -210,6 +213,33 @@ public class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void scrollToCurrentCell() {
+        delegate.getCurrentLogicalCell().ifPresent(cell -> {
+            Sheet sheet = delegate.getSheet().orElseThrow();
+            int i = cell.getRowNumber();
+            int j = cell.getColumnNumber();
+            int splitRow = sheet.getSplitRow();
+            if (i >= splitRow) {
+                i -= splitRow;
+                // at least part of the (possibly merged) cell is below the split => scroll row into view
+                FxSegmentView.VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomRightQuadrant.flow;
+                FxRow fxRow = flow.getCell(i);
+                Platform.runLater(() -> flow.scrollTo(fxRow));
+            }
+            int splitColumn = sheet.getSplitColumn();
+            if (j >= splitColumn) {
+                // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
+                Scale2f s = delegate.getScale();
+                float split = delegate.getColumnPos(splitColumn);
+                float xMin = (delegate.getColumnPos(j) - split) * s.sx();
+                float xMax = (delegate.getColumnPos(j+1) - split) * s.sy();
+                float width = xMax - xMin;
+                if (xMin < hScrollbar.getValue()) {
+                    hScrollbar.setValue(xMin);
+                } else if (xMax > hScrollbar.getValue() + hScrollbar.getVisibleAmount()) {
+                    // todo hScrollbar.setValue();
+                }
+            }
+        });
     }
 
     @Override
