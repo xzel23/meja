@@ -49,7 +49,7 @@ val runShowTestXlsx = task<JavaExec>("runShowTestXlsx") {
     enableAssertions = true
 }
 */
-val runShowTestXlsx = task<JavaExec>("runShowTestXlsx") {
+val runShowTestXlsx = task<JavaExec>("runFxShowTestXlsx") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
     enableAssertions = true
