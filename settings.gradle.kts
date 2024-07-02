@@ -35,7 +35,7 @@ dependencyResolutionManagement {
 
             version("cabe", "2.0")
             version("dua3-utility", "13.0-BETA5")
-            version("javafx", "21.0.2")
+            version("javafx", "22.0.1")
             version("log4j", "2.23.1")
             version("poi", "5.3.0")
 
