@@ -8,6 +8,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -15,8 +16,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.control.Skin;
 import javafx.scene.control.Skinnable;
+import javafx.scene.input.MouseEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Optional;
 
 public class FxRow extends IndexedCell<RowProxy> {
+    Logger LOG = LogManager.getLogger(FxRow.class);
+
     private final ObservableList<Row> rows;
     private final Canvas canvas;
 
@@ -24,6 +32,7 @@ public class FxRow extends IndexedCell<RowProxy> {
     private final SegmentViewDelegate segmentViewDelegate;
 
     public FxRow(ObservableList<Row> rows, SegmentViewDelegate svDelegate) {
+        LOG.debug("FxRow()");
         this.rows = rows;
         this.segmentViewDelegate = svDelegate;
         this.sheetViewDelegate = (FxSheetViewDelegate) svDelegate.getSheetViewDelegate();
@@ -31,6 +40,8 @@ public class FxRow extends IndexedCell<RowProxy> {
 
         setText(null);
         setGraphic(null);
+
+        setOnMouseClicked(this::onMouseClicked);
     }
 
     public float getRowHeightInPixels() {
@@ -80,6 +91,8 @@ public class FxRow extends IndexedCell<RowProxy> {
 
     @Override
     public void updateIndex(int i) {
+        LOG.trace("updateIndex({})", i);
+
         super.updateIndex(i);
 
         if (i<0) {
@@ -108,11 +121,15 @@ public class FxRow extends IndexedCell<RowProxy> {
 
     @Override
     protected void updateItem(@Nullable RowProxy item, boolean empty) {
+        LOG.trace("updateItem({}, {})", item, empty);
+
         super.updateItem(item, empty);
-        sheetViewDelegate.updateLayout();
-        if (item != null) {
-            render();
-        }
+        Platform.runLater(() -> {
+            sheetViewDelegate.updateLayout();
+            if (item != null) {
+                    render();
+            }
+        });
     }
 
     public FxSheetViewDelegate getSheetViewDelegate() {
@@ -296,4 +313,23 @@ public class FxRow extends IndexedCell<RowProxy> {
         g.fillRect(g.getBounds());
     }
 
+    public void onMouseClicked(MouseEvent evt) {
+        double x = evt.getX();
+        double y = evt.getY();
+
+        LOG.debug("onMouseClicked({})", evt);
+
+        int i = Optional.ofNullable(getItem()).map(RowProxy::getRow).map(Row::getRowNumber).orElse(-1);
+        int j = -1;
+        for (int k = segmentViewDelegate.getStartColumn(); k < segmentViewDelegate.getEndColumn(); k++) {
+            if (getSheetViewDelegate().getColumnPos(k) <= x && x <= getSheetViewDelegate().getColumnPos(k+1)) {
+                j = k;
+                break;
+            }
+        }
+
+        if (i>= 0 && j>=0) {
+            sheetViewDelegate.setCurrentCell(i, j);
+        }
+    }
 }
