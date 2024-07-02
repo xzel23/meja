@@ -219,14 +219,14 @@ public class FxSheetView extends StackPane implements SheetView {
             if (j >= splitColumn) {
                 // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
                 Scale2f s = delegate.getScale();
-                float split = delegate.getColumnPos(splitColumn);
+                float split = delegate.getSplitX();
                 float xMin = (delegate.getColumnPos(j) - split) * s.sx();
                 float xMax = (delegate.getColumnPos(j+1) - split) * s.sy();
                 float width = xMax - xMin;
                 if (xMin < hScrollbar.getValue()) {
                     hScrollbar.setValue(xMin);
-                } else if (xMax > hScrollbar.getValue() + hScrollbar.getVisibleAmount()) {
-                    // todo hScrollbar.setValue();
+                } else if (xMin > hScrollbar.getValue() + hScrollbar.getVisibleAmount() * s.sx()) {
+                    hScrollbar.setValue(xMin - hScrollbar.getVisibleAmount() * s.sx());
                 }
             }
         });
