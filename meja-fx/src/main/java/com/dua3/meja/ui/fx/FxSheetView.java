@@ -49,6 +49,8 @@ public class FxSheetView extends StackPane implements SheetView {
     }
 
     public FxSheetView(@Nullable Sheet sheet) {
+        LOG.debug("FxSheetView({})", sheet);
+
         this.delegate = new FxSheetViewDelegate(this);
         delegate.setSheet(sheet);
 
@@ -138,23 +140,17 @@ public class FxSheetView extends StackPane implements SheetView {
     }
 
     private <T, U, P extends Property<U>> void entangle(Function<T, P> s, T a, T b) {
-        entangleProperties(s.apply(a), s.apply(b));
-    }
-
-    @SafeVarargs
-    private <T, P extends Property<T>> void entangleProperties(P pMain, P... pDependent) {
-        for (P p : pDependent) {
-            p.bindBidirectional(pMain);
-        }
+        s.apply(b).bindBidirectional(s.apply(a));
     }
 
     void onKeyPressed(KeyEvent event) {
+        LOG.trace("onKeyPressed(): event = {}, focusOwner = {}", () -> event, () -> getScene().getFocusOwner());
+
         if (event.isConsumed()) {
-            LOG.trace("onKeyPressed(): KeyEvent already consumed: {}", event);
+            LOG.trace("KeyEvent already consumed");
             return;
         }
 
-        LOG.trace("onKeyPressed(): event = {}, focusOwner = {}", event, getScene().getFocusOwner());
         if (isFocused()) {
             switch (event.getCode()) {
                 case UP -> {
@@ -185,14 +181,6 @@ public class FxSheetView extends StackPane implements SheetView {
         }
     }
 
-    private boolean isTabButtonFocused() {
-        Scene scene = getScene();
-        if (scene != null && scene.getFocusOwner() != null) {
-            return scene.getFocusOwner().getParent() instanceof javafx.scene.control.TabPane;
-        }
-        return false;
-    }
-
     @Override
     public FxSheetViewDelegate getDelegate() {
         return delegate;
@@ -213,6 +201,8 @@ public class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void scrollToCurrentCell() {
+        LOG.debug("scrollToCurrentCell()");
+
         delegate.getCurrentLogicalCell().ifPresent(cell -> {
             Sheet sheet = delegate.getSheet().orElseThrow();
             int i = cell.getRowNumber();
@@ -243,11 +233,9 @@ public class FxSheetView extends StackPane implements SheetView {
     }
 
     @Override
-    public void stopEditing(boolean commit) {
-    }
-
-    @Override
     public void repaintCell(Cell cell) {
+        LOG.trace("repaintCell({})", cell);
+
         Cell lc = cell.getLogicalCell();
         int startRow = lc.getRowNumber();
         int endRow = startRow + lc.getVerticalSpan() -1;
@@ -264,7 +252,8 @@ public class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void updateContent() {
-        LOG.debug("updating content");
+        LOG.debug("updateContent()");
+
         getSheet().ifPresent(sheet -> {
             Lock lock = delegate.writeLock();
             lock.lock();
@@ -293,11 +282,15 @@ public class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void focusView() {
+        LOG.debug("focusView()");
+
         requestFocus();
     }
 
     @Override
     public void copyToClipboard() {
+        LOG.debug("copyToClipboard()");
+
         delegate.getCurrentLogicalCell().ifPresent(cell -> {
             RichText text = cell.getAsText(getLocale());
             FxUtil.copyToClipboard(text.toString());
@@ -306,17 +299,17 @@ public class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void showSearchDialog() {
+        LOG.warn("showSearchDialog() not implemented");
     }
 
     @Override
     public void startEditing() {
+        LOG.warn("startEditing() not implemented");
     }
 
-    /**
-     * Scroll cell into view.
-     *
-     * @param cell the cell to scroll to
-     */
-    public void ensureCellIsVisible(@Nullable Cell cell) {
+    @Override
+    public void stopEditing(boolean commit) {
+        LOG.warn("stopEditing() not implemented");
     }
+
 }

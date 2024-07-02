@@ -265,7 +265,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     /**
-     * Get number of rows for the currently loaded sheet.
+     * Get the number of rows for the currently loaded sheet.
      *
      * @return number of rows
      */
