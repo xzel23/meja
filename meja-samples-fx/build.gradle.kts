@@ -19,6 +19,8 @@ dependencies {
     implementation(project(":meja-fx"))
 
     implementation(rootProject.libs.dua3.utility)
+    implementation(rootProject.libs.dua3.utility.logging)
+    implementation(rootProject.libs.dua3.utility.logging.log4j)
     implementation(rootProject.libs.dua3.utility.fx)
     implementation(rootProject.libs.dua3.utility.fx.controls)
 
