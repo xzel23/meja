@@ -302,9 +302,17 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
             }
             case SheetEvent.ACTIVE_CELL_CHANGED -> {
                 SheetEvent.ActiveCellChanged evt = (SheetEvent.ActiveCellChanged) item;
-                owner.repaintCell(evt.valueOld());
+
+                Cell oldCell = evt.valueOld();
+                Cell newCell = evt.valueNew();
+
+                if (oldCell != null) {
+                    owner.repaintCell(oldCell);
+                }
                 owner.scrollToCurrentCell();
-                owner.repaintCell(evt.valueNew());
+                if (newCell != null) {
+                    owner.repaintCell(newCell);
+                }
             }
             case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED -> {
                 owner.repaintCell(((SheetEvent.CellChanged<?>) item).cell());

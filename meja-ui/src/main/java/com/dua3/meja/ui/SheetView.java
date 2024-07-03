@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.ui;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
@@ -84,7 +83,7 @@ public interface SheetView {
 
     SheetViewDelegate getDelegate();
 
-    void repaintCell(@Nullable Cell cell);
+    void repaintCell(Cell cell);
 
     void updateContent();
 

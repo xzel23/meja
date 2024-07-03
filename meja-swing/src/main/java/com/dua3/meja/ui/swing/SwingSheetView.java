@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.ui.swing;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Direction;
@@ -77,7 +76,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     }
 
     @Override
-    public void repaintCell(@Nullable Cell cell) {
+    public void repaintCell(Cell cell) {
         if (cell != null) {
             cell = cell.getLogicalCell();
             Rectangle2f r = delegate.getCellRect(cell);
