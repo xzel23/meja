@@ -15,6 +15,9 @@ import com.dua3.utility.text.VerticalAlignment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * The CellRenderer class is responsible for rendering cells in a {@link SheetView}.
+ */
 public class CellRenderer {
     private static final Logger LOGGER = LogManager.getLogger(CellRenderer.class);
 
@@ -215,7 +218,8 @@ public class CellRenderer {
     /**
      * Draw frame around current selection.
      *
-     * @param g                graphics object used for drawing
+     * @param g    graphics object used for drawing
+     * @param cell the cell to render
      */
     public void drawSelection(Graphics g, Cell cell) {
         LOGGER.trace("drawSelection()");

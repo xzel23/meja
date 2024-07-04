@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * @author Axel Howind (axel@dua3.com)
+ * Implementation of the {@link Cell} interface for {@link GenericSheet}.
  */
 public class GenericCell extends AbstractCell {
     private static final int MAX_HORIZONTAL_SPAN = 0xefff;

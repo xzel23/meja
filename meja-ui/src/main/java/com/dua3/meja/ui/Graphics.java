@@ -17,6 +17,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * A generic interface defining drawing commands.
+ * <p>
+ * The Graphics interface provides an abstraction from the underlying rendering toolkit.
+ */
 public interface Graphics {
 
     FontUtil<?> getFontUtil();
@@ -31,6 +36,7 @@ public interface Graphics {
     /**
      * Get text dimensions using the current font.
      *
+     * @param text the text
      * @return the text dimensions
      */
     Rectangle2f getTextDimension(CharSequence text);

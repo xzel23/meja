@@ -1,3 +1,6 @@
+/**
+ * This module provides JavaFX support for the Meja library.
+ */
 module com.dua3.meja.fx {
     exports com.dua3.meja.ui.fx;
     opens com.dua3.meja.ui.fx;

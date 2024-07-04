@@ -37,7 +37,7 @@ import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 
 /**
- * @author Axel Howind (axel@dua3.com)
+ * Implementation of the {@link CellStyle} interface for {@link GenericSheet}.
  */
 public class GenericCellStyle implements CellStyle {
 

@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.Optional;
 
 /**
- * @author Axel Howind (axel@dua3.com)
+ * Implementation of the {@link Row} interface for {@link GenericSheet}.
  */
 public class GenericRow extends AbstractRow {
 

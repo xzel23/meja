@@ -1,3 +1,6 @@
+/**
+ * This module provides database functionality for the Meja library.
+ */
 module com.dua3.meja.db {
     exports com.dua3.meja.db;
 
