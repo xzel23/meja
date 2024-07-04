@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * The com.dua3.meja module provides utility, model, and IO classes for working with spreadsheets.
+ */
 module com.dua3.meja {
     exports com.dua3.meja.util;
     exports com.dua3.meja.model;

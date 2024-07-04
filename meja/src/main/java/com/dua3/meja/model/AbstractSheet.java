@@ -20,7 +20,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Abstract base class for implementations of the {@link Sheet} interface.
+ * The AbstractSheet class represents the abstract base class for a sheet in a spreadsheet.
+ * It provides common functionality for working with sheets and is designed to be extended by
+ * specific implementations for different spreadsheet formats.
  */
 public abstract class AbstractSheet implements Sheet {
 
@@ -31,6 +33,9 @@ public abstract class AbstractSheet implements Sheet {
 
     private final SubmissionPublisher<SheetEvent> publisher = new SubmissionPublisher<>();
 
+    /**
+     * Constructor.
+     */
     protected AbstractSheet() {
     }
 
@@ -39,18 +44,45 @@ public abstract class AbstractSheet implements Sheet {
         publisher.subscribe(subscriber);
     }
 
+    /**
+     * Notifies subscribers that the active cell in the sheet has changed.
+     * This method is called internally when there is a change in the active cell of the sheet.
+     * Subscribers can listen to this event and perform any necessary actions or updates.
+     *
+     * @param old the previously active cell
+     * @param arg the new active cell
+     */
     protected void activeCellChanged(@Nullable Cell old, @Nullable Cell arg) {
         publisher.submit(new SheetEvent.ActiveCellChanged(this, old, arg));
     }
 
+    /**
+     * Notifies subscribers that the cell style has changed.
+     *
+     * @param cell the cell that has changed its style
+     * @param old the previous style of the cell
+     * @param arg additional argument related to the style change
+     */
     protected void cellStyleChanged(Cell cell, Object old, Object arg) {
         publisher.submit(new SheetEvent.CellStyleChanged(this, cell, old, arg));
     }
 
+    /**
+     * Notifies subscribers that the value of a cell has been changed.
+     *
+     * @param cell the cell whose value has changed
+     * @param old the old value of the cell
+     * @param arg additional argument (optional)
+     */
     protected void cellValueChanged(Cell cell, @Nullable Object old, @Nullable Object arg) {
         publisher.submit(new SheetEvent.CellValueChanged(this, cell, old, arg));
     }
 
+    /**
+     * Notifies subscribers that the layout of the sheet has changed.
+     * This method is called internally when there is a change in the layout of the sheet.
+     * Subscribers can listen to this event and perform any necessary actions or updates.
+     */
     protected void layoutChanged() {
         publisher.submit(new SheetEvent.LayoutChanged(this));
     }
@@ -75,10 +107,22 @@ public abstract class AbstractSheet implements Sheet {
         publisher.submit(new SheetEvent.ColumnsAdded(this, first, last));
     }
 
+    /**
+     * Broadcasts an event indicating a change in the zoom factor of the sheet.
+     *
+     * @param valueOld the previous zoom factor
+     * @param valueNew the new zoom factor
+     */
     protected void zoomChanged(double valueOld, double valueNew) {
         publisher.submit(new SheetEvent.ZoomChanged(this, valueOld, valueNew));
     }
 
+    /**
+     * Notifies subscribers that the split (freeze pane) in the sheet has changed.
+     *
+     * @param oldSplit the old split coordinates as a Pair of integers representing the row and column
+     * @param newSplit the new split coordinates as a Pair of integers representing the row and column
+     */
     protected void splitChanged(Pair<Integer, Integer> oldSplit, Pair<Integer, Integer> newSplit) {
         publisher.submit(new SheetEvent.SplitSet(this, oldSplit, newSplit));
     }
@@ -127,6 +171,12 @@ public abstract class AbstractSheet implements Sheet {
         return mergedRegions.stream().filter(rr -> rr.contains(rowNum, colNum)).findFirst().orElse(null);
     }
 
+    /**
+     * Removes a merged region from the sheet based on the given row number and column number.
+     *
+     * @param rowNumber    the row number of the merged region to be removed
+     * @param columnNumber the column number of the merged region to be removed
+     */
     protected void removeMergedRegion(int rowNumber, int columnNumber) {
         for (int idx = 0; idx < mergedRegions.size(); idx++) {
             RectangularRegion rr = mergedRegions.get(idx);

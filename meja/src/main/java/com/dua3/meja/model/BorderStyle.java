@@ -19,6 +19,9 @@ import com.dua3.utility.data.Color;
 
 /**
  * Definition of a cell border.
+ *
+ * @param width the border width
+ * @param color the border color
  */
 public record BorderStyle(float width, Color color) {
     public boolean isNone() {

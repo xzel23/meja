@@ -26,18 +26,40 @@ public abstract class AbstractWorkbook implements Workbook {
 
     private final SubmissionPublisher<WorkbookEvent> publisher = new SubmissionPublisher<>();
 
+    /**
+     * Notifies subscribers that the active sheet of the workbook has changed.
+     *
+     * @param idxOld the index of the old active sheet.
+     * @param idxNew the index of the new active sheet.
+     */
     protected void activeSheetChanged(int idxOld, int idxNew) {
         publisher.submit(new WorkbookEvent.ActiveSheetChanged(this, idxOld, idxNew));
     }
 
+    /**
+     * Notifies subscribers that a sheet has been added to the workbook.
+     *
+     * @param idx the index of the newly added sheet
+     */
     protected void sheetAdded(int idx) {
         publisher.submit(new WorkbookEvent.SheetAdded(this, idx));
     }
 
+    /**
+     * Notifies the subscribers that a sheet has been removed from the workbook.
+     *
+     * @param idx the index of the removed sheet
+     */
     protected void sheetRemoved(int idx) {
         publisher.submit(new WorkbookEvent.SheetRemoved(this, idx));
     }
 
+    /**
+     * Notifies subscribers that the URI of the workbook has changed.
+     *
+     * @param oldUri The old URI of the workbook.
+     * @param newUri The new URI of the workbook.
+     */
     protected void uriChanged(@Nullable URI oldUri, @Nullable URI newUri) {
         publisher.submit(new WorkbookEvent.UriChanged(this, oldUri, newUri));
     }

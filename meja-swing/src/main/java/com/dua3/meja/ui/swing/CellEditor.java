@@ -15,13 +15,10 @@
  */
 package com.dua3.meja.ui.swing;
 
-import javax.swing.JComponent;
-
 import com.dua3.meja.model.Cell;
 
-/**
- * @author Axel Howind (axel@dua3.com)
- */
+import javax.swing.JComponent;
+
 public interface CellEditor {
 
     /**
