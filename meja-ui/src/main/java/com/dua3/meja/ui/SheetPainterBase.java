@@ -23,6 +23,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import com.dua3.utility.ui.Graphics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

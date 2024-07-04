@@ -25,6 +25,7 @@ import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
+import com.dua3.utility.swing.SwingGraphics;
 import com.dua3.utility.swing.SwingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
