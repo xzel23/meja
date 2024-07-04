@@ -314,10 +314,9 @@ public class FxRow extends IndexedCell<RowProxy> {
     }
 
     public void onMouseClicked(MouseEvent evt) {
-        double x = evt.getX();
-        double y = evt.getY();
-
         LOG.debug("onMouseClicked({})", evt);
+
+        double x = evt.getX();
 
         int i = Optional.ofNullable(getItem()).map(RowProxy::getRow).map(Row::getRowNumber).orElse(-1);
         int j = -1;
