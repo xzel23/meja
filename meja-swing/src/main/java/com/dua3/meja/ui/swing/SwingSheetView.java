@@ -77,19 +77,17 @@ public class SwingSheetView extends JPanel implements SheetView {
 
     @Override
     public void repaintCell(Cell cell) {
-        if (cell != null) {
-            cell = cell.getLogicalCell();
-            Rectangle2f r = delegate.getCellRect(cell);
-            float m = getDelegate().getSelectionStrokeWidth()/2f;
-            CellStyle cs = cell.getCellStyle();
-            r = r.addMargin(
-                    Math.max(m, cs.getBorderStyle(Direction.WEST).width()),
-                    Math.max(m, cs.getBorderStyle(Direction.NORTH).width()),
-                    Math.max(m, cs.getBorderStyle(Direction.EAST).width()),
-                    Math.max(m, cs.getBorderStyle(Direction.SOUTH).width())
-            );
-            sheetPane.repaintSheet(r);
-        }
+        cell = cell.getLogicalCell();
+        Rectangle2f r = delegate.getCellRect(cell);
+        float m = getDelegate().getSelectionStrokeWidth()/2f;
+        CellStyle cs = cell.getCellStyle();
+        r = r.addMargin(
+                Math.max(m, cs.getBorderStyle(Direction.WEST).width()),
+                Math.max(m, cs.getBorderStyle(Direction.NORTH).width()),
+                Math.max(m, cs.getBorderStyle(Direction.EAST).width()),
+                Math.max(m, cs.getBorderStyle(Direction.SOUTH).width())
+        );
+        sheetPane.repaintSheet(r);
     }
 
     /**
