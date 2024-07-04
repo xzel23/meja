@@ -12,6 +12,9 @@ import javafx.geometry.Bounds;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.text.Text;
 
+/**
+ * The FxGraphics class implements the {@link Graphics interface for rendering graphics in JavaFX based applications.
+ */
 public class FxGraphics implements Graphics {
     public static final FxFontUtil FONT_UTIL = FxFontUtil.getInstance();
     public static final Font DEFAULT_FONT = new Font();
@@ -20,6 +23,8 @@ public class FxGraphics implements Graphics {
     private final float w;
     private final float h;
     private final AffineTransformation2f parentTransform;
+
+    private boolean isDrawing = true;
 
     private AffineTransformation2f transform;
 
@@ -42,31 +47,35 @@ public class FxGraphics implements Graphics {
 
     @Override
     public FontUtil<?> getFontUtil() {
+        assert isDrawing : "instance has already been closed!";
+
         return FONT_UTIL;
     }
 
     @Override
     public Rectangle2f getBounds() {
+        assert isDrawing : "instance has already been closed!";
         return new Rectangle2f(0, 0, w, h);
     }
 
     @Override
     public Rectangle2f getTextDimension(CharSequence text) {
+        assert isDrawing : "instance has already been closed!";
+
         return FONT_UTIL.getTextDimension(text, font);
     }
 
     @Override
-    public void beginDraw() {
-        // nop
-    }
+    public void close() {
+        assert isDrawing : "instance has already been closed!";
 
-    @Override
-    public void endDraw() {
-        // nop
+        isDrawing = false;
     }
 
     @Override
     public void strokeRect(float x, float y, float w, float h) {
+        assert isDrawing : "instance has already been closed!";
+
         gc.setStroke(strokeColor);
         gc.setLineWidth(width);
         gc.strokeRect(x, y, w, h);
@@ -74,12 +83,16 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void fillRect(float x, float y, float w, float h) {
+        assert isDrawing : "instance has already been closed!";
+
         gc.setFill(fillColor);
         gc.fillRect(x, y, w, h);
     }
 
     @Override
     public void strokeLine(float x1, float y1, float x2, float y2) {
+        assert isDrawing : "instance has already been closed!";
+
         gc.setStroke(strokeColor);
         gc.setLineWidth(width);
         gc.strokeLine(x1, y1, x2, y2);
@@ -87,28 +100,38 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void setStroke(Color c, float width) {
+        assert isDrawing : "instance has already been closed!";
+
         this.strokeColor = FxUtil.convert(c);
         this.width = width;
     }
 
     @Override
     public void setFill(Color c) {
+        assert isDrawing : "instance has already been closed!";
+
         this.fillColor = FxUtil.convert(c);
     }
 
     @Override
     public void setTransformation(AffineTransformation2f t) {
+        assert isDrawing : "instance has already been closed!";
+
         this.transform = t;
         gc.setTransform(FxUtil.convert(t.append(parentTransform)));
     }
 
     @Override
     public AffineTransformation2f getTransformation() {
+        assert isDrawing : "instance has already been closed!";
+
         return transform;
     }
 
     @Override
     public void setFont(Font font) {
+        assert isDrawing : "instance has already been closed!";
+
         this.textColor = FxUtil.convert(font.getColor());
         this.font = FONT_UTIL.convert(font.scaled(s));
         this.isStrikeThrough = font.isStrikeThrough();
@@ -117,6 +140,8 @@ public class FxGraphics implements Graphics {
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
+        assert isDrawing : "instance has already been closed!";
+
         gc.setFont(font);
         gc.setFill(textColor);
         gc.fillText(text.toString(), x, y);

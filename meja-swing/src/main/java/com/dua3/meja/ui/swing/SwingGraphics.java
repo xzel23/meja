@@ -21,6 +21,9 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
 
+/**
+ * The SwingGraphics class implements the {@link Graphics interface for rendering graphics in swing based applications.
+ */
 public class SwingGraphics implements Graphics {
     private static final AwtFontUtil FONT_UTIL = AwtFontUtil.getInstance();
     public static final java.awt.Font DEFAULT_FONT = FONT_UTIL.convert(new Font());
@@ -39,6 +42,14 @@ public class SwingGraphics implements Graphics {
     private final Rectangle2D.Float rect = new Rectangle2D.Float();
     private final double[] double6 = new double[6];
 
+    private boolean isDrawing = true;
+
+    /**
+     * Constructor.
+     *
+     * @param g2d     the Graphics2D object to render on
+     * @param bounds  the bounds of the parent component
+     */
     public SwingGraphics(Graphics2D g2d, Rectangle bounds) {
         this.g2d = g2d;
         this.parentBounds = bounds;
@@ -57,16 +68,20 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public Rectangle2f getBounds() {
+        assert isDrawing : "instance has been closed!";
+
         return convert(LangUtil.orElse(g2d.getClipBounds(), parentBounds));
     }
 
     /**
-     * Convert a java.awt.Rectangle object to a Rectangle2f object.
+     * Convert a {@link java.awt.Rectangle} object to a {@link Rectangle2f} object.
      *
      * @param r the Rectangle object to convert
      * @return a Rectangle2f object with the same position and size as the input
      */
-    public static Rectangle2f convert(Rectangle r) {
+    public Rectangle2f convert(Rectangle r) {
+        assert isDrawing : "instance has been closed!";
+
         return Rectangle2f.of(r.x, r.y, r.width, r.height);
     }
 
@@ -74,7 +89,7 @@ public class SwingGraphics implements Graphics {
      * Converts a {@link Rectangle} object to a {@link Rectangle2f} object.
      *
      * @param r the Rectangle object to convert
-     * @return a Rectangle2f object with the same position and size as the input
+     * @return a {@link Rectangle2f} object with the same position and size as the input
      */
     public static Rectangle convert(Rectangle2f r) {
         return new Rectangle(
@@ -87,11 +102,11 @@ public class SwingGraphics implements Graphics {
      * Converts a {@link Rectangle2f} object to a Rectangle object.
      *
      *
-     * <p>The difference to the {@link #convert(Rectangle2f)} is that the returned rectangle will completeyly cover the
+     * <p>The difference to the {@link #convert(Rectangle2f)} is that the returned rectangle will completely cover the
      * area of the transformed source rectangle even if the covered area of pixels on the border only is covered
      * to less than 50% by the transformed source rectangle.
      *
-     * @param r the Rectangle2f object to convert
+     * @param r the {@link Rectangle2f} object to convert
      * @return a Rectangle object with the same position and size as the input
      */
     public static Rectangle convertCovering(Rectangle2f r) {
@@ -119,6 +134,8 @@ public class SwingGraphics implements Graphics {
      * @return the converted affine transformation
      */
     public AffineTransformation2f convert(AffineTransform t) {
+        assert isDrawing : "instance has been closed!";
+
         t.getMatrix(double6);
         return new AffineTransformation2f(
                 (float) double6[0], (float) double6[2], (float) double6[4], (float) double6[1], (float) double6[3], (float) double6[5]
@@ -127,38 +144,45 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void setTransformation(AffineTransformation2f t) {
+        assert isDrawing : "instance has been closed!";
+
         this.transform = t;
         g2d.setTransform(convert(t.append(parentTransform)));
     }
 
     @Override
     public AffineTransformation2f getTransformation() {
+        assert isDrawing : "instance has been closed!";
+
         return transform;
     }
 
     @Override
-    public void beginDraw() {
-        // nop
-    }
+    public void close() {
+        assert isDrawing : "instance has already been closed!";
 
-    @Override
-    public void endDraw() {
-        // nop
+        isDrawing = false;
     }
 
     @Override
     public void setFill(Color color) {
+        assert isDrawing : "instance has been closed!";
+
         fillColor = SwingUtil.toAwtColor(color);
     }
 
     @Override
     public void setStroke(Color color, float width) {
+        assert isDrawing : "instance has been closed!";
+
         this.strokeColor = SwingUtil.toAwtColor(color);
         g2d.setStroke(new BasicStroke(width));
     }
 
     @Override
     public void setFont(Font font) {
+        assert isDrawing : "instance has been closed!";
+
         textColor = (SwingUtil.toAwtColor(font.getColor()));
         isUnderlined = font.isUnderline();
         isStrikeThrough = font.isStrikeThrough();
@@ -167,6 +191,8 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void strokeLine(float x1, float y1, float x2, float y2) {
+        assert isDrawing : "instance has been closed!";
+
         g2d.setColor(strokeColor);
         line.setLine(x1, y1, x2, y2);
         g2d.draw(line);
@@ -174,6 +200,8 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void strokeRect(float x, float y, float width, float height) {
+        assert isDrawing : "instance has been closed!";
+
         g2d.setColor(strokeColor);
         rect.setRect(x, y, width, height);
         g2d.draw(rect);
@@ -181,6 +209,8 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void fillRect(float x, float y, float width, float height) {
+        assert isDrawing : "instance has been closed!";
+
         g2d.setColor(fillColor);
         rect.setRect(x, y, width, height);
         g2d.fill(rect);
@@ -188,6 +218,8 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
+        assert isDrawing : "instance has been closed!";
+
         if (text.isEmpty()) {
             return;
         }
@@ -203,11 +235,15 @@ public class SwingGraphics implements Graphics {
 
     @Override
     public Rectangle2f getTextDimension(CharSequence text) {
+        assert isDrawing : "instance has been closed!";
+
         return FONT_UTIL.getTextDimension(text, font);
     }
 
     @Override
     public FontUtil<?> getFontUtil() {
+        assert isDrawing : "instance has been closed!";
+
         return FONT_UTIL;
     }
 }

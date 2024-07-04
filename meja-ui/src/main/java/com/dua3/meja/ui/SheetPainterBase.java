@@ -81,14 +81,12 @@ public abstract class SheetPainterBase {
         try {
             LOGGER.debug("drawSheet - T =\n{}", () -> g.getTransformation().toMatrixString());
 
-            g.beginDraw();
             drawBackground(g);
             drawLabels(g);
             drawGrid(g);
             drawCells(g);
             sheet.getCurrentCell().ifPresent( cell -> cellRenderer.drawSelection(g, cell));
             drawSplitLines(g);
-            g.endDraw();
         } finally {
             readLock.unlock();
         }

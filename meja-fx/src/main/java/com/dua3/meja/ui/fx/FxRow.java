@@ -190,64 +190,64 @@ public class FxRow extends IndexedCell<RowProxy> {
 
         CellRenderer cellRenderer = new CellRenderer(sheetViewDelegate);
 
-        FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight());
+        try (FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight())) {
+            // clear background
+            g.setFill(sheetViewDelegate.getBackground());
+            g.fillRect(g.getBounds());
 
-        // clear background
-        g.setFill(sheetViewDelegate.getBackground());
-        g.fillRect(g.getBounds());
+            float widthInPoints = segmentViewDelegate.getWidthInPoints();
+            float rowHeightInPoints = getRowHeightInPoints();
 
-        float widthInPoints = segmentViewDelegate.getWidthInPoints();
-        float rowHeightInPoints = getRowHeightInPoints();
+            // draw grid lines
+            g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxHeightInPoints());
+            float x = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getStartColumn());
+            float y = rowHeightInPoints;
+            g.strokeLine(x, y, widthInPoints, y);
 
-        // draw grid lines
-        g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxHeightInPoints());
-        float x = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getStartColumn());
-        float y = rowHeightInPoints;
-        g.strokeLine(x, y, widthInPoints, y);
+            g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxWidthInPoints());
+            for (int j = segmentViewDelegate.getStartColumn(); j <= segmentViewDelegate.getEndColumn(); j++) {
+                x = sheetViewDelegate.getColumnPos(j);
+                g.strokeLine(x, 0, x, h);
+            }
 
-        g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxWidthInPoints());
-        for (int j = segmentViewDelegate.getStartColumn(); j<=segmentViewDelegate.getEndColumn(); j++) {
-            x = sheetViewDelegate.getColumnPos(j);
-            g.strokeLine(x, 0, x, h);
-        }
+            int i = row.getRowNumber();
 
-        int i = row.getRowNumber();
+            g.setTransformation(AffineTransformation2f.translate(0, -sheetViewDelegate.getRowPos(i)));
 
-        g.setTransformation(AffineTransformation2f.translate(0, -sheetViewDelegate.getRowPos(i)));
-
-        //  draw row label
-        Rectangle2f r = new Rectangle2f(
-                -sheetViewDelegate.getRowLabelWidthInPoints(),
-                sheetViewDelegate.getRowPos(i),
-                sheetViewDelegate.getRowLabelWidthInPoints(),
-                sheetViewDelegate.getRowPos(i + 1) - sheetViewDelegate.getRowPos(i)
-        );
-
-        sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getRowName(i));
-
-        //  iterate over columns
-        for (int j = segmentViewDelegate.getStartColumn(); j < segmentViewDelegate.getEndColumn(); j++) {
             //  draw row label
-            r = new Rectangle2f(
-                    sheetViewDelegate.getColumnPos(j),
-                    -sheetViewDelegate.getColumnLabelHeightInPoints(),
-                    sheetViewDelegate.getColumnPos(j + 1) - sheetViewDelegate.getColumnPos(j),
-                    sheetViewDelegate.getColumnLabelHeightInPoints()
+            Rectangle2f r = new Rectangle2f(
+                    -sheetViewDelegate.getRowLabelWidthInPoints(),
+                    sheetViewDelegate.getRowPos(i),
+                    sheetViewDelegate.getRowLabelWidthInPoints(),
+                    sheetViewDelegate.getRowPos(i + 1) - sheetViewDelegate.getRowPos(i)
             );
-            sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getColumnName(j));
 
-            // draw cell
-            row.getCellIfExists(j).ifPresent(cell -> cellRenderer.drawCell(g, cell.getLogicalCell()));
+            sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getRowName(i));
+
+            //  iterate over columns
+            for (int j = segmentViewDelegate.getStartColumn(); j < segmentViewDelegate.getEndColumn(); j++) {
+                //  draw row label
+                r = new Rectangle2f(
+                        sheetViewDelegate.getColumnPos(j),
+                        -sheetViewDelegate.getColumnLabelHeightInPoints(),
+                        sheetViewDelegate.getColumnPos(j + 1) - sheetViewDelegate.getColumnPos(j),
+                        sheetViewDelegate.getColumnLabelHeightInPoints()
+                );
+                sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getColumnName(j));
+
+                // draw cell
+                row.getCellIfExists(j).ifPresent(cell -> cellRenderer.drawCell(g, cell.getLogicalCell()));
+            }
+
+            if (segmentViewDelegate.hasVLine()) {
+                g.setStroke(Color.BLACK, sheetViewDelegate.get1PxWidthInPoints());
+                x = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getEndColumn()) + getSheetViewDelegate().get1PxWidthInPoints();
+                y = sheetViewDelegate.getRowPos(i);
+                g.strokeLine(x, y, x, y + getRowHeightInPoints());
+            }
+
+            sheetViewDelegate.getCurrentLogicalCell().ifPresent(cell -> cellRenderer.drawSelection(g, cell));
         }
-
-        if (segmentViewDelegate.hasVLine()) {
-            g.setStroke(Color.BLACK, sheetViewDelegate.get1PxWidthInPoints());
-            x = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getEndColumn()) + getSheetViewDelegate().get1PxWidthInPoints();
-            y = sheetViewDelegate.getRowPos(i);
-            g.strokeLine(x, y, x, y + getRowHeightInPoints());
-        }
-
-        sheetViewDelegate.getCurrentLogicalCell().ifPresent( cell -> cellRenderer.drawSelection(g, cell));
     }
 
     private void renderColumnLabels() {
@@ -269,32 +269,32 @@ public class FxRow extends IndexedCell<RowProxy> {
         float translateY = 0;
         gc.setTransform(s.sx(), 0, 0, s.sy(), translateX, translateY);
 
-        FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight());
+        try (FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight())) {
+            // clear background
+            g.setFill(sheetViewDelegate.getBackground());
+            g.fillRect(g.getBounds());
 
-        // clear background
-        g.setFill(sheetViewDelegate.getBackground());
-        g.fillRect(g.getBounds());
+            float heightInPoints = sheetViewDelegate.getColumnLabelHeightInPoints();
 
-        float heightInPoints = sheetViewDelegate.getColumnLabelHeightInPoints();
+            //  iterate over columns
+            for (int j = segmentViewDelegate.getStartColumn(); j < segmentViewDelegate.getEndColumn(); j++) {
+                //  draw row label
+                Rectangle2f r = new Rectangle2f(
+                        sheetViewDelegate.getColumnPos(j),
+                        0,
+                        sheetViewDelegate.getColumnPos(j + 1) - sheetViewDelegate.getColumnPos(j),
+                        heightInPoints
+                );
+                sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getColumnName(j));
+            }
 
-        //  iterate over columns
-        for (int j = segmentViewDelegate.getStartColumn(); j < segmentViewDelegate.getEndColumn(); j++) {
-            //  draw row label
-            Rectangle2f r = new Rectangle2f(
-                    sheetViewDelegate.getColumnPos(j),
-                    0,
-                    sheetViewDelegate.getColumnPos(j + 1) - sheetViewDelegate.getColumnPos(j),
-                    heightInPoints
-            );
-            sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getColumnName(j));
-        }
-
-        // draw split line
-        if (segmentViewDelegate.hasVLine()) {
-            g.setStroke(Color.BLACK, sheetViewDelegate.get1PxWidthInPoints());
-            float x = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getEndColumn()) + getSheetViewDelegate().get1PxWidthInPoints();
-            float y = 0;
-            g.strokeLine(x, y, x, y + heightInPoints);
+            // draw split line
+            if (segmentViewDelegate.hasVLine()) {
+                g.setStroke(Color.BLACK, sheetViewDelegate.get1PxWidthInPoints());
+                float x = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getEndColumn()) + getSheetViewDelegate().get1PxWidthInPoints();
+                float y = 0;
+                g.strokeLine(x, y, x, y + heightInPoints);
+            }
         }
     }
 
