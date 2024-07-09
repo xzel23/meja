@@ -46,9 +46,8 @@ public class Cache<K, V> {
     /**
      * Constructs a new Cache object with the given type and compute function.
      *
-     * @param type    the type of the cache, either STRONG_KEYS or WEAK_KEYS
+     * @param type    the type of the cache, either SOFT_REFERENCES or WEAK_REFERENCES
      * @param compute a function that computes the value for the given key if it is not already present in the cache
-     * @throws IllegalArgumentException if the type is not STRONG_KEYS or WEAK_KEYS
      */
     public Cache(ReferenceType type, Function<? super K, ? extends V> compute) {
         this.compute = compute;
@@ -74,6 +73,8 @@ public class Cache<K, V> {
 
         if (item == null) {
             synchronized (lock) {
+                // Check again within synchronized block
+                weak = items.get(key);
                 item = weak == null ? null : weak.get();
                 if (item == null) {
                     item = compute.apply(key);
