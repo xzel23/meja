@@ -309,9 +309,10 @@ public class FxRow extends IndexedCell<RowProxy> {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, w, h);
 
-        FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight());
-        g.setFill(Color.BLACK);
-        g.fillRect(g.getBounds());
+        try (FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight())) {
+            g.setFill(Color.BLACK);
+            g.fillRect(g.getBounds());
+        }
     }
 
     public void onMouseClicked(MouseEvent evt) {
