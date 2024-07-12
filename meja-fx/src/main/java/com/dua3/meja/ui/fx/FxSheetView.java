@@ -241,7 +241,7 @@ public class FxSheetView extends StackPane implements SheetView {
         int endRow = startRow + lc.getVerticalSpan();
 
         PlatformHelper.runLater(() ->{
-            for (int i=startRow; i<endRow; i++) {
+            for (int i = startRow; i< endRow; i++) {
                 topLeftQuadrant.flow.getCell(i).requestLayout();
                 topRightQuadrant.flow.getCell(i).requestLayout();
                 bottomLeftQuadrant.flow.getCell(i).requestLayout();

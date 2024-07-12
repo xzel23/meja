@@ -62,8 +62,6 @@ public class FxRow extends IndexedCell<RowProxy> {
                 idx--;
                 if (idx<rows.size()) {
                     return sheetViewDelegate.getRowHeightInPoints(rows.get(idx).getRowNumber());
-                } else if (idx==rows.size()) {
-                    return sheetViewDelegate.get1PxHeightInPoints();
                 } else {
                     return sheetViewDelegate.getDefaultRowHeightInPoints();
                 }
