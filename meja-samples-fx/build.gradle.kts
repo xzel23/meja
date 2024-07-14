@@ -1,15 +1,8 @@
 plugins {
     id("application")
-    alias(libs.plugins.javafx)
 }
 
 description = "Meja spreadsheet library - samples (JavaFX)"
-
-javafx {
-    version = rootProject.libs.versions.javafx.get()
-    configuration = "implementation"
-    modules = listOf("javafx.base", "javafx.graphics", "javafx.controls")
-}
 
 dependencies {
     implementation(project(":meja"))
@@ -55,4 +48,10 @@ val runShowTestXlsx = task<JavaExec>("runFxShowTestXlsx") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
     enableAssertions = true
+}
+
+val runShowTestXlsxNoEA = task<JavaExec>("runFxShowTestXlsx (no assertions)") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
+    enableAssertions = false
 }
