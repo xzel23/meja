@@ -384,7 +384,7 @@ public abstract class PoiCellStyle implements CellStyle {
 
     @Override
     public void setRotation(short angle) {
-        poiCellStyle.setRotation((short) LangUtil.requireInInterval(angle, (short) -90, (short) 90, "angle must be in range [-90, 90]: %d", angle));
+        poiCellStyle.setRotation(LangUtil.requireInInterval(angle, (short) -90, (short) 90, "angle must be in range [-90, 90]: %d", angle));
     }
 
     DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {

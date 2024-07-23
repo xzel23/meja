@@ -108,7 +108,7 @@ public final class FxKitchenSink extends Application {
     private Workbook wb;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         final FxWorkbookView view = new FxWorkbookView();
         Scene scene = new Scene(view, 1000, 600);
 

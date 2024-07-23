@@ -141,11 +141,13 @@ public interface SheetView {
     /**
      * Represents the quadrant of a sheet view.
      * A quadrant can be one of the four sections of a sheet view: top-left, top-right, bottom-left, and bottom-right.
-     *
+     * <p>
      * The quadrant is defined by two boolean properties:
-     * - isTop: indicates whether the quadrant is in the top half of the sheet view
-     * - isLeft: indicates whether the quadrant is in the left half of the sheet view
-     *
+     * <ul>
+     * <li>isTop: indicates whether the quadrant is in the top half of the sheet view
+     * <li>isLeft: indicates whether the quadrant is in the left half of the sheet view
+     * </ul>
+     * <p>
      * Each quadrant provides methods to get the start and end positions for rows and columns within the quadrant.
      */
     enum Quadrant {

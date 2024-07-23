@@ -41,8 +41,8 @@ public class FxSheetView extends StackPane implements SheetView {
     private final FxSegmentView bottomLeftQuadrant;
     private final FxSegmentView bottomRightQuadrant;
     private final GridPane gridPane;
-    private ScrollBar hScrollbar;
-    private ScrollBar vScrollbar;
+    private final ScrollBar hScrollbar;
+    private final ScrollBar vScrollbar;
 
     public FxSheetView() {
         this(null);

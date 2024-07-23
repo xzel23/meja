@@ -504,7 +504,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public boolean setCurrentCell(int i, int j) {
-        return sheet == null ? false : sheet.setCurrentCell(i, j);
+        return sheet != null && sheet.setCurrentCell(i, j);
     }
 
     public boolean setCurrentCell(Cell cell) {
@@ -625,7 +625,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public void onMousePressed(Cell cell) {
-        LOG.debug("onMousePressed({})", cell::getCellRef);
+        LOG.debug("onMousePressed({})", () -> cell.getCellRef());
 
         // make the cell the current cell
         boolean currentCellChanged = setCurrentCell(cell);

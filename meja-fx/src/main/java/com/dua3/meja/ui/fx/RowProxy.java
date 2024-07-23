@@ -8,7 +8,7 @@ public class RowProxy {
     public static final RowProxy ROW_PROXY_CLOLUMN_LABELS = new RowProxy(Type.CLOUMN_LABELS, null);
     public static final RowProxy ROW_PROXY_SPLIT_LINE = new RowProxy(Type.SPLIT_LINE, null);
 
-    enum Type {
+    public enum Type {
         ROW,
         EMPTY,
         CLOUMN_LABELS,

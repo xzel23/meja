@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Optional;
 
 public class FxRow extends IndexedCell<RowProxy> {
-    Logger LOG = LogManager.getLogger(FxRow.class);
+    private static final Logger LOG = LogManager.getLogger(FxRow.class);
 
     private final ObservableList<Row> rows;
     private final Canvas canvas;

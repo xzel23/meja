@@ -48,7 +48,7 @@ import java.util.concurrent.locks.Lock;
 @SuppressWarnings("serial")
 public class SwingSheetView extends JPanel implements SheetView {
 
-    private transient final SwingSheetViewDelegate delegate;
+    private final transient SwingSheetViewDelegate delegate;
 
     private static final Logger LOG = LogManager.getLogger(SwingSheetView.class);
 
