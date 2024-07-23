@@ -25,6 +25,8 @@ import java.util.Optional;
  * The WorkbookView interface represents a user interface view for a workbook.
  * It provides methods for accessing and modifying the displayed workbook and its sheets.
  * The generic type parameter SV represents the type of sheet views used in this workbook view.
+ *
+ * @param <SV> the generic type of the {@link SheetView} implementation
  */
 public interface WorkbookView<SV extends SheetView> {
 
