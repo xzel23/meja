@@ -114,9 +114,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     @Override
     public void close() throws IOException {
         poiWorkbook.close();
-        if (poiWorkbook instanceof SXSSFWorkbook sxssfWorkbook) {
-            sxssfWorkbook.dispose();
-        }
     }
 
     @Override
