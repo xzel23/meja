@@ -24,6 +24,11 @@ public class CellRenderer {
 
     private final SheetViewDelegate delegate;
 
+    /**
+     * Create new CellRenderer instance.
+     *
+     * @param delegate the delegate object that provides necessary information about the {@link SheetView} for which cells are to be rendered
+     */
     public CellRenderer(SheetViewDelegate delegate) {
         this.delegate = delegate;
     }
@@ -32,6 +37,13 @@ public class CellRenderer {
         return delegate;
     }
 
+    /**
+     * Draws a cell on the graphics object. The cell is composed of three parts:
+     * background, border, and foreground.
+     *
+     * @param g    the graphics object on which to draw the cell
+     * @param cell the cell to draw
+     */
     public void drawCell(Graphics g, Cell cell) {
         drawCellBackground(g, cell);
         drawCellBorder(g, cell);

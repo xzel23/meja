@@ -9,6 +9,12 @@ package com.dua3.meja.ui;
  */
 public interface SegmentView {
 
+    /**
+     * Sets the size of the view on the display.
+     *
+     * @param w The width of the view in pixels.
+     * @param h The height of the view in pixels.
+     */
     void setViewSizeOnDisplay(float w, float h);
 
 }
