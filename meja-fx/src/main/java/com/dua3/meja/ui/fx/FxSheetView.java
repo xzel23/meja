@@ -74,9 +74,6 @@ public class FxSheetView extends StackPane implements SheetView {
         vScrollbar = new ScrollBar();
         vScrollbar.setOrientation(Orientation.VERTICAL);
 
-        entangleScrollBars(hScrollbar, topRightQuadrant.flow.getHScrollbar(), bottomRightQuadrant.flow.getHScrollbar());
-        entangleScrollBars(vScrollbar, bottomLeftQuadrant.flow.getVScrollbar(), bottomRightQuadrant.flow.getVScrollbar());
-
         // Set layout constraints
         RowConstraints[] rc = {
                 rowConstraints(Priority.NEVER),
@@ -112,6 +109,13 @@ public class FxSheetView extends StackPane implements SheetView {
         StackPane.setAlignment(hScrollbar, javafx.geometry.Pos.BOTTOM_CENTER);
         StackPane.setAlignment(vScrollbar, javafx.geometry.Pos.CENTER_RIGHT);
 
+        // entangle scrollbars
+        entangleScrollBars(hScrollbar, topRightQuadrant.flow.getHScrollbar(), bottomRightQuadrant.flow.getHScrollbar());
+        entangleScrollBars(vScrollbar, bottomLeftQuadrant.flow.getVScrollbar(), bottomRightQuadrant.flow.getVScrollbar());
+
+        hScrollbar.setValue(0);
+        vScrollbar.setValue(0);
+
         setFocusTraversable(true);
         setOnKeyPressed(this::onKeyPressed);
 
@@ -132,9 +136,10 @@ public class FxSheetView extends StackPane implements SheetView {
 
     private void entangleScrollBars(ScrollBar mainScrollBar, ScrollBar... dependentScrollbars) {
         for (ScrollBar scrollbar : dependentScrollbars) {
+            entangle(ScrollBar::visibleAmountProperty, mainScrollBar, scrollbar);
+            entangle(ScrollBar::unitIncrementProperty, mainScrollBar, scrollbar);
             entangle(ScrollBar::minProperty, mainScrollBar, scrollbar);
             entangle(ScrollBar::maxProperty, mainScrollBar, scrollbar);
-            entangle(ScrollBar::visibleAmountProperty, mainScrollBar, scrollbar);
             entangle(ScrollBar::valueProperty, mainScrollBar, scrollbar);
         }
     }
@@ -201,7 +206,7 @@ public class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void scrollToCurrentCell() {
-        LOG.debug("scrollToCurrentCell()");
+        LOG.trace("scrollToCurrentCell()");
 
         delegate.getCurrentLogicalCell().ifPresent(cell -> {
             Sheet sheet = delegate.getSheet().orElseThrow();
@@ -213,6 +218,7 @@ public class FxSheetView extends StackPane implements SheetView {
                 // at least part of the (possibly merged) cell is below the split => scroll row into view
                 FxSegmentView.VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomRightQuadrant.flow;
                 FxRow fxRow = flow.getCell(i);
+                LOG.trace("scrolling row {} into view", i);
                 Platform.runLater(() -> flow.scrollTo(fxRow));
             }
             int splitColumn = sheet.getSplitColumn();
@@ -224,8 +230,10 @@ public class FxSheetView extends StackPane implements SheetView {
                 float xMax = (delegate.getColumnPos(j+1) - split) * s.sy();
                 float width = xMax - xMin;
                 if (xMin < hScrollbar.getValue()) {
+                    LOG.trace("scrolling to leftmost column");
                     hScrollbar.setValue(xMin);
                 } else if (xMin > hScrollbar.getValue() + hScrollbar.getVisibleAmount() * s.sx()) {
+                    LOG.trace("scrolling column {} into view", j);
                     hScrollbar.setValue(xMin - hScrollbar.getVisibleAmount() * s.sx());
                 }
             }
