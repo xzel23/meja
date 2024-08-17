@@ -56,11 +56,11 @@ public class FxRow extends IndexedCell<RowProxy> {
         if (getSegmentViewDelegate().isAboveSplit()) {
             if (idx <0) {
                 return getSheetViewDelegate().getDefaultRowHeightInPoints();
-            } else if (idx==0) {
+            } else if (idx == 0) {
                 return sheetViewDelegate.getColumnLabelHeightInPoints();
             } else {
                 idx--;
-                if (idx<rows.size()) {
+                if (idx < rows.size()) {
                     return sheetViewDelegate.getRowHeightInPoints(rows.get(idx).getRowNumber());
                 } else {
                     return sheetViewDelegate.getDefaultRowHeightInPoints();
@@ -122,11 +122,11 @@ public class FxRow extends IndexedCell<RowProxy> {
     protected void updateItem(@Nullable RowProxy item, boolean empty) {
         LOG.trace("updateItem({}, {})", item, empty);
 
+        assert Platform.isFxApplicationThread() :"not on FxApplication thread";
+
         super.updateItem(item, empty);
 
-        if (item != null) {
-            Platform.runLater(() -> render());
-        }
+        render();
     }
 
     public FxSheetViewDelegate getSheetViewDelegate() {
