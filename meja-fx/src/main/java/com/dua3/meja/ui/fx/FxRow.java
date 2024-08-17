@@ -243,7 +243,11 @@ public class FxRow extends IndexedCell<RowProxy> {
                 g.strokeLine(x, y, x, y + getRowHeightInPoints());
             }
 
-            sheetViewDelegate.getCurrentLogicalCell().ifPresent(cell -> cellRenderer.drawSelection(g, cell));
+            sheetViewDelegate.getCurrentLogicalCell().ifPresent(cell -> {
+                if (cell.getRowNumber() - 1 <= i && cell.getRowNumber() + cell.getVerticalSpan() >= i) {
+                    cellRenderer.drawSelection(g, cell);
+                }
+            });
         }
     }
 
