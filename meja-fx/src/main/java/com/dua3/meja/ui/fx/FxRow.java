@@ -123,12 +123,10 @@ public class FxRow extends IndexedCell<RowProxy> {
         LOG.trace("updateItem({}, {})", item, empty);
 
         super.updateItem(item, empty);
-        Platform.runLater(() -> {
-            sheetViewDelegate.updateLayout();
-            if (item != null) {
-                    render();
-            }
-        });
+
+        if (item != null) {
+            Platform.runLater(() -> render());
+        }
     }
 
     public FxSheetViewDelegate getSheetViewDelegate() {
