@@ -58,16 +58,21 @@ public class FxSegmentView extends Control implements SegmentView {
     private final ObservableList<Row> rows;
 
     public FxSegmentView(FxSheetViewDelegate sheetDelegate, SheetView.Quadrant quadrant, ObservableList<Row> sheetRows) {
-        this.flow = new VirtualFlowWithHiddenScrollBars<>(quadrant);
+        this.quadrant = quadrant;
         this.sheetDelegate = sheetDelegate;
         this.segmentDelegate = new SegmentViewDelegate(this, sheetDelegate, quadrant);
-        this.quadrant = quadrant;
         this.rows = filterRows(sheetRows, sheetDelegate.getSplitRow());
-
-        setSkin(new FxSegmentViewSkin(this));
-        setFocusTraversable(false);
+        this.flow = new VirtualFlowWithHiddenScrollBars<>(quadrant);
 
         updateLayout();
+
+        flow.setCellFactory(f -> new FxRow(rows, segmentDelegate));
+        flow.setCellCount(rows.size());
+
+        FxSegmentViewSkin skin = new FxSegmentViewSkin(this);
+        setSkin(skin);
+
+        setFocusTraversable(false);
     }
 
     /**
@@ -113,24 +118,7 @@ public class FxSegmentView extends Control implements SegmentView {
                     // nop
                 }
             }
-
-            flow.setCellFactory(f -> new FxRow(rows, segmentDelegate));
-            flow.setCellCount(rows.size());
         });
-    }
-
-    private void init() {
-        // TODO listen to mouse events
-        /*
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                Point p = e.getPoint();
-                translateMousePosition(p);
-                svDelegate.onMousePressed(p.dx, p.dy);
-            }
-        });
-         */
     }
 
     @Override
