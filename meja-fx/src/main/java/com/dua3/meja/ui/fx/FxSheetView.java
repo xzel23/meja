@@ -220,7 +220,7 @@ public class FxSheetView extends StackPane implements SheetView {
                     FxSegmentView.VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomRightQuadrant.flow;
                     FxRow fxRow = flow.getCell(i);
                     LOG.trace("scrolling row {} into view", i);
-                    Platform.runLater(() -> flow.scrollTo(fxRow));
+                    flow.scrollTo(fxRow);
                 }
                 int splitColumn = sheet.getSplitColumn();
                 if (j >= splitColumn) {

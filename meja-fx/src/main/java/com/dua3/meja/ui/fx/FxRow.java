@@ -27,7 +27,6 @@ public class FxRow extends IndexedCell<RowProxy> {
     private static final Logger LOG = LogManager.getLogger(FxRow.class);
 
     private final ObservableList<Row> rows;
-    private final Canvas canvas;
 
     private final FxSheetViewDelegate sheetViewDelegate;
     private final SegmentViewDelegate segmentViewDelegate;
@@ -37,10 +36,9 @@ public class FxRow extends IndexedCell<RowProxy> {
         this.rows = rows;
         this.segmentViewDelegate = svDelegate;
         this.sheetViewDelegate = (FxSheetViewDelegate) svDelegate.getSheetViewDelegate();
-        this.canvas = new Canvas(1,1);
 
         setText(null);
-        setGraphic(null);
+        setGraphic(new Canvas(1,1));
 
         setOnMouseClicked(this::onMouseClicked);
     }
@@ -127,6 +125,8 @@ public class FxRow extends IndexedCell<RowProxy> {
         super.updateItem(item, empty);
 
         render();
+
+        LOG.trace("bounds: {}", getLayoutBounds());
     }
 
     public FxSheetViewDelegate getSheetViewDelegate() {
@@ -147,7 +147,7 @@ public class FxRow extends IndexedCell<RowProxy> {
 
             @Override
             public Node getNode() {
-                return canvas;
+                return getGraphic();
             }
 
             public void dispose() {
@@ -168,6 +168,9 @@ public class FxRow extends IndexedCell<RowProxy> {
     private void renderRow(Row row) {
         float w = segmentViewDelegate.getWidthInPixels();
         float h = getRowHeightInPixels();
+
+        Canvas canvas = (Canvas) getGraphic();
+
         canvas.setWidth(w);
         canvas.setHeight(h);
 
@@ -258,6 +261,8 @@ public class FxRow extends IndexedCell<RowProxy> {
         float w = segmentViewDelegate.getWidthInPixels();
         float h = sheetViewDelegate.getColumnLabelHeightInPixels();
 
+        Canvas canvas = (Canvas) getGraphic();
+
         canvas.setWidth(w);
         canvas.setHeight(h);
 
@@ -302,6 +307,8 @@ public class FxRow extends IndexedCell<RowProxy> {
     private void renderSplitLine() {
         float w = segmentViewDelegate.getWidthInPixels();
         float h = 1;
+
+        Canvas canvas = (Canvas) getGraphic();
 
         canvas.setWidth(w);
         canvas.setHeight(h);
