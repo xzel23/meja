@@ -214,6 +214,11 @@ public interface Row extends Iterable<Cell> {
         return Optional.empty();
     }
 
+    /**
+     * Get the height of the row.
+     *
+     * @return the row height in points
+     */
     default float getRowHeight() {
         return getSheet().getRowHeight(getRowNumber());
     }

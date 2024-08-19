@@ -64,6 +64,11 @@ public abstract class AbstractWorkbook implements Workbook {
         publisher.submit(new WorkbookEvent.UriChanged(this, oldUri, newUri));
     }
 
+    /**
+     * Constructs an instance of the {@code AbstractWorkbook} class.
+     *
+     * @param uri the URI of the workbook
+     */
     protected AbstractWorkbook(@Nullable URI uri) {
         this.uri = uri;
     }

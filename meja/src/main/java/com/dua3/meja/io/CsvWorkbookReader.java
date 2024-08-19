@@ -15,19 +15,20 @@
  */
 package com.dua3.meja.io;
 
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.utility.io.CsvReader;
+import com.dua3.utility.io.CsvReader.RowBuilder;
+import com.dua3.utility.options.Arguments;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import com.dua3.utility.io.CsvReader;
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.utility.io.CsvReader.RowBuilder;
-import com.dua3.utility.options.Arguments;
-
 /**
- * @author Axel Howind (axel@dua3.com)
+ * The {@code CsvWorkbookReader} class is a concrete implementation of the abstract {@link WorkbookReader} class. It is responsible for reading workbook data from CSV (comma-separated
+ *  values) format. The CSV data can be read from a BufferedReader or an InputStream.
  */
 public final class CsvWorkbookReader extends WorkbookReader {
 

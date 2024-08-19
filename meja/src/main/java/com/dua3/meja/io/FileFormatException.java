@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.io.Serial;
 
 /**
- * @author axel
+ * The {@code FileFormatException} class represents an exception that is thrown when there is an issue with the file format or corrupted data in a file.
+ * It is a subclass of the {@link IOException} class.
  */
 public class FileFormatException extends IOException {
 

@@ -24,6 +24,12 @@ import com.dua3.utility.data.Color;
  * @param color the border color
  */
 public record BorderStyle(float width, Color color) {
+    /**
+     * Checks if the border style has a width of 0.
+     * This method is used to determine if the border should be considered as none.
+     *
+     * @return true if the border style has a width of 0, false otherwise
+     */
     public boolean isNone() {
         return width == 0f;
     }

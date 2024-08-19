@@ -15,6 +15,8 @@
  */
 package com.dua3.meja.util;
 
+import com.dua3.meja.model.Cell;
+
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.LocalDateTime;
@@ -22,10 +24,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.Optional;
 
-import com.dua3.meja.model.Cell;
-
 /**
- * @author Axel Howind (axel@dua3.com)
+ * The CellValueHelper class is used to set cell values in various formats, such as numbers, dates, booleans, and text.
  */
 public class CellValueHelper {
 

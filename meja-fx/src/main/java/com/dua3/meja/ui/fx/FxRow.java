@@ -23,6 +23,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
+/**
+ * A custom cell implementation for rendering rows in a spreadsheet. It extends the IndexedCell class and overrides several methods to customize the appearance and behavior of the
+ *  cell.
+ */
 public class FxRow extends IndexedCell<RowProxy> {
     private static final Logger LOG = LogManager.getLogger(FxRow.class);
 
@@ -31,8 +35,14 @@ public class FxRow extends IndexedCell<RowProxy> {
     private final FxSheetViewDelegate sheetViewDelegate;
     private final SegmentViewDelegate segmentViewDelegate;
 
+    /**
+     * A single row in a sheet view.
+     *
+     * @param rows the list of rows in the sheet view
+     * @param svDelegate the segment view delegate for the sheet view
+     */
     public FxRow(ObservableList<Row> rows, SegmentViewDelegate svDelegate) {
-        LOG.debug("FxRow()");
+        LOG.trace("FxRow()");
         this.rows = rows;
         this.segmentViewDelegate = svDelegate;
         this.sheetViewDelegate = (FxSheetViewDelegate) svDelegate.getSheetViewDelegate();
@@ -43,10 +53,20 @@ public class FxRow extends IndexedCell<RowProxy> {
         setOnMouseClicked(this::onMouseClicked);
     }
 
+    /**
+     * Returns the height of a row in pixels.
+     *
+     * @return the height of the row in pixels
+     */
     public float getRowHeightInPixels() {
         return sheetViewDelegate.getScale().sy() * getRowHeightInPoints();
     }
 
+    /**
+     * Returns the height of a row in points.
+     *
+     * @return the height of the row in points
+     */
     public float getRowHeightInPoints() {
         sheetViewDelegate.updateLayout();
         int idx = getIndex();
@@ -322,7 +342,7 @@ public class FxRow extends IndexedCell<RowProxy> {
         }
     }
 
-    public void onMouseClicked(MouseEvent evt) {
+    private void onMouseClicked(MouseEvent evt) {
         LOG.debug("onMouseClicked({})", evt);
 
         double x = evt.getX();

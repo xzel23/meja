@@ -28,7 +28,8 @@ import java.io.OutputStream;
 import java.util.function.DoubleConsumer;
 
 /**
- * @author Axel Howind (axel@dua3.com)
+ * The {@code CsvWorkbookWriter} class is a concrete implementation of the {@link WorkbookWriter} interface.
+ * It provides methods for writing workbook data to a CSV file or a writer using a CSV format.
  */
 public final class CsvWorkbookWriter implements WorkbookWriter {
 
