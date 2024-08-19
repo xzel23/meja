@@ -157,9 +157,7 @@ public class FxSheetView extends StackPane implements SheetView {
         visibleProperty.setValue(value);
         dependentProperty.setValue(value);
 
-        controllingProperty.addListener((v,o,n) -> {
-            dependentProperty.setValue(n);
-        });
+        controllingProperty.addListener((v,o,n) -> dependentProperty.setValue(n));
 
         controllingProperty.bindBidirectional(visibleProperty);
     }
@@ -224,38 +222,36 @@ public class FxSheetView extends StackPane implements SheetView {
     public void scrollToCurrentCell() {
         LOG.trace("scrollToCurrentCell()");
 
-        Platform.runLater( () -> {
-            delegate.getCurrentLogicalCell().ifPresent(cell -> {
-                Sheet sheet = delegate.getSheet().orElseThrow();
-                int i = cell.getRowNumber();
-                int j = cell.getColumnNumber();
-                int splitRow = sheet.getSplitRow();
-                if (i >= splitRow) {
-                    i -= splitRow;
-                    // at least part of the (possibly merged) cell is below the split => scroll row into view
-                    FxSegmentView.VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomRightQuadrant.flow;
-                    FxRow fxRow = flow.getCell(i);
-                    LOG.trace("scrolling row {} into view", i);
-                    flow.scrollTo(fxRow);
+        Platform.runLater( () -> delegate.getCurrentLogicalCell().ifPresent(cell -> {
+            Sheet sheet = delegate.getSheet().orElseThrow();
+            int i = cell.getRowNumber();
+            int j = cell.getColumnNumber();
+            int splitRow = sheet.getSplitRow();
+            if (i >= splitRow) {
+                i -= splitRow;
+                // at least part of the (possibly merged) cell is below the split => scroll row into view
+                FxSegmentView.VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomRightQuadrant.flow;
+                FxRow fxRow = flow.getCell(i);
+                LOG.trace("scrolling row {} into view", i);
+                flow.scrollTo(fxRow);
+            }
+            int splitColumn = sheet.getSplitColumn();
+            if (j >= splitColumn) {
+                // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
+                Scale2f s = delegate.getScale();
+                float split = delegate.getSplitX();
+                float xMin = (delegate.getColumnPos(j) - split) * s.sx();
+                float xMax = (delegate.getColumnPos(j+1) - split) * s.sy();
+                float width = xMax - xMin;
+                if (xMin < hScrollbar.getValue()) {
+                    LOG.trace("scrolling to leftmost column");
+                    hScrollbar.setValue(xMin);
+                } else if (xMin > hScrollbar.getValue() + hScrollbar.getVisibleAmount() * s.sx()) {
+                    LOG.trace("scrolling column {} into view", j);
+                    hScrollbar.setValue(xMin - hScrollbar.getVisibleAmount() * s.sx());
                 }
-                int splitColumn = sheet.getSplitColumn();
-                if (j >= splitColumn) {
-                    // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
-                    Scale2f s = delegate.getScale();
-                    float split = delegate.getSplitX();
-                    float xMin = (delegate.getColumnPos(j) - split) * s.sx();
-                    float xMax = (delegate.getColumnPos(j+1) - split) * s.sy();
-                    float width = xMax - xMin;
-                    if (xMin < hScrollbar.getValue()) {
-                        LOG.trace("scrolling to leftmost column");
-                        hScrollbar.setValue(xMin);
-                    } else if (xMin > hScrollbar.getValue() + hScrollbar.getVisibleAmount() * s.sx()) {
-                        LOG.trace("scrolling column {} into view", j);
-                        hScrollbar.setValue(xMin - hScrollbar.getVisibleAmount() * s.sx());
-                    }
-                }
-            });
-        });
+            }
+        }));
     }
 
     @Override

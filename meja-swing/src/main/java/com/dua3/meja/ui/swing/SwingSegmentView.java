@@ -179,7 +179,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 try (SwingGraphics sg = new SwingGraphics((Graphics2D) g.create(), bounds)) {
                     AffineTransformation2f t = ssvDelegate.getTransformation();
                     sg.setTransformation(t);
-                    LOG.debug("paintComponent() - transformation:\n{}", () -> t.toMatrixString());
+                    LOG.debug("paintComponent() - transformation:\n{}", t::toMatrixString);
 
                     // draw sheet
                     svDelegate.getSheetPainter().drawSheet(sg);

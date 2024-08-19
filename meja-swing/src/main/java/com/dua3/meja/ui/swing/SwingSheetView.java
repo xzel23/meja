@@ -45,7 +45,6 @@ import java.util.concurrent.locks.Lock;
 /**
  * Swing component for displaying instances of {@link Sheet}.
  */
-@SuppressWarnings("serial")
 public class SwingSheetView extends JPanel implements SheetView {
 
     private final transient SwingSheetViewDelegate delegate;

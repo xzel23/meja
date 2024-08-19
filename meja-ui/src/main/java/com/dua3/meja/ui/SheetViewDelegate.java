@@ -625,7 +625,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public void onMousePressed(Cell cell) {
-        LOG.debug("onMousePressed({})", () -> cell.getCellRef());
+        LOG.debug("onMousePressed({})", cell::getCellRef);
 
         // make the cell the current cell
         boolean currentCellChanged = setCurrentCell(cell);
