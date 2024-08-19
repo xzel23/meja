@@ -24,23 +24,28 @@ public class TableModelDemo extends JFrame {
 
     private static final Logger LOG = LogManager.getLogger(TableModelDemo.class);
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            SwingUtil.setNativeLookAndFeel();
-            TableModelDemo instance = new TableModelDemo();
-            instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            instance.setVisible(true);
-        });
+    public static void main(String[] args) throws IOException {
+        try (Workbook wb = GenericWorkbookFactory.instance().create()) {
+            Sheet sheet = wb.createSheet("TableModelDemo");
+            sheet.createRow("Nr.", "Time");
+
+            SwingUtilities.invokeLater(() -> {
+                SwingUtil.setNativeLookAndFeel();
+                TableModelDemo instance = new TableModelDemo(sheet);
+                instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                instance.setVisible(true);
+            });
+        }
     }
 
-    private TableModelDemo() {
+    private TableModelDemo(Sheet sheet) {
         super("TableModel demo");
         setSize(800, 600);
 
+        this.sheet = sheet;
+
         JTable table = new JTable();
         setContentPane(new JScrollPane(table));
-
-        sheet = createSheet();
 
         table.setModel(MejaSwingHelper.getTableModel(sheet, TableOptions.FIRST_ROW_IS_HEADER, TableOptions.EDITABLE));
 
@@ -57,22 +62,4 @@ public class TableModelDemo extends JFrame {
     }
 
     private final Sheet sheet;
-
-    private Sheet createSheet() {
-        Workbook wb = GenericWorkbookFactory.instance().create();
-        Sheet sheet = wb.createSheet("TableModelDemo");
-        sheet.createRow("Nr.", "Time");
-        return sheet;
-    }
-
-    @Override
-    public void dispose() {
-        try {
-            sheet.getWorkbook().close();
-        } catch (IOException e) {
-            LOG.error("exception occurred while closing workbook", e);
-        }
-        super.dispose();
-    }
-
 }
