@@ -31,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 import java.awt.Toolkit;
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
-import java.util.function.Function;
 
 public class FxSheetView extends StackPane implements SheetView {
     private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
@@ -110,8 +109,8 @@ public class FxSheetView extends StackPane implements SheetView {
         StackPane.setAlignment(vScrollbar, javafx.geometry.Pos.CENTER_RIGHT);
 
         // entangle scrollbars
-        entangleScrollBars(hScrollbar, topRightQuadrant.flow.getHScrollbar(), bottomRightQuadrant.flow.getHScrollbar());
-        entangleScrollBars(vScrollbar, bottomLeftQuadrant.flow.getVScrollbar(), bottomRightQuadrant.flow.getVScrollbar());
+        entangleScrollBars(hScrollbar, bottomRightQuadrant.flow.getHScrollbar(), topRightQuadrant.flow.getHScrollbar());
+        entangleScrollBars(vScrollbar, bottomRightQuadrant.flow.getVScrollbar(), bottomLeftQuadrant.flow.getVScrollbar());
 
         hScrollbar.setValue(0);
         vScrollbar.setValue(0);
@@ -134,18 +133,35 @@ public class FxSheetView extends StackPane implements SheetView {
         return rc;
     }
 
-    private void entangleScrollBars(ScrollBar mainScrollBar, ScrollBar... dependentScrollbars) {
-        for (ScrollBar scrollbar : dependentScrollbars) {
-            entangle(ScrollBar::visibleAmountProperty, mainScrollBar, scrollbar);
-            entangle(ScrollBar::unitIncrementProperty, mainScrollBar, scrollbar);
-            entangle(ScrollBar::minProperty, mainScrollBar, scrollbar);
-            entangle(ScrollBar::maxProperty, mainScrollBar, scrollbar);
-            entangle(ScrollBar::valueProperty, mainScrollBar, scrollbar);
-        }
+    private void entangleScrollBars(ScrollBar visibleScrollBar, ScrollBar controllingScrollBar, ScrollBar dependentScrollbar) {
+        entangleFollowing(visibleScrollBar.visibleAmountProperty(), controllingScrollBar.visibleAmountProperty(), dependentScrollbar.visibleAmountProperty());
+        entangleFollowing(visibleScrollBar.unitIncrementProperty(), controllingScrollBar.unitIncrementProperty(), dependentScrollbar.unitIncrementProperty());
+        entangleFollowing(visibleScrollBar.minProperty(), controllingScrollBar.minProperty(), dependentScrollbar.minProperty());
+        entangleFollowing(visibleScrollBar.maxProperty(), controllingScrollBar.maxProperty(), dependentScrollbar.maxProperty());
+        entangleBinding(visibleScrollBar.valueProperty(), controllingScrollBar.valueProperty(), dependentScrollbar.valueProperty());
     }
 
-    private <T, U, P extends Property<U>> void entangle(Function<T, P> s, T a, T b) {
-        s.apply(b).bindBidirectional(s.apply(a));
+    private <V> void entangleFollowing(Property<V> visibleProperty, Property<V> controllingProperty, Property<V> dependentProperty) {
+        V value = controllingProperty.getValue();
+        visibleProperty.setValue(value);
+        dependentProperty.setValue(value);
+
+        controllingProperty.addListener((v,o,n) -> {
+            visibleProperty.setValue(n);
+            dependentProperty.setValue(n);
+        });
+    }
+
+    private <V> void entangleBinding(Property<V> visibleProperty, Property<V> controllingProperty, Property<V> dependentProperty) {
+        V value = controllingProperty.getValue();
+        visibleProperty.setValue(value);
+        dependentProperty.setValue(value);
+
+        controllingProperty.addListener((v,o,n) -> {
+            dependentProperty.setValue(n);
+        });
+
+        controllingProperty.bindBidirectional(visibleProperty);
     }
 
     void onKeyPressed(KeyEvent event) {
