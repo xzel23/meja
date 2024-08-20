@@ -160,9 +160,8 @@ public class FxSheetView extends StackPane implements SheetView {
         visibleProperty.setValue(value);
         dependentProperty.setValue(value);
 
-        controllingProperty.addListener((v,o,n) -> dependentProperty.setValue(n));
-
         controllingProperty.bindBidirectional(visibleProperty);
+        visibleProperty.bindBidirectional(dependentProperty);
     }
 
     void onKeyPressed(KeyEvent event) {
