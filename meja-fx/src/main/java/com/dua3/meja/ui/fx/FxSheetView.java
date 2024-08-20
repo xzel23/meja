@@ -146,6 +146,9 @@ public class FxSheetView extends StackPane implements SheetView {
         visibleProperty.setValue(value);
         dependentProperty.setValue(value);
 
+        dependentProperty.addListener(v -> dependentProperty.setValue(controllingProperty.getValue()));
+        visibleProperty.addListener(v -> visibleProperty.setValue(controllingProperty.getValue()));
+
         controllingProperty.addListener((v,o,n) -> {
             visibleProperty.setValue(n);
             dependentProperty.setValue(n);
