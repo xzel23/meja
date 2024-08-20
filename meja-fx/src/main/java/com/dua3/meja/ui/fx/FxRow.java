@@ -1,6 +1,7 @@
 package com.dua3.meja.ui.fx;
 
 import com.dua3.cabe.annotations.Nullable;
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.ui.CellRenderer;
 import com.dua3.meja.ui.SegmentViewDelegate;
@@ -345,19 +346,21 @@ public class FxRow extends IndexedCell<RowProxy> {
     private void onMouseClicked(MouseEvent evt) {
         LOG.debug("onMouseClicked({})", evt);
 
-        double x = evt.getX();
+        double xSheet = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getStartColumn()) + evt.getX() / sheetViewDelegate.getScale().sx();
 
         int i = Optional.ofNullable(getItem()).map(RowProxy::getRow).map(Row::getRowNumber).orElse(-1);
         int j = -1;
         for (int k = segmentViewDelegate.getStartColumn(); k < segmentViewDelegate.getEndColumn(); k++) {
-            if (getSheetViewDelegate().getColumnPos(k) <= x && x <= getSheetViewDelegate().getColumnPos(k+1)) {
+            if (getSheetViewDelegate().getColumnPos(k) <= xSheet && xSheet <= getSheetViewDelegate().getColumnPos(k+1)) {
                 j = k;
                 break;
             }
         }
+        LOG.trace("onMouseClicked(): row #{}, column #{}, cell={}", i, j, sheetViewDelegate.getCurrentLogicalCell().map(Cell::getCellRef));
 
         if (i>= 0 && j>=0) {
             sheetViewDelegate.setCurrentCell(i, j);
+            LOG.debug("onMouseClicked(): set current cell to {}", sheetViewDelegate.getCurrentLogicalCell().map(Cell::getCellRef));
         }
     }
 }
