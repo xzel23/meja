@@ -5,6 +5,7 @@ import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.math.geometry.Scale2f;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Control;
@@ -90,6 +91,8 @@ public class FxSegmentView extends Control implements SegmentView {
      * Update layout, i.e., when the scale or row and/or column sizes change.
      */
     private void updateLayout() {
+        assert Platform.isFxApplicationThread() : "not on FXApplicationThread";
+
         sheetDelegate.updateLayout();
         segmentDelegate.updateLayout();
 

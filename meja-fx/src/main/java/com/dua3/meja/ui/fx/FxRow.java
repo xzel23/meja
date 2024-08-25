@@ -69,6 +69,8 @@ public class FxRow extends IndexedCell<RowProxy> {
      * @return the height of the row in points
      */
     public float getRowHeightInPoints() {
+        assert Platform.isFxApplicationThread() :"not on FxApplication thread";
+
         sheetViewDelegate.updateLayout();
         int idx = getIndex();
 

@@ -279,28 +279,30 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.debug("updateContent()");
 
         getSheet().ifPresent(sheet -> {
-            Lock lock = delegate.writeLock();
-            lock.lock();
-            try {
-                int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-                delegate.setDisplayScale(getDisplayScale());
-                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72f));
-                delegate.updateLayout();
-                if (topLeftQuadrant != null) {
-                    topLeftQuadrant.refresh();
+            PlatformHelper.runLater(() -> {
+                Lock lock = delegate.writeLock();
+                lock.lock();
+                try {
+                    int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+                    delegate.setDisplayScale(getDisplayScale());
+                    delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72f));
+                    delegate.updateLayout();
+                    if (topLeftQuadrant != null) {
+                        topLeftQuadrant.refresh();
+                    }
+                    if (topRightQuadrant != null) {
+                        topRightQuadrant.refresh();
+                    }
+                    if (bottomLeftQuadrant != null) {
+                        bottomLeftQuadrant.refresh();
+                    }
+                    if (bottomRightQuadrant != null) {
+                        bottomRightQuadrant.refresh();
+                    }
+                } finally {
+                    lock.unlock();
                 }
-                if (topRightQuadrant != null) {
-                    topRightQuadrant.refresh();
-                }
-                if (bottomLeftQuadrant != null) {
-                    bottomLeftQuadrant.refresh();
-                }
-                if (bottomRightQuadrant != null) {
-                    bottomRightQuadrant.refresh();
-                }
-            } finally {
-                lock.unlock();
-            }
+            });
         });
     }
 
