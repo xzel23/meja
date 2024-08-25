@@ -13,7 +13,6 @@ import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.ui.Graphics;
-import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -392,8 +391,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public void updateLayout() {
-        assert Platform.isFxApplicationThread() : "not oon FXApplication thread";
-
         if (!layoutChanged) {
             return;
         }
