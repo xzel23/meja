@@ -87,11 +87,13 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
 
     @Override
     public Lock readLock() {
+        LOG.trace("readLock() [{}]", sheet::getSheetName);
         return sheet.readLock();
     }
 
     @Override
     public Lock writeLock() {
+        LOG.trace("writeLock() [{}]", sheet::getSheetName);
         return sheet.writeLock();
     }
 
@@ -380,7 +382,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
             this.sheet = sheet;
 
             markLayoutChanged();
-            owner.updateContent();
 
             // subscribe to the Flow API
             sheet.subscribe(this);
