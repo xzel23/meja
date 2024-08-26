@@ -93,7 +93,6 @@ public class FxSegmentView extends Control implements SegmentView {
     private void updateLayout() {
         assert Platform.isFxApplicationThread() : "not on FXApplicationThread";
 
-        sheetDelegate.updateLayout();
         segmentDelegate.updateLayout();
 
         sheetDelegate.getSheet().ifPresent(sheet -> {
