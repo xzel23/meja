@@ -382,6 +382,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
             this.sheet = sheet;
 
             markLayoutChanged();
+            owner.updateContent();
 
             // subscribe to the Flow API
             sheet.subscribe(this);
