@@ -240,16 +240,27 @@ public class FxSheetView extends StackPane implements SheetView {
             if (j >= splitColumn) {
                 // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
                 Scale2f s = delegate.getScale();
-                float split = delegate.getSplitX();
-                float xMin = (delegate.getColumnPos(j) - split) * s.sx();
-                float xMax = (delegate.getColumnPos(j+1) - split) * s.sy();
-                float width = xMax - xMin;
-                if (xMin < hScrollbar.getValue()) {
+                double split = delegate.getSplitX() * s.sx();
+                double xMin = delegate.getColumnPos(j)  * s.sx() - split;
+                double xMax = delegate.getColumnPos(j+1)  * s.sx() - split;
+                double width = delegate.getColumnPos(delegate.getColumnCount()) * s.sx() - split;
+
+                double sbVisibleAmount = hScrollbar.getVisibleAmount();
+                double sbMax = hScrollbar.getMax();
+                double sbMin = hScrollbar.getMin();
+                double sbValue = hScrollbar.getValue();
+                double sbRange = sbMax - sbMin;
+                double sbWidth = sbVisibleAmount + sbRange;
+                double visiblePercent = sbVisibleAmount / sbWidth;
+
+                double visibleMaxX = split + sbValue + width * visiblePercent;
+
+                if (xMin < sbValue) {
                     LOG.trace("scrolling to leftmost column");
                     hScrollbar.setValue(xMin);
-                } else if (xMin > hScrollbar.getValue() + hScrollbar.getVisibleAmount() * s.sx()) {
+                } else if (xMax > visibleMaxX) {
                     LOG.trace("scrolling column {} into view", j);
-                    hScrollbar.setValue(xMin - hScrollbar.getVisibleAmount() * s.sx());
+                    hScrollbar.setValue(Math.min(sbMax, xMax - width * visiblePercent - split));
                 }
             }
         }));
