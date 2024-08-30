@@ -131,7 +131,7 @@ public interface CellStyle {
     }
 
     /**
-     * Get name of cell style.
+     * Get the name of the cell style.
      *
      * @return the name of this cell style
      */

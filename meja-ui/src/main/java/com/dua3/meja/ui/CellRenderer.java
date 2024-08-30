@@ -51,7 +51,7 @@ public class CellRenderer {
     }
 
     /**
-     * Draw cell background.
+     * Draw the cell background.
      *
      * @param cell cell to draw
      */

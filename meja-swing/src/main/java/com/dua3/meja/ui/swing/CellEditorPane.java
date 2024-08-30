@@ -95,7 +95,7 @@ public class CellEditorPane extends JTextPane {
     }
 
     /**
-     * A custom EditorKit to allow vertical alignment of text.
+     * A custom EditorKit to allow vertical aligned text.
      */
     final class CellEditorKit extends StyledEditorKit {
         @Override

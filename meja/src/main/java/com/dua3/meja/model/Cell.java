@@ -476,7 +476,7 @@ public interface Cell {
 
            return getWorkbook()
                    .getUri()
-                   .orElseThrow(() -> new IllegalStateException("cannot resolve relative link because workbook URI is not set"))
+                   .orElseThrow(() -> new IllegalStateException("cannot resolve the relative link because the workbook URI is not set"))
                    .resolve(link);
         });
     }
@@ -490,7 +490,7 @@ public interface Cell {
 
     /**
      * Check for error.
-     * @return true, if cell type is ERROR
+     * @return true, if the cell type is ERROR
      */
     default boolean isError() {
         return getCellType()==CellType.ERROR;
@@ -552,7 +552,7 @@ public interface Cell {
     void unMerge();
 
     /**
-     * Test if cell is merged.
+     * Test if the cell is merged.
      *
      * @return true if cell is merged
      */

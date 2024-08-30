@@ -288,32 +288,30 @@ public class FxSheetView extends StackPane implements SheetView {
     public void updateContent() {
         LOG.debug("updateContent()");
 
-        getSheet().ifPresent(sheet -> {
-            PlatformHelper.runAndWait(() -> {
-            Lock lock = delegate.writeLock();
-                lock.lock();
-                try {
-                    int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-                    delegate.setDisplayScale(getDisplayScale());
-                    delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72f));
-                    delegate.updateLayout();
-                    if (topLeftQuadrant != null) {
-                        topLeftQuadrant.refresh();
-                    }
-                    if (topRightQuadrant != null) {
-                        topRightQuadrant.refresh();
-                    }
-                    if (bottomLeftQuadrant != null) {
-                        bottomLeftQuadrant.refresh();
-                    }
-                    if (bottomRightQuadrant != null) {
-                        bottomRightQuadrant.refresh();
-                    }
-                } finally {
-                    lock.unlock();
+        getSheet().ifPresent(sheet -> PlatformHelper.runAndWait(() -> {
+        Lock lock = delegate.writeLock();
+            lock.lock();
+            try {
+                int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+                delegate.setDisplayScale(getDisplayScale());
+                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72f));
+                delegate.updateLayout();
+                if (topLeftQuadrant != null) {
+                    topLeftQuadrant.refresh();
                 }
-            });
-        });
+                if (topRightQuadrant != null) {
+                    topRightQuadrant.refresh();
+                }
+                if (bottomLeftQuadrant != null) {
+                    bottomLeftQuadrant.refresh();
+                }
+                if (bottomRightQuadrant != null) {
+                    bottomRightQuadrant.refresh();
+                }
+            } finally {
+                lock.unlock();
+            }
+        }));
     }
 
     @Override

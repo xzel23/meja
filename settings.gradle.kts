@@ -29,11 +29,11 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.51.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.0.20")
+            plugin("spotbugs", "com.github.spotbugs").version("6.0.21")
             plugin("cabe", "com.dua3.cabe").version("2.1.2")
 
             version("cabe", "2.0")
-            version("dua3-utility", "13.0.1-SNAPSHOT")
+            version("dua3-utility", "13.0.1")
             version("javafx", "22.0.1")
             version("log4j", "2.23.1")
             version("poi", "5.3.0")
@@ -56,7 +56,7 @@ dependencyResolutionManagement {
             // version overrides for libraries
 
             // use a newer version of commons-compress because of CVE-2024-26308, CVE-2024-25710
-            library("commons-compress", "org.apache.commons", "commons-compress").version("1.26.1")
+            library("commons-compress", "org.apache.commons", "commons-compress").version("1.26.2")
         }
     }
 
