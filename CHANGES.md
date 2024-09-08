@@ -1,6 +1,6 @@
 # Meja Changelog
 
-## Version 5.0 (in development)
+## Version 5.0
 
 - new JavaFX WorkbookView
 - rewritten large parts of the Swing sheet rendering code
@@ -8,6 +8,7 @@
 - update utility to next major version
 - use Rectangle2f from utility; changes coordinates to float
 - code cleanup
+- NOTE: there are some glitches with border drawing in Swing that will be fixed in a coming release
 
 ## Version 4.1.5
 
