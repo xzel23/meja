@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 5.0.1
+
+- use Java 17 toolchain for all modules but the JavaFX support module that uses Java 21
+
 ## Version 5.0
 
 - new JavaFX WorkbookView
