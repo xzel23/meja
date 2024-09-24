@@ -28,7 +28,7 @@ public class RowProxy {
     }
 
     /**
-     * Represents the type of a {@link RowProxy} object.
+     * Represents the type of this {@link RowProxy} object.
      * The Type enum consists of the following values:
      * - ROW: Represents a regular row in a sheet.
      * - EMPTY: Represents an empty row.

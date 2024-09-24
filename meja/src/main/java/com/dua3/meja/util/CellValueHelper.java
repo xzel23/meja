@@ -135,7 +135,7 @@ public class CellValueHelper {
         // (to avoid exceptions if this is not a date)
         TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);
         if (ta == null || pos.getErrorIndex() >= 0 || pos.getIndex() != text.length()) {
-            // an error occurred or parsing did not use all of the available input
+            // an error occurred or parsing did not use all the available input
             return Optional.empty();
         }
 

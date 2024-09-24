@@ -75,7 +75,7 @@ public final class DbMejaUtil {
         try {
             return clob.getSubString(1, (int) Math.min(Integer.MAX_VALUE, clob.length()));
         } catch (SQLException e) {
-            LOG.warn("could no convert Clob to String", e);
+            LOG.warn("could not convert Clob to String", e);
             return ERROR_TEXT;
         }
     }

@@ -209,6 +209,7 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public int hashCode() {
+        //noinspection NonFinalFieldReferencedInHashCode
         return poiSheet.hashCode();
     }
 

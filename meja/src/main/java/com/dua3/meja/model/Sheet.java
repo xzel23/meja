@@ -422,7 +422,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     /**
      * Translate column name to column number.
      *
-     * @param colName the name of the column, ie. "A", "B",... , "AA", "AB",...
+     * @param colName the name of the column, i.e. "A", "B",... , "AA", "AB",...
      * @return the column number
      * @throws IllegalArgumentException if {@code colName} is not a valid column
      *                                  name
