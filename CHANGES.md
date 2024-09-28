@@ -1,6 +1,6 @@
 # Meja Changelog
 
-## Version 5.1
+## Version 6
 
 - BREAKING: some Event class method names changed tobe more consistent
 - Javadoc
