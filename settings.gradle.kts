@@ -33,8 +33,8 @@ dependencyResolutionManagement {
             plugin("cabe", "com.dua3.cabe").version("2.1.2")
 
             version("cabe", "2.0")
-            version("dua3-utility", "13.1.2")
-            version("log4j", "2.23.1")
+            version("dua3-utility", "13.2-SNAPSHOT")
+            version("log4j", "2.24.1")
             version("poi", "5.3.0")
 
             library("cabe-annotations", "com.dua3.cabe", "cabe-annotations").versionRef("cabe")
