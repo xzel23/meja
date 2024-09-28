@@ -71,13 +71,29 @@ public final class MejaHelper {
     }
 
     /**
-     * Options controlling print output.
+     * Options controlling print output in text format.
      */
     public enum PrintOptions {
+        /**
+         * A constant that determines whether lines should be drawn in the associated rendering context.
+         */
         DRAW_LINES,
+        /**
+         * The `PREPEND_SHEET_NAME` variable is a boolean flag used to determine whether
+         * to output the sheet name when printing a sheet.
+         */
         PREPEND_SHEET_NAME,
+        /**
+         * A constant that indicates whether a horizontal line should be printed above the sheet.
+         */
         LINE_ABOVE,
+        /**
+         * A constant that indicates whether a horizontal line should be printed below the sheet.
+         */
         LINE_BELOW,
+        /**
+         * Indicates whether the first line in a file or dataset should be treated as a header.
+         */
         FIRST_LINE_IS_HEADER
     }
 

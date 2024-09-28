@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 5.1
+
+- BREAKING: some Event class method names changed tobe more consistent
+- Javadoc
+- dependency updates
+
 ## Version 5.0.1
 
 - use Java 17 toolchain for all modules but the JavaFX support module that uses Java 21
@@ -16,7 +22,7 @@
 
 ## Version 4.1.5
 
-- fixes for workbook-relative hyperlinks in excel implementation
+- fixes for workbook-relative hyperlinks in the Excel implementation
 
 ## Version 4.1.5
 
@@ -24,7 +30,7 @@
 
 ## Version 4.1.4
 
-- override transitive Apache POI dependency on commons-compress to non vulnerable version 1.26.1
+- override transitive Apache POI dependency on commons-compress to non-vulnerable version 1.26.1
 - update utility
 
 ## Version 4.1.3

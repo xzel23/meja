@@ -54,7 +54,7 @@ public class RowProxy {
     }
 
     /**
-     * Returns a {@link RowProxy} object representing the given row. If the row is null, it returns {@link RowProxy#ROW_PROXY_EMPTY}.
+     * Returns a {@code RowProxy} object representing the given row. If the row is null, it returns {@link RowProxy#ROW_PROXY_EMPTY}.
      *
      * @param row the row to create a RowProxy for
      * @return a RowProxy object representing the given row, or ROW_PROXY_EMPTY if row is null

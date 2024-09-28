@@ -4,10 +4,27 @@ import com.dua3.cabe.annotations.Nullable;
 
 import java.net.URI;
 
+/**
+ * Interface representing various events that can occur within a workbook.
+ * These events include changes to the active sheet, adding or removing sheets,
+ * and changes to the workbook's URI.
+ */
 public interface WorkbookEvent extends Event<Workbook> {
+    /**
+     * This constant signifies that the currently active sheet has changed.
+     */
     String ACTIVE_SHEET_CHANGED = "ACTIVE_SHEET_CHANGED";
+    /**
+     * This constant signifies that a sheet has been added.
+     */
     String SHEET_ADDED = "SHEET_ADDED";
+    /**
+     * This constant signifies that a sheet has been removed.
+     */
     String SHEET_REMOVED = "SHEET_REMOVED";
+    /**
+     * This constant signifies that the workbook URI has changed.
+     */
     String URI_CHANGED = "URI_CHANGED";
 
     /**
