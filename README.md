@@ -53,3 +53,8 @@ Utilities for JavaFX.
 ## Logging
 
 Meja uses Log4J2-API for logging facade, the same as the Apache POI library used for reading and writing Excel files.
+
+### Null values
+
+Only parameters marked @Nullable accept `null` values.
+ 

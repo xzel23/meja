@@ -3,6 +3,7 @@
 ## Version 6
 
 - BREAKING: some Event class method names changed tobe more consistent
+- JSpecify annotations are used and all modules are @NullMarked
 - Javadoc
 - dependency updates
 
