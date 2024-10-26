@@ -1,7 +1,7 @@
 package com.dua3.meja.model;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.data.Pair;
+import org.jspecify.annotations.Nullable;
 
 /**
  * SheetEvent is an interface that extends the Event class for handling various

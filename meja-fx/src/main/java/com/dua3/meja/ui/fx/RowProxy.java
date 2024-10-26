@@ -1,7 +1,7 @@
 package com.dua3.meja.ui.fx;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Row;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The RowProxy class represents a proxy for a single row in a sheet. It is needed to differentiate between actual rows of the sheet, and the split line that for technical reasons is also implemented as an {@link FxRow} instance.

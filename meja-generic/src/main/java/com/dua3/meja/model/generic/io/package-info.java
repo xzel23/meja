@@ -17,7 +17,4 @@
 /**
  * Generic implementation - CSV-I/O.
  */
-@NotNullApi
 package com.dua3.meja.model.generic.io;
-
-import com.dua3.cabe.annotations.NotNullApi;

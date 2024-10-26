@@ -1,6 +1,5 @@
 package com.dua3.meja.ui.fx;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Row;
@@ -27,6 +26,7 @@ import javafx.stage.Screen;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.Toolkit;
 import java.util.Locale;

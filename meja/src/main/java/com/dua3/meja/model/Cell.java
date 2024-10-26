@@ -16,7 +16,6 @@
  */
 package com.dua3.meja.model;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.LangUtil;
@@ -25,6 +24,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.TextUtil;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.nio.file.Path;

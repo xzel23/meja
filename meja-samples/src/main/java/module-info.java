@@ -1,3 +1,6 @@
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 module com.dua3.meja.samples {
     requires java.desktop;
     requires com.dua3.meja.generic;
@@ -7,5 +10,5 @@ module com.dua3.meja.samples {
     requires com.dua3.utility.logging.log4j;
     requires com.dua3.utility.swing;
     requires org.apache.logging.log4j;
-    requires static com.dua3.cabe.annotations;
+    requires static org.jspecify;
 }

@@ -17,7 +17,4 @@
 /**
  * Implementation independent classes for reading and writing workbook data.
  */
-@NotNullApi
 package com.dua3.meja.io;
-
-import com.dua3.cabe.annotations.NotNullApi;

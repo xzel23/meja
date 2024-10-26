@@ -1,3 +1,5 @@
+import org.jspecify.annotations.NullMarked;
+
 /**
  * The com.dua3.meja.swing module provides Swing-based user interfaces for the com.dua3.meja library.
  * <p>
@@ -5,6 +7,7 @@
  * - com.dua3.meja.ui: Contains common UI interfaces and classes
  * - com.dua3.meja.ui.swing: Contains UI implementations using Swing
  */
+@NullMarked
 module com.dua3.meja.swing {
     exports com.dua3.meja.ui.swing;
 
@@ -15,6 +18,6 @@ module com.dua3.meja.swing {
     requires com.dua3.utility;
     requires com.dua3.utility.swing;
 
-    requires static com.dua3.cabe.annotations;
+    requires static org.jspecify;
     requires org.apache.logging.log4j;
 }

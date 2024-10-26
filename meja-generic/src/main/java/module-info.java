@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * The com.dua3.meja.generic module provides generic implementations of Workbooks etc.
  */
+@NullMarked
 module com.dua3.meja.generic {
     exports com.dua3.meja.model.generic;
     opens com.dua3.meja.model.generic;
@@ -29,7 +32,7 @@ module com.dua3.meja.generic {
 
     requires com.dua3.utility;
 
-    requires static com.dua3.cabe.annotations;
+    requires static org.jspecify;
     requires org.apache.logging.log4j;
 
     provides com.dua3.utility.io.FileType with com.dua3.meja.model.generic.io.FileTypeCsv;

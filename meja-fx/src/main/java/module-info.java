@@ -1,6 +1,9 @@
+import org.jspecify.annotations.NullMarked;
+
 /**
  * This module provides JavaFX support for the Meja library.
  */
+@NullMarked
 module com.dua3.meja.fx {
     exports com.dua3.meja.ui.fx;
     opens com.dua3.meja.ui.fx;
@@ -12,7 +15,7 @@ module com.dua3.meja.fx {
     requires transitive com.dua3.meja.ui;
     requires com.dua3.utility;
     requires com.dua3.utility.fx;
-    requires com.dua3.cabe.annotations;
     requires org.apache.logging.log4j;
     requires java.desktop;
+    requires org.jspecify;
 }

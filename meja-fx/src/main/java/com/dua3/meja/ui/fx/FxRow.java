@@ -1,6 +1,5 @@
 package com.dua3.meja.ui.fx;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.ui.CellRenderer;
@@ -21,6 +20,7 @@ import javafx.scene.control.Skinnable;
 import javafx.scene.input.MouseEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 

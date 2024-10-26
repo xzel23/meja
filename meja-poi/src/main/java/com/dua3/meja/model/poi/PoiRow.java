@@ -15,11 +15,11 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 

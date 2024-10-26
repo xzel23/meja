@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * The com.dua3.meja module provides utility, model, and IO classes for working with spreadsheets.
  */
+@NullMarked
 module com.dua3.meja {
     exports com.dua3.meja.util;
     exports com.dua3.meja.model;
@@ -25,7 +28,7 @@ module com.dua3.meja {
 
     requires com.dua3.utility;
 
-    requires static com.dua3.cabe.annotations;
+    requires static org.jspecify;
     requires org.apache.logging.log4j;
 
     uses com.dua3.meja.model.WorkbookFactory;

@@ -17,7 +17,4 @@
 /**
  * Generic implementation.
  */
-@NotNullApi
 package com.dua3.meja.model.generic;
-
-import com.dua3.cabe.annotations.NotNullApi;

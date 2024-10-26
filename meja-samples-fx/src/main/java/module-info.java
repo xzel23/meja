@@ -1,3 +1,6 @@
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 open module com.dua3.meja.fx.samples {
     exports com.dua3.meja.fx.samples;
 
@@ -9,7 +12,7 @@ open module com.dua3.meja.fx.samples {
     requires com.dua3.utility.fx;
     requires com.dua3.utility.fx.controls;
     requires org.apache.logging.log4j;
-    requires static com.dua3.cabe.annotations;
+    requires static org.jspecify;
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;

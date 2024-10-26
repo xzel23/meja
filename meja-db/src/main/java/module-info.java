@@ -1,6 +1,9 @@
+import org.jspecify.annotations.NullMarked;
+
 /**
  * This module provides database functionality for the Meja library.
  */
+@NullMarked
 module com.dua3.meja.db {
     exports com.dua3.meja.db;
 
@@ -8,6 +11,6 @@ module com.dua3.meja.db {
 
     requires java.sql;
 
-    requires static com.dua3.cabe.annotations;
+    requires static org.jspecify;
     requires org.apache.logging.log4j;
 }

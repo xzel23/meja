@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import org.jspecify.annotations.NullMarked;
+
 /**
  * The com.dua3.meja.poi module provides MS Excel compatible implementations of Workbooks etc. based on Apache POI.
  */
+@NullMarked
 module com.dua3.meja.poi {
     exports com.dua3.meja.model.poi;
     opens com.dua3.meja.model.poi;
@@ -30,6 +33,6 @@ module com.dua3.meja.poi {
     requires org.apache.poi.ooxml;
     requires com.dua3.utility;
 
-    requires static com.dua3.cabe.annotations;
+    requires static org.jspecify;
     requires org.apache.logging.log4j;
 }

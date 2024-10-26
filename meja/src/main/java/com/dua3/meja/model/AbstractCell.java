@@ -1,7 +1,7 @@
 package com.dua3.meja.model;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.utility.lang.LangUtil;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Locale;
 

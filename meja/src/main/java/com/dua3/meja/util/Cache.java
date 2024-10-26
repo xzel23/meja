@@ -15,7 +15,7 @@
  */
 package com.dua3.meja.util;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.ref.Cleaner;
 import java.lang.ref.Reference;

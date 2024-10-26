@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.AbstractSheet;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.RectangularRegion;
@@ -28,6 +27,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;

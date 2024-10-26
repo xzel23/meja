@@ -1,6 +1,6 @@
 package com.dua3.meja.model;
 
-import com.dua3.cabe.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 

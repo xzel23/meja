@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.model.poi;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
 import com.dua3.meja.model.AbstractWorkbook;
@@ -52,6 +51,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -496,7 +496,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        public Color getColor(@Nullable org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
+        public Color getColor(org.apache.poi.ss.usermodel.@Nullable Color poiColor, Color defaultColor) {
             if (poiColor == null || poiColor.equals(HSSFColorPredefined.AUTOMATIC.getColor())) {
                 return defaultColor;
             }
@@ -604,7 +604,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         }
 
         @Override
-        public Color getColor(@Nullable org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor) {
+        public Color getColor(org.apache.poi.ss.usermodel.@Nullable Color poiColor, Color defaultColor) {
             XSSFColor xssfColor = (XSSFColor) poiColor;
             if (poiColor == null || xssfColor.isAuto()) {
                 return defaultColor;

@@ -17,7 +17,4 @@
 /**
  * Components to display workbooks and sheets in Swing applications.
  */
-@NotNullApi
 package com.dua3.meja.ui.swing;
-
-import com.dua3.cabe.annotations.NotNullApi;

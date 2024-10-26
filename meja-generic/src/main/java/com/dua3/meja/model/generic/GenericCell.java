@@ -15,7 +15,6 @@
  */
 package com.dua3.meja.model.generic;
 
-import com.dua3.cabe.annotations.Nullable;
 import com.dua3.meja.model.AbstractCell;
 import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
@@ -23,6 +22,7 @@ import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.RichText;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.time.LocalDate;
