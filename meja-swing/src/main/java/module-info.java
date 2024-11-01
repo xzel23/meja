@@ -18,6 +18,6 @@ module com.dua3.meja.swing {
     requires com.dua3.utility;
     requires com.dua3.utility.swing;
 
-    requires static org.jspecify;
+    requires org.jspecify;
     requires org.apache.logging.log4j;
 }

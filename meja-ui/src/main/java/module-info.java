@@ -11,6 +11,6 @@ module com.dua3.meja.ui {
 
     requires com.dua3.utility;
 
-    requires static org.jspecify;
+    requires org.jspecify;
     requires org.apache.logging.log4j;
 }

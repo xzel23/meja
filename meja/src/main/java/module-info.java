@@ -28,7 +28,7 @@ module com.dua3.meja {
 
     requires com.dua3.utility;
 
-    requires static org.jspecify;
+    requires org.jspecify;
     requires org.apache.logging.log4j;
 
     uses com.dua3.meja.model.WorkbookFactory;

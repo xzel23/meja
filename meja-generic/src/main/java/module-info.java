@@ -32,7 +32,7 @@ module com.dua3.meja.generic {
 
     requires com.dua3.utility;
 
-    requires static org.jspecify;
+    requires org.jspecify;
     requires org.apache.logging.log4j;
 
     provides com.dua3.utility.io.FileType with com.dua3.meja.model.generic.io.FileTypeCsv;

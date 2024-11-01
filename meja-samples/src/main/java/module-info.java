@@ -10,5 +10,5 @@ module com.dua3.meja.samples {
     requires com.dua3.utility.logging.log4j;
     requires com.dua3.utility.swing;
     requires org.apache.logging.log4j;
-    requires static org.jspecify;
+    requires org.jspecify;
 }
