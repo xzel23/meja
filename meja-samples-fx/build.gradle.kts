@@ -4,6 +4,23 @@ plugins {
 
 description = "Meja spreadsheet library - samples (JavaFX)"
 
+val javaToolVersion = JavaLanguageVersion.of(21)
+val javaCompatibility = JavaVersion.VERSION_17
+
+java {
+    toolchain { languageVersion.set(javaToolVersion) }
+
+    // JavaFX 21 is needed, but it is compatible with Java 17, so use Java 17 as language setting
+    sourceCompatibility = javaCompatibility
+    targetCompatibility = javaCompatibility
+}
+
+fun JavaExec.useToolchain() {
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(javaToolVersion)
+    })
+}
+
 dependencies {
     implementation(project(":meja"))
     implementation(project(":meja-generic"))
@@ -24,12 +41,14 @@ val runExcelViewer = task<JavaExec>("runExcelViewer") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxExcelViewer")
     enableAssertions = true
+    useToolchain()
 }
 
 val runKitchenSink = task<JavaExec>("runKitchenSink") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxKitchenSink")
     enableAssertions = true
+    useToolchain()
 }
 /*
 val runTableModel = task<JavaExec>("runTableModel") {
@@ -48,10 +67,12 @@ val runShowTestXlsx = task<JavaExec>("runFxShowTestXlsx") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
     enableAssertions = true
+    useToolchain()
 }
 
 val runShowTestXlsxNoEA = task<JavaExec>("runFxShowTestXlsx (no assertions)") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
     enableAssertions = false
+    useToolchain()
 }
