@@ -15,8 +15,6 @@
  */
 package com.dua3.meja.util;
 
-import org.jspecify.annotations.Nullable;
-
 import java.lang.ref.Cleaner;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -28,7 +26,7 @@ import java.util.function.Function;
 /**
  * A simple cache implementation.
  * <p>
- * This class is not intended as a replacement for {@code JCache} (JSR 107).
+ * NOTE: This class is not intended as a replacement for {@code JCache} (JSR 107).
  * </p>
  *
  * @param <K> key class
@@ -61,13 +59,9 @@ public class Cache<K, V> {
      * Gets the value associated with the specified key.
      *
      * @param key the key whose associated value is to be retrieved
-     * @return the value to which the specified key is mapped, or null if this map contains no mapping for the key
+     * @return the value to which the specified key is mapped
      */
-    public V get(@Nullable K key) {
-        if (key == null) {
-            return null;
-        }
-
+    public V get(K key) {
         Reference<V> weak = items.get(key);
         V item = weak == null ? null : weak.get();
 
@@ -78,6 +72,7 @@ public class Cache<K, V> {
                 item = weak == null ? null : weak.get();
                 if (item == null) {
                     item = compute.apply(key);
+                    assert item != null;
                     Reference<V> ref = newReference.apply(item);
                     CLEANER.register(item, () -> items.remove(key));
                     items.put(key, ref);
