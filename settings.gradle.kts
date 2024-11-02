@@ -13,11 +13,6 @@ include("meja-samples")
 include("meja-fx")
 include("meja-samples-fx")
 
-// use plugin to add JVM toolchain repository
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-}
-
 // define dependency versions and repositories
 dependencyResolutionManagement {
 
@@ -64,6 +59,7 @@ dependencyResolutionManagement {
 
         // Maven Central Repository
         mavenCentral()
+        mavenLocal()
 
         // Sonatype Releases
         maven {
