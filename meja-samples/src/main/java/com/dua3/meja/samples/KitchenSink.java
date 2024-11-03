@@ -136,7 +136,7 @@ public final class KitchenSink extends JFrame {
         return wb;
     }
 
-    private Workbook wb;
+    private final Workbook wb = createWorkbook(GenericWorkbookFactory.instance());
 
     private KitchenSink() {
         super("Méja Kitchensink demo");
@@ -157,8 +157,6 @@ public final class KitchenSink extends JFrame {
         setSize(800, 600);
         final SwingWorkbookView view = new SwingWorkbookView();
         setContentPane(view);
-
-        wb = createWorkbook(GenericWorkbookFactory.instance());
 
         view.setWorkbook(wb);
     }

@@ -49,7 +49,7 @@ import java.util.function.Predicate;
  */
 public final class HtmlWorkbookWriter implements WorkbookWriter {
 
-    private Arguments options;
+    private Arguments options = Arguments.empty();
 
     private HtmlWorkbookWriter() {
     }

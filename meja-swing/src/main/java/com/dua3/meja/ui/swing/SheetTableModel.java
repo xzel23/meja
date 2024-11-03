@@ -6,6 +6,7 @@ import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.util.TableOptions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.TableModelListener;
@@ -51,7 +52,7 @@ final class SheetTableModel extends AbstractTableModel {
             }
         }
 
-        private Flow.Subscription subscription;
+        private Flow.@Nullable Subscription subscription;
 
         @Override
         public void onSubscribe(Flow.Subscription subscription) {

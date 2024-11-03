@@ -62,7 +62,7 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
     /**
      * The currently opened workbook.
      */
-    private Workbook workbook;
+    private @Nullable Workbook workbook;
 
     /**
      * The current directory.
@@ -113,8 +113,8 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
         return getUri(workbook);
     }
 
-    public Workbook getWorkbook() {
-        return workbook;
+    public Optional<Workbook> getWorkbook() {
+        return Optional.ofNullable(workbook);
     }
 
     public void saveWorkbook(URI uri) throws IOException {

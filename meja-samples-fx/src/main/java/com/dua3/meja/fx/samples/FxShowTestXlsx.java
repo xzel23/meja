@@ -13,21 +13,29 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 /**
  * A simple demo application that just displays the file 'test.xlsx'.
  */
 public final class FxShowTestXlsx extends Application {
 
-    private static LogBuffer logBuffer;
+    private static final LogBuffer logBuffer = createLogBuffer();
+
+    public FxShowTestXlsx() throws IOException, URISyntaxException {}
+
+    private static LogBuffer createLogBuffer() {
+        LogUtilLog4J.init(LogLevel.TRACE);
+        return new LogBuffer(100000);
+    }
 
     public static void main(String[] args) {
-        LogUtilLog4J.init(LogLevel.TRACE);
-        logBuffer = new LogBuffer(100000);
         LogUtil.getGlobalDispatcher().addLogEntryHandler(logBuffer);
         launch(args);
     }
 
-    private Workbook wb;
+    private Workbook wb =  MejaHelper.openWorkbook(LangUtil.getResourceURL(FxShowTestXlsx.class, "test.xlsx").toURI());
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -40,7 +48,6 @@ public final class FxShowTestXlsx extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        wb =  MejaHelper.openWorkbook(LangUtil.getResourceURL(FxShowTestXlsx.class, "test.xlsx").toURI());
         view.setWorkbook(wb);
     }
 }

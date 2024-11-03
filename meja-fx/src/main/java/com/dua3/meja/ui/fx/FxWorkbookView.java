@@ -44,7 +44,7 @@ import java.util.concurrent.Flow;
 public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetView>, Flow.Subscriber<WorkbookEvent> {
     private static final Logger LOG = LogManager.getLogger(FxWorkbookView.class);
 
-    private transient Workbook workbook;
+    private transient @Nullable Workbook workbook;
     private final TabPane content;
 
     /**

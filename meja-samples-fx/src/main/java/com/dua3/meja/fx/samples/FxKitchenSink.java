@@ -105,7 +105,7 @@ public final class FxKitchenSink extends Application {
         return wb;
     }
 
-    private Workbook wb;
+    private final Workbook wb = createWorkbook(GenericWorkbookFactory.instance());
 
     @Override
     public void start(Stage primaryStage) {
@@ -116,7 +116,6 @@ public final class FxKitchenSink extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        wb = createWorkbook(GenericWorkbookFactory.instance());
         view.setWorkbook(wb);
     }
 }

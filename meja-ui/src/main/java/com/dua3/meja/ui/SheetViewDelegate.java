@@ -40,7 +40,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     /**
      * The sheet displayed.
      */
-    private transient Sheet sheet;
+    private transient @Nullable Sheet sheet;
 
     /**
      * Horizontal padding.
@@ -138,7 +138,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     /**
      * Flow-API {@link java.util.concurrent.Flow.Subscription} instance.
      */
-    private Flow.Subscription subscription;
+    private Flow.@Nullable Subscription subscription;
 
     /**
      * Function that provides the column names.

@@ -48,7 +48,7 @@ public class GenericCell extends AbstractCell {
             | CellType.BLANK.ordinal();
     private Object value;
     private GenericCellStyle cellStyle;
-    private Map<Attribute, Object> attributes;
+    private @Nullable Map<Attribute, Object> attributes;
 
     enum Attribute {
         LINK_URI,

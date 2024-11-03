@@ -22,7 +22,7 @@ public abstract class AbstractWorkbook implements Workbook {
     /**
      * The object cache used to reduce memory usage.
      */
-    private ObjectCache objectCache;
+    private @Nullable ObjectCache objectCache;
 
     private final SubmissionPublisher<WorkbookEvent> publisher = new SubmissionPublisher<>();
 

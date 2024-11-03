@@ -44,7 +44,7 @@ public abstract class SheetPainterBase {
     /**
      * Reference to the sheet.
      */
-    private Sheet sheet;
+    private @Nullable Sheet sheet;
 
     public float getRowLabelWidth() {
         return getDelegate().getRowLabelWidthInPoints();

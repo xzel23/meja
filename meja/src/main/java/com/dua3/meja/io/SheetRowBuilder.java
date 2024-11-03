@@ -15,20 +15,20 @@
  */
 package com.dua3.meja.io;
 
-import java.text.NumberFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-
-import com.dua3.utility.io.IoOptions;
-import com.dua3.utility.io.PredefinedDateTimeFormat;
-import com.dua3.utility.io.CsvReader.RowBuilder;
-
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.util.CellValueHelper;
+import com.dua3.utility.io.CsvReader.RowBuilder;
+import com.dua3.utility.io.IoOptions;
+import com.dua3.utility.io.PredefinedDateTimeFormat;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
+import org.jspecify.annotations.Nullable;
+
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * Implementation of the {@link RowBuilder} interface that appends new rows for an existing sheet.
@@ -37,7 +37,7 @@ public class SheetRowBuilder implements RowBuilder {
 
     private final Sheet sheet;
     private final CellValueHelper helper;
-    private Row currentRow;
+    private @Nullable Row currentRow;
     private int colNr;
 
     /**

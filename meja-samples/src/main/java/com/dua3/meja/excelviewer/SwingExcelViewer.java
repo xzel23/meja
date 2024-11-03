@@ -115,7 +115,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
 
     private final ExcelViewerModel<SwingWorkbookView, SwingSheetView> model;
 
-    private SwingWorkbookView workbookView;
+    private @Nullable SwingWorkbookView workbookView;
 
     /**
      * Constructor.
@@ -233,30 +233,27 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
     }
 
     private void saveWorkbook() {
-        Workbook workbook = model.getWorkbook();
-        if (workbook == null) {
-            return;
-        }
-
-        Optional<URI> uri = workbook.getUri();
-        try {
-            if (uri.isEmpty()) {
-                final Optional<URI> newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
-                        model.getCurrentUri());
-                if (newUri.isEmpty()) {
-                    // user cancelled the dialog
-                    LOG.debug("save-dialog was cancelled");
-                    return;
+        model.getWorkbook().ifPresent(workbook -> {
+            Optional<URI> uri = workbook.getUri();
+            try {
+                if (uri.isEmpty()) {
+                    final Optional<URI> newUri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
+                            model.getCurrentUri());
+                    if (newUri.isEmpty()) {
+                        // user cancelled the dialog
+                        LOG.debug("save-dialog was cancelled");
+                        return;
+                    }
+                    workbookChanged(null /* old path was not set */, newUri.get());
+                } else {
+                    model.saveWorkbook(uri.get());
                 }
-                workbookChanged(null /* old path was not set */, newUri.get());
-            } else {
-                model.saveWorkbook(uri.get());
+            } catch (IOException ex) {
+                LOG.error("exception saving workbook", ex);
+                JOptionPane.showMessageDialog(this, "IO-Error saving workbook.", "Workbook could not be saved.",
+                        JOptionPane.ERROR_MESSAGE);
             }
-        } catch (IOException ex) {
-            LOG.error("exception saving workbook", ex);
-            JOptionPane.showMessageDialog(this, "IO-Error saving workbook.", "Workbook could not be saved.",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+        });
     }
 
     @Override
@@ -310,25 +307,26 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
      * Show the "Save as" dialog.
      */
     private void showSaveAsDialog() {
-        try {
-            Workbook workbook = model.getWorkbook();
-            final Optional<URI> uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
-                    model.getCurrentUri());
-            uri.ifPresent(value -> {
-                workbook.setUri(value);
-                updateUri(value);
-                LOG.info("saved workbook to {}", value);
-            });
-        } catch (IOException ex) {
-            LOG.error("exception saving workbook", ex);
-            JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        } catch (Exception ex) {
-            LOG.error("unknown exception caught, will be rethrown after message dialog: {}", ex.getMessage());
-            JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            throw ex; // rethrow
-        }
+        model.getWorkbook().ifPresent(workbook -> {
+            try {
+                final Optional<URI> uri = MejaSwingHelper.showDialogAndSaveWorkbook(this, workbook,
+                        model.getCurrentUri());
+                uri.ifPresent(value -> {
+                    workbook.setUri(value);
+                    updateUri(value);
+                    LOG.info("saved workbook to {}", value);
+                });
+            } catch (IOException ex) {
+                LOG.error("exception saving workbook", ex);
+                JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                LOG.error("unknown exception caught, will be rethrown after message dialog: {}", ex.getMessage());
+                JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                throw ex; // rethrow
+            }
+        });
     }
 
     private void updateUri(@Nullable URI path) {
@@ -343,7 +341,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
     @Override
     public void workbookChanged(@Nullable URI oldUri, @Nullable URI newUri) {
         firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
-        workbookView.setWorkbook(model.getWorkbook());
+        workbookView.setWorkbook(model.getWorkbook().orElse(null));
         updateUri(newUri);
     }
 

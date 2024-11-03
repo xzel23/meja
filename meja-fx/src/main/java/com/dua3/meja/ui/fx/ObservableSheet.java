@@ -7,6 +7,7 @@ import com.dua3.meja.model.SheetEvent.RowsAdded;
 import javafx.collections.ObservableListBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.Flow;
 
@@ -32,7 +33,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
 
     private class SheetTracker implements Flow.Subscriber<SheetEvent> {
 
-        private Flow.Subscription subscription;
+        private Flow.@Nullable Subscription subscription;
 
         @Override
         public void onSubscribe(Flow.Subscription subscription) {

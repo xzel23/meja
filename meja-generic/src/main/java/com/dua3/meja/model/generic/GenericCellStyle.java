@@ -26,6 +26,7 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -59,7 +60,7 @@ public class GenericCellStyle implements CellStyle {
     private short rotation;
 
     // formatting helper
-    private DateTimeFormatter dateFormatter;
+    private @Nullable DateTimeFormatter dateFormatter;
 
     /**
      * Construct a new {@code GenericCellStyle}.

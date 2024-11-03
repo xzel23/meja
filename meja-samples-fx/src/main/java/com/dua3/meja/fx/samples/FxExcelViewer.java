@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class FxExcelViewer extends Application {
 
-    private FxWorkbookView fxWorkbookView;
+    private final FxWorkbookView fxWorkbookView = new FxWorkbookView();
 
     @Override
     public void start(Stage primaryStage) {
@@ -26,9 +26,6 @@ public class FxExcelViewer extends Application {
         // Create UI components
         Label instructionLabel = new Label("Select a spreadsheet to view:");
         Button openFileButton = new Button("Open Spreadsheet");
-
-        // FxWorkbookView setup (assuming FxWorkbookView has a default constructor)
-        fxWorkbookView = new FxWorkbookView();
 
         // Setup file chooser action
         openFileButton.setOnAction(event -> openSpreadsheet(primaryStage));
