@@ -145,6 +145,7 @@ public class FxRow extends IndexedCell<RowProxy> {
 
         assert Platform.isFxApplicationThread() :"not on FxApplication thread";
 
+        //noinspection DataFlowIssue
         super.updateItem(item, empty);
 
         render();

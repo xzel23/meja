@@ -20,6 +20,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,8 @@ public class GenericSheet extends AbstractSheet {
     private final GenericWorkbook workbook;
     private final String sheetName;
     private final List<GenericRow> rows = new ArrayList<>(4_000);
-    private final ArrayList<Float> columnWidth = new ArrayList<>(200);
-    private final ArrayList<Float> rowHeight = new ArrayList<>(4_000);
+    private final ArrayList<@Nullable Float> columnWidth = new ArrayList<>(200);
+    private final ArrayList<@Nullable Float> rowHeight = new ArrayList<>(4_000);
     private int freezeRow;
     private int freezeColumn;
     private int autoFilterRow = -1;

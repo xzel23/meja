@@ -167,8 +167,8 @@ public abstract class AbstractSheet implements Sheet {
     }
 
     @Override
-    public RectangularRegion getMergedRegion(int rowNum, int colNum) {
-        return mergedRegions.stream().filter(rr -> rr.contains(rowNum, colNum)).findFirst().orElse(null);
+    public Optional<RectangularRegion> getMergedRegion(int rowNum, int colNum) {
+        return mergedRegions.stream().filter(rr -> rr.contains(rowNum, colNum)).findFirst();
     }
 
     /**

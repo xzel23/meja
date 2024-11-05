@@ -40,6 +40,7 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -260,5 +261,12 @@ public class SwingSheetView extends JPanel implements SheetView {
     @Override
     public SwingSheetViewDelegate getDelegate() {
         return delegate;
+    }
+
+    @Override
+    public Locale getLocale() {
+        Locale locale = super.getLocale();
+        assert locale != null;
+        return locale;
     }
 }

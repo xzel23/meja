@@ -168,7 +168,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @return the merged region or null if the cell does not belong to a merged
      * region
      */
-    RectangularRegion getMergedRegion(int rowNum, int colNum);
+    Optional<RectangularRegion> getMergedRegion(int rowNum, int colNum);
 
     /**
      * Get row, creating it if necessary.

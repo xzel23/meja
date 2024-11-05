@@ -87,12 +87,14 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
 
     @Override
     public Lock readLock() {
+        assert sheet != null;
         LOG.trace("readLock() [{}]", sheet::getSheetName);
         return sheet.readLock();
     }
 
     @Override
     public Lock writeLock() {
+        assert sheet != null;
         LOG.trace("writeLock() [{}]", sheet::getSheetName);
         return sheet.writeLock();
     }
@@ -111,7 +113,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return dx coordinate of split
      */
     public float getSplitX() {
-        return getColumnPos(sheet.getSplitColumn());
+        return sheet == null ? 0 : getColumnPos(sheet.getSplitColumn());
     }
 
     /**
@@ -120,7 +122,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return dy coordinate of split
      */
     public float getSplitY() {
-        return getRowPos(sheet.getSplitRow());
+        return sheet == null ? 0 : getRowPos(sheet.getSplitRow());
     }
 
     protected Color getSelectionColor() {
@@ -228,6 +230,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public Cell getCellAt(float x, float y) {
+        assert sheet != null;
         int i = getRowNumberFromY(y);
         int j = getColumnNumberFromX(x);
         return sheet.getCell(i,j);
@@ -385,7 +388,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
             owner.updateContent();
 
             // subscribe to the Flow API
-            sheet.subscribe(this);
+            if (sheet != null) {
+                sheet.subscribe(this);
+            }
 
             LOG.debug("sheet changed");
         }

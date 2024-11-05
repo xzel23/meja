@@ -174,7 +174,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
         }
     }
 
-    private transient Flow.Subscription subscription = null;
+    private transient Flow.@Nullable Subscription subscription = null;
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {

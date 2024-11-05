@@ -4,7 +4,8 @@ import com.dua3.meja.model.Row;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The RowProxy class represents a proxy for a single row in a sheet. It is needed to differentiate between actual rows of the sheet, and the split line that for technical reasons is also implemented as an {@link FxRow} instance.
+ * The RowProxy class represents a proxy for a single row in a sheet. It is needed to differentiate between actual
+ * rows of the sheet, and the split line that for technical reasons is also implemented as an {@link FxRow} instance.
  */
 public class RowProxy {
     /**
@@ -39,7 +40,7 @@ public class RowProxy {
     /**
      *
      */
-    private final Row row;
+    private final @Nullable Row row;
 
     /**
      * The RowProxy class represents a proxy for a single row in a sheet. It is used to differentiate between actual rows of the sheet and other types of rows, such as empty rows
@@ -78,6 +79,7 @@ public class RowProxy {
      * @return the row associated with this RowProxy instance
      */
     public Row getRow() {
+        assert type == Type.ROW && row != null;
         return row;
     }
 }

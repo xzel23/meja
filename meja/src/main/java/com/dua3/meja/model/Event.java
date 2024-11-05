@@ -137,8 +137,8 @@ public interface Event<T> {
      * @param <V> the type of the value that changed
      */
     abstract class EventValueChanged<T,V> extends AbstractEvent<T> {
-        private final V oldValue;
-        private final V newValue;
+        private final @Nullable V oldValue;
+        private final @Nullable V newValue;
         /**
          * Constructor for creating an instance of EventValueChanged.
          *
@@ -157,7 +157,7 @@ public interface Event<T> {
          *
          * @return the previously stored value of type V
          */
-        public V oldValue() {
+        public @Nullable V oldValue() {
             return oldValue;
         }
         /**
@@ -165,7 +165,7 @@ public interface Event<T> {
          *
          * @return the new value of type V
          */
-        public V newValue() {
+        public @Nullable V newValue() {
             return newValue;
         }
     }

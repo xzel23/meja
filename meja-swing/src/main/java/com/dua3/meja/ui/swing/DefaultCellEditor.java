@@ -21,6 +21,7 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.swing.SwingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -66,7 +67,7 @@ public class DefaultCellEditor implements CellEditor {
     }
 
     private final CellEditorPane component;
-    private Cell cell;
+    private @Nullable Cell cell;
 
     private final SwingSheetView sheetView;
 
@@ -117,6 +118,7 @@ public class DefaultCellEditor implements CellEditor {
 
         // update the cell with the new value
         if (commit) {
+            assert cell != null;
             updateCellContent();
             sheetView.repaintCell(cell);
         }
@@ -134,6 +136,7 @@ public class DefaultCellEditor implements CellEditor {
     }
 
     protected void updateCellContent() {
+        assert cell != null;
         String text;
         try {
             Document doc = component.getDocument();

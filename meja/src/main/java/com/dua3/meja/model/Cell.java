@@ -112,7 +112,7 @@ public interface Cell {
      * @param defaultValue the default value to return for empty cells
      * @return cell value if cell is not empty, {@code defaultValue otherwise}
      */
-    Object getOrDefault(@Nullable Object defaultValue);
+    @Nullable Object getOrDefault(@Nullable Object defaultValue);
 
     /**
      * Return text representation of value.

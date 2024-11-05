@@ -27,7 +27,7 @@ dependencyResolutionManagement {
             plugin("spotbugs", "com.github.spotbugs").version("6.0.25")
             plugin("cabe", "com.dua3.cabe").version("3.0-beta-9")
 
-            version("dua3-utility", "14-beta-2-SNAPSHOT")
+            version("dua3-utility", "14-beta-2")
             version("jspecify", "1.0.0")
             version("log4j", "2.24.1")
             version("poi", "5.3.0")

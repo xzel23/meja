@@ -224,12 +224,12 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
 
     @Override
     public Optional<SwingSheetView> getCurrentView() {
-        return workbookView.getCurrentView();
+        return Optional.ofNullable(workbookView).flatMap(SwingWorkbookView::getCurrentView);
     }
 
     @Override
     public Optional<SwingSheetView> getViewForSheet(Sheet sheet) {
-        return workbookView.getViewForSheet(sheet);
+        return Optional.ofNullable(workbookView).flatMap(wv -> wv.getViewForSheet(sheet));
     }
 
     private void saveWorkbook() {
@@ -258,7 +258,9 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
 
     @Override
     public void setEditable(boolean editable) {
-        workbookView.setEditable(editable);
+        if (workbookView != null) {
+            workbookView.setEditable(editable);
+        }
     }
 
     private void setLookAndFeel(String lookAndFeelClassName) {
@@ -341,7 +343,9 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
     @Override
     public void workbookChanged(@Nullable URI oldUri, @Nullable URI newUri) {
         firePropertyChange(PROPERTY_FILE_CHANGED, oldUri, newUri);
-        workbookView.setWorkbook(model.getWorkbook().orElse(null));
+        if (workbookView != null) {
+            workbookView.setWorkbook(model.getWorkbook().orElse(null));
+        }
         updateUri(newUri);
     }
 

@@ -18,6 +18,7 @@ package com.dua3.meja.model;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.options.Arguments;
+import org.jspecify.annotations.Nullable;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -240,7 +241,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *
      * @param uri the URI to set.
      */
-    void setUri(URI uri);
+    void setUri(@Nullable URI uri);
 
     /**
      * Check if a style with this name is defined.
@@ -456,7 +457,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @return the cached instance, if an instance equal to {@code obj} is present
      * in the cache, {@code obj} otherwise
      */
-    <T> T cache(T obj);
+    <T extends @Nullable Object> T cache(T obj);
 
     /**
      * Create a stream of the rows in this sheet.

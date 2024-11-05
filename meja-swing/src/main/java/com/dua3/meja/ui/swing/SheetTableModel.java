@@ -120,6 +120,7 @@ final class SheetTableModel extends AbstractTableModel {
         }
 
         public void detach() {
+            assert subscription != null : "subscription not attached";
             subscription.cancel();
             subscription = null;
         }
@@ -146,7 +147,7 @@ final class SheetTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Object getValueAt(int i, int j) {
+    public @Nullable Object getValueAt(int i, int j) {
         return sheet.getCellIfExists(convertRowNumberJTableToSheet(i), j).flatMap(Cell::get).orElse(null);
     }
 
@@ -184,7 +185,7 @@ final class SheetTableModel extends AbstractTableModel {
     public void removeTableModelListener(TableModelListener l) {
         super.removeTableModelListener(l);
 
-        if (listenerList.getListenerCount() == 0) {
+        if (listenerList.getListenerCount() == 0 && sl.subscription != null) {
             sl.subscription.cancel();
             sl.subscription = null;
             LOG.debug("last TableModelListener was removed, detaching sheet listener from sheet");

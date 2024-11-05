@@ -191,9 +191,9 @@ public final class PoiCell extends AbstractCell {
     }
 
     @Override
-    public Object getOrDefault(@Nullable Object defaultValue) {
+    public @Nullable Object getOrDefault(@Nullable Object defaultValue) {
         return switch (getCellType()) {
-            case BLANK -> null;
+            case BLANK -> defaultValue;
             case DATE -> poiCell.getLocalDateTimeCellValue().toLocalDate();
             case DATE_TIME -> poiCell.getLocalDateTimeCellValue();
             case NUMERIC -> poiCell.getNumericCellValue();

@@ -155,6 +155,9 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
     }
 
     protected void setZoom(float zoom) {
+        if (workbook == null) {
+            return;
+        }
         for (Sheet sheet : workbook) {
             sheet.setZoom(zoom);
         }

@@ -17,7 +17,7 @@ public abstract class AbstractWorkbook implements Workbook {
     /**
      * The path of this workbook.
      */
-    private URI uri;
+    private @Nullable URI uri;
 
     /**
      * The object cache used to reduce memory usage.
@@ -79,8 +79,8 @@ public abstract class AbstractWorkbook implements Workbook {
     }
 
     @Override
-    public <T> T cache(T obj) {
-        return objectCache != null ? objectCache.get(obj) : obj;
+    public <T extends @Nullable Object> T cache(T obj) {
+        return objectCache != null  && obj != null ? objectCache.get(obj) : obj;
     }
 
     @Override
@@ -110,7 +110,7 @@ public abstract class AbstractWorkbook implements Workbook {
     }
 
     @Override
-    public void setUri(URI uri) {
+    public void setUri(@Nullable URI uri) {
         URI oldUri = this.uri;
         this.uri = uri;
         uriChanged(oldUri, uri);

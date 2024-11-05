@@ -46,7 +46,7 @@ public class GenericCell extends AbstractCell {
      */
     private static final long INITIAL_DATA = ((/* spanX */ 1L) << 32) | ((/* spanY */ 1L) << 8)
             | CellType.BLANK.ordinal();
-    private Object value;
+    private @Nullable Object value;
     private GenericCellStyle cellStyle;
     private @Nullable Map<Attribute, Object> attributes;
 
@@ -138,12 +138,14 @@ public class GenericCell extends AbstractCell {
     }
 
     @Override
-    public Object getOrDefault(@Nullable Object defaultValue) {
+    public @Nullable Object getOrDefault(@Nullable Object defaultValue) {
         return value != null ? value : defaultValue;
     }
 
     @Override
     public RichText getAsText(Locale locale) {
+        assert value != null || getCellType() == CellType.BLANK;
+
         return switch (getCellType()) {
             case BLANK -> RichText.emptyText();
             case TEXT -> getText();
@@ -157,6 +159,7 @@ public class GenericCell extends AbstractCell {
     @Override
     public boolean getBoolean() {
         if (getCellType() == CellType.BOOLEAN) {
+            assert value != null;
             return (boolean) value;
         }
         throw new CellException(this, "Cannot get boolean value from cell of type " + getCellType().name() + ".");
@@ -180,6 +183,7 @@ public class GenericCell extends AbstractCell {
     @Override
     public LocalDate getDate() {
         if (getCellType() == CellType.DATE) {
+            assert value != null;
             return (LocalDate) value;
         }
         throw new CellException(this, "Cannot get date value from cell of type " + getCellType().name() + ".");
@@ -188,6 +192,7 @@ public class GenericCell extends AbstractCell {
     @Override
     public LocalDateTime getDateTime() {
         if (getCellType() == CellType.DATE_TIME) {
+            assert value != null;
             return (LocalDateTime) value;
         }
         throw new CellException(this, "Cannot get date value from cell of type " + getCellType().name() + ".");
@@ -196,6 +201,7 @@ public class GenericCell extends AbstractCell {
     @Override
     public String getFormula() {
         if (getCellType() == CellType.FORMULA) {
+            assert value != null;
             return (String) value;
         }
         throw new CellException(this, "Cannot get formula from cell of type " + getCellType().name() + ".");
@@ -209,6 +215,7 @@ public class GenericCell extends AbstractCell {
     @Override
     public Number getNumber() {
         if (getCellType() == CellType.NUMERIC) {
+            assert value != null;
             return (Number) value;
         }
         throw new CellException(this, "Cannot get numeric value from cell of type " + getCellType().name() + ".");
@@ -236,6 +243,8 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public RichText getText() {
+        assert value != null || getCellType() == CellType.BLANK;
+
         return switch (getCellType()) {
             case BLANK -> RichText.emptyText();
             case TEXT -> (RichText) value;
@@ -285,17 +294,17 @@ public class GenericCell extends AbstractCell {
     }
 
     private GenericCell set(@Nullable Object arg, CellType type) {
-        GenericSheet sheet = getSheet();
-        arg = sheet.getWorkbook().cache(arg);
-        if (arg != value || type != getCellType()) {
-            Object old = value;
-            if (arg == null) {
-                clear();
-            } else {
+        if (arg == null) {
+            clear();
+        } else {
+            GenericSheet sheet = getSheet();
+            arg = sheet.getWorkbook().cache(arg);
+            if (arg != value || type != getCellType()) {
+                Object old = value;
                 setCellType(type);
                 value = arg;
+                valueChanged(old, arg);
             }
-            valueChanged(old, arg);
         }
         return this;
     }
@@ -393,6 +402,8 @@ public class GenericCell extends AbstractCell {
 
     @Override
     public String toString(Locale locale) {
+        assert value != null || getCellType() == CellType.BLANK;
+
         return switch (getCellType()) {
             case BLANK -> "";
             case NUMERIC -> cellStyle.format((Number) value, locale);

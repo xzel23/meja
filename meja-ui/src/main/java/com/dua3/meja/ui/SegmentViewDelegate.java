@@ -4,6 +4,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Scale2f;
 
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 
 public class SegmentViewDelegate {
@@ -31,8 +32,8 @@ public class SegmentViewDelegate {
         return sheetViewDelegate;
     }
 
-    public Sheet getSheet() {
-        return sheetViewDelegate.getSheet().orElse(null);
+    public Optional<Sheet> getSheet() {
+        return sheetViewDelegate.getSheet();
     }
 
     /**

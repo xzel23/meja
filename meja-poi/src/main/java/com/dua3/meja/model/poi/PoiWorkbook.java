@@ -100,7 +100,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * @param poiWorkbook the POI workbook instance
      * @param uri         the URI of this workbook
      */
-    protected PoiWorkbook(@Nullable Workbook poiWorkbook, @Nullable URI uri) {
+    protected PoiWorkbook(Workbook poiWorkbook, @Nullable URI uri) {
         super(uri);
         this.poiWorkbook = poiWorkbook;
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();

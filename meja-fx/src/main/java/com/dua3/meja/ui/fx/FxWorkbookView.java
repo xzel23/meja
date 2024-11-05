@@ -89,6 +89,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     @Override
     public Optional<FxSheetView> getCurrentView() {
+        //noinspection ReturnOfNull
         return Optional.ofNullable(content)
                 .map(TabPane::getSelectionModel)
                 .map(SelectionModel::getSelectedItem)
@@ -98,6 +99,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
 
     @Override
     public Optional<FxSheetView> getViewForSheet(Sheet sheet) {
+        //noinspection ReturnOfNull
         return content.getTabs().stream()
                 .map(Tab::getContent)
                 .map(content -> content instanceof FxSheetView sv ? sv : null)
@@ -113,6 +115,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      * @return the view for the requested sheet or {@code null} if not found
      */
     public Optional<FxSheetView> getViewForSheet(String sheetName) {
+        //noinspection ReturnOfNull
         return content.getTabs().stream()
                 .map(Tab::getContent)
                 .map(content -> content instanceof FxSheetView sv ? sv : null)
@@ -143,6 +146,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
             return;
         }
 
+        //noinspection ReturnOfNull
         content.getTabs().stream()
                 .map(Tab::getContent)
                 .map(content -> content instanceof FxSheetView sv ? sv : null)
@@ -180,7 +184,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
         }
     }
 
-    private transient Flow.Subscription subscription = null;
+    private transient Flow.@Nullable Subscription subscription = null;
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
