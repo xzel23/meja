@@ -20,7 +20,6 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
-import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
@@ -134,26 +133,24 @@ public final class PoiCell extends AbstractCell {
         this.spanX = 1;
         this.spanY = 1;
 
-        RectangularRegion mergedRegion = row.getSheet().getMergedRegion(cell.getRowIndex(), cell.getColumnIndex());
+        row.getSheet().getMergedRegion(cell.getRowIndex(), cell.getColumnIndex())
+                .ifPresent(mergedRegion -> {
+                    // cell is merged
+                    boolean isTop = getRowNumber() == mergedRegion.firstRow();
+                    boolean isTopLeft = isTop && getColumnNumber() == mergedRegion.firstColumn();
+                    PoiCell topLeftCell;
+                    if (isTopLeft) {
+                        topLeftCell = this;
+                    } else {
+                        PoiRow topRow = isTop ? row : row.getSheet().getRow(mergedRegion.firstRow());
+                        topLeftCell = topRow.getCell(mergedRegion.firstColumn());
+                    }
 
-        if (mergedRegion != null) {
-            // cell is merged
-            boolean isTop = getRowNumber() == mergedRegion.firstRow();
-            boolean isTopLeft = isTop && getColumnNumber() == mergedRegion.firstColumn();
-            PoiCell topLeftCell;
-            if (isTopLeft) {
-                topLeftCell = this;
-            } else {
-                PoiRow topRow = isTop ? row : row.getSheet().getRow(mergedRegion.firstRow());
-                topLeftCell = topRow.getCell(mergedRegion.firstColumn());
-            }
+                    int spanX_ = 1 + mergedRegion.lastColumn() - mergedRegion.firstColumn();
+                    int spanY_ = 1 + mergedRegion.lastRow() - mergedRegion.firstRow();
 
-            int spanX_ = 1 + mergedRegion.lastColumn() - mergedRegion.firstColumn();
-            int spanY_ = 1 + mergedRegion.lastRow() - mergedRegion.firstRow();
-
-            addedToMergedRegion(topLeftCell, spanX_, spanY_);
-        }
-
+                    addedToMergedRegion(topLeftCell, spanX_, spanY_);
+                });
     }
 
     @Override
@@ -411,6 +408,11 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public Cell set(@Nullable RichText s) {
+        if (s == null) {
+            clear();
+            return this;
+        }
+
         s = getWorkbook().cache(s);
         Object old = getOrDefault(null);
 

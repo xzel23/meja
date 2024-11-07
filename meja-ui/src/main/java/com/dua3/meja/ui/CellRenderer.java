@@ -97,9 +97,6 @@ public class CellRenderer {
             }
 
             Color color = b.color();
-            if (color == null) {
-                color = Color.BLACK;
-            }
             g.setStroke(color, b.width() * delegate.get1PxWidthInPoints());
 
             switch (d) {

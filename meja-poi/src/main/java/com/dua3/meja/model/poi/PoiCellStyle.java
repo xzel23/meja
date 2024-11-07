@@ -171,7 +171,7 @@ public abstract class PoiCellStyle implements CellStyle {
         public void setBorderStyle(Direction d, BorderStyle borderStyle) {
             org.apache.poi.ss.usermodel.BorderStyle poiBorder = getPoiBorder(borderStyle);
             final Color color = borderStyle.color();
-            XSSFColor poiColor = color == null ? null : ((PoiXssfWorkbook) workbook).getPoiColor(color);
+            XSSFColor poiColor = ((PoiXssfWorkbook) workbook).getPoiColor(color);
             switch (d) {
                 case NORTH -> {
                     poiCellStyle.setBorderTop(poiBorder);

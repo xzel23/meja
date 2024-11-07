@@ -161,7 +161,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     /**
      * The scale used to calculate screen sizes dependent of display resolution.
      */
-    private Scale2f displayScale = Scale2f.identity();
+    private Scale2f displayScale;
     /**
      * The color to use for the grid lines.
      */

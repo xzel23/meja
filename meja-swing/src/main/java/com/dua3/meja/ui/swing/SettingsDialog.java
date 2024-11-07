@@ -71,7 +71,11 @@ public class SettingsDialog extends JDialog {
                 } else {
                     value = ((JTextComponent) component).getText();
                 }
-                entries.add(Arguments.createEntry(option, value));
+                if (value != null) {
+                    entries.add(Arguments.createEntry(option, value));
+                } else {
+                    entries.add(Arguments.createEntry(option));
+                }
             }
             result = Arguments.of(entries.toArray(Arguments.Entry[]::new));
             dispose();

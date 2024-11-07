@@ -351,6 +351,7 @@ public class FxRow extends IndexedCell<RowProxy> {
 
         double xSheet = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getStartColumn()) + evt.getX() / sheetViewDelegate.getScale().sx();
 
+        //noinspection OptionalOfNullableMisuse - false positive
         int i = Optional.ofNullable(getItem()).map(RowProxy::getRow).map(Row::getRowNumber).orElse(-1);
         int j = -1;
         for (int k = segmentViewDelegate.getStartColumn(); k < segmentViewDelegate.getEndColumn(); k++) {

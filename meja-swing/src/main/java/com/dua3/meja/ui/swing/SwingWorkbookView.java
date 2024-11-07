@@ -65,7 +65,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
      */
     @Override
     public Optional<SwingSheetView> getCurrentView() {
-        Component component = content != null ? content.getSelectedComponent() : null;
+        Component component = content.getSelectedComponent();
         return component instanceof SwingSheetView swingSheetView ? Optional.of(swingSheetView) : Optional.empty();
     }
 

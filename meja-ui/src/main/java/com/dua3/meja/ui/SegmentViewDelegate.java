@@ -81,65 +81,62 @@ public class SegmentViewDelegate {
     }
 
     public boolean isLeftOfSplit() {
-        return getEndColumn() <= getSheet().getSplitColumn();
+        return getSheet().map(sheet -> getEndColumn() <= sheet.getSplitColumn()).orElse(getStartColumn() <= 0);
     }
 
     public boolean isAboveSplit() {
-        return getEndRow() <= getSheet().getSplitRow();
+        return getSheet().map(sheet -> getEndRow() <= sheet.getSplitRow()).orElse(getStartRow() <= 0);
     }
 
     public boolean hasHLine() {
-        return isAboveSplit() && getSheet().getSplitRow() > 0;
+        return getSheet().map(sheet -> sheet.getSplitRow() > 0 && getEndRow() <= sheet.getSplitRow()).orElse(getStartRow() <= 0);
     }
 
     public boolean hasVLine() {
-        return isLeftOfSplit() && getSheet().getSplitColumn() > 0;
+        return getSheet().map(sheet -> sheet.getSplitColumn() > 0 && getEndColumn() <= sheet.getSplitColumn()).orElse(getStartColumn() <= 0);
     }
 
     public void updateLayout() {
-        Sheet sheet = getSheet();
-        if (sheet == null) {
-            return;
-        }
+        getSheet().ifPresent(sheet -> {
+            Lock lock = sheet.readLock();
+            lock.lock();
+            try {
+                // update the sheet layout first
+                sheetViewDelegate.updateLayout();
 
-        Lock lock = sheet.readLock();
-        lock.lock();
-        try {
-            // update the sheet layout first
-            sheetViewDelegate.updateLayout();
+                // the width is the width for the labels showing row names ...
+                float width = isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0;
 
-            // the width is the width for the labels showing row names ...
-            float width = isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0;
+                // ... plus 1 Pixel for the splitline if there's a vertical split, and we are left of the split
+                width += hasVLine() ? sheetViewDelegate.get1PxWidthInPoints() : 0;
 
-            // ... plus 1 Pixel for the splitline if there's a vertical split, and we are left of the split
-            width += hasVLine() ? sheetViewDelegate.get1PxWidthInPoints() : 0;
+                // ... plus the width of the columns displayed ...
+                width += sheetViewDelegate.getColumnPos(getEndColumn()) - sheetViewDelegate.getColumnPos(getStartColumn());
 
-            // ... plus the width of the columns displayed ...
-            width += sheetViewDelegate.getColumnPos(getEndColumn()) - sheetViewDelegate.getColumnPos(getStartColumn());
+                // the height is the height for the labels showing column names ...
+                float height = isAboveSplit() ? sheetViewDelegate.getColumnLabelHeightInPoints() : 0;
 
-            // the height is the height for the labels showing column names ...
-            float height = isAboveSplit() ? sheetViewDelegate.getColumnLabelHeightInPoints() : 0;
+                // ... plus 1 Pixel for the splitline if there's a horizontal split and we are above of the split
+                height += hasHLine() ? sheetViewDelegate.get1PxHeightInPoints() : 0;
 
-            // ... plus 1 Pixel for the splitline if there's a horizontal split and we are above of the split
-            height += hasHLine() ? sheetViewDelegate.get1PxHeightInPoints() : 0;
+                // ... plus the height of the rows displayed ...
+                height += sheetViewDelegate.getRowPos(getEndRow()) - sheetViewDelegate.getRowPos(getStartRow());
 
-            // ... plus the height of the rows displayed ...
-            height += sheetViewDelegate.getRowPos(getEndRow()) - sheetViewDelegate.getRowPos(getStartRow());
+                offsetX = (isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0) - sheetViewDelegate.getColumnPos(getStartColumn());
+                offsetY = (isAboveSplit() ? sheetViewDelegate.getColumnLabelHeightInPoints() : 0) - sheetViewDelegate.getRowPos(getStartRow());
 
-            offsetX = (isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0) - sheetViewDelegate.getColumnPos(getStartColumn());
-            offsetY = (isAboveSplit() ? sheetViewDelegate.getColumnLabelHeightInPoints() : 0) - sheetViewDelegate.getRowPos(getStartRow());
+                this.widthInPoints = width;
+                this.heightInPoints = height;
 
-            this.widthInPoints = width;
-            this.heightInPoints = height;
+                Scale2f s = getSheetViewDelegate().getScale();
+                this.widthInPixels = s.sx() * width;
+                this.heightInPixels = s.sy() * height;
 
-            Scale2f s = getSheetViewDelegate().getScale();
-            this.widthInPixels = s.sx() * width;
-            this.heightInPixels = s.sy() * height;
-
-            owner.setViewSizeOnDisplay(widthInPixels, heightInPixels);
-        } finally {
-            lock.unlock();
-        }
+                owner.setViewSizeOnDisplay(widthInPixels, heightInPixels);
+            } finally {
+                lock.unlock();
+            }
+        });
     }
 
     /**
