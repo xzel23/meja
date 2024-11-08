@@ -454,10 +454,9 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *
      * @param <T> object type
      * @param obj the object to lookup
-     * @return the cached instance, if an instance equal to {@code obj} is present
-     * in the cache, {@code obj} otherwise
+     * @return the cached instance, if caching is enabled, otherwise {@code obj}
      */
-    <T extends @Nullable Object> T cache(T obj);
+    <T> T cache(T obj);
 
     /**
      * Create a stream of the rows in this sheet.

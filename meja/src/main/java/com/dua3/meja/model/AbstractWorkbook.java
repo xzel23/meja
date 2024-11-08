@@ -79,8 +79,8 @@ public abstract class AbstractWorkbook implements Workbook {
     }
 
     @Override
-    public <T extends @Nullable Object> T cache(T obj) {
-        return objectCache != null  && obj != null ? objectCache.get(obj) : obj;
+    public <T> T cache(T obj) {
+        return objectCache != null ? objectCache.get(obj) : obj;
     }
 
     @Override

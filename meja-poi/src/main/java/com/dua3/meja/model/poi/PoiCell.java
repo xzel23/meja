@@ -350,14 +350,15 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public PoiCell set(@Nullable Boolean arg) {
-        arg = getWorkbook().cache(arg);
-        Object old = getOrDefault(null);
         if (arg == null) {
             clear();
-        } else {
-            poiCell.setCellValue(arg);
-            setCellStylePlain();
+            return this;
         }
+
+        Object old = getOrDefault(null);
+        arg = getWorkbook().cache(arg);
+        poiCell.setCellValue(arg);
+        setCellStylePlain();
         updateRow();
         valueChanged(old, arg);
         return this;
@@ -393,52 +394,55 @@ public final class PoiCell extends AbstractCell {
 
     @Override
     public PoiCell set(@Nullable Number arg) {
-        arg = getWorkbook().cache(arg);
-        Object old = getOrDefault(null);
         if (arg == null) {
             clear();
-        } else {
-            poiCell.setCellValue(arg.doubleValue());
-            setCellStylePlain();
+            return this;
         }
+
+        arg = getWorkbook().cache(arg);
+        Object old = getOrDefault(null);
+        poiCell.setCellValue(arg.doubleValue());
+        setCellStylePlain();
         updateRow();
         valueChanged(old, null);
         return this;
     }
 
     @Override
-    public Cell set(@Nullable RichText s) {
-        if (s == null) {
+    public Cell set(@Nullable RichText arg) {
+        if (arg == null) {
             clear();
             return this;
         }
 
-        s = getWorkbook().cache(s);
+        arg = getWorkbook().cache(arg);
         Object old = getOrDefault(null);
-
-        RichTextString richText = getWorkbook().createRichTextString(s.toString());
-        for (Run run : s) {
+        RichTextString richText = getWorkbook().createRichTextString(arg.toString());
+        for (Run run : arg) {
             PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont().deriveFont(run.getFontDef()));
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
         poiCell.setCellValue(richText);
         setCellStylePlain();
-
         updateRow();
-
-        valueChanged(old, s);
+        valueChanged(old, arg);
 
         return this;
     }
 
     @Override
     public PoiCell set(@Nullable String arg) {
+        if (arg == null) {
+            clear();
+            return this;
+        }
+
         arg = getWorkbook().cache(arg);
         Object old = getOrDefault(null);
         poiCell.setCellValue(arg);
         setCellStylePlain();
         updateRow();
-        valueChanged(old, null);
+        valueChanged(old, arg);
         return this;
     }
 
