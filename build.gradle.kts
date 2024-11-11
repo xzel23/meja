@@ -15,6 +15,7 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.dua3.cabe.processor.Configuration
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 import java.net.URI
 
 plugins {
@@ -47,7 +48,18 @@ object Meta {
 subprojects {
 
     project.setVersion(rootProject.libs.versions.projectVersion.get())
-    val isReleaseVersion = !project.getVersion().toString().endsWith("SNAPSHOT")
+
+    fun isDevelopmentVersion(versionString : String) : Boolean {
+        val v = versionString.toDefaultLowerCase()
+        val markers = listOf("snapshot", "alpha", "beta")
+        for (marker in markers) {
+            if (v.contains("-$marker") || v.contains(".$marker")) {
+                return true
+            }
+        }
+        return false
+    }
+    val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
 
     apply(plugin = "java-library")
     apply(plugin = "jvm-test-suite")
