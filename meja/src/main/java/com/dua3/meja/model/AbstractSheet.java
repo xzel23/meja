@@ -226,12 +226,12 @@ public abstract class AbstractSheet implements Sheet {
         float[] colWidth = new float[n];
         Arrays.fill(colWidth, 0.0f);
 
-        rows().flatMap(Row::cells).forEach(cell -> {
-            if (cell.getCellType() != CellType.BLANK) {
-                int j = cell.getColumnNumber();
-                float width = cell.calcCellDimension().width();
-                colWidth[j] = Math.max(colWidth[j], width);
-            }
+        rows().flatMap(Row::cells)
+                .filter(cell -> !cell.isEmpty())
+                .forEach(cell -> {
+            int j = cell.getColumnNumber();
+            float width = cell.calcCellDimension().width();
+            colWidth[j] = Math.max(colWidth[j], width);
         });
 
         for (int j = 0; j < n; j++) {

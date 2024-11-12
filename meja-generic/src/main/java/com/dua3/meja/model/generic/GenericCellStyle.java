@@ -109,7 +109,7 @@ public class GenericCellStyle implements CellStyle {
     private DateTimeFormatter getDateFormatter(Locale locale) {
         if (dateFormatter == null) {
             try {
-                if (dataFormat == null || dataFormat.isEmpty()) {
+                if (dataFormat.isEmpty()) {
                     dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
                 } else {
                     dateFormatter = DateTimeFormatter.ofPattern(dataFormat);
@@ -130,7 +130,7 @@ public class GenericCellStyle implements CellStyle {
      * @return text representation of {@code n}
      */
     public String format(Number n, Locale locale) {
-        String fmt = dataFormat == null || dataFormat.isEmpty() ? "0.##########" : dataFormat;
+        String fmt = dataFormat.isEmpty() ? "0.##########" : dataFormat;
         NumberFormat numberFormatter;
         try {
             DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);

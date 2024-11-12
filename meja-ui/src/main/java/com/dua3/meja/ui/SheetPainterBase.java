@@ -17,7 +17,6 @@ package com.dua3.meja.ui;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
-import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
@@ -200,60 +199,57 @@ public abstract class SheetPainterBase {
 
         // Collect cells to be drawn
         for (int i = va.startRow(); i < va.endRow(); i++) {
-            Row row = sheet.getRow(i);
+            sheet.getRowIfExists(i).ifPresent(row -> {
 
-            if (row == null) {
-                continue;
-            }
+                // if first/last displayed cell of row is empty, start drawing at
+                // the first non-empty cell to the left/right to make sure
+                // overflowing text is visible.
+                int first = va.startColumn();
+                while (first > 0 && getDelegate().getColumnPos(first) + maxWidth > bounds.xMin() && row.getCell(first).isEmpty()) {
+                    first--;
+                }
 
-            // if first/last displayed cell of row is empty, start drawing at
-            // the first non-empty cell to the left/right to make sure
-            // overflowing text is visible.
-            int first = va.startColumn();
-            while (first > 0 && getDelegate().getColumnPos(first) + maxWidth > bounds.xMin() && row.getCell(first).isEmpty()) {
-                first--;
-            }
+                int end = va.endColumn();
+                while (end < getDelegate().getColumnCount() && getDelegate().getColumnPos(end) - maxWidth < bounds.xMax()
+                        && (end <= 0 || row.getCell(end - 1).isEmpty())) {
+                    end++;
+                }
 
-            int end = va.endColumn();
-            while (end < getDelegate().getColumnCount() && getDelegate().getColumnPos(end) - maxWidth < bounds.xMax()
-                    && (end <= 0 || row.getCell(end - 1).isEmpty())) {
-                end++;
-            }
+                for (int j = first; j < end; j++) {
+                    Cell cell = row.getCell(j);
+                    Cell logicalCell = cell.getLogicalCell();
 
-            for (int j = first; j < end; j++) {
-                Cell cell = row.getCell(j);
-                Cell logicalCell = cell.getLogicalCell();
-
-                final boolean visible;
-                //noinspection ObjectEquality
-                if (cell == logicalCell) {
-                    // if cell is not merged or the top left cell of the
-                    // merged region, then it is visible
-                    visible = true;
-                } else {
-                    // otherwise, calculate row and column numbers of the
-                    // first visible cell of the merged region
-                    int iCell = Math.max(va.startRow(), logicalCell.getRowNumber());
-                    int jCell = Math.max(first, logicalCell.getColumnNumber());
-                    visible = i == iCell && j == jCell;
-                    // skip the other cells of this row that belong to the same
-                    // merged region
-                    j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
-                    // filter out cells that cannot overflow into the visible
-                    // region
-                    if (j < va.startColumn()) {
-                        CellStyle style = cell.getCellStyle();
-                        if (style.isStyleWrapping()) {
-                            continue;
+                    final boolean visible;
+                    //noinspection ObjectEquality
+                    if (cell == logicalCell) {
+                        // if cell is not merged or the top left cell of the
+                        // merged region, then it is visible
+                        visible = true;
+                    } else {
+                        // otherwise, calculate row and column numbers of the
+                        // first visible cell of the merged region
+                        int iCell = Math.max(va.startRow(), logicalCell.getRowNumber());
+                        int jCell = Math.max(first, logicalCell.getColumnNumber());
+                        visible = row.getRowNumber() == iCell && j == jCell;
+                        // skip the other cells of this row that belong to the same
+                        // merged region
+                        j = logicalCell.getColumnNumber() + logicalCell.getHorizontalSpan() - 1;
+                        // filter out cells that cannot overflow into the visible
+                        // region
+                        if (j < va.startColumn()) {
+                            CellStyle style = cell.getCellStyle();
+                            if (style.isStyleWrapping()) {
+                                continue;
+                            }
                         }
                     }
-                }
 
-                // draw cell
-                if (visible) {
-                    cellRenderer.drawCell(g, logicalCell);
+                    // draw cell
+                    if (visible) {
+                        cellRenderer.drawCell(g, logicalCell);
+                    }
                 }
-            }
+            });
         }
     }
 

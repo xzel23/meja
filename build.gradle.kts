@@ -47,7 +47,7 @@ object Meta {
 
 subprojects {
 
-    project.setVersion(rootProject.libs.versions.projectVersion.get())
+    project.version = rootProject.libs.versions.projectVersion.get()
 
     fun isDevelopmentVersion(versionString : String) : Boolean {
         val v = versionString.toDefaultLowerCase()
@@ -60,6 +60,7 @@ subprojects {
         return false
     }
     val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
+    val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snapshot")
 
     apply(plugin = "java-library")
     apply(plugin = "jvm-test-suite")
@@ -179,7 +180,7 @@ subprojects {
             maven {
                 val releaseRepo = URI("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
                 val snapshotRepo = URI("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                url = if (isReleaseVersion) releaseRepo else snapshotRepo
+                url = if (isSnapshot) snapshotRepo else releaseRepo
                 credentials {
                     username = project.properties["ossrhUsername"].toString()
                     password = project.properties["ossrhPassword"].toString()

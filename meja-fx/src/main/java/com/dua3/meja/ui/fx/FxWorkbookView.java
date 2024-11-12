@@ -142,10 +142,6 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     @Override
     public void setEditable(boolean editable) {
-        if (content == null) {
-            return;
-        }
-
         //noinspection ReturnOfNull
         content.getTabs().stream()
                 .map(Tab::getContent)

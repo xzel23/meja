@@ -18,17 +18,11 @@ include("meja-samples-fx")
 // define dependency versions and repositories
 dependencyResolutionManagement {
 
-    fun isDevelopmentVersion(versionString : String) : Boolean {
-        val v = versionString.toDefaultLowerCase()
-        val markers = listOf("snapshot", "alpha", "beta")
-        for (marker in markers) {
-            if (v.contains("-$marker") || v.contains(".$marker")) {
-                return true
-            }
-        }
-        return false
+    val isSnapshot = projectVersion.toDefaultLowerCase().contains("snapshot")
+
+    if (isSnapshot) {
+        println("SNAPSHOT version detected, using local Maven repository")
     }
-    val isSnapshot = isDevelopmentVersion(projectVersion)
 
     versionCatalogs {
         create("libs") {
@@ -42,7 +36,7 @@ dependencyResolutionManagement {
             version("dua3-utility", "14-beta-3")
             version("jspecify", "1.0.0")
             version("log4j", "2.24.1")
-            version("poi", "5.4.0")
+            version("poi", "5.3.0")
 
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
             library("dua3-utility-db", "com.dua3.utility", "utility-db").versionRef("dua3-utility")

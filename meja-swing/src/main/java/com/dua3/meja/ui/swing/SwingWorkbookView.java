@@ -119,10 +119,6 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
      */
     @Override
     public void setEditable(boolean editable) {
-        if (content == null) {
-            return;
-        }
-
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
             if (view instanceof SwingSheetView swingSheetView) {

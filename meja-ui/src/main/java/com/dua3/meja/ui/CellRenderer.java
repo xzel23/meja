@@ -66,18 +66,12 @@ public class CellRenderer {
         }
 
         if (pattern != FillPattern.SOLID) {
-            Color fillBgColor = style.getFillBgColor();
-            if (fillBgColor != null) {
-                g.setFill(fillBgColor);
-                g.fillRect(cr);
-            }
-        }
-
-        Color fillFgColor = style.getFillFgColor();
-        if (fillFgColor != null) {
-            g.setFill(fillFgColor);
+            g.setFill(style.getFillBgColor());
             g.fillRect(cr);
         }
+
+        g.setFill(style.getFillFgColor());
+        g.fillRect(cr);
     }
 
     /**
