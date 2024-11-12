@@ -26,6 +26,7 @@ import com.dua3.utility.text.TextUtil;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Formatter;
 import java.util.Locale;
@@ -139,10 +140,7 @@ public final class MejaHelper {
             }
         }
 
-        int overallLength = 1;
-        for (int len : columnLength) {
-            overallLength += len + 1;
-        }
+        int overallLength = 1 + Arrays.stream(columnLength).map(len -> len + 1).sum();
 
         // output data
         try (Formatter fmt = new Formatter(app)) {

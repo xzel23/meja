@@ -77,13 +77,13 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     private float sheetWidthInPoints;
     private float rowLabelWidth;
     private float columnLabelHeightInPoints;
-    private float defaultRowHeightInPoints = 12f;
+    private float defaultRowHeightInPoints = 12.0f;
     private Font labelFont = new Font().withSize(8);
     private Color labelBackgroundColor = Color.WHITESMOKE;
     private Color labelBorderColor = labelBackgroundColor.darker();
-    private float labelBorderWidthInPixels = 1f;
-    private float pixelWidthInPoints = 1f;
-    private float pixelHeightInPoints = 1f;
+    private float labelBorderWidthInPixels = 1.0f;
+    private float pixelWidthInPoints = 1.0f;
+    private float pixelHeightInPoints = 1.0f;
 
     @Override
     public Lock readLock() {
@@ -412,8 +412,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         Lock lock = writeLock();
         lock.lock();
         try {
-            this.pixelWidthInPoints = 1f / scale.sx();
-            this.pixelHeightInPoints = 1f / scale.sy();
+            this.pixelWidthInPoints = 1.0f / scale.sx();
+            this.pixelHeightInPoints = 1.0f / scale.sy();
 
             // determine row and column positions
             sheetHeightInPoints = 0;

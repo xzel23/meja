@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 /**
  * A custom cell implementation for rendering rows in a spreadsheet. It extends the IndexedCell class and overrides several methods to customize the appearance and behavior of the
@@ -353,13 +354,10 @@ public class FxRow extends IndexedCell<RowProxy> {
 
         //noinspection OptionalOfNullableMisuse - false positive
         int i = Optional.ofNullable(getItem()).map(RowProxy::getRow).map(Row::getRowNumber).orElse(-1);
-        int j = -1;
-        for (int k = segmentViewDelegate.getStartColumn(); k < segmentViewDelegate.getEndColumn(); k++) {
-            if (getSheetViewDelegate().getColumnPos(k) <= xSheet && xSheet <= getSheetViewDelegate().getColumnPos(k+1)) {
-                j = k;
-                break;
-            }
-        }
+        int j = IntStream.range(segmentViewDelegate.getStartColumn(), segmentViewDelegate.getEndColumn())
+                .filter(k -> getSheetViewDelegate().getColumnPos(k) <= xSheet && xSheet <= getSheetViewDelegate().getColumnPos(k + 1))
+                .findFirst()
+                .orElse(-1);
         LOG.trace("onMouseClicked(): row #{}, column #{}, cell={}", i, j, sheetViewDelegate.getCurrentLogicalCell().map(Cell::getCellRef));
 
         if (i>= 0 && j>=0) {

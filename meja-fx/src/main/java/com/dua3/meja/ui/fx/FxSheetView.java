@@ -294,7 +294,7 @@ public class FxSheetView extends StackPane implements SheetView {
             try {
                 int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
                 delegate.setDisplayScale(getDisplayScale());
-                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72f));
+                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
                 delegate.updateLayout();
 
                 topLeftQuadrant.refresh();

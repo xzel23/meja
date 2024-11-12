@@ -80,7 +80,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     public void repaintCell(Cell cell) {
         cell = cell.getLogicalCell();
         Rectangle2f r = delegate.getCellRect(cell);
-        float m = getDelegate().getSelectionStrokeWidth()/2f;
+        float m = getDelegate().getSelectionStrokeWidth()/ 2.0f;
         CellStyle cs = cell.getCellStyle();
         r = r.addMargin(
                 Math.max(m, cs.getBorderStyle(Direction.WEST).width()),
@@ -236,7 +236,7 @@ public class SwingSheetView extends JPanel implements SheetView {
             try {
                 int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
                 delegate.setDisplayScale(getDisplayScale());
-                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72f));
+                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
                 delegate.updateLayout();
             } finally {
                 lock.unlock();
