@@ -2,7 +2,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "6-beta-3-SNAPSHOT"
+val projectVersion = "6-rc"
 
 // define subprojects
 include("meja")
@@ -31,9 +31,9 @@ dependencyResolutionManagement {
             plugin("versions", "com.github.ben-manes.versions").version("0.51.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.0.26")
-            plugin("cabe", "com.dua3.cabe").version("3.0-beta-11")
+            plugin("cabe", "com.dua3.cabe").version("3.0-rc")
 
-            version("dua3-utility", "14-beta-3")
+            version("dua3-utility", "14-rc-2")
             version("jspecify", "1.0.0")
             version("log4j", "2.24.1")
             version("poi", "5.3.0")
