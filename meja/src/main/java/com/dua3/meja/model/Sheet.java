@@ -244,7 +244,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @param values the values to insert (optional)
      * @return new row instance
      */
-    default Row createRow(Object... values) {
+    default Row createRow(@Nullable Object... values) {
         return createRowWith(Arrays.asList(values));
     }
 
@@ -256,7 +256,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @param values the values to insert
      * @return new row instance
      */
-    default <T, C extends Iterable<T>> Row createRowWith(C values) {
+    default <T, C extends Iterable<@Nullable T>> Row createRowWith(C values) {
         Row row = getRow(getRowCount());
         values.forEach(row::createCell);
         return row;
