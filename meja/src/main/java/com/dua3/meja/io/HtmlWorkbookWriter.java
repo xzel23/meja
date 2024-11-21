@@ -281,6 +281,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         try {
             writeSheets(workbook, out, locale, p -> {});
         } catch (UncheckedIOException e) {
+            //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
             throw e.getCause();
         }
     }
@@ -298,6 +299,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         try {
             writeSheets(workbook, out, locale, updateProgress);
         } catch (UncheckedIOException e) {
+            //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
             throw e.getCause();
         }
     }
