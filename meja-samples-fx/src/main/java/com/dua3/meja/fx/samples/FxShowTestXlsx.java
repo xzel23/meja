@@ -35,7 +35,7 @@ public final class FxShowTestXlsx extends Application {
         launch(args);
     }
 
-    private Workbook wb =  MejaHelper.openWorkbook(LangUtil.getResourceURL(FxShowTestXlsx.class, "test.xlsx").toURI());
+    private Workbook wb = MejaHelper.openWorkbook(LangUtil.getResourceURL(FxShowTestXlsx.class, "test.xlsx").toURI());
 
     @Override
     public void start(Stage primaryStage) {

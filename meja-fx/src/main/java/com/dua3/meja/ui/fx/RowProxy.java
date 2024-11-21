@@ -61,7 +61,7 @@ public class RowProxy {
      * @return a RowProxy object representing the given row, or ROW_PROXY_EMPTY if row is null
      */
     public static RowProxy row(@Nullable Row row) {
-        return row==null ? ROW_PROXY_EMPTY : new RowProxy(Type.ROW, row);
+        return row == null ? ROW_PROXY_EMPTY : new RowProxy(Type.ROW, row);
     }
 
     /**

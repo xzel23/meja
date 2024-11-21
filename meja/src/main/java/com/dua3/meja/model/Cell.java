@@ -112,7 +112,8 @@ public interface Cell {
      * @param defaultValue the default value to return for empty cells
      * @return cell value if cell is not empty, {@code defaultValue otherwise}
      */
-    @Nullable Object getOrDefault(@Nullable Object defaultValue);
+    @Nullable
+    Object getOrDefault(@Nullable Object defaultValue);
 
     /**
      * Return text representation of value.
@@ -469,15 +470,15 @@ public interface Cell {
      */
     default Optional<URI> getResolvedHyperlink() {
         return getHyperlink().map(link -> {
-           if (link.getScheme() != null) {
-               // relative URIs have scheme set to null, absolute URIs require a valid scheme
-               return link;
-           }
+            if (link.getScheme() != null) {
+                // relative URIs have scheme set to null, absolute URIs require a valid scheme
+                return link;
+            }
 
-           return getWorkbook()
-                   .getUri()
-                   .orElseThrow(() -> new IllegalStateException("cannot resolve the relative link because the workbook URI is not set"))
-                   .resolve(link);
+            return getWorkbook()
+                    .getUri()
+                    .orElseThrow(() -> new IllegalStateException("cannot resolve the relative link because the workbook URI is not set"))
+                    .resolve(link);
         });
     }
 
@@ -493,7 +494,7 @@ public interface Cell {
      * @return true, if the cell type is ERROR
      */
     default boolean isError() {
-        return getCellType()==CellType.ERROR;
+        return getCellType() == CellType.ERROR;
     }
 
     /**
@@ -598,12 +599,12 @@ public interface Cell {
     default BorderStyle getEffectiveBorderStyle(Direction direction) {
         BorderStyle style = getLogicalCell().getCellStyle().getBorderStyle(direction);
         // When drawing the right or lower edge of a cell, the border style of the current cell is used
-        if (!style.isNone() && direction==Direction.EAST || direction==Direction.SOUTH) {
+        if (!style.isNone() && direction == Direction.EAST || direction == Direction.SOUTH) {
             return style;
         }
 
         // else it is determined by the neighboring cell's style
-        return  getNeighboringCell(direction)
+        return getNeighboringCell(direction)
                 .map(Cell::getCellStyle)
                 .map(cs -> cs.getBorderStyle(direction.inverse()))
                 .orElse(style);

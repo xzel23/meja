@@ -85,7 +85,7 @@ public abstract class SheetPainterBase {
             drawLabels(g);
             drawGrid(g);
             drawCells(g);
-            sheet.getCurrentCell().ifPresent( cell -> cellRenderer.drawSelection(g, cell));
+            sheet.getCurrentCell().ifPresent(cell -> cellRenderer.drawSelection(g, cell));
             drawSplitLines(g);
         } finally {
             readLock.unlock();
@@ -172,7 +172,7 @@ public abstract class SheetPainterBase {
      * </ul>
      * This is controlled by {@code cellDrawMode}.
      *
-     * @param g            the graphics object to use
+     * @param g the graphics object to use
      */
     void drawCells(Graphics g) {
         LOGGER.trace("drawCells()");

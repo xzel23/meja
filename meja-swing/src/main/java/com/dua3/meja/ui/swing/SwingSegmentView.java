@@ -71,10 +71,10 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
         AffineTransformation2f ti = t.inverse().orElse(AffineTransformation2f.identity());
 
         Function<Integer, Float> xD2S = x -> ti.transform(Vector2f.of(x, 0)).x();
-        Function<Float,Integer> xS2Di = x -> Math.round(t.transform(x, 0).x());
+        Function<Float, Integer> xS2Di = x -> Math.round(t.transform(x, 0).x());
 
         Function<Integer, Float> yD2S = y -> ti.transform(Vector2f.of(0, y)).y();
-        Function<Float,Integer> yS2Di = y -> Math.round(t.transform(0, y).y());
+        Function<Float, Integer> yS2Di = y -> Math.round(t.transform(0, y).y());
 
         if (orientation == SwingConstants.VERTICAL) {
             // scroll vertical
@@ -151,7 +151,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             public void mousePressed(MouseEvent e) {
                 LOG.trace("mouse pressed: {}", e);
                 Point p = e.getPoint();
-                ssvDelegate.getTransformation().inverse().ifPresent( ti -> {
+                ssvDelegate.getTransformation().inverse().ifPresent(ti -> {
                     Vector2f q = ti.transform(p.x, p.y);
                     Cell cell = svDelegate.getCellAt(q.x(), q.y());
                     svDelegate.onMousePressed(cell);

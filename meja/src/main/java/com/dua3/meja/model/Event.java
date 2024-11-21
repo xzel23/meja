@@ -14,6 +14,7 @@ public interface Event<T> {
      * @return the source of the event
      */
     T source();
+
     /**
      * Retrieves the type of the event.
      *
@@ -81,6 +82,7 @@ public interface Event<T> {
             super(source, type);
             this.idx = idx;
         }
+
         /**
          * Retrieves the index belonging to this event.
          *
@@ -99,6 +101,7 @@ public interface Event<T> {
     abstract class EventIndexChanged<T> extends AbstractEvent<T> {
         private final int oldIndex;
         private final int newIndex;
+
         /**
          * Constructs a new EventIndexChanged event.
          *
@@ -112,6 +115,7 @@ public interface Event<T> {
             this.oldIndex = oldIndex;
             this.newIndex = newIndex;
         }
+
         /**
          * Returns the value of the old index.
          *
@@ -120,6 +124,7 @@ public interface Event<T> {
         public int oldIndex() {
             return oldIndex;
         }
+
         /**
          * Computes and returns the new index value.
          *
@@ -136,9 +141,10 @@ public interface Event<T> {
      * @param <T> the type of the event source
      * @param <V> the type of the value that changed
      */
-    abstract class EventValueChanged<T,V> extends AbstractEvent<T> {
+    abstract class EventValueChanged<T, V> extends AbstractEvent<T> {
         private final @Nullable V oldValue;
         private final @Nullable V newValue;
+
         /**
          * Constructor for creating an instance of EventValueChanged.
          *
@@ -152,6 +158,7 @@ public interface Event<T> {
             this.oldValue = oldValue;
             this.newValue = newValue;
         }
+
         /**
          * Returns the old value.
          *
@@ -160,6 +167,7 @@ public interface Event<T> {
         public @Nullable V oldValue() {
             return oldValue;
         }
+
         /**
          * Returns the new value of type V.
          *
@@ -180,6 +188,7 @@ public interface Event<T> {
     abstract class EventDoubleValueChanged<T> extends AbstractEvent<T> {
         private final double oldValue;
         private final double newValue;
+
         /**
          * Constructs a new EventDoubleValueChanged instance representing a change event for a double value.
          *
@@ -193,6 +202,7 @@ public interface Event<T> {
             this.oldValue = oldValue;
             this.newValue = newValue;
         }
+
         /**
          * Retrieves the old value of the instance.
          *
@@ -201,6 +211,7 @@ public interface Event<T> {
         public double oldValue() {
             return oldValue;
         }
+
         /**
          * Retrieves the new value of the instance.
          *
@@ -219,6 +230,7 @@ public interface Event<T> {
     abstract class EventIntValueChanged<T> extends AbstractEvent<T> {
         private final int oldValue;
         private final int newValue;
+
         /**
          * Constructs a new EventIntValueChanged.
          *
@@ -232,6 +244,7 @@ public interface Event<T> {
             this.oldValue = oldValue;
             this.newValue = newValue;
         }
+
         /**
          * Retrieves the old value stored in the object.
          *
@@ -240,6 +253,7 @@ public interface Event<T> {
         public int oldValue() {
             return oldValue;
         }
+
         /**
          * Returns the new value.
          *

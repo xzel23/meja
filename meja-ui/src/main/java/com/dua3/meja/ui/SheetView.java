@@ -163,7 +163,7 @@ public interface SheetView {
          * Construct a new instance.
          *
          * @param isLeft whether the quadrant is on the left of the split column
-         * @param isTop whether the quadrant is above the split row
+         * @param isTop  whether the quadrant is above the split row
          */
         Quadrant(boolean isTop, boolean isLeft) {
             this.isTop = isTop;
@@ -191,8 +191,8 @@ public interface SheetView {
         /**
          * Returns the start column index (inclusive) based on the given column count and split column.
          *
-         * @param columnCount  the number of total columns
-         * @param splitColumn  the index of the split column
+         * @param columnCount the number of total columns
+         * @param splitColumn the index of the split column
          * @return the index of the starting column
          */
         public int startColumn(int columnCount, int splitColumn) {
@@ -231,5 +231,5 @@ public interface SheetView {
         public int endRow(int rowCount, int splitRow) {
             return isTop ? splitRow : rowCount;
         }
-     }
+    }
 }

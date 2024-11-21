@@ -45,7 +45,7 @@ public final class ShowTestXlsx extends JFrame {
 
     private ShowTestXlsx() throws URISyntaxException, IOException {
         super("Méja Kitchensink demo");
-        wb =  MejaHelper.openWorkbook(LangUtil.getResourceURL(ShowTestXlsx.class, "test.xlsx").toURI());
+        wb = MejaHelper.openWorkbook(LangUtil.getResourceURL(ShowTestXlsx.class, "test.xlsx").toURI());
         init();
     }
 

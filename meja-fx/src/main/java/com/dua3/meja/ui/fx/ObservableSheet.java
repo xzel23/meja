@@ -43,7 +43,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
 
         @Override
         public void onNext(SheetEvent item) {
-            if(item instanceof RowsAdded rowsAdded) {
+            if (item instanceof RowsAdded rowsAdded) {
                 beginChange();
                 nextAdd(rowsAdded.first(), rowsAdded.last());
                 endChange();

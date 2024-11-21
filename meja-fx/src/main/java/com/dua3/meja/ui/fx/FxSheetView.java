@@ -149,7 +149,7 @@ public class FxSheetView extends StackPane implements SheetView {
         dependentProperty.addListener(v -> dependentProperty.setValue(controllingProperty.getValue()));
         visibleProperty.addListener(v -> visibleProperty.setValue(controllingProperty.getValue()));
 
-        controllingProperty.addListener((v,o,n) -> {
+        controllingProperty.addListener((v, o, n) -> {
             visibleProperty.setValue(n);
             dependentProperty.setValue(n);
         });
@@ -224,7 +224,7 @@ public class FxSheetView extends StackPane implements SheetView {
     public void scrollToCurrentCell() {
         LOG.trace("scrollToCurrentCell()");
 
-        Platform.runLater( () -> delegate.getCurrentLogicalCell().ifPresent(cell -> {
+        Platform.runLater(() -> delegate.getCurrentLogicalCell().ifPresent(cell -> {
             Sheet sheet = delegate.getSheet().orElseThrow();
             int i = cell.getRowNumber();
             int j = cell.getColumnNumber();
@@ -241,8 +241,8 @@ public class FxSheetView extends StackPane implements SheetView {
                 // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
                 Scale2f s = delegate.getScale();
                 double split = delegate.getSplitX() * s.sx();
-                double xMin = delegate.getColumnPos(j)  * s.sx() - split;
-                double xMax = delegate.getColumnPos(j+1)  * s.sx() - split;
+                double xMin = delegate.getColumnPos(j) * s.sx() - split;
+                double xMax = delegate.getColumnPos(j + 1) * s.sx() - split;
                 double width = delegate.getColumnPos(delegate.getColumnCount()) * s.sx() - split;
 
                 double sbVisibleAmount = hScrollbar.getVisibleAmount();
@@ -274,8 +274,8 @@ public class FxSheetView extends StackPane implements SheetView {
         int startRow = lc.getRowNumber();
         int endRow = startRow + lc.getVerticalSpan();
 
-        PlatformHelper.runLater(() ->{
-            for (int i = startRow; i< endRow; i++) {
+        PlatformHelper.runLater(() -> {
+            for (int i = startRow; i < endRow; i++) {
                 topLeftQuadrant.flow.getCell(i).requestLayout();
                 topRightQuadrant.flow.getCell(i).requestLayout();
                 bottomLeftQuadrant.flow.getCell(i).requestLayout();
@@ -289,7 +289,7 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.debug("updateContent()");
 
         getSheet().ifPresent(sheet -> PlatformHelper.runAndWait(() -> {
-        Lock lock = delegate.writeLock();
+            Lock lock = delegate.writeLock();
             lock.lock();
             try {
                 int dpi = Toolkit.getDefaultToolkit().getScreenResolution();

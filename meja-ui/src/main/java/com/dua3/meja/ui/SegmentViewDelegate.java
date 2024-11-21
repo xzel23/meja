@@ -56,12 +56,12 @@ public class SegmentViewDelegate {
 
     public float getXMinInViewCoordinates() {
         float x = sheetViewDelegate.getColumnPos(getStartColumn());
-        return getTransformation().transform(x,0).x();
+        return getTransformation().transform(x, 0).x();
     }
 
     public float getYMinInViewCoordinates() {
         float y = sheetViewDelegate.getRowPos(getStartRow());
-        return getTransformation().transform(0,y).y();
+        return getTransformation().transform(0, y).y();
     }
 
     public float getWidthInPoints() {

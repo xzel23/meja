@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 public final class KitchenSink extends JFrame {
     private static final Logger LOG;
 
-    private static final boolean  SHOW_LOG_WINDOW =  System.getProperty("logwindow") != null;
+    private static final boolean SHOW_LOG_WINDOW = System.getProperty("logwindow") != null;
 
     static {
         // this must be done before any logger is created!

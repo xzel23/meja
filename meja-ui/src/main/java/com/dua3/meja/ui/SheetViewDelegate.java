@@ -233,8 +233,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         assert sheet != null;
         int i = getRowNumberFromY(y);
         int j = getColumnNumberFromX(x);
-        return sheet.getCell(i,j);
+        return sheet.getCell(i, j);
     }
+
     private int getPositionIndexFromCoordinate(float[] positions, double coord, float sizeInPoints) {
         if (positions.length == 0) {
             return 0;
@@ -719,7 +720,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public float getRowHeightInPoints(int i) {
-        return rowPos[i+1] - rowPos[i];
+        return rowPos[i + 1] - rowPos[i];
     }
 
     public float getColumnLabelHeightInPixels() {
@@ -727,7 +728,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public float getColumnWidthInPoints(int j) {
-        return columnPos[j+1] - columnPos[j];
+        return columnPos[j + 1] - columnPos[j];
     }
 
     public float getDefaultRowHeightInPoints() {
@@ -759,7 +760,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public float getLabelBorderWidthInPoints() {
-        return labelBorderWidthInPixels* get1PxWidthInPoints();
+        return labelBorderWidthInPixels * get1PxWidthInPoints();
     }
 
     public void setLabelBorderWidthInPixels(float labelBorderWidthInPixels) {
@@ -807,7 +808,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         g.setFill(getLabelBackgroundColor());
         g.fillRect(r);
 
-        g.setStroke(getLabelBorderColor(), getLabelBorderWidthInPixels()* get1PxWidthInPoints());
+        g.setStroke(getLabelBorderColor(), getLabelBorderWidthInPixels() * get1PxWidthInPoints());
         g.strokeRect(r);
 
         g.setFont(getLabelFont());

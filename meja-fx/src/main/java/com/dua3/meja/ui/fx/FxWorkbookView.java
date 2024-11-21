@@ -53,7 +53,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
     public FxWorkbookView() {
         content = new TabPane();
         content.setSide(Side.BOTTOM);
-        content.getSelectionModel().selectedIndexProperty().addListener((v,o,n) -> {
+        content.getSelectionModel().selectedIndexProperty().addListener((v, o, n) -> {
             if (workbook != null) {
                 workbook.setCurrentSheet(n.intValue());
                 Platform.runLater(
@@ -168,9 +168,9 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
 
         if (workbook != null) {
             content.getTabs().setAll(
-                workbook.sheets()
-                        .map(sheet -> new Tab(sheet.getSheetName(), new FxSheetView(sheet)))
-                        .toList()
+                    workbook.sheets()
+                            .map(sheet -> new Tab(sheet.getSheetName(), new FxSheetView(sheet)))
+                            .toList()
             );
             if (workbook.getSheetCount() > 0) {
                 content.getSelectionModel().select(workbook.getCurrentSheetIndex());

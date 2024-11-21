@@ -250,7 +250,7 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void splitAt(int i, int j) {
-        Pair<Integer, Integer> oldSplit = Pair.of(getSplitRow(),  getSplitColumn());
+        Pair<Integer, Integer> oldSplit = Pair.of(getSplitRow(), getSplitColumn());
         freezeRow = i;
         freezeColumn = j;
         splitChanged(oldSplit, Pair.of(i, j));

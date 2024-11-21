@@ -80,7 +80,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     public void repaintCell(Cell cell) {
         cell = cell.getLogicalCell();
         Rectangle2f r = delegate.getCellRect(cell);
-        float m = getDelegate().getSelectionStrokeWidth()/ 2.0f;
+        float m = getDelegate().getSelectionStrokeWidth() / 2.0f;
         CellStyle cs = cell.getCellStyle();
         r = r.addMargin(
                 Math.max(m, cs.getBorderStyle(Direction.WEST).width()),
@@ -217,7 +217,7 @@ public class SwingSheetView extends JPanel implements SheetView {
         int idx = (cell.getRowNumber() < getDelegate().getSplitRow() ? 0 : 2)
                 + (cell.getColumnNumber() < getDelegate().getSplitColumn() ? 0 : 1);
 
-        return switch(idx) {
+        return switch (idx) {
             case 0 -> sheetPane.topLeftQuadrant;
             case 1 -> sheetPane.topRightQuadrant;
             case 2 -> sheetPane.bottomLeftQuadrant;

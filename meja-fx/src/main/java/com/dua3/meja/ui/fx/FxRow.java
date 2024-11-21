@@ -50,7 +50,7 @@ public class FxRow extends IndexedCell<RowProxy> {
         this.sheetViewDelegate = (FxSheetViewDelegate) svDelegate.getSheetViewDelegate();
 
         setText(null);
-        setGraphic(new Canvas(1,1));
+        setGraphic(new Canvas(1, 1));
 
         setOnMouseClicked(this::onMouseClicked);
     }
@@ -70,13 +70,13 @@ public class FxRow extends IndexedCell<RowProxy> {
      * @return the height of the row in points
      */
     public float getRowHeightInPoints() {
-        assert Platform.isFxApplicationThread() :"not on FxApplication thread";
+        assert Platform.isFxApplicationThread() : "not on FxApplication thread";
 
         sheetViewDelegate.updateLayout();
         int idx = getIndex();
 
         if (getSegmentViewDelegate().isAboveSplit()) {
-            if (idx <0) {
+            if (idx < 0) {
                 return getSheetViewDelegate().getDefaultRowHeightInPoints();
             } else if (idx == 0) {
                 return sheetViewDelegate.getColumnLabelHeightInPoints();
@@ -116,17 +116,17 @@ public class FxRow extends IndexedCell<RowProxy> {
 
         super.updateIndex(i);
 
-        if (i<0) {
+        if (i < 0) {
             // empty row
             updateItem(RowProxy.ROW_PROXY_EMPTY, true);
         } else if (segmentViewDelegate.isAboveSplit()) {
             // row is above split
-            if (i==0) {
+            if (i == 0) {
                 // row 0 is the column headers
                 updateItem(RowProxy.ROW_PROXY_CLOLUMN_LABELS, false);
             } else {
                 i--; // adjust i because of inserted column header row
-                if (i==rows.size()) {
+                if (i == rows.size()) {
                     updateItem(RowProxy.ROW_PROXY_SPLIT_LINE, false);
                 } else {
                     Row row = i < rows.size() ? rows.get(i) : null;
@@ -144,7 +144,7 @@ public class FxRow extends IndexedCell<RowProxy> {
     protected void updateItem(@Nullable RowProxy item, boolean empty) {
         LOG.trace("updateItem({}, {})", item, empty);
 
-        assert Platform.isFxApplicationThread() :"not on FxApplication thread";
+        assert Platform.isFxApplicationThread() : "not on FxApplication thread";
 
         //noinspection DataFlowIssue
         super.updateItem(item, empty);
@@ -209,7 +209,7 @@ public class FxRow extends IndexedCell<RowProxy> {
 
         float translateX = s.sx() * getSegmentViewDelegate().getXOffset();
         float translateY = segmentViewDelegate.isAboveSplit()
-                ? - s.sy() * sheetViewDelegate.getRowPos(getSegmentViewDelegate().getStartRow())
+                ? -s.sy() * sheetViewDelegate.getRowPos(getSegmentViewDelegate().getStartRow())
                 : 0;
         gc.setTransform(s.sx(), 0, 0, s.sy(), translateX, translateY);
 
@@ -360,7 +360,7 @@ public class FxRow extends IndexedCell<RowProxy> {
                 .orElse(-1);
         LOG.trace("onMouseClicked(): row #{}, column #{}, cell={}", i, j, sheetViewDelegate.getCurrentLogicalCell().map(Cell::getCellRef));
 
-        if (i>= 0 && j>=0) {
+        if (i >= 0 && j >= 0) {
             sheetViewDelegate.setCurrentCell(i, j);
             LOG.debug("onMouseClicked(): set current cell to {}", sheetViewDelegate.getCurrentLogicalCell().map(Cell::getCellRef));
         }

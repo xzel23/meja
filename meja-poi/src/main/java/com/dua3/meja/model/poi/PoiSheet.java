@@ -158,7 +158,7 @@ public class PoiSheet extends AbstractSheet {
         Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
             poiRow = poiSheet.createRow(i);
-            rowsAdded(i, i+1);
+            rowsAdded(i, i + 1);
         }
         return new PoiRow(this, poiRow);
     }
@@ -319,7 +319,7 @@ public class PoiSheet extends AbstractSheet {
     @Override
     public void splitAt(int i, int j) {
         Pair<Integer, Integer> old = Pair.of(getSplitRow(), getSplitColumn());
-        Pair<Integer, Integer> newSplit = Pair.of(i,j);
+        Pair<Integer, Integer> newSplit = Pair.of(i, j);
         poiSheet.createFreezePane(j, i);
         splitChanged(old, newSplit);
     }
@@ -359,7 +359,7 @@ public class PoiSheet extends AbstractSheet {
 
         // determine default font size
         Font font = workbook.getFont(workbook.poiWorkbook.getFontAt(0)).font;
-        factorWidth = (float) FontUtil.getInstance().getTextWidth("0", font)/256;
+        factorWidth = (float) FontUtil.getInstance().getTextWidth("0", font) / 256;
     }
 
 }

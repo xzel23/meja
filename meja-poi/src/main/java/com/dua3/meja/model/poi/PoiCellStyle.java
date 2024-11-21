@@ -388,7 +388,8 @@ public abstract class PoiCellStyle implements CellStyle {
         poiCellStyle.setRotation(LangUtil.requireInInterval(angle, (short) -90, (short) 90, "angle must be in range [-90, 90]: %d", angle));
     }
 
-    @Nullable DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
+    @Nullable
+    DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
         return switch (poiCellStyle.getDataFormat()) {
             case 0x0e -> DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
             case 0xa4 -> DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
@@ -396,7 +397,8 @@ public abstract class PoiCellStyle implements CellStyle {
         };
     }
 
-    @Nullable DateTimeFormatter getLocaleAwareDateTimeFormat(Locale locale) {
+    @Nullable
+    DateTimeFormatter getLocaleAwareDateTimeFormat(Locale locale) {
         return switch (poiCellStyle.getDataFormat()) {
             case 0x0e -> DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withLocale(locale);
             case 0xa4 -> DateTimeFormatter.ofLocalizedTime(FormatStyle.FULL).withLocale(locale);

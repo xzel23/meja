@@ -165,7 +165,8 @@ public class CellRenderer {
             case ALIGN_CENTER -> Alignment.CENTER;
             case ALIGN_RIGHT -> Alignment.RIGHT;
             case ALIGN_JUSTIFY -> Alignment.JUSTIFY;
-            case ALIGN_AUTOMATIC -> throw new IllegalStateException("effectiveHAlign() must not return ALIGN_AUTOMATIC");
+            case ALIGN_AUTOMATIC ->
+                    throw new IllegalStateException("effectiveHAlign() must not return ALIGN_AUTOMATIC");
         };
 
         VerticalAlignment vAlign = switch (cs.getVAlign()) {
@@ -239,9 +240,9 @@ public class CellRenderer {
 
         if (strokeWidth > 1) {
             g.setStroke(delegate.getSelectionColor().brighter(), delegate.get1PxWidthInPoints());
-            g.strokeRect(r.addMargin(-delegate.get1PxWidthInPoints() * strokeWidth/2));
+            g.strokeRect(r.addMargin(-delegate.get1PxWidthInPoints() * strokeWidth / 2));
             g.setStroke(delegate.getSelectionColor().darker(), delegate.get1PxWidthInPoints());
-            g.strokeRect(r.addMargin(delegate.get1PxWidthInPoints() * strokeWidth/2));
+            g.strokeRect(r.addMargin(delegate.get1PxWidthInPoints() * strokeWidth / 2));
         }
     }
 }
