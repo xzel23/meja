@@ -1,6 +1,6 @@
 package com.dua3.meja.model;
 
-import com.dua3.meja.util.ObjectCache;
+import com.dua3.utility.data.ObjectCache;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
