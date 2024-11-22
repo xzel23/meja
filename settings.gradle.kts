@@ -35,7 +35,7 @@ dependencyResolutionManagement {
 
             version("dua3-utility", "14")
             version("jspecify", "1.0.0")
-            version("log4j", "2.24.1")
+            version("log4j-bom", "2.24.2")
             version("poi", "5.3.0")
 
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
@@ -46,10 +46,13 @@ dependencyResolutionManagement {
             library("dua3-utility-fx", "com.dua3.utility", "utility-fx").versionRef("dua3-utility")
             library("dua3-utility-fx-controls", "com.dua3.utility", "utility-fx-controls").versionRef("dua3-utility")
             library("jspecify", "org.jspecify", "jspecify").versionRef("jspecify")
-            library("log4j-api", "org.apache.logging.log4j", "log4j-api").versionRef("log4j")
-            library("log4j-core", "org.apache.logging.log4j", "log4j-core").versionRef("log4j")
-            library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").versionRef("log4j")
-            library("log4j-jcl", "org.apache.logging.log4j", "log4j-jcl").versionRef("log4j")
+            library("log4j-bom", "org.apache.logging.log4j", "log4j-bom").versionRef("log4j-bom")
+            library("log4j-api", "org.apache.logging.log4j", "log4j-api").withoutVersion()
+            library("log4j-core", "org.apache.logging.log4j", "log4j-core").withoutVersion()
+            library("log4j-jul", "org.apache.logging.log4j", "log4j-jul").withoutVersion()
+            library("log4j-jcl", "org.apache.logging.log4j", "log4j-jcl").withoutVersion()
+            library("log4j-slf4j2", "org.apache.logging.log4j", "log4j-slf4j2-impl").withoutVersion()
+            library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").withoutVersion()
             library("poi", "org.apache.poi", "poi").versionRef("poi")
             library("poi-ooxml", "org.apache.poi", "poi-ooxml").versionRef("poi")
 

@@ -93,7 +93,8 @@ subprojects {
         // Cabe (source annotations)
         implementation(rootProject.libs.jspecify)
 
-        // LOG4J2
+        // LOG4J
+        implementation(platform(rootProject.libs.log4j.bom))
         implementation(rootProject.libs.log4j.api)
     }
 
