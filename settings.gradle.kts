@@ -2,7 +2,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "6-rc-2"
+val projectVersion = "6-rc-3-SNAPSHOT"
 
 // define subprojects
 include("meja")
