@@ -24,6 +24,10 @@ import com.dua3.utility.data.Color;
  * @param color the border color
  */
 public record BorderStyle(float width, Color color) {
+    /**
+     * A BorderStyle instance representing an empty border,
+     * defined with a width of 0.0f and color of black.
+     */
     public static final BorderStyle EMPTY_BORDER = new BorderStyle(0.0f, Color.BLACK);
 
     /**

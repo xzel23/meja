@@ -82,16 +82,45 @@ public interface SheetView {
      */
     void stopEditing(boolean commit);
 
+    /**
+     * Retrieves the delegate responsible for handling the sheet view's operations and interactions.
+     *
+     * @return the SheetViewDelegate that manages various operations for the sheet view
+     */
     SheetViewDelegate getDelegate();
 
+    /**
+     * Repaints the specified cell in the sheet view.
+     *
+     * @param cell the cell to repaint.
+     */
     void repaintCell(Cell cell);
 
+    /**
+     * Refreshes the content of the sheet view. This method is responsible for updating the display
+     * to reflect any changes made to the underlying data or structure of the sheet.
+     * It ensures that the current state of the sheet is accurately represented in the view.
+     */
     void updateContent();
 
+    /**
+     * Requests focus for the current view, bringing it to the foreground and
+     * ensuring that it is ready to receive user input.
+     */
     void focusView();
 
+    /**
+     * Retrieve the current locale settings for this sheet view.
+     *
+     * @return the locale associated with this sheet view
+     */
     Locale getLocale();
 
+    /**
+     * Retrieves the scale factor for displaying content in the sheet view.
+     *
+     * @return the display scale as a Scale2f object which represents the scale factors for both X and Y axes.
+     */
     Scale2f getDisplayScale();
 
     /**
@@ -116,24 +145,53 @@ public interface SheetView {
         }
     }
 
+    /**
+     * Copies the currently selected cell's content to the system clipboard.
+     */
     void copyToClipboard();
 
+    /**
+     * Displays a search dialog that allows users to search for specific content within the sheet.
+     */
     void showSearchDialog();
 
+    /**
+     * Initiates the editing mode for the currently selected cell in the sheet.
+     * This method prepares the cell for input, allowing the user to modify
+     * its content. If the sheet or the current cell is not editable,
+     * this method may have no effect.
+     */
     void startEditing();
 
+    /**
+     * Moves the selection rectangle to the top-left cell in the sheet.
+     * This action typically aligns the view to the beginning of the data set.
+     */
     default void moveHome() {
         getDelegate().moveHome();
     }
 
+    /**
+     * Move the selection rectangle to the bottom right cell of the sheet.
+     */
     default void moveEnd() {
         getDelegate().moveEnd();
     }
 
+    /**
+     * Moves the view in the specified direction.
+     *
+     * @param direction the direction to move the view, which can be NORTH, EAST, SOUTH, or WEST
+     */
     default void move(Direction direction) {
         getDelegate().move(direction);
     }
 
+    /**
+     * Moves the current page in the specified direction.
+     *
+     * @param direction the direction to move the page, must be one of the following: NORTH, EAST, SOUTH, or WEST.
+     */
     default void movePage(Direction direction) {
         getDelegate().movePage(direction);
     }
