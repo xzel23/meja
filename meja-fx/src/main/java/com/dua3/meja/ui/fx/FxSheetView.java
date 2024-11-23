@@ -57,9 +57,10 @@ public class FxSheetView extends StackPane implements SheetView {
         gridPane = new GridPane();
 
         // Create quadrants
-        ObservableList<Row> rows = delegate.getSheet().map(ObservableSheet::new)
-                .map(s -> (ObservableList<Row>) s)
-                .orElse(FXCollections.emptyObservableList());
+        ObservableList<Row> rows = sheet == null
+                ? FXCollections.emptyObservableList()
+                : new ObservableSheet(sheet);
+
         delegate.updateLayout();
         topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, rows);
         topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, rows);
