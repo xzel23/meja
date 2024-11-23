@@ -296,11 +296,18 @@ public class FxSheetView extends StackPane implements SheetView {
                 delegate.setDisplayScale(getDisplayScale());
                 delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
                 delegate.updateLayout();
-
-                topLeftQuadrant.refresh();
-                topRightQuadrant.refresh();
-                bottomLeftQuadrant.refresh();
-                bottomRightQuadrant.refresh();
+                if (topLeftQuadrant != null) {
+                    topLeftQuadrant.refresh();
+                }
+                if (topRightQuadrant != null) {
+                    topRightQuadrant.refresh();
+                }
+                if (bottomLeftQuadrant != null) {
+                    bottomLeftQuadrant.refresh();
+                }
+                if (bottomRightQuadrant != null) {
+                    bottomRightQuadrant.refresh();
+                }
             } finally {
                 lock.unlock();
             }
