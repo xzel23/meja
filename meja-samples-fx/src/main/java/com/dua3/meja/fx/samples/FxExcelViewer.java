@@ -25,6 +25,7 @@ public class FxExcelViewer extends Application {
     public void start(Stage primaryStage) {
         // Create MenuBar
         MenuBar menuBar = new MenuBar();
+        menuBar.setUseSystemMenuBar(true);
 
         // File menu
         Menu fileMenu = new Menu("File");
