@@ -165,7 +165,7 @@ public class SegmentViewDelegate {
      * Updates the layout of the segment view based on the current sheet view settings.
      * This includes recalculating the dimensions of the visible area in points and pixels
      * and adjusting offsets for column and row labels depending on the split configuration.
-     *
+     * <p>
      * The method first secures a read lock on the sheet to ensure thread safety while it performs
      * the following steps:
      *
