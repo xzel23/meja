@@ -154,10 +154,20 @@ public class FxRow extends IndexedCell<RowProxy> {
         LOG.trace("bounds: {}", getLayoutBounds());
     }
 
+    /**
+     * Retrieves the sheet view delegate associated with this FxRow instance.
+     *
+     * @return the sheet view delegate associated with this FxRow instance
+     */
     public FxSheetViewDelegate getSheetViewDelegate() {
         return sheetViewDelegate;
     }
 
+    /**
+     * Retrieves the SegmentViewDelegate associated with this FxRow instance.
+     *
+     * @return the segment view delegate associated this FxRow instance
+     */
     public SegmentViewDelegate getSegmentViewDelegate() {
         return segmentViewDelegate;
     }

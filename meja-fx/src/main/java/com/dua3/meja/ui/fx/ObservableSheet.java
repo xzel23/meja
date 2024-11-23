@@ -11,11 +11,23 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.Flow;
 
+/**
+ * ObservableSheet is a wrapper around a Sheet that implements an observable list of Rows.
+ * It extends {@code ObservableListBase<Row>} to provide the necessary observable list functionalities.
+ * Internally, it subscribes to sheet events and updates the observable list accordingly.
+ */
 public class ObservableSheet extends ObservableListBase<Row> {
     private static final Logger LOG = LogManager.getLogger(ObservableSheet.class);
 
     private final Sheet sheet;
 
+    /**
+     * Constructs an ObservableSheet that wraps a given {@code Sheet}.
+     * This constructor subscribes an internal {@code SheetTracker} to the sheet
+     * to monitor sheet events and update the observable list dynamically.
+     *
+     * @param sheet the sheet to wrap and observe
+     */
     public ObservableSheet(Sheet sheet) {
         this.sheet = sheet;
         this.sheet.subscribe(new SheetTracker());
