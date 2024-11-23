@@ -8,6 +8,10 @@
         </Or>
     </Match>
     <Match>
+        <Bug pattern="NP_NULL_PARAM_DEREF_NONVIRTUAL"/>
+        <Class name="com.dua3.meja.ui.fx.FxSheetView" />
+    </Match>
+    <Match>
         <Or>
             <Bug code="FS"/>
             <Bug code="EI"/>
