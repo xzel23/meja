@@ -44,6 +44,11 @@ public abstract class AbstractSheet implements Sheet {
         publisher.subscribe(subscriber);
     }
 
+    private void submit(SheetEvent event) {
+        LOG.trace("submit: {}", event);
+        publisher.submit(event);
+    }
+
     /**
      * Notifies subscribers that the active cell in the sheet has changed.
      * This method is called internally when there is a change in the active cell of the sheet.
@@ -53,7 +58,7 @@ public abstract class AbstractSheet implements Sheet {
      * @param arg the new active cell
      */
     protected void activeCellChanged(@Nullable Cell old, @Nullable Cell arg) {
-        publisher.submit(new SheetEvent.ActiveCellChanged(this, old, arg));
+        submit(new SheetEvent.ActiveCellChanged(this, old, arg));
     }
 
     /**
@@ -64,7 +69,7 @@ public abstract class AbstractSheet implements Sheet {
      * @param arg additional argument related to the style change
      */
     protected void cellStyleChanged(Cell cell, Object old, Object arg) {
-        publisher.submit(new SheetEvent.CellStyleChanged(this, cell, old, arg));
+        submit(new SheetEvent.CellStyleChanged(this, cell, old, arg));
     }
 
     /**
@@ -75,7 +80,7 @@ public abstract class AbstractSheet implements Sheet {
      * @param arg additional argument (optional)
      */
     protected void cellValueChanged(Cell cell, @Nullable Object old, @Nullable Object arg) {
-        publisher.submit(new SheetEvent.CellValueChanged(this, cell, old, arg));
+        submit(new SheetEvent.CellValueChanged(this, cell, old, arg));
     }
 
     /**
@@ -84,7 +89,7 @@ public abstract class AbstractSheet implements Sheet {
      * Subscribers can listen to this event and perform any necessary actions or updates.
      */
     protected void layoutChanged() {
-        publisher.submit(new SheetEvent.LayoutChanged(this));
+        submit(new SheetEvent.LayoutChanged(this));
     }
 
     /**
@@ -94,7 +99,7 @@ public abstract class AbstractSheet implements Sheet {
      * @param last the index (exclusive) of the last added row
      */
     protected void rowsAdded(int first, int last) {
-        publisher.submit(new SheetEvent.RowsAdded(this, first, last));
+        submit(new SheetEvent.RowsAdded(this, first, last));
     }
 
     /**
@@ -104,7 +109,7 @@ public abstract class AbstractSheet implements Sheet {
      * @param last the index (exclusive) of the last added column
      */
     protected void columnsAdded(int first, int last) {
-        publisher.submit(new SheetEvent.ColumnsAdded(this, first, last));
+        submit(new SheetEvent.ColumnsAdded(this, first, last));
     }
 
     /**
@@ -114,7 +119,7 @@ public abstract class AbstractSheet implements Sheet {
      * @param valueNew the new zoom factor
      */
     protected void zoomChanged(double valueOld, double valueNew) {
-        publisher.submit(new SheetEvent.ZoomChanged(this, valueOld, valueNew));
+        submit(new SheetEvent.ZoomChanged(this, valueOld, valueNew));
     }
 
     /**
@@ -124,7 +129,7 @@ public abstract class AbstractSheet implements Sheet {
      * @param newSplit the new split coordinates as a Pair of integers representing the row and column
      */
     protected void splitChanged(Pair<Integer, Integer> oldSplit, Pair<Integer, Integer> newSplit) {
-        publisher.submit(new SheetEvent.SplitSet(this, oldSplit, newSplit));
+        submit(new SheetEvent.SplitSet(this, oldSplit, newSplit));
     }
 
     @Override
