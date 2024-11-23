@@ -53,18 +53,19 @@ public class FxSheetView extends StackPane implements SheetView {
         this.delegate = new FxSheetViewDelegate(this);
         this.gridPane = new GridPane();
 
-        delegate.setSheet(sheet);
+        updateDelegate(sheet);
 
         // Create quadrants
         ObservableList<Row> rows = sheet == null
                 ? FXCollections.emptyObservableList()
                 : new ObservableSheet(sheet);
 
-        delegate.updateLayout();
         topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, rows);
         topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, rows);
         bottomLeftQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_LEFT, rows);
         bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, rows);
+
+        updateContent();
 
         // Create scrollbars
         hScrollbar = new ScrollBar();
@@ -292,26 +293,23 @@ public class FxSheetView extends StackPane implements SheetView {
             Lock lock = delegate.writeLock();
             lock.lock();
             try {
-                int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-                delegate.setDisplayScale(getDisplayScale());
-                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
-                delegate.updateLayout();
-                if (topLeftQuadrant != null) {
-                    topLeftQuadrant.refresh();
-                }
-                if (topRightQuadrant != null) {
-                    topRightQuadrant.refresh();
-                }
-                if (bottomLeftQuadrant != null) {
-                    bottomLeftQuadrant.refresh();
-                }
-                if (bottomRightQuadrant != null) {
-                    bottomRightQuadrant.refresh();
-                }
+                updateDelegate(sheet);
+                topLeftQuadrant.refresh();
+                topRightQuadrant.refresh();
+                bottomLeftQuadrant.refresh();
+                bottomRightQuadrant.refresh();
             } finally {
                 lock.unlock();
             }
         }));
+    }
+
+    private void updateDelegate(@Nullable Sheet sheet) {
+        delegate.setSheetWithoutUpdatingView(sheet);
+        int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+        delegate.setDisplayScale(getDisplayScale());
+        delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
+        delegate.updateLayout();
     }
 
     @Override

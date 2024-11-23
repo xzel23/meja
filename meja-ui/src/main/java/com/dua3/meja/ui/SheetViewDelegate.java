@@ -378,6 +378,11 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public void setSheet(@Nullable Sheet sheet) {
+        setSheetWithoutUpdatingView(sheet);
+        owner.updateContent();
+    }
+
+    public void setSheetWithoutUpdatingView(@Nullable Sheet sheet) {
         //noinspection ObjectEquality
         if (sheet != this.sheet) {
             if (this.subscription != null) {
@@ -388,7 +393,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
             this.sheet = sheet;
 
             markLayoutChanged();
-            owner.updateContent();
 
             // subscribe to the Flow API
             if (sheet != null) {
