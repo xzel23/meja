@@ -2,10 +2,13 @@
 
 ## Version 6
 
-- BREAKING: some Event class method names changed tobe more consistent
+- BREAKING: some Event class method names changed to be more consistent; some mthods changed to return Optional
 - JSpecify annotations are used and all modules are @NullMarked
-- Javadoc
+- use log4j-bom
+- Javadoc additions
 - dependency updates
+- fix issues when formatting dates
+- several fixes for the JavaFX components that display Workbooks and sheets
 
 ## Version 5.0.1
 
