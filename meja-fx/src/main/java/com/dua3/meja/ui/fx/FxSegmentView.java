@@ -24,8 +24,31 @@ public class FxSegmentView extends Control implements SegmentView {
         flow.refresh();
     }
 
+    /**
+     * Requests a layout update for a specific row within the segment view.
+     *
+     * @param i the index of the row for which the layout update is requested
+     */
     public void requestLayoutForRow(int i) {
-        flow.getCell(i).requestLayout();
+        int flowIndex = getFlowIndex(i);
+        if (flowIndex >= 0) {
+            flow.getCell(flowIndex).requestLayout();
+        }
+    }
+
+    /**
+     * Retrieves the index of the flow for a given row index.
+     *
+     * @param rowIndex the index of the row for which to get the flow index.
+     * @return the flow index if the row is found; -1 otherwise.
+     */
+    private int getFlowIndex(int rowIndex) {
+        for (int i = 0; i < rows.size(); i++) {
+            if (rows.get(i).getRowNumber() == rowIndex) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static class FxSegmentViewSkin extends SkinBase<FxSegmentView> {
