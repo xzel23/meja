@@ -1,8 +1,9 @@
 # Meja Changelog
 
-## Version 6
+## Version 6.0.0
 
-- BREAKING: some Event class method names changed to be more consistent; some mthods changed to return Optional
+- BREAKING: some Event class method names changed to be more consistent; some methods that could return null have been 
+  changed to return Optional instead
 - JSpecify annotations are used and all modules are @NullMarked
 - use log4j-bom
 - Javadoc additions
