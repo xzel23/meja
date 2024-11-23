@@ -24,6 +24,10 @@ public class FxSegmentView extends Control implements SegmentView {
         flow.refresh();
     }
 
+    public void requestLayoutForRow(int i) {
+        flow.getCell(i).requestLayout();
+    }
+
     private static class FxSegmentViewSkin extends SkinBase<FxSegmentView> {
         protected FxSegmentViewSkin(FxSegmentView control) {
             super(control);
@@ -62,7 +66,7 @@ public class FxSegmentView extends Control implements SegmentView {
         this.quadrant = quadrant;
         this.sheetDelegate = sheetDelegate;
         this.segmentDelegate = new SegmentViewDelegate(this, sheetDelegate, quadrant);
-        this.rows = filterRows(sheetRows, sheetDelegate.getSplitRow());
+        this.rows = filterRows(sheetRows, quadrant, sheetDelegate.getSplitRow());
         this.flow = new VirtualFlowWithHiddenScrollBars<>(quadrant);
 
         updateLayout();
@@ -83,7 +87,7 @@ public class FxSegmentView extends Control implements SegmentView {
      * @param splitRow the split row, i.e., rows above this row belong to the upper half
      * @return the filtered {@link ObservableList} of rows
      */
-    public ObservableList<Row> filterRows(ObservableList<Row> rows, int splitRow) {
+    private static ObservableList<Row> filterRows(ObservableList<Row> rows, SheetView.Quadrant quadrant, int splitRow) {
         return new FilteredList<>(rows, row -> quadrant.isTop() == (row.getRowNumber() < splitRow));
     }
 

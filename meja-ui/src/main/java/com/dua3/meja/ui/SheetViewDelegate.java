@@ -299,6 +299,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
 
     @Override
     public void onNext(SheetEvent item) {
+        LOG.trace("received event: {}", item);
+
         switch (item.type()) {
             case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED -> {
                 owner.updateContent();

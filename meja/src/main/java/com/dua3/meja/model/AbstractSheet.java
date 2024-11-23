@@ -45,7 +45,7 @@ public abstract class AbstractSheet implements Sheet {
     }
 
     private void submit(SheetEvent event) {
-        LOG.trace("submit: {}", event);
+        LOG.trace("submitting event: {}", event);
         publisher.submit(event);
     }
 
