@@ -4,9 +4,12 @@ import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.fx.controls.Dialogs;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -20,19 +23,25 @@ public class FxExcelViewer extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Initial setup
+        // Create MenuBar
+        MenuBar menuBar = new MenuBar();
+
+        // File menu
+        Menu fileMenu = new Menu("File");
+        MenuItem openItem = new MenuItem("Open");
+        openItem.setOnAction(event -> openSpreadsheet(primaryStage));
+        MenuItem exitItem = new MenuItem("Exit");
+        exitItem.setOnAction(event -> Platform.exit());
+        fileMenu.getItems().addAll(openItem, exitItem);
+
+        menuBar.getMenus().add(fileMenu);
+
         primaryStage.setTitle("Spreadsheet Viewer");
 
-        // Create UI components
-        Label instructionLabel = new Label("Select a spreadsheet to view:");
-        Button openFileButton = new Button("Open Spreadsheet");
-
-        // Setup file chooser action
-        openFileButton.setOnAction(event -> openSpreadsheet(primaryStage));
-
         // Layout
-        VBox root = new VBox(10, instructionLabel, openFileButton, fxWorkbookView);
-        root.setSpacing(10);
+        VBox root = new VBox();
+        VBox.setVgrow(fxWorkbookView, Priority.ALWAYS);
+        root.getChildren().addAll(menuBar, fxWorkbookView);
 
         Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);
