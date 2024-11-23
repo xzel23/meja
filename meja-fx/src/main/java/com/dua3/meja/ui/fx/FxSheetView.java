@@ -51,10 +51,9 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.debug("FxSheetView({})", sheet);
 
         this.delegate = new FxSheetViewDelegate(this);
-        delegate.setSheet(sheet);
+        this.gridPane = new GridPane();
 
-        // Initialize GridPane
-        gridPane = new GridPane();
+        delegate.setSheet(sheet);
 
         // Create quadrants
         ObservableList<Row> rows = sheet == null
