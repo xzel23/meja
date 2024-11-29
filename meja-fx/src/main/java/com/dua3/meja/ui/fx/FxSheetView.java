@@ -32,6 +32,13 @@ import java.awt.Toolkit;
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 
+/**
+ * The FxSheetView class is responsible for rendering a spreadsheet-like UI component,
+ * using four quadrants to manage visible data sections efficiently.
+ * This class incorporates scrollbars and quadrants to manage the display of data and handle
+ * keyboard inputs for navigation. It also entangles scrollbar movements to ensure synchronized scrolling
+ * across different quadrants.
+ */
 public class FxSheetView extends StackPane implements SheetView {
     private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
     private final FxSheetViewDelegate delegate;
@@ -43,10 +50,20 @@ public class FxSheetView extends StackPane implements SheetView {
     private final ScrollBar hScrollbar;
     private final ScrollBar vScrollbar;
 
+    /**
+     * Constructs a new FxSheetView instance.
+     */
     public FxSheetView() {
         this(null);
     }
 
+    /**
+     * Constructs a new instance of FxSheetView using the specified Sheet object.
+     * Initializes the layout and scrollbars, and sets up the view quadrants based on the provided sheet.
+     *
+     * @param sheet the Sheet object to be used as a model for the FxSheetView; can be null, in which case
+     *              an empty view is initialized.
+     */
     public FxSheetView(@Nullable Sheet sheet) {
         LOG.debug("FxSheetView({})", sheet);
 

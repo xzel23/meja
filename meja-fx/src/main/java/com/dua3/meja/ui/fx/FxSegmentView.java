@@ -16,6 +16,12 @@ import javafx.scene.control.skin.VirtualFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * FxSegmentView is a JavaFX control that implements the {@link SegmentView} interface,
+ * representing a view of a segment of a sheet focused within a specific quadrant.
+ * The class manages layout and interactions for a section of rows displayed in a grid-like
+ * interface with customization options for scaling and displaying without scrollbars.
+ */
 public class FxSegmentView extends Control implements SegmentView {
 
     private static final Logger LOG = LogManager.getLogger(FxSegmentView.class);
@@ -66,14 +72,30 @@ public class FxSegmentView extends Control implements SegmentView {
             getVbar().setOpacity(0);
         }
 
+        /**
+         * Retrieves the horizontal scrollbar associated with the virtual flow.
+         *
+         * @return the horizontal ScrollBar instance used in the VirtualFlow.
+         */
         public ScrollBar getHScrollbar() {
             return getHbar();
         }
 
+        /**
+         * Retrieves the vertical scrollbar associated with this virtual flow.
+         *
+         * @return the vertical ScrollBar object.
+         */
         public ScrollBar getVScrollbar() {
             return getVbar();
         }
 
+        /**
+         * Refreshes the virtual flow by rebuilding its cells.
+         * This method is typically called to update the visual representation of the
+         * cells in the virtual flow after changes have been made. It ensures that all
+         * cells are reconstructed and displayed according to the current data and state.
+         */
         public void refresh() {
             rebuildCells();
         }
