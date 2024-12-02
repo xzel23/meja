@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 6.1.0
+
+- BREAKING: null arguments to methods wil throw IllegalArgumentException instead of NullPointerException
+- dependency updates and small fixes
+- javadoc
+
 ## Version 6.0.0
 
 - BREAKING: some Event class method names changed to be more consistent; some methods that could return null have been 
