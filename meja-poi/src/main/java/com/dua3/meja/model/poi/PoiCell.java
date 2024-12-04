@@ -22,6 +22,7 @@ import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.RichTextBuilder;
 import com.dua3.utility.text.Run;
@@ -419,7 +420,7 @@ public final class PoiCell extends AbstractCell {
         Object old = getOrDefault(null);
         RichTextString richText = getWorkbook().createRichTextString(arg.toString());
         for (Run run : arg) {
-            PoiFont font = getWorkbook().getPoiFont(getCellStyle().getFont().deriveFont(run.getFontDef()));
+            PoiFont font = getWorkbook().getPoiFont(FontUtil.getInstance().deriveFont(getCellStyle().getFont(), run.getFontDef()));
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
         poiCell.setCellValue(richText);

@@ -24,6 +24,7 @@ import com.dua3.meja.model.VAlign;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
+import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -69,7 +70,7 @@ public class GenericCellStyle implements CellStyle {
      */
     public GenericCellStyle(GenericWorkbook workbook) {
         this.workbook = workbook;
-        this.font = new Font();
+        this.font = FontUtil.getInstance().getDefaultFont();
         this.fillPattern = FillPattern.NONE;
         this.fillBgColor = Color.WHITE;
         this.fillFgColor = Color.WHITE;

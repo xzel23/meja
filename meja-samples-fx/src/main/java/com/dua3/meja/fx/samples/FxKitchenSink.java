@@ -11,6 +11,7 @@ import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
+import com.dua3.utility.text.FontUtil;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -76,17 +77,18 @@ public final class FxKitchenSink extends Application {
 
         CellStyle csDefault = wb.getDefaultCellStyle();
         Font fontDefault = csDefault.getFont();
+        FontUtil<?> fontUtil = FontUtil.getInstance();
         for (Entry<String, Color> e : Color.palette().entrySet()) {
             String name = "font" + e.getKey();
 
             CellStyle cs = wb.getCellStyle(name);
-            cs.setFont(fontDefault.deriveFont(FontDef.color(e.getValue())));
+            cs.setFont(fontUtil.deriveFont(fontDefault, FontDef.color(e.getValue())));
 
             CellStyle csDark = wb.getCellStyle(name + "Dark");
-            csDark.setFont(fontDefault.deriveFont(FontDef.color(e.getValue().darker())));
+            csDark.setFont(fontUtil.deriveFont(fontDefault, FontDef.color(e.getValue().darker())));
 
             CellStyle csBright = wb.getCellStyle(name + "Bright");
-            csBright.setFont(fontDefault.deriveFont(FontDef.color(e.getValue().brighter())));
+            csBright.setFont(fontUtil.deriveFont(fontDefault, FontDef.color(e.getValue().brighter())));
 
             row = sheet.getRow(sheet.getRowCount());
             row.getCell(0).set(name).setCellStyle(cs);

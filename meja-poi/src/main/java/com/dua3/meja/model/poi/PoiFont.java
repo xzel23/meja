@@ -18,6 +18,7 @@ package com.dua3.meja.model.poi;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
+import com.dua3.utility.text.FontUtil;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -85,9 +86,16 @@ public class PoiFont {
      * @param poiFont  the POI font instance
      */
     public PoiFont(PoiWorkbook workbook, org.apache.poi.ss.usermodel.Font poiFont) {
-        this.font = new Font(poiFont.getFontName(), poiFont.getFontHeightInPoints(),
-                workbook.getColor(poiFont, Color.BLACK), poiFont.getBold(), poiFont.getItalic(),
-                poiFont.getUnderline() != org.apache.poi.ss.usermodel.Font.U_NONE, poiFont.getStrikeout());
+        FontDef fd = new FontDef();
+        fd.setFamily(poiFont.getFontName());
+        fd.setSize((float) poiFont.getFontHeightInPoints());
+        fd.setColor(workbook.getColor(poiFont, Color.BLACK));
+        fd.setBold(poiFont.getBold());
+        fd.setItalic(poiFont.getItalic());
+        fd.setUnderline(poiFont.getUnderline() != org.apache.poi.ss.usermodel.Font.U_NONE);
+        fd.setStrikeThrough(poiFont.getStrikeout());
+        this.font = FontUtil.getInstance().getFont(fd);
+
         this.workbook = workbook;
         this.poiFont = poiFont;
     }
@@ -99,7 +107,7 @@ public class PoiFont {
      * @return a new PoiFont instance with the derived font
      */
     public PoiFont deriveFont(FontDef fd) {
-        Font derivedFont = font.deriveFont(fd);
+        Font derivedFont = FontUtil.getInstance().deriveFont(font, fd);
         return workbook.createFont(derivedFont);
     }
 
