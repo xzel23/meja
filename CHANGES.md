@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 6.2.0
+
+- update utility to 15.x
+- small fixes
+
 ## Version 6.1.0
 
 - BREAKING: null arguments to methods wil throw IllegalArgumentException instead of NullPointerException
