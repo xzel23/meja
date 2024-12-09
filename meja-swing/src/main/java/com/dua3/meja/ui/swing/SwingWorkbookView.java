@@ -75,7 +75,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
             Component view = content.getComponentAt(i);
             if (view instanceof SwingSheetView swingSheetView) {
                 //noinspection ObjectEquality
-                if (sheet == swingSheetView.getSheet().orElse(null)) {
+                if (sheet == swingSheetView.getSheet()) {
                     return Optional.of(swingSheetView);
                 }
             }
@@ -93,7 +93,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
             if (view instanceof SwingSheetView swingSheetView) {
-                if (Objects.equals(swingSheetView.getSheet().map(Sheet::getSheetName).orElse(null), sheetName)) {
+                if (Objects.equals(swingSheetView.getSheet().getSheetName(), sheetName)) {
                     return Optional.of(swingSheetView);
                 }
             }
@@ -146,7 +146,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
         if (workbook != null) {
             for (int i = 0; i < workbook.getSheetCount(); i++) {
                 Sheet sheet = workbook.getSheet(i);
-                final SwingSheetView sheetView = new SwingSheetView();
+                final SwingSheetView sheetView = new SwingSheetView(sheet);
                 content.addTab(sheet.getSheetName(), sheetView);
                 sheetView.setSheet(sheet);
             }

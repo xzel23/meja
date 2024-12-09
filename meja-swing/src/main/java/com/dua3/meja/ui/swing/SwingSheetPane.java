@@ -51,48 +51,45 @@ final class SwingSheetPane extends JScrollPane {
 
     @Override
     public void validate() {
-        svDelegate.getSheet().ifPresent(sheet -> {
-            topLeftQuadrant.validate();
-            topRightQuadrant.validate();
-            bottomLeftQuadrant.validate();
-            bottomRightQuadrant.validate();
-        });
+        topLeftQuadrant.validate();
+        topRightQuadrant.validate();
+        bottomLeftQuadrant.validate();
+        bottomRightQuadrant.validate();
 
         super.validate();
     }
 
     public Rectangle2f getCellRectInViewCoordinates(Cell cell) {
-        return svDelegate.getSheet().map(sheet -> {
-            boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
-            boolean isLeft = cell.getColumnNumber() < sheet.getSplitColumn();
+        Sheet sheet = svDelegate.getSheet();
+        boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
+        boolean isLeft = cell.getColumnNumber() < sheet.getSplitColumn();
 
-            final SwingSegmentView quadrant;
-            if (isTop) {
-                quadrant = isLeft ? topLeftQuadrant : topRightQuadrant;
-            } else {
-                quadrant = isLeft ? bottomLeftQuadrant : bottomRightQuadrant;
-            }
+        final SwingSegmentView quadrant;
+        if (isTop) {
+            quadrant = isLeft ? topLeftQuadrant : topRightQuadrant;
+        } else {
+            quadrant = isLeft ? bottomLeftQuadrant : bottomRightQuadrant;
+        }
 
-            boolean insideViewPort = !(isLeft && isTop);
+        boolean insideViewPort = !(isLeft && isTop);
 
-            final Container parent = quadrant.getParent();
-            Point pos = insideViewPort ? ((JViewport) parent).getViewPosition() : new Point();
+        final Container parent = quadrant.getParent();
+        Point pos = insideViewPort ? ((JViewport) parent).getViewPosition() : new Point();
 
-            int i = cell.getRowNumber();
-            int j = cell.getColumnNumber();
-            float x = svDelegate.getColumnPos(j);
-            float w = svDelegate.getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
-            float y = svDelegate.getRowPos(i);
-            float h = svDelegate.getRowPos(i + cell.getVerticalSpan()) - y + 1;
-            x -= quadrant.getSvDelegate().getXMinInViewCoordinates();
-            x += parent.getX();
-            x -= pos.x;
-            y -= quadrant.getSvDelegate().getYMinInViewCoordinates();
-            y += parent.getY();
-            y -= pos.y;
+        int i = cell.getRowNumber();
+        int j = cell.getColumnNumber();
+        float x = svDelegate.getColumnPos(j);
+        float w = svDelegate.getColumnPos(j + cell.getHorizontalSpan()) - x + 1;
+        float y = svDelegate.getRowPos(i);
+        float h = svDelegate.getRowPos(i + cell.getVerticalSpan()) - y + 1;
+        x -= quadrant.getSvDelegate().getXMinInViewCoordinates();
+        x += parent.getX();
+        x -= pos.x;
+        y -= quadrant.getSvDelegate().getYMinInViewCoordinates();
+        y += parent.getY();
+        y -= pos.y;
 
-            return new Rectangle2f(x, y, w, h);
-        }).orElse(EMPTY_RECTANGLE);
+        return new Rectangle2f(x, y, w, h);
     }
 
     private void init() {
@@ -106,7 +103,7 @@ final class SwingSheetPane extends JScrollPane {
     }
 
     public void repaintSheet(Rectangle2f rect) {
-        LOG.debug("repaintSheet('{}'): {}", svDelegate.getSheet().map(Sheet::getSheetName), rect);
+        LOG.debug("repaintSheet('{}'): {}", svDelegate.getSheet().getSheetName(), rect);
 
         topLeftQuadrant.repaintSheet(rect);
         topRightQuadrant.repaintSheet(rect);

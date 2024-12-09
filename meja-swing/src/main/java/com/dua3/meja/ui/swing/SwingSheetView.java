@@ -63,9 +63,9 @@ public class SwingSheetView extends JPanel implements SheetView {
      * <p>
      * No sheet is set.
      */
-    public SwingSheetView() {
+    public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));
-        this.delegate = new SwingSheetViewDelegate(this, CellRenderer::new);
+        this.delegate = new SwingSheetViewDelegate(sheet, this, CellRenderer::new);
         this.sheetPane = new SwingSheetPane(delegate);
         init();
     }
@@ -132,7 +132,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     }
 
     public void copyToClipboard() {
-        delegate.getSheet().flatMap(Sheet::getCurrentCell)
+        delegate.getSheet().getCurrentCell()
                 .map(cell -> cell.getAsText(getLocale()))
                 .ifPresent(t -> SwingUtil.setClipboardText(String.valueOf(t)));
     }
@@ -230,22 +230,21 @@ public class SwingSheetView extends JPanel implements SheetView {
     public void updateContent() {
         LOG.debug("updating content");
 
-        getSheet().ifPresent(sheet -> {
-            Lock lock = delegate.writeLock();
-            lock.lock();
-            try {
-                int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-                delegate.setDisplayScale(getDisplayScale());
-                delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
-                delegate.updateLayout();
-            } finally {
-                lock.unlock();
-            }
-            SwingUtilities.invokeLater(() -> {
-                delegate.getSheetPainter().update(sheet);
-                revalidate();
-                repaint();
-            });
+        Sheet sheet = getSheet();
+        Lock lock = delegate.writeLock();
+        lock.lock();
+        try {
+            int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+            delegate.setDisplayScale(getDisplayScale());
+            delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
+            delegate.updateLayout();
+        } finally {
+            lock.unlock();
+        }
+        SwingUtilities.invokeLater(() -> {
+            delegate.getSheetPainter().update(sheet);
+            revalidate();
+            repaint();
         });
     }
 

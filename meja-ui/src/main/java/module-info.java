@@ -13,4 +13,5 @@ module com.dua3.meja.ui {
 
     requires org.jspecify;
     requires org.apache.logging.log4j;
+    requires javafx.graphics;
 }

@@ -144,32 +144,30 @@ public class FxSegmentView extends Control implements SegmentView {
 
         segmentDelegate.updateLayout();
 
-        sheetDelegate.getSheet().ifPresent(sheet -> {
-            double widthInPixels = segmentDelegate.getWidthInPixels();
-            double heightInPixels = segmentDelegate.getHeightInPixels();
+        double widthInPixels = segmentDelegate.getWidthInPixels();
+        double heightInPixels = segmentDelegate.getHeightInPixels();
 
-            switch (quadrant) {
-                case TOP_LEFT -> {
-                    setMinSize(widthInPixels, heightInPixels);
-                    setMaxSize(widthInPixels, heightInPixels);
-                    setPrefSize(widthInPixels, heightInPixels);
-                }
-                case TOP_RIGHT -> {
-                    setMinHeight(heightInPixels);
-                    setMaxHeight(heightInPixels);
-                    setPrefHeight(heightInPixels);
-                    setPrefWidth(widthInPixels);
-                }
-                case BOTTOM_LEFT -> {
-                    setMinWidth(widthInPixels);
-                    setMaxWidth(widthInPixels);
-                    setPrefWidth(widthInPixels);
-                }
-                case BOTTOM_RIGHT -> {
-                    // nop
-                }
+        switch (quadrant) {
+            case TOP_LEFT -> {
+                setMinSize(widthInPixels, heightInPixels);
+                setMaxSize(widthInPixels, heightInPixels);
+                setPrefSize(widthInPixels, heightInPixels);
             }
-        });
+            case TOP_RIGHT -> {
+                setMinHeight(heightInPixels);
+                setMaxHeight(heightInPixels);
+                setPrefHeight(heightInPixels);
+                setPrefWidth(widthInPixels);
+            }
+            case BOTTOM_LEFT -> {
+                setMinWidth(widthInPixels);
+                setMaxWidth(widthInPixels);
+                setPrefWidth(widthInPixels);
+            }
+            case BOTTOM_RIGHT -> {
+                // nop
+            }
+        }
     }
 
     @Override

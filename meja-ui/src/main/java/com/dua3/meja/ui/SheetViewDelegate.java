@@ -40,7 +40,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     /**
      * The sheet displayed.
      */
-    private transient @Nullable Sheet sheet;
+    private transient Sheet sheet;
 
     /**
      * Horizontal padding.
@@ -87,14 +87,12 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
 
     @Override
     public Lock readLock() {
-        assert sheet != null;
         LOG.trace("readLock() [{}]", sheet::getSheetName);
         return sheet.readLock();
     }
 
     @Override
     public Lock writeLock() {
-        assert sheet != null;
         LOG.trace("writeLock() [{}]", sheet::getSheetName);
         return sheet.writeLock();
     }
@@ -113,7 +111,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return dx coordinate of split
      */
     public float getSplitX() {
-        return sheet == null ? 0 : getColumnPos(sheet.getSplitColumn());
+        return getColumnPos(sheet.getSplitColumn());
     }
 
     /**
@@ -122,7 +120,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return dy coordinate of split
      */
     public float getSplitY() {
-        return sheet == null ? 0 : getRowPos(sheet.getSplitRow());
+        return getRowPos(sheet.getSplitRow());
     }
 
     protected Color getSelectionColor() {
@@ -175,7 +173,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      */
     private boolean editing;
 
-    public SheetViewDelegate(SheetView owner) {
+    public SheetViewDelegate(Sheet sheet, SheetView owner) {
+        this.sheet = sheet;
         this.owner = owner;
         this.displayScale = owner.getDisplayScale();
         updateLayout();
@@ -230,7 +229,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public Cell getCellAt(float x, float y) {
-        assert sheet != null;
         int i = getRowNumberFromY(y);
         int j = getColumnNumberFromX(x);
         return sheet.getCell(i, j);
@@ -352,11 +350,16 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return column number of the selected cell
      */
     public int getCurrentColNum() {
-        return getSheet().flatMap(Sheet::getCurrentCell).map(Cell::getColumnNumber).orElse(0);
+        return sheet.getCurrentCell().map(Cell::getColumnNumber).orElse(0);
     }
 
-    public Optional<Sheet> getSheet() {
-        return Optional.ofNullable(sheet);
+    /**
+     * Retrieves the current sheet associated with this view delegate.
+     *
+     * @return the currently loaded sheet
+     */
+    public Sheet getSheet() {
+        return sheet;
     }
 
     /**
@@ -377,12 +380,12 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         return new Rectangle2f(x, y, w, h);
     }
 
-    public void setSheet(@Nullable Sheet sheet) {
+    public void setSheet(Sheet sheet) {
         setSheetWithoutUpdatingView(sheet);
         owner.updateContent();
     }
 
-    public void setSheetWithoutUpdatingView(@Nullable Sheet sheet) {
+    public void setSheetWithoutUpdatingView(Sheet sheet) {
         //noinspection ObjectEquality
         if (sheet != this.sheet) {
             if (this.subscription != null) {
@@ -395,9 +398,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
             markLayoutChanged();
 
             // subscribe to the Flow API
-            if (sheet != null) {
-                sheet.subscribe(this);
-            }
+            sheet.subscribe(this);
 
             LOG.debug("sheet changed");
         }
@@ -405,14 +406,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
 
     public void updateLayout() {
         if (!layoutChanged) {
-            return;
-        }
-
-        if (sheet == null) {
-            sheetWidthInPoints = 0;
-            sheetHeightInPoints = 0;
-            rowPos = new float[]{0};
-            columnPos = new float[]{0};
             return;
         }
 
@@ -457,7 +450,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return row number of the selected cell
      */
     public int getCurrentRowNum() {
-        return getSheet().flatMap(Sheet::getCurrentCell).map(Cell::getRowNumber).orElse(0);
+        return getSheet().getCurrentCell().map(Cell::getRowNumber).orElse(0);
     }
 
     public Color getGridColor() {
@@ -510,19 +503,19 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public int getSplitColumn() {
-        return sheet == null ? 0 : sheet.getSplitColumn();
+        return sheet.getSplitColumn();
     }
 
     public int getSplitRow() {
-        return sheet == null ? 0 : sheet.getSplitRow();
+        return sheet.getSplitRow();
     }
 
     public boolean setCurrentCell(int i, int j) {
-        return sheet != null && sheet.setCurrentCell(i, j);
+        return sheet.setCurrentCell(i, j);
     }
 
     public boolean setCurrentCell(Cell cell) {
-        return sheet != null && sheet.setCurrentCell(cell);
+        return sheet.setCurrentCell(cell);
     }
 
     public void setRowNames(IntFunction<String> rowNames) {
@@ -590,43 +583,35 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public Optional<Cell> getCurrentLogicalCell() {
-        return getSheet().flatMap(Sheet::getCurrentCell).map(Cell::getLogicalCell);
+        return getSheet().getCurrentCell().map(Cell::getLogicalCell);
     }
 
     public void setCurrentColNum(int colNum) {
-        getSheet().ifPresent(sheet -> {
-            int rowNum = sheet.getCurrentCell().map(Cell::getRowNumber).orElse(0);
-            setCurrentCell(sheet.getCell(rowNum, MathUtil.clamp(sheet.getFirstColNum(), sheet.getLastColNum(), colNum)));
-        });
+        int rowNum = sheet.getCurrentCell().map(Cell::getRowNumber).orElse(0);
+        setCurrentCell(sheet.getCell(rowNum, MathUtil.clamp(sheet.getFirstColNum(), sheet.getLastColNum(), colNum)));
     }
 
     public void setCurrentRowNum(int rowNum) {
-        getSheet().ifPresent(sheet -> {
-            int colNum = sheet.getCurrentCell().map(Cell::getColumnNumber).orElse(0);
-            setCurrentCell(MathUtil.clamp(sheet.getFirstRowNum(), sheet.getLastRowNum(), rowNum), colNum);
-        });
+        int colNum = sheet.getCurrentCell().map(Cell::getColumnNumber).orElse(0);
+        setCurrentCell(MathUtil.clamp(sheet.getFirstRowNum(), sheet.getLastRowNum(), rowNum), colNum);
     }
 
     /**
      * Move the selection rectangle to the bottom right cell.
      */
     public void moveEnd() {
-        getSheet().ifPresent(sheet -> {
-            int row = sheet.getLastRowNum();
-            int col = sheet.getLastColNum();
-            setCurrentCell(row, col);
-        });
+        int row = sheet.getLastRowNum();
+        int col = sheet.getLastColNum();
+        setCurrentCell(row, col);
     }
 
     /**
      * Move the selection rectangle to the top left cell.
      */
     public void moveHome() {
-        getSheet().ifPresent(sheet -> {
-            int row = sheet.getFirstRowNum();
-            int col = sheet.getFirstColNum();
-            setCurrentCell(row, col);
-        });
+        int row = sheet.getFirstRowNum();
+        int col = sheet.getFirstColNum();
+        setCurrentCell(row, col);
     }
 
     /**
@@ -801,12 +786,13 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         private static final VisibleArea EMPTY = new VisibleArea(0, 0, 0, 0);
 
         public static VisibleArea get(SheetViewDelegate delegate, Rectangle2f boundsInSheet) {
-            return delegate.getSheet().map(sheet -> new VisibleArea(
+            Sheet sheet = delegate.getSheet();
+            return new VisibleArea(
                     Math.max(0, delegate.getRowNumberFromY(boundsInSheet.yMin())),
                     Math.min(sheet.getLastRowNum() + 1, 1 + delegate.getRowNumberFromY(boundsInSheet.yMax())),
                     Math.max(0, delegate.getColumnNumberFromX(boundsInSheet.xMin())),
                     Math.min(sheet.getLastColNum() + 1, 1 + delegate.getColumnNumberFromX(boundsInSheet.xMax()))
-            )).orElse(EMPTY);
+            );
         }
     }
 

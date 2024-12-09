@@ -11,7 +11,6 @@ import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.text.RichText;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -26,7 +25,6 @@ import javafx.stage.Screen;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.Nullable;
 
 import java.awt.Toolkit;
 import java.util.Locale;
@@ -51,31 +49,22 @@ public class FxSheetView extends StackPane implements SheetView {
     private final ScrollBar vScrollbar;
 
     /**
-     * Constructs a new FxSheetView instance.
-     */
-    public FxSheetView() {
-        this(null);
-    }
-
-    /**
      * Constructs a new instance of FxSheetView using the specified Sheet object.
      * Initializes the layout and scrollbars, and sets up the view quadrants based on the provided sheet.
      *
      * @param sheet the Sheet object to be used as a model for the FxSheetView; can be null, in which case
      *              an empty view is initialized.
      */
-    public FxSheetView(@Nullable Sheet sheet) {
+    public FxSheetView(Sheet sheet) {
         LOG.debug("FxSheetView({})", sheet);
 
-        this.delegate = new FxSheetViewDelegate(this);
+        this.delegate = new FxSheetViewDelegate(sheet, this);
         this.gridPane = new GridPane();
 
         updateDelegate(sheet);
 
         // Create quadrants
-        ObservableList<Row> rows = sheet == null
-                ? FXCollections.emptyObservableList()
-                : new ObservableSheet(sheet);
+        ObservableList<Row> rows = new ObservableSheet(sheet);
 
         topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, rows);
         topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, rows);
@@ -243,7 +232,7 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.trace("scrollToCurrentCell()");
 
         Platform.runLater(() -> delegate.getCurrentLogicalCell().ifPresent(cell -> {
-            Sheet sheet = delegate.getSheet().orElseThrow();
+            Sheet sheet = delegate.getSheet();
             int i = cell.getRowNumber();
             int j = cell.getColumnNumber();
             int splitRow = sheet.getSplitRow();
@@ -306,11 +295,11 @@ public class FxSheetView extends StackPane implements SheetView {
     public void updateContent() {
         LOG.debug("updateContent()");
 
-        getSheet().ifPresent(sheet -> PlatformHelper.runAndWait(() -> {
+        PlatformHelper.runAndWait(() -> {
             Lock lock = delegate.writeLock();
             lock.lock();
             try {
-                updateDelegate(sheet);
+                updateDelegate(getSheet());
                 topLeftQuadrant.refresh();
                 topRightQuadrant.refresh();
                 bottomLeftQuadrant.refresh();
@@ -318,10 +307,10 @@ public class FxSheetView extends StackPane implements SheetView {
             } finally {
                 lock.unlock();
             }
-        }));
+        });
     }
 
-    private void updateDelegate(@Nullable Sheet sheet) {
+    private void updateDelegate(Sheet sheet) {
         delegate.setSheetWithoutUpdatingView(sheet);
         int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
         delegate.setDisplayScale(getDisplayScale());

@@ -170,33 +170,31 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             // clear background by calling super method
             super.paintComponent(g);
 
-            svDelegate.getSheet().ifPresent(sheet -> {
-                Rectangle bounds = getBounds();
-                if (bounds.width == 0 || bounds.height == 0) {
-                    return;
+            Rectangle bounds = getBounds();
+            if (bounds.width == 0 || bounds.height == 0) {
+                return;
+            }
+
+            try (SwingGraphics sg = new SwingGraphics((Graphics2D) g.create(), bounds)) {
+                AffineTransformation2f t = ssvDelegate.getTransformation();
+                sg.setTransformation(t);
+                LOG.debug("paintComponent() - transformation:\n{}", t::toMatrixString);
+
+                // draw sheet
+                svDelegate.getSheetPainter().drawSheet(sg);
+
+                // draw split lines
+                if (ssvDelegate.hasHLine()) {
+                    float ySplit = svDelegate.getRowPos(svDelegate.getSplitRow()) + svDelegate.get1PxWidthInPoints();
+                    sg.setStroke(Color.BLACK, svDelegate.get1PxHeightInPoints());
+                    sg.strokeLine(-svDelegate.getRowLabelWidthInPoints(), ySplit, svDelegate.getSheetWidthInPoints(), ySplit);
                 }
-
-                try (SwingGraphics sg = new SwingGraphics((Graphics2D) g.create(), bounds)) {
-                    AffineTransformation2f t = ssvDelegate.getTransformation();
-                    sg.setTransformation(t);
-                    LOG.debug("paintComponent() - transformation:\n{}", t::toMatrixString);
-
-                    // draw sheet
-                    svDelegate.getSheetPainter().drawSheet(sg);
-
-                    // draw split lines
-                    if (ssvDelegate.hasHLine()) {
-                        float ySplit = svDelegate.getRowPos(svDelegate.getSplitRow()) + svDelegate.get1PxWidthInPoints();
-                        sg.setStroke(Color.BLACK, svDelegate.get1PxHeightInPoints());
-                        sg.strokeLine(-svDelegate.getRowLabelWidthInPoints(), ySplit, svDelegate.getSheetWidthInPoints(), ySplit);
-                    }
-                    if (ssvDelegate.hasVLine()) {
-                        float xSplit = svDelegate.getColumnPos(svDelegate.getSplitColumn()) + svDelegate.get1PxWidthInPoints();
-                        sg.setStroke(Color.BLACK, svDelegate.get1PxWidthInPoints());
-                        sg.strokeLine(xSplit, -svDelegate.getColumnLabelHeightInPoints(), xSplit, svDelegate.getSheetHeightInPoints());
-                    }
+                if (ssvDelegate.hasVLine()) {
+                    float xSplit = svDelegate.getColumnPos(svDelegate.getSplitColumn()) + svDelegate.get1PxWidthInPoints();
+                    sg.setStroke(Color.BLACK, svDelegate.get1PxWidthInPoints());
+                    sg.strokeLine(xSplit, -svDelegate.getColumnLabelHeightInPoints(), xSplit, svDelegate.getSheetHeightInPoints());
                 }
-            });
+            }
         } finally {
             lock.unlock();
         }

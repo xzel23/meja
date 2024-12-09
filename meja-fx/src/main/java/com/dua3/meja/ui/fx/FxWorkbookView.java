@@ -105,7 +105,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
                 .map(Tab::getContent)
                 .map(content -> content instanceof FxSheetView sv ? sv : null)
                 .filter(Objects::nonNull)
-                .filter(sv -> sv.getSheet().orElse(null) == sheet)
+                .filter(sv -> sv.getSheet() == sheet)
                 .findFirst();
     }
 
@@ -121,7 +121,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
                 .map(Tab::getContent)
                 .map(content -> content instanceof FxSheetView sv ? sv : null)
                 .filter(Objects::nonNull)
-                .filter(sv -> Objects.equals(sv.getSheet().map(Sheet::getSheetName).orElse(null), sheetName))
+                .filter(sv -> Objects.equals(sv.getSheet().getSheetName(), sheetName))
                 .findFirst();
     }
 

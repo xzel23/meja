@@ -21,7 +21,6 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.utility.math.geometry.Scale2f;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -37,7 +36,7 @@ public interface SheetView {
      *
      * @return the sheet
      */
-    default Optional<Sheet> getSheet() {
+    default Sheet getSheet() {
         return getDelegate().getSheet();
     }
 

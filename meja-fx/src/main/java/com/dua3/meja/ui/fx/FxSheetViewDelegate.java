@@ -1,5 +1,6 @@
 package com.dua3.meja.ui.fx;
 
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetViewDelegate;
 
 /**
@@ -18,9 +19,10 @@ public class FxSheetViewDelegate extends SheetViewDelegate {
      *              responsible for managing.
      */
     public FxSheetViewDelegate(
+            Sheet sheet,
             FxSheetView owner
     ) {
-        super(owner);
+        super(sheet, owner);
     }
 
 }

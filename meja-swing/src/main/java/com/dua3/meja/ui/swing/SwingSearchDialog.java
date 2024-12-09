@@ -124,25 +124,23 @@ final class SwingSearchDialog extends JDialog {
     }
 
     void doSearch() {
-        swingSheetView.getSheet().ifPresent(sheet -> {
-            EnumSet<SearchOptions> options = EnumSet.of(SearchOptions.SEARCH_FROM_CURRENT);
+        EnumSet<SearchOptions> options = EnumSet.of(SearchOptions.SEARCH_FROM_CURRENT);
 
-            if (jcbIgnoreCase.isSelected()) {
-                options.add(SearchOptions.IGNORE_CASE);
-            }
+        if (jcbIgnoreCase.isSelected()) {
+            options.add(SearchOptions.IGNORE_CASE);
+        }
 
-            if (jcbMatchCompleteText.isSelected()) {
-                options.add(SearchOptions.MATCH_COMPLETE_TEXT);
-            }
+        if (jcbMatchCompleteText.isSelected()) {
+            options.add(SearchOptions.MATCH_COMPLETE_TEXT);
+        }
 
-            Optional<Cell> oc = sheet.find(getText(), SearchSettings.of(options));
-            if (oc.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Text was not found.");
-            } else {
-                Cell cell = oc.get();
-                swingSheetView.setCurrentCell(cell.getRowNumber(), cell.getColumnNumber());
-            }
-        });
+        Optional<Cell> oc = swingSheetView.getSheet().find(getText(), SearchSettings.of(options));
+        if (oc.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Text was not found.");
+        } else {
+            Cell cell = oc.get();
+            swingSheetView.setCurrentCell(cell.getRowNumber(), cell.getColumnNumber());
+        }
     }
 
     String getText() {

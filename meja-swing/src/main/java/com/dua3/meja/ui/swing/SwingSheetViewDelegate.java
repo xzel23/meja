@@ -1,5 +1,6 @@
 package com.dua3.meja.ui.swing;
 
+import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.CellRenderer;
 import com.dua3.meja.ui.SheetViewDelegate;
 
@@ -11,10 +12,11 @@ public class SwingSheetViewDelegate extends SheetViewDelegate {
     private final SwingSheetPainter sheetPainter;
 
     public SwingSheetViewDelegate(
+            Sheet sheet,
             SwingSheetView owner,
             Function<SwingSheetViewDelegate, CellRenderer> cellRendererFactory
     ) {
-        super(owner);
+        super(sheet, owner);
         this.cellRenderer = cellRendererFactory.apply(this);
         this.sheetPainter = new SwingSheetPainter(this, cellRenderer);
     }

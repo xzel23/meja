@@ -84,14 +84,13 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
      */
     protected void adjustColumns(@Nullable SheetView view) {
         if (view != null) {
-            view.getSheet().ifPresent(Sheet::autoSizeColumns);
+            view.getSheet().autoSizeColumns();
         }
     }
 
     protected void freezeAtCurrentCell(@Nullable SheetView view) {
         if (view != null) {
-            view.getSheet()
-                    .flatMap(Sheet::getCurrentCell)
+            view.getSheet().getCurrentCell()
                     .ifPresent(cell -> cell.getSheet().splitAt(cell.getRowNumber(), cell.getColumnNumber()));
         }
     }
