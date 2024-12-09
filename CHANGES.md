@@ -3,6 +3,7 @@
 ## Version 6.2.0
 
 - update utility to 15.x
+- added sheet as argument to SwingSheetView and FxSheetView constructors
 - small fixes
 
 ## Version 6.1.0

@@ -178,6 +178,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         this.owner = owner;
         this.displayScale = owner.getDisplayScale();
         updateLayout();
+        sheet.subscribe(this);
     }
 
     /**
@@ -378,30 +379,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
         final float h = getRowPos(i + cell.getVerticalSpan()) - y;
 
         return new Rectangle2f(x, y, w, h);
-    }
-
-    public void setSheet(Sheet sheet) {
-        setSheetWithoutUpdatingView(sheet);
-        owner.updateContent();
-    }
-
-    public void setSheetWithoutUpdatingView(Sheet sheet) {
-        //noinspection ObjectEquality
-        if (sheet != this.sheet) {
-            if (this.subscription != null) {
-                this.subscription.cancel();
-                this.subscription = null;
-            }
-
-            this.sheet = sheet;
-
-            markLayoutChanged();
-
-            // subscribe to the Flow API
-            sheet.subscribe(this);
-
-            LOG.debug("sheet changed");
-        }
     }
 
     public void updateLayout() {

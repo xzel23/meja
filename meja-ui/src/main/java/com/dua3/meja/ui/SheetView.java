@@ -66,15 +66,6 @@ public interface SheetView {
     }
 
     /**
-     * Set sheet to display.
-     *
-     * @param sheet the sheet to display
-     */
-    default void setSheet(Sheet sheet) {
-        getDelegate().setSheet(sheet);
-    }
-
-    /**
      * End edit mode for the current cell.
      *
      * @param commit true if the content of the edited cell is to be updated
