@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 6.2.1
+
+- update utility; fixes a bug where the text color in POI sheets was set to black
+
 ## Version 6.2.0
 
 - update utility to 15.x
