@@ -9,7 +9,6 @@ import com.dua3.meja.model.Row;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Alignment;
-import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
@@ -177,10 +176,9 @@ public class CellRenderer {
         };
 
         RichText text = cell.getAsText(delegate.getLocale());
-        Font font = cs.getFont();
         boolean wrapping = cs.isStyleWrapping();
 
-        g.renderText(r, text, font, hAlign, vAlign, wrapping);
+        g.renderText(r, text, hAlign, vAlign, wrapping);
     }
 
     /**
