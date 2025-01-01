@@ -170,7 +170,11 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
         if (workbook != null) {
             content.getTabs().setAll(
                     workbook.sheets()
-                            .map(sheet -> new Tab(sheet.getSheetName(), new FxSheetView(sheet)))
+                            .map(sheet -> {
+                                Tab tab = new Tab(sheet.getSheetName(), new FxSheetView(sheet));
+                                tab.setClosable(false);
+                                return tab;
+                            })
                             .toList()
             );
             if (workbook.getSheetCount() > 0) {
