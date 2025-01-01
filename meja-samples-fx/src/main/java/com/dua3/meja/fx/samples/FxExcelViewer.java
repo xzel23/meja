@@ -2,13 +2,12 @@ package com.dua3.meja.fx.samples;
 
 import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.Dialogs;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -17,25 +16,34 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * The {@code FxExcelViewer} class provides a JavaFX application for viewing
+ * spreadsheet files. This application allows users to open and displayExcel files.
+ */
 public class FxExcelViewer extends Application {
 
     private final FxWorkbookView fxWorkbookView = new FxWorkbookView();
 
+    /**
+     * The main entry point for the JavaFX application. This method launches the
+     * JavaFX Runtime environment and initializes the primary application stage.
+     *
+     * @param args the command-line arguments passed to the application
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage primaryStage) {
         // Create MenuBar
-        MenuBar menuBar = new MenuBar();
+        MenuBar menuBar = new MenuBar(
+                Controls.menu("File",
+                        Controls.menuItem("Open", () -> openSpreadsheet(primaryStage)),
+                        Controls.menuItem("Exit", Platform::exit)
+                )
+        );
         menuBar.setUseSystemMenuBar(true);
-
-        // File menu
-        Menu fileMenu = new Menu("File");
-        MenuItem openItem = new MenuItem("Open");
-        openItem.setOnAction(event -> openSpreadsheet(primaryStage));
-        MenuItem exitItem = new MenuItem("Exit");
-        exitItem.setOnAction(event -> Platform.exit());
-        fileMenu.getItems().addAll(openItem, exitItem);
-
-        menuBar.getMenus().add(fileMenu);
 
         primaryStage.setTitle("Spreadsheet Viewer");
 
@@ -67,9 +75,5 @@ public class FxExcelViewer extends Application {
                         .showAndWait();
             }
         }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
