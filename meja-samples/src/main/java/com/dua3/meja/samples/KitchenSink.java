@@ -91,6 +91,8 @@ public final class KitchenSink extends JFrame {
             row.getCell(2).set("darker").setCellStyle(csDark);
             row.getCell(3).set("brighter").setCellStyle(csBright);
         }
+
+        sheet.autoSizeColumn(0);
     }
 
     private static void addTextColorSheet(Workbook wb) {
@@ -127,6 +129,8 @@ public final class KitchenSink extends JFrame {
             row.getCell(2).set("darker").setCellStyle(csDark);
             row.getCell(3).set("brighter").setCellStyle(csBright);
         }
+
+        sheet.autoSizeColumn(0);
     }
 
     private static Workbook createWorkbook(WorkbookFactory<?> factory) {
