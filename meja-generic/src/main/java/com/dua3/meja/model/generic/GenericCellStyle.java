@@ -70,7 +70,7 @@ public class GenericCellStyle implements CellStyle {
      */
     public GenericCellStyle(GenericWorkbook workbook) {
         this.workbook = workbook;
-        this.font = FontUtil.getInstance().getDefaultFont();
+        this.font = FontUtil.getInstance().getFont("Verdana-10");
         this.fillPattern = FillPattern.NONE;
         this.fillBgColor = Color.WHITE;
         this.fillFgColor = Color.WHITE;
