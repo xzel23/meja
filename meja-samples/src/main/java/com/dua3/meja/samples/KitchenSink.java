@@ -122,7 +122,7 @@ public final class KitchenSink extends JFrame {
             csBright.setFont(fontUtil.deriveFont(fontDefault, FontDef.color(e.getValue().brighter())));
 
             row = sheet.getRow(sheet.getRowCount());
-            row.getCell(0).set(name).setCellStyle(cs);
+            row.getCell(0).set(e.getKey()).setCellStyle(cs);
             row.getCell(1).set(e.getValue().toString()).setCellStyle(cs);
             row.getCell(2).set("darker").setCellStyle(csDark);
             row.getCell(3).set("brighter").setCellStyle(csBright);

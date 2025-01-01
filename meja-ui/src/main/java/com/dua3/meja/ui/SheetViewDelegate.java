@@ -78,7 +78,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     private float rowLabelWidth;
     private float columnLabelHeightInPoints;
     private float defaultRowHeightInPoints = 12.0f;
-    private Font labelFont = FontUtil.getInstance().getDefaultFont();
+    private Font labelFont = FontUtil.getInstance().getDefaultFont().withSize(8);
     private Color labelBackgroundColor = Color.WHITESMOKE;
     private Color labelBorderColor = labelBackgroundColor.darker();
     private float labelBorderWidthInPixels = 1.0f;

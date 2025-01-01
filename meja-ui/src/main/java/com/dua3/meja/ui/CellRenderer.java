@@ -177,6 +177,7 @@ public class CellRenderer {
 
         RichText text = cell.getAsText(delegate.getLocale());
         boolean wrapping = cs.isStyleWrapping();
+        g.setFont(cs.getFont());
 
         g.renderText(r, text, hAlign, vAlign, wrapping);
     }
