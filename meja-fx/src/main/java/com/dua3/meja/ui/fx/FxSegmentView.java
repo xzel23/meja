@@ -26,6 +26,12 @@ public class FxSegmentView extends Control implements SegmentView {
 
     private static final Logger LOG = LogManager.getLogger(FxSegmentView.class);
 
+    /**
+     * Refreshes the segment view by invoking the underlying flow's refresh method.
+     * This method ensures the visual representation of the segment view remains
+     * up to date by rebuilding the virtual flow's cells. It is typically used
+     * after updates to the data or layout to guarantee the correctness of the displayed content.
+     */
     public void refresh() {
         flow.refresh();
     }
@@ -101,17 +107,28 @@ public class FxSegmentView extends Control implements SegmentView {
         }
     }
 
-    private final FxSheetViewDelegate sheetDelegate;
+    private final FxSheetViewDelegate svDelegate;
     private final SegmentViewDelegate segmentDelegate;
     private final SheetView.Quadrant quadrant;
     final VirtualFlowWithHiddenScrollBars<FxRow> flow;
     private final ObservableList<Row> rows;
 
-    public FxSegmentView(FxSheetViewDelegate sheetDelegate, SheetView.Quadrant quadrant, ObservableList<Row> sheetRows) {
+    /**
+     * Constructs an instance of FxSegmentView, responsible for displaying a specific quadrant
+     * of a sheet in the user interface, using a delegate for handling functionality and data
+     * and an observable list for the rows of the sheet.
+     *
+     * @param svDelegate the delegate responsible for accessing data specific to the {@link SheetView}
+     * @param quadrant the specific quadrant of the sheet that the segment view
+     *        represents and displays.
+     * @param sheetRows the observable list of all rows in the sheet, which will be
+     *        filtered to include only the rows belonging to the specified quadrant.
+     */
+    public FxSegmentView(FxSheetViewDelegate svDelegate, SheetView.Quadrant quadrant, ObservableList<Row> sheetRows) {
         this.quadrant = quadrant;
-        this.sheetDelegate = sheetDelegate;
-        this.segmentDelegate = new SegmentViewDelegate(this, sheetDelegate, quadrant);
-        this.rows = filterRows(sheetRows, quadrant, sheetDelegate.getSplitRow());
+        this.svDelegate = svDelegate;
+        this.segmentDelegate = new SegmentViewDelegate(this, svDelegate, quadrant);
+        this.rows = filterRows(sheetRows, quadrant, svDelegate.getSplitRow());
         this.flow = new VirtualFlowWithHiddenScrollBars<>(quadrant);
 
         updateLayout();
@@ -172,7 +189,7 @@ public class FxSegmentView extends Control implements SegmentView {
 
     @Override
     public void setViewSizeOnDisplay(float widthInPoints, float heightIPoints) {
-        Scale2f scale = sheetDelegate.getScale();
+        Scale2f scale = svDelegate.getScale();
         setPrefSize(widthInPoints * scale.sx(), heightIPoints * scale.sy());
     }
 }

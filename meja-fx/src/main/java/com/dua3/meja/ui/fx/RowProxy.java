@@ -21,10 +21,18 @@ public class RowProxy {
      */
     public static final RowProxy ROW_PROXY_SPLIT_LINE = new RowProxy(Type.SPLIT_LINE, null);
 
+    /**
+     * The {@code Type} enum defines the different types of rows that a {@link RowProxy} object can represent in a sheet.
+     * This is used to differentiate actual rows from other special representations like empty rows, column labels, and split lines.
+     */
     public enum Type {
+        /** Represents an actual data row in the sheet. */
         ROW,
+        /** Represents an empty row in the sheet. */
         EMPTY,
+        /** Represents a row containing column labels in the sheet. */
         CLOUMN_LABELS,
+        /** Represents a split line in the sheet, inserted after fixed rows on top. */
         SPLIT_LINE
     }
 
