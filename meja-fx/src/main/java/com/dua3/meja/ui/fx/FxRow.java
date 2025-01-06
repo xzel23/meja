@@ -44,7 +44,8 @@ public class FxRow extends IndexedCell<RowProxy> {
      * @param svDelegate the segment view delegate for the sheet view
      */
     public FxRow(ObservableList<Row> rows, SegmentViewDelegate svDelegate) {
-        LOG.trace("FxRow()");
+        LOG.trace("instance created");
+
         this.rows = rows;
         this.segmentViewDelegate = svDelegate;
         this.sheetViewDelegate = (FxSheetViewDelegate) svDelegate.getSheetViewDelegate();
@@ -150,8 +151,6 @@ public class FxRow extends IndexedCell<RowProxy> {
         super.updateItem(item, empty);
 
         render();
-
-        LOG.trace("bounds: {}", getLayoutBounds());
     }
 
     /**
@@ -368,11 +367,11 @@ public class FxRow extends IndexedCell<RowProxy> {
                 .filter(k -> getSheetViewDelegate().getColumnPos(k) <= xSheet && xSheet <= getSheetViewDelegate().getColumnPos(k + 1))
                 .findFirst()
                 .orElse(-1);
-        LOG.trace("onMouseClicked(): row #{}, column #{}, cell={}", i, j, sheetViewDelegate.getCurrentLogicalCell().map(Cell::getCellRef));
+        LOG.trace("onMouseClicked(): row #{}, column #{}", i, j);
 
         if (i >= 0 && j >= 0) {
             sheetViewDelegate.setCurrentCell(i, j);
-            LOG.debug("onMouseClicked(): set current cell to {}", sheetViewDelegate.getCurrentLogicalCell().map(Cell::getCellRef));
+            LOG.debug("onMouseClicked(): set current cell to {}", () -> sheetViewDelegate.getCurrentLogicalCell().map(Cell::getCellRef));
         }
     }
 }
