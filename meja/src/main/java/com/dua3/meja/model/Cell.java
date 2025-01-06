@@ -607,6 +607,7 @@ public interface Cell {
         return getNeighboringCell(direction)
                 .map(Cell::getCellStyle)
                 .map(cs -> cs.getBorderStyle(direction.inverse()))
+                .filter(bs -> !bs.isNone())
                 .orElse(style);
     }
 
