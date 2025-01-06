@@ -30,6 +30,12 @@ public final class FxShowTestXlsx extends Application {
         return new LogBuffer(100000);
     }
 
+    /**
+     * The main entry point of the application. This method initializes the global log entry handler
+     * with a log buffer and launches the JavaFX application.
+     *
+     * @param args the command-line arguments passed to the application
+     */
     public static void main(String[] args) {
         LogUtil.getGlobalDispatcher().addLogEntryHandler(logBuffer);
         launch(args);

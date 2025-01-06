@@ -26,6 +26,12 @@ import java.util.Map.Entry;
 public final class FxKitchenSink extends Application {
     private static final Logger LOG = LogManager.getLogger(FxKitchenSink.class);
 
+    /**
+     * The main entry point for the JavaFX application. This method launches the
+     * JavaFX Runtime environment and initializes the primary application.
+     *
+     * @param args the command-line arguments passed to the application
+     */
     public static void main(String[] args) {
         launch(args);
     }
