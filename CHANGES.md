@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 6.3.0
+
+- update utility
+- fix rendering issues
+- JavaFX WorkbookView fixes
+
 ## Version 6.2.1
 
 - update utility; fixes a bug where the text color in POI sheets was set to black
