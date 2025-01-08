@@ -185,6 +185,7 @@ public class FxSegmentView extends Control implements SegmentView {
                 // nop
             }
         }
+        LOG.trace("updateLayout() quadrant={}, width={}, height={} ", quadrant, widthInPixels, heightInPixels);
     }
 
     @Override
