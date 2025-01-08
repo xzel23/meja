@@ -139,6 +139,15 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     void setCurrentSheet(int idx);
 
     /**
+     * Set the current sheet.
+     *
+     * @param sheet the sheet to make current
+     */
+    default void setCurrentSheet(@Nullable Sheet sheet) {
+        setCurrentSheet(getSheetIndex(sheet));
+    }
+
+    /**
      * Get index of current sheet.
      *
      * @return index of current sheet
@@ -210,6 +219,21 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
                 return idx;
             }
             idx++;
+        }
+        return -1;
+    }
+
+    /**
+     * Get index of sheet by name.
+     *
+     * @param sheet the sheet
+     * @return index of sheet or -1 if no sheet with this name exists
+     */
+    default int getSheetIndex(@Nullable Sheet sheet) {
+        for (int idx = 0; idx < getSheetCount(); idx++) {
+            if (sheet == getSheet(idx)) {
+                return idx;
+            }
         }
         return -1;
     }

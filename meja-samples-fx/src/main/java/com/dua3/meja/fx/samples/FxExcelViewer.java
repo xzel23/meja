@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -36,7 +37,9 @@ public class FxExcelViewer extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Create MenuBar
+        primaryStage.setTitle("Spreadsheet Viewer");
+
+        // create menu
         MenuBar menuBar = new MenuBar(
                 Controls.menu("File",
                         Controls.menuItem("Open", () -> openSpreadsheet(primaryStage)),
@@ -45,12 +48,23 @@ public class FxExcelViewer extends Application {
         );
         menuBar.setUseSystemMenuBar(true);
 
-        primaryStage.setTitle("Spreadsheet Viewer");
+        // create tool bar
+        ToolBar toolBar = new ToolBar(
+                Controls.button().graphic(
+                        Controls.graphic("fth-folder"))
+                        .action(() -> openSpreadsheet(primaryStage))
+                        .build(),
+                Controls.slider()
+                        .min(0.25)
+                        .max(2)
+                        .bind(fxWorkbookView.currentViewZoomProperty())
+                        .build()
+        );
 
-        // Layout
+        // layout
         VBox root = new VBox();
         VBox.setVgrow(fxWorkbookView, Priority.ALWAYS);
-        root.getChildren().addAll(menuBar, fxWorkbookView);
+        root.getChildren().addAll(menuBar, toolBar, fxWorkbookView);
 
         Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);

@@ -21,6 +21,10 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookEvent;
 import com.dua3.meja.ui.WorkbookView;
 import javafx.application.Platform;
+import javafx.beans.property.FloatProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventTarget;
 import javafx.geometry.Side;
 import javafx.scene.control.SelectionModel;
@@ -46,6 +50,8 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
 
     private transient @Nullable Workbook workbook;
     private final TabPane content;
+    private final ObjectProperty<FxSheetView> currentViewProperty = new SimpleObjectProperty<>();
+    private final FloatProperty currentViewZoomProperty = new SimpleFloatProperty();
 
     /**
      * Construct a new {@code WorkbookView}.
@@ -53,16 +59,23 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
     public FxWorkbookView() {
         content = new TabPane();
         content.setSide(Side.BOTTOM);
-        content.getSelectionModel().selectedIndexProperty().addListener((v, o, n) -> {
-            int idx = n.intValue();
-            if (workbook != null && idx >= 0) {
-                workbook.setCurrentSheet(idx);
-                Platform.runLater(
-                        () -> getCurrentView().ifPresent(FxSheetView::requestFocus)
-                );
+        content.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> {
+            if (workbook != null && n != null && n.getContent() instanceof FxSheetView sv) {
+                workbook.setCurrentSheet(sv.getSheet());
+                currentViewProperty.set(sv);
+                Platform.runLater(sv::requestFocus);
             }
         });
-
+        currentViewProperty.addListener((v, o, n) -> {
+            if (workbook != null) {
+                Sheet sheet = n.getSheet();
+                workbook.setCurrentSheet(sheet);
+                currentViewZoomProperty.set(sheet.getZoom());
+            }
+        });
+        currentViewZoomProperty.addListener((v, o, n) -> {
+           getCurrentView().map(FxSheetView::getSheet).ifPresent(sheet -> sheet.setZoom(n.floatValue()));
+        });
 
         setCenter(content);
 
@@ -81,6 +94,26 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
                 event.consume();
             }
         });
+    }
+
+    /**
+     * Provides the property representing the currently visible {@link FxSheetView}
+     * in this workbook view.
+     *
+     * @return an {@link ObjectProperty} representing the current {@link FxSheetView}.
+     */
+    public ObjectProperty<FxSheetView> currentViewProperty() {
+        return currentViewProperty;
+    }
+
+    /**
+     * Provides the property representing the zoom level of the currently visible
+     * {@link FxSheetView} within this workbook view.
+     *
+     * @return a {@link FloatProperty} representing the zoom level of the current view
+     */
+    public FloatProperty currentViewZoomProperty() {
+        return currentViewZoomProperty;
     }
 
     /**

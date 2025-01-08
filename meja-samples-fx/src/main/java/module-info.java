@@ -11,6 +11,7 @@ open module com.dua3.meja.fx.samples {
     requires com.dua3.utility.logging.log4j;
     requires com.dua3.utility.fx;
     requires com.dua3.utility.fx.controls;
+    requires com.dua3.utility.fx.icons;
     requires org.apache.logging.log4j;
     requires org.jspecify;
     requires javafx.base;

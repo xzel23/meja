@@ -10,7 +10,9 @@ import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.text.RichText;
 import javafx.application.Platform;
+import javafx.beans.property.FloatProperty;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -48,6 +50,8 @@ public class FxSheetView extends StackPane implements SheetView {
     private final ScrollBar hScrollbar;
     private final ScrollBar vScrollbar;
 
+    private final FloatProperty scaleProperty = new SimpleFloatProperty();
+
     /**
      * Constructs a new instance of FxSheetView using the specified Sheet object.
      * Initializes the layout and scrollbars, and sets up the view quadrants based on the provided sheet.
@@ -60,6 +64,7 @@ public class FxSheetView extends StackPane implements SheetView {
 
         this.delegate = new FxSheetViewDelegate(sheet, this);
         this.gridPane = new GridPane();
+        this.scaleProperty.setValue(sheet.getZoom());
 
         updateDelegate(sheet);
 

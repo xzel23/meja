@@ -4,6 +4,8 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.model.SheetEvent.RowsAdded;
+import javafx.beans.property.FloatProperty;
+import javafx.beans.property.SimpleFloatProperty;
 import javafx.collections.ObservableListBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +22,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
     private static final Logger LOG = LogManager.getLogger(ObservableSheet.class);
 
     private final Sheet sheet;
+    private final FloatProperty zoomProperty;
 
     /**
      * Constructs an ObservableSheet that wraps a given {@code Sheet}.
@@ -31,6 +34,11 @@ public class ObservableSheet extends ObservableListBase<Row> {
     public ObservableSheet(Sheet sheet) {
         this.sheet = sheet;
         this.sheet.subscribe(new SheetTracker());
+        this.zoomProperty = new SimpleFloatProperty(sheet.getZoom());
+
+        zoomProperty.addListener((v, o, n) -> {
+            sheet.setZoom(n.floatValue());
+        });
     }
 
     @Override
@@ -59,6 +67,8 @@ public class ObservableSheet extends ObservableListBase<Row> {
                 beginChange();
                 nextAdd(rowsAdded.first(), rowsAdded.last());
                 endChange();
+            } else if (item instanceof SheetEvent.ZoomChanged zoomChanged) {
+                zoomProperty.setValue(zoomChanged.newValue());
             }
         }
 
