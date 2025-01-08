@@ -6,6 +6,7 @@ import com.dua3.meja.ui.CellRenderer;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxGraphics;
+import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
@@ -71,7 +72,7 @@ public class FxRow extends IndexedCell<RowProxy> {
      * @return the height of the row in points
      */
     public float getRowHeightInPoints() {
-        assert Platform.isFxApplicationThread() : "not on FxApplication thread";
+        PlatformHelper.checkApplicationThread();
 
         sheetViewDelegate.updateLayout();
         int idx = getIndex();
