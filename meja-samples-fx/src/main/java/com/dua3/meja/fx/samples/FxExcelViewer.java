@@ -58,6 +58,7 @@ public class FxExcelViewer extends Application {
                         .min(0.25)
                         .max(2)
                         .bind(fxWorkbookView.currentViewZoomProperty())
+                        .blockIncrement(0.25)
                         .build()
         );
 
