@@ -128,7 +128,11 @@ public class FxSheetView extends StackPane implements SheetView {
 
         observableSheet.zoomProperty().addListener((v, o, n) -> {
             if (!Objects.equals(n, o)) {
-                PlatformHelper.runLater(this::updateLayout);
+                PlatformHelper.runLater(() -> {
+                    if (Objects.equals(observableSheet.zoomProperty().get(), n)) {
+                        updateLayout();
+                    }
+                });
             }
         });
     }
