@@ -5,7 +5,7 @@ plugins {
 description = "Meja spreadsheet library - samples (JavaFX)"
 
 val javaToolVersion = JavaLanguageVersion.of(21)
-val javaCompatibility = JavaVersion.VERSION_17
+val javaCompatibility = JavaVersion.VERSION_21
 
 java {
     toolchain { languageVersion.set(javaToolVersion) }
@@ -34,6 +34,7 @@ dependencies {
     implementation(rootProject.libs.dua3.utility.fx)
     implementation(rootProject.libs.dua3.utility.fx.controls)
     implementation(rootProject.libs.dua3.utility.fx.icons.ikonli)
+    implementation(rootProject.libs.dua3.fx.application)
 
     // ikonli is used by fx-icons-ikonli; since there are dozens of icon packs, we must specify the ones to include here
     runtimeOnly(libs.ikonli.feather)

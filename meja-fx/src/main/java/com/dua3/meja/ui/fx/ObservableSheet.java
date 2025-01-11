@@ -51,6 +51,10 @@ public class ObservableSheet extends ObservableListBase<Row> {
         return sheet.getRowCount();
     }
 
+    public FloatProperty zoomProperty() {
+        return zoomProperty;
+    }
+
     private class SheetTracker implements Flow.Subscriber<SheetEvent> {
 
         private Flow.@Nullable Subscription subscription;

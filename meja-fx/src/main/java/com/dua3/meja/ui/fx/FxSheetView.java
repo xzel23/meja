@@ -2,7 +2,6 @@ package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
-import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.fx.FxUtil;
@@ -10,10 +9,7 @@ import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.text.RichText;
 import javafx.application.Platform;
-import javafx.beans.property.FloatProperty;
 import javafx.beans.property.Property;
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollBar;
@@ -30,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.awt.Toolkit;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -50,8 +47,6 @@ public class FxSheetView extends StackPane implements SheetView {
     private final ScrollBar hScrollbar;
     private final ScrollBar vScrollbar;
 
-    private final FloatProperty scaleProperty = new SimpleFloatProperty();
-
     /**
      * Constructs a new instance of FxSheetView using the specified Sheet object.
      * Initializes the layout and scrollbars, and sets up the view quadrants based on the provided sheet.
@@ -64,17 +59,16 @@ public class FxSheetView extends StackPane implements SheetView {
 
         this.delegate = new FxSheetViewDelegate(sheet, this);
         this.gridPane = new GridPane();
-        this.scaleProperty.setValue(sheet.getZoom());
 
         updateDelegate(sheet);
 
         // Create quadrants
-        ObservableList<Row> rows = new ObservableSheet(sheet);
+        ObservableSheet observableSheet = new ObservableSheet(sheet);
 
-        topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, rows);
-        topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, rows);
-        bottomLeftQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_LEFT, rows);
-        bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, rows);
+        topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, observableSheet);
+        topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, observableSheet);
+        bottomLeftQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_LEFT, observableSheet);
+        bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, observableSheet);
 
         updateContent();
 
@@ -131,6 +125,12 @@ public class FxSheetView extends StackPane implements SheetView {
         setOnKeyPressed(this::onKeyPressed);
 
         updateContent();
+
+        observableSheet.zoomProperty().addListener((v, o, n) -> {
+            if (!Objects.equals(n, o)) {
+                PlatformHelper.runLater(this::updateLayout);
+            }
+        });
     }
 
     private static ColumnConstraints columnConstraints(Priority prio) {
@@ -296,6 +296,10 @@ public class FxSheetView extends StackPane implements SheetView {
         });
     }
 
+    public void updateLayout() {
+
+    }
+
     @Override
     public void updateContent() {
         LOG.debug("updateContent()");
@@ -305,6 +309,12 @@ public class FxSheetView extends StackPane implements SheetView {
             lock.lock();
             try {
                 updateDelegate(getSheet());
+
+                topLeftQuadrant.updateLayout();
+                topRightQuadrant.updateLayout();
+                bottomLeftQuadrant.updateLayout();
+                bottomRightQuadrant.updateLayout();
+
                 topLeftQuadrant.refresh();
                 topRightQuadrant.refresh();
                 bottomLeftQuadrant.refresh();

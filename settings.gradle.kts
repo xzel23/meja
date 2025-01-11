@@ -33,12 +33,14 @@ dependencyResolutionManagement {
             plugin("spotbugs", "com.github.spotbugs").version("6.0.27")
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
 
-            version("dua3-utility", "15.1.0")
+            version("dua3-utility", "15.1.1")
+            version("dua3-fx", "1.0.4-SNAPSHOT")
             version("ikonli", "12.3.1")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.24.3")
             version("poi", "5.3.0")
 
+            library("dua3-fx-application", "com.dua3.fx", "fx-application").versionRef("dua3-fx")
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
             library("dua3-utility-db", "com.dua3.utility", "utility-db").versionRef("dua3-utility")
             library("dua3-utility-logging", "com.dua3.utility", "utility-logging").versionRef("dua3-utility")

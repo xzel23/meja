@@ -1,5 +1,6 @@
 package com.dua3.meja.fx.samples;
 
+import com.dua3.fx.application.FxApplicationHelper;
 import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.fx.controls.Controls;
@@ -21,9 +22,13 @@ import java.io.IOException;
  * The {@code FxExcelViewer} class provides a JavaFX application for viewing
  * spreadsheet files. This application allows users to open and displayExcel files.
  */
-public class FxExcelViewer extends Application {
+public class FxExcelViewer {
 
-    private final FxWorkbookView fxWorkbookView = new FxWorkbookView();
+    private static final String APP_NAME = "Meja Spreadsheet Viewer";
+    private static final String APP_VERSION = "0.1";
+    private static final String COPYRIGHT = "2025";
+    private static final String DEVELOPER_MAIL = "axh@dua3.com";
+    private static final String APP_DESCRIPTION = "Spreadsheet viewer application";
 
     /**
      * The main entry point for the JavaFX application. This method launches the
@@ -32,62 +37,76 @@ public class FxExcelViewer extends Application {
      * @param args the command-line arguments passed to the application
      */
     public static void main(String[] args) {
-        launch(args);
+        FxApplicationHelper.runApplication(
+                FxExcelViewerApplication.class.getName(),
+                args,
+                APP_NAME,
+                APP_VERSION,
+                COPYRIGHT,
+                DEVELOPER_MAIL,
+                APP_DESCRIPTION
+        );
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Spreadsheet Viewer");
+    public static class FxExcelViewerApplication extends Application {
+        private final FxWorkbookView fxWorkbookView = new FxWorkbookView();
 
-        // create menu
-        MenuBar menuBar = new MenuBar(
-                Controls.menu("File",
-                        Controls.menuItem("Open", () -> openSpreadsheet(primaryStage)),
-                        Controls.menuItem("Exit", Platform::exit)
-                )
-        );
-        menuBar.setUseSystemMenuBar(true);
+        @Override
+        public void start(Stage primaryStage) {
+            primaryStage.setTitle("Spreadsheet Viewer");
 
-        // create tool bar
-        ToolBar toolBar = new ToolBar(
-                Controls.button().graphic(
-                        Controls.graphic("fth-folder"))
-                        .action(() -> openSpreadsheet(primaryStage))
-                        .build(),
-                Controls.slider()
-                        .min(0.25)
-                        .max(2)
-                        .bind(fxWorkbookView.currentViewZoomProperty())
-                        .blockIncrement(0.25)
-                        .build()
-        );
+            FxApplicationHelper.showLogWindow(primaryStage);
 
-        // layout
-        VBox root = new VBox();
-        VBox.setVgrow(fxWorkbookView, Priority.ALWAYS);
-        root.getChildren().addAll(menuBar, toolBar, fxWorkbookView);
+            // create menu
+            MenuBar menuBar = new MenuBar(
+                    Controls.menu("File",
+                            Controls.menuItem("Open", () -> openSpreadsheet(primaryStage)),
+                            Controls.menuItem("Exit", Platform::exit)
+                    )
+            );
+            menuBar.setUseSystemMenuBar(true);
 
-        Scene scene = new Scene(root, 800, 600);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+            // create toolbar
+            ToolBar toolBar = new ToolBar(
+                    Controls.button().graphic(
+                                    Controls.graphic("fth-folder"))
+                            .action(() -> openSpreadsheet(primaryStage))
+                            .build(),
+                    Controls.slider()
+                            .min(0.25)
+                            .max(2)
+                            .bind(fxWorkbookView.currentViewZoomProperty())
+                            .blockIncrement(0.25)
+                            .build()
+            );
 
-    // Method to open a spreadsheet and display it in the FxWorkbookView
-    private void openSpreadsheet(Stage stage) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Spreadsheets", "*.xlsx", "*.xls")
-        );
+            // layout
+            VBox root = new VBox();
+            VBox.setVgrow(fxWorkbookView, Priority.ALWAYS);
+            root.getChildren().addAll(menuBar, toolBar, fxWorkbookView);
 
-        File selectedFile = fileChooser.showOpenDialog(stage);
-        if (selectedFile != null) {
-            try {
-                fxWorkbookView.setWorkbook(MejaHelper.openWorkbook(selectedFile.toURI()));
-            } catch (IOException e) {
-                Dialogs.error(fxWorkbookView.getScene().getWindow())
-                        .title("Error opening spreadsheet")
-                        .text("Could not open spreadsheet: " + e.getMessage())
-                        .showAndWait();
+            Scene scene = new Scene(root, 800, 600);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        }
+
+        // Method to open a spreadsheet and display it in the FxWorkbookView
+        private void openSpreadsheet(Stage stage) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Spreadsheets", "*.xlsx", "*.xls")
+            );
+
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                try {
+                    fxWorkbookView.setWorkbook(MejaHelper.openWorkbook(selectedFile.toURI()));
+                } catch (IOException e) {
+                    Dialogs.error(fxWorkbookView.getScene().getWindow())
+                            .title("Error opening spreadsheet")
+                            .text("Could not open spreadsheet: " + e.getMessage())
+                            .showAndWait();
+                }
             }
         }
     }
