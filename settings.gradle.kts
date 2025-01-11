@@ -33,7 +33,7 @@ dependencyResolutionManagement {
             plugin("spotbugs", "com.github.spotbugs").version("6.0.27")
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
 
-            version("dua3-utility", "15.1.1")
+            version("dua3-utility", "15.1.2-SNAPSHOT")
             version("dua3-fx", "1.0.4-SNAPSHOT")
             version("ikonli", "12.3.1")
             version("jspecify", "1.0.0")
