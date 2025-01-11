@@ -360,6 +360,8 @@ public class FxRow extends IndexedCell<RowProxy> {
     private void onMouseClicked(MouseEvent evt) {
         LOG.debug("onMouseClicked({})", evt);
 
+        sheetViewDelegate.requestFocus();
+
         double xSheet = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getStartColumn()) + evt.getX() / sheetViewDelegate.getScale().sx();
 
         //noinspection OptionalOfNullableMisuse - false positive
