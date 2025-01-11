@@ -39,7 +39,10 @@ dependencies {
     // ikonli is used by fx-icons-ikonli; since there are dozens of icon packs, we must specify the ones to include here
     runtimeOnly(libs.ikonli.feather)
 
+    implementation(rootProject.libs.log4j.api)
     implementation(rootProject.libs.log4j.core)
+    runtimeOnly(rootProject.libs.log4j.jcl)
+    runtimeOnly(rootProject.libs.log4j.jul)
 }
 
 val runExcelViewer = task<JavaExec>("runExcelViewer") {

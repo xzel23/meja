@@ -71,7 +71,7 @@ public class FxSegmentView extends Control implements SegmentView {
     }
 
     static class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends VirtualFlow<T> {
-        VirtualFlowWithHiddenScrollBars(SheetView.Quadrant quadrant) {
+        VirtualFlowWithHiddenScrollBars() {
             getHbar().setPrefHeight(0);
             getHbar().setOpacity(0);
             getVbar().setPrefWidth(0);
@@ -129,7 +129,7 @@ public class FxSegmentView extends Control implements SegmentView {
         this.svDelegate = svDelegate;
         this.segmentDelegate = new SegmentViewDelegate(this, svDelegate, quadrant);
         this.rows = filterRows(observableSheet, quadrant, svDelegate.getSplitRow());
-        this.flow = new VirtualFlowWithHiddenScrollBars<>(quadrant);
+        this.flow = new VirtualFlowWithHiddenScrollBars<>();
 
         updateLayout();
 

@@ -63,13 +63,17 @@ public class RowProxy {
     }
 
     /**
-     * Returns a {@code RowProxy} object representing the given row. If the row is null, it returns {@link RowProxy#ROW_PROXY_EMPTY}.
+     * Returns a {@code RowProxy} object representing the given row.
      *
      * @param row the row to create a RowProxy for
      * @return a RowProxy object representing the given row, or ROW_PROXY_EMPTY if row is null
      */
-    public static RowProxy row(@Nullable Row row) {
-        return row == null ? ROW_PROXY_EMPTY : new RowProxy(Type.ROW, row);
+    public static RowProxy row(Row row) {
+        return new RowProxy(Type.ROW, row);
+    }
+
+    public static RowProxy virtualRow(int rowNumber) {
+        return new VirtualRowProxy(rowNumber);
     }
 
     /**
@@ -89,5 +93,23 @@ public class RowProxy {
     public Row getRow() {
         assert type == Type.ROW && row != null;
         return row;
+    }
+
+    public int getRowNumber() {
+        return row.getRowNumber();
+    }
+
+    private static class VirtualRowProxy extends RowProxy {
+        private final int rowNumber;
+
+        public VirtualRowProxy(int rowNumber) {
+            super(Type.ROW, null);
+            this.rowNumber = rowNumber;
+        }
+
+        @Override
+        public int getRowNumber() {
+            return rowNumber;
+        }
     }
 }

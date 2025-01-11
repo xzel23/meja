@@ -6,6 +6,7 @@ import com.dua3.meja.ui.CellRenderer;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.fx.FxGraphics;
+import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
@@ -19,6 +20,7 @@ import javafx.scene.control.IndexedCell;
 import javafx.scene.control.Skin;
 import javafx.scene.control.Skinnable;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Affine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -32,6 +34,7 @@ import java.util.stream.IntStream;
  */
 public class FxRow extends IndexedCell<RowProxy> {
     private static final Logger LOG = LogManager.getLogger(FxRow.class);
+    public static final Affine IDENTITY_TRANSFORMATION = FxUtil.convert(AffineTransformation2f.IDENTITY);
 
     private final ObservableList<Row> rows;
 
@@ -121,24 +124,29 @@ public class FxRow extends IndexedCell<RowProxy> {
         if (i < 0) {
             // empty row
             updateItem(RowProxy.ROW_PROXY_EMPTY, true);
+            return;
         } else if (segmentViewDelegate.isAboveSplit()) {
             // row is above split
             if (i == 0) {
                 // row 0 is the column headers
                 updateItem(RowProxy.ROW_PROXY_CLOLUMN_LABELS, false);
+                return;
             } else {
                 i--; // adjust i because of inserted column header row
                 if (i == rows.size()) {
+                    // row is the split line
                     updateItem(RowProxy.ROW_PROXY_SPLIT_LINE, false);
-                } else {
-                    Row row = i < rows.size() ? rows.get(i) : null;
-                    updateItem(RowProxy.row(row), row == null);
+                    return;
                 }
             }
+        }
+
+        if (i < rows.size()) {
+            updateItem(RowProxy.row(rows.get(i)), false);
         } else {
-            // row is below split
-            Row row = i < rows.size() ? rows.get(i) : null;
-            updateItem(RowProxy.row(row), row == null);
+            int j = i + 1 - rows.size();
+            int rowNumber = j + (rows.isEmpty() ? 0 : rows.get(rows.size() - 1).getRowNumber());
+            updateItem(RowProxy.virtualRow(rowNumber), false);
         }
     }
 
@@ -191,26 +199,46 @@ public class FxRow extends IndexedCell<RowProxy> {
     }
 
     private void render() {
-        RowProxy item = getItem();
-        switch (item.getType()) {
-            case ROW -> renderRow(item.getRow());
-            case EMPTY -> {}
-            case CLOUMN_LABELS -> renderColumnLabels();
-            case SPLIT_LINE -> renderSplitLine();
+        sheetViewDelegate.readLock().lock();
+        try {
+            RowProxy item = getItem();
+            switch (item.getType()) {
+                case ROW -> renderRow(item.getRowNumber(), item.getRow());
+                case EMPTY -> renderEmpty();
+                case CLOUMN_LABELS -> renderColumnLabels();
+                case SPLIT_LINE -> renderSplitLine();
+            }
+        } finally {
+            sheetViewDelegate.readLock().unlock();
         }
     }
 
-    private void renderRow(Row row) {
-        float w = segmentViewDelegate.getWidthInPixels();
-        float h = getRowHeightInPixels();
+    private void renderEmpty() {
+        Canvas canvas = (Canvas) getGraphic();
+        canvas.setVisible(false);
+    }
 
+    private GraphicsContext prepareGraphicsContext(float w, float h) {
         Canvas canvas = (Canvas) getGraphic();
 
         canvas.setWidth(w);
         canvas.setHeight(h);
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setTransform(IDENTITY_TRANSFORMATION);
+
         gc.clearRect(0, 0, w, h);
+
+        canvas.setVisible(true);
+
+        return gc;
+    }
+
+    private void renderRow(int rowNumber, @Nullable Row row) {
+        float w = segmentViewDelegate.getWidthInPixels();
+        float h = getRowHeightInPixels();
+
+        GraphicsContext gc = prepareGraphicsContext(w, h);
 
         FxSheetViewDelegate sheetViewDelegate = getSheetViewDelegate();
         sheetViewDelegate.updateLayout();
@@ -225,27 +253,28 @@ public class FxRow extends IndexedCell<RowProxy> {
 
         CellRenderer cellRenderer = new CellRenderer(sheetViewDelegate);
 
-        try (FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight())) {
+        try (FxGraphics g = new FxGraphics(gc, w, h)) {
+            float sheetX = sheetViewDelegate.getColumnPos(segmentViewDelegate.getStartColumn());
+            float sheetWidth = sheetViewDelegate.getSheetWidthInPoints();
+            float rowHeight = sheetViewDelegate.getRowHeightInPoints(rowNumber);
+
             // clear background
             g.setFill(sheetViewDelegate.getBackground());
-            g.fillRect(g.getBounds());
+            g.fillRect(sheetX, 0, sheetWidth, rowHeight);
 
-            float widthInPoints = segmentViewDelegate.getWidthInPoints();
             float rowHeightInPoints = getRowHeightInPoints();
 
             // draw grid lines
             g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxHeightInPoints());
-            float x = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getStartColumn());
-            float y = rowHeightInPoints;
-            g.strokeLine(x, y, widthInPoints, y);
+            g.strokeLine(sheetX, rowHeightInPoints, sheetWidth, rowHeightInPoints);
 
             g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxWidthInPoints());
             for (int j = segmentViewDelegate.getStartColumn(); j <= segmentViewDelegate.getEndColumn(); j++) {
-                x = sheetViewDelegate.getColumnPos(j);
-                g.strokeLine(x, 0, x, h);
+                float x = sheetViewDelegate.getColumnPos(j);
+                g.strokeLine(x, 0, x, rowHeight);
             }
 
-            int i = row.getRowNumber();
+            int i = rowNumber;
 
             g.setTransformation(AffineTransformation2f.translate(0, -sheetViewDelegate.getRowPos(i)));
 
@@ -271,13 +300,15 @@ public class FxRow extends IndexedCell<RowProxy> {
                 sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getColumnName(j));
 
                 // draw cell
-                row.getCellIfExists(j).ifPresent(cell -> cellRenderer.drawCell(g, cell.getLogicalCell()));
+                if (row != null) {
+                    row.getCellIfExists(j).ifPresent(cell -> cellRenderer.drawCell(g, cell.getLogicalCell()));
+                }
             }
 
             if (segmentViewDelegate.hasVLine()) {
                 g.setStroke(Color.BLACK, sheetViewDelegate.get1PxWidthInPoints());
-                x = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getEndColumn()) + getSheetViewDelegate().get1PxWidthInPoints();
-                y = sheetViewDelegate.getRowPos(i);
+                float x = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getEndColumn()) + getSheetViewDelegate().get1PxWidthInPoints();
+                float y = sheetViewDelegate.getRowPos(i);
                 g.strokeLine(x, y, x, y + getRowHeightInPoints());
             }
 
@@ -296,21 +327,15 @@ public class FxRow extends IndexedCell<RowProxy> {
         float w = segmentViewDelegate.getWidthInPixels();
         float h = sheetViewDelegate.getColumnLabelHeightInPixels();
 
-        Canvas canvas = (Canvas) getGraphic();
-
-        canvas.setWidth(w);
-        canvas.setHeight(h);
+        GraphicsContext gc = prepareGraphicsContext(w, h);
 
         Scale2f s = sheetViewDelegate.getScale();
-
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, w, h);
 
         float translateX = s.sx() * getSegmentViewDelegate().getXOffset();
         float translateY = 0;
         gc.setTransform(s.sx(), 0, 0, s.sy(), translateX, translateY);
 
-        try (FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight())) {
+        try (FxGraphics g = new FxGraphics(gc, w, h)) {
             // clear background
             g.setFill(sheetViewDelegate.getBackground());
             g.fillRect(g.getBounds());
@@ -343,15 +368,9 @@ public class FxRow extends IndexedCell<RowProxy> {
         float w = segmentViewDelegate.getWidthInPixels();
         float h = 1;
 
-        Canvas canvas = (Canvas) getGraphic();
+        GraphicsContext gc = prepareGraphicsContext(w, h);
 
-        canvas.setWidth(w);
-        canvas.setHeight(h);
-
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, w, h);
-
-        try (FxGraphics g = new FxGraphics(gc, (float) canvas.getWidth(), (float) canvas.getHeight())) {
+        try (FxGraphics g = new FxGraphics(gc, w, h)) {
             g.setFill(Color.BLACK);
             g.fillRect(g.getBounds());
         }

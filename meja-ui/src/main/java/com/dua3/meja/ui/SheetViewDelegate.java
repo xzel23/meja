@@ -284,7 +284,11 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
      * @return the rowPos
      */
     public float getRowPos(int i) {
-        return rowPos[MathUtil.clamp(0, rowPos.length - 1, i)];
+        if (i < rowPos.length) {
+            return rowPos[i];
+        } else {
+            return rowPos[rowPos.length - 1] + (i - rowPos.length + 1) * getDefaultRowHeightInPoints();
+        }
     }
 
     @Override
@@ -688,7 +692,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent>, 
     }
 
     public float getRowHeightInPoints(int i) {
-        return rowPos[i + 1] - rowPos[i];
+        return i + 1 < rowPos.length ? rowPos[i + 1] - rowPos[i] : defaultRowHeightInPoints;
     }
 
     public float getColumnLabelHeightInPixels() {
