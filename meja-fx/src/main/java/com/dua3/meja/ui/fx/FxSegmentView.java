@@ -6,6 +6,7 @@ import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.Scale2f;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Control;
@@ -15,6 +16,7 @@ import javafx.scene.control.SkinBase;
 import javafx.scene.control.skin.VirtualFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 /**
  * FxSegmentView is a JavaFX control that implements the {@link SegmentView} interface,
@@ -56,7 +58,8 @@ public class FxSegmentView extends Control implements SegmentView {
      */
     private int getFlowIndex(int rowIndex) {
         for (int i = 0; i < rows.size(); i++) {
-            if (rows.get(i).getRowNumber() == rowIndex) {
+            Row row = rows.get(i);
+            if (row != null && row.getRowNumber() == rowIndex) {
                 return i;
             }
         }
@@ -103,7 +106,7 @@ public class FxSegmentView extends Control implements SegmentView {
          * cells are reconstructed and displayed according to the current data and state.
          */
         public void refresh() {
-            rebuildCells();
+            recreateCells();
         }
     }
 
@@ -111,7 +114,7 @@ public class FxSegmentView extends Control implements SegmentView {
     private final SegmentViewDelegate segmentDelegate;
     private final SheetView.Quadrant quadrant;
     final VirtualFlowWithHiddenScrollBars<FxRow> flow;
-    private final ObservableList<Row> rows;
+    private final ObservableList<@Nullable Row> rows;
 
     /**
      * Constructs an instance of FxSegmentView, responsible for displaying a specific quadrant
@@ -135,6 +138,15 @@ public class FxSegmentView extends Control implements SegmentView {
 
         flow.setCellFactory(f -> new FxRow(rows, segmentDelegate));
         flow.setCellCount(rows.size());
+
+        this.rows.addListener((ListChangeListener<? super Row>) change -> {
+            PlatformHelper.runLater(() -> {
+                try (var __ = svDelegate.readLock()) {
+                    flow.setCellCount(rows.size());
+                    flow.refresh();
+                }
+            });
+        });
 
         FxSegmentViewSkin skin = new FxSegmentViewSkin(this);
         setSkin(skin);

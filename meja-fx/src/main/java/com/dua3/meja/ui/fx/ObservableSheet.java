@@ -18,7 +18,7 @@ import java.util.concurrent.Flow;
  * It extends {@code ObservableListBase<Row>} to provide the necessary observable list functionalities.
  * Internally, it subscribes to sheet events and updates the observable list accordingly.
  */
-public class ObservableSheet extends ObservableListBase<Row> {
+public class ObservableSheet extends ObservableListBase<@Nullable Row> {
     private static final Logger LOG = LogManager.getLogger(ObservableSheet.class);
 
     private final Sheet sheet;
@@ -42,8 +42,8 @@ public class ObservableSheet extends ObservableListBase<Row> {
     }
 
     @Override
-    public Row get(int index) {
-        return sheet.getRow(index);
+    public @Nullable Row get(int index) {
+        return sheet.getRowIfExists(index).orElse(null);
     }
 
     @Override

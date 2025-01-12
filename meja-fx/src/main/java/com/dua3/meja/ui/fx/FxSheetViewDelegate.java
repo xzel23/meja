@@ -2,6 +2,7 @@ package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetViewDelegate;
+import com.dua3.utility.fx.PlatformHelper;
 
 /**
  * Represents a delegate specific to the FxSheetView, extending the general functionality provided by the
@@ -26,4 +27,9 @@ public class FxSheetViewDelegate extends SheetViewDelegate {
         super(sheet, owner);
     }
 
+    @Override
+    public void updateLayout() {
+        PlatformHelper.checkApplicationThread();
+        super.updateLayout();
+    }
 }

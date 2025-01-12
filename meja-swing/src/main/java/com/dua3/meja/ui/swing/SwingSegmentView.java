@@ -22,7 +22,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.locks.Lock;
 import java.util.function.Function;
 
 final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
@@ -164,9 +163,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
     protected void paintComponent(Graphics g) {
         LOG.debug("paintComponent(): ({},{}) - ({},{})", ssvDelegate.getStartRow(), ssvDelegate.getStartColumn(), ssvDelegate.getEndRow(), ssvDelegate.getEndColumn());
 
-        Lock lock = svDelegate.readLock();
-        lock.lock();
-        try {
+        try (var __ = svDelegate.readLock()) {
             // clear background by calling super method
             super.paintComponent(g);
 
@@ -195,8 +192,6 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                     sg.strokeLine(xSplit, -svDelegate.getColumnLabelHeightInPoints(), xSplit, svDelegate.getSheetHeightInPoints());
                 }
             }
-        } finally {
-            lock.unlock();
         }
     }
 
@@ -215,13 +210,14 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             return;
         }
 
-        Rectangle2f r = svDelegate.getCellRect(cell);
-        AffineTransformation2f t = ssvDelegate.getTransformation();
-        Rectangle bounds = SwingGraphics.convert(Rectangle2f.withCorners(
-                t.transform(r.min()),
-                t.transform(r.max())
-        ));
-
-        scrollRectToVisible(bounds);
+        try (var __ = svDelegate.readLock()) {
+            Rectangle2f r = svDelegate.getCellRect(cell);
+            AffineTransformation2f t = ssvDelegate.getTransformation();
+            Rectangle bounds = SwingGraphics.convert(Rectangle2f.withCorners(
+                    t.transform(r.min()),
+                    t.transform(r.max())
+            ));
+            scrollRectToVisible(bounds);
+        }
     }
 }

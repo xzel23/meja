@@ -38,7 +38,7 @@ dependencyResolutionManagement {
             version("ikonli", "12.3.1")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.24.3")
-            version("poi", "5.3.0")
+            version("poi", "5.4.0")
 
             library("dua3-fx-application", "com.dua3.fx", "fx-application").versionRef("dua3-fx")
             library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")

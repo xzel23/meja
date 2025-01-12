@@ -3,7 +3,6 @@ package com.dua3.meja.ui;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Scale2f;
-import javafx.application.Platform;
 
 import java.util.concurrent.locks.Lock;
 
@@ -184,8 +183,6 @@ public class SegmentViewDelegate {
      * where segments might be positioned above, below, left, or right of splits.
      */
     public void updateLayout() {
-        assert Platform.isFxApplicationThread() : "not on application thread";
-
         Lock lock = getSheet().readLock();
         lock.lock();
         try {

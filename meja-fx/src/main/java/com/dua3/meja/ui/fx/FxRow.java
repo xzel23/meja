@@ -11,7 +11,6 @@ import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -23,23 +22,28 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Affine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 /**
  * A custom cell implementation for rendering rows in a spreadsheet. It extends the IndexedCell class and overrides several methods to customize the appearance and behavior of the
  *  cell.
  */
-public class FxRow extends IndexedCell<RowProxy> {
+public class FxRow extends IndexedCell<FxRow.Index> {
     private static final Logger LOG = LogManager.getLogger(FxRow.class);
+
+    public record Index(int rowIndex, int rowNumber) {}
+
     public static final Affine IDENTITY_TRANSFORMATION = FxUtil.convert(AffineTransformation2f.IDENTITY);
 
     private final ObservableList<Row> rows;
 
     private final FxSheetViewDelegate sheetViewDelegate;
     private final SegmentViewDelegate segmentViewDelegate;
+
+    private static final int ROW_INDEX_UNUSED = -1;
+    private static final int ROW_INDEX_COLUMN_LABELS = -2;
+    private static final int ROW_INDEX_SPLIT_LINE = -3;
 
     /**
      * A single row in a sheet view.
@@ -88,7 +92,7 @@ public class FxRow extends IndexedCell<RowProxy> {
             } else {
                 idx--;
                 if (idx < rows.size()) {
-                    return sheetViewDelegate.getRowHeightInPoints(rows.get(idx).getRowNumber());
+                    return sheetViewDelegate.getRowHeightInPoints(getItem().rowNumber());
                 } else {
                     return sheetViewDelegate.getDefaultRowHeightInPoints();
                 }
@@ -96,7 +100,7 @@ public class FxRow extends IndexedCell<RowProxy> {
         } else {
             return (idx < 0 || idx >= rows.size()
                     ? sheetViewDelegate.getDefaultRowHeightInPoints()
-                    : sheetViewDelegate.getRowHeightInPoints(rows.get(idx).getRowNumber()));
+                    : sheetViewDelegate.getRowHeightInPoints(getItem().rowNumber()));
         }
     }
 
@@ -119,46 +123,40 @@ public class FxRow extends IndexedCell<RowProxy> {
     public void updateIndex(int i) {
         LOG.trace("updateIndex({})", i);
 
+        PlatformHelper.checkApplicationThread();
+
         super.updateIndex(i);
 
+        int rowIdx = i;
         if (i < 0) {
             // empty row
-            updateItem(RowProxy.ROW_PROXY_EMPTY, true);
+            updateItem(new Index(ROW_INDEX_UNUSED, -1), true);
             return;
         } else if (segmentViewDelegate.isAboveSplit()) {
             // row is above split
             if (i == 0) {
                 // row 0 is the column headers
-                updateItem(RowProxy.ROW_PROXY_CLOLUMN_LABELS, false);
+                updateItem(new Index(ROW_INDEX_COLUMN_LABELS, -1), false);
                 return;
             } else {
-                i--; // adjust i because of inserted column header row
-                if (i == rows.size()) {
+                rowIdx--;
+                if (rowIdx == rows.size()) {
                     // row is the split line
-                    updateItem(RowProxy.ROW_PROXY_SPLIT_LINE, false);
+                    updateItem(new Index(ROW_INDEX_SPLIT_LINE, -1), false);
                     return;
                 }
             }
         }
 
-        if (i < rows.size()) {
-            updateItem(RowProxy.row(rows.get(i)), false);
-        } else {
-            int j = i + 1 - rows.size();
-            int rowNumber = j + (rows.isEmpty() ? 0 : rows.get(rows.size() - 1).getRowNumber());
-            updateItem(RowProxy.virtualRow(rowNumber), false);
-        }
+        int rowNumber = segmentViewDelegate.getStartRow() + rowIdx;
+        updateItem(new Index(rowIdx, rowNumber), false);
     }
 
     @Override
-    protected void updateItem(@Nullable RowProxy item, boolean empty) {
+    protected void updateItem(Index item, boolean empty) {
         LOG.trace("updateItem({}, {})", item, empty);
-
-        assert Platform.isFxApplicationThread() : "not on FxApplication thread";
-
-        //noinspection DataFlowIssue
+        PlatformHelper.checkApplicationThread();
         super.updateItem(item, empty);
-
         render();
     }
 
@@ -199,17 +197,14 @@ public class FxRow extends IndexedCell<RowProxy> {
     }
 
     private void render() {
-        sheetViewDelegate.readLock().lock();
-        try {
-            RowProxy item = getItem();
-            switch (item.getType()) {
-                case ROW -> renderRow(item.getRowNumber(), item.getRow());
-                case EMPTY -> renderEmpty();
-                case CLOUMN_LABELS -> renderColumnLabels();
-                case SPLIT_LINE -> renderSplitLine();
+        PlatformHelper.checkApplicationThread();
+        try (var __ = sheetViewDelegate.readLock()) {
+            switch (getItem().rowIndex()) {
+                case ROW_INDEX_UNUSED -> renderEmpty();
+                case ROW_INDEX_COLUMN_LABELS -> renderColumnLabels();
+                case ROW_INDEX_SPLIT_LINE -> renderSplitLine();
+                default -> renderRow();
             }
-        } finally {
-            sheetViewDelegate.readLock().unlock();
         }
     }
 
@@ -234,7 +229,12 @@ public class FxRow extends IndexedCell<RowProxy> {
         return gc;
     }
 
-    private void renderRow(int rowNumber, @Nullable Row row) {
+    private void renderRow() {
+        Index index = getItem();
+        int idx = index.rowIndex();
+        int rowNumber = index.rowNumber;
+        Row row = 0 <= idx && idx < rows.size() ? rows.get(idx) : null;
+
         float w = segmentViewDelegate.getWidthInPixels();
         float h = getRowHeightInPixels();
 
@@ -250,8 +250,6 @@ public class FxRow extends IndexedCell<RowProxy> {
                 ? -s.sy() * sheetViewDelegate.getRowPos(getSegmentViewDelegate().getStartRow())
                 : 0;
         gc.setTransform(s.sx(), 0, 0, s.sy(), translateX, translateY);
-
-        CellRenderer cellRenderer = new CellRenderer(sheetViewDelegate);
 
         try (FxGraphics g = new FxGraphics(gc, w, h)) {
             float sheetX = sheetViewDelegate.getColumnPos(segmentViewDelegate.getStartColumn());
@@ -289,6 +287,7 @@ public class FxRow extends IndexedCell<RowProxy> {
             sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getRowName(i));
 
             //  iterate over columns
+            CellRenderer cellRenderer = new CellRenderer(sheetViewDelegate);
             for (int j = segmentViewDelegate.getStartColumn(); j < segmentViewDelegate.getEndColumn(); j++) {
                 //  draw row label
                 r = new Rectangle2f(
@@ -301,7 +300,8 @@ public class FxRow extends IndexedCell<RowProxy> {
 
                 // draw cell
                 if (row != null) {
-                    row.getCellIfExists(j).ifPresent(cell -> cellRenderer.drawCell(g, cell.getLogicalCell()));
+                    row.getCellIfExists(j)
+                            .ifPresent(cell -> cellRenderer.drawCell(g, cell.getLogicalCell()));
                 }
             }
 
@@ -383,8 +383,7 @@ public class FxRow extends IndexedCell<RowProxy> {
 
         double xSheet = getSheetViewDelegate().getColumnPos(segmentViewDelegate.getStartColumn()) + evt.getX() / sheetViewDelegate.getScale().sx();
 
-        //noinspection OptionalOfNullableMisuse - false positive
-        int i = Optional.ofNullable(getItem()).map(RowProxy::getRow).map(Row::getRowNumber).orElse(-1);
+        int i = getItem().rowNumber();
         int j = IntStream.range(segmentViewDelegate.getStartColumn(), segmentViewDelegate.getEndColumn())
                 .filter(k -> getSheetViewDelegate().getColumnPos(k) <= xSheet && xSheet <= getSheetViewDelegate().getColumnPos(k + 1))
                 .findFirst()

@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import java.awt.Toolkit;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
 
 /**
  * The FxSheetView class is responsible for rendering a spreadsheet-like UI component,
@@ -241,42 +240,44 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.trace("scrollToCurrentCell()");
 
         Platform.runLater(() -> delegate.getCurrentLogicalCell().ifPresent(cell -> {
-            Sheet sheet = delegate.getSheet();
-            int i = cell.getRowNumber();
-            int j = cell.getColumnNumber();
-            int splitRow = sheet.getSplitRow();
-            if (i >= splitRow) {
-                i -= splitRow;
-                // at least part of the (possibly merged) cell is below the split => scroll row into view
-                FxSegmentView.VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomRightQuadrant.flow;
-                LOG.trace("scrolling row {} into view", i);
-                flow.scrollTo(i);
-            }
-            int splitColumn = sheet.getSplitColumn();
-            if (j >= splitColumn) {
-                // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
-                Scale2f s = delegate.getScale();
-                double split = delegate.getSplitX() * s.sx();
-                double xMin = delegate.getColumnPos(j) * s.sx() - split;
-                double xMax = delegate.getColumnPos(j + 1) * s.sx() - split;
-                double width = delegate.getColumnPos(delegate.getColumnCount()) * s.sx() - split;
+            try (var __ = delegate.readLock()) {
+                Sheet sheet = delegate.getSheet();
+                int i = cell.getRowNumber();
+                int j = cell.getColumnNumber();
+                int splitRow = sheet.getSplitRow();
+                if (i >= splitRow) {
+                    i -= splitRow;
+                    // at least part of the (possibly merged) cell is below the split => scroll row into view
+                    FxSegmentView.VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomRightQuadrant.flow;
+                    LOG.trace("scrolling row {} into view", i);
+                    flow.scrollTo(i);
+                }
+                int splitColumn = sheet.getSplitColumn();
+                if (j >= splitColumn) {
+                    // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
+                    Scale2f s = delegate.getScale();
+                    double split = delegate.getSplitX() * s.sx();
+                    double xMin = delegate.getColumnPos(j) * s.sx() - split;
+                    double xMax = delegate.getColumnPos(j + 1) * s.sx() - split;
+                    double width = delegate.getColumnPos(delegate.getColumnCount()) * s.sx() - split;
 
-                double sbVisibleAmount = hScrollbar.getVisibleAmount();
-                double sbMax = hScrollbar.getMax();
-                double sbMin = hScrollbar.getMin();
-                double sbValue = hScrollbar.getValue();
-                double sbRange = sbMax - sbMin;
-                double sbWidth = sbVisibleAmount + sbRange;
-                double visiblePercent = sbVisibleAmount / sbWidth;
+                    double sbVisibleAmount = hScrollbar.getVisibleAmount();
+                    double sbMax = hScrollbar.getMax();
+                    double sbMin = hScrollbar.getMin();
+                    double sbValue = hScrollbar.getValue();
+                    double sbRange = sbMax - sbMin;
+                    double sbWidth = sbVisibleAmount + sbRange;
+                    double visiblePercent = sbVisibleAmount / sbWidth;
 
-                double visibleMaxX = split + sbValue + width * visiblePercent;
+                    double visibleMaxX = split + sbValue + width * visiblePercent;
 
-                if (xMin < sbValue) {
-                    LOG.trace("scrolling to leftmost column");
-                    hScrollbar.setValue(xMin);
-                } else if (xMax > visibleMaxX) {
-                    LOG.trace("scrolling column {} into view", j);
-                    hScrollbar.setValue(Math.min(sbMax, xMax - width * visiblePercent - split));
+                    if (xMin < sbValue) {
+                        LOG.trace("scrolling to leftmost column");
+                        hScrollbar.setValue(xMin);
+                    } else if (xMax > visibleMaxX) {
+                        LOG.trace("scrolling column {} into view", j);
+                        hScrollbar.setValue(Math.min(sbMax, xMax - width * visiblePercent - split));
+                    }
                 }
             }
         }));
@@ -286,22 +287,31 @@ public class FxSheetView extends StackPane implements SheetView {
     public void repaintCell(Cell cell) {
         LOG.trace("repaintCell({})", cell);
 
-        Cell lc = cell.getLogicalCell();
-        int startRow = lc.getRowNumber();
-        int endRow = startRow + lc.getVerticalSpan();
-
         PlatformHelper.runLater(() -> {
-            for (int i = startRow; i < endRow; i++) {
-                topLeftQuadrant.requestLayoutForRow(i);
-                topRightQuadrant.requestLayoutForRow(i);
-                bottomLeftQuadrant.requestLayoutForRow(i);
-                bottomRightQuadrant.requestLayoutForRow(i);
+            try (var __ = delegate.readLock()) {
+                Cell lc = cell.getLogicalCell();
+                int startRow = lc.getRowNumber();
+                int endRow = startRow + lc.getVerticalSpan();
+                for (int i = startRow; i < endRow; i++) {
+                    topLeftQuadrant.requestLayoutForRow(i);
+                    topRightQuadrant.requestLayoutForRow(i);
+                    bottomLeftQuadrant.requestLayoutForRow(i);
+                    bottomRightQuadrant.requestLayoutForRow(i);
+                }
             }
         });
     }
 
     public void updateLayout() {
-
+        PlatformHelper.runAndWait(() -> {
+            try (var __ = delegate.writeLock()) {
+                updateDelegate(getSheet());
+                topLeftQuadrant.updateLayout();
+                topRightQuadrant.updateLayout();
+                bottomLeftQuadrant.updateLayout();
+                bottomRightQuadrant.updateLayout();
+            }
+        });
     }
 
     @Override
@@ -309,9 +319,7 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.debug("updateContent()");
 
         PlatformHelper.runAndWait(() -> {
-            Lock lock = delegate.writeLock();
-            lock.lock();
-            try {
+            try (var __ = delegate.readLock()) {
                 updateDelegate(getSheet());
 
                 topLeftQuadrant.updateLayout();
@@ -323,8 +331,6 @@ public class FxSheetView extends StackPane implements SheetView {
                 topRightQuadrant.refresh();
                 bottomLeftQuadrant.refresh();
                 bottomRightQuadrant.refresh();
-            } finally {
-                lock.unlock();
             }
         });
     }
