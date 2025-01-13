@@ -355,40 +355,32 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
     @Override
     public void onNext(SheetEvent item) {
-        LOG.trace("received event: {}", item);
+        LOG.trace("onNext() - {}", item);
 
         switch (item.type()) {
             case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED -> {
-                try (var __ = automaticReadLock()) {
-                    owner.updateContent();
-                }
+                owner.updateContent();
             }
             case SheetEvent.SPLIT_CHANGED -> {
-                try (var __ = automaticReadLock()) {
-                    owner.updateContent();
-                    owner.scrollToCurrentCell();
-                }
+                owner.updateContent();
+                owner.scrollToCurrentCell();
             }
             case SheetEvent.ACTIVE_CELL_CHANGED -> {
-                try (var __ = automaticReadLock()) {
-                    SheetEvent.ActiveCellChanged evt = (SheetEvent.ActiveCellChanged) item;
+                SheetEvent.ActiveCellChanged evt = (SheetEvent.ActiveCellChanged) item;
 
-                    Cell oldCell = evt.oldValue();
-                    Cell newCell = evt.newValue();
+                Cell oldCell = evt.oldValue();
+                Cell newCell = evt.newValue();
 
-                    if (oldCell != null) {
-                        owner.repaintCell(oldCell);
-                    }
-                    owner.scrollToCurrentCell();
-                    if (newCell != null) {
-                        owner.repaintCell(newCell);
-                    }
+                if (oldCell != null) {
+                    owner.repaintCell(oldCell);
+                }
+                owner.scrollToCurrentCell();
+                if (newCell != null) {
+                    owner.repaintCell(newCell);
                 }
             }
             case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED -> {
-                try (var __ = automaticReadLock()) {
-                    owner.repaintCell(((SheetEvent.CellChanged<?>) item).cell());
-                }
+                owner.repaintCell(((SheetEvent.CellChanged<?>) item).cell());
             }
             default -> {
             }
@@ -451,6 +443,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             return;
         }
 
+        LOG.trace("updateLayout()");
         try (var __ = automaticWriteLock()) {
             this.pixelWidthInPoints = 1.0f / scale.sx();
             this.pixelHeightInPoints = 1.0f / scale.sy();
@@ -530,6 +523,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setColumnNames(IntFunction<String> columnNames) {
+        LOG.trace("setColumnNames()");
         try (var __ = automaticWriteLock()) {
             this.columnNames = columnNames;
             markLayoutChanged();
@@ -545,18 +539,21 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public boolean setCurrentCell(int i, int j) {
+        LOG.trace("setCurrentCell()");
         try (var __ = automaticWriteLock()) {
             return sheet.setCurrentCell(i, j);
         }
     }
 
     public boolean setCurrentCell(Cell cell) {
+        LOG.trace("setCurrentCell()");
         try (var __ = automaticWriteLock()) {
             return sheet.setCurrentCell(cell);
         }
     }
 
     public void setRowNames(IntFunction<String> rowNames) {
+        LOG.trace("setRowNames()");
         try (var __ = automaticWriteLock()) {
             this.rowNames = rowNames;
             markLayoutChanged();
@@ -568,6 +565,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setScale(Scale2f scale) {
+        LOG.trace("setScale()");
         try (var __ = automaticReadLock()) {
             if (!scale.equals(this.scale)) {
                 this.scale = scale;
@@ -577,6 +575,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setDisplayScale(Scale2f displayScale) {
+        LOG.trace("setDisplayScale()");
         try (var __ = automaticReadLock()) {
             if (!displayScale.equals(this.displayScale)) {
                 this.displayScale = displayScale;
@@ -598,8 +597,30 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void move(Direction d) {
+        LOG.trace("move()");
         try (var __ = automaticWriteLock()) {
             getCurrentLogicalCell().ifPresent(cell -> {
+                switch (d) {
+                    case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
+                    case SOUTH -> setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
+                    case WEST -> setCurrentColNum(cell.getColumnNumber() - 1);
+                    case EAST -> setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
+                }
+            });
+        }
+    }
+
+    /**
+     * Move the selection rectangle to an adjacent cell.
+     *
+     * @param d direction
+     */
+    public void movePage(Direction d) {
+        LOG.trace("movePage()");
+        try (var __ = automaticWriteLock()) {
+            getCurrentLogicalCell().ifPresent(cell -> {
+                Rectangle2f cellRect = getCellRect(cell.getLogicalCell());
+                //cellRect.yMin() - this.getVisibleAreaInSheet();
                 switch (d) {
                     case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
                     case SOUTH -> setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
@@ -615,6 +636,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setCurrentColNum(int colNum) {
+        LOG.trace("setCurrentColNum()");
         try (var __ = automaticWriteLock()) {
             int rowNum = sheet.getCurrentCell().map(Cell::getRowNumber).orElse(0);
             setCurrentCell(sheet.getCell(rowNum, Math.max(0, colNum)));
@@ -622,6 +644,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setCurrentRowNum(int rowNum) {
+        LOG.trace("setCurrentRowNum()");
         try (var __ = automaticWriteLock()) {
             int colNum = sheet.getCurrentCell().map(Cell::getColumnNumber).orElse(0);
             setCurrentCell(Math.max(0, rowNum), colNum);
@@ -632,29 +655,24 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * Move the selection rectangle to the bottom right cell.
      */
     public void moveEnd() {
+        LOG.trace("moveEnd()");
+        try (var __ = automaticWriteLock()) {
         int row = sheet.getLastRowNum();
         int col = sheet.getLastColNum();
         setCurrentCell(row, col);
+        }
     }
 
     /**
      * Move the selection rectangle to the top left cell.
      */
     public void moveHome() {
+        LOG.trace("moveHome()");
         try (var __ = automaticWriteLock()) {
             int row = sheet.getFirstRowNum();
             int col = sheet.getFirstColNum();
             setCurrentCell(row, col);
         }
-    }
-
-    /**
-     * Move the selection rectangle to an adjacent cell.
-     *
-     * @param d direction
-     */
-    public void movePage(Direction d) {
-        move(d); // TODO
     }
 
     public void onMousePressed(Cell cell) {
@@ -716,6 +734,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setLabelFont(Font labelFont) {
+        LOG.trace("setLabelFont()");
         try (var __ = automaticWriteLock()) {
             this.labelFont = labelFont;
             markLayoutChanged();

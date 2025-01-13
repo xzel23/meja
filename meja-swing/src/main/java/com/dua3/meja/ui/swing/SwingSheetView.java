@@ -227,10 +227,10 @@ public class SwingSheetView extends JPanel implements SheetView {
 
     @Override
     public void updateContent() {
-        LOG.debug("updating content");
+        LOG.trace("updateContent()");
 
         Sheet sheet = getSheet();
-        try (var __ = delegate.automaticWriteLock()){
+        try (var __ = delegate.automaticWriteLock()) {
             int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
             delegate.setDisplayScale(getDisplayScale());
             delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));

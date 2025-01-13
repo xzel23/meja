@@ -128,6 +128,8 @@ public class FxSegmentView extends Control implements SegmentView {
      *        filtered to include only the rows belonging to the specified quadrant.
      */
     public FxSegmentView(FxSheetViewDelegate svDelegate, SheetView.Quadrant quadrant, ObservableSheet observableSheet) {
+        LOG.trace("FxSegmentView()");
+
         this.quadrant = quadrant;
         this.svDelegate = svDelegate;
         this.segmentDelegate = new SegmentViewDelegate(this, svDelegate, quadrant);

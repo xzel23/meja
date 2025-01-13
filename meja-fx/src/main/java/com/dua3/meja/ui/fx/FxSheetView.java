@@ -46,6 +46,8 @@ public class FxSheetView extends StackPane implements SheetView {
     private final ScrollBar hScrollbar;
     private final ScrollBar vScrollbar;
 
+    private boolean updating = false;
+
     /**
      * Constructs a new instance of FxSheetView using the specified Sheet object.
      * Initializes the layout and scrollbars, and sets up the view quadrants based on the provided sheet.
@@ -347,7 +349,13 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.debug("updateContent()");
         PlatformHelper.checkApplicationThread();
 
-        try (var __ = delegate.automaticReadLock()) {
+        if (updating) {
+            return;
+        }
+
+        try (var __ = delegate.automaticWriteLock()) {
+            updating = true;
+
             updateDelegate(getSheet());
 
             topLeftQuadrant.updateLayout();
@@ -359,6 +367,8 @@ public class FxSheetView extends StackPane implements SheetView {
             topRightQuadrant.refresh();
             bottomLeftQuadrant.refresh();
             bottomRightQuadrant.refresh();
+        } finally {
+            updating = false;
         }
     }
 

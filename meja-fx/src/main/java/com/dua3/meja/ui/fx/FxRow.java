@@ -206,6 +206,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
     }
 
     private void render() {
+        LOG.trace("render()");
         PlatformHelper.checkApplicationThread();
         try (var __ = sheetViewDelegate.automaticReadLock()) {
             switch (getItem().rowIndex()) {

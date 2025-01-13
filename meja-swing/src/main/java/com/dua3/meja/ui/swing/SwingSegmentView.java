@@ -210,6 +210,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             return;
         }
 
+        LOG.trace("scrollIntoView()");
         try (var __ = svDelegate.automaticReadLock()) {
             Rectangle2f r = svDelegate.getCellRect(cell);
             AffineTransformation2f t = ssvDelegate.getTransformation();
