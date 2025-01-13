@@ -161,8 +161,8 @@ public class FxSegmentView extends Control implements SegmentView {
      * @param splitRow the split row, i.e., rows above this row belong to the upper half
      * @return the filtered {@link ObservableList} of rows
      */
-    private static ObservableList<Row> filterRows(ObservableList<Row> rows, SheetView.Quadrant quadrant, int splitRow) {
-        return new FilteredList<>(rows, row -> quadrant.isTop() == (row.getRowNumber() < splitRow));
+    private static ObservableList<@Nullable Row> filterRows(ObservableList<@Nullable Row> rows, SheetView.Quadrant quadrant, int splitRow) {
+        return new FilteredList<>(rows, row -> row != null && quadrant.isTop() == (row.getRowNumber() < splitRow));
     }
 
     /**
