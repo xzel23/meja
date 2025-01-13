@@ -163,7 +163,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
     protected void paintComponent(Graphics g) {
         LOG.debug("paintComponent(): ({},{}) - ({},{})", ssvDelegate.getStartRow(), ssvDelegate.getStartColumn(), ssvDelegate.getEndRow(), ssvDelegate.getEndColumn());
 
-        try (var __ = svDelegate.readLock()) {
+        try (var __ = svDelegate.automaticReadLock()) {
             // clear background by calling super method
             super.paintComponent(g);
 
@@ -210,7 +210,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             return;
         }
 
-        try (var __ = svDelegate.readLock()) {
+        try (var __ = svDelegate.automaticReadLock()) {
             Rectangle2f r = svDelegate.getCellRect(cell);
             AffineTransformation2f t = ssvDelegate.getTransformation();
             Rectangle bounds = SwingGraphics.convert(Rectangle2f.withCorners(

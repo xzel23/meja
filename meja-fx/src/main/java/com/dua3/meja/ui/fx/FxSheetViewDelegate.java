@@ -1,6 +1,7 @@
 package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.ui.SheetViewDelegate;
 import com.dua3.utility.fx.PlatformHelper;
 
@@ -31,5 +32,10 @@ public class FxSheetViewDelegate extends SheetViewDelegate {
     public void updateLayout() {
         PlatformHelper.checkApplicationThread();
         super.updateLayout();
+    }
+
+    @Override
+    public void onNext(SheetEvent item) {
+        PlatformHelper.runLater(() -> super.onNext(item));
     }
 }

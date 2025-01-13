@@ -32,9 +32,18 @@ import java.util.stream.IntStream;
 public class FxRow extends IndexedCell<FxRow.Index> {
     private static final Logger LOG = LogManager.getLogger(FxRow.class);
 
+    /**
+     * The {@code Index} class is a record representing the position of a row within a table
+     * or sheet-like structure. It encapsulates two distinct pieces of information:
+     *
+     * <ul>
+     *     <li><b>rowIndex:</b> The internal index of the row, used to access the row from the filtered list of rows.</li>
+     *     <li><b>rowNumber:</b> The row number as defined in the sheet.</li>
+     * </ul>
+     */
     public record Index(int rowIndex, int rowNumber) {}
 
-    public static final Affine IDENTITY_TRANSFORMATION = FxUtil.convert(AffineTransformation2f.IDENTITY);
+    private static final Affine IDENTITY_TRANSFORMATION = FxUtil.convert(AffineTransformation2f.IDENTITY);
 
     private final ObservableList<Row> rows;
 
@@ -198,7 +207,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
 
     private void render() {
         PlatformHelper.checkApplicationThread();
-        try (var __ = sheetViewDelegate.readLock()) {
+        try (var __ = sheetViewDelegate.automaticReadLock()) {
             switch (getItem().rowIndex()) {
                 case ROW_INDEX_UNUSED -> renderEmpty();
                 case ROW_INDEX_COLUMN_LABELS -> renderColumnLabels();

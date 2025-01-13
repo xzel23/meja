@@ -51,6 +51,13 @@ public class ObservableSheet extends ObservableListBase<@Nullable Row> {
         return sheet.getRowCount();
     }
 
+    /**
+     * Provides access to the zoom property of the observable sheet.
+     * The zoom property is a {@link FloatProperty} that allows
+     * for observing and modifying the zoom level of the underlying sheet.
+     *
+     * @return the zoom property of the observable sheet
+     */
     public FloatProperty zoomProperty() {
         return zoomProperty;
     }

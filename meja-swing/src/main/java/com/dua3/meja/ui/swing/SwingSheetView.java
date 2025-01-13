@@ -41,7 +41,6 @@ import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Locale;
-import java.util.concurrent.locks.Lock;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -231,15 +230,11 @@ public class SwingSheetView extends JPanel implements SheetView {
         LOG.debug("updating content");
 
         Sheet sheet = getSheet();
-        Lock lock = delegate.writeLock();
-        lock.lock();
-        try {
+        try (var __ = delegate.automaticWriteLock()){
             int dpi = Toolkit.getDefaultToolkit().getScreenResolution();
             delegate.setDisplayScale(getDisplayScale());
             delegate.setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
             delegate.updateLayout();
-        } finally {
-            lock.unlock();
         }
         SwingUtilities.invokeLater(() -> {
             delegate.getSheetPainter().update(sheet);

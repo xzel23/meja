@@ -240,7 +240,7 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.trace("scrollToCurrentCell()");
 
         Platform.runLater(() -> delegate.getCurrentLogicalCell().ifPresent(cell -> {
-            try (var __ = delegate.readLock()) {
+            try (var __ = delegate.automaticReadLock()) {
                 Sheet sheet = delegate.getSheet();
                 int i = cell.getRowNumber();
                 int j = cell.getColumnNumber();
@@ -288,7 +288,7 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.trace("repaintCell({})", cell);
 
         PlatformHelper.runLater(() -> {
-            try (var __ = delegate.readLock()) {
+            try (var __ = delegate.automaticReadLock()) {
                 Cell lc = cell.getLogicalCell();
                 int startRow = lc.getRowNumber();
                 int endRow = startRow + lc.getVerticalSpan();
@@ -302,37 +302,56 @@ public class FxSheetView extends StackPane implements SheetView {
         });
     }
 
-    public void updateLayout() {
-        PlatformHelper.runAndWait(() -> {
-            try (var __ = delegate.writeLock()) {
-                updateDelegate(getSheet());
-                topLeftQuadrant.updateLayout();
-                topRightQuadrant.updateLayout();
-                bottomLeftQuadrant.updateLayout();
-                bottomRightQuadrant.updateLayout();
-            }
-        });
+    /**
+     * Updates the layout of the FxSheetView instance and its associated components.
+     *
+     * This method performs the following operations:
+     * <ul>
+     *   <li>Logs the start of the layout update process for debugging purposes.</li>
+     *   <li>Ensures that the logic executes on the UI application thread by invoking
+     *       {@code PlatformHelper.checkApplicationThread()}.</li>
+     *   <li>Acquires a write lock for thread-safe operations using the delegate's
+     *       {@code automaticWriteLock()} method.</li>
+     *   <li>Calls {@code updateDelegate()} to update the internal state of the
+     *       delegate with the current sheet's properties.</li>
+     *   <li>Updates the layout of all four quadrants of the view: top-left, top-right,
+     *       bottom-left, and bottom-right, by invoking their {@code updateLayout} methods.</li>
+     * </ul>
+     *
+     * This operation is vital for reflecting changes in layout, scaling, or other graphical
+     * attributes in the view, particularly after modifications to the underlying {@code Sheet}
+     * or its configurations.
+     */
+    private void updateLayout() {
+        LOG.debug("updateLayout()");
+        PlatformHelper.checkApplicationThread();
+        try (var __ = delegate.automaticWriteLock()) {
+            updateDelegate(getSheet());
+            topLeftQuadrant.updateLayout();
+            topRightQuadrant.updateLayout();
+            bottomLeftQuadrant.updateLayout();
+            bottomRightQuadrant.updateLayout();
+        }
     }
 
     @Override
     public void updateContent() {
         LOG.debug("updateContent()");
+        PlatformHelper.checkApplicationThread();
 
-        PlatformHelper.runAndWait(() -> {
-            try (var __ = delegate.readLock()) {
-                updateDelegate(getSheet());
+        try (var __ = delegate.automaticReadLock()) {
+            updateDelegate(getSheet());
 
-                topLeftQuadrant.updateLayout();
-                topRightQuadrant.updateLayout();
-                bottomLeftQuadrant.updateLayout();
-                bottomRightQuadrant.updateLayout();
+            topLeftQuadrant.updateLayout();
+            topRightQuadrant.updateLayout();
+            bottomLeftQuadrant.updateLayout();
+            bottomRightQuadrant.updateLayout();
 
-                topLeftQuadrant.refresh();
-                topRightQuadrant.refresh();
-                bottomLeftQuadrant.refresh();
-                bottomRightQuadrant.refresh();
-            }
-        });
+            topLeftQuadrant.refresh();
+            topRightQuadrant.refresh();
+            bottomLeftQuadrant.refresh();
+            bottomRightQuadrant.refresh();
+        }
     }
 
     private void updateDelegate(Sheet sheet) {
