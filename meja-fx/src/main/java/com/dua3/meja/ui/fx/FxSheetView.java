@@ -205,6 +205,14 @@ public class FxSheetView extends StackPane implements SheetView {
                     move(Direction.EAST);
                     event.consume();
                 }
+                case PAGE_UP -> {
+                    movePage(Direction.NORTH);
+                    event.consume();
+                }
+                case PAGE_DOWN -> {
+                    movePage(Direction.SOUTH);
+                    event.consume();
+                }
                 case C -> {
                     if (event.isShortcutDown()) {
                         copyToClipboard();
