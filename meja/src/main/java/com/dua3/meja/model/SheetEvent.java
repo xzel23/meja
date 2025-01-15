@@ -44,9 +44,9 @@ public interface SheetEvent extends Event<Sheet> {
     /**
      * Class representing a zoom change event for a {@link Sheet}.
      * This event indicates that the zoom level of a sheet has changed from an old value to a new value.
-     * It extends {@link EventDoubleValueChanged} to handle events where the value change involves double precision numbers.
+     * It extends {@link EventValueChanged} to handle events where the value change involves double precision numbers.
      */
-    class ZoomChanged extends EventDoubleValueChanged<Sheet> implements SheetEvent {
+    class ZoomChanged extends EventValueChanged<Sheet, Float> implements SheetEvent {
         /**
          * Constructs a new ZoomChanged event.
          *
@@ -54,7 +54,7 @@ public interface SheetEvent extends Event<Sheet> {
          * @param valueOld The old zoom value before the change.
          * @param valueNew The new zoom value after the change.
          */
-        public ZoomChanged(Sheet source, double valueOld, double valueNew) {
+        public ZoomChanged(Sheet source, float valueOld, float valueNew) {
             super(source, ZOOM_CHANGED, valueOld, valueNew);
         }
     }

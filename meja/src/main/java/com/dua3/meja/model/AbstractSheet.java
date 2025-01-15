@@ -118,7 +118,7 @@ public abstract class AbstractSheet implements Sheet {
      * @param valueOld the previous zoom factor
      * @param valueNew the new zoom factor
      */
-    protected void zoomChanged(double valueOld, double valueNew) {
+    protected void zoomChanged(float valueOld, float valueNew) {
         submit(new SheetEvent.ZoomChanged(this, valueOld, valueNew));
     }
 
@@ -258,4 +258,10 @@ public abstract class AbstractSheet implements Sheet {
         });
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{" +
+                "name=" + getSheetName() +
+                '}';
+    }
 }

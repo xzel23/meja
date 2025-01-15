@@ -91,47 +91,14 @@ public interface Event<T> {
         public int idx() {
             return idx;
         }
-    }
 
-    /**
-     * Abstract class representing an event where an index value changes.
-     *
-     * @param <T> the type of the source object associated with the event
-     */
-    abstract class EventIndexChanged<T> extends AbstractEvent<T> {
-        private final int oldIndex;
-        private final int newIndex;
-
-        /**
-         * Constructs a new EventIndexChanged event.
-         *
-         * @param source the object on which the Event initially occurred
-         * @param type the type of the event
-         * @param oldIndex the old index before the change
-         * @param newIndex the new index after the change
-         */
-        protected EventIndexChanged(T source, String type, int oldIndex, int newIndex) {
-            super(source, type);
-            this.oldIndex = oldIndex;
-            this.newIndex = newIndex;
-        }
-
-        /**
-         * Returns the value of the old index.
-         *
-         * @return the integer value representing the old index
-         */
-        public int oldIndex() {
-            return oldIndex;
-        }
-
-        /**
-         * Computes and returns the new index value.
-         *
-         * @return the computed new index value.
-         */
-        public int newIndex() {
-            return newIndex;
+        @Override
+        public String toString() {
+            return "EventWithIndex{" +
+                    "type=" + type() +
+                    ", source=" + source() +
+                    ", idx=" + idx +
+                    '}';
         }
     }
 
@@ -176,49 +143,15 @@ public interface Event<T> {
         public @Nullable V newValue() {
             return newValue;
         }
-    }
 
-    /**
-     * An abstract class representing an event where a double value has changed.
-     *
-     * <p>This class extends {@code AbstractEvent} and includes the old and new double values.
-     *
-     * @param <T> the type of the source object associated with this event
-     */
-    abstract class EventDoubleValueChanged<T> extends AbstractEvent<T> {
-        private final double oldValue;
-        private final double newValue;
-
-        /**
-         * Constructs a new EventDoubleValueChanged instance representing a change event for a double value.
-         *
-         * @param source the object on which the event initially occurred
-         * @param type the type of the event
-         * @param oldValue the old value before the change
-         * @param newValue the new value after the change
-         */
-        protected EventDoubleValueChanged(T source, String type, double oldValue, double newValue) {
-            super(source, type);
-            this.oldValue = oldValue;
-            this.newValue = newValue;
-        }
-
-        /**
-         * Retrieves the old value of the instance.
-         *
-         * @return the old value as a {@code double}
-         */
-        public double oldValue() {
-            return oldValue;
-        }
-
-        /**
-         * Retrieves the new value of the instance.
-         *
-         * @return the new value as a {@code double}
-         */
-        public double newValue() {
-            return newValue;
+        @Override
+        public String toString() {
+            return "EventValueChanged{" +
+                    "type=" + type() +
+                    ", source=" + source() +
+                    ", oldValue=" + oldValue +
+                    ", newValue=" + newValue +
+                    '}';
         }
     }
 
@@ -261,6 +194,16 @@ public interface Event<T> {
          */
         public int newValue() {
             return newValue;
+        }
+
+        @Override
+        public String toString() {
+            return "EventIntValueChanged{" +
+                    "type=" + type() +
+                    ", source=" + source() +
+                    ", oldValue=" + oldValue +
+                    ", newValue=" + newValue +
+                    '}';
         }
     }
 }

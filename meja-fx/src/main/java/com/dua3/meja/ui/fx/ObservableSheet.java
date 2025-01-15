@@ -79,6 +79,7 @@ public class ObservableSheet extends ObservableListBase<@Nullable Row> {
                 nextAdd(rowsAdded.first(), rowsAdded.last());
                 endChange();
             } else if (item instanceof SheetEvent.ZoomChanged zoomChanged) {
+                LOG.trace("zoom changed from {} to {}", zoomProperty.getValue(), zoomChanged.newValue());
                 zoomProperty.setValue(zoomChanged.newValue());
             }
         }

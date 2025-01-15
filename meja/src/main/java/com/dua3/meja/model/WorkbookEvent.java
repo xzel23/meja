@@ -30,7 +30,7 @@ public interface WorkbookEvent extends Event<Workbook> {
     /**
      * Event sent when the active sheet changes.
      */
-    class ActiveSheetChanged extends EventIndexChanged<Workbook> implements WorkbookEvent {
+    class ActiveSheetChanged extends EventIntValueChanged<Workbook> implements WorkbookEvent {
         ActiveSheetChanged(Workbook workbook, int idxOld, int idxNew) {
             super(workbook, ACTIVE_SHEET_CHANGED, idxOld, idxNew);
         }
