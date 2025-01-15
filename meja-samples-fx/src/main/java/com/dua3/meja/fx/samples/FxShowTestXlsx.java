@@ -21,13 +21,22 @@ import java.net.URISyntaxException;
  */
 public final class FxShowTestXlsx extends Application {
 
-    private static final LogBuffer logBuffer = createLogBuffer();
+    private static final LogBuffer logBuffer;
 
-    public FxShowTestXlsx() throws IOException, URISyntaxException {}
-
-    private static LogBuffer createLogBuffer() {
+    static {
         LogUtilLog4J.init(LogLevel.TRACE);
-        return new LogBuffer(100000);
+        logBuffer = new LogBuffer(100000);
+    }
+
+    private final Workbook wb;
+
+    /**
+     * Constructor.
+     * @throws IOException when the workbork could not be read.
+     * @throws URISyntaxException when the workbook URI is invalid.
+     */
+    public FxShowTestXlsx() throws IOException, URISyntaxException {
+        this.wb = MejaHelper.openWorkbook(LangUtil.getResourceURL(FxShowTestXlsx.class, "test.xlsx").toURI());
     }
 
     /**
@@ -40,8 +49,6 @@ public final class FxShowTestXlsx extends Application {
         LogUtil.getGlobalDispatcher().addLogEntryHandler(logBuffer);
         launch(args);
     }
-
-    private Workbook wb = MejaHelper.openWorkbook(LangUtil.getResourceURL(FxShowTestXlsx.class, "test.xlsx").toURI());
 
     @Override
     public void start(Stage primaryStage) {

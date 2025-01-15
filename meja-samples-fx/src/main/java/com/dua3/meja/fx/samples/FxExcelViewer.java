@@ -48,6 +48,10 @@ public class FxExcelViewer {
         );
     }
 
+    private FxExcelViewer() {
+        // nothing to do
+    }
+
     /**
      * The Application class.
      *
@@ -57,6 +61,16 @@ public class FxExcelViewer {
      */
     public static class FxExcelViewerApplication extends Application {
         private final FxWorkbookView fxWorkbookView = new FxWorkbookView();
+
+        /**
+         * Default constructor for the FxExcelViewerApplication class.
+         *
+         * <p>This constructor initializes an instance of the FxExcelViewerApplication.
+         * No specific initialization operations are performed in this constructor.
+         */
+        FxExcelViewerApplication() {
+            // nothing to do
+        }
 
         @Override
         public void start(Stage primaryStage) {
