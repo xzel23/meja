@@ -20,6 +20,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
+import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ import java.util.Optional;
  * A generic implementation of {@link Sheet}.
  */
 public class GenericSheet extends AbstractSheet {
+    private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(GenericSheet.class);
 
     private static final float DEFAULT_COLUMN_WIDTH = 80.0f;
     private static final float DEFAULT_ROW_HEIGHT = 12.0f;
@@ -62,6 +64,8 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void clear() {
+        LOG.trace("clearing the sheet");
+
         rows.clear();
         copy(new GenericSheet(workbook, sheetName));
     }
@@ -185,11 +189,16 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void setAutofilterRow(int i) {
+        LOG.trace("setting auto filter row {}", i);
+        LangUtil.check(i >= 0, "Invalid row number: %d", i);
         autoFilterRow = i;
     }
 
     @Override
     public void setColumnWidth(int j, float width) {
+        LOG.trace("setting column width of column {} to {}", j, width);
+        LangUtil.check(width >= 0, "Invalid column width: %f", width);
+
         if (j < columnWidth.size()) {
             if (!Objects.equals(columnWidth.set(j, width), width)) { // use Objects.equals to avoid NPE!
                 layoutChanged();
@@ -206,6 +215,8 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public boolean setCurrentCell(Cell cell) {
+        LOG.trace("setting current cell to {}", cell::getCellRef);
+
         //noinspection ObjectEquality
         LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
@@ -225,6 +236,9 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void setRowHeight(int i, float height) {
+        LOG.trace("setting row height of row {} to {}", i, height);
+        LangUtil.check(height >= 0, "Invalid row height: %f", height);
+
         if (i < rowHeight.size()) {
             rowHeight.set(i, height);
         } else {
@@ -239,6 +253,7 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void setZoom(float zoom) {
+        LOG.trace("setting zoom to {}", zoom);
         LangUtil.check(zoom > 0, "Invalid zoom factor: %f", zoom);
 
         if (zoom != this.zoom) {
@@ -250,6 +265,9 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public void splitAt(int i, int j) {
+        LOG.trace("setting split to ({}, {})", i, j);
+        LangUtil.check(i >= 0 && j >= 0, "Invalid split position: (%d, %d)", i, j);
+
         Pair<Integer, Integer> oldSplit = Pair.of(getSplitRow(), getSplitColumn());
         freezeRow = i;
         freezeColumn = j;

@@ -22,6 +22,7 @@ import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
@@ -36,6 +37,7 @@ import java.util.Optional;
  * POI implementation of the {@link com.dua3.meja.model.Sheet} interface.
  */
 public class PoiSheet extends AbstractSheet {
+    private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(PoiSheet.class);
 
     protected final PoiWorkbook workbook;
     protected Sheet poiSheet;
@@ -65,6 +67,8 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void clear() {
+        LOG.trace("clearing the sheet");
+
         // determine sheet number
         int sheetNr = workbook.poiWorkbook.getSheetIndex(poiSheet);
 
@@ -233,21 +237,16 @@ public class PoiSheet extends AbstractSheet {
         }
     }
 
-    private void setAutoFilterForPoiRow(@Nullable Row poiRow) {
-        if (poiRow != null) {
-            int rowNumber = poiRow.getRowNum();
-            short col1 = poiRow.getFirstCellNum();
-            short coln = poiRow.getLastCellNum();
-            poiSheet.setAutoFilter(new CellRangeAddress(rowNumber, rowNumber, col1, coln));
-        }
-    }
-
     @Override
     public void setAutofilterRow(int rowNumber) {
-        if (rowNumber >= 0) {
-            Row poiRow = poiSheet.getRow(rowNumber);
-            setAutoFilterForPoiRow(poiRow);
-        }
+        LOG.trace("setting auto filter row {}", rowNumber);
+        LangUtil.check(rowNumber >= 0, "Invalid row number: %d", rowNumber);
+
+        int rowNumber1 = getRow(rowNumber).poiRow.getRowNum();
+        short col1 = getRow(rowNumber).poiRow.getFirstCellNum();
+        short coln = getRow(rowNumber).poiRow.getLastCellNum();
+        poiSheet.setAutoFilter(new CellRangeAddress(rowNumber1, rowNumber1, col1, coln));
+
         autoFilterRow = rowNumber;
     }
 
@@ -270,12 +269,17 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void setColumnWidth(int j, float width) {
+        LOG.trace("setting column width of column {} to {}", j, width);
+        LangUtil.check(width >= 0, "Invalid column width: %f", width);
+
         poiSheet.setColumnWidth(j, pointsToPoiColumnWidth(width));
         layoutChanged();
     }
 
     @Override
     public boolean setCurrentCell(Cell cell) {
+        LOG.trace("setting current cell to {}", cell::getCellRef);
+
         //noinspection ObjectEquality
         LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
@@ -294,6 +298,9 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void setRowHeight(int i, float height) {
+        LOG.trace("setting row height of row {} to {}", i, height);
+        LangUtil.check(height >= 0, "Invalid row height: %f", height);
+
         Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
             poiRow = poiSheet.createRow(i);
@@ -304,11 +311,17 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void setZoom(float zoom) {
+        LOG.trace("setting zoom to {}", zoom);
         LangUtil.check(zoom > 0, "Invalid zoom factor: %f", zoom);
 
-        if (zoom != this.zoom) {
+        if (zoom == this.zoom) {
+            LOG.trace("zoom does not change");
+        } else {
             float oldZoom = this.zoom;
             this.zoom = zoom;
+
+            LOG.trace("changing zoom from {} to {}", oldZoom, zoom);
+
             // translate zoom factor into percent
             int pmZoom = Math.max(1, Math.round(zoom * 100));
             poiSheet.setZoom(pmZoom);
@@ -318,6 +331,9 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public void splitAt(int i, int j) {
+        LOG.trace("setting split to ({}, {})", i, j);
+        LangUtil.check(i >= 0 && j >= 0, "Invalid split position: (%d, %d)", i, j);
+
         Pair<Integer, Integer> old = Pair.of(getSplitRow(), getSplitColumn());
         Pair<Integer, Integer> newSplit = Pair.of(i, j);
         poiSheet.createFreezePane(j, i);
