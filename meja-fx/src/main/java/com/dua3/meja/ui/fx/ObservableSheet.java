@@ -5,6 +5,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.model.SheetEvent.RowsAdded;
 import javafx.beans.property.FloatProperty;
+import javafx.beans.property.ReadOnlyFloatProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.collections.ObservableListBase;
 import org.apache.logging.log4j.LogManager;
@@ -35,10 +36,6 @@ public class ObservableSheet extends ObservableListBase<@Nullable Row> {
         this.sheet = sheet;
         this.sheet.subscribe(new SheetTracker());
         this.zoomProperty = new SimpleFloatProperty(sheet.getZoom());
-
-        zoomProperty.addListener((v, o, n) -> {
-            sheet.setZoom(n.floatValue());
-        });
     }
 
     @Override
@@ -58,7 +55,7 @@ public class ObservableSheet extends ObservableListBase<@Nullable Row> {
      *
      * @return the zoom property of the observable sheet
      */
-    public FloatProperty zoomProperty() {
+    public ReadOnlyFloatProperty zoomProperty() {
         return zoomProperty;
     }
 
