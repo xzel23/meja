@@ -68,7 +68,7 @@ public class FxExcelViewer {
          * <p>This constructor initializes an instance of the FxExcelViewerApplication.
          * No specific initialization operations are performed in this constructor.
          */
-        FxExcelViewerApplication() {
+        public FxExcelViewerApplication() {
             // nothing to do
         }
 
