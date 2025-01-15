@@ -80,6 +80,10 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs.add("-Xlint:-module")
+    }
+
     cabe {
         if (isReleaseVersion) {
             config.set(Configuration.parse("publicApi=THROW_IAE:privateApi=ASSERT"))
