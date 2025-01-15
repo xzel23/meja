@@ -48,6 +48,13 @@ public class FxExcelViewer {
         );
     }
 
+    /**
+     * The Application class.
+     *
+     * <p><strong>Note:</strong> The application class must not be a top level class when using the
+     * {@link FxApplicationHelper} to start the application as JavaFX "hacks" the startup code to
+     * start the JavaFX platform before {@code main()} is called.
+     */
     public static class FxExcelViewerApplication extends Application {
         private final FxWorkbookView fxWorkbookView = new FxWorkbookView();
 

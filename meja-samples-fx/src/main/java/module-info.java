@@ -1,5 +1,8 @@
 import org.jspecify.annotations.NullMarked;
 
+/**
+ * This module provides JavaFX sample applications for Meja.
+ */
 @NullMarked
 open module com.dua3.meja.fx.samples {
     exports com.dua3.meja.fx.samples;
