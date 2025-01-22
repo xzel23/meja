@@ -6,6 +6,15 @@ import com.dua3.utility.math.geometry.Scale2f;
 
 import java.util.concurrent.locks.Lock;
 
+/**
+ * This class serves as a delegate for the {@link SegmentView} and is responsible for managing
+ * its visualization, layout calculations, and interactions with the associated {@link SheetViewDelegate}.
+ * It provides methods to retrieve and manipulate the segment view's spatial characteristics, such as
+ * dimensions, offsets, and positions, and ensures proper layout updates in the context of the sheet view.
+ *
+ * <p>The {@code SegmentViewDelegate} class makes it possible to share code between the swing and JavaFX
+ * implementations.
+ */
 public class SegmentViewDelegate {
     private final SegmentView owner;
     private final SheetViewDelegate sheetViewDelegate;
@@ -17,6 +26,15 @@ public class SegmentViewDelegate {
     private float widthInPixels;
     private float heightInPixels;
 
+    /**
+     * Constructs a {@code SegmentViewDelegate} instance, which manages the interaction
+     * between a {@link SegmentView}, a {@link SheetViewDelegate}, and a specific
+     * {@link SheetView.Quadrant}.
+     *
+     * @param owner the {@link SegmentView} instance associated with this delegate
+     * @param sheetViewDelegate the {@link SheetViewDelegate} managing the sheet's layout and data
+     * @param quadrant the {@link SheetView.Quadrant} defining the portion of the sheet displayed by the segment
+     */
     public SegmentViewDelegate(
             SegmentView owner,
             SheetViewDelegate sheetViewDelegate,

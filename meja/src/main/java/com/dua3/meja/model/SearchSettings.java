@@ -4,7 +4,13 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Represents the settings for a search operation.
+ * A record representing the settings for a search operation.
+ *
+ * @param searchFromCurrent {@code true} to start the search from the current cell, otherwise from the first cell
+ * @param ignoreCase  {@code true} to ignore the character case in search
+ * @param matchComplete  {@code true} to only find cells where the full cell content matches, otherwise search for sub-string
+ * @param updateCurrent {true} to set the current cell to the first match
+ * @param searchFormula  {@code true} to search in formula strings
  */
 public record SearchSettings(
         boolean searchFromCurrent,
