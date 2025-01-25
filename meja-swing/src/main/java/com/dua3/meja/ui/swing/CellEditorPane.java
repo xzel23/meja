@@ -197,8 +197,8 @@ public class CellEditorPane extends JTextPane {
         Color bg = cellStyle.getFillBgColor();
         Font font = cellStyle.getFont();
 
-        setBackground(SwingUtil.toAwtColor(fg));
-        setForeground(SwingUtil.toAwtColor(bg));
+        setBackground(SwingUtil.convert(fg));
+        setForeground(SwingUtil.convert(bg));
 
         final RichText text;
         if (!eval && cell.getCellType() == CellType.FORMULA) {

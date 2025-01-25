@@ -73,7 +73,6 @@ subprojects {
     apply(plugin = "com.dua3.cabe")
 
     java {
-        toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
         withJavadocJar()
         withSourcesJar()
         sourceCompatibility = JavaVersion.VERSION_17

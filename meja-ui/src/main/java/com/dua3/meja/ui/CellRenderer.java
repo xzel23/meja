@@ -5,7 +5,9 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
+import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.Row;
+import com.dua3.meja.model.VAlign;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Alignment;
@@ -159,27 +161,63 @@ public class CellRenderer {
     private void renderCellContent(Graphics g, Cell cell, Rectangle2f r, Rectangle2f clipRect) {
         CellStyle cs = cell.getCellStyle();
 
-        Alignment hAlign = switch (cs.effectiveHAlign(cell.getCellType())) {
-            case ALIGN_LEFT -> Alignment.LEFT;
-            case ALIGN_CENTER -> Alignment.CENTER;
-            case ALIGN_RIGHT -> Alignment.RIGHT;
-            case ALIGN_JUSTIFY -> Alignment.JUSTIFY;
-            case ALIGN_AUTOMATIC ->
-                    throw new IllegalStateException("effectiveHAlign() must not return ALIGN_AUTOMATIC");
-        };
+        Alignment hAlign;
+        Graphics.HAnchor hAnchor;
+        HAlign alignment = cs.effectiveHAlign(cell.getCellType());
+        switch (alignment) {
+            case ALIGN_LEFT -> {
+                hAlign = Alignment.LEFT;
+                hAnchor = Graphics.HAnchor.LEFT;
+            }
+            case ALIGN_CENTER -> {
+                hAlign = Alignment.CENTER;
+                hAnchor = Graphics.HAnchor.CENTER;
+            }
+            case ALIGN_RIGHT -> {
+                hAlign = Alignment.RIGHT;
+                hAnchor = Graphics.HAnchor.RIGHT;
+            }
+            case ALIGN_JUSTIFY -> {
+                hAlign = Alignment.JUSTIFY;
+                hAnchor = Graphics.HAnchor.LEFT;
+            }
+            default -> throw new IllegalStateException(alignment.name() + " not allowed here");
+        }
 
-        VerticalAlignment vAlign = switch (cs.getVAlign()) {
-            case ALIGN_TOP -> VerticalAlignment.TOP;
-            case ALIGN_MIDDLE -> VerticalAlignment.MIDDLE;
-            case ALIGN_BOTTOM -> VerticalAlignment.BOTTOM;
-            case ALIGN_DISTRIBUTED, ALIGN_JUSTIFY -> VerticalAlignment.DISTRIBUTED;
-        };
+        VerticalAlignment vAlign;
+        Graphics.VAnchor vAnchor;
+        VAlign verticalAlignment = cs.getVAlign();
+        switch (verticalAlignment) {
+            case ALIGN_TOP -> {
+                vAlign = VerticalAlignment.TOP;
+                vAnchor = Graphics.VAnchor.TOP;
+            }
+            case ALIGN_MIDDLE -> {
+                vAlign = VerticalAlignment.MIDDLE;
+                vAnchor = Graphics.VAnchor.MIDDLE;
+            }
+            case ALIGN_BOTTOM -> {
+                vAlign = VerticalAlignment.BOTTOM;
+                vAnchor = Graphics.VAnchor.BOTTOM;
+            }
+            case ALIGN_DISTRIBUTED, ALIGN_JUSTIFY -> {
+                vAlign = VerticalAlignment.DISTRIBUTED;
+                vAnchor = Graphics.VAnchor.TOP;
+            }
+            default -> throw new IllegalStateException("unsupported vertical alignment: " + verticalAlignment.name());
+        }
 
         RichText text = cell.getAsText(delegate.getLocale());
         boolean wrapping = cs.isStyleWrapping();
         g.setFont(cs.getFont());
 
-        g.renderText(r, text, hAlign, vAlign, wrapping);
+        short rotation = cs.getRotation();
+        double angle = -rotation * Math.PI / 180;
+
+        g.renderText(
+                r.min(), text, hAnchor, vAnchor, hAlign, vAlign, r.getDimension(),
+                angle, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+        );
     }
 
     /**
