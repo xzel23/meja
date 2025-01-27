@@ -34,6 +34,10 @@ public enum HAlign {
      */
     ALIGN_RIGHT(false, "text-align: right;"),
     /**
+     * Align text distributed.
+     */
+    ALIGN_DISTRIBUTED(true, "text-align: left; white-space: pre-wrap !important;"),
+    /**
      * Align text justified.
      */
     ALIGN_JUSTIFY(true, "text-align: left; white-space: pre-wrap !important;"),

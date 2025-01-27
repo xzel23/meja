@@ -17,10 +17,10 @@ package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 /**
  * @author Axel Howind (axel@dua3.com)
@@ -41,6 +41,7 @@ public final class PoiHelper {
             case ALIGN_RIGHT -> HorizontalAlignment.RIGHT;
             case ALIGN_CENTER -> HorizontalAlignment.CENTER;
             case ALIGN_JUSTIFY -> HorizontalAlignment.JUSTIFY;
+            case ALIGN_DISTRIBUTED -> HorizontalAlignment.DISTRIBUTED;
             case ALIGN_AUTOMATIC -> HorizontalAlignment.GENERAL;
         };
     }
@@ -57,7 +58,8 @@ public final class PoiHelper {
             case CENTER, CENTER_SELECTION -> HAlign.ALIGN_CENTER;
             case RIGHT -> HAlign.ALIGN_RIGHT;
             case GENERAL -> HAlign.ALIGN_AUTOMATIC;
-            case FILL, JUSTIFY, DISTRIBUTED -> HAlign.ALIGN_JUSTIFY;
+            case FILL, JUSTIFY -> HAlign.ALIGN_JUSTIFY;
+            case DISTRIBUTED -> HAlign.ALIGN_DISTRIBUTED;
         };
     }
 

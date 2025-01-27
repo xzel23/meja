@@ -177,6 +177,10 @@ public class CellRenderer {
                 hAlign = Alignment.RIGHT;
                 hAnchor = Graphics.HAnchor.RIGHT;
             }
+            case ALIGN_DISTRIBUTED -> {
+                hAlign = Alignment.DISTRIBUTE;
+                hAnchor = Graphics.HAnchor.LEFT;
+            }
             case ALIGN_JUSTIFY -> {
                 hAlign = Alignment.JUSTIFY;
                 hAnchor = Graphics.HAnchor.LEFT;
@@ -212,6 +216,7 @@ public class CellRenderer {
         g.setFont(cs.getFont());
 
         short rotation = cs.getRotation();
+        System.out.println("rotation: " + rotation);
         double angle = -rotation * Math.PI / 180;
 
         g.renderText(

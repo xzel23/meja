@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 6.4.0
+
+- update Apache POI to 5.4.0
+- spreadsheet rendering (JavaFX and Swing): rotated text
+- spreadsheet rendering (JavaFX and Swing): distributed text layout
+
 ## Version 6.3.0
 
 - update utility

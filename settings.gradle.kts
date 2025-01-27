@@ -2,7 +2,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "6.3.0"
+val projectVersion = "6.4.0-RC1"
 
 // define subprojects
 include("meja")
@@ -18,23 +18,20 @@ include("meja-samples-fx")
 // define dependency versions and repositories
 dependencyResolutionManagement {
 
-    val isSnapshot = projectVersion.toDefaultLowerCase().contains("snapshot")
-
-    if (isSnapshot) {
-        println("SNAPSHOT version detected, using local Maven repository")
-    }
+    val isSnapshot = projectVersion.toDefaultLowerCase().contains("-snapshot")
+    val isReleaseCandidate = projectVersion.toDefaultLowerCase().contains("-rc")
 
     versionCatalogs {
         create("libs") {
             version("projectVersion", projectVersion)
 
-            plugin("versions", "com.github.ben-manes.versions").version("0.51.0")
+            plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.0.27")
+            plugin("spotbugs", "com.github.spotbugs").version("6.1.3")
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
 
-            version("dua3-utility", "15.1.2-SNAPSHOT")
-            version("dua3-fx", "1.0.4-SNAPSHOT")
+            version("dua3-utility", "15.2.0-RC1")
+            version("dua3-fx", "1.0.4-RC1")
             version("ikonli", "12.3.1")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.24.3")
@@ -97,7 +94,30 @@ dependencyResolutionManagement {
         }
 
         if (isSnapshot) {
-            // local maven repository
+            println("snapshot version detected, adding local and snapshot Maven repositories")
+            mavenLocal()
+
+            // Sonatype Snapshots
+            maven {
+                name = "oss.sonatype.org-snapshots"
+                url = java.net.URI("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+                mavenContent {
+                    snapshotsOnly()
+                }
+            }
+
+            // Apache snapshots
+            maven {
+                name = "apache-snapshots"
+                url = java.net.URI("https://repository.apache.org/content/repositories/snapshots/")
+                mavenContent {
+                    snapshotsOnly()
+                }
+            }
+        }
+
+        if (isReleaseCandidate) {
+            println("release candidate version detected, adding local and staging Maven repositories")
             mavenLocal()
 
             // Sonatype Snapshots
@@ -115,15 +135,6 @@ dependencyResolutionManagement {
                 url = java.net.URI("https://repository.apache.org/content/repositories/staging/")
                 mavenContent {
                     releasesOnly()
-                }
-            }
-
-            // Apache snapshots
-            maven {
-                name = "apache-snapshots"
-                url = java.net.URI("https://repository.apache.org/content/repositories/snapshots/")
-                mavenContent {
-                    snapshotsOnly()
                 }
             }
         }
