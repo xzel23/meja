@@ -55,7 +55,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * @author axel
+ * Concrete subclass of {@link AbstractCell} for Apache POI based workbooks.
  */
 public final class PoiCell extends AbstractCell {
 

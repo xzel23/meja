@@ -23,7 +23,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 /**
- * @author Axel Howind (axel@dua3.com)
+ * Utility class for the Apache POI implementation.
  */
 public final class PoiHelper {
 

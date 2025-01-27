@@ -17,7 +17,10 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 /**
- * @author axel
+ * The Model class for {@code ExcelViewer} implementations.
+ *
+ * @param <WV> the {@link WorkbookView} generic parameter
+ * @param <SV> the {@link SheetView} generic parameter
  */
 public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView> {
 

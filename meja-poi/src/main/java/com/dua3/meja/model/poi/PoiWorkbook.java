@@ -78,19 +78,19 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     private static final Logger LOGGER = LogManager.getLogger(PoiWorkbook.class);
     /**
-     *
+     * The underlying Apache POI {@link Workbook} instance.
      */
     protected final Workbook poiWorkbook;
     /**
-     *
+     * The Apache POI {@link FormulaEvaluator}.
      */
     protected final FormulaEvaluator evaluator;
     /**
-     *
+     * The list of sheets contained in the workbook.
      */
     protected final List<PoiSheet> sheets = new ArrayList<>();
     /**
-     *
+     * Mapping from cellstyle names to internat Apache POI cell style numbers.
      */
     protected final Map<String, Short> cellStyles = new HashMap<>();
 
@@ -325,7 +325,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     }
 
     /**
-     *
+     * Initialise the workbook by creating {@link PoiSheet} instances for the sheets contained in the workbook.
      */
     protected final void init() {
         for (int i = 0; i < poiWorkbook.getNumberOfSheets(); i++) {
@@ -560,7 +560,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     }
 
     /**
-     *
+     * Implementation of {@code PoiWorkbook} for workbooks using the XSSF format.
      */
     public static class PoiXssfWorkbook extends PoiWorkbook {
 

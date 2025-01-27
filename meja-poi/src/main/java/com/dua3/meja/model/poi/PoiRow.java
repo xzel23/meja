@@ -24,7 +24,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Optional;
 
 /**
- * @author axel
+ * Concrete Implementation of {@link AbstractRow} for Apache POI based workbooks.
  */
 public final class PoiRow extends AbstractRow {
 

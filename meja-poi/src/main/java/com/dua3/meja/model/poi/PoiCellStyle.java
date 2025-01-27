@@ -37,7 +37,7 @@ import java.time.format.FormatStyle;
 import java.util.Locale;
 
 /**
- * @author axel
+ * A {@link CellStyle} implementation for Apache POI based workbooks.
  */
 public abstract class PoiCellStyle implements CellStyle {
 
@@ -221,17 +221,17 @@ public abstract class PoiCellStyle implements CellStyle {
     }
 
     /**
-     *
+     * The {@link PoiWorkbook} this cell style belongs to.
      */
     protected final PoiWorkbook workbook;
 
     /**
-     *
+     * The font belonging to this cell style.
      */
     protected final PoiFont font;
 
     /**
-     *
+     * The underlying Apache POI {@link org.apache.poi.ss.usermodel.CellStyle} instance.
      */
     protected final org.apache.poi.ss.usermodel.CellStyle poiCellStyle;
 

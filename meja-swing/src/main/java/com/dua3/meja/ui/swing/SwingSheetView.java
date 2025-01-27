@@ -59,8 +59,8 @@ public class SwingSheetView extends JPanel implements SheetView {
 
     /**
      * Constructor.
-     * <p>
-     * No sheet is set.
+     *
+     * @param sheet the {@link Sheet}
      */
     public SwingSheetView(Sheet sheet) {
         super(new GridLayout(1, 1));

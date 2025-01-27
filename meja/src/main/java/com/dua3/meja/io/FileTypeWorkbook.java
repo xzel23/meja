@@ -16,6 +16,14 @@ import java.util.function.Function;
  * @param <W> the generic workbook type associated with this filetype
  */
 public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
+    /**
+     * Constructor.
+     *
+     * @param name          the name of the file type (displayed in dialogs)
+     * @param mode          the {@link OpenMode}
+     * @param cls           the class belonging to this file type that implements the {@link Workbook} interface
+     * @param extensions    the file name extensions belonging to this file type
+     */
     protected FileTypeWorkbook(String name, OpenMode mode, Class<? extends W> cls, String... extensions) {
         super(name, mode, cls, extensions);
     }
