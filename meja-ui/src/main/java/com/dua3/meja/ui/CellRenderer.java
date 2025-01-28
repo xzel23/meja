@@ -212,16 +212,15 @@ public class CellRenderer {
         }
 
         RichText text = cell.getAsText(delegate.getLocale());
-        boolean wrapping = cs.isStyleWrapping();
+        Graphics.TextWrapping wrapping = cs.isStyleWrapping() ? Graphics.TextWrapping.WRAP : Graphics.TextWrapping.NO_WRAP;
         g.setFont(cs.getFont());
 
         short rotation = cs.getRotation();
-        System.out.println("rotation: " + rotation);
         double angle = -rotation * Math.PI / 180;
 
         g.renderText(
-                r.min(), text, hAnchor, vAnchor, hAlign, vAlign, r.getDimension(),
-                angle, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE_BLOCK, Graphics.AlignmentAxis.AUTOMATIC
+                r.min(), text, hAnchor, vAnchor, hAlign, vAlign, r.getDimension(), wrapping,
+                angle, Graphics.TextRotationMode.ROTATE_AND_TRANSLATE
         );
     }
 

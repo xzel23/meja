@@ -9,6 +9,7 @@ import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Vector2f;
 import com.dua3.utility.swing.SwingGraphics;
+import com.dua3.utility.swing.SwingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -172,7 +173,9 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 return;
             }
 
-            try (SwingGraphics sg = new SwingGraphics((Graphics2D) g.create(), bounds)) {
+            Graphics2D g2d = (Graphics2D) g;
+            SwingUtil.setRenderingQuality(g2d);
+            try (SwingGraphics sg = new SwingGraphics(g2d, bounds)) {
                 AffineTransformation2f t = ssvDelegate.getTransformation();
                 sg.setTransformation(t);
                 LOG.debug("paintComponent() - transformation:\n{}", t::toMatrixString);
