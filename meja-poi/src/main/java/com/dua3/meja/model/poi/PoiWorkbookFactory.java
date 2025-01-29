@@ -36,7 +36,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 /**
- * @author axel
+ * A {@link WorkbookFactory} implementation for creating workbooks based on the Apache POI implementation.
  */
 public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
 
@@ -51,6 +51,8 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     /**
+     * Get the singleton instance for this factory.
+     *
      * @return the singleton instance
      */
     public static PoiWorkbookFactory instance() {

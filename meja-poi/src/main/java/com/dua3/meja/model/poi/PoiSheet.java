@@ -47,6 +47,12 @@ public class PoiSheet extends AbstractSheet {
     private int autoFilterRow = -1;
     private float factorWidth = 1;
 
+    /**
+     * Constructor.
+     *
+     * @param workbook the {@link PoiWorkbook} the sheet belongs to
+     * @param poiSheet the {@link Sheet}
+     */
     protected PoiSheet(PoiWorkbook workbook, Sheet poiSheet) {
         this.workbook = workbook;
         this.poiSheet = poiSheet;

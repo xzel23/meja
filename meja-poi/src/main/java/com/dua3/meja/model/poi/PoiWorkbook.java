@@ -72,7 +72,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * @author axel
+ * Implementation of the {@link com.dua3.meja.model.Workbook} interface based on the Apache POI implementation.
  */
 public abstract class PoiWorkbook extends AbstractWorkbook {
 

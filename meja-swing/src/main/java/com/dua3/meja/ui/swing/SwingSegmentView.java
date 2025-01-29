@@ -184,8 +184,8 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 LOG.debug("paintComponent() - transformation:\n{}", t::toMatrixString);
 
                 Rectangle2f r = Rectangle2f.withCorners(
-                        sg.transform((float) bounds.getMinX(), (float) bounds.getMinY()),
-                        sg.transform((float) bounds.getMaxX(), (float) bounds.getMaxY())
+                        sg.transform((float) clipBounds.getMinX(), (float) clipBounds.getMinY()),
+                        sg.transform((float) clipBounds.getMaxX(), (float) clipBounds.getMaxY())
                 );
 
                 // draw sheet

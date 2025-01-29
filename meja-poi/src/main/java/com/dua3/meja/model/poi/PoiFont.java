@@ -34,14 +34,17 @@ import java.util.Objects;
 public class PoiFont {
 
     /**
-     *
+     * The workbook this font belongs to.
      */
     protected final PoiWorkbook workbook;
 
+    /**
+     * The {@link Font} instance that corresponds to this POI font.
+     */
     protected final Font font;
 
     /**
-     *
+     * The {@link org.apache.poi.ss.usermodel.Font} instance that corresponds to this font.
      */
     protected final org.apache.poi.ss.usermodel.Font poiFont;
 
