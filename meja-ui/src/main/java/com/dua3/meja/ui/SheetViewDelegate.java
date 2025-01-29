@@ -851,4 +851,12 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         g.drawText(text, r.xCenter(), r.yCenter(), Graphics.HAnchor.CENTER, Graphics.VAnchor.MIDDLE);
     }
 
+    public SheetView.SheetArea getSheetArea(Rectangle2f r) {
+        return new SheetView.SheetArea(
+                Math.max(0, getRowNumberFromY(r.yMin())),
+                Math.max(0, getColumnNumberFromX(r.xMin())),
+                getRowNumberFromY(r.yMax()) + 1,
+                getColumnNumberFromX(r.xMax()) + 1
+        );
+    }
 }

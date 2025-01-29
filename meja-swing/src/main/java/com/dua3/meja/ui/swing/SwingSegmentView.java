@@ -23,6 +23,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 import java.util.function.Function;
 
 final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
@@ -173,6 +174,8 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 return;
             }
 
+            Rectangle clipBounds = Objects.requireNonNullElse(g.getClipBounds(), bounds);
+
             Graphics2D g2d = (Graphics2D) g;
             SwingUtil.setRenderingQuality(g2d);
             try (SwingGraphics sg = new SwingGraphics(g2d, bounds)) {
@@ -180,8 +183,13 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 sg.setTransformation(t);
                 LOG.debug("paintComponent() - transformation:\n{}", t::toMatrixString);
 
+                Rectangle2f r = Rectangle2f.withCorners(
+                        sg.transform((float) bounds.getMinX(), (float) bounds.getMinY()),
+                        sg.transform((float) bounds.getMaxX(), (float) bounds.getMaxY())
+                );
+
                 // draw sheet
-                svDelegate.getSheetPainter().drawSheet(sg);
+                svDelegate.getSheetPainter().drawSheet(sg, r);
 
                 // draw split lines
                 if (ssvDelegate.hasHLine()) {

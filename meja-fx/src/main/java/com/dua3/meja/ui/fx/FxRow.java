@@ -346,7 +346,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         try (FxGraphics g = new FxGraphics(gc, w, h)) {
             // clear background
             g.setFill(sheetViewDelegate.getBackground());
-            g.fillRect(g.getBounds());
+            g.fillRect(0, 0, g.getWidth(), g.getHeight());
 
             float heightInPoints = sheetViewDelegate.getColumnLabelHeightInPoints();
 
@@ -380,7 +380,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
 
         try (FxGraphics g = new FxGraphics(gc, w, h)) {
             g.setFill(Color.BLACK);
-            g.fillRect(g.getBounds());
+            g.fillRect(0, 0, g.getWidth(), g.getHeight());
         }
     }
 
