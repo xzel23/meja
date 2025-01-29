@@ -173,6 +173,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             if (bounds.width == 0 || bounds.height == 0) {
                 return;
             }
+            bounds.setLocation(0, 0);
 
             Rectangle clipBounds = Objects.requireNonNullElse(g.getClipBounds(), bounds);
 
@@ -184,8 +185,8 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                 LOG.debug("paintComponent() - transformation:\n{}", t::toMatrixString);
 
                 Rectangle2f r = Rectangle2f.withCorners(
-                        sg.transform((float) clipBounds.getMinX(), (float) clipBounds.getMinY()),
-                        sg.transform((float) clipBounds.getMaxX(), (float) clipBounds.getMaxY())
+                        sg.inverseTransform(Vector2f.of((float) clipBounds.getMinX(), (float) clipBounds.getMinY())),
+                        sg.inverseTransform(Vector2f.of((float) clipBounds.getMaxX(), (float) clipBounds.getMaxY()))
                 );
 
                 // draw sheet

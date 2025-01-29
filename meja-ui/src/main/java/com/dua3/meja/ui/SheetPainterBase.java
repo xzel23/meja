@@ -122,9 +122,11 @@ public abstract class SheetPainterBase {
             float w = getRowLabelWidth();
             float y = getDelegate().getRowPos(i);
             float h = getDelegate().getRowPos(i + 1) - y;
-            Rectangle2f lr = new Rectangle2f(x, y, w, h);
-            String text = delegate.getRowName(i);
-            delegate.drawLabel(g, lr, text);
+            if (w > 0 && h > 0.0) {
+                Rectangle2f lr = new Rectangle2f(x, y, w, h);
+                String text = delegate.getRowName(i);
+                delegate.drawLabel(g, lr, text);
+            }
         }
 
         // draw column labels
@@ -133,9 +135,11 @@ public abstract class SheetPainterBase {
             float x = getDelegate().getColumnPos(j);
             float y = -getColumnLabelHeight();
             float w = getDelegate().getColumnPos(j + 1) - x;
-            Rectangle2f lr = new Rectangle2f(x, y, w, getColumnLabelHeight());
-            String text = delegate.getColumnName(j);
-            delegate.drawLabel(g, lr, text);
+            if (w > 0) {
+                Rectangle2f lr = new Rectangle2f(x, y, w, getColumnLabelHeight());
+                String text = delegate.getColumnName(j);
+                delegate.drawLabel(g, lr, text);
+            }
         }
     }
 
