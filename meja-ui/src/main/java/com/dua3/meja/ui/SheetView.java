@@ -187,6 +187,21 @@ public interface SheetView {
     }
 
     /**
+     * Defines a rectangular area of cells in a sheet.
+     * @param startRow      the start row
+     * @param startColumn   the start column
+     * @param endRow        the end row (exclusive)
+     * @param endColumn     the end column (exclusive)
+     */
+    record SheetArea(int startRow, int startColumn, int endRow, int endColumn) {
+        public static final SheetArea EMPTY = new SheetArea(0, 0, 0, 0);
+
+        public SheetArea {
+            assert startRow <= endRow && startColumn <= endColumn;
+        }
+    }
+
+    /**
      * Represents the quadrant of a sheet view.
      * A quadrant can be one of the four sections of a sheet view: top-left, top-right, bottom-left, and bottom-right.
      * <p>
