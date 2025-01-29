@@ -40,7 +40,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     /**
      * The sheet displayed.
      */
-    private transient Sheet sheet;
+    private final Sheet sheet;
 
     /**
      * Horizontal padding.
@@ -77,7 +77,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private float sheetWidthInPoints;
     private float rowLabelWidth;
     private float columnLabelHeightInPoints;
-    private float defaultRowHeightInPoints = 12.0f;
+    private float defaultRowHeightInPoints = 12.0f; // TODO get from workbook
     private Font labelFont = FontUtil.getInstance().getDefaultFont().withSize(8);
     private Color labelBackgroundColor = Color.WHITESMOKE;
     private Color labelBorderColor = labelBackgroundColor.darker();
@@ -620,7 +620,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         try (var __ = automaticWriteLock()) {
             getCurrentLogicalCell().ifPresent(cell -> {
                 Rectangle2f cellRect = getCellRect(cell.getLogicalCell());
-                //cellRect.yMin() - this.getVisibleAreaInSheet();
                 switch (d) {
                     case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
                     case SOUTH -> setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
@@ -807,10 +806,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         this.labelBorderWidthInPixels = labelBorderWidthInPixels;
     }
 
-    VisibleArea getVisibleAreaInSheet(Graphics g) {
-        return VisibleArea.get(this, g.getBounds());
-    }
-
     public AffineTransformation2f getTransformation() {
         return AffineTransformation2f.scale(getScale());
     }
@@ -831,18 +826,18 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return displayScale;
     }
 
-    protected record VisibleArea(int startRow, int endRow, int startColumn, int endColumn) {
-        private static final VisibleArea EMPTY = new VisibleArea(0, 0, 0, 0);
-
-        public static VisibleArea get(SheetViewDelegate delegate, Rectangle2f boundsInSheet) {
-            Sheet sheet = delegate.getSheet();
-            return new VisibleArea(
-                    Math.max(0, delegate.getRowNumberFromY(boundsInSheet.yMin())),
-                    Math.min(sheet.getLastRowNum() + 1, 1 + delegate.getRowNumberFromY(boundsInSheet.yMax())),
-                    Math.max(0, delegate.getColumnNumberFromX(boundsInSheet.xMin())),
-                    Math.min(sheet.getLastColNum() + 1, 1 + delegate.getColumnNumberFromX(boundsInSheet.xMax()))
-            );
-        }
+    /**
+     * Returns the area tapen up by the sheet and decorations in view coordinates.
+     * @return the total area used to display the sheet, and its labels
+     */
+    public Rectangle2f getTotalArea() {
+        float labelHeight = getColumnLabelHeightInPoints();
+        float labelWidth = getRowLabelWidthInPoints();
+        float x = -labelWidth;
+        float y = -labelHeight;
+        float w = labelWidth + getSheetWidthInPoints();
+        float h = labelHeight + getSheetHeightInPoints();
+        return new Rectangle2f(x, y, w, h);
     }
 
     public void drawLabel(Graphics g, Rectangle2f r, String text) {
