@@ -17,9 +17,9 @@ public class FxSheetViewDelegate extends SheetViewDelegate {
      * This delegate is responsible for managing the functions and interactions
      * specific to the associated FxSheetView.
      *
-     * @param owner The FxSheetView instance that this delegate will be associated with and
-     *              responsible for managing.
+     * @param owner The FxSheetView instance that this delegate will be associated with and responsible for managing.
      * @param sheet The sheet to show.
+     * @param dpi   the resolution in DPI for the display device
      */
     public FxSheetViewDelegate(
             Sheet sheet,
