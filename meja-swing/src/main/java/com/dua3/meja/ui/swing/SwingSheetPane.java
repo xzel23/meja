@@ -1,7 +1,6 @@
 package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
-import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import org.apache.logging.log4j.LogManager;
@@ -60,7 +59,6 @@ final class SwingSheetPane extends JScrollPane {
     }
 
     public Rectangle2f getCellRectInViewCoordinates(Cell cell) {
-        Sheet sheet = svDelegate.getSheet();
         boolean isTop = cell.getRowNumber() < svDelegate.getSplitRow();
         boolean isLeft = cell.getColumnNumber() < svDelegate.getSplitColumn();
 
