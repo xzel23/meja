@@ -5,8 +5,11 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.model.SheetEvent.RowsAdded;
 import javafx.beans.property.FloatProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ReadOnlyFloatProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableListBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,11 +22,12 @@ import java.util.concurrent.Flow;
  * It extends {@code ObservableListBase<Row>} to provide the necessary observable list functionalities.
  * Internally, it subscribes to sheet events and updates the observable list accordingly.
  */
-public class ObservableSheet extends ObservableListBase<@Nullable Row> {
+public class ObservableSheet extends ObservableListBase<Row> {
     private static final Logger LOG = LogManager.getLogger(ObservableSheet.class);
 
     private final Sheet sheet;
     private final FloatProperty zoomProperty;
+    private final IntegerProperty columnCountProperty;
 
     /**
      * Constructs an ObservableSheet that wraps a given {@code Sheet}.
@@ -36,11 +40,12 @@ public class ObservableSheet extends ObservableListBase<@Nullable Row> {
         this.sheet = sheet;
         this.sheet.subscribe(new SheetTracker());
         this.zoomProperty = new SimpleFloatProperty(sheet.getZoom());
+        this.columnCountProperty = new SimpleIntegerProperty(sheet.getColumnCount());
     }
 
     @Override
-    public @Nullable Row get(int index) {
-        return sheet.getRowIfExists(index).orElse(null);
+    public Row get(int index) {
+        return sheet.getRow(index);
     }
 
     @Override
@@ -59,6 +64,10 @@ public class ObservableSheet extends ObservableListBase<@Nullable Row> {
         return zoomProperty;
     }
 
+    public ReadOnlyIntegerProperty columnCountProperty() {
+        return columnCountProperty;
+    }
+
     private class SheetTracker implements Flow.Subscriber<SheetEvent> {
 
         private Flow.@Nullable Subscription subscription;
@@ -71,14 +80,21 @@ public class ObservableSheet extends ObservableListBase<@Nullable Row> {
 
         @Override
         public void onNext(SheetEvent item) {
-            if (item instanceof RowsAdded rowsAdded) {
-                beginChange();
-                nextAdd(rowsAdded.first(), rowsAdded.last());
-                endChange();
-            } else if (item instanceof SheetEvent.ZoomChanged zoomChanged) {
-                LOG.trace("zoom changed from {} to {}", zoomProperty.getValue(), zoomChanged.newValue());
-                zoomProperty.setValue(zoomChanged.newValue());
-            }
+            switch (item) {
+                case RowsAdded rowsAdded -> {
+                    beginChange();
+                    nextAdd(rowsAdded.first(), rowsAdded.last());
+                    endChange();
+                }
+                case SheetEvent.ZoomChanged zoomChanged -> {
+                    LOG.trace("zoom changed from {} to {}", zoomProperty.getValue(), zoomChanged.newValue());
+                    zoomProperty.setValue(zoomChanged.newValue());
+                }
+                case SheetEvent.ColumnsAdded columnsAdded-> {
+                    LOG.trace("columns added");
+                    columnCountProperty.setValue(sheet.getColumnCount());
+                }
+                default -> {}}
         }
 
         @Override
