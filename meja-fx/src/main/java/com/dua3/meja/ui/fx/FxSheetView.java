@@ -75,21 +75,7 @@ public class FxSheetView extends StackPane implements SheetView {
         topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, topRows);
         bottomLeftQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_LEFT, bottomRows);
         bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, bottomRows);
-/*
-        bottomLeftQuadrant.minWidthProperty().bind(topLeftQuadrant.widthProperty());
-        bottomLeftQuadrant.maxWidthProperty().bind(topLeftQuadrant.widthProperty());
-        bottomLeftQuadrant.prefWidthProperty().bind(topLeftQuadrant.widthProperty());
-        bottomLeftQuadrant.minHeightProperty().bind(bottomRightQuadrant.heightProperty());
-        bottomLeftQuadrant.maxHeightProperty().bind(bottomRightQuadrant.heightProperty());
-        bottomLeftQuadrant.prefHeightProperty().bind(bottomRightQuadrant.heightProperty());
 
-        topRightQuadrant.minWidthProperty().bind(bottomRightQuadrant.widthProperty());
-        topRightQuadrant.maxWidthProperty().bind(bottomRightQuadrant.widthProperty());
-        topRightQuadrant.prefWidthProperty().bind(bottomRightQuadrant.widthProperty());
-        topRightQuadrant.minHeightProperty().bind(topLeftQuadrant.heightProperty());
-        topRightQuadrant.maxHeightProperty().bind(topLeftQuadrant.heightProperty());
-        topRightQuadrant.prefHeightProperty().bind(topLeftQuadrant.heightProperty());
-*/
         // Create scrollbars
         hScrollbar = new ScrollBar();
         hScrollbar.setOrientation(Orientation.HORIZONTAL);
