@@ -23,9 +23,11 @@ public class FxSheetViewDelegate extends SheetViewDelegate {
      */
     public FxSheetViewDelegate(
             Sheet sheet,
-            FxSheetView owner
+            FxSheetView owner,
+            int dpi
     ) {
         super(sheet, owner);
+        update(dpi);
     }
 
     @Override

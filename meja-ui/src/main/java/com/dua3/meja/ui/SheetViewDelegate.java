@@ -84,6 +84,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private float labelBorderWidthInPixels = 1.0f;
     private float pixelWidthInPoints = 1.0f;
     private float pixelHeightInPoints = 1.0f;
+    private int splitColumn;
+    private int splitRow;
 
     /**
      * Retrieves the read lock for the underlying sheet.
@@ -125,6 +127,18 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return AutoLock.of(sheet.writeLock(), () -> "writeLock() [%s]".formatted(sheet.getSheetName()));
     }
 
+    public void update(int dpi) {
+        try (var __ = automaticWriteLock()) {
+            setDisplayScale(getDisplayScale());
+            setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
+            setRowCount(sheet.getRowCount());
+            setColumnCount(sheet.getColumnCount());
+            setSplitRow(sheet.getSplitRow());
+            setSplitColumn(sheet.getSplitColumn());
+            updateLayout();
+        }
+    }
+
     /**
      * Retrieves the height of the sheet in points.
      *
@@ -149,7 +163,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @return dx coordinate of split
      */
     public float getSplitX() {
-        return getColumnPos(sheet.getSplitColumn());
+        return getColumnPos(getSplitColumn());
     }
 
     /**
@@ -158,7 +172,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @return dy coordinate of split
      */
     public float getSplitY() {
-        return getRowPos(sheet.getSplitRow());
+        return getRowPos(getSplitRow());
     }
 
     /**
@@ -358,7 +372,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         LOG.trace("onNext() - {}", item);
 
         switch (item.type()) {
-            case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED -> {
+            case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED, SheetEvent.COLUMNS_ADDED -> {
                 owner.updateContent();
             }
             case SheetEvent.SPLIT_CHANGED -> {
@@ -440,6 +454,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
     public void updateLayout() {
         if (!layoutChanged) {
+            LOG.trace("updateLayout() - layout is clean, nothing to do");
             return;
         }
 
@@ -489,6 +504,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setGridColor(Color gridColor) {
+        LOG.trace("setGridColor({})", gridColor);
         this.gridColor = gridColor;
     }
 
@@ -506,6 +522,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setEditable(boolean editable) {
+        LOG.trace("setEditable({})", editable);
         this.editable = editable;
     }
 
@@ -519,6 +536,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setEditing(boolean editing) {
+        LOG.trace("setEditing({})", editing);
         this.editing = editing;
     }
 
@@ -531,22 +549,22 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public int getSplitColumn() {
-        return sheet.getSplitColumn();
+        return splitColumn;
     }
 
     public int getSplitRow() {
-        return sheet.getSplitRow();
+        return splitRow;
     }
 
     public boolean setCurrentCell(int i, int j) {
-        LOG.trace("setCurrentCell()");
+        LOG.trace("setCurrentCell({}, {})", i, j);
         try (var __ = automaticWriteLock()) {
             return sheet.setCurrentCell(i, j);
         }
     }
 
     public boolean setCurrentCell(Cell cell) {
-        LOG.trace("setCurrentCell()");
+        LOG.trace("setCurrentCell({})", cell::getCellRef);
         try (var __ = automaticWriteLock()) {
             return sheet.setCurrentCell(cell);
         }
@@ -565,7 +583,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setScale(Scale2f scale) {
-        LOG.trace("setScale()");
+        LOG.trace("setScale({})", scale);
         try (var __ = automaticReadLock()) {
             if (!scale.equals(this.scale)) {
                 this.scale = scale;
@@ -575,7 +593,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setDisplayScale(Scale2f displayScale) {
-        LOG.trace("setDisplayScale()");
+        LOG.trace("setDisplayScale({})", displayScale);
         try (var __ = automaticReadLock()) {
             if (!displayScale.equals(this.displayScale)) {
                 this.displayScale = displayScale;
@@ -585,6 +603,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     private void markLayoutChanged() {
+        LOG.trace("markLayoutChanged()");
         this.layoutChanged = true;
     }
 
@@ -593,11 +612,12 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public void setBackground(Color background) {
+        LOG.trace("setBackground({})", background);
         this.background = background;
     }
 
     public void move(Direction d) {
-        LOG.trace("move()");
+        LOG.trace("move({})", d);
         try (var __ = automaticWriteLock()) {
             getCurrentLogicalCell().ifPresent(cell -> {
                 switch (d) {
@@ -858,5 +878,31 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
                 getRowNumberFromY(r.yMax()) + 1,
                 getColumnNumberFromX(r.xMax()) + 1
         );
+    }
+
+    public void setRowCount(int rowCount) {
+        if (rowCount != rowPos.length - 1) {
+            markLayoutChanged();
+        }
+    }
+
+    public void setColumnCount(int columnCount) {
+        if (columnCount != columnPos.length - 1) {
+            markLayoutChanged();
+        }
+    }
+
+    public void setSplitRow(int i) {
+        if (i != splitRow) {
+            splitRow = i;
+            markLayoutChanged();
+        }
+    }
+
+    public void setSplitColumn(int j) {
+        if (j != splitColumn) {
+            splitColumn = j;
+            markLayoutChanged();
+        }
     }
 }

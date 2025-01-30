@@ -144,7 +144,7 @@ public class SegmentViewDelegate {
      * the start column index is less than or equal to 0; otherwise, {@code false}
      */
     public boolean isLeftOfSplit() {
-        return getEndColumn() <= getSheet().getSplitColumn();
+        return getEndColumn() <= sheetViewDelegate.getSplitColumn();
     }
 
     /**
@@ -155,7 +155,7 @@ public class SegmentViewDelegate {
      *         if the starting row index is less than or equal to zero.
      */
     public boolean isAboveSplit() {
-        return getEndRow() <= getSheet().getSplitRow();
+        return getEndRow() <= sheetViewDelegate.getSplitRow();
     }
 
     /**

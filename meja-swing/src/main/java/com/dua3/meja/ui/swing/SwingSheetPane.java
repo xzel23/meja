@@ -61,8 +61,8 @@ final class SwingSheetPane extends JScrollPane {
 
     public Rectangle2f getCellRectInViewCoordinates(Cell cell) {
         Sheet sheet = svDelegate.getSheet();
-        boolean isTop = cell.getRowNumber() < sheet.getSplitRow();
-        boolean isLeft = cell.getColumnNumber() < sheet.getSplitColumn();
+        boolean isTop = cell.getRowNumber() < svDelegate.getSplitRow();
+        boolean isLeft = cell.getColumnNumber() < svDelegate.getSplitColumn();
 
         final SwingSegmentView quadrant;
         if (isTop) {
