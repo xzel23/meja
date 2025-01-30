@@ -5,9 +5,8 @@ java {
     withJavadocJar()
     withSourcesJar()
 
-    // JavaFX 21 is needed, but it is compatible with Java 17, so use Java 17 as language setting
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
