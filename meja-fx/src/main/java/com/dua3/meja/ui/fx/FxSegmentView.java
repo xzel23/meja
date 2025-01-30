@@ -204,7 +204,7 @@ public class FxSegmentView extends Control implements SegmentView {
 
     @Override
     public void setViewSizeOnDisplay(float widthInPoints, float heightIPoints) {
-        Scale2f scale = svDelegate.getScale();
-        setPrefSize(widthInPoints * scale.sx(), heightIPoints * scale.sy());
+                Scale2f scale = svDelegate.getScale();
+                setPrefSize(widthInPoints * scale.sx(), heightIPoints * scale.sy());
     }
 }
