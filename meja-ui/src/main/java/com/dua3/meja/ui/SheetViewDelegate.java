@@ -371,32 +371,35 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public void onNext(SheetEvent item) {
         LOG.trace("onNext() - {}", item);
 
-        switch (item.type()) {
-            case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED, SheetEvent.COLUMNS_ADDED -> {
-                owner.updateContent();
-            }
-            case SheetEvent.SPLIT_CHANGED -> {
-                owner.updateContent();
-                owner.scrollToCurrentCell();
-            }
-            case SheetEvent.ACTIVE_CELL_CHANGED -> {
-                SheetEvent.ActiveCellChanged evt = (SheetEvent.ActiveCellChanged) item;
-
-                Cell oldCell = evt.oldValue();
-                Cell newCell = evt.newValue();
-
-                if (oldCell != null) {
-                    owner.repaintCell(oldCell);
+        try (var __ = automaticWriteLock()) {
+            switch (item.type()) {
+                case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED,
+                     SheetEvent.COLUMNS_ADDED -> {
+                    owner.updateContent();
                 }
-                owner.scrollToCurrentCell();
-                if (newCell != null) {
-                    owner.repaintCell(newCell);
+                case SheetEvent.SPLIT_CHANGED -> {
+                    owner.updateContent();
+                    owner.scrollToCurrentCell();
                 }
-            }
-            case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED -> {
-                owner.repaintCell(((SheetEvent.CellChanged<?>) item).cell());
-            }
-            default -> {
+                case SheetEvent.ACTIVE_CELL_CHANGED -> {
+                    SheetEvent.ActiveCellChanged evt = (SheetEvent.ActiveCellChanged) item;
+
+                    Cell oldCell = evt.oldValue();
+                    Cell newCell = evt.newValue();
+
+                    if (oldCell != null) {
+                        owner.repaintCell(oldCell);
+                    }
+                    owner.scrollToCurrentCell();
+                    if (newCell != null) {
+                        owner.repaintCell(newCell);
+                    }
+                }
+                case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED -> {
+                    owner.repaintCell(((SheetEvent.CellChanged<?>) item).cell());
+                }
+                default -> {
+                }
             }
         }
     }
@@ -460,6 +463,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
         LOG.trace("updateLayout()");
         try (var __ = automaticWriteLock()) {
+            layoutChanged = false;
+
             this.pixelWidthInPoints = 1.0f / scale.sx();
             this.pixelHeightInPoints = 1.0f / scale.sy();
 
@@ -486,7 +491,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             Rectangle2f dim = calculateLabelDimension(sMax);
             rowLabelWidth = dim.width() + 2 * PADDING_X_IN_POINTS;
             columnLabelHeightInPoints = dim.height() + 2 * PADDING_Y_IN_POINTS;
-            layoutChanged = false;
         }
     }
 

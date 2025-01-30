@@ -88,7 +88,6 @@ public class FxRow extends IndexedCell<FxRow.Index> {
     public float getRowHeightInPoints() {
         PlatformHelper.checkApplicationThread();
 
-        sheetViewDelegate.updateLayout();
         int idx = getIndex();
 
         if (getSegmentViewDelegate().isAboveSplit()) {
@@ -249,7 +248,6 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         GraphicsContext gc = prepareGraphicsContext(w, h);
 
         FxSheetViewDelegate sheetViewDelegate = getSheetViewDelegate();
-        sheetViewDelegate.updateLayout();
 
         Scale2f s = sheetViewDelegate.getScale();
 
@@ -330,7 +328,6 @@ public class FxRow extends IndexedCell<FxRow.Index> {
 
     private void renderColumnLabels() {
         FxSheetViewDelegate sheetViewDelegate = getSheetViewDelegate();
-        sheetViewDelegate.updateLayout();
 
         float w = segmentViewDelegate.getWidthInPixels();
         float h = sheetViewDelegate.getColumnLabelHeightInPixels();

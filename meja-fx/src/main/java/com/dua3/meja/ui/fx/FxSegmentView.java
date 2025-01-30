@@ -5,10 +5,8 @@ import com.dua3.meja.ui.SegmentView;
 import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.fx.PlatformHelper;
-import com.dua3.utility.math.geometry.Scale2f;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Control;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.control.ScrollBar;
@@ -124,16 +122,15 @@ public class FxSegmentView extends Control implements SegmentView {
      * @param svDelegate the delegate responsible for accessing data specific to the {@link SheetView}
      * @param quadrant the specific quadrant of the sheet that the segment view
      *        represents and displays.
-     * @param observableSheet the observable list of all rows in the sheet, which will be
-     *        filtered to include only the rows belonging to the specified quadrant.
+     * @param rows the observable list of the rows to display in this quadrant.
      */
-    public FxSegmentView(FxSheetViewDelegate svDelegate, SheetView.Quadrant quadrant, ObservableSheet observableSheet) {
+    public FxSegmentView(FxSheetViewDelegate svDelegate, SheetView.Quadrant quadrant, ObservableList<Row> rows) {
         LOG.trace("FxSegmentView()");
 
         this.quadrant = quadrant;
         this.svDelegate = svDelegate;
         this.segmentDelegate = new SegmentViewDelegate(this, svDelegate, quadrant);
-        this.rows = filterRows(observableSheet, quadrant, svDelegate.getSplitRow());
+        this.rows = rows;
         this.flow = new VirtualFlowWithHiddenScrollBars<>();
 
         updateLayout();
@@ -157,54 +154,19 @@ public class FxSegmentView extends Control implements SegmentView {
     }
 
     /**
-     * Get an {@link ObservableList} containing the rows belonging to this quadrant
-     *
-     * @param rows     all rows
-     * @param splitRow the split row, i.e., rows above this row belong to the upper half
-     * @return the filtered {@link ObservableList} of rows
-     */
-    private static ObservableList<@Nullable Row> filterRows(ObservableList<@Nullable Row> rows, SheetView.Quadrant quadrant, int splitRow) {
-        return new FilteredList<>(rows, row -> row != null && quadrant.isTop() == (row.getRowNumber() < splitRow));
-    }
-
-    /**
      * Update layout, i.e., when the scale or row and/or column sizes change.
      */
     public void updateLayout() {
         PlatformHelper.checkApplicationThread();
-
         segmentDelegate.updateLayout();
-
-        double widthInPixels = segmentDelegate.getWidthInPixels();
-        double heightInPixels = segmentDelegate.getHeightInPixels();
-
-        switch (quadrant) {
-            case TOP_LEFT -> {
-                setMinSize(widthInPixels, heightInPixels);
-                setMaxSize(widthInPixels, heightInPixels);
-                setPrefSize(widthInPixels, heightInPixels);
-            }
-            case TOP_RIGHT -> {
-                setMinHeight(heightInPixels);
-                setMaxHeight(heightInPixels);
-                setPrefHeight(heightInPixels);
-                setPrefWidth(widthInPixels);
-            }
-            case BOTTOM_LEFT -> {
-                setMinWidth(widthInPixels);
-                setMaxWidth(widthInPixels);
-                setPrefWidth(widthInPixels);
-            }
-            case BOTTOM_RIGHT -> {
-                // nop
-            }
-        }
-        LOG.trace("updateLayout() quadrant={}, width={}, height={} ", quadrant, widthInPixels, heightInPixels);
     }
 
     @Override
-    public void setViewSizeOnDisplay(float widthInPoints, float heightIPoints) {
-                Scale2f scale = svDelegate.getScale();
-                setPrefSize(widthInPoints * scale.sx(), heightIPoints * scale.sy());
+    public void setViewSizeOnDisplay(float w, float h) {
+        if (quadrant== SheetView.Quadrant.TOP_LEFT) {
+            setMinSize(w, h);
+            setMaxSize(w, h);
+        }
+        setPrefSize(w, h);
     }
 }

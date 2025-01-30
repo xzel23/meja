@@ -2,6 +2,7 @@ package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
+import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.fx.FxUtil;
@@ -10,6 +11,8 @@ import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.text.RichText;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollBar;
@@ -23,6 +26,7 @@ import javafx.stage.Screen;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.Toolkit;
 import java.util.Locale;
@@ -64,11 +68,28 @@ public class FxSheetView extends StackPane implements SheetView {
         // Create quadrants
         ObservableSheet observableSheet = new ObservableSheet(sheet);
 
-        topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, observableSheet);
-        topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, observableSheet);
-        bottomLeftQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_LEFT, observableSheet);
-        bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, observableSheet);
+        ObservableList<Row> topRows = new FilteredList<>(observableSheet, row -> row.getRowNumber() < delegate.getSplitRow());
+        ObservableList<Row> bottomRows = new FilteredList<>(observableSheet, row -> row.getRowNumber() >= delegate.getSplitRow());
 
+        topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, topRows);
+        topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, topRows);
+        bottomLeftQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_LEFT, bottomRows);
+        bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, bottomRows);
+/*
+        bottomLeftQuadrant.minWidthProperty().bind(topLeftQuadrant.widthProperty());
+        bottomLeftQuadrant.maxWidthProperty().bind(topLeftQuadrant.widthProperty());
+        bottomLeftQuadrant.prefWidthProperty().bind(topLeftQuadrant.widthProperty());
+        bottomLeftQuadrant.minHeightProperty().bind(bottomRightQuadrant.heightProperty());
+        bottomLeftQuadrant.maxHeightProperty().bind(bottomRightQuadrant.heightProperty());
+        bottomLeftQuadrant.prefHeightProperty().bind(bottomRightQuadrant.heightProperty());
+
+        topRightQuadrant.minWidthProperty().bind(bottomRightQuadrant.widthProperty());
+        topRightQuadrant.maxWidthProperty().bind(bottomRightQuadrant.widthProperty());
+        topRightQuadrant.prefWidthProperty().bind(bottomRightQuadrant.widthProperty());
+        topRightQuadrant.minHeightProperty().bind(topLeftQuadrant.heightProperty());
+        topRightQuadrant.maxHeightProperty().bind(topLeftQuadrant.heightProperty());
+        topRightQuadrant.prefHeightProperty().bind(topLeftQuadrant.heightProperty());
+*/
         // Create scrollbars
         hScrollbar = new ScrollBar();
         hScrollbar.setOrientation(Orientation.HORIZONTAL);
@@ -132,6 +153,17 @@ public class FxSheetView extends StackPane implements SheetView {
                 });
             }
         });
+    }
+
+    /**
+     * Get an {@link ObservableList} containing the rows belonging to this quadrant
+     *
+     * @param rows     all rows
+     * @param splitRow the split row, i.e., rows above this row belong to the upper half
+     * @return the filtered {@link ObservableList} of rows
+     */
+    private static ObservableList<@Nullable Row> filterRows(ObservableList<@Nullable Row> rows, boolean isTop, int splitRow) {
+        return new FilteredList<>(rows, row -> row != null && isTop == (row.getRowNumber() < splitRow));
     }
 
     private static ColumnConstraints columnConstraints(Priority prio) {
@@ -296,20 +328,19 @@ public class FxSheetView extends StackPane implements SheetView {
     @Override
     public void repaintCell(Cell cell) {
         LOG.trace("repaintCell({})", cell);
+        PlatformHelper.checkApplicationThread();
 
-        PlatformHelper.runLater(() -> {
-            try (var __ = delegate.automaticReadLock()) {
-                Cell lc = cell.getLogicalCell();
-                int startRow = lc.getRowNumber();
-                int endRow = startRow + lc.getVerticalSpan();
-                for (int i = startRow; i < endRow; i++) {
-                    topLeftQuadrant.requestLayoutForRow(i);
-                    topRightQuadrant.requestLayoutForRow(i);
-                    bottomLeftQuadrant.requestLayoutForRow(i);
-                    bottomRightQuadrant.requestLayoutForRow(i);
-                }
+        try (var __ = delegate.automaticReadLock()) {
+            Cell lc = cell.getLogicalCell();
+            int startRow = lc.getRowNumber();
+            int endRow = startRow + lc.getVerticalSpan();
+            for (int i = startRow; i < endRow; i++) {
+                topLeftQuadrant.requestLayoutForRow(i);
+                topRightQuadrant.requestLayoutForRow(i);
+                bottomLeftQuadrant.requestLayoutForRow(i);
+                bottomRightQuadrant.requestLayoutForRow(i);
             }
-        });
+        }
     }
 
     /**
@@ -335,12 +366,14 @@ public class FxSheetView extends StackPane implements SheetView {
     private void updateLayout() {
         LOG.debug("updateLayout()");
         PlatformHelper.checkApplicationThread();
-        try (var __ = delegate.automaticWriteLock()) {
-            delegate.update(getDpi());
-            bottomRightQuadrant.updateLayout();
-            topRightQuadrant.updateLayout();
-            bottomLeftQuadrant.updateLayout();
-            topLeftQuadrant.updateLayout();
+        synchronized (topLeftQuadrant) {
+            try (var __ = delegate.automaticWriteLock()) {
+                delegate.update(getDpi());
+                bottomRightQuadrant.updateLayout();
+                topRightQuadrant.updateLayout();
+                bottomLeftQuadrant.updateLayout();
+                topLeftQuadrant.updateLayout();
+            }
         }
     }
 
@@ -354,16 +387,13 @@ public class FxSheetView extends StackPane implements SheetView {
         }
 
         try (var __ = delegate.automaticWriteLock()) {
-            updating = true;
-
-            updateLayout();
-
-            topLeftQuadrant.refresh();
-            topRightQuadrant.refresh();
-            bottomLeftQuadrant.refresh();
-            bottomRightQuadrant.refresh();
-        } finally {
-            updating = false;
+            synchronized (topLeftQuadrant) {
+                updateLayout();
+                topLeftQuadrant.refresh();
+                topRightQuadrant.refresh();
+                bottomLeftQuadrant.refresh();
+                bottomRightQuadrant.refresh();
+            }
         }
     }
 
