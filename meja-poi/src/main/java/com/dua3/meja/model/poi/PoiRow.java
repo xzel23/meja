@@ -57,8 +57,19 @@ public final class PoiRow extends AbstractRow {
     }
 
     @Override
-    public PoiCell getCell(int col) {
-        org.apache.poi.ss.usermodel.Cell poiCell = poiRow.getCell(col, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+    public PoiCell getCell(int j) {
+        org.apache.poi.ss.usermodel.Cell poiCell;
+        int oldLast = getLastCellNum();
+            if (j > oldLast) {
+            int jj = oldLast;
+            do {
+                poiCell = poiRow.createCell(++jj);
+            } while (jj < j);
+            getSheet().setColumnUsed(j);
+        } else {
+            poiCell = poiRow.getCell(j, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+        }
+
         return new PoiCell(this, poiCell);
     }
 
@@ -92,6 +103,17 @@ public final class PoiRow extends AbstractRow {
      */
     void setColumnUsed(int columnNumber) {
         getSheet().setColumnUsed(columnNumber);
+    }
+
+    /**
+     * Broadcast event: columns added.
+     *
+     * @param first the index (inclusive) of the first added column
+     * @param last the index (exclusive) of the last added column
+     */
+    private void columnsAdded(int first, int last) {
+        PoiSheet sheet = getSheet();
+        sheet.setColumnUsed(last);
     }
 
     @Override

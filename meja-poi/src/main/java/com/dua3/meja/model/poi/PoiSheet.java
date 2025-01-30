@@ -167,8 +167,12 @@ public class PoiSheet extends AbstractSheet {
     public PoiRow getRow(int i) {
         Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
+            int oldLast = getLastRowNum();
+            int added = i - oldLast;
             poiRow = poiSheet.createRow(i);
-            rowsAdded(i, i + 1);
+            if (added > 0) {
+                rowsAdded(oldLast + 1, oldLast + added + 1);
+            }
         }
         return new PoiRow(this, poiRow);
     }

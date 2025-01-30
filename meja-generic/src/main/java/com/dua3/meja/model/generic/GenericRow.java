@@ -51,8 +51,12 @@ public class GenericRow extends AbstractRow {
 
     @Override
     public GenericCell getCell(int col) {
-        reserve(col);
-        return cells.get(col);
+        int added = reserve(col);
+        GenericCell cell = cells.get(col);
+        if (added > 0) {
+            getSheet().setColumnUsed(col);
+        }
+        return cell;
     }
 
     @Override
@@ -75,8 +79,9 @@ public class GenericRow extends AbstractRow {
         return new IteratorAdapter<>(cells.iterator());
     }
 
-    private void reserve(int col) {
-        if (col >= cells.size()) {
+    private int reserve(int col) {
+        int n = Math.max (0, col - cells.size() + 1);
+        if (n > 0) {
             GenericCellStyle cellStyle = getSheet().getWorkbook().getDefaultCellStyle();
             cells.ensureCapacity(col + 1);
             for (int colNum = cells.size(); colNum <= col; colNum++) {
@@ -84,6 +89,7 @@ public class GenericRow extends AbstractRow {
             }
             getSheet().reserveColumn(col);
         }
+        return n;
     }
 
     @Override

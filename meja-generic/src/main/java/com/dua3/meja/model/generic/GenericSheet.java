@@ -42,8 +42,8 @@ public class GenericSheet extends AbstractSheet {
     private final List<GenericRow> rows = new ArrayList<>(4_000);
     private final ArrayList<@Nullable Float> columnWidth = new ArrayList<>(200);
     private final ArrayList<@Nullable Float> rowHeight = new ArrayList<>(4_000);
-    private int freezeRow;
-    private int freezeColumn;
+    private int splitRow;
+    private int splitColumn;
     private int autoFilterRow = -1;
     private int numberOfColumns;
     private int currentRow;
@@ -149,12 +149,12 @@ public class GenericSheet extends AbstractSheet {
 
     @Override
     public int getSplitColumn() {
-        return freezeColumn;
+        return splitColumn;
     }
 
     @Override
     public int getSplitRow() {
-        return freezeRow;
+        return splitRow;
     }
 
     @Override
@@ -269,9 +269,16 @@ public class GenericSheet extends AbstractSheet {
         LangUtil.check(i >= 0 && j >= 0, "Invalid split position: (%d, %d)", i, j);
 
         Pair<Integer, Integer> oldSplit = Pair.of(getSplitRow(), getSplitColumn());
-        freezeRow = i;
-        freezeColumn = j;
+        splitRow = i;
+        splitColumn = j;
         splitChanged(oldSplit, Pair.of(i, j));
     }
 
+    void setColumnUsed(int columnNumber) {
+        if (columnNumber > numberOfColumns - 1 ) {
+            int oldLast = getLastColNum();
+            numberOfColumns = columnNumber + 1;
+            columnsAdded(oldLast, numberOfColumns);
+        }
+    }
 }
