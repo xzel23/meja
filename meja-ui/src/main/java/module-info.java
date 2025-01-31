@@ -10,6 +10,7 @@ module com.dua3.meja.ui {
     requires transitive com.dua3.meja;
 
     requires com.dua3.utility;
+    requires com.dua3.utility.logging.log4j;
 
     requires org.jspecify;
     requires org.apache.logging.log4j;

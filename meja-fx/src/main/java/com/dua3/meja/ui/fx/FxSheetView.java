@@ -267,7 +267,7 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.trace("scrollToCurrentCell()");
 
         Platform.runLater(() -> {
-            try (var __ = delegate.automaticReadLock()) {
+            try (var __ = delegate.readLock("FxSheetView.scrollToCurrentCell()")) {
                 Cell cell = delegate.getCurrentLogicalCell();
                 Sheet sheet = delegate.getSheet();
                 int i = cell.getRowNumber();
@@ -316,7 +316,7 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.trace("repaintCell({})", cell);
         PlatformHelper.checkApplicationThread();
 
-        try (var __ = delegate.automaticReadLock()) {
+        try (var __ = delegate.readLock("FxSheetView.repaintCell()")) {
             Cell lc = cell.getLogicalCell();
             int startRow = lc.getRowNumber();
             int endRow = startRow + lc.getVerticalSpan();
@@ -353,7 +353,7 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.debug("updateLayout()");
         PlatformHelper.checkApplicationThread();
         synchronized (topLeftQuadrant) {
-            try (var __ = delegate.automaticWriteLock()) {
+            try (var __ = delegate.readLock("FxSheetView.updateLayout()")) {
                 delegate.update(getDpi());
                 bottomRightQuadrant.updateLayout();
                 topRightQuadrant.updateLayout();
@@ -372,7 +372,7 @@ public class FxSheetView extends StackPane implements SheetView {
             return;
         }
 
-        try (var __ = delegate.automaticWriteLock()) {
+        try (var __ = delegate.readLock("FxSheetView.updateContent()")) {
             synchronized (topLeftQuadrant) {
                 updateLayout();
                 topLeftQuadrant.refresh();

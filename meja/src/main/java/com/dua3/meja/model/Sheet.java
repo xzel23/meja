@@ -16,6 +16,7 @@
 package com.dua3.meja.model;
 
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.concurrent.AutoLock;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -27,8 +28,6 @@ import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.concurrent.Flow;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -37,7 +36,7 @@ import java.util.stream.StreamSupport;
  *
  * @author axel
  */
-public interface Sheet extends Iterable<Row>, ReadWriteLock {
+public interface Sheet extends Iterable<Row> {
 
     /**
      * Subscribes a subscriber to receive events of a specified class.
@@ -452,13 +451,17 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     }
 
     /**
-     * Test if sheet is empty.
+     * Test if the sheet is empty.
      *
      * @return true, if the sheet is empty
      */
     default boolean isEmpty() {
         return getRowCount() == 0;
     }
+
+    AutoLock readLock(String name);
+
+    AutoLock writeLock(String name);
 
     /**
      * Find cell containing text in sheet.
@@ -468,9 +471,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      * @return {@code Optional} holding the cell found or empty
      */
     default Optional<Cell> find(String text, SearchSettings ss) {
-        Lock lock = readLock();
-        lock.lock();
-        try {
+        try (var __ = readLock("AbstractSheet.find()")) {
             if (isEmpty()) {
                 return Optional.empty();
             }
@@ -520,8 +521,6 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
 
             // not found
             return Optional.empty();
-        } finally {
-            lock.unlock();
         }
     }
 
@@ -550,16 +549,16 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
     }
 
     /**
-     * Get the default column width for this sheet, i.e., the width used when creating new columns.
+     * Get the default row height for this sheet, i.e., the height used when creating new rows.
      *
-     * @return the default column width
+     * @return the default row height
      */
     float getDefaultRowHeight();
 
     /**
-     * Get the default row height for this sheet, i.e., the height used when creating new rows.
+     * Get the default column widtht for this sheet, i.e., the width used when creating new columns.
      *
-     * @return the default row height
+     * @return the default column width
      */
     float getDefaultColumnWidth();
 }

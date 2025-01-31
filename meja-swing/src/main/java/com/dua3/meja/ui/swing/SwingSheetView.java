@@ -66,6 +66,7 @@ public class SwingSheetView extends JPanel implements SheetView {
         super(new GridLayout(1, 1));
         this.delegate = new SwingSheetViewDelegate(sheet, this, CellRenderer::new);
         this.sheetPane = new SwingSheetPane(delegate);
+
         init();
     }
 
@@ -254,5 +255,11 @@ public class SwingSheetView extends JPanel implements SheetView {
         Locale locale = super.getLocale();
         assert locale != null;
         return locale;
+    }
+
+    @Override
+    public void validate() {
+        super.validate();
+        delegate.updateLayout();
     }
 }

@@ -22,6 +22,8 @@ import com.dua3.meja.ui.swing.MejaSwingHelper;
 import com.dua3.meja.ui.swing.SwingSheetView;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.meja.util.MejaHelper;
+import com.dua3.utility.logging.LogLevel;
+import com.dua3.utility.logging.log4j.LogUtilLog4J;
 import com.dua3.utility.swing.SwingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +54,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,18 +89,23 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
      */
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
+        List<String> argList = new ArrayList<>(List.of(args));
+        if (argList.remove("--debug")) {
+            LogUtilLog4J.init(LogLevel.TRACE);
+        }
+
         SwingUtil.setNativeLookAndFeel(APPLICATION_NAME);
 
         SwingUtilities.invokeLater(() -> {
             ExcelViewerModel<SwingWorkbookView, SwingSheetView> model = new ExcelViewerModel<>(APPLICATION_NAME, YEAR, AUTHOR);
             SwingExcelViewer viewer = new SwingExcelViewer(model);
 
-            if (args.length > 1) {
+            if (argList.size() > 1) {
                 System.out.println(model.getInfo());
                 System.exit(STATUS_ERROR);
             }
 
-            File file = args.length == 1 ? new File(args[0]) : null;
+            File file = argList.isEmpty() ? null : new File(argList.get(0));
 
             viewer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             viewer.setSize(600, 400);

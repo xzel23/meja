@@ -18,6 +18,7 @@ package com.dua3.meja.ui;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
 
 import java.util.Locale;
@@ -188,13 +189,15 @@ public interface SheetView {
 
     /**
      * Defines a rectangular area of cells in a sheet.
-     * @param startRow      the start row
-     * @param startColumn   the start column
-     * @param endRow        the end row (exclusive)
-     * @param endColumn     the end column (exclusive)
+     *
+     * @param rect
+     * @param startRow    the start row
+     * @param startColumn the start column
+     * @param endRow      the end row (exclusive)
+     * @param endColumn   the end column (exclusive)
      */
-    record SheetArea(int startRow, int startColumn, int endRow, int endColumn) {
-        public static final SheetArea EMPTY = new SheetArea(0, 0, 0, 0);
+    record SheetArea(com.dua3.utility.math.geometry.Rectangle2f rect, int startRow, int startColumn, int endRow, int endColumn) {
+        public static final SheetArea EMPTY = new SheetArea(Rectangle2f.of(0, 0, 0, 0), 0, 0, 0, 0);
 
         public SheetArea {
             assert startRow <= endRow && startColumn <= endColumn;

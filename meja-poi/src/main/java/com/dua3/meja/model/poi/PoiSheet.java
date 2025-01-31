@@ -352,12 +352,13 @@ public class PoiSheet extends AbstractSheet {
 
     @Override
     public float getDefaultRowHeight() {
-        return poiSheet.getDefaultRowHeight();
+        return poiSheet.getDefaultRowHeightInPoints();
     }
 
     @Override
     public float getDefaultColumnWidth() {
-        return poiSheet.getDefaultColumnWidth();
+        // unit is number of characters and 7 is a common character width in points
+        return poiSheet.getDefaultColumnWidth() * 7;
     }
 
     private void init() {

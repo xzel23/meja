@@ -140,7 +140,7 @@ public class FxSegmentView extends Control implements SegmentView {
 
         this.rows.addListener((ListChangeListener<? super Row>) change -> {
             PlatformHelper.runLater(() -> {
-                try (var __ = svDelegate.automaticReadLock()) {
+                try (var __ = svDelegate.readLock("FxSegmentView - rows changed")) {
                     flow.setCellCount(rows.size());
                     flow.refresh();
                 }
@@ -162,7 +162,7 @@ public class FxSegmentView extends Control implements SegmentView {
     }
 
     @Override
-    public void setViewSizeOnDisplay(float w, float h) {
+    public void updateViewSize(float w, float h) {
         if (quadrant== SheetView.Quadrant.TOP_LEFT) {
             setMinSize(w, h);
             setMaxSize(w, h);

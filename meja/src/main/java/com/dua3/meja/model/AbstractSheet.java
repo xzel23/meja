@@ -1,6 +1,7 @@
 package com.dua3.meja.model;
 
 import com.dua3.meja.util.RectangularRegion;
+import com.dua3.utility.concurrent.AutoLock;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Dimension2f;
@@ -15,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -133,13 +133,13 @@ public abstract class AbstractSheet implements Sheet {
     }
 
     @Override
-    public Lock readLock() {
-        return lock.readLock();
+    public AutoLock readLock(String name) {
+        return AutoLock.of(lock.readLock(), name);
     }
 
     @Override
-    public Lock writeLock() {
-        return lock.writeLock();
+    public AutoLock writeLock(String name) {
+        return AutoLock.of(lock.writeLock(), name);
     }
 
     @Override

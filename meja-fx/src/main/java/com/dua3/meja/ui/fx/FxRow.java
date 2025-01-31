@@ -205,7 +205,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
     private void render() {
         LOG.trace("render()");
         PlatformHelper.checkApplicationThread();
-        try (var __ = sheetViewDelegate.automaticReadLock()) {
+        try (var __ = sheetViewDelegate.readLock("FxRow.render()")) {
             switch (getItem().rowIndex()) {
                 case ROW_INDEX_UNUSED -> renderEmpty();
                 case ROW_INDEX_COLUMN_LABELS -> renderColumnLabels();

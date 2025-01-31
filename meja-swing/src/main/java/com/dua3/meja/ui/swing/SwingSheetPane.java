@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Point;
 
 final class SwingSheetPane extends JScrollPane {
@@ -97,7 +98,28 @@ final class SwingSheetPane extends JScrollPane {
         setRowHeaderView(bottomLeftQuadrant);
         setCorner(ScrollPaneConstants.UPPER_LEADING_CORNER, topLeftQuadrant);
 
+        getViewport().addChangeListener(evt -> {
+            updateDimensionWithViewportSize();
+        });
         setViewportBorder(BorderFactory.createEmptyBorder());
+    }
+
+    private void updateDimensionWithViewportSize() {
+        JViewport viewport = getViewport();
+        Dimension vpSize = viewport.getSize();
+        Point vpPosition = viewport.getViewPosition();
+        int w = vpPosition.x + vpSize.width;
+        int h = vpPosition.y + vpSize.height;
+        Dimension newSize = new Dimension(
+                Math.max(w, bottomRightQuadrant.getWidth()),
+                Math.max(h, bottomRightQuadrant.getHeight())
+        );
+        if (!newSize.equals(bottomRightQuadrant.getSize())) {
+            bottomRightQuadrant.setPreferredSize(newSize);
+            bottomRightQuadrant.setSize(newSize);
+            bottomLeftQuadrant.setPreferredSize(new Dimension(bottomLeftQuadrant.getWidth(), newSize.height));
+            topRightQuadrant.setPreferredSize(new Dimension(newSize.width, topRightQuadrant.getHeight()));
+        }
     }
 
     public void repaintSheet(Rectangle2f rect) {

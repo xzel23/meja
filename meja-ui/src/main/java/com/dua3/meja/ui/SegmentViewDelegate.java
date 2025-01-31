@@ -4,7 +4,8 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Scale2f;
 
-import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * This class serves as a delegate for the {@link SegmentView} and is responsible for managing
@@ -25,6 +26,8 @@ public class SegmentViewDelegate {
     private float heightInPoints;
     private float widthInPixels;
     private float heightInPixels;
+
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
      * Constructs a {@code SegmentViewDelegate} instance, which manages the interaction
@@ -201,12 +204,7 @@ public class SegmentViewDelegate {
      * where segments might be positioned above, below, left, or right of splits.
      */
     public void updateLayout() {
-        Lock lock = getSheet().readLock();
-        lock.lock();
-        try {
-            // update the sheet layout first
-            sheetViewDelegate.updateLayout();
-
+        try (var __ = sheetViewDelegate.readLock("SegmentViewDelegate.updateLayout()")) {
             // the width is the width for the labels showing row names ...
             float width = isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0;
 
@@ -235,9 +233,7 @@ public class SegmentViewDelegate {
             this.widthInPixels = s.sx() * width;
             this.heightInPixels = s.sy() * height;
 
-            owner.setViewSizeOnDisplay(widthInPixels, heightInPixels);
-        } finally {
-            lock.unlock();
+            owner.updateViewSize(widthInPixels, heightInPixels);
         }
     }
 
@@ -290,6 +286,15 @@ public class SegmentViewDelegate {
                 AffineTransformation2f.translate(getXOffset(), getYOffset()),
                 sheetViewDelegate.getTransformation()
         );
+    }
+
+    /**
+     * Retrieves the quadrant associated with this segment view delegate.
+     *
+     * @return the {@link SheetView.Quadrant} representing the portion of the sheet managed by this delegate
+     */
+    public SheetView.Quadrant getQuadrant() {
+        return quadrant;
     }
 
     @Override
