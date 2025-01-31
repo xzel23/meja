@@ -324,7 +324,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             }
         }
 
-        return j - 1;
+        return Math.max(0, j - 1);
     }
 
     /**
