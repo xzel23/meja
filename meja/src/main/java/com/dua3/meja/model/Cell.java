@@ -23,6 +23,7 @@ import com.dua3.utility.math.geometry.Dimension2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.Style;
 import com.dua3.utility.text.TextUtil;
 import org.jspecify.annotations.Nullable;
 
@@ -118,10 +119,23 @@ public interface Cell {
     /**
      * Return text representation of value.
      *
+     * <p>The cell value is converted to a RichText, but the cell style is not applied.
+     *
+     * @param locale the locale to use during formatting
+     * @return cell value as a RichText instance
+     */
+    RichText getAsText(Locale locale);
+
+    /**
+     * Return text representation of value with the cell style applied.
+     *
      * @param locale the locale to use during formatting
      * @return cell value as R, as it would be displayed
      */
-    RichText getAsText(Locale locale);
+    default RichText getAsFormattedText(Locale locale) {
+        CellStyle cs = getCellStyle();
+        return getAsText(Locale.getDefault()).wrap(Style.create(cs.getFont(), cs.getFillFgColor(), cs.getFillBgColor()));
+    }
 
     /**
      * Return boolean cell value.

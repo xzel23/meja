@@ -76,7 +76,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private float sheetWidthInPoints;
     private float rowLabelWidth;
     private float columnLabelHeightInPoints;
-    private float defaultRowHeightInPoints = 12.0f; // TODO get from workbook
     private Font labelFont = FontUtil.getInstance().getDefaultFont().withSize(8);
     private Color labelBackgroundColor = Color.WHITESMOKE;
     private Color labelBorderColor = labelBackgroundColor.darker();
@@ -291,7 +290,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
     }
 
-    public int getRowNumberFromY(float y) {
+    public int getRowNumberFromY(float y, boolean clipToSheet) {
         return getPositionIndexFromCoordinate(rowPos, y, sheetHeightInPoints);
     }
 
@@ -780,7 +779,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public float getRowHeightInPoints(int i) {
-        return i + 1 < rowPos.length ? rowPos[i + 1] - rowPos[i] : defaultRowHeightInPoints;
+        return i + 1 < rowPos.length ? rowPos[i + 1] - rowPos[i] : getDefaultRowHeightInPoints();
     }
 
     public float getColumnLabelHeightInPixels() {
@@ -792,7 +791,11 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public float getDefaultRowHeightInPoints() {
-        return defaultRowHeightInPoints;
+        return sheet.getDefaultRowHeight();
+    }
+
+    public float getDefaultColumnWidthInPoints() {
+        return sheet.getDefaultColumnWidth();
     }
 
     public Locale getLocale() {
@@ -840,7 +843,11 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     public float getDefaultRowHeightInPixels() {
-        return getScale().sy() * defaultRowHeightInPoints;
+        return getScale().sy() * sheet.getDefaultRowHeight();
+    }
+
+    public float getDefaultColumnWidthInPixels() {
+        return getScale().sx() * sheet.getDefaultColumnWidth();
     }
 
     public Scale2f getDisplayScale() {
@@ -872,12 +879,25 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         g.drawText(text, r.xCenter(), r.yCenter(), Graphics.HAnchor.CENTER, Graphics.VAnchor.MIDDLE);
     }
 
-    public SheetView.SheetArea getSheetArea(Rectangle2f r) {
-        return new SheetView.SheetArea(
-                Math.max(0, getRowNumberFromY(r.yMin())),
-                Math.max(0, getColumnNumberFromX(r.xMin())),
-                getRowNumberFromY(r.yMax()) + 1,
-                getColumnNumberFromX(r.xMax()) + 1
+    public SheetView.SheetArea getSheetArea(Rectangle2f r, boolean clipToSheet) {
+        int startRow = Math.max(0, getRowNumberFromY(r.yMin()));
+        int startColumn = Math.max(0, getColumnNumberFromX(r.xMin()));
+        int endRow = getRowNumberFromY(r.yMax()) + 1;
+        int endColumn = getColumnNumberFromX(r.xMax()) + 1;
+
+        if (!clipToSheet && startColumn >= sheet.getLastColNum()) {
+            endColumn += (int) Math.ceil(r.xMax() - getSheetWidthInPoints() / getDefaultColumnWidthInPoints());
+        }
+        if (!clipToSheet && startRow >= sheet.getLastRowNum()) {
+            endRow += (int) Math.ceil(r.yMax() - getSheetHeightInPoints() / getDefaultRowHeightInPoints());
+        }
+
+        if (clipToSheet || endColumn <= sheet.getLastColNum() && endRow <= sheet.getLastRowNum()) {}
+            return new SheetView.SheetArea(
+                    startRow,
+                    startColumn,
+                    endRow,
+                    endColumn
         );
     }
 

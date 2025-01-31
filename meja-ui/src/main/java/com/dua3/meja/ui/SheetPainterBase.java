@@ -112,7 +112,7 @@ public abstract class SheetPainterBase {
         SheetViewDelegate delegate = getDelegate();
 
         // determine visible rows and columns
-        SheetView.SheetArea va = delegate.getSheetArea(r);
+        SheetView.SheetArea va = delegate.getSheetArea(r, false);
         LOGGER.trace("draw labels - visible area: {}", va);
 
         // draw row labels
@@ -148,7 +148,7 @@ public abstract class SheetPainterBase {
         SheetViewDelegate delegate = getDelegate();
 
         // determine visible rows and columns
-        SheetView.SheetArea va = delegate.getSheetArea(r);
+        SheetView.SheetArea va = delegate.getSheetArea(r, false);
         LOGGER.trace("drawDrid() - visible area: {}", va);
 
         g.setStroke(delegate.getGridColor(), delegate.get1PxWidthInPoints());
@@ -204,7 +204,7 @@ public abstract class SheetPainterBase {
             return;
         }
 
-        SheetView.SheetArea va = getDelegate().getSheetArea(r);
+        SheetView.SheetArea va = getDelegate().getSheetArea(r, true);
         LOGGER.trace("draw cells - visible area: {}", va);
 
         // Collect cells to be drawn

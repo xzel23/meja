@@ -393,7 +393,7 @@ public class FxSheetView extends StackPane implements SheetView {
     @Override
     public void copyToClipboard() {
         LOG.debug("copyToClipboard()");
-        FxUtil.copyToClipboard(delegate.getCurrentLogicalCell().getAsText(getLocale()).toString());
+        FxUtil.copyToClipboard(delegate.getCurrentLogicalCell().getAsFormattedText(getLocale()));
     }
 
     @Override

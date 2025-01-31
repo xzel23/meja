@@ -350,6 +350,16 @@ public class PoiSheet extends AbstractSheet {
         splitChanged(old, newSplit);
     }
 
+    @Override
+    public float getDefaultRowHeight() {
+        return poiSheet.getDefaultRowHeight();
+    }
+
+    @Override
+    public float getDefaultColumnWidth() {
+        return poiSheet.getDefaultColumnWidth();
+    }
+
     private void init() {
         // update row and column information
         firstColumn = Integer.MAX_VALUE;

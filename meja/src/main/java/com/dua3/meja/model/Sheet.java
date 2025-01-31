@@ -549,4 +549,17 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
         }
     }
 
+    /**
+     * Get the default column width for this sheet, i.e., the width used when creating new columns.
+     *
+     * @return the default column width
+     */
+    float getDefaultRowHeight();
+
+    /**
+     * Get the default row height for this sheet, i.e., the height used when creating new rows.
+     *
+     * @return the default row height
+     */
+    float getDefaultColumnWidth();
 }

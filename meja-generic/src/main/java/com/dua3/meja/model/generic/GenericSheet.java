@@ -272,6 +272,16 @@ public class GenericSheet extends AbstractSheet {
         splitChanged(oldSplit, Pair.of(i, j));
     }
 
+    @Override
+    public float getDefaultRowHeight() {
+        return DEFAULT_ROW_HEIGHT;
+    }
+
+    @Override
+    public float getDefaultColumnWidth() {
+        return DEFAULT_COLUMN_WIDTH;
+    }
+
     void setColumnUsed(int columnNumber) {
         if (columnNumber > numberOfColumns - 1 ) {
             int oldLast = getLastColNum();
