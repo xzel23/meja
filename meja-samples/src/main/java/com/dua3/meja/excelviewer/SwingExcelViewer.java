@@ -77,7 +77,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
 
     public static final String AUTHOR = "Axel Howind";
 
-    public static final int YEAR = 2015;
+    public static final int YEAR = 2025;
 
     /**
      * Main method.
