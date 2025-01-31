@@ -1,10 +1,13 @@
 # Meja Changelog
 
-## Version 6.4.0
+## Version 7
 
 - update Apache POI to 5.4.0
-- spreadsheet rendering (JavaFX and Swing): rotated text
-- spreadsheet rendering (JavaFX and Swing): distributed text layout
+- sheet.getCurrentCell() returns cell directly, not wrapped in an Optional
+- UI components for Swing and JavaFX:
+   - support rotated text
+   - support text layout 'distributed'
+   - allow navigating beyond spreadsheet row/column range
 
 ## Version 6.3.0
 
