@@ -1,15 +1,18 @@
 package com.dua3.meja.ui.fx;
 
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.model.SheetEvent.RowsAdded;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyFloatProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableListBase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +31,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
     private final Sheet sheet;
     private final FloatProperty zoomProperty;
     private final IntegerProperty columnCountProperty;
+    private final ObjectProperty<Cell> currentCellProperty;
 
     /**
      * Constructs an ObservableSheet that wraps a given {@code Sheet}.
@@ -41,6 +45,12 @@ public class ObservableSheet extends ObservableListBase<Row> {
         this.sheet.subscribe(new SheetTracker());
         this.zoomProperty = new SimpleFloatProperty(sheet.getZoom());
         this.columnCountProperty = new SimpleIntegerProperty(sheet.getColumnCount());
+        this.currentCellProperty = new SimpleObjectProperty<>(sheet.getCurrentCell());
+        currentCellProperty.addListener((v, o, n) -> {
+            if (n != o || (n.getRowNumber() != o.getRowNumber() || n.getColumnNumber() != o.getColumnNumber()) ) {
+                sheet.setCurrentCell(n);
+            }
+        });
     }
 
     @Override
@@ -68,6 +78,10 @@ public class ObservableSheet extends ObservableListBase<Row> {
         return columnCountProperty;
     }
 
+    public ObjectProperty<@Nullable Cell> currentCellProperty() {
+        return currentCellProperty;
+    }
+
     private class SheetTracker implements Flow.Subscriber<SheetEvent> {
 
         private Flow.@Nullable Subscription subscription;
@@ -93,6 +107,10 @@ public class ObservableSheet extends ObservableListBase<Row> {
                 case SheetEvent.ColumnsAdded columnsAdded-> {
                     LOG.trace("columns added");
                     columnCountProperty.setValue(sheet.getColumnCount());
+                }
+                case SheetEvent.ActiveCellChanged activeCellChanged -> {
+                    LOG.trace("active cell changed");
+                    currentCellProperty.set(activeCellChanged.newValue());
                 }
                 default -> {}}
         }

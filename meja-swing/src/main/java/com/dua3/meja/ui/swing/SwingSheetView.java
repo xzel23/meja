@@ -95,7 +95,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      */
     @Override
     public void scrollToCurrentCell() {
-        SwingUtilities.invokeLater(() -> delegate.getCurrentLogicalCell().ifPresent(sheetPane::ensureCellIsVisible));
+        SwingUtilities.invokeLater(() -> sheetPane.ensureCellIsVisible(delegate.getCurrentLogicalCell()));
     }
 
     /**
@@ -131,9 +131,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     }
 
     public void copyToClipboard() {
-        delegate.getSheet().getCurrentCell()
-                .map(cell -> cell.getAsText(getLocale()))
-                .ifPresent(t -> SwingUtil.setClipboardText(String.valueOf(t)));
+        SwingUtil.setClipboardText(delegate.getSheet().getCurrentCell().getAsText(getLocale()).toString());
     }
 
     private void init() {
@@ -188,28 +186,27 @@ public class SwingSheetView extends JPanel implements SheetView {
             return;
         }
 
-        delegate.getCurrentLogicalCell().ifPresent(cell -> {
-            sheetPane.ensureCellIsVisible(cell);
-            sheetPane.setScrollable(false);
+        Cell cell = delegate.getCurrentLogicalCell();
+        sheetPane.ensureCellIsVisible(cell);
+        sheetPane.setScrollable(false);
 
-            final JComponent editorComp = editor.startEditing(cell);
+        final JComponent editorComp = editor.startEditing(cell);
 
-            final Rectangle2f cellRect = sheetPane.getCellRectInViewCoordinates(cell);
-            SwingSegmentView sv = getViewContainingCell(cell);
-            SegmentViewDelegate svDelegate = sv.getSvDelegate();
-            AffineTransformation2f t = svDelegate.getTransformation();
-            editorComp.setBounds(SwingGraphics.convert(Rectangle2f.withCorners(
-                    t.transform(cellRect.min()),
-                    t.transform(cellRect.max())
-            )));
+        final Rectangle2f cellRect = sheetPane.getCellRectInViewCoordinates(cell);
+        SwingSegmentView sv = getViewContainingCell(cell);
+        SegmentViewDelegate svDelegate = sv.getSvDelegate();
+        AffineTransformation2f t = svDelegate.getTransformation();
+        editorComp.setBounds(SwingGraphics.convert(Rectangle2f.withCorners(
+                t.transform(cellRect.min()),
+                t.transform(cellRect.max())
+        )));
 
-            sheetPane.add(editorComp);
-            editorComp.validate();
-            editorComp.setVisible(true);
-            editorComp.repaint();
+        sheetPane.add(editorComp);
+        editorComp.validate();
+        editorComp.setVisible(true);
+        editorComp.repaint();
 
-            delegate.setEditing(true);
-        });
+        delegate.setEditing(true);
     }
 
     private SwingSegmentView getViewContainingCell(Cell cell) {

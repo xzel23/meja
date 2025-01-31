@@ -205,7 +205,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
 
         mnOptions.addSeparator();
 
-        mnOptions.add(SwingUtil.createAction("Freeze", e -> getCurrentView().ifPresent(model::freezeAtCurrentCell)));
+        mnOptions.add(SwingUtil.createAction("Freeze", e -> getCurrentView().ifPresent(model::splitAtCurrentCell)));
 
         menuBar.add(mnOptions);
 

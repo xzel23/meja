@@ -3,6 +3,7 @@
  */
 package com.dua3.meja.excelviewer;
 
+import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
@@ -91,10 +92,11 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
         }
     }
 
-    protected void freezeAtCurrentCell(@Nullable SheetView view) {
+    protected void splitAtCurrentCell(@Nullable SheetView view) {
         if (view != null) {
-            view.getSheet().getCurrentCell()
-                    .ifPresent(cell -> cell.getSheet().splitAt(cell.getRowNumber(), cell.getColumnNumber()));
+            Sheet sheet = view.getSheet();
+            Cell cell = sheet.getCurrentCell();
+            sheet.splitAt(cell.getRowNumber(), cell.getColumnNumber());
         }
     }
 

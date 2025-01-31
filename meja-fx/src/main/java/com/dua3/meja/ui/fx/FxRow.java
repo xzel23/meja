@@ -318,11 +318,10 @@ public class FxRow extends IndexedCell<FxRow.Index> {
                 g.strokeLine(x, y, x, y + getRowHeightInPoints());
             }
 
-            sheetViewDelegate.getCurrentLogicalCell().ifPresent(cell -> {
-                if (cell.getRowNumber() - 1 <= i && cell.getRowNumber() + cell.getVerticalSpan() >= i) {
-                    cellRenderer.drawSelection(g, cell);
-                }
-            });
+            Cell cell = sheetViewDelegate.getCurrentLogicalCell();
+            if (cell.getRowNumber() - 1 <= i && cell.getRowNumber() + cell.getVerticalSpan() >= i) {
+                cellRenderer.drawSelection(g, cell);
+            }
         }
     }
 
@@ -397,7 +396,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
 
         if (i >= 0 && j >= 0) {
             sheetViewDelegate.setCurrentCell(i, j);
-            LOG.debug("onMouseClicked(): set current cell to {}", () -> sheetViewDelegate.getCurrentLogicalCell().map(Cell::getCellRef));
+            LOG.debug("onMouseClicked(): set current cell to {}", () -> sheetViewDelegate.getCurrentLogicalCell().getCellRef());
         }
     }
 }

@@ -18,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.concurrent.locks.Lock;
 import java.util.function.IntFunction;
@@ -425,7 +424,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @return column number of the selected cell
      */
     public int getCurrentColNum() {
-        return sheet.getCurrentCell().map(Cell::getColumnNumber).orElse(0);
+        return sheet.getCurrentCell().getColumnNumber();
     }
 
     /**
@@ -500,7 +499,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @return row number of the selected cell
      */
     public int getCurrentRowNum() {
-        return getSheet().getCurrentCell().map(Cell::getRowNumber).orElse(0);
+        return getSheet().getCurrentCell().getRowNumber();
     }
 
     public Color getGridColor() {
@@ -623,14 +622,13 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public void move(Direction d) {
         LOG.trace("move({})", d);
         try (var __ = automaticWriteLock()) {
-            getCurrentLogicalCell().ifPresent(cell -> {
-                switch (d) {
-                    case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
-                    case SOUTH -> setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
-                    case WEST -> setCurrentColNum(cell.getColumnNumber() - 1);
-                    case EAST -> setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
-                }
-            });
+            Cell cell = getCurrentLogicalCell();
+            switch (d) {
+                case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
+                case SOUTH -> setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
+                case WEST -> setCurrentColNum(cell.getColumnNumber() - 1);
+                case EAST -> setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
+            }
         }
     }
 
@@ -642,26 +640,25 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public void movePage(Direction d) {
         LOG.trace("movePage()");
         try (var __ = automaticWriteLock()) {
-            getCurrentLogicalCell().ifPresent(cell -> {
-                Rectangle2f cellRect = getCellRect(cell.getLogicalCell());
-                switch (d) {
-                    case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
-                    case SOUTH -> setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
-                    case WEST -> setCurrentColNum(cell.getColumnNumber() - 1);
-                    case EAST -> setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
-                }
-            });
+            Cell cell = getCurrentLogicalCell();
+            Rectangle2f cellRect = getCellRect(cell.getLogicalCell());
+            switch (d) {
+                case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
+                case SOUTH -> setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
+                case WEST -> setCurrentColNum(cell.getColumnNumber() - 1);
+                case EAST -> setCurrentColNum(cell.getColumnNumber() + cell.getHorizontalSpan());
+            }
         }
     }
 
-    public Optional<Cell> getCurrentLogicalCell() {
-        return getSheet().getCurrentCell().map(Cell::getLogicalCell);
+    public Cell getCurrentLogicalCell() {
+        return getSheet().getCurrentCell().getLogicalCell();
     }
 
     public void setCurrentColNum(int colNum) {
         LOG.trace("setCurrentColNum()");
         try (var __ = automaticWriteLock()) {
-            int rowNum = sheet.getCurrentCell().map(Cell::getRowNumber).orElse(0);
+            int rowNum = sheet.getCurrentCell().getRowNumber();
             setCurrentCell(sheet.getCell(rowNum, Math.max(0, colNum)));
         }
     }
@@ -669,7 +666,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public void setCurrentRowNum(int rowNum) {
         LOG.trace("setCurrentRowNum()");
         try (var __ = automaticWriteLock()) {
-            int colNum = sheet.getCurrentCell().map(Cell::getColumnNumber).orElse(0);
+            int colNum = sheet.getCurrentCell().getColumnNumber();
             setCurrentCell(Math.max(0, rowNum), colNum);
        }
     }

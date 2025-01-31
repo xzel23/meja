@@ -8,7 +8,6 @@ import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.Scale2f;
-import com.dua3.utility.text.RichText;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
@@ -267,8 +266,9 @@ public class FxSheetView extends StackPane implements SheetView {
     public void scrollToCurrentCell() {
         LOG.trace("scrollToCurrentCell()");
 
-        Platform.runLater(() -> delegate.getCurrentLogicalCell().ifPresent(cell -> {
+        Platform.runLater(() -> {
             try (var __ = delegate.automaticReadLock()) {
+                Cell cell = delegate.getCurrentLogicalCell();
                 Sheet sheet = delegate.getSheet();
                 int i = cell.getRowNumber();
                 int j = cell.getColumnNumber();
@@ -308,7 +308,7 @@ public class FxSheetView extends StackPane implements SheetView {
                     }
                 }
             }
-        }));
+        });
     }
 
     @Override
@@ -393,11 +393,7 @@ public class FxSheetView extends StackPane implements SheetView {
     @Override
     public void copyToClipboard() {
         LOG.debug("copyToClipboard()");
-
-        delegate.getCurrentLogicalCell().ifPresent(cell -> {
-            RichText text = cell.getAsText(getLocale());
-            FxUtil.copyToClipboard(text.toString());
-        });
+        FxUtil.copyToClipboard(delegate.getCurrentLogicalCell().getAsText(getLocale()).toString());
     }
 
     @Override

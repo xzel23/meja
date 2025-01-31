@@ -123,7 +123,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
      *
      * @return the current cell
      */
-    Optional<? extends Cell> getCurrentCell();
+    Cell getCurrentCell();
 
     /**
      * Get number of first used column.
@@ -482,7 +482,7 @@ public interface Sheet extends Iterable<Row>, ReadWriteLock {
             Cell end = null;
             Cell cell;
             if (ss.searchFromCurrent()) {
-                cell = getCurrentCell().map(this::nextCell).orElse(getCell(getFirstRowNum(), getFirstColNum()));
+                cell = nextCell(getCurrentCell());
             } else {
                 cell = getCell(getFirstRowNum(), getFirstColNum());
             }

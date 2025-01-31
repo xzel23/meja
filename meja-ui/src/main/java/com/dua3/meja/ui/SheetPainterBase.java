@@ -92,7 +92,7 @@ public abstract class SheetPainterBase {
             drawLabels(g, r);
             drawGrid(g, r);
             drawCells(g, r);
-            sheet.getCurrentCell().ifPresent(cell -> cellRenderer.drawSelection(g, cell));
+            cellRenderer.drawSelection(g, sheet.getCurrentCell());
             drawSplitLines(g);
         } finally {
             readLock.unlock();

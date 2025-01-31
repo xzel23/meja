@@ -178,7 +178,7 @@ public interface Row extends Iterable<Cell> {
             text = text.toLowerCase(Locale.ROOT);
         }
 
-        int jStart = ss.searchFromCurrent() ? getSheet().getCurrentCell().map(Cell::getColumnNumber).orElse(getLastCellNum()) : getLastCellNum();
+        int jStart = ss.searchFromCurrent() ? getSheet().getCurrentCell().getColumnNumber() : getLastCellNum();
         int j = jStart;
         do {
             // move to next cell
