@@ -7,6 +7,10 @@ import com.dua3.meja.ui.SheetView;
 import com.dua3.utility.fx.PlatformHelper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Side;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Control;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.control.ScrollBar;
@@ -25,6 +29,8 @@ import org.jspecify.annotations.Nullable;
 public class FxSegmentView extends Control implements SegmentView {
 
     private static final Logger LOG = LogManager.getLogger(FxSegmentView.class);
+
+    private final FxSheetView sheetView;
 
     /**
      * Refreshes the segment view by invoking the underlying flow's refresh method.
@@ -64,6 +70,10 @@ public class FxSegmentView extends Control implements SegmentView {
         return -1;
     }
 
+    public boolean isAboveSplit() {
+        return segmentDelegateLeft.isAboveSplit();
+    }
+
     private static class FxSegmentViewSkin extends SkinBase<FxSegmentView> {
         protected FxSegmentViewSkin(FxSegmentView control) {
             super(control);
@@ -71,12 +81,16 @@ public class FxSegmentView extends Control implements SegmentView {
         }
     }
 
-    static class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends VirtualFlow<T> {
-        VirtualFlowWithHiddenScrollBars() {
-            getHbar().setPrefHeight(0);
-            getHbar().setOpacity(0);
-            getVbar().setPrefWidth(0);
-            getVbar().setOpacity(0);
+    static class VirtualFlowWithHidableScrollBars<T extends IndexedCell<?>> extends VirtualFlow<T> {
+        VirtualFlowWithHidableScrollBars(boolean hideHScrollbar, boolean hideVScrollbar) {
+            if (hideHScrollbar) {
+                getHbar().setPrefHeight(0);
+                getHbar().setOpacity(0);
+            }
+            if (hideVScrollbar) {
+                getVbar().setPrefWidth(0);
+                getVbar().setOpacity(0);
+            }
         }
 
         /**
@@ -106,12 +120,30 @@ public class FxSegmentView extends Control implements SegmentView {
         public void refresh() {
             recreateCells();
         }
+
+        @Override
+        protected void layoutChildren() {
+            super.layoutChildren();
+            getChildren().stream()
+                    .filter(Node::isVisible)
+                    .forEach(node -> {
+                        if (node instanceof Parent parent) {
+                            ObservableList<Node> children = parent.getChildrenUnmodifiable();
+                            if (!children.isEmpty() && children.getFirst() instanceof Group group) {
+                                children = group.getChildrenUnmodifiable();
+                                if (!children.isEmpty() && children.getFirst() instanceof FxRow) {
+                                    node.setLayoutX(0);
+                                    node.getClip().setLayoutX(node.getLayoutX());
+                                }
+                            }
+                        }
+                    });
+        }
     }
 
-    private final FxSheetViewDelegate svDelegate;
-    private final SegmentViewDelegate segmentDelegate;
-    private final SheetView.Quadrant quadrant;
-    final VirtualFlowWithHiddenScrollBars<FxRow> flow;
+    private final SegmentViewDelegate segmentDelegateLeft;
+    private final SegmentViewDelegate segmentDelegateRight;
+    final VirtualFlowWithHidableScrollBars<FxRow> flow;
     private final ObservableList<@Nullable Row> rows;
 
     /**
@@ -119,23 +151,34 @@ public class FxSegmentView extends Control implements SegmentView {
      * of a sheet in the user interface, using a delegate for handling functionality and data
      * and an observable list for the rows of the sheet.
      *
-     * @param svDelegate the delegate responsible for accessing data specific to the {@link SheetView}
-     * @param quadrant the specific quadrant of the sheet that the segment view
-     *        represents and displays.
-     * @param rows the observable list of the rows to display in this quadrant.
+     * @param fxSheetView the {@link FxSheetView} this segment belongs to
+     * @param side        use {@link Side#TOP} for the top segment, {@link Side#BOTTOM} for the bottom segment
+     * @param svDelegate  the delegate responsible for accessing data specific to the {@link SheetView}
+     * @param rows        the observable list of the rows to display in this quadrant.
      */
-    public FxSegmentView(FxSheetViewDelegate svDelegate, SheetView.Quadrant quadrant, ObservableList<Row> rows) {
+    public FxSegmentView(FxSheetView fxSheetView, Side side, FxSheetViewDelegate svDelegate, ObservableList<Row> rows) {
         LOG.trace("FxSegmentView()");
 
-        this.quadrant = quadrant;
-        this.svDelegate = svDelegate;
-        this.segmentDelegate = new SegmentViewDelegate(this, svDelegate, quadrant);
+        SheetView.Quadrant quadrantLeft = switch (side) {
+            case TOP -> SheetView.Quadrant.TOP_LEFT;
+            case BOTTOM -> SheetView.Quadrant.BOTTOM_LEFT;
+            default -> throw new IllegalStateException("invalid side: " + side);
+        };
+        SheetView.Quadrant quadrantRight = switch (side) {
+            case TOP -> SheetView.Quadrant.TOP_RIGHT;
+            case BOTTOM -> SheetView.Quadrant.BOTTOM_RIGHT;
+            default -> throw new IllegalStateException("invalid side: " + side);
+        };
+
+        this.sheetView = fxSheetView;
+        this.segmentDelegateLeft = new SegmentViewDelegate(this, svDelegate, quadrantLeft);
+        this.segmentDelegateRight = new SegmentViewDelegate(this, svDelegate, quadrantRight);
         this.rows = rows;
-        this.flow = new VirtualFlowWithHiddenScrollBars<>();
+        this.flow = new VirtualFlowWithHidableScrollBars<>(true, true);
 
         updateLayout();
 
-        flow.setCellFactory(f -> new FxRow(rows, segmentDelegate));
+        flow.setCellFactory(f -> new FxRow(this));
         flow.setCellCount(rows.size());
 
         this.rows.addListener((ListChangeListener<? super Row>) change -> {
@@ -158,15 +201,27 @@ public class FxSegmentView extends Control implements SegmentView {
      */
     public void updateLayout() {
         PlatformHelper.checkApplicationThread();
-        segmentDelegate.updateLayout();
+        segmentDelegateLeft.updateLayout();
+        segmentDelegateRight.updateLayout();
     }
 
     @Override
     public void updateViewSize(float w, float h) {
-        if (quadrant== SheetView.Quadrant.TOP_LEFT) {
-            setMinSize(w, h);
-            setMaxSize(w, h);
+        if (segmentDelegateLeft.isAboveSplit()) {
+            setMinHeight(h);
         }
-        setPrefSize(w, h);
     }
+
+    SegmentViewDelegate getSegmentDelegateLeft() {
+        return segmentDelegateLeft;
+    }
+
+    SegmentViewDelegate getSegmentDelegateRight() {
+        return segmentDelegateRight;
+    }
+
+    public FxSheetView getSheetView() {
+        return sheetView;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.CellRenderer;
+import com.dua3.meja.ui.SheetPainter;
 import com.dua3.meja.ui.SheetViewDelegate;
 
 import java.util.function.Function;
@@ -9,7 +10,7 @@ import java.util.function.Function;
 public class SwingSheetViewDelegate extends SheetViewDelegate {
 
     private final CellRenderer cellRenderer;
-    private final SwingSheetPainter sheetPainter;
+    private final SheetPainter sheetPainter;
 
     public SwingSheetViewDelegate(
             Sheet sheet,
@@ -18,10 +19,10 @@ public class SwingSheetViewDelegate extends SheetViewDelegate {
     ) {
         super(sheet, owner);
         this.cellRenderer = cellRendererFactory.apply(this);
-        this.sheetPainter = new SwingSheetPainter(this, cellRenderer);
+        this.sheetPainter = new SheetPainter(this, cellRenderer);
     }
 
-    public SwingSheetPainter getSheetPainter() {
+    public SheetPainter getSheetPainter() {
         return sheetPainter;
     }
 

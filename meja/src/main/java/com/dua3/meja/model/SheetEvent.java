@@ -76,15 +76,13 @@ public interface SheetEvent extends Event<Sheet> {
     }
 
     /**
-     * The SplitSet class represents an event that indicates a change in the split settings
-     * of a Sheet. This class extends from EventValueChanged, capturing the state before
-     * and after the split setting change, and implements the SheetEvent interface to conform
-     * to the event handling model for Sheets.
+     * The SplitChanged class represents an event that indicates a change in the split settings
+     * of a Sheet.
      *
      * <p>The event is triggered when the split setting of a Sheet changes, encapsulating
      * the old and new split values represented as a Pair of Integer values for split row and column.
      */
-    class SplitSet extends EventValueChanged<Sheet, Pair<Integer, Integer>> implements SheetEvent {
+    class SplitChanged extends EventValueChanged<Sheet, Pair<Integer, Integer>> implements SheetEvent {
         /**
          * Constructor for creating a SplitSet event.
          *
@@ -92,7 +90,7 @@ public interface SheetEvent extends Event<Sheet> {
          * @param valueOld The old value pair before the split change.
          * @param valueNew The new value pair after the split change.
          */
-        public SplitSet(Sheet source, Pair<Integer, Integer> valueOld, Pair<Integer, Integer> valueNew) {
+        public SplitChanged(Sheet source, Pair<Integer, Integer> valueOld, Pair<Integer, Integer> valueNew) {
             super(source, SPLIT_CHANGED, valueOld, valueNew);
         }
     }

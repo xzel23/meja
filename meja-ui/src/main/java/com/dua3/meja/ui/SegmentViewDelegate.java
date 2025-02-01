@@ -209,13 +209,15 @@ public class SegmentViewDelegate {
             float width = isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0;
 
             // ... plus 1 Pixel for the splitline if there's a vertical split, and we are left of the split
-            width += hasVLine() ? sheetViewDelegate.get1PxWidthInPoints() : 0;
+            width += hasVLine() ? sheetViewDelegate.getSplitLineWidthInPoints() : 0;
 
             // ... plus the width of the columns displayed ...
             width += sheetViewDelegate.getColumnPos(getEndColumn()) - sheetViewDelegate.getColumnPos(getStartColumn());
 
             // the height is the height for the labels showing column names ...
-            float height = isAboveSplit() ? sheetViewDelegate.getColumnLabelHeightInPoints() : 0;
+            float height = isAboveSplit()
+                    ? sheetViewDelegate.getColumnLabelHeightInPoints() + sheetViewDelegate.getSplitLineHeightInPoints()
+                    : 0;
 
             // ... plus 1 Pixel for the splitline if there's a horizontal split and we are above of the split
             height += hasHLine() ? sheetViewDelegate.get1PxHeightInPoints() : 0;

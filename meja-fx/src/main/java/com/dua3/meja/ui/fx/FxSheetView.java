@@ -9,18 +9,23 @@ import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.Scale2f;
 import javafx.application.Platform;
-import javafx.beans.property.Property;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Orientation;
+import javafx.geometry.Side;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +35,7 @@ import org.jspecify.annotations.Nullable;
 import java.awt.Toolkit;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.function.IntConsumer;
 
 /**
  * The FxSheetView class is responsible for rendering a spreadsheet-like UI component,
@@ -40,14 +46,18 @@ import java.util.Objects;
  */
 public class FxSheetView extends StackPane implements SheetView {
     private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
+    private final ObservableSheet observableSheet;
     private final FxSheetViewDelegate delegate;
-    private final FxSegmentView topLeftQuadrant;
-    private final FxSegmentView topRightQuadrant;
-    private final FxSegmentView bottomLeftQuadrant;
-    private final FxSegmentView bottomRightQuadrant;
+    private final FxSegmentView topSegment;
+    private final FxSegmentView bottomSegment;
     private final GridPane gridPane;
-    private final ScrollBar hScrollbar;
-    private final ScrollBar vScrollbar;
+    private final ScrollBar hScrollbar = new ScrollBar();
+    private final ScrollBar vScrollbar = new ScrollBar();
+    private final DoubleProperty scrollXProperty;
+    private final DoubleProperty scrollYProperty;
+    private final DoubleProperty sheetScaleXProperty = new SimpleDoubleProperty(1.0);
+    private final DoubleProperty sheetScaleYProperty = new SimpleDoubleProperty(1.0);
+
 
     private boolean updating = false;
 
@@ -65,22 +75,32 @@ public class FxSheetView extends StackPane implements SheetView {
         this.gridPane = new GridPane();
 
         // Create quadrants
-        ObservableSheet observableSheet = new ObservableSheet(sheet);
+        this.observableSheet = new ObservableSheet(sheet);
 
         ObservableList<Row> topRows = new FilteredList<>(observableSheet, row -> row.getRowNumber() < delegate.getSplitRow());
         ObservableList<Row> bottomRows = new FilteredList<>(observableSheet, row -> row.getRowNumber() >= delegate.getSplitRow());
 
-        topLeftQuadrant = new FxSegmentView(delegate, Quadrant.TOP_LEFT, topRows);
-        topRightQuadrant = new FxSegmentView(delegate, Quadrant.TOP_RIGHT, topRows);
-        bottomLeftQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_LEFT, bottomRows);
-        bottomRightQuadrant = new FxSegmentView(delegate, Quadrant.BOTTOM_RIGHT, bottomRows);
+        topSegment = new FxSegmentView(this, Side.TOP, delegate, topRows);
+        bottomSegment = new FxSegmentView(this, Side.BOTTOM, delegate, bottomRows);
 
         // Create scrollbars
-        hScrollbar = new ScrollBar();
         hScrollbar.setOrientation(Orientation.HORIZONTAL);
+        observableSheet.splitColumnProperty().addListener((v, o, n) -> hScrollbar.setMin(delegate.getSplitX()));
+        widthProperty().addListener((v, o, n) -> updateHScrollbar());
+        updateHScrollbar();
 
-        vScrollbar = new ScrollBar();
         vScrollbar.setOrientation(Orientation.VERTICAL);
+        observableSheet.splitRowProperty().addListener((v, o, n) -> vScrollbar.setMin(delegate.getSplitY()));
+        heightProperty().addListener((v, o, n) -> updateVScrollbar());
+        updateVScrollbar();
+
+        observableSheet.addLayoutListener(s -> {
+            updateHScrollbar();
+            updateVScrollbar();
+        });
+
+        this.scrollXProperty = hScrollbar.valueProperty();
+        this.scrollYProperty = vScrollbar.valueProperty();
 
         // Set layout constraints
         RowConstraints[] rc = {
@@ -91,35 +111,53 @@ public class FxSheetView extends StackPane implements SheetView {
         gridPane.getRowConstraints().setAll(rc);
 
         ColumnConstraints[] cc = {
-                columnConstraints(Priority.NEVER),
                 columnConstraints(Priority.ALWAYS),
                 columnConstraints(Priority.NEVER)
         };
         gridPane.getColumnConstraints().setAll(cc);
 
-        // Add quadrants to GridPane
-        gridPane.add(topLeftQuadrant, 0, 0);
-        gridPane.add(topRightQuadrant, 1, 0);
-        gridPane.add(bottomLeftQuadrant, 0, 1);
-        gridPane.add(bottomRightQuadrant, 1, 1);
+        // set up horizontal scrollbar
+        Region leftSpacer = new Region();
+        leftSpacer.prefHeightProperty().bind(hScrollbar.heightProperty());
+        IntConsumer updateLeftSpacerFromSplitColumn = j -> leftSpacer.setPrefWidth(delegate.getColumnPos(j) * delegate.getScale().sx() + delegate.getRowLabelWidthInPixels());
+        observableSheet.splitColumnProperty().addListener((v, o, n) -> updateLeftSpacerFromSplitColumn.accept(n.intValue()));
+        updateLeftSpacerFromSplitColumn.accept(sheet.getSplitColumn());
+
+        Region bottomRightCorner = new Region();
+        bottomRightCorner.prefWidthProperty().bind(vScrollbar.widthProperty());
+        bottomRightCorner.prefHeightProperty().bind(hScrollbar.heightProperty());
+
+        HBox hScrollbarContainer = new HBox(0.0, leftSpacer, hScrollbar, bottomRightCorner);
+        HBox.setHgrow(leftSpacer, Priority.NEVER);
+        HBox.setHgrow(hScrollbar, Priority.ALWAYS);
+        HBox.setHgrow(bottomRightCorner, Priority.NEVER);
+
+        // set up vertical scrollbar
+        Region topSpacer = new Region();
+        topSpacer.prefWidthProperty().bind(vScrollbar.widthProperty());
+        IntConsumer updateTopSpacerFromSplitRow = i -> topSpacer.setPrefHeight(delegate.getRowPos(i) * delegate.getScale().sy() + delegate.getColumnLabelHeightInPixels());
+        observableSheet.splitRowProperty().addListener((v, o, n) -> updateTopSpacerFromSplitRow.accept(n.intValue()));
+        updateTopSpacerFromSplitRow.accept(sheet.getSplitRow());
+
+        VBox vScrollbarContainer = new VBox(0.0, topSpacer, vScrollbar);
+        VBox.setVgrow(topSpacer, Priority.NEVER);
+        VBox.setVgrow(vScrollbar, Priority.ALWAYS);
+
+        // Add segments and scrollbar to GridPane
+        gridPane.add(topSegment, 0, 0);
+        gridPane.add(bottomSegment, 0, 1);
+        gridPane.add(vScrollbarContainer, 1, 0, 1, 2);
+        gridPane.add(hScrollbarContainer, 0, 2, 2, 1);
+
+        // bind vertical scrollbar
+        vScrollbar.valueProperty().addListener((v, o, n) -> {
+            LOG.trace("set vscrollbar value to {}", n);
+            double position = n.doubleValue() / Math.max(1.0, vScrollbar.getMax() - vScrollbar.getMin());
+            bottomSegment.flow.setPosition(position);
+        });
 
         // Add the GridPane to the StackPane
         getChildren().add(gridPane);
-
-        // Add scrollbars directly to the StackPane
-        getChildren().addAll(hScrollbar, vScrollbar);
-
-        // Bind visibility of scrollbars
-        hScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getHScrollbar().visibleProperty());
-        vScrollbar.visibleProperty().bind(bottomRightQuadrant.flow.getVScrollbar().visibleProperty());
-
-        // Position scrollbars
-        StackPane.setAlignment(hScrollbar, javafx.geometry.Pos.BOTTOM_CENTER);
-        StackPane.setAlignment(vScrollbar, javafx.geometry.Pos.CENTER_RIGHT);
-
-        // entangle scrollbars
-        entangleScrollBars(hScrollbar, bottomRightQuadrant.flow.getHScrollbar(), topRightQuadrant.flow.getHScrollbar());
-        entangleScrollBars(vScrollbar, bottomRightQuadrant.flow.getVScrollbar(), bottomLeftQuadrant.flow.getVScrollbar());
 
         hScrollbar.setValue(0);
         vScrollbar.setValue(0);
@@ -138,6 +176,32 @@ public class FxSheetView extends StackPane implements SheetView {
                 });
             }
         });
+    }
+
+    private void updateHScrollbar() {
+        double scrollableSize = delegate.getSheetWidthInPoints() - delegate.getSplitX();
+        double viewableSize = Math.max(0.0, (getWidth() - vScrollbar.getWidth()) / delegate.getScale().sx() - delegate.getSplitX());
+        double hScrollbarMax = Math.max(0.0, scrollableSize - viewableSize + vScrollbar.getWidth() / delegate.getScale().sx());
+        double visibleAmount = hScrollbarMax * viewableSize / scrollableSize;
+        hScrollbar.setMin(0.0);
+        hScrollbar.setMax(hScrollbarMax);
+        hScrollbar.setVisibleAmount(visibleAmount);
+        hScrollbar.setUnitIncrement(delegate.getDefaultColumnWidthInPixels() * delegate.getScale().sx() / 8);
+        hScrollbar.setBlockIncrement(delegate.getDefaultColumnWidthInPixels() * delegate.getScale().sx());
+        hScrollbar.setValue(hScrollbar.getMin());
+    }
+
+    private void updateVScrollbar() {
+        double scrollableSize = delegate.getSheetHeightInPoints() - delegate.getSplitY();
+        double viewableSize = Math.max(0.0, (getHeight() - hScrollbar.getHeight()) / delegate.getScale().sy() - delegate.getSplitY());
+        double vScrollbarMax = Math.max(0.0, scrollableSize - viewableSize + hScrollbar.getHeight() / delegate.getScale().sy());
+        double visibleAmount = vScrollbarMax * viewableSize / scrollableSize;
+        vScrollbar.setMin(0.0);
+        vScrollbar.setMax(vScrollbarMax);
+        vScrollbar.setVisibleAmount(visibleAmount);
+        vScrollbar.setUnitIncrement(delegate.getDefaultRowHeightInPixels() * delegate.getScale().sy());
+        vScrollbar.setBlockIncrement(delegate.getDefaultRowHeightInPixels() * delegate.getScale().sy() * 8);
+        vScrollbar.setValue(vScrollbar.getMin());
     }
 
     /**
@@ -161,37 +225,6 @@ public class FxSheetView extends StackPane implements SheetView {
         RowConstraints rc = new RowConstraints();
         rc.setVgrow(prio);
         return rc;
-    }
-
-    private void entangleScrollBars(ScrollBar visibleScrollBar, ScrollBar controllingScrollBar, ScrollBar dependentScrollbar) {
-        entangleFollowing(visibleScrollBar.visibleAmountProperty(), controllingScrollBar.visibleAmountProperty(), dependentScrollbar.visibleAmountProperty());
-        entangleFollowing(visibleScrollBar.unitIncrementProperty(), controllingScrollBar.unitIncrementProperty(), dependentScrollbar.unitIncrementProperty());
-        entangleFollowing(visibleScrollBar.minProperty(), controllingScrollBar.minProperty(), dependentScrollbar.minProperty());
-        entangleFollowing(visibleScrollBar.maxProperty(), controllingScrollBar.maxProperty(), dependentScrollbar.maxProperty());
-        entangleBinding(visibleScrollBar.valueProperty(), controllingScrollBar.valueProperty(), dependentScrollbar.valueProperty());
-    }
-
-    private <V> void entangleFollowing(Property<V> visibleProperty, Property<V> controllingProperty, Property<V> dependentProperty) {
-        V value = controllingProperty.getValue();
-        visibleProperty.setValue(value);
-        dependentProperty.setValue(value);
-
-        dependentProperty.addListener(v -> dependentProperty.setValue(controllingProperty.getValue()));
-        visibleProperty.addListener(v -> visibleProperty.setValue(controllingProperty.getValue()));
-
-        controllingProperty.addListener((v, o, n) -> {
-            visibleProperty.setValue(n);
-            dependentProperty.setValue(n);
-        });
-    }
-
-    private <V> void entangleBinding(Property<V> visibleProperty, Property<V> controllingProperty, Property<V> dependentProperty) {
-        V value = controllingProperty.getValue();
-        visibleProperty.setValue(value);
-        dependentProperty.setValue(value);
-
-        controllingProperty.bindBidirectional(visibleProperty);
-        visibleProperty.bindBidirectional(dependentProperty);
     }
 
     static int getDpi() {
@@ -276,7 +309,7 @@ public class FxSheetView extends StackPane implements SheetView {
                 if (i >= splitRow) {
                     i -= splitRow;
                     // at least part of the (possibly merged) cell is below the split => scroll row into view
-                    FxSegmentView.VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomRightQuadrant.flow;
+                    FxSegmentView.VirtualFlowWithHidableScrollBars<FxRow> flow = bottomSegment.flow;
                     LOG.trace("scrolling row {} into view", i);
                     flow.scrollTo(i);
                 }
@@ -321,10 +354,8 @@ public class FxSheetView extends StackPane implements SheetView {
             int startRow = lc.getRowNumber();
             int endRow = startRow + lc.getVerticalSpan();
             for (int i = startRow; i < endRow; i++) {
-                topLeftQuadrant.requestLayoutForRow(i);
-                topRightQuadrant.requestLayoutForRow(i);
-                bottomLeftQuadrant.requestLayoutForRow(i);
-                bottomRightQuadrant.requestLayoutForRow(i);
+                topSegment.requestLayoutForRow(i);
+                bottomSegment.requestLayoutForRow(i);
             }
         }
     }
@@ -352,14 +383,10 @@ public class FxSheetView extends StackPane implements SheetView {
     private void updateLayout() {
         LOG.debug("updateLayout()");
         PlatformHelper.checkApplicationThread();
-        synchronized (topLeftQuadrant) {
-            try (var __ = delegate.readLock("FxSheetView.updateLayout()")) {
-                delegate.update(getDpi());
-                bottomRightQuadrant.updateLayout();
-                topRightQuadrant.updateLayout();
-                bottomLeftQuadrant.updateLayout();
-                topLeftQuadrant.updateLayout();
-            }
+        try (var __ = delegate.writeLock("FxSheetView.updateLayout()")) {
+            delegate.update(getDpi());
+            topSegment.updateLayout();
+            bottomSegment.updateLayout();
         }
     }
 
@@ -372,21 +399,19 @@ public class FxSheetView extends StackPane implements SheetView {
             return;
         }
 
-        try (var __ = delegate.readLock("FxSheetView.updateContent()")) {
-            synchronized (topLeftQuadrant) {
-                updateLayout();
-                topLeftQuadrant.refresh();
-                topRightQuadrant.refresh();
-                bottomLeftQuadrant.refresh();
-                bottomRightQuadrant.refresh();
-            }
+        try (var __ = getSheet().readLock("FxSheetView.updateContent()")) {
+            updateLayout();
+            topSegment.refresh();
+            bottomSegment.refresh();
+
+            sheetScaleXProperty.set(delegate.getScale().sx());
+            sheetScaleYProperty.set(delegate.getScale().sy());
         }
     }
 
     @Override
     public void focusView() {
         LOG.debug("focusView()");
-
         requestFocus();
     }
 
@@ -411,4 +436,49 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.warn("stopEditing() not implemented");
     }
 
+    public ScrollBar getHScrollbar() {
+        return hScrollbar;
+    }
+
+    public ScrollBar getVScrollbar() {
+        return vScrollbar;
+    }
+
+    DoubleProperty sheetScaleXProperty() {
+        return sheetScaleXProperty;
+    }
+
+    DoubleProperty sheetScaleYProperty() {
+        return sheetScaleYProperty;
+    }
+
+    ObservableSheet getObservableSheet() {
+        return observableSheet;
+    }
+
+    record SheetPosition(int row, int column, float xSheet, float ySheet) {}
+
+    public int getRowFromY(double y) {
+        boolean isTop = y - delegate.getColumnLabelHeightInPixels() <= delegate.getSplitYInPixels();
+
+        y /= delegate.getScale().sy();
+
+        if (!isTop) {
+            y += vScrollbar.getValue();
+        }
+
+        return delegate.getRowNumberFromY((float) y, false);
+    }
+
+    public int getColumnFromX(double x) {
+        boolean isLeft = x - delegate.getRowLabelWidthInPixels() <= delegate.getSplitXInPixels();
+
+        x /= delegate.getScale().sx();
+
+        if (!isLeft) {
+            x += hScrollbar.getValue();
+        }
+
+        return delegate.getColumnNumberFromX((float) x, false);
+    }
 }
