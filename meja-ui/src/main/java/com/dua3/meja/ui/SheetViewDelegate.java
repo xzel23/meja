@@ -52,6 +52,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     private static final float PADDING_Y_IN_POINTS = 1;
 
+    private static final int SPLIT_LINE_PIXELS = 1;
+
     /**
      * Color used to draw the selection rectangle.
      */
@@ -786,12 +788,25 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     /**
+     * Get the width of Row labels in points.
+     *
+     * @return the width of row labels in points
+     */
+    public float getRowLabelWidthInPixels() {
+        return rowLabelWidth * scale.sx();
+    }
+
+    /**
      * Get the height of column labels in points.
      *
      * @return the height of cloumn labels in points
      */
     public float getColumnLabelHeightInPoints() {
         return columnLabelHeightInPoints;
+    }
+
+    public float getRowHeightInPixels(int rowNumber) {
+        return getRowHeightInPoints(rowNumber) * scale.sy();
     }
 
     public float getRowHeightInPoints(int i) {
@@ -939,4 +954,13 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             }
         }
     }
+
+    public float getSplitLineWidthInPoints() {
+        return SPLIT_LINE_PIXELS / scale.sx();
+    }
+
+    public float getSplitLineHeightInPoints() {
+        return SPLIT_LINE_PIXELS / scale.sy();
+    }
+
 }

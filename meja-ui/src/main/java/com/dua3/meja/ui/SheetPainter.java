@@ -31,13 +31,12 @@ import java.util.Optional;
 /**
  * A helper class that implements the actual drawing algorithm.
  */
-public abstract class SheetPainterBase {
+public class SheetPainter {
 
-    private static final Logger LOGGER = LogManager.getLogger(SheetPainterBase.class);
+    private static final Logger LOGGER = LogManager.getLogger(SheetPainter.class);
 
+    private final SheetViewDelegate delegate;
     private final CellRenderer cellRenderer;
-
-    protected abstract SheetViewDelegate getDelegate();
 
     /**
      * Reference to the sheet.
@@ -45,22 +44,22 @@ public abstract class SheetPainterBase {
     private @Nullable Sheet sheet;
 
     public float getRowLabelWidth() {
-        return getDelegate().getRowLabelWidthInPoints();
+        return delegate.getRowLabelWidthInPoints();
     }
 
     public float getColumnLabelHeight() {
-        return getDelegate().getColumnLabelHeightInPoints();
+        return delegate.getColumnLabelHeightInPoints();
     }
 
     public void drawBackground(Graphics g, SheetView.SheetArea va) {
-        Rectangle2f sheetArea = getDelegate().getTotalArea();
+        Rectangle2f sheetArea = delegate.getTotalArea();
         Rectangle2f r = Rectangle2f.of(
                 Math.max(va.rect().xMin(), sheetArea.xMin()),
                 Math.max(va.rect().yMin(), sheetArea.yMin()),
                 Math.max(va.rect().xMax(), sheetArea.xMax()),
                 Math.max(va.rect().yMax(), sheetArea.yMax())
         );
-        g.setFill(getDelegate().getBackground());
+        g.setFill(delegate.getBackground());
         g.fillRect(r);
     }
 
@@ -77,7 +76,8 @@ public abstract class SheetPainterBase {
         }
     }
 
-    protected SheetPainterBase(CellRenderer cellRenderer) {
+    public SheetPainter(SheetViewDelegate delegate, CellRenderer cellRenderer) {
+        this.delegate = delegate;
         this.cellRenderer = cellRenderer;
     }
 
@@ -88,8 +88,8 @@ public abstract class SheetPainterBase {
             return;
         }
 
-        try (var __ = sheet.readLock("SheetPainterBase.drawSheet()")) {
-            SheetView.SheetArea va = getDelegate().getSheetArea(r, false);
+        try (var __ = sheet.readLock("SheetPainter.drawSheet()")) {
+            SheetView.SheetArea va = delegate.getSheetArea(r, false);
 
             drawBackground(g, va);
             drawLabels(g, va);
@@ -109,14 +109,12 @@ public abstract class SheetPainterBase {
     }
 
     protected void drawLabels(Graphics g, SheetView.SheetArea va) {
-        SheetViewDelegate delegate = getDelegate();
-
        // draw row labels
         for (int i = va.startRow(); i < va.endRow(); i++) {
             float x = -getRowLabelWidth();
             float w = getRowLabelWidth();
-            float y = getDelegate().getRowPos(i);
-            float h = getDelegate().getRowPos(i + 1) - y;
+            float y = delegate.getRowPos(i);
+            float h = delegate.getRowPos(i + 1) - y;
             if (w > 0 && h > 0.0) {
                 Rectangle2f lr = new Rectangle2f(x, y, w, h);
                 String text = delegate.getRowName(i);
@@ -126,9 +124,9 @@ public abstract class SheetPainterBase {
 
         // draw column labels
         for (int j = va.startColumn(); j < va.endColumn(); j++) {
-            float x = getDelegate().getColumnPos(j);
+            float x = delegate.getColumnPos(j);
             float y = -getColumnLabelHeight();
-            float w = getDelegate().getColumnPos(j + 1) - x;
+            float w = delegate.getColumnPos(j + 1) - x;
             if (w > 0) {
                 Rectangle2f lr = new Rectangle2f(x, y, w, getColumnLabelHeight());
                 String text = delegate.getColumnName(j);
@@ -138,9 +136,7 @@ public abstract class SheetPainterBase {
     }
 
     protected void drawGrid(Graphics g, SheetView.SheetArea va) {
-        SheetViewDelegate delegate = getDelegate();
-
-        Rectangle2f sheetArea = getDelegate().getTotalArea();
+        Rectangle2f sheetArea = delegate.getTotalArea();
         Rectangle2f r = Rectangle2f.of(
                 Math.max(va.rect().xMin(), sheetArea.xMin()),
                 Math.max(va.rect().yMin(), sheetArea.yMin()),
@@ -152,13 +148,13 @@ public abstract class SheetPainterBase {
 
         // draw horizontal grid lines
         for (int i = va.startRow(); i <= va.endRow(); i++) {
-            float y = getDelegate().getRowPos(i);
+            float y = delegate.getRowPos(i);
             g.strokeLine(Math.max(0, r.xMin()), y, r.xMax(), y);
         }
 
         // draw vertical grid lines
         for (int j = va.startColumn(); j <= va.endColumn(); j++) {
-            float x = getDelegate().getColumnPos(j);
+            float x = delegate.getColumnPos(j);
             g.strokeLine(x, r.yMin(), x, r.yMax());
         }
     }
@@ -203,12 +199,12 @@ public abstract class SheetPainterBase {
                 // the first non-empty cell to the left/right to make sure
                 // overflowing text is visible.
                 int first = va.startColumn();
-                while (first > 0 && getDelegate().getColumnPos(first) + maxWidth > r.xMin() && row.getCell(first).isEmpty()) {
+                while (first > 0 && delegate.getColumnPos(first) + maxWidth > r.xMin() && row.getCell(first).isEmpty()) {
                     first--;
                 }
 
                 int end = va.endColumn();
-                while (end < getDelegate().getColumnCount() && getDelegate().getColumnPos(end) - maxWidth < r.xMax()
+                while (end < delegate.getColumnCount() && delegate.getColumnPos(end) - maxWidth < r.xMax()
                         && (end <= 0 || row.getCell(end - 1).isEmpty())) {
                     end++;
                 }
@@ -252,9 +248,7 @@ public abstract class SheetPainterBase {
     }
 
     protected void drawSplitLines(Graphics g, SheetView.SheetArea va) {
-        SheetViewDelegate delegate = getDelegate();
-
-        Rectangle2f sheetArea = getDelegate().getTotalArea();
+        Rectangle2f sheetArea = delegate.getTotalArea();
         Rectangle2f r = Rectangle2f.of(
                 Math.max(va.rect().xMin(), sheetArea.xMin()),
                 Math.max(va.rect().yMin(), sheetArea.yMin()),
@@ -264,15 +258,15 @@ public abstract class SheetPainterBase {
 
         int splitColumn = delegate.getSplitColumn();
         if (splitColumn > 0) {
-            g.setStroke(Color.BLACK, getDelegate().get1PxWidthInPoints());
-            float x = getDelegate().getColumnPos(splitColumn);
+            g.setStroke(Color.BLACK, delegate.get1PxWidthInPoints());
+            float x = delegate.getColumnPos(splitColumn);
             g.strokeLine(x, r.yMin(), x, r.yMax());
         }
 
         int splitRow = delegate.getSplitRow();
         if (splitRow > 0) {
-            g.setStroke(Color.BLACK, getDelegate().get1PxHeightInPoints());
-            float y = getDelegate().getRowPos(splitRow);
+            g.setStroke(Color.BLACK, delegate.get1PxHeightInPoints());
+            float y = delegate.getRowPos(splitRow);
             g.strokeLine(r.xMin(), y, r.xMax(), y);
         }
     }

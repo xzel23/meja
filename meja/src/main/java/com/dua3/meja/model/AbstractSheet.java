@@ -129,7 +129,7 @@ public abstract class AbstractSheet implements Sheet {
      * @param newSplit the new split coordinates as a Pair of integers representing the row and column
      */
     protected void splitChanged(Pair<Integer, Integer> oldSplit, Pair<Integer, Integer> newSplit) {
-        submit(new SheetEvent.SplitSet(this, oldSplit, newSplit));
+        submit(new SheetEvent.SplitChanged(this, oldSplit, newSplit));
     }
 
     @Override

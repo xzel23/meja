@@ -5,6 +5,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.model.SheetEvent.RowsAdded;
+import com.dua3.utility.data.Pair;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -18,7 +19,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.concurrent.Flow;
+import java.util.function.Consumer;
 
 /**
  * ObservableSheet is a wrapper around a Sheet that implements an observable list of Rows.
@@ -29,8 +32,11 @@ public class ObservableSheet extends ObservableListBase<Row> {
     private static final Logger LOG = LogManager.getLogger(ObservableSheet.class);
 
     private final Sheet sheet;
+    private final List<Consumer<? super Sheet>> layoutListeners;
     private final FloatProperty zoomProperty;
     private final IntegerProperty columnCountProperty;
+    private final IntegerProperty splitRowProperty;
+    private final IntegerProperty splitColumnProperty;
     private final ObjectProperty<Cell> currentCellProperty;
 
     /**
@@ -42,15 +48,20 @@ public class ObservableSheet extends ObservableListBase<Row> {
      */
     public ObservableSheet(Sheet sheet) {
         this.sheet = sheet;
-        this.sheet.subscribe(new SheetTracker());
+        this.layoutListeners = new java.util.ArrayList<>();
         this.zoomProperty = new SimpleFloatProperty(sheet.getZoom());
         this.columnCountProperty = new SimpleIntegerProperty(sheet.getColumnCount());
+        this.splitRowProperty = new SimpleIntegerProperty(sheet.getSplitRow());
+        this.splitColumnProperty = new SimpleIntegerProperty(sheet.getSplitColumn());
         this.currentCellProperty = new SimpleObjectProperty<>(sheet.getCurrentCell());
+
         currentCellProperty.addListener((v, o, n) -> {
             if (n != o || (n.getRowNumber() != o.getRowNumber() || n.getColumnNumber() != o.getColumnNumber()) ) {
                 sheet.setCurrentCell(n);
             }
         });
+
+        this.sheet.subscribe(new SheetTracker());
     }
 
     @Override
@@ -61,6 +72,14 @@ public class ObservableSheet extends ObservableListBase<Row> {
     @Override
     public int size() {
         return sheet.getRowCount();
+    }
+
+    public void addLayoutListener(Consumer<? super Sheet> listener) {
+        layoutListeners.add(listener);
+    }
+
+    public boolean removeLayoutListener(Consumer<? super Sheet> listener) {
+        return layoutListeners.remove(listener);
     }
 
     /**
@@ -76,6 +95,14 @@ public class ObservableSheet extends ObservableListBase<Row> {
 
     public ReadOnlyIntegerProperty columnCountProperty() {
         return columnCountProperty;
+    }
+
+    public ReadOnlyIntegerProperty splitRowProperty() {
+        return splitRowProperty;
+    }
+
+    public ReadOnlyIntegerProperty splitColumnProperty() {
+        return splitColumnProperty;
     }
 
     public ObjectProperty<@Nullable Cell> currentCellProperty() {
@@ -111,6 +138,17 @@ public class ObservableSheet extends ObservableListBase<Row> {
                 case SheetEvent.ActiveCellChanged activeCellChanged -> {
                     LOG.trace("active cell changed");
                     currentCellProperty.set(activeCellChanged.newValue());
+                }
+                case SheetEvent.SplitChanged splitChanged -> {
+                    LOG.trace("split changed");
+                    Pair<Integer, Integer> split = splitChanged.newValue();
+                    assert split != null;
+                    splitRowProperty.set(split.first());
+                    splitColumnProperty.set(split.second());
+                }
+                case SheetEvent.LayoutChanged layoutChanged -> {
+                    LOG.trace("layout changed");
+                    layoutListeners.forEach(listener -> listener.accept(sheet));
                 }
                 default -> {}}
         }
