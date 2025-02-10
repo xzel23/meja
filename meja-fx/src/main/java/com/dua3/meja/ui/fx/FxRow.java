@@ -37,14 +37,11 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         private final Canvas right;
 
         FxRowGraphics(FxRow fxRow) {
-            super();
             left = new Canvas();
             right = new Canvas();
 
             getChildren().addAll(left, right);
-//            getChildren().addAll(left, right);
             left.toFront();
-            //right.toBack();
 
             right.translateXProperty().bind(
                     left.layoutXProperty()
@@ -99,17 +96,13 @@ public class FxRow extends IndexedCell<FxRow.Index> {
             Canvas canvas = getCanvas(side);
             GraphicsContext g2d = canvas.getGraphicsContext2D();
             Affine transform = g2d.getTransform();
-            FxGraphics fxGraphics = new FxGraphics(canvas) {
+            return new FxGraphics(canvas) {
                 @Override
                 public void close() {
                     super.close();
                     g2d.setTransform(transform);
                 }
             };
-            fxGraphics.setStroke((side == Side.LEFT ? Color.GREEN : Color.BLUE), 1);
-            fxGraphics.strokeRect(0.0f,0.0f, fxGraphics.getWidth(), fxGraphics.getHeight());
-
-            return fxGraphics;
         }
 
         private Canvas getCanvas(Side side) {
@@ -350,7 +343,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
 
             // draw grid lines
             g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxHeightInPoints());
-            g.strokeLine(x, y + h, w, y + h); // horizontal
+            g.strokeLine(x, y + h, x + w, y + h); // horizontal
 
             g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxWidthInPoints());
             for (int j = segmentViewDelegate.getStartColumn(); j <= segmentViewDelegate.getEndColumn(); j++) {
@@ -396,17 +389,19 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         try (FxGraphics g = fxrg.getGraphicsContext(side)) {
             float h = fxSheetView.getDelegate().getColumnLabelHeightInPoints();
             float y = 0;
+            //
+            if (segmentViewDelegate.getStartColumn() == 0) {
+                float wj = fxSheetView.getDelegate().getRowLabelWidthInPoints();
+                float xj = -fxSheetView.getDelegate().getRowLabelWidthInPoints();
+                g.setFill(fxSheetView.getDelegate().getLabelBackgroundColor());
+                g.fillRect(xj, y, wj, h);
+            }
             //  iterate over columns
             for (int j = segmentViewDelegate.getStartColumn(); j < segmentViewDelegate.getEndColumn(); j++) {
                 //  draw row label
                 float xj = fxSheetView.getDelegate().getColumnPos(j);
                 float wj = fxSheetView.getDelegate().getColumnPos(j + 1) - xj;
-                Rectangle2f r = new Rectangle2f(
-                        xj,
-                        y,
-                        wj,
-                        h
-                );
+                Rectangle2f r = new Rectangle2f(xj, y, wj, h);
                 fxSheetView.getDelegate().drawLabel(g, r, fxSheetView.getDelegate().getColumnName(j));
             }
 

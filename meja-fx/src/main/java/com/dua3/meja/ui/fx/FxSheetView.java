@@ -306,38 +306,40 @@ public class FxSheetView extends StackPane implements SheetView {
                 int i = cell.getRowNumber();
                 int j = cell.getColumnNumber();
                 int splitRow = delegate.getSplitRow();
+
+                // vertical scroll
                 if (i >= splitRow) {
-                    i -= splitRow;
                     // at least part of the (possibly merged) cell is below the split => scroll row into view
                     FxSegmentView.VirtualFlowWithHidableScrollBars<FxRow> flow = bottomSegment.flow;
                     LOG.trace("scrolling row {} into view", i);
-                    flow.scrollTo(i);
+                    flow.scrollTo(i -= splitRow);
                 }
+
+                // horizontal scroll
                 int splitColumn = delegate.getSplitColumn();
                 if (j >= splitColumn) {
                     // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
-                    Scale2f s = delegate.getScale();
-                    double split = delegate.getSplitX() * s.sx();
-                    double xMin = delegate.getColumnPos(j) * s.sx() - split;
-                    double xMax = delegate.getColumnPos(j + 1) * s.sx() - split;
-                    double width = delegate.getColumnPos(delegate.getColumnCount()) * s.sx() - split;
+                    double sx = delegate.getScale().sx();
+                    double splitX = delegate.getSplitX();
+                    double xMin = delegate.getColumnPos(j);
+                    double xMax = delegate.getColumnPos(j + 1);
+                    double sheetWidth = delegate.getSheetWidthInPoints();
+                    double segmentWidth = sheetWidth - splitX;
 
-                    double sbVisibleAmount = hScrollbar.getVisibleAmount();
                     double sbMax = hScrollbar.getMax();
                     double sbMin = hScrollbar.getMin();
                     double sbValue = hScrollbar.getValue();
                     double sbRange = sbMax - sbMin;
-                    double sbWidth = sbVisibleAmount + sbRange;
-                    double visiblePercent = sbVisibleAmount / sbWidth;
+                    double visibleWidth = (getWidth() - vScrollbar.getWidth() - getDelegate().getColumnLabelHeightInPixels() - delegate.getSplitLineWidth()) / sx - splitX;
+                    double visibleMaxX = splitX + sbValue + visibleWidth;
 
-                    double visibleMaxX = split + sbValue + width * visiblePercent;
-
-                    if (xMin < sbValue) {
+                    if (xMin < splitX + sbValue) {
                         LOG.trace("scrolling to leftmost column");
-                        hScrollbar.setValue(xMin);
+                        hScrollbar.setValue(xMin - splitX);
                     } else if (xMax > visibleMaxX) {
                         LOG.trace("scrolling column {} into view", j);
-                        hScrollbar.setValue(Math.min(sbMax, xMax - width * visiblePercent - split));
+                        double value = xMax - visibleWidth - sbMin - splitX;
+                        hScrollbar.setValue(value);
                     }
                 }
             }

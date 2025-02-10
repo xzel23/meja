@@ -136,13 +136,7 @@ public class SheetPainter {
     }
 
     protected void drawGrid(Graphics g, SheetView.SheetArea va) {
-        Rectangle2f sheetArea = delegate.getTotalArea();
-        Rectangle2f r = Rectangle2f.of(
-                Math.max(va.rect().xMin(), sheetArea.xMin()),
-                Math.max(va.rect().yMin(), sheetArea.yMin()),
-                Math.max(va.rect().xMax(), sheetArea.xMax()),
-                Math.max(va.rect().yMax(), sheetArea.yMax())
-        );
+        Rectangle2f r = va.rect();
 
         g.setStroke(delegate.getGridColor(), delegate.get1PxWidthInPoints());
 

@@ -970,4 +970,12 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public double getSplitYInPixels() {
         return getColumnLabelHeightInPixels() + rowPos[splitRow] * scale.sy();
     }
+
+    public double getSplitLineWidth() {
+        return SPLIT_LINE_PIXELS;
+    }
+
+    public double getSplitLineHeight() {
+        return SPLIT_LINE_PIXELS;
+    }
 }
