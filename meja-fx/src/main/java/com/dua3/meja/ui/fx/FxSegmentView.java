@@ -147,9 +147,8 @@ public class FxSegmentView extends Control implements SegmentView {
     private final ObservableList<@Nullable Row> rows;
 
     /**
-     * Constructs an instance of FxSegmentView, responsible for displaying a specific quadrant
-     * of a sheet in the user interface, using a delegate for handling functionality and data
-     * and an observable list for the rows of the sheet.
+     * Constructs an instance of FxSegmentView, responsible for displaying either the top (above split) or
+     * bottom (below split) part of a sheet in the user interface.
      *
      * @param fxSheetView the {@link FxSheetView} this segment belongs to
      * @param side        use {@link Side#TOP} for the top segment, {@link Side#BOTTOM} for the bottom segment
