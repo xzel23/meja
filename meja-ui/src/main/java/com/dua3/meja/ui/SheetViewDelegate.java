@@ -6,7 +6,6 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.SheetEvent;
 import com.dua3.utility.concurrent.AutoLock;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
@@ -364,7 +363,10 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @return the columnPos
      */
     public float getColumnPos(int j) {
-        return columnPos[MathUtil.clamp(0, columnPos.length - 1, j)];
+        if (j >= columnPos.length) {
+            return columnPos[columnPos.length - 1] + (j - columnPos.length + 1) * getDefaultColumnWidthInPoints();
+        }
+        return columnPos[Math.max(0, j)];
     }
 
     /**
@@ -381,11 +383,10 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @return the rowPos
      */
     public float getRowPos(int i) {
-        if (i < rowPos.length) {
-            return rowPos[i];
-        } else {
+        if (i >= rowPos.length) {
             return rowPos[rowPos.length - 1] + (i - rowPos.length + 1) * getDefaultRowHeightInPoints();
         }
+        return rowPos[Math.max(0, i)];
     }
 
     @Override

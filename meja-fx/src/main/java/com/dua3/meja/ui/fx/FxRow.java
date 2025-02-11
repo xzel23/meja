@@ -158,10 +158,6 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         return fxSheetView.getDelegate().getScale().sy() * getRowHeightInPoints();
     }
 
-    public float getWidthInPixels() {
-        return fxSegmentView.getSegmentDelegateLeft().getWidthInPixels() + fxSegmentView.getSegmentDelegateRight().getWidthInPixels();
-    }
-
     public float getWidthInPixels(Side side) {
         return getSegmentViewDelegate(side).getWidthInPixels();
     }
