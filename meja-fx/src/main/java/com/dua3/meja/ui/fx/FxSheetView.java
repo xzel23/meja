@@ -461,26 +461,22 @@ public class FxSheetView extends StackPane implements SheetView {
     record SheetPosition(int row, int column, float xSheet, float ySheet) {}
 
     public int getRowFromY(double y) {
-        boolean isTop = y - delegate.getColumnLabelHeightInPixels() <= delegate.getSplitYInPixels();
-
+        y -= delegate.getColumnLabelHeightInPixels();
+        boolean isTop = y <= delegate.getSplitYInPixels();
         y /= delegate.getScale().sy();
-
         if (!isTop) {
             y += vScrollbar.getValue();
         }
-
         return delegate.getRowNumberFromY((float) y, false);
     }
 
     public int getColumnFromX(double x) {
-        boolean isLeft = x - delegate.getRowLabelWidthInPixels() <= delegate.getSplitXInPixels();
-
+        x -= delegate.getRowLabelWidthInPixels();
+        boolean isLeft = x <= delegate.getSplitXInPixels();
         x /= delegate.getScale().sx();
-
         if (!isLeft) {
             x += hScrollbar.getValue();
         }
-
         return delegate.getColumnNumberFromX((float) x, false);
     }
 }
