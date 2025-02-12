@@ -10,7 +10,7 @@ val javaCompatibility = JavaVersion.VERSION_21
 java {
     toolchain { languageVersion.set(javaToolVersion) }
 
-    // JavaFX 21 is needed, but it is compatible with Java 17, so use Java 17 as language setting
+    // Java 17 is used for everything but the JavaFX related modules
     sourceCompatibility = javaCompatibility
     targetCompatibility = javaCompatibility
 }
@@ -45,6 +45,24 @@ dependencies {
     runtimeOnly(rootProject.libs.log4j.jul)
 }
 
+fun JavaExec.useJDKPreviewToolchain() {
+    val javaHome = file("/Users/axelhowind/bin/jdk-preview/jdk/Contents/Home")
+    val pathToFx = "/Users/axelhowind/bin/jdk-preview/javafx-sdk/lib"
+    val javaToolOptions = "--module-path=$pathToFx --add-modules javafx.controls,javafx.fxml"
+    val javafxModules = listOf("javafx.controls", "javafx.fxml")
+
+    environment("PATH_TO_FX", pathToFx)               // Make available to the runtime
+    environment("JAVA_HOME", "/Users/axelhowind/bin/jdk-preview/jdk/Contents/Home") // Use JDK 24 location
+    environment("JAVA_TOOL_OPTIONS", "--module-path=$pathToFx") // Ensure module path is set
+
+    jvmArgs = listOf(
+        "--module-path", pathToFx, // Explicit module path for JavaFX
+        "--add-modules", javafxModules.joinToString(",") // Adds required JavaFX modules
+    )
+
+    executable = file("${javaHome.absolutePath}/bin/java").absolutePath
+}
+
 val runExcelViewer = task<JavaExec>("runExcelViewer") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxExcelViewer")
@@ -76,6 +94,13 @@ val runShowTestXlsx = task<JavaExec>("runFxShowTestXlsx") {
     mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
     enableAssertions = true
     useToolchain()
+}
+
+val runShowTestXlsxJDKPreview = task<JavaExec>("runShowTestXlsxJDKPreview") {
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
+    enableAssertions = true
+    useJDKPreviewToolchain()
 }
 
 val runShowTestXlsxNoEA = task<JavaExec>("runFxShowTestXlsx (no assertions)") {
