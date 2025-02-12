@@ -5,6 +5,7 @@ import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.Dialogs;
+import com.dua3.utility.lang.SystemInfo;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -83,6 +84,15 @@ public class FxExcelViewer {
                     Controls.menu("File",
                             Controls.menuItem("Open", () -> openSpreadsheet(primaryStage)),
                             Controls.menuItem("Exit", Platform::exit)
+                    ),
+                    Controls.menu("Help",
+                            Controls.menuItem("System Information", () ->
+                                    Dialogs.information(primaryStage)
+                                            .title("System Information")
+                                            .header(SystemInfo.getSystemInfo().formatted())
+                                            .build()
+                                            .showAndWait()
+                            )
                     )
             );
             menuBar.setUseSystemMenuBar(true);
