@@ -167,7 +167,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      *
      * @return dx coordinate of split
      */
-    public float getSplitX() {
+    public float getSplitXInPoints() {
         return getColumnPos(getSplitColumn());
     }
 
@@ -176,7 +176,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      *
      * @return dy coordinate of split
      */
-    public float getSplitY() {
+    public float getSplitYInPoints() {
         return getRowPos(getSplitRow());
     }
 

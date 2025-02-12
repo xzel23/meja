@@ -74,7 +74,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
             right.setWidth(Math.max(getWidth() - segmentDelegateLeft.getWidthInPixels(), segmentDelegateRight.getWidthInPixels()));
             right.setHeight(rowHeightInPoints);
 
-            tx = -segmentDelegateRight.getSheetViewDelegate().getSplitX();
+            tx = -segmentDelegateRight.getSheetViewDelegate().getSplitXInPoints();
 
             GraphicsContext g2dRight = right.getGraphicsContext2D();
 
@@ -323,44 +323,52 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         Row row = index.row();
         assert row != null;
 
-        FxSheetViewDelegate sheetViewDelegate = fxSheetView.getDelegate();
+        FxSheetViewDelegate svDelegate = fxSheetView.getDelegate();
         SegmentViewDelegate segmentViewDelegate = getSegmentViewDelegate(side);
 
         int i = index.rowNumber();
-        float x = sheetViewDelegate.getColumnPos(segmentViewDelegate.getStartColumn());
-        float w = segmentViewDelegate.getWidthInPoints();
-        float y = sheetViewDelegate.getRowPos(i);
+        float x = svDelegate.getColumnPos(segmentViewDelegate.getStartColumn());
+        float y = svDelegate.getRowPos(i);
         float h = row.getRowHeight();
 
         try (FxGraphics g = fxrg.getGraphicsContext(side)) {
+            // get w from size of row on screen which may exceed the actual sheet width
+            float w = (g.getWidth() - svDelegate.getRowLabelWidthInPixels()) / svDelegate.getScale().sx();
+            float maxX = g.getWidth() / svDelegate.getScale().sx();
+            int maxJ = side == Side.LEFT ? segmentViewDelegate.getEndColumn() : fxSheetView.getColumnFromXInPixels(w);
+
             // clear background
-            g.setFill(sheetViewDelegate.getBackground());
+            g.setFill(svDelegate.getBackground());
             g.fillRect(x, y, w, h);
 
             // draw grid lines
-            g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxHeightInPoints());
+            g.setStroke(svDelegate.getGridColor(), svDelegate.get1PxHeightInPoints());
             g.strokeLine(x, y + h, x + w, y + h); // horizontal
 
-            g.setStroke(sheetViewDelegate.getGridColor(), sheetViewDelegate.get1PxWidthInPoints());
+            g.setStroke(svDelegate.getGridColor(), svDelegate.get1PxWidthInPoints());
             for (int j = segmentViewDelegate.getStartColumn(); j <= segmentViewDelegate.getEndColumn(); j++) {
-                float xj = sheetViewDelegate.getColumnPos(j);
+                float xj = svDelegate.getColumnPos(j);
+                if (side == Side.LEFT && xj > maxX) {
+                    // when rendering the part left of the split, stop when the split is reached
+                    break;
+                }
                 g.strokeLine(xj, y, xj, y + h); // vertical
             }
 
             //  draw row label
-            if (segmentViewDelegate.getStartColumn() == 0) {
-                float rowLabelWidthInPoints = sheetViewDelegate.getRowLabelWidthInPoints();
+            if (side == Side.LEFT) {
+                float rowLabelWidthInPoints = svDelegate.getRowLabelWidthInPoints();
                 Rectangle2f r = new Rectangle2f(
                         x - rowLabelWidthInPoints,
                         y,
                         rowLabelWidthInPoints,
                         h
                 );
-                sheetViewDelegate.drawLabel(g, r, sheetViewDelegate.getRowName(i));
+                svDelegate.drawLabel(g, r, svDelegate.getRowName(i));
             }
 
             //  iterate over columns and draw cells
-            CellRenderer cellRenderer = new CellRenderer(sheetViewDelegate);
+            CellRenderer cellRenderer = new CellRenderer(svDelegate);
             for (int j = segmentViewDelegate.getStartColumn(); j < segmentViewDelegate.getEndColumn(); j++) {
                 row.getCellIfExists(j).ifPresent(cell -> cellRenderer.drawCell(g, cell.getLogicalCell()));
             }
@@ -368,11 +376,11 @@ public class FxRow extends IndexedCell<FxRow.Index> {
             // draw the vertical split line
             if (segmentViewDelegate.hasVLine()) {
                 g.setFill(Color.BLACK);
-                float xSplit = fxSheetView.getDelegate().getSplitX();
-                g.fillRect(xSplit, y, sheetViewDelegate.getSplitLineWidthInPoints(), h);
+                float xSplit = fxSheetView.getDelegate().getSplitXInPoints();
+                g.fillRect(xSplit, y, svDelegate.getSplitLineWidthInPoints(), h);
             }
 
-            Cell cell = sheetViewDelegate.getCurrentLogicalCell();
+            Cell cell = svDelegate.getCurrentLogicalCell();
             if (cell.getRowNumber() - 1 <= i && cell.getRowNumber() + cell.getVerticalSpan() >= i) {
                 cellRenderer.drawSelection(g, cell);
             }
@@ -380,43 +388,50 @@ public class FxRow extends IndexedCell<FxRow.Index> {
     }
 
     private void renderColumnLabels(Side side, FxRowGraphics fxrg) {
+        FxSheetViewDelegate svDelegate = fxSheetView.getDelegate();
         SegmentViewDelegate segmentViewDelegate = getSegmentViewDelegate(side);
 
         try (FxGraphics g = fxrg.getGraphicsContext(side)) {
-            float h = fxSheetView.getDelegate().getColumnLabelHeightInPoints();
+            float h = svDelegate.getColumnLabelHeightInPoints();
             float y = 0;
-            //
+            float sheetX = -getSegmentViewDelegate(side).getXOffset();
+            float w = g.getWidth() / svDelegate.getScale().sx();
+            float maxX = sheetX + w;
+            int maxJ = fxSheetView.getColumnFromXInPoints(maxX);
+
+            // draw the top left corner
             if (segmentViewDelegate.getStartColumn() == 0) {
-                float wj = fxSheetView.getDelegate().getRowLabelWidthInPoints();
-                float xj = -fxSheetView.getDelegate().getRowLabelWidthInPoints();
-                g.setFill(fxSheetView.getDelegate().getLabelBackgroundColor());
+                float wj = svDelegate.getRowLabelWidthInPoints();
+                float xj = -svDelegate.getRowLabelWidthInPoints();
+                g.setFill(svDelegate.getLabelBackgroundColor());
                 g.fillRect(xj, y, wj, h);
             }
             //  iterate over columns
-            for (int j = segmentViewDelegate.getStartColumn(); j < segmentViewDelegate.getEndColumn(); j++) {
-                //  draw row label
-                float xj = fxSheetView.getDelegate().getColumnPos(j);
-                float wj = fxSheetView.getDelegate().getColumnPos(j + 1) - xj;
+            for (int j = segmentViewDelegate.getStartColumn(); j <= maxJ; j++) {
+                //  draw column label
+                float xj = svDelegate.getColumnPos(j);
+                float wj = svDelegate.getColumnPos(j + 1) - xj;
                 Rectangle2f r = new Rectangle2f(xj, y, wj, h);
-                fxSheetView.getDelegate().drawLabel(g, r, fxSheetView.getDelegate().getColumnName(j));
+                svDelegate.drawLabel(g, r, svDelegate.getColumnName(j));
             }
 
             // draw split line
             if (segmentViewDelegate.hasVLine()) {
                 g.setFill(Color.BLACK);
-                float xSplit = fxSheetView.getDelegate().getColumnPos(segmentViewDelegate.getEndColumn());
-                g.fillRect(xSplit, y, fxSheetView.getDelegate().getSplitLineWidthInPoints(), h);
+                float xSplit = svDelegate.getColumnPos(segmentViewDelegate.getEndColumn());
+                g.fillRect(xSplit, y, svDelegate.getSplitLineWidthInPoints(), h);
             }
         }
     }
 
     private void renderSplitLine(Side side, FxRowGraphics fxrg) {
+        FxSheetViewDelegate svDelegate = fxSheetView.getDelegate();
         try (FxGraphics g = fxrg.getGraphicsContext(side)) {
             g.setFill(Color.BLACK);
-            float sheetX = - getSegmentViewDelegate(side).getXOffset();
-            float sheetWidth = fxSheetView.getDelegate().getSheetWidthInPoints();
+            float sheetX = -getSegmentViewDelegate(side).getXOffset();
+            float w = g.getWidth() / svDelegate.getScale().sx();
             float rowHeight = getRowHeightInPoints();
-            g.fillRect(sheetX, 0, sheetWidth, rowHeight);
+            g.fillRect(sheetX, 0, w, rowHeight);
         }
     }
 
@@ -424,11 +439,11 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         LOG.debug("onMouseClicked({})", evt);
 
         fxSheetView.requestFocus();
-        int j = fxSheetView.getColumnFromX(evt.getX());
+        int j = fxSheetView.getColumnFromXInPixels(evt.getX());
 
-        FxSheetViewDelegate sheetViewDelegate = fxSheetView.getDelegate();
-        sheetViewDelegate.setCurrentCell(getItem().rowNumber(), j);
-        LOG.debug("onMouseClicked(): set current cell to {}", () -> sheetViewDelegate.getCurrentLogicalCell().getCellRef());
+        FxSheetViewDelegate svDelegate = fxSheetView.getDelegate();
+        svDelegate.setCurrentCell(getItem().rowNumber(), j);
+        LOG.debug("onMouseClicked(): set current cell to {}", () -> svDelegate.getCurrentLogicalCell().getCellRef());
     }
 
     /**

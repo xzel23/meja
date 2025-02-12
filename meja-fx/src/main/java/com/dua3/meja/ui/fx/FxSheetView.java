@@ -85,12 +85,12 @@ public class FxSheetView extends StackPane implements SheetView {
 
         // Create scrollbars
         hScrollbar.setOrientation(Orientation.HORIZONTAL);
-        observableSheet.splitColumnProperty().addListener((v, o, n) -> hScrollbar.setMin(delegate.getSplitX()));
+        observableSheet.splitColumnProperty().addListener((v, o, n) -> hScrollbar.setMin(delegate.getSplitXInPoints()));
         widthProperty().addListener((v, o, n) -> updateHScrollbar());
         updateHScrollbar();
 
         vScrollbar.setOrientation(Orientation.VERTICAL);
-        observableSheet.splitRowProperty().addListener((v, o, n) -> vScrollbar.setMin(delegate.getSplitY()));
+        observableSheet.splitRowProperty().addListener((v, o, n) -> vScrollbar.setMin(delegate.getSplitYInPoints()));
         heightProperty().addListener((v, o, n) -> updateVScrollbar());
         updateVScrollbar();
 
@@ -179,8 +179,8 @@ public class FxSheetView extends StackPane implements SheetView {
     }
 
     private void updateHScrollbar() {
-        double scrollableSize = delegate.getSheetWidthInPoints() - delegate.getSplitX();
-        double viewableSize = Math.max(0.0, (getWidth() - vScrollbar.getWidth()) / delegate.getScale().sx() - delegate.getSplitX());
+        double scrollableSize = delegate.getSheetWidthInPoints() - delegate.getSplitXInPoints();
+        double viewableSize = Math.max(0.0, (getWidth() - vScrollbar.getWidth()) / delegate.getScale().sx() - delegate.getSplitXInPoints());
         double hScrollbarMax = Math.max(0.0, scrollableSize - viewableSize + vScrollbar.getWidth() / delegate.getScale().sx());
         double visibleAmount = hScrollbarMax * viewableSize / scrollableSize;
         hScrollbar.setMin(0.0);
@@ -188,12 +188,11 @@ public class FxSheetView extends StackPane implements SheetView {
         hScrollbar.setVisibleAmount(visibleAmount);
         hScrollbar.setUnitIncrement(delegate.getDefaultColumnWidthInPixels() * delegate.getScale().sx() / 8);
         hScrollbar.setBlockIncrement(delegate.getDefaultColumnWidthInPixels() * delegate.getScale().sx());
-        hScrollbar.setValue(hScrollbar.getMin());
     }
 
     private void updateVScrollbar() {
-        double scrollableSize = delegate.getSheetHeightInPoints() - delegate.getSplitY();
-        double viewableSize = Math.max(0.0, (getHeight() - hScrollbar.getHeight()) / delegate.getScale().sy() - delegate.getSplitY());
+        double scrollableSize = delegate.getSheetHeightInPoints() - delegate.getSplitYInPoints();
+        double viewableSize = Math.max(0.0, (getHeight() - hScrollbar.getHeight()) / delegate.getScale().sy() - delegate.getSplitYInPoints());
         double vScrollbarMax = Math.max(0.0, scrollableSize - viewableSize + hScrollbar.getHeight() / delegate.getScale().sy());
         double visibleAmount = vScrollbarMax * viewableSize / scrollableSize;
         vScrollbar.setMin(0.0);
@@ -201,7 +200,6 @@ public class FxSheetView extends StackPane implements SheetView {
         vScrollbar.setVisibleAmount(visibleAmount);
         vScrollbar.setUnitIncrement(delegate.getDefaultRowHeightInPixels() * delegate.getScale().sy());
         vScrollbar.setBlockIncrement(delegate.getDefaultRowHeightInPixels() * delegate.getScale().sy() * 8);
-        vScrollbar.setValue(vScrollbar.getMin());
     }
 
     /**
@@ -320,7 +318,7 @@ public class FxSheetView extends StackPane implements SheetView {
                 if (j >= splitColumn) {
                     // at least part of the (possibly merged) cell is to the right of the split => scroll column into view
                     double sx = delegate.getScale().sx();
-                    double splitX = delegate.getSplitX();
+                    double splitX = delegate.getSplitXInPoints();
                     double xMin = delegate.getColumnPos(j);
                     double xMax = delegate.getColumnPos(j + 1);
                     double sheetWidth = delegate.getSheetWidthInPoints();
@@ -460,17 +458,25 @@ public class FxSheetView extends StackPane implements SheetView {
 
     record SheetPosition(int row, int column, float xSheet, float ySheet) {}
 
-    public int getRowFromY(double y) {
-        y -= delegate.getColumnLabelHeightInPixels();
-        boolean isTop = y <= delegate.getSplitYInPixels();
-        y /= delegate.getScale().sy();
+    public int getColumnFromXInPoints(double x) {
+        x -= delegate.getRowLabelWidthInPoints();
+        boolean isLeft = x <= delegate.getSplitXInPoints();
+        if (!isLeft) {
+            x += hScrollbar.getValue();
+        }
+        return delegate.getColumnNumberFromX((float) x, false);
+    }
+
+    public int getRowFromYInPoints(double y) {
+        y -= delegate.getColumnLabelHeightInPoints();
+        boolean isTop = y <= delegate.getSplitYInPoints();
         if (!isTop) {
             y += vScrollbar.getValue();
         }
         return delegate.getRowNumberFromY((float) y, false);
     }
 
-    public int getColumnFromX(double x) {
+    public int getColumnFromXInPixels(double x) {
         x -= delegate.getRowLabelWidthInPixels();
         boolean isLeft = x <= delegate.getSplitXInPixels();
         x /= delegate.getScale().sx();
@@ -478,5 +484,15 @@ public class FxSheetView extends StackPane implements SheetView {
             x += hScrollbar.getValue();
         }
         return delegate.getColumnNumberFromX((float) x, false);
+    }
+
+    public int getRowFromYInPixels(double y) {
+        y -= delegate.getColumnLabelHeightInPixels();
+        boolean isTop = y <= delegate.getSplitYInPixels();
+        y /= delegate.getScale().sy();
+        if (!isTop) {
+            y += vScrollbar.getValue();
+        }
+        return delegate.getRowNumberFromY((float) y, false);
     }
 }
