@@ -459,8 +459,26 @@ public interface Sheet extends Iterable<Row> {
         return getRowCount() == 0;
     }
 
+    /**
+     * Acquires a read lock associated with the specified name.
+     * This method ensures thread-safe access to shared resources by
+     * allowing multiple readers or a single writer but not both simultaneously.
+     *
+     * @param name the name identifying the lock to be acquired
+     * @return an {@link AutoLock} representing the acquired read lock,
+     *         which will automatically release once closed.
+     */
     AutoLock readLock(String name);
 
+    /**
+     * Acquires a write lock on the specified resource.
+     * This method provides a mechanism to ensure exclusive access to
+     * the resource identified by the given name.
+     *
+     * @param name the name of the resource to be locked. Must not be null.
+     * @return an {@link AutoLock} instance representing the acquired lock,
+     *         which will automatically release once closed.
+     */
     AutoLock writeLock(String name);
 
     /**
