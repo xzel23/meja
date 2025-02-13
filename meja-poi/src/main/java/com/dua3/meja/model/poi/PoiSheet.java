@@ -127,8 +127,8 @@ public class PoiSheet extends AbstractSheet {
         final int currentRow, currentColumn;
         CellAddress cellRef = poiSheet.getActiveCell();
         if (cellRef != null) {
-            currentRow = Math.max(getFirstRowNum(), Math.min(getLastRowNum(), cellRef.getRow()));
-            currentColumn = Math.max(firstColumn, Math.min(lastColumn, cellRef.getColumn()));
+            currentRow = cellRef.getRow();
+            currentColumn = cellRef.getColumn();
         } else {
             return getCell(0, 0);
         }
