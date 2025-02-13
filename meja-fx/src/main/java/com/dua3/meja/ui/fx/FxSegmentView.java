@@ -208,6 +208,7 @@ public class FxSegmentView extends Control implements SegmentView {
     public void updateViewSize(float w, float h) {
         if (segmentDelegateLeft.isAboveSplit()) {
             setMinHeight(h);
+            setPrefHeight(h);
         }
     }
 

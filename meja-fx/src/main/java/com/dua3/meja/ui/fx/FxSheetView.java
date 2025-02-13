@@ -102,20 +102,6 @@ public class FxSheetView extends StackPane implements SheetView {
         this.scrollXProperty = hScrollbar.valueProperty();
         this.scrollYProperty = vScrollbar.valueProperty();
 
-        // Set layout constraints
-        RowConstraints[] rc = {
-                rowConstraints(Priority.NEVER),
-                rowConstraints(Priority.ALWAYS),
-                rowConstraints(Priority.NEVER)
-        };
-        gridPane.getRowConstraints().setAll(rc);
-
-        ColumnConstraints[] cc = {
-                columnConstraints(Priority.ALWAYS),
-                columnConstraints(Priority.NEVER)
-        };
-        gridPane.getColumnConstraints().setAll(cc);
-
         // set up horizontal scrollbar
         Region leftSpacer = new Region();
         leftSpacer.prefHeightProperty().bind(hScrollbar.heightProperty());
@@ -142,6 +128,22 @@ public class FxSheetView extends StackPane implements SheetView {
         VBox vScrollbarContainer = new VBox(0.0, topSpacer, vScrollbar);
         VBox.setVgrow(topSpacer, Priority.NEVER);
         VBox.setVgrow(vScrollbar, Priority.ALWAYS);
+
+        // Set layout constraints
+        RowConstraints[] rc = {
+                rowConstraints(Priority.NEVER),
+                rowConstraints(Priority.ALWAYS),
+                rowConstraints(Priority.NEVER)
+        };
+        gridPane.getRowConstraints().setAll(rc);
+        GridPane.setHgrow(bottomSegment, Priority.ALWAYS);
+        GridPane.setVgrow(bottomSegment, Priority.ALWAYS);
+
+        ColumnConstraints[] cc = {
+                columnConstraints(Priority.ALWAYS),
+                columnConstraints(Priority.NEVER)
+        };
+        gridPane.getColumnConstraints().setAll(cc);
 
         // Add segments and scrollbar to GridPane
         gridPane.add(topSegment, 0, 0);

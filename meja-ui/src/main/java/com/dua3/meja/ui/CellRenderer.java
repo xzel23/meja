@@ -271,10 +271,8 @@ public class CellRenderer {
         LOGGER.trace("drawSelection()");
 
         Cell lc = cell.getLogicalCell();
-
-        Rectangle2f r = getCellRect(lc);
-
         float strokeWidth = delegate.getSelectionStrokeWidth();
+        Rectangle2f r = getCellRect(lc).addMargin(-strokeWidth / 2.0f);
 
         g.setStroke(delegate.getSelectionColor(), strokeWidth * delegate.get1PxWidthInPoints());
         g.strokeRect(r);

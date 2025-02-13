@@ -274,6 +274,9 @@ public class PoiSheet extends AbstractSheet {
         int last = lastColumn + 1;
         if (first != last) {
             columnsAdded(first, last);
+            for (int j = first; j < last; j++) {
+                setColumnWidth(j, getDefaultColumnWidth());
+            }
         }
     }
 

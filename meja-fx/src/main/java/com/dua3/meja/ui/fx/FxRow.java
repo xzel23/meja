@@ -144,7 +144,9 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         this.fxSegmentView = fxSegmentView;
 
         setText(null);
-        setGraphic(new FxRowGraphics(this));
+        FxRowGraphics fxrg = new FxRowGraphics(this);
+        fxrg.prefWidthProperty().bind(this.widthProperty());
+        setGraphic(fxrg);
 
         setOnMouseClicked(this::onMouseClicked);
     }
@@ -327,15 +329,19 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         SegmentViewDelegate segmentViewDelegate = getSegmentViewDelegate(side);
 
         int i = index.rowNumber();
+
+
+
         float x = svDelegate.getColumnPos(segmentViewDelegate.getStartColumn());
         float y = svDelegate.getRowPos(i);
         float h = row.getRowHeight();
 
         try (FxGraphics g = fxrg.getGraphicsContext(side)) {
             // get w from size of row on screen which may exceed the actual sheet width
-            float w = (g.getWidth() - svDelegate.getRowLabelWidthInPixels()) / svDelegate.getScale().sx();
-            float maxX = g.getWidth() / svDelegate.getScale().sx();
-            int maxJ = side == Side.LEFT ? segmentViewDelegate.getEndColumn() : fxSheetView.getColumnFromXInPixels(w);
+            float sheetX = -getSegmentViewDelegate(side).getXOffset();
+            float w = g.getWidth() / svDelegate.getScale().sx();
+            float maxX = sheetX + w;
+            int maxJ = fxSheetView.getColumnFromXInPoints(maxX);
 
             // clear background
             g.setFill(svDelegate.getBackground());
@@ -439,11 +445,22 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         LOG.debug("onMouseClicked({})", evt);
 
         fxSheetView.requestFocus();
-        int j = fxSheetView.getColumnFromXInPixels(evt.getX());
-
         FxSheetViewDelegate svDelegate = fxSheetView.getDelegate();
-        svDelegate.setCurrentCell(getItem().rowNumber(), j);
-        LOG.debug("onMouseClicked(): set current cell to {}", () -> svDelegate.getCurrentLogicalCell().getCellRef());
+        double x = evt.getX();
+        int j = x < svDelegate.getRowLabelWidthInPixels() ? -1 : fxSheetView.getColumnFromXInPixels(x);
+        int i = getItem().rowNumber();
+        if (j < 0) {
+            if (i < 0) {
+                LOG.debug("onMouseClicked(): left top corner clicked");
+            } else {
+                LOG.debug("onMouseClicked(): row header clicked for row {}", i);
+            }
+        } else if (i < 0) {
+            LOG.debug("onMouseClicked(): column header clicked for column {}", j);
+        } else {
+            svDelegate.setCurrentCell(i, j);
+            LOG.debug("onMouseClicked(): set current cell to {}", () -> svDelegate.getCurrentLogicalCell().getCellRef());
+        }
     }
 
     /**
