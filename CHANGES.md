@@ -4,6 +4,7 @@
 
 - update Apache POI to 5.4.0
 - sheet.getCurrentCell() returns cell directly, not wrapped in an Optional
+- fix getRotation() for XSSF files for values outside of the range [0, 90]
 - UI components for Swing and JavaFX:
    - support rotated text
    - support text layout 'distributed'
