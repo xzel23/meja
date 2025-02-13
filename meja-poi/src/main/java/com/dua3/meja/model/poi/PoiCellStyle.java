@@ -216,7 +216,7 @@ public abstract class PoiCellStyle implements CellStyle {
         @Override
         public short getRotation() {
             short angle = poiCellStyle.getRotation();
-            return angle <= 90 ? angle : (short) (angle - 180); // XSSF uses 0 to 180 degrees
+            return angle <= 90 ? angle : (short) (90 - angle); // XSSF uses 0 to 180 degrees
         }
     }
 
