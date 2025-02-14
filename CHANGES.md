@@ -10,6 +10,10 @@
    - support text layout 'distributed'
    - allow navigating beyond spreadsheet row/column range
 
+### Known Issues
+
+- FXSheetView: mouse panning and changing zoom do not update scrollbars
+
 ## Version 6.3.0
 
 - update utility
