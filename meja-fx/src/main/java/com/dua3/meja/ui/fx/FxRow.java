@@ -321,7 +321,6 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         fxrg.setVisible(true);
 
         Index index = getItem();
-        int idx = index.rowIndex();
         Row row = index.row();
         assert row != null;
 
@@ -352,7 +351,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
             g.strokeLine(x, y + h, x + w, y + h); // horizontal
 
             g.setStroke(svDelegate.getGridColor(), svDelegate.get1PxWidthInPoints());
-            for (int j = segmentViewDelegate.getStartColumn(); j <= segmentViewDelegate.getEndColumn(); j++) {
+            for (int j = segmentViewDelegate.getStartColumn(); j <= maxJ; j++) {
                 float xj = svDelegate.getColumnPos(j);
                 if (side == Side.LEFT && xj > maxX) {
                     // when rendering the part left of the split, stop when the split is reached
@@ -375,7 +374,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
 
             //  iterate over columns and draw cells
             CellRenderer cellRenderer = new CellRenderer(svDelegate);
-            for (int j = segmentViewDelegate.getStartColumn(); j < segmentViewDelegate.getEndColumn(); j++) {
+            for (int j = segmentViewDelegate.getStartColumn(); j <= maxJ; j++) {
                 row.getCellIfExists(j).ifPresent(cell -> cellRenderer.drawCell(g, cell.getLogicalCell()));
             }
 
