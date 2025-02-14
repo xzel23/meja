@@ -8,14 +8,8 @@ import com.dua3.utility.fx.PlatformHelper;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Side;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Control;
-import javafx.scene.control.IndexedCell;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SkinBase;
-import javafx.scene.control.skin.VirtualFlow;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -81,69 +75,9 @@ public class FxSegmentView extends Control implements SegmentView {
         }
     }
 
-    static class VirtualFlowWithHidableScrollBars<T extends IndexedCell<?>> extends VirtualFlow<T> {
-        VirtualFlowWithHidableScrollBars(boolean hideHScrollbar, boolean hideVScrollbar) {
-            if (hideHScrollbar) {
-                getHbar().setPrefHeight(0);
-                getHbar().setOpacity(0);
-            }
-            if (hideVScrollbar) {
-                getVbar().setPrefWidth(0);
-                getVbar().setOpacity(0);
-            }
-        }
-
-        /**
-         * Retrieves the horizontal scrollbar associated with the virtual flow.
-         *
-         * @return the horizontal ScrollBar instance used in the VirtualFlow.
-         */
-        public ScrollBar getHScrollbar() {
-            return getHbar();
-        }
-
-        /**
-         * Retrieves the vertical scrollbar associated with this virtual flow.
-         *
-         * @return the vertical ScrollBar object.
-         */
-        public ScrollBar getVScrollbar() {
-            return getVbar();
-        }
-
-        /**
-         * Refreshes the virtual flow by rebuilding its cells.
-         * This method is typically called to update the visual representation of the
-         * cells in the virtual flow after changes have been made. It ensures that all
-         * cells are reconstructed and displayed according to the current data and state.
-         */
-        public void refresh() {
-            recreateCells();
-        }
-
-        @Override
-        protected void layoutChildren() {
-            super.layoutChildren();
-            getChildren().stream()
-                    .filter(Node::isVisible)
-                    .forEach(node -> {
-                        if (node instanceof Parent parent) {
-                            ObservableList<Node> children = parent.getChildrenUnmodifiable();
-                            if (!children.isEmpty() && children.getFirst() instanceof Group group) {
-                                children = group.getChildrenUnmodifiable();
-                                if (!children.isEmpty() && children.getFirst() instanceof FxRow) {
-                                    node.setLayoutX(0);
-                                    node.getClip().setLayoutX(node.getLayoutX());
-                                }
-                            }
-                        }
-                    });
-        }
-    }
-
     private final SegmentViewDelegate segmentDelegateLeft;
     private final SegmentViewDelegate segmentDelegateRight;
-    final VirtualFlowWithHidableScrollBars<FxRow> flow;
+    final VirtualFlowWithHiddenScrollBars<FxRow> flow;
     private final ObservableList<@Nullable Row> rows;
 
     /**
@@ -173,7 +107,7 @@ public class FxSegmentView extends Control implements SegmentView {
         this.segmentDelegateLeft = new SegmentViewDelegate(this, svDelegate, quadrantLeft);
         this.segmentDelegateRight = new SegmentViewDelegate(this, svDelegate, quadrantRight);
         this.rows = rows;
-        this.flow = new VirtualFlowWithHidableScrollBars<>(true, true);
+        this.flow = new VirtualFlowWithHiddenScrollBars<>(true, true);
 
         updateLayout();
 
