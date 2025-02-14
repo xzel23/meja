@@ -12,7 +12,7 @@
 
 ### Known Issues
 
-- FXSheetView: mouse panning and changing zoom do not update scrollbars
+- FXSheetView: mouse panning ~~and changing zoom~~ does not update scrollbars
 
 ## Version 6.3.0
 

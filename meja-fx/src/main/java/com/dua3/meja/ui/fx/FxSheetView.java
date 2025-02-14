@@ -35,7 +35,6 @@ import org.jspecify.annotations.Nullable;
 import java.awt.Toolkit;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.function.IntConsumer;
 
 /**
  * The FxSheetView class is responsible for rendering a spreadsheet-like UI component,
@@ -51,13 +50,18 @@ public class FxSheetView extends StackPane implements SheetView {
     private final FxSegmentView topSegment;
     private final FxSegmentView bottomSegment;
     private final GridPane gridPane;
+
     private final ScrollBar hScrollbar = new ScrollBar();
     private final ScrollBar vScrollbar = new ScrollBar();
+
+    private final Region leftSpacer = new Region();
+    private final Region topSpacer = new Region();
+    private final Region bottomRightCorner = new Region();
+
     private final DoubleProperty scrollXProperty;
     private final DoubleProperty scrollYProperty;
     private final DoubleProperty sheetScaleXProperty = new SimpleDoubleProperty(1.0);
     private final DoubleProperty sheetScaleYProperty = new SimpleDoubleProperty(1.0);
-
 
     private boolean updating = false;
 
@@ -103,13 +107,10 @@ public class FxSheetView extends StackPane implements SheetView {
         this.scrollYProperty = vScrollbar.valueProperty();
 
         // set up horizontal scrollbar
-        Region leftSpacer = new Region();
         leftSpacer.prefHeightProperty().bind(hScrollbar.heightProperty());
-        IntConsumer updateLeftSpacerFromSplitColumn = j -> leftSpacer.setPrefWidth(delegate.getColumnPos(j) * delegate.getScale().sx() + delegate.getRowLabelWidthInPixels());
-        observableSheet.splitColumnProperty().addListener((v, o, n) -> updateLeftSpacerFromSplitColumn.accept(n.intValue()));
-        updateLeftSpacerFromSplitColumn.accept(sheet.getSplitColumn());
+        observableSheet.splitColumnProperty().addListener((v, o, n) -> updateLeftSpacer());
+        updateLeftSpacer();
 
-        Region bottomRightCorner = new Region();
         bottomRightCorner.prefWidthProperty().bind(vScrollbar.widthProperty());
         bottomRightCorner.prefHeightProperty().bind(hScrollbar.heightProperty());
 
@@ -119,11 +120,8 @@ public class FxSheetView extends StackPane implements SheetView {
         HBox.setHgrow(bottomRightCorner, Priority.NEVER);
 
         // set up vertical scrollbar
-        Region topSpacer = new Region();
         topSpacer.prefWidthProperty().bind(vScrollbar.widthProperty());
-        IntConsumer updateTopSpacerFromSplitRow = i -> topSpacer.setPrefHeight(delegate.getRowPos(i) * delegate.getScale().sy() + delegate.getColumnLabelHeightInPixels());
-        observableSheet.splitRowProperty().addListener((v, o, n) -> updateTopSpacerFromSplitRow.accept(n.intValue()));
-        updateTopSpacerFromSplitRow.accept(sheet.getSplitRow());
+        topSpacer.prefHeightProperty().bind(topSegment.heightProperty());
 
         VBox vScrollbarContainer = new VBox(0.0, topSpacer, vScrollbar);
         VBox.setVgrow(topSpacer, Priority.NEVER);
@@ -180,7 +178,13 @@ public class FxSheetView extends StackPane implements SheetView {
         });
     }
 
+    private void updateLeftSpacer() {
+        int j = delegate.getSplitColumn();
+        leftSpacer.setPrefWidth(delegate.getColumnPos(j) * delegate.getScale().sx() + delegate.getRowLabelWidthInPixels());
+    }
+
     private void updateHScrollbar() {
+        updateLeftSpacer();
         double scrollableSize = delegate.getSheetWidthInPoints() - delegate.getSplitXInPoints();
         double viewableSize = Math.max(0.0, (getWidth() - vScrollbar.getWidth()) / delegate.getScale().sx() - delegate.getSplitXInPoints());
         double hScrollbarMax = Math.max(0.0, scrollableSize - viewableSize + vScrollbar.getWidth() / delegate.getScale().sx());
@@ -389,6 +393,8 @@ public class FxSheetView extends StackPane implements SheetView {
             delegate.update(getDpi());
             topSegment.updateLayout();
             bottomSegment.updateLayout();
+            updateHScrollbar();
+            updateVScrollbar();
         }
     }
 
