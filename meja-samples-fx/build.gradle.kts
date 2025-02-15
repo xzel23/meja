@@ -6,6 +6,7 @@ description = "Meja spreadsheet library - samples (JavaFX)"
 
 val javaToolVersion = JavaLanguageVersion.of(21)
 val javaCompatibility = JavaVersion.VERSION_21
+val javaRuntimeVersion = "EA"
 
 java {
     toolchain { languageVersion.set(javaToolVersion) }
@@ -16,9 +17,28 @@ java {
 }
 
 fun JavaExec.useToolchain() {
-    javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(javaToolVersion)
-    })
+    if (javaRuntimeVersion.toString() == "EA") {
+        val jdkPreviewBase = file("${System.getProperty("user.home")}/bin/jdk-preview").absolutePath
+        val javaHome = "${jdkPreviewBase}/jdk/Contents/Home"
+        val pathToFx = "${jdkPreviewBase}/javafx-sdk/lib"
+        val javafxModules = listOf("javafx.controls", "javafx.fxml")
+
+        environment("PATH_TO_FX", pathToFx)
+        environment("JAVA_HOME", javaHome)
+        environment("JAVA_TOOL_OPTIONS", "--module-path=$pathToFx")
+
+        jvmArgs = listOf(
+            "--module-path", pathToFx, // Explicit module path for JavaFX
+            "--add-modules", javafxModules.joinToString(",") // Adds required JavaFX modules
+        )
+
+        executable = "${javaHome}/bin/java"
+
+    } else {
+        javaLauncher.set(javaToolchains.launcherFor {
+            languageVersion.set(javaToolVersion)
+        })
+    }
 }
 
 dependencies {
@@ -45,67 +65,23 @@ dependencies {
     runtimeOnly(rootProject.libs.log4j.jul)
 }
 
-fun JavaExec.useJDKPreviewToolchain() {
-    val javaHome = file("/Users/axelhowind/bin/jdk-preview/jdk/Contents/Home")
-    val pathToFx = "/Users/axelhowind/bin/jdk-preview/javafx-sdk/lib"
-    val javaToolOptions = "--module-path=$pathToFx --add-modules javafx.controls,javafx.fxml"
-    val javafxModules = listOf("javafx.controls", "javafx.fxml")
-
-    environment("PATH_TO_FX", pathToFx)               // Make available to the runtime
-    environment("JAVA_HOME", "/Users/axelhowind/bin/jdk-preview/jdk/Contents/Home") // Use JDK 24 location
-    environment("JAVA_TOOL_OPTIONS", "--module-path=$pathToFx") // Ensure module path is set
-
-    jvmArgs = listOf(
-        "--module-path", pathToFx, // Explicit module path for JavaFX
-        "--add-modules", javafxModules.joinToString(",") // Adds required JavaFX modules
-    )
-
-    executable = file("${javaHome.absolutePath}/bin/java").absolutePath
-}
-
-val runExcelViewer = task<JavaExec>("runExcelViewer") {
+val runExcelViewer = task<JavaExec>("runFxExcelViewer") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxExcelViewer")
     enableAssertions = true
     useToolchain()
 }
 
-val runKitchenSink = task<JavaExec>("runKitchenSink") {
+val runKitchenSink = task<JavaExec>("runFxKitchenSink") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxKitchenSink")
     enableAssertions = true
     useToolchain()
 }
-/*
-val runTableModel = task<JavaExec>("runTableModel") {
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.meja.samples.TableModelDemo")
-    enableAssertions = true
-}
 
-val runShowTestXlsx = task<JavaExec>("runShowTestXlsx") {
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.meja.samples.ShowTestXlsx")
-    enableAssertions = true
-}
-*/
 val runShowTestXlsx = task<JavaExec>("runFxShowTestXlsx") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
     enableAssertions = true
-    useToolchain()
-}
-
-val runShowTestXlsxJDKPreview = task<JavaExec>("runShowTestXlsxJDKPreview") {
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
-    enableAssertions = true
-    useJDKPreviewToolchain()
-}
-
-val runShowTestXlsxNoEA = task<JavaExec>("runFxShowTestXlsx (no assertions)") {
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
-    enableAssertions = false
     useToolchain()
 }
