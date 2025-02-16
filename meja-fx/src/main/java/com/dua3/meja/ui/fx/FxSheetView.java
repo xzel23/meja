@@ -172,6 +172,13 @@ public class FxSheetView extends StackPane implements SheetView {
 
         updateContent();
 
+        bottomSegment.flow.setOnScroll(event -> {
+            double deltaY = event.getDeltaY();
+            double deltaX = event.getDeltaX();
+            hScrollbar.setValue(Math.clamp(hScrollbar.getValue() - deltaX * delegate.getScale().sx(), hScrollbar.getMin(), hScrollbar.getMax()));
+            vScrollbar.setValue(Math.clamp(vScrollbar.getValue() - deltaY * delegate.getScale().sy(), vScrollbar.getMin(), vScrollbar.getMax()));
+        });
+
         observableSheet.zoomProperty().addListener((v, o, n) -> {
             if (!Objects.equals(n, o)) {
                 PlatformHelper.runLater(() -> {
