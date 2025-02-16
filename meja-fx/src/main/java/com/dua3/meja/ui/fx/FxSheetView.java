@@ -153,9 +153,9 @@ public class FxSheetView extends StackPane implements SheetView {
         vScrollbar.valueProperty().addListener((v, o, n) -> {
             LOG.trace("set vscrollbar value to {}", n);
             double position = n.doubleValue() / Math.max(1.0, vScrollbar.getMax() - vScrollbar.getMin());
-            bottomSegment.flow.setPosition(position);
+            bottomSegment.getFlow().setPosition(position);
         });
-        bottomSegment.flow.positionProperty().addListener((v, o, n) -> {
+        bottomSegment.getFlow().positionProperty().addListener((v, o, n) -> {
             double position = n.doubleValue() * (vScrollbar.getMax() - vScrollbar.getMin());
             updateVScrollbar();
             vScrollbar.setValue(position);
@@ -172,7 +172,7 @@ public class FxSheetView extends StackPane implements SheetView {
 
         updateContent();
 
-        bottomSegment.flow.setOnScroll(event -> {
+        bottomSegment.getFlow().setOnScroll(event -> {
             double deltaY = event.getDeltaY();
             double deltaX = event.getDeltaX();
             hScrollbar.setValue(Math.clamp(hScrollbar.getValue() - deltaX * delegate.getScale().sx(), hScrollbar.getMin(), hScrollbar.getMax()));
@@ -326,7 +326,7 @@ public class FxSheetView extends StackPane implements SheetView {
                 // vertical scroll
                 if (i >= splitRow) {
                     // at least part of the (possibly merged) cell is below the split => scroll row into view
-                    VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomSegment.flow;
+                    VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomSegment.getFlow();
                     LOG.trace("scrolling row {} into view", i);
                     flow.scrollTo(i -= splitRow);
                 }

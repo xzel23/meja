@@ -25,49 +25,9 @@ public class FxSegmentView extends Control implements SegmentView {
     private static final Logger LOG = LogManager.getLogger(FxSegmentView.class);
 
     private final FxSheetView sheetView;
-
-    /**
-     * Requests a layout update for a specific row within the segment view.
-     *
-     * @param i the index of the row for which the layout update is requested
-     */
-    public void requestLayoutForRow(int i) {
-        int flowIndex = getFlowIndex(i);
-        if (flowIndex >= 0) {
-            flow.getCell(flowIndex).requestLayout();
-        }
-    }
-
-    /**
-     * Retrieves the index of the flow for a given row index.
-     *
-     * @param rowIndex the index of the row for which to get the flow index.
-     * @return the flow index if the row is found; -1 otherwise.
-     */
-    private int getFlowIndex(int rowIndex) {
-        for (int i = 0; i < rows.size(); i++) {
-            Row row = rows.get(i);
-            if (row != null && row.getRowNumber() == rowIndex) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public boolean isAboveSplit() {
-        return segmentDelegateLeft.isAboveSplit();
-    }
-
-    private static class FxSegmentViewSkin extends SkinBase<FxSegmentView> {
-        protected FxSegmentViewSkin(FxSegmentView control) {
-            super(control);
-            getChildren().add(control.flow);
-        }
-    }
-
     private final SegmentViewDelegate segmentDelegateLeft;
     private final SegmentViewDelegate segmentDelegateRight;
-    final VirtualFlowWithHiddenScrollBars<FxRow> flow;
+    private final VirtualFlowWithHiddenScrollBars<FxRow> flow;
     private final ObservableList<@Nullable Row> rows;
 
     /**
@@ -116,6 +76,49 @@ public class FxSegmentView extends Control implements SegmentView {
         setSkin(skin);
 
         setFocusTraversable(false);
+    }
+
+    /**
+     * Requests a layout update for a specific row within the segment view.
+     *
+     * @param i the index of the row for which the layout update is requested
+     */
+    public void requestLayoutForRow(int i) {
+        int flowIndex = getFlowIndex(i);
+        if (flowIndex >= 0) {
+            flow.getCell(flowIndex).requestLayout();
+        }
+    }
+
+    /**
+     * Retrieves the index of the flow for a given row index.
+     *
+     * @param rowIndex the index of the row for which to get the flow index.
+     * @return the flow index if the row is found; -1 otherwise.
+     */
+    private int getFlowIndex(int rowIndex) {
+        for (int i = 0; i < rows.size(); i++) {
+            Row row = rows.get(i);
+            if (row != null && row.getRowNumber() == rowIndex) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public boolean isAboveSplit() {
+        return segmentDelegateLeft.isAboveSplit();
+    }
+
+    public VirtualFlowWithHiddenScrollBars<FxRow> getFlow() {
+        return flow;
+    }
+
+    private static class FxSegmentViewSkin extends SkinBase<FxSegmentView> {
+        protected FxSegmentViewSkin(FxSegmentView control) {
+            super(control);
+            getChildren().add(control.flow);
+        }
     }
 
     /**
