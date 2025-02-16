@@ -155,6 +155,11 @@ public class FxSheetView extends StackPane implements SheetView {
             double position = n.doubleValue() / Math.max(1.0, vScrollbar.getMax() - vScrollbar.getMin());
             bottomSegment.flow.setPosition(position);
         });
+        bottomSegment.flow.positionProperty().addListener((v, o, n) -> {
+            double position = n.doubleValue() * (vScrollbar.getMax() - vScrollbar.getMin());
+            updateVScrollbar();
+            vScrollbar.setValue(position);
+        });
 
         // Add the GridPane to the StackPane
         getChildren().add(gridPane);

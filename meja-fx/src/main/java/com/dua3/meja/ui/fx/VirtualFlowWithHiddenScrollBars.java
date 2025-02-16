@@ -6,14 +6,10 @@ import javafx.scene.control.skin.VirtualFlow;
 
 class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends VirtualFlow<T> {
     VirtualFlowWithHiddenScrollBars(boolean hideHScrollbar, boolean hideVScrollbar) {
-        if (hideHScrollbar) {
-            getHbar().setPrefHeight(0);
-            getHbar().setOpacity(0);
-        }
-        if (hideVScrollbar) {
-            getVbar().setPrefWidth(0);
-            getVbar().setOpacity(0);
-        }
+        getChildren().remove(getVbar());
+        getChildren().remove(getHbar());
+        getVbar().setDisable(true);
+        getHbar().setDisable(true);
     }
 
     /**
@@ -43,4 +39,6 @@ class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends VirtualF
     public void refresh() {
         recreateCells();
     }
+
+
 }
