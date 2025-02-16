@@ -3,6 +3,7 @@ package com.dua3.meja.ui.fx;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.skin.VirtualFlow;
+import javafx.scene.input.ScrollEvent;
 
 class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends VirtualFlow<T> {
     VirtualFlowWithHiddenScrollBars(boolean hideHScrollbar, boolean hideVScrollbar) {
@@ -10,6 +11,10 @@ class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends VirtualF
         getChildren().remove(getHbar());
         getVbar().setDisable(true);
         getHbar().setDisable(true);
+
+        // disable scrolling and panning
+        setPannable(false);
+        addEventFilter(ScrollEvent.ANY, event -> event.consume());
     }
 
     /**
