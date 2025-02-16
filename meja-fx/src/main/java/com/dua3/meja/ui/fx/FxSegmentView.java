@@ -27,16 +27,6 @@ public class FxSegmentView extends Control implements SegmentView {
     private final FxSheetView sheetView;
 
     /**
-     * Refreshes the segment view by invoking the underlying flow's refresh method.
-     * This method ensures the visual representation of the segment view remains
-     * up to date by rebuilding the virtual flow's cells. It is typically used
-     * after updates to the data or layout to guarantee the correctness of the displayed content.
-     */
-    public void refresh() {
-        flow.refresh();
-    }
-
-    /**
      * Requests a layout update for a specific row within the segment view.
      *
      * @param i the index of the row for which the layout update is requested
@@ -118,7 +108,6 @@ public class FxSegmentView extends Control implements SegmentView {
             PlatformHelper.runLater(() -> {
                 try (var __ = svDelegate.readLock("FxSegmentView - rows changed")) {
                     flow.setCellCount(rows.size());
-                    flow.refresh();
                 }
             });
         });
@@ -130,7 +119,7 @@ public class FxSegmentView extends Control implements SegmentView {
     }
 
     /**
-     * Update layout, i.e., when the scale or row and/or column sizes change.
+     * Update layout, i.e.; when the scale or row and/or column sizes change.
      */
     public void updateLayout() {
         PlatformHelper.checkApplicationThread();
