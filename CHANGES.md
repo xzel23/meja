@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 7.0.1
+
+- fix SXSSF not writing column widths correctly after updating POI
+
 ## Version 7
 
 - update Apache POI to 5.4.0

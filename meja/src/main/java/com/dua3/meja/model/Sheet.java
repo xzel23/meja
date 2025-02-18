@@ -364,11 +364,6 @@ public interface Sheet extends Iterable<Row> {
         int splitColumn = other.getSplitColumn();
         int autoFilterRow = other.getAutoFilterRow();
 
-        // copy column widths
-        for (int j = other.getFirstColNum(); j <= other.getLastColNum(); j++) {
-            setColumnWidth(j, other.getColumnWidth(j));
-        }
-
         // copy merged regions
         for (RectangularRegion rr : other.getMergedRegions()) {
             addMergedRegion(rr);
@@ -387,6 +382,11 @@ public interface Sheet extends Iterable<Row> {
             if (i == splitRow) {
                 splitAt(splitRow, splitColumn);
             }
+        }
+
+        // copy column widths (must be done after copying rows because POI SXSSF overwrites widths when adding the rows)
+        for (int j = other.getFirstColNum(); j <= other.getLastColNum(); j++) {
+            setColumnWidth(j, other.getColumnWidth(j));
         }
     }
 
