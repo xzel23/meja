@@ -32,24 +32,45 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * An interface representing a single sheet of a workbook.
+ * An interface representing a single sheet of a workbook. A Sheet contains rows and cells organized in a tabular structure.
+ * It provides methods for accessing and manipulating cell data, managing merged regions, auto-sizing rows and columns,
+ * and handling sheet-level operations.
+ * <p>
+ * The Sheet interface implements the Iterable&lt;Row&gt; interface, allowing iteration over all rows in the sheet.
+ * It also supports an event system through which subscribers can receive notifications about changes to the sheet.
  *
  * @author axel
+ * @see Row
+ * @see Cell
+ * @see Workbook
  */
 public interface Sheet extends Iterable<Row> {
 
     /**
-     * Subscribes a subscriber to receive events of a specified class.
+     * Subscribes a subscriber to receive sheet events. Events are published when significant changes occur in the sheet,
+     * such as:
+     * <ul>
+     *   <li>Cell content or formatting changes</li>
+     *   <li>Row or column modifications (resize, insert, delete)</li>
+     *   <li>Sheet structure changes (merged regions, autofilter)</li>
+     * </ul>
      *
-     * @param subscriber   the subscriber to receive the events
+     * @param subscriber the subscriber to receive the sheet events
+     * @see SheetEvent
+     * @see Flow.Subscriber
      */
     void subscribe(Flow.Subscriber<SheetEvent> subscriber);
 
     /**
-     * Add new merged region.
+     * Creates a new merged region in the sheet. A merged region is a rectangular area of cells that acts
+     * as a single cell. The content and style of the top-left cell in the region becomes the content
+     * and style for the entire merged region.
      *
-     * @param cells the region of cells to be merged
-     * @throws IllegalStateException if the region already contains merged cells
+     * @param cells the rectangular region of cells to be merged
+     * @throws IllegalStateException if any cell in the region is already part of another merged region
+     * @throws IllegalArgumentException if the region is invalid (empty or outside sheet bounds)
+     * @see #getMergedRegions()
+     * @see #getMergedRegion(int, int)
      */
     void addMergedRegion(RectangularRegion cells);
 
@@ -85,27 +106,41 @@ public interface Sheet extends Iterable<Row> {
     int getAutoFilterRow();
 
     /**
-     * Get cell at given position, creating a new one if it does not exist yet.
+     * Returns the cell at the specified position, creating a new empty cell if one doesn't exist.
+     * This method ensures a cell is always returned, creating new rows or cells as needed.
      *
-     * @param i the row number
-     * @param j the column number
-     * @return the cell at row {@code i} and column {@code j}
+     * @param i the row number (0-based)
+     * @param j the column number (0-based)
+     * @return the cell at the specified position, never null
+     * @throws IllegalArgumentException if row or column number is negative
+     * @see #getCellIfExists(int, int)
+     * @see #getRow(int)
      */
     Cell getCell(int i, int j);
 
     /**
-     * Get cell if exists.
+     * Returns the cell at the specified position if it exists, without creating new cells.
+     * Unlike {@link #getCell(int, int)}, this method will not create new cells or rows
+     * if they don't exist.
      *
-     * @param i the row number
-     * @param j the column number
-     * @return Optional holding the cell at row {@code i} and column {@code j}, or empty Optional
+     * @param i the row number (0-based)
+     * @param j the column number (0-based)
+     * @return an Optional containing the cell if it exists, or an empty Optional if the cell
+     *         or its containing row doesn't exist
+     * @throws IllegalArgumentException if row or column number is negative
+     * @see #getCell(int, int)
+     * @see #getRowIfExists(int)
      */
     Optional<? extends Cell> getCellIfExists(int i, int j);
 
     /**
-     * Get number of columns.
+     * Returns the total number of columns in this sheet. This count includes all columns
+     * between 0 and the last used column, inclusive, regardless of whether individual
+     * columns contain data.
      *
-     * @return number of columns in this sheet
+     * @return the total number of columns in this sheet
+     * @see #getFirstColNum()
+     * @see #getLastColNum()
      */
     int getColumnCount();
 
@@ -118,115 +153,163 @@ public interface Sheet extends Iterable<Row> {
     float getColumnWidth(int j);
 
     /**
-     * Get the current cell.
+     * Get the current cell in the sheet. The current cell represents the active or focused cell
+     * in the sheet, which is typically used for navigation and editing operations.
      *
-     * @return the current cell
+     * @return the current cell, or null if no cell is currently selected
+     * @see #setCurrentCell(Cell)
+     * @see #setCurrentCell(int, int)
      */
     Cell getCurrentCell();
 
     /**
-     * Get number of first used column.
+     * Returns the number of the first column in the sheet that contains data.
+     * A column is considered "used" if it contains at least one non-empty cell.
      *
-     * @return the first used column number
+     * @return the number of the first column containing data, or 0 if the sheet is empty
+     * @see #getLastColNum()
+     * @see #getColumnCount()
+     * @see #isEmpty()
      */
     int getFirstColNum();
 
     /**
-     * Get number of first used row.
+     * Returns the number of the first row in the sheet that contains data.
+     * A row is considered "used" if it contains at least one non-empty cell.
      *
-     * @return the first used column number, or 0 if sheet is empty
+     * @return the number of the first row containing data, or 0 if the sheet is empty
+     * @see #getLastRowNum()
+     * @see #getRowCount()
+     * @see #isEmpty()
      */
     int getFirstRowNum();
 
     /**
-     * Get number of last used column.
+     * Returns the number of the last column in the sheet that contains data.
+     * A column is considered "used" if it contains at least one non-empty cell.
+     * All columns between {@link #getFirstColNum()} and this number may contain data.
      *
-     * @return the last used column number
+     * @return the number of the last column containing data, or -1 if the sheet is empty
+     * @see #getFirstColNum()
+     * @see #getColumnCount()
+     * @see #isEmpty()
      */
     int getLastColNum();
 
     /**
-     * Get number of last used row.
+     * Returns the number of the last row in the sheet that contains data.
+     * A row is considered "used" if it contains at least one non-empty cell.
+     * All rows between {@link #getFirstRowNum()} and this number may contain data.
      *
-     * @return the last used row number
+     * @return the number of the last row containing data, or -1 if the sheet is empty
+     * @see #getFirstRowNum()
+     * @see #getRowCount()
+     * @see #isEmpty()
      */
     int getLastRowNum();
 
     /**
-     * Get the list of merged regions for this sheet.
+     * Returns a list of all merged regions in this sheet. A merged region is a rectangular area
+     * of cells that acts as a single cell. The list is unmodifiable and represents a snapshot
+     * of the current state.
      *
-     * @return list of merged regions
+     * @return an unmodifiable list of all merged regions in this sheet
+     * @see #addMergedRegion(RectangularRegion)
+     * @see #getMergedRegion(int, int)
      */
     List<RectangularRegion> getMergedRegions();
 
     /**
-     * Get merged region at position.
+     * Returns the merged region that contains the cell at the specified position.
+     * A merged region is a rectangular area of cells that acts as a single cell.
      *
-     * @param rowNum the row number
-     * @param colNum the column number
-     * @return the merged region or null if the cell does not belong to a merged
-     * region
+     * @param rowNum the row number of the cell to check
+     * @param colNum the column number of the cell to check
+     * @return an Optional containing the merged region if the specified cell belongs to one,
+     *         or an empty Optional if the cell is not part of any merged region
+     * @see #getMergedRegions()
+     * @see #addMergedRegion(RectangularRegion)
      */
     Optional<RectangularRegion> getMergedRegion(int rowNum, int colNum);
 
     /**
-     * Get row, creating it if necessary.
+     * Returns the row at the specified index, creating it if it doesn't exist.
+     * This method ensures a row is always returned, creating new rows as needed.
      *
-     * @param i the row number
-     * @return the row with row number {@code i}
+     * @param i the row number (0-based)
+     * @return the row at the specified position, never null
+     * @throws IllegalArgumentException if the row number is negative
+     * @see #getRowIfExists(int)
      */
     Row getRow(int i);
 
     /**
-     * Get existent row.
+     * Returns the row at the specified index if it exists, without creating new rows.
+     * Unlike {@link #getRow(int)}, this method will not create new rows if they don't exist.
      *
-     * @param i the row number
-     * @return Optional containing the row with row number {@code i}
+     * @param i the row number (0-based)
+     * @return an Optional containing the row if it exists, or an empty Optional if the row doesn't exist
+     * @throws IllegalArgumentException if the row number is negative
+     * @see #getRow(int)
      */
     Optional<? extends Row> getRowIfExists(int i);
 
     /**
-     * Get number of rows.
+     * Returns the total number of rows in this sheet. This count includes all rows
+     * between 0 and the last used row, inclusive, regardless of whether individual
+     * rows contain data. Empty rows within this range are included in the count.
      *
-     * @return number of rows in this sheet
+     * @return the total number of rows in this sheet
+     * @see #getFirstRowNum()
+     * @see #getLastRowNum()
+     * @see #isEmpty()
      */
     int getRowCount();
 
     /**
-     * Get row height.
+     * Returns the height of the specified row in points. The height affects the visual
+     * presentation of the row in the sheet.
      *
-     * @param i the row number
-     * @return height of the row with number {@code i} in points
+     * @param i the row number (0-based)
+     * @return height of the specified row in points
+     * @throws IllegalArgumentException if the row number is negative
+     * @see #setRowHeight(int, float)
+     * @see #getDefaultRowHeight()
      */
     float getRowHeight(int i);
 
     /**
-     * Get name of sheet.
+     * Returns the name of this sheet. The sheet name is a unique identifier within its workbook
+     * and is used to reference the sheet in formulas and programmatic access.
      *
-     * @return name of sheet
+     * @return the name of this sheet
+     * @see Workbook
      */
     String getSheetName();
 
     /**
-     * Get the frozen column.
+     * Returns the frozen column split point. Columns before this point remain visible
+     * while scrolling horizontally. This is commonly used to keep headers visible.
      *
-     * @return the number of the first column that will not remain at a fixed
-     * position when scrolling
+     * @return the number of the first unfrozen column (0-based)
+     * @see #splitAt(int, int)
      */
     int getSplitColumn();
 
     /**
-     * Get the split row.
+     * Returns the frozen row split point. Rows before this point remain visible
+     * while scrolling vertically. This is commonly used to keep headers visible.
      *
-     * @return the number of the first row that will not remain at a fixed position
-     * when scrolling
+     * @return the number of the first unfrozen row (0-based)
+     * @see #splitAt(int, int)
      */
     int getSplitRow();
 
     /**
-     * Get workbook.
+     * Returns the workbook that contains this sheet. Each sheet belongs to exactly one workbook
+     * and maintains this association throughout its lifetime.
      *
-     * @return the workbook this sheet belongs to
+     * @return the workbook that contains this sheet, never null
      */
     Workbook getWorkbook();
 
@@ -238,22 +321,48 @@ public interface Sheet extends Iterable<Row> {
     float getZoom();
 
     /**
-     * Create a new row at the bottom of the sheet.
+     * Creates a new row at the end of the sheet and populates it with the provided values.
+     * This is a convenience method that converts the varargs parameter to a list and delegates
+     * to {@link #createRowWith(Iterable)}.
      *
-     * @param values the values to insert (optional)
-     * @return new row instance
+     * <p>Example usage:
+     * {@code Row row = sheet.createRow("Name", 42, true);}</p>
+     *
+     * @param values the values to insert into the cells of the new row. Each value will be converted
+     *              to its string representation if necessary. Null values create empty cells.
+     * @return the newly created row
+     * @see #createRowWith(Iterable)
+     * @see #getRowCount()
      */
     default Row createRow(@Nullable Object... values) {
         return createRowWith(Arrays.asList(values));
     }
 
     /**
-     * Create a new row at the bottom of the sheet.
+     * Creates a new row at the end of the sheet and populates it with values from the provided Iterable.
+     * This is the primary implementation for row creation with multiple values. It supports any Iterable
+     * source of values, making it flexible for different data structures.
      *
-     * @param <T> the generic type of the items to insert into the row
-     * @param <C> the generic type of the {@link Iterable} holding the items to be set
-     * @param values the values to insert
-     * @return new row instance
+     * <p>Examples:
+     * <pre>{@code
+     * // Using a List
+     * List<String> data = Arrays.asList("Name", "Age", "City");
+     * Row row1 = sheet.createRowWith(data);
+     *
+     * // Using a Set
+     * Set<Integer> numbers = new HashSet<>(Arrays.asList(1, 2, 3));
+     * Row row2 = sheet.createRowWith(numbers);
+     * }</pre>
+     *
+     * @param <T> the type of elements in the Iterable
+     * @param <C> the type of the Iterable collection
+     * @param values the Iterable containing values to insert into the new row's cells.
+     *              Each value will be converted to its string representation if necessary.
+     *              Null values create empty cells.
+     * @return the newly created row
+     * @see #createRow(Object...)
+     * @see #getRowCount()
+     * @see Row#createCell(Object)
      */
     default <T, C extends Iterable<@Nullable T>> Row createRowWith(C values) {
         Row row = getRow(getRowCount());
@@ -277,19 +386,29 @@ public interface Sheet extends Iterable<Row> {
     void setColumnWidth(int j, float width);
 
     /**
-     * Set the current cell.
+     * Sets the current (active) cell in the sheet. The current cell is used for navigation
+     * and editing operations. If the specified cell belongs to a merged region, the top-left
+     * cell of that region becomes the current cell.
      *
-     * @param cell the cell to set as current
-     * @return true, if the current cell changes
+     * @param cell the cell to set as current. If null, the current cell selection is cleared.
+     * @return true if the current cell changed, false if the specified cell was already the current cell
+     * @throws IllegalArgumentException if the cell belongs to a different sheet
+     * @see #getCurrentCell()
+     * @see #setCurrentCell(int, int)
      */
     boolean setCurrentCell(Cell cell);
 
     /**
-     * Set the current cell.
+     * Convenience method to set the current cell by its row and column coordinates.
+     * This method creates or retrieves the cell at the specified position and sets it
+     * as the current cell.
      *
-     * @param i the row of the cell to set
-     * @param j the column of the cell to set
-     * @return true, if the current cell changes
+     * @param i the row number of the cell to set as current
+     * @param j the column number of the cell to set as current
+     * @return true if the current cell changed, false if the specified cell was already the current cell
+     * @see #setCurrentCell(Cell)
+     * @see #getCurrentCell()
+     * @see #getCell(int, int)
      */
     default boolean setCurrentCell(int i, int j) {
         return setCurrentCell(getCell(i, j).getLogicalCell());
@@ -322,9 +441,20 @@ public interface Sheet extends Iterable<Row> {
     void splitAt(int i, int j);
 
     /**
-     * Create row iterator.
+     * Returns an iterator over the rows in this sheet. The iterator traverses the rows
+     * sequentially from {@link #getFirstRowNum()} to {@link #getLastRowNum()}, inclusive.
+     * Empty rows within this range are included in the iteration.
+     * 
+     * <p>This method is part of the {@link Iterable} interface implementation, allowing
+     * the sheet to be used in for-each loops: {@code for (Row row : sheet) {...}}</p>
      *
-     * @return row iterator
+     * <p>The iterator's {@code remove()} operation is not supported.</p>
+     *
+     * @return an iterator over the rows in ascending order
+     * @see #rows() for a stream-based alternative
+     * @see #getFirstRowNum()
+     * @see #getLastRowNum()
+     * @throws UnsupportedOperationException if attempting to remove rows through the iterator
      */
     @Override
     default Iterator<Row> iterator() {
@@ -391,9 +521,21 @@ public interface Sheet extends Iterable<Row> {
     }
 
     /**
-     * Create a stream of the rows in this sheet.
+     * Returns a sequential {@link Stream} of all rows in this sheet. This method provides
+     * a stream-based alternative to the {@link #iterator()} method, enabling functional-style
+     * operations on the rows.
      *
-     * @return stream of rows
+     * <p>The stream traverses rows in ascending order from {@link #getFirstRowNum()} to
+     * {@link #getLastRowNum()}, inclusive. Empty rows within this range are included in
+     * the stream. The stream is ordered and non-parallel.</p>
+     *
+     * <p>Example usage:
+     * {@code sheet.rows().filter(row -> !row.isEmpty()).forEach(row -> processRow(row));}</p>
+     *
+     * @return a sequential Stream of rows in ascending order
+     * @see #iterator()
+     * @see #getFirstRowNum()
+     * @see #getLastRowNum()
      */
     default Stream<Row> rows() {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
@@ -460,24 +602,50 @@ public interface Sheet extends Iterable<Row> {
     }
 
     /**
-     * Acquires a read lock associated with the specified name.
-     * This method ensures thread-safe access to shared resources by
-     * allowing multiple readers or a single writer but not both simultaneously.
+     * Acquires a read lock for thread-safe access to the sheet. Multiple threads can hold read locks
+     * simultaneously, but a read lock cannot be acquired while a write lock is held. The lock is
+     * automatically released when the returned AutoLock is closed.
      *
-     * @param name the name identifying the lock to be acquired
-     * @return an {@link AutoLock} representing the acquired read lock,
-     *         which will automatically release once closed.
+     * <p>Example usage with try-with-resources:
+     * <pre>{@code
+     * try (var lock = sheet.readLock("MyOperation")) {
+     *     // Read operations here...
+     *     Cell cell = sheet.getCell(0, 0);
+     * }
+     * }</pre>
+     *
+     * @param name a descriptive name for the lock, used for debugging and monitoring.
+     *            Should indicate the operation or component acquiring the lock.
+     * @return an AutoLock that will automatically release the read lock when closed
+     * @throws IllegalArgumentException if name is null
+     * @see #writeLock(String)
+     * @see AutoLock
      */
     AutoLock readLock(String name);
 
     /**
-     * Acquires a write lock on the specified resource.
-     * This method provides a mechanism to ensure exclusive access to
-     * the resource identified by the given name.
+     * Acquires an exclusive write lock for thread-safe modifications to the sheet. Only one thread
+     * can hold a write lock at a time, and no read locks can be held while a write lock is active.
+     * The lock is automatically released when the returned AutoLock is closed.
      *
-     * @param name the name of the resource to be locked. Must not be null.
-     * @return an {@link AutoLock} instance representing the acquired lock,
-     *         which will automatically release once closed.
+     * <p>Example usage with try-with-resources:
+     * <pre>{@code
+     * try (var lock = sheet.writeLock("UpdateOperation")) {
+     *     // Modification operations here...
+     *     sheet.getCell(0, 0).setValue("New Value");
+     *     sheet.addMergedRegion(region);
+     * }
+     * }</pre>
+     *
+     * <p><strong>Note:</strong> Write locks should be held for the shortest time possible
+     * as they block all other threads from reading or writing.</p>
+     *
+     * @param name a descriptive name for the lock, used for debugging and monitoring.
+     *            Should indicate the operation or component acquiring the lock.
+     * @return an AutoLock that will automatically release the write lock when closed
+     * @throws IllegalArgumentException if name is null
+     * @see #readLock(String)
+     * @see AutoLock
      */
     AutoLock writeLock(String name);
 

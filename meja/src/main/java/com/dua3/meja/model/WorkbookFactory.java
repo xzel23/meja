@@ -15,10 +15,10 @@
  */
 package com.dua3.meja.model;
 
+import com.dua3.utility.options.Arguments;
+
 import java.io.IOException;
 import java.net.URI;
-
-import com.dua3.utility.options.Arguments;
 
 /**
  * Abstract base class for workbook factories.
@@ -29,11 +29,13 @@ import com.dua3.utility.options.Arguments;
 public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
 
     /**
-     * Return copy of workbook in this factory's implementation.
+     * Creates a deep copy of the given workbook using this factory's implementation.
+     * The copy includes all sheets, cell styles, and content from the source workbook.
+     * The URI of the source workbook is also copied if present.
      *
-     * @param other the source workbook
-     * @return workbook instance of type {@code WORKBOOK} with the contents of
-     * {@code workbook}
+     * @param other the source workbook to copy
+     * @return a new workbook instance of type {@code WORKBOOK} containing all content from the source
+     * @see #create()
      */
     public WORKBOOK copyOf(Workbook other) {
         WORKBOOK workbook = create();
@@ -56,16 +58,22 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
     }
 
     /**
-     * Create a new Workbook instance.
+     * Creates a new empty workbook instance using this factory's implementation.
+     * The workbook is created with default settings and contains no sheets.
      *
-     * @return workbook
+     * @return a new empty workbook instance
+     * @see #createStreaming()
+     * @see #copyOf(Workbook)
      */
     public abstract WORKBOOK create();
 
     /**
-     * Create a new Workbook instance, use streaming if available.
+     * Creates a new empty workbook instance optimized for streaming operations.
+     * This method should be used when dealing with large datasets to minimize
+     * memory usage. Not all implementations support streaming mode.
      *
-     * @return workbook
+     * @return a new empty workbook instance configured for streaming
+     * @see #create()
      */
     public abstract WORKBOOK createStreaming();
 

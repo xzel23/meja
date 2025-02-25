@@ -102,32 +102,56 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     /**
-     * Create a new Xls-Workbook.
+     * Creates a new empty workbook in XLS format (Excel 97-2003).
+     * This format has limitations on the number of rows and columns compared to XLSX.
      *
-     * @return the newly created Workbook
+     * @return a new empty workbook in XLS format
+     * @see #createXlsx()
+     * @see #createXlsxStreaming()
      */
     public Workbook createXls() {
         return new PoiHssfWorkbook(new HSSFWorkbook(), null);
     }
 
     /**
-     * Create a new Xlsx-Workbook.
+     * Creates a new empty workbook in XLSX format (Excel 2007+).
+     * This is the recommended format for new workbooks as it supports larger datasets
+     * and more features than XLS format.
      *
-     * @return the newly created Workbook
+     * @return a new empty workbook in XLSX format
+     * @see #createXls()
+     * @see #createXlsxStreaming()
      */
     public PoiWorkbook createXlsx() {
         return new PoiXssfWorkbook(new XSSFWorkbook(), null);
     }
 
     /**
-     * Create a new Xlsx-Workbook in streaming mode (write only).
+     * Creates a new empty workbook in XLSX format optimized for streaming operations.
+     * This mode is recommended for handling large datasets as it uses minimal memory,
+     * but note that it's write-only and some features may be limited.
      *
-     * @return the newly created Workbook
+     * @return a new empty workbook in XLSX format configured for streaming
+     * @see #createXlsx()
+     * @see #createXls()
      */
     public PoiWorkbook createXlsxStreaming() {
         return new PoiXssfWorkbook(new SXSSFWorkbook(), null);
     }
 
+    /**
+     * Opens an existing workbook from the specified URI with custom import settings.
+     * The workbook format (XLS or XLSX) is automatically detected. This method provides
+     * additional control over the import process through the importSettings parameter.
+     *
+     * @param uri the URI of the workbook to open
+     * @param importSettings configuration options for the import process, such as
+     *                      character encoding for CSV files or other format-specific settings
+     * @return the opened workbook
+     * @throws IOException if an I/O error occurs while reading the file
+     * @throws FileFormatException if the file format is invalid or the file is corrupted
+     * @see #open(URI)
+     */
     @Override
     public PoiWorkbook open(URI uri, Arguments importSettings) throws IOException {
         // Read Excel files directly using POI methods
@@ -139,9 +163,14 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
     }
 
     /**
+     * Opens an existing workbook from the specified URI. The workbook format (XLS or XLSX)
+     * is automatically detected.
+     *
      * @param uri URI of the workbook to open
-     * @return the workbook
-     * @throws IOException if an error occurs
+     * @return the opened workbook
+     * @throws IOException if an I/O error occurs while reading the file
+     * @throws FileFormatException if the file format is invalid or the file is corrupted
+     * @see #open(URI, Arguments)
      */
     @Override
     public PoiWorkbook open(URI uri) throws IOException {
