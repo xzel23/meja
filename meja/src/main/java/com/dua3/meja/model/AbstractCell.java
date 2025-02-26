@@ -8,9 +8,9 @@ import java.util.Locale;
 /**
  * Abstract base class for sheet cells.
  */
-public abstract class AbstractCell implements Cell {
+public abstract class AbstractCell<R extends AbstractRow> implements Cell {
 
-    private final AbstractRow row;
+    private final R row;
     private AbstractCell logicalCell;
 
     /**
@@ -18,7 +18,7 @@ public abstract class AbstractCell implements Cell {
      *
      * @param row the row the new cell belongs to
      */
-    protected AbstractCell(AbstractRow row) {
+    protected AbstractCell(R row) {
         this.row = row;
         this.logicalCell = this;
     }
@@ -116,7 +116,7 @@ public abstract class AbstractCell implements Cell {
     public abstract AbstractSheet getSheet();
 
     @Override
-    public AbstractRow getRow() {
+    public R getRow() {
         return row;
     }
 

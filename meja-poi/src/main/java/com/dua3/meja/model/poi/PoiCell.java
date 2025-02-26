@@ -57,7 +57,7 @@ import java.util.Optional;
 /**
  * Concrete subclass of {@link AbstractCell} for Apache POI based workbooks.
  */
-public final class PoiCell extends AbstractCell {
+public final class PoiCell extends AbstractCell<PoiRow> {
 
     private static final Logger LOGGER = LogManager.getLogger(PoiCell.class);
 
@@ -291,11 +291,6 @@ public final class PoiCell extends AbstractCell {
             poiType = poiCell.getCachedFormulaResultType();
         }
         return getCellType(poiCell, poiType);
-    }
-
-    @Override
-    public PoiRow getRow() {
-        return (PoiRow) super.getRow();
     }
 
     @Override

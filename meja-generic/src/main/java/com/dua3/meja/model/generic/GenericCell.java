@@ -16,7 +16,6 @@
 package com.dua3.meja.model.generic;
 
 import com.dua3.meja.model.AbstractCell;
-import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
 import com.dua3.meja.model.CellType;
@@ -35,7 +34,7 @@ import java.util.Optional;
 /**
  * Implementation of the {@link Cell} interface for {@link GenericSheet}.
  */
-public class GenericCell extends AbstractCell {
+public class GenericCell extends AbstractCell<GenericRow> {
     private static final int MAX_HORIZONTAL_SPAN = 0xefff;
     private static final int MAX_VERTICAL_SPAN = 0xef_ffff;
     private static final int MAX_COLUMN_NUMBER = 0xef_ffff;
@@ -101,7 +100,7 @@ public class GenericCell extends AbstractCell {
      * @param colNr     the column number
      * @param cellStyle the cell style to use
      */
-    public GenericCell(AbstractRow row, int colNr, GenericCellStyle cellStyle) {
+    public GenericCell(GenericRow row, int colNr, GenericCellStyle cellStyle) {
         super(row);
 
         LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER, () -> new CellException(this, "column number out of range: " + colNr));
@@ -224,11 +223,6 @@ public class GenericCell extends AbstractCell {
     @Override
     public CellType getResultType() {
         return getCellType();
-    }
-
-    @Override
-    public GenericRow getRow() {
-        return (GenericRow) super.getRow();
     }
 
     @Override
