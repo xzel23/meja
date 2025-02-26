@@ -328,7 +328,7 @@ public class FxSheetView extends StackPane implements SheetView {
                     // at least part of the (possibly merged) cell is below the split => scroll row into view
                     VirtualFlowWithHiddenScrollBars<FxRow> flow = bottomSegment.getFlow();
                     LOG.trace("scrolling row {} into view", i);
-                    flow.scrollTo(i -= splitRow);
+                    flow.scrollTo(i - splitRow);
                 }
 
                 // horizontal scroll
