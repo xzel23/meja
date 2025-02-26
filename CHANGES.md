@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 7.0.2 (in progress)
+
+- many Javadoc additions and corrections
+- the internal abstract base classes have been refctored to reduce code duplication
+
 ## Version 7.0.1
 
 - fix SXSSF not writing column widths correctly after updating POI
