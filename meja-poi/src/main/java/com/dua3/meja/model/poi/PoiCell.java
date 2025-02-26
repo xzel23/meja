@@ -57,7 +57,7 @@ import java.util.Optional;
 /**
  * Concrete subclass of {@link AbstractCell} for Apache POI based workbooks.
  */
-public final class PoiCell extends AbstractCell<PoiRow> {
+public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
 
     private static final Logger LOGGER = LogManager.getLogger(PoiCell.class);
 
@@ -162,25 +162,6 @@ public final class PoiCell extends AbstractCell<PoiRow> {
             updateRow();
             valueChanged(old, null);
         }
-    }
-
-    @Override
-    public void copy(Cell other) {
-        PoiCellStyle cellStyle = getWorkbook().getCellStyle(other.getCellStyle().getName());
-        setCellStyle(cellStyle);
-
-        switch (other.getCellType()) {
-            case BLANK -> clear();
-            case BOOLEAN -> set(other.getBoolean());
-            case ERROR -> setError();
-            case FORMULA -> setFormula(other.getFormula());
-            case NUMERIC -> set(other.getNumber());
-            case DATE -> set(other.getDate());
-            case DATE_TIME -> set(other.getDateTime());
-            case TEXT -> set(other.getText());
-            default -> throw new CellException(other, "Unsupported Cell Type: " + other.getCellType());
-        }
-        other.getHyperlink().ifPresent(this::setHyperlink);
     }
 
     @Override
@@ -296,11 +277,6 @@ public final class PoiCell extends AbstractCell<PoiRow> {
     @Override
     public int getRowNumber() {
         return getRow().getRowNumber();
-    }
-
-    @Override
-    public PoiSheet getSheet() {
-        return getRow().getSheet();
     }
 
     @Override

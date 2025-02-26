@@ -4,10 +4,14 @@ import java.util.Optional;
 
 /**
  * Abstract base class for implementations of the {@link Row} interface.
+ *
+ * @param <S> the concrete type of Sheet that contains this row, extending AbstractSheet
+ * @param <R> the concrete type of Row (self-referential type parameter), extending AbstractRow
+ * @param <C> the concrete type of Cell that this row contains, extending AbstractCell
  */
-public abstract class AbstractRow implements Row {
+public abstract class AbstractRow<S extends AbstractSheet<S, R, C>, R extends AbstractRow<S, R, C>, C extends AbstractCell<S, R, C>> implements Row {
 
-    private final AbstractSheet sheet;
+    private final S sheet;
     private final int rowNumber;
 
     /**
@@ -16,16 +20,16 @@ public abstract class AbstractRow implements Row {
      * @param sheet The AbstractSheet to which this row belongs.
      * @param rowNumber The row number of this row.
      */
-    protected AbstractRow(AbstractSheet sheet, int rowNumber) {
+    protected AbstractRow(S sheet, int rowNumber) {
         this.sheet = sheet;
         this.rowNumber = rowNumber;
     }
 
     @Override
-    public abstract AbstractCell getCell(int col);
+    public abstract C getCell(int col);
 
     @Override
-    public abstract Optional<? extends AbstractCell> getCellIfExists(int j);
+    public abstract Optional<C> getCellIfExists(int j);
 
     @Override
     public int getRowNumber() {
@@ -33,7 +37,7 @@ public abstract class AbstractRow implements Row {
     }
 
     @Override
-    public AbstractSheet getSheet() {
+    public S getSheet() {
         return sheet;
     }
 

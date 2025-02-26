@@ -7,11 +7,15 @@ import java.util.Locale;
 
 /**
  * Abstract base class for sheet cells.
+ *
+ * @param <S> the concrete type of Sheet that contains this cell, extending AbstractSheet
+ * @param <R> the concrete type of Row that contains this cell, extending AbstractRow
+ * @param <C> the concrete type of Cell (self-referential type parameter), extending AbstractCell
  */
-public abstract class AbstractCell<R extends AbstractRow> implements Cell {
+public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends AbstractRow<S, R, C>, C extends AbstractCell<S, R, C>> implements Cell {
 
     private final R row;
-    private AbstractCell logicalCell;
+    private C logicalCell;
 
     /**
      * Create a new Abstract cell that belongs to a row.
@@ -20,7 +24,7 @@ public abstract class AbstractCell<R extends AbstractRow> implements Cell {
      */
     protected AbstractCell(R row) {
         this.row = row;
-        this.logicalCell = this;
+        this.logicalCell = (C) this;
     }
 
     /**
@@ -30,7 +34,7 @@ public abstract class AbstractCell<R extends AbstractRow> implements Cell {
      * @param spanX the horizontal span of the merged region
      * @param spanY the vertical span of the merged region
      */
-    protected void addedToMergedRegion(AbstractCell topLeftCell, int spanX, int spanY) {
+    protected void addedToMergedRegion(C topLeftCell, int spanX, int spanY) {
         LangUtil.check(!isMerged(), () -> new CellException(this, "Cell is already merged."));
         LangUtil.check(spanX <= Short.MAX_VALUE, () -> new CellException(this, "Maximum horizontal span number is " + Short.MAX_VALUE));
 
@@ -86,13 +90,13 @@ public abstract class AbstractCell<R extends AbstractRow> implements Cell {
      * This method is typically called internally when a merged region is unmerged or when a cell is updated in a merged region.
      */
     protected void removedFromMergedRegion() {
-        this.logicalCell = this;
+        this.logicalCell = (C) this;
         setHorizontalSpan(1);
         setVerticalSpan(1);
     }
 
     @Override
-    public Cell getLogicalCell() {
+    public C getLogicalCell() {
         return logicalCell;
     }
 
@@ -113,7 +117,9 @@ public abstract class AbstractCell<R extends AbstractRow> implements Cell {
     }
 
     @Override
-    public abstract AbstractSheet getSheet();
+    public S getSheet() {
+        return getRow().getSheet();
+    }
 
     @Override
     public R getRow() {

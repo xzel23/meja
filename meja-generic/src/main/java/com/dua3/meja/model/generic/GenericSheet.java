@@ -31,7 +31,7 @@ import java.util.Optional;
 /**
  * A generic implementation of {@link Sheet}.
  */
-public class GenericSheet extends AbstractSheet {
+public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, GenericCell> {
     private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(GenericSheet.class);
 
     private static final float DEFAULT_COLUMN_WIDTH = 80.0f;

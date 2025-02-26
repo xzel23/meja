@@ -96,7 +96,21 @@ public interface Cell {
      *
      * @param other cell to copy data from
      */
-    void copy(Cell other);
+    default void copy(Cell other) {
+        setCellStyle(other.getCellStyle().getName());
+        switch (other.getCellType()) {
+            case BLANK -> clear();
+            case BOOLEAN -> set(other.getBoolean());
+            case ERROR -> setError();
+            case FORMULA -> set(other.getFormula());
+            case NUMERIC -> set(other.getNumber());
+            case DATE -> set(other.getDate());
+            case DATE_TIME -> set(other.getDateTime());
+            case TEXT -> set(other.getText());
+            default -> throw new CellException(other, "unsupported cell type: " + other.getCellType());
+        }
+        other.getHyperlink().ifPresent(this::setHyperlink);
+    }
 
     /**
      * Return raw cell value.

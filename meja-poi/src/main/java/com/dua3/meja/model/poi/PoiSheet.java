@@ -36,7 +36,7 @@ import java.util.Optional;
 /**
  * POI implementation of the {@link com.dua3.meja.model.Sheet} interface.
  */
-public class PoiSheet extends AbstractSheet {
+public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(PoiSheet.class);
 
     protected final PoiWorkbook workbook;

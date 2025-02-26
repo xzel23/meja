@@ -27,7 +27,7 @@ import java.util.Optional;
 /**
  * Implementation of the {@link Row} interface for {@link GenericSheet}.
  */
-public class GenericRow extends AbstractRow {
+public class GenericRow extends AbstractRow<GenericSheet, GenericRow, GenericCell> {
 
     private final ArrayList<GenericCell> cells;
 
@@ -90,11 +90,6 @@ public class GenericRow extends AbstractRow {
             getSheet().reserveColumn(col);
         }
         return n;
-    }
-
-    @Override
-    public GenericSheet getSheet() {
-        return (GenericSheet) super.getSheet();
     }
 
     @Override

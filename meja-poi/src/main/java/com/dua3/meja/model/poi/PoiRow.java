@@ -26,7 +26,7 @@ import java.util.Optional;
 /**
  * Concrete Implementation of {@link AbstractRow} for Apache POI based workbooks.
  */
-public final class PoiRow extends AbstractRow {
+public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
 
     /**
      *
@@ -60,7 +60,7 @@ public final class PoiRow extends AbstractRow {
     public PoiCell getCell(int j) {
         org.apache.poi.ss.usermodel.Cell poiCell;
         int oldLast = getLastCellNum();
-            if (j > oldLast) {
+        if (j > oldLast) {
             int jj = oldLast;
             do {
                 poiCell = poiRow.createCell(++jj);
@@ -114,11 +114,6 @@ public final class PoiRow extends AbstractRow {
     private void columnsAdded(int first, int last) {
         PoiSheet sheet = getSheet();
         sheet.setColumnUsed(last);
-    }
-
-    @Override
-    public PoiSheet getSheet() {
-        return (PoiSheet) (super.getSheet());
     }
 
     @Override

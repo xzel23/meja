@@ -23,8 +23,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * The AbstractSheet class represents the abstract base class for a sheet in a spreadsheet.
  * It provides common functionality for working with sheets and is designed to be extended by
  * specific implementations for different spreadsheet formats.
+ *
+ * @param <S> the concrete type of Sheet (self-referential type parameter), extending AbstractSheet
+ * @param <R> the concrete type of Row that this sheet contains, extending AbstractRow
+ * @param <C> the concrete type of Cell that this sheet contains, extending AbstractCell
  */
-public abstract class AbstractSheet implements Sheet {
+public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends AbstractRow<S, R, C>, C extends AbstractCell<S, R, C>> implements Sheet {
 
     private static final Logger LOG = LogManager.getLogger(AbstractSheet.class);
 
@@ -152,10 +156,10 @@ public abstract class AbstractSheet implements Sheet {
         // update cell data
         int spanX = cells.lastColumn() - cells.firstColumn() + 1;
         int spanY = cells.lastRow() - cells.firstRow() + 1;
-        AbstractCell topLeftCell = getCell(cells.firstRow(), cells.firstColumn());
+        C topLeftCell = getCell(cells.firstRow(), cells.firstColumn());
         for (int i = 0; i < spanY; i++) {
             for (int j = 0; j < spanX; j++) {
-                AbstractCell cell = getCell(cells.firstRow() + i, cells.firstColumn() + j);
+                C cell = getCell(cells.firstRow() + i, cells.firstColumn() + j);
                 cell.addedToMergedRegion(topLeftCell, spanX, spanY);
             }
         }
@@ -188,9 +192,9 @@ public abstract class AbstractSheet implements Sheet {
             if (rr.firstRow() == rowNumber && rr.firstColumn() == columnNumber) {
                 mergedRegions.remove(idx--);
                 for (int i = rr.firstRow(); i <= rr.lastRow(); i++) {
-                    AbstractRow row = getRow(i);
+                    R row = getRow(i);
                     for (int j = rr.firstColumn(); j <= rr.lastColumn(); j++) {
-                        row.getCellIfExists(j).ifPresent(AbstractCell::removedFromMergedRegion);
+                        row.getCellIfExists(j).ifPresent(C::removedFromMergedRegion);
                     }
                 }
             }
@@ -199,16 +203,16 @@ public abstract class AbstractSheet implements Sheet {
     }
 
     @Override
-    public abstract AbstractRow getRow(int i);
+    public abstract R getRow(int i);
 
     @Override
-    public abstract Optional<? extends AbstractRow> getRowIfExists(int i);
+    public abstract Optional<R> getRowIfExists(int i);
 
     @Override
-    public abstract AbstractCell getCell(int i, int j);
+    public abstract C getCell(int i, int j);
 
     @Override
-    public abstract Optional<? extends AbstractCell> getCellIfExists(int i, int j);
+    public abstract Optional<C> getCellIfExists(int i, int j);
 
     @Override
     public abstract AbstractWorkbook getWorkbook();

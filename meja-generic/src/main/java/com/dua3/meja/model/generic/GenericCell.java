@@ -34,7 +34,7 @@ import java.util.Optional;
 /**
  * Implementation of the {@link Cell} interface for {@link GenericSheet}.
  */
-public class GenericCell extends AbstractCell<GenericRow> {
+public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericCell> {
     private static final int MAX_HORIZONTAL_SPAN = 0xefff;
     private static final int MAX_VERTICAL_SPAN = 0xef_ffff;
     private static final int MAX_COLUMN_NUMBER = 0xef_ffff;
@@ -117,23 +117,6 @@ public class GenericCell extends AbstractCell<GenericRow> {
         setCellType(CellType.BLANK);
         this.value = null;
         valueChanged(old, null);
-    }
-
-    @Override
-    public void copy(Cell other) {
-        setCellStyle(other.getCellStyle().getName());
-        switch (other.getCellType()) {
-            case BLANK -> clear();
-            case BOOLEAN -> set(other.getBoolean());
-            case ERROR -> setError();
-            case FORMULA -> set(other.getFormula());
-            case NUMERIC -> set(other.getNumber());
-            case DATE -> set(other.getDate());
-            case DATE_TIME -> set(other.getDateTime());
-            case TEXT -> set(other.getText());
-            default -> throw new CellException(other, "unsupported cell type: " + other.getCellType());
-        }
-        other.getHyperlink().ifPresent(this::setHyperlink);
     }
 
     @Override
@@ -228,11 +211,6 @@ public class GenericCell extends AbstractCell<GenericRow> {
     @Override
     public int getRowNumber() {
         return getRow().getRowNumber();
-    }
-
-    @Override
-    public GenericSheet getSheet() {
-        return getRow().getSheet();
     }
 
     @Override
