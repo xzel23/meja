@@ -15,9 +15,9 @@
 - sheet.getCurrentCell() returns cell directly, not wrapped in an Optional
 - fix getRotation() for XSSF files for values outside of the range [0, 90]
 - UI components for Swing and JavaFX:
-   - support rotated text
-   - support text layout 'distributed'
-   - allow navigating beyond spreadsheet row/column range
+- support rotated text
+- support text layout 'distributed'
+- allow navigating beyond spreadsheet row/column range
 
 ### Known Issues
 
