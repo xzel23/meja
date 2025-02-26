@@ -65,6 +65,13 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     private static final char TAB = '\t';
     private static final String CELLSTYLE_MARKER_DATETIME = "#DATETIME";
 
+    /**
+     * Converts an Apache POI cell type to the corresponding Meja cell type.
+     *
+     * @param poiType the Apache POI cell type to convert
+     * @return the corresponding Meja CellType
+     * @throws IllegalArgumentException if the POI cell type is unknown
+     */
     private static CellType translateCellType(org.apache.poi.ss.usermodel.CellType poiType) {
         return switch (poiType) {
             case BLANK -> CellType.BLANK;
@@ -78,6 +85,13 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         };
     }
 
+    /**
+     * Determines the actual Meja cell type, including special handling for date and datetime values.
+     *
+     * @param poiCell the Apache POI cell
+     * @param poiType the basic POI cell type
+     * @return the actual Meja CellType, with date detection
+     */
     private static CellType getCellType(org.apache.poi.ss.usermodel.Cell poiCell, org.apache.poi.ss.usermodel.CellType poiType) {
         CellType type = translateCellType(poiType);
         // because Excel annoyingly store dates as doubles, we have to check for dates using some tricks
@@ -94,6 +108,14 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         return type;
     }
 
+    /**
+     * Checks if a cell contains a date value.
+     * Works around POI's limitation where DateUtil.isCellDateFormatted() throws IllegalStateException for non-numeric cells.
+     *
+     * @param poiCell the Apache POI cell to check
+     * @param poiType the basic POI cell type
+     * @return true if the cell contains a date value
+     */
     private static boolean isCellDateFormatted(org.apache.poi.ss.usermodel.Cell poiCell, org.apache.poi.ss.usermodel.CellType poiType) {
         /*
          * DateUtil.isCellDateFormatted() throws IllegalStateException when cell is not
@@ -106,6 +128,14 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         return poiType == org.apache.poi.ss.usermodel.CellType.NUMERIC && DateUtil.isCellDateFormatted(poiCell);
     }
 
+    /**
+     * Checks if a cell contains a date and time value.
+     * First checks if the cell is date-formatted, then verifies if it has a time component.
+     *
+     * @param poiCell the Apache POI cell to check
+     * @param poiType the basic POI cell type
+     * @return true if the cell contains both date and time values
+     */
     private static boolean isCellDateTime(org.apache.poi.ss.usermodel.Cell poiCell, org.apache.poi.ss.usermodel.CellType poiType) {
         // check if date formatted and time is exactly midnight
         if (!isCellDateFormatted(poiCell, poiType)) {
@@ -233,6 +263,14 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         return poiCell.getLocalDateTimeCellValue();
     }
 
+    /**
+     * Gets the font used for a specific formatting run in rich text.
+     * Handles both HSSF (old .xls) and XSSF (.xlsx) formats.
+     *
+     * @param richText the POI rich text string
+     * @param i the index of the formatting run
+     * @return the Font instance used for the specified formatting run
+     */
     private Font getFontForFormattingRun(RichTextString richText, int i) {
         if (richText instanceof HSSFRichTextString hssfRichText) {
             return ((PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i))
@@ -300,6 +338,14 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         return poiCell.hashCode();
     }
 
+    /**
+     * Checks if a cell style is formatted for date/time values.
+     * This is determined either by the style name ending with a specific marker
+     * or by checking the POI date format settings.
+     *
+     * @param cellStyle the cell style to check
+     * @return true if the style is formatted for date/time values
+     */
     static boolean isDateTimeFormat(PoiCellStyle cellStyle) {
         if (cellStyle.getName().endsWith(CELLSTYLE_MARKER_DATETIME)) {
             return true;
@@ -588,9 +634,13 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     }
 
     /**
-     * Format the cell content as a String, with the number and date formats applied.
+     * Formats the cell content as a String, applying appropriate number and date formats.
+     * This method handles different cell types differently:
+     * - For dates, uses the cell style's locale-aware date format
+     * - For other types, uses POI's DataFormatter for consistent formatting
      *
-     * @return cell content with format applied
+     * @param locale the locale to use for formatting
+     * @return the formatted cell content as a string
      */
     private String getFormattedText(Locale locale) {
         // is there a special date format?

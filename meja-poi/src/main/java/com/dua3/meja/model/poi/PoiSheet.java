@@ -65,6 +65,13 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
         addMergedRegionToPoiSheet(cells);
     }
 
+    /**
+     * Updates the underlying POI sheet to reflect a merged region.
+     * Converts the Meja RectangularRegion to POI's CellRangeAddress format
+     * and adds it to the POI sheet's merged regions.
+     *
+     * @param cells the rectangular region of cells to merge
+     */
     void addMergedRegionToPoiSheet(RectangularRegion cells) {
         CellRangeAddress cra = new CellRangeAddress(cells.firstRow(), cells.lastRow(), cells.firstColumn(),
                 cells.lastColumn());
@@ -157,7 +164,7 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
 
     /**
      * Get the underlying Apache POI sheet instance.
-     * @return the Apache POI sheet used ti store sheet data
+     * @return the Apache POI sheet used to store sheet data
      */
     public Sheet getPoiSheet() {
         return poiSheet;

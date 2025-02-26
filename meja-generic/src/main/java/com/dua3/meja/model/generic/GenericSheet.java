@@ -179,6 +179,12 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
         }
     }
 
+    /**
+     * Ensures the sheet has enough columns allocated to accommodate the specified column number.
+     * If necessary, expands the sheet and notifies listeners about the added columns.
+     *
+     * @param col the column number to reserve space for
+     */
     void reserveColumn(int col) {
         int oldValue = numberOfColumns;
         numberOfColumns = Math.max(col + 1, numberOfColumns);
@@ -282,6 +288,13 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
         return DEFAULT_COLUMN_WIDTH;
     }
 
+    /**
+     * Marks a column as being in use and expands the sheet if necessary.
+     * If the column number is beyond the current sheet bounds, the sheet is expanded
+     * and listeners are notified about the added columns.
+     *
+     * @param columnNumber the column number to mark as used
+     */
     void setColumnUsed(int columnNumber) {
         if (columnNumber > numberOfColumns - 1 ) {
             int oldLast = getLastColNum();

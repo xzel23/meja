@@ -74,10 +74,22 @@ public class ObservableSheet extends ObservableListBase<Row> {
         return sheet.getRowCount();
     }
 
+    /**
+     * Adds a layout listener to the observable sheet.
+     * The listener will be notified whenever the sheet's layout changes.
+     *
+     * @param listener the consumer to be notified of layout changes
+     */
     public void addLayoutListener(Consumer<? super Sheet> listener) {
         layoutListeners.add(listener);
     }
 
+    /**
+     * Removes a layout listener from the observable sheet.
+     *
+     * @param listener the listener to remove
+     * @return true if the listener was removed, false if it wasn't present
+     */
     public boolean removeLayoutListener(Consumer<? super Sheet> listener) {
         return layoutListeners.remove(listener);
     }
@@ -93,18 +105,43 @@ public class ObservableSheet extends ObservableListBase<Row> {
         return zoomProperty;
     }
 
+    /**
+     * Provides access to the column count property of the observable sheet.
+     * This property represents the total number of columns in the sheet.
+     *
+     * @return the read-only column count property
+     */
     public ReadOnlyIntegerProperty columnCountProperty() {
         return columnCountProperty;
     }
 
+    /**
+     * Provides access to the split row property of the observable sheet.
+     * This property represents the row number where the sheet is split for frozen panes.
+     *
+     * @return the read-only split row property
+     */
     public ReadOnlyIntegerProperty splitRowProperty() {
         return splitRowProperty;
     }
 
+    /**
+     * Provides access to the split column property of the observable sheet.
+     * This property represents the column number where the sheet is split for frozen panes.
+     *
+     * @return the read-only split column property
+     */
     public ReadOnlyIntegerProperty splitColumnProperty() {
         return splitColumnProperty;
     }
 
+    /**
+     * Provides access to the current cell property of the observable sheet.
+     * This property represents the currently selected cell in the sheet.
+     * The property value may be null if no cell is currently selected.
+     *
+     * @return the current cell property
+     */
     public ObjectProperty<@Nullable Cell> currentCellProperty() {
         return currentCellProperty;
     }

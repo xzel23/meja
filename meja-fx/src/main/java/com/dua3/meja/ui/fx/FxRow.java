@@ -118,7 +118,8 @@ public class FxRow extends IndexedCell<FxRow.Index> {
      * The {@code Index} class is a record representing the position of a row within a table
      * or sheet-like structure. It encapsulates two distinct pieces of information:
      *
-     * @param rowIndex The internal index of the row, used to access the row from the filtered list of rows.
+     * @param rowIndex  The internal index of the row, used to access the row from the filtered list of rows.
+     * @param rowNumber The row number in the sheet
      * @param row       The row of the sheet.
      */
     public record Index(int rowIndex, int rowNumber, @Nullable Row row) {}

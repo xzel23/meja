@@ -43,14 +43,30 @@ public class SheetPainter {
      */
     private @Nullable Sheet sheet;
 
+    /**
+     * Gets the width of the row labels in points.
+     *
+     * @return the width of the row labels area in points
+     */
     public float getRowLabelWidth() {
         return delegate.getRowLabelWidthInPoints();
     }
 
+    /**
+     * Gets the height of the column labels in points.
+     *
+     * @return the height of the column labels area in points
+     */
     public float getColumnLabelHeight() {
         return delegate.getColumnLabelHeightInPoints();
     }
 
+    /**
+     * Draws the background of the sheet in the specified area.
+     *
+     * @param g the graphics context to draw on
+     * @param va the visible area of the sheet to be drawn
+     */
     public void drawBackground(Graphics g, SheetView.SheetArea va) {
         Rectangle2f sheetArea = delegate.getTotalArea();
         Rectangle2f r = Rectangle2f.of(
@@ -63,6 +79,13 @@ public class SheetPainter {
         g.fillRect(r);
     }
 
+    /**
+     * Calculates the intersection of two rectangles.
+     *
+     * @param r1 the first rectangle
+     * @param r2 the second rectangle
+     * @return the intersection rectangle, or a zero-size rectangle at r1's position if the rectangles don't intersect
+     */
     static Rectangle2f intersection(Rectangle2f r1, Rectangle2f r2) {
         float x1 = Math.max(r1.x(), r2.x());
         float y1 = Math.max(r1.y(), r2.y());
@@ -81,6 +104,13 @@ public class SheetPainter {
         this.cellRenderer = cellRenderer;
     }
 
+    /**
+     * Draws the complete sheet including all components (background, labels, grid, cells, selection, and split lines).
+     * This method orchestrates the entire drawing process for the sheet view.
+     *
+     * @param g the graphics context to draw on
+     * @param r the rectangle defining the area where the sheet should be drawn
+     */
     public void drawSheet(Graphics g, Rectangle2f r) {
         LOGGER.trace("drawSheet()");
 
@@ -101,6 +131,12 @@ public class SheetPainter {
     }
 
 
+    /**
+     * Updates the sheet reference for this painter.
+     * Only updates if the provided sheet is different from the current one.
+     *
+     * @param sheet the new sheet to paint, can be null to clear the current sheet
+     */
     public void update(@Nullable Sheet sheet) {
         //noinspection ObjectEquality
         if (sheet != this.sheet) {
@@ -108,6 +144,13 @@ public class SheetPainter {
         }
     }
 
+    /**
+     * Draws the row and column labels in the specified sheet area.
+     * This method handles the rendering of both row numbers and column letters.
+     *
+     * @param g the graphics context to draw on
+     * @param va the visible area of the sheet where labels should be drawn
+     */
     protected void drawLabels(Graphics g, SheetView.SheetArea va) {
        // draw row labels
         for (int i = va.startRow(); i < va.endRow(); i++) {
@@ -135,6 +178,13 @@ public class SheetPainter {
         }
     }
 
+    /**
+     * Draws the grid lines that separate cells in the sheet.
+     * This includes both horizontal and vertical lines that form the cell boundaries.
+     *
+     * @param g the graphics context to draw on
+     * @param va the visible area of the sheet where the grid should be drawn
+     */
     protected void drawGrid(Graphics g, SheetView.SheetArea va) {
         Rectangle2f r = va.rect();
 
@@ -154,19 +204,19 @@ public class SheetPainter {
     }
 
     /**
-     * Draw cells.
+     * Draws all visible cells in the specified area using a three-step process.
+     * This method handles the complex task of rendering cells with proper layering
+     * to ensure correct display of backgrounds, borders, and text.
      * <p>
-     * Since borders can be draw over by the background of adjacent cells and text
-     * can overlap, drawing is done in three steps:
+     * The drawing process consists of three steps to handle overlapping elements:
      * <ul>
-     * <li>draw background for <em>all</em> cells
-     * <li>draw borders for <em>all</em> cells
-     * <li>draw foreground <em>all</em> cells
+     * <li>draw background for <em>all</em> cells - ensures proper background layering</li>
+     * <li>draw borders for <em>all</em> cells - prevents borders from being covered</li>
+     * <li>draw foreground for <em>all</em> cells - allows text to overlap if needed</li>
      * </ul>
-     * This is controlled by {@code cellDrawMode}.
      *
-     * @param g  the graphics object to use
-     * @param va the area to draw
+     * @param g  the graphics context to draw on
+     * @param va the visible area of the sheet containing the cells to be drawn
      */
     void drawCells(Graphics g, SheetView.SheetArea va) {
         // no sheet, no drawing
@@ -241,6 +291,13 @@ public class SheetPainter {
         }
     }
 
+    /**
+     * Draws split lines that indicate frozen panes in the sheet view.
+     * These lines appear as black lines at the split positions for both frozen rows and columns.
+     *
+     * @param g the graphics context to draw on
+     * @param va the visible area of the sheet where split lines should be drawn
+     */
     protected void drawSplitLines(Graphics g, SheetView.SheetArea va) {
         Rectangle2f sheetArea = delegate.getTotalArea();
         Rectangle2f r = Rectangle2f.of(

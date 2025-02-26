@@ -243,6 +243,11 @@ public class FxSheetView extends StackPane implements SheetView {
         return rc;
     }
 
+    /**
+     * Returns the screen resolution in dots per inch (DPI).
+     *
+     * @return the screen resolution in DPI
+     */
     static int getDpi() {
         return Toolkit.getDefaultToolkit().getScreenResolution();
     }
@@ -453,10 +458,20 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.warn("stopEditing() not implemented");
     }
 
+    /**
+     * Returns the horizontal scrollbar of the sheet view.
+     *
+     * @return the horizontal ScrollBar instance
+     */
     public ScrollBar getHScrollbar() {
         return hScrollbar;
     }
 
+    /**
+     * Returns the vertical scrollbar of the sheet view.
+     *
+     * @return the vertical ScrollBar instance
+     */
     public ScrollBar getVScrollbar() {
         return vScrollbar;
     }
@@ -475,6 +490,12 @@ public class FxSheetView extends StackPane implements SheetView {
 
     record SheetPosition(int row, int column, float xSheet, float ySheet) {}
 
+    /**
+     * Converts an X coordinate in points to a column number.
+     *
+     * @param x the X coordinate in points
+     * @return the column number at the given X coordinate
+     */
     public int getColumnFromXInPoints(double x) {
         x -= delegate.getRowLabelWidthInPoints();
         boolean isLeft = x <= delegate.getSplitXInPoints();
@@ -484,6 +505,12 @@ public class FxSheetView extends StackPane implements SheetView {
         return delegate.getColumnNumberFromX((float) x, false);
     }
 
+    /**
+     * Converts a Y coordinate in points to a row number.
+     *
+     * @param y the Y coordinate in points
+     * @return the row number at the given Y coordinate
+     */
     public int getRowFromYInPoints(double y) {
         y -= delegate.getColumnLabelHeightInPoints();
         boolean isTop = y <= delegate.getSplitYInPoints();
@@ -493,6 +520,12 @@ public class FxSheetView extends StackPane implements SheetView {
         return delegate.getRowNumberFromY((float) y, false);
     }
 
+    /**
+     * Converts an X coordinate in pixels to a column number.
+     *
+     * @param x the X coordinate in pixels
+     * @return the column number at the given X coordinate
+     */
     public int getColumnFromXInPixels(double x) {
         x -= delegate.getRowLabelWidthInPixels();
         boolean isLeft = x <= delegate.getSplitXInPixels();
@@ -503,6 +536,12 @@ public class FxSheetView extends StackPane implements SheetView {
         return delegate.getColumnNumberFromX((float) x, false);
     }
 
+    /**
+     * Converts a Y coordinate in pixels to a row number.
+     *
+     * @param y the Y coordinate in pixels
+     * @return the row number at the given Y coordinate
+     */
     public int getRowFromYInPixels(double y) {
         y -= delegate.getColumnLabelHeightInPixels();
         boolean isTop = y <= delegate.getSplitYInPixels();
