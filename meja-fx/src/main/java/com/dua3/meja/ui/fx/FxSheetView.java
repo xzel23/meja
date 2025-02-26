@@ -380,7 +380,7 @@ public class FxSheetView extends StackPane implements SheetView {
 
     /**
      * Updates the layout of the FxSheetView instance and its associated components.
-     *
+     * <p>
      * This method performs the following operations:
      * <ul>
      *   <li>Logs the start of the layout update process for debugging purposes.</li>
