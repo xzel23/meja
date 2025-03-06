@@ -27,10 +27,10 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.1.4")
+            plugin("spotbugs", "com.github.spotbugs").version("6.1.7")
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
 
-            version("dua3-utility", "16.1.2")
+            version("dua3-utility", "16.1.3")
             version("dua3-fx", "1.0.6")
             version("ikonli", "12.3.1")
             version("jspecify", "1.0.0")
