@@ -1,9 +1,10 @@
 # Meja Changelog
 
-## Version 7.0.2 (in progress)
+## Version 7.0.2
 
 - many Javadoc additions and corrections
-- the internal abstract base classes have been refctored to reduce code duplication
+- the internal abstract base classes have been refactored to reduce code duplication
+- dependency updates
 
 ## Version 7.0.1
 
