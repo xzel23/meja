@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 7.1.0
+
+- update utility to 16.2.0 (breaking change in Font class)
+
 ## Version 7.0.2
 
 - many Javadoc additions and corrections
