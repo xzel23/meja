@@ -10,11 +10,53 @@ Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 As it's rather common to give everything Java related a name of indo/malay origin, I chose 'meja' which is the
 indonesian word for table (as in furniture).
 
+## Using Meja in your projects
+
+* The Minimal Java version is **Java 17**.
+* **Java 21/JavaFX 21** is needed to use the **JavaFX related modules**.
+
+Meja is available in the Maven central repository.
+
+You need at least the following modules:
+
+* `meja`: core functionality, CSV import and export, HTML export
+* `meja-generic`: generic implementation (memory efficient)
+
+Add any combination of the following as needed:
+
+* `meja-poi`: Apache POI based implementation (supports Excel XLSX and XLS file format)
+* `meja-db`: for reading data directly from JDBC result sets
+* `meja-swing`: for displaying sheets and workbooks in Swing applications
+* `meja-fx`: for displaying sheets and workbooks in JavaFX applications
+
+**Maven**
+
+```
+    <dependency>
+        <groupId>com.dua3.meja</groupId>
+        <artifactId>[meja_module]</artifactId>
+        <version>[meja_version]</version>
+    </dependency>
+```
+
+**Gradle (Groovy DSL)**
+
+```
+    implementation 'com.dua3.meja:[meja_module]:[meja_version]'
+```
+
+**Gradle (Kotlin DSL)**
+
+```
+    implementation("com.dua3.meja:[meja_module]:[meja_version]")
+```
+
 ## Building
 
-The required Java version is 17. The JavaFX support module requires Java 21.
+Java 21 is required for building Meja.
 
-Clone the repository and run `./gradlew`. This will also install meja into your local maven repository.
+Clone the repository and run `./gradlew build` to build the library, `./gradlew publishToMavenLocal` to publish to
+your local Maven repository.
 
 ## License
 

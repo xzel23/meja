@@ -183,7 +183,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             Rectangle clipBounds = Objects.requireNonNullElse(g.getClipBounds(), bounds);
 
             Graphics2D g2d = (Graphics2D) g;
-            SwingUtil.setRenderingQuality(g2d);
+            SwingUtil.setRenderingQualityHigh(g2d);
             try (SwingGraphics sg = new SwingGraphics(g2d, bounds)) {
                 AffineTransformation2f t = ssvDelegate.getTransformation();
                 sg.setTransformation(t);
