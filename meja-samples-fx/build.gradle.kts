@@ -4,41 +4,13 @@ plugins {
 
 description = "Meja spreadsheet library - samples (JavaFX)"
 
-val javaToolVersion = JavaLanguageVersion.of(21)
-val javaCompatibility = JavaVersion.VERSION_21
-val javaRuntimeVersion = "EA"
-
 java {
-    toolchain { languageVersion.set(javaToolVersion) }
+    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = targetCompatibility
+    version = targetCompatibility.toString()
 
-    // Java 17 is used for everything but the JavaFX related modules
-    sourceCompatibility = javaCompatibility
-    targetCompatibility = javaCompatibility
-}
-
-fun JavaExec.useToolchain() {
-    if (javaRuntimeVersion.toString() == "EA") {
-        val jdkPreviewBase = file("${System.getProperty("user.home")}/bin/jdk-preview").absolutePath
-        val javaHome = "${jdkPreviewBase}/jdk/Contents/Home"
-        val pathToFx = "${jdkPreviewBase}/javafx-sdk/lib"
-        val javafxModules = listOf("javafx.controls", "javafx.fxml")
-
-        environment("PATH_TO_FX", pathToFx)
-        environment("JAVA_HOME", javaHome)
-        environment("JAVA_TOOL_OPTIONS", "--module-path=$pathToFx")
-
-        jvmArgs = listOf(
-            "--module-path", pathToFx, // Explicit module path for JavaFX
-            "--add-modules", javafxModules.joinToString(",") // Adds required JavaFX modules
-        )
-
-        executable = "${javaHome}/bin/java"
-
-    } else {
-        javaLauncher.set(javaToolchains.launcherFor {
-            languageVersion.set(javaToolVersion)
-        })
-    }
+    withJavadocJar()
+    withSourcesJar()
 }
 
 dependencies {
@@ -65,23 +37,20 @@ dependencies {
     runtimeOnly(rootProject.libs.log4j.jul)
 }
 
-val runExcelViewer = task<JavaExec>("runFxExcelViewer") {
+val runExcelViewer = tasks.register<JavaExec>("runFxExcelViewer") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxExcelViewer")
     enableAssertions = true
-    useToolchain()
 }
 
-val runKitchenSink = task<JavaExec>("runFxKitchenSink") {
+val runKitchenSink = tasks.register<JavaExec>("runFxKitchenSink") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxKitchenSink")
     enableAssertions = true
-    useToolchain()
 }
 
-val runShowTestXlsx = task<JavaExec>("runFxShowTestXlsx") {
+val runShowTestXlsx = tasks.register<JavaExec>("runFxShowTestXlsx") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
     enableAssertions = true
-    useToolchain()
 }
