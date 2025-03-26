@@ -20,8 +20,6 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.text.Font;
-import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -38,6 +36,8 @@ import java.util.Optional;
  */
 public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(PoiSheet.class);
+
+    private static final float FACTOR_WIDTH = 7.0f / 256;
 
     /**
      * Represents the underlying workbook associated with this sheet instance.
@@ -65,7 +65,6 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     private int lastColumn;
     private float zoom = 1.0f;
     private int autoFilterRow = -1;
-    private float factorWidth = 1;
 
     /**
      * Constructor.
@@ -255,11 +254,11 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     private float poiColumnWidthToPoints(int poiWidth) {
-        return poiWidth * factorWidth;
+        return poiWidth * FACTOR_WIDTH;
     }
 
     private int pointsToPoiColumnWidth(float width) {
-        return Math.round(width / factorWidth);
+        return Math.round(width / FACTOR_WIDTH);
     }
 
     @Override
@@ -423,10 +422,6 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
             // the merged region is already present in the POI file
             super.addMergedRegion(rr);
         }
-
-        // determine default font size
-        Font font = workbook.getFont(workbook.poiWorkbook.getFontAt(0)).font;
-        factorWidth = (float) FontUtil.getInstance().getTextWidth("0", font) / 256;
     }
 
 }

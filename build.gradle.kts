@@ -119,14 +119,11 @@ subprojects {
                     implementation(rootProject.libs.log4j.core)
                 }
 
-                // Add system properties for software rendering
                 targets {
                     all {
                         testTask {
-                            // Use headless mode for AWT
+                            // Use headless mode for AWT in unit tests
                             jvmArgs("-Djava.awt.headless=true")
-                            // Force JavaFX to use software rendering
-                            jvmArgs("-Dprism.order=sw")
                         }
                     }
                 }

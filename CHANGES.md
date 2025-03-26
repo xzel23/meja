@@ -5,6 +5,7 @@
 - update utility to 17.0.0
 - GitHub actions: fix CI build
 - add/improve Javadoc
+- use a fixed factor to convert between internal units and points to get the same column widths independent of platform
 
 ## Version 7.1.0
 
