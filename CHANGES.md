@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 7.2.0
+
+- update utility to 17.0.0
+- GitHub actions: fix CI build
+- add/improve Javadoc
+
 ## Version 7.1.0
 
 - update utility to 16.2.0 (breaking change in Font class)
