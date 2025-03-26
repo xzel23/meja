@@ -31,7 +31,7 @@ dependencyResolutionManagement {
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
 
             version("dua3-utility", "17.0.0")
-            version("dua3-fx", "1.1.0")
+            version("dua3-fx", "1.2.0")
             version("ikonli", "12.3.1")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.24.3")
