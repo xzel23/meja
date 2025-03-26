@@ -38,8 +38,6 @@ import java.util.concurrent.Flow;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
- *
- * @author axel
  */
 public class SwingWorkbookView extends JComponent implements WorkbookView<SwingSheetView>, ChangeListener, Flow.Subscriber<WorkbookEvent> {
     private static final Logger LOG = LogManager.getLogger(SwingWorkbookView.class);

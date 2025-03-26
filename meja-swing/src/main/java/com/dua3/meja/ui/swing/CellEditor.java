@@ -19,6 +19,12 @@ import com.dua3.meja.model.Cell;
 
 import javax.swing.JComponent;
 
+/**
+ * The CellEditor interface defines the methods used for editing cell content
+ * in a table, spreadsheet, or similar UI component.
+ * It provides functionality to check if editing is active, initiate editing on
+ * a specific cell, and stop editing with an option to commit changes.
+ */
 public interface CellEditor {
 
     /**

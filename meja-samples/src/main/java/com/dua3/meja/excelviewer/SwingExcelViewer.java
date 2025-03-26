@@ -59,10 +59,10 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A sample Swing application that uses the Meja library to load and display
- * Excel sheets or CSv data.
- *
- * @author axel
+ * A GUI application for viewing Excel files using Swing.
+ * <p>
+ * This class extends {@code JFrame} and implements the {@code ExcelViewer} and {@code DropTargetListener} interfaces.
+ * It provides a graphical interface for viewing Excel workbooks.
  */
 @SuppressWarnings("serial")
 public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkbookView, SwingSheetView>, DropTargetListener {
@@ -71,15 +71,24 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
 
     private static final int STATUS_ERROR = 1;
 
-    public static final String PROPERTY_FILE_CHANGED = "file changed";
+    private static final String PROPERTY_FILE_CHANGED = "file changed";
 
     /**
      * The application name to show in title bar.
      */
     public static final String APPLICATION_NAME = "Meja ExcelViewer";
 
+    /**
+     * The author of the `SwingExcelViewer` application.
+     */
     public static final String AUTHOR = "Axel Howind";
 
+    /**
+     * The constant representing the year associated with the application or component.
+     * <p>
+     * This value generally indicates the specific year used for contextual
+     * purposes, such as licensing, versioning, or metadata.
+     */
     public static final int YEAR = 2025;
 
     /**

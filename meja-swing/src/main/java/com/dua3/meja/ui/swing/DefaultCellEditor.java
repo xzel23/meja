@@ -71,6 +71,14 @@ public class DefaultCellEditor implements CellEditor {
 
     private final SwingSheetView sheetView;
 
+    /**
+     * Constructs a {@code DefaultCellEditor} instance for the specified {@link SwingSheetView}.
+     * This editor is responsible for managing cell editing functionality within the sheet view.
+     * It initializes the underlying editor pane, binds keyboard actions for editing,
+     * and sets default properties for the editor component.
+     *
+     * @param sheetView the {@link SwingSheetView} associated with this cell editor
+     */
     public DefaultCellEditor(SwingSheetView sheetView) {
         this.sheetView = sheetView;
         component = new CellEditorPane();
@@ -135,6 +143,23 @@ public class DefaultCellEditor implements CellEditor {
         SwingUtilities.invokeLater(sheetView::requestFocusInWindow);
     }
 
+    /**
+     * Updates the content of the cell being edited by fetching the text from the
+     * associated component's document, formatting it, and applying it to the cell.
+     * <p>
+     * This method retrieves the text from the document linked to the editor
+     * component. If an error occurs during retrieval, it assigns a default error
+     * value ("#ERROR") to the text. The retrieved text is then processed and set
+     * to the cell using a {@code CellValueHelper}, which handles parsing and
+     * formatting of the value based on locale-specific number and date formats.
+     * <p>
+     * The {@code CellValueHelper} ensures the proper conversion and application
+     * of the text to the cell, accommodating various types of values, such as
+     * numbers, dates, booleans, formulas, or plain text.
+     * <p>
+     * If assertions are enabled, this method will throw an {@code AssertionError}
+     * if the cell is {@code null}.
+     */
     protected void updateCellContent() {
         assert cell != null;
         String text;

@@ -20,11 +20,33 @@ import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
+/**
+ * The {@code CreateCalendar} class is a sample application tha generates
+ * a calendar for the current year in a spreadsheet format. It organizes
+ * the calendar data into months and weeks, formatting the layout
+ * accordingly. The class also supports styling specific days, such as holidays,
+ * with distinct formatting features.
+ *
+ * <p>The calendar generated includes the following details:</p>
+ * <ul>
+ *   <li>Month names and their corresponding weekly layout.</li>
+ *   <li>Days of the week formatted based on the system's locale.</li>
+ *   <li>Week numbers displayed per the locale-specific week definitions.</li>
+ *   <li>Special styling for significant dates such as holidays (e.g., Christmas).</li>
+ * </ul>
+ */
 public final class CreateCalendar {
 
     private CreateCalendar() {
     }
 
+    /**
+     * The main entry point of the application. This method creates a calendar
+     * HTML file at the specified path and handles any exceptions that may occur during
+     * the process. The calendar is generated for the current year.
+     *
+     * @param args command-line arguments (not used in this implementation)
+     */
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public static void main(String[] args) {
         try {

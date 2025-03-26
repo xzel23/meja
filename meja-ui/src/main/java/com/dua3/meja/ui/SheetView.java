@@ -123,11 +123,49 @@ public interface SheetView {
      * Actions for key bindings.
      */
     enum Actions {
-        MOVE_UP(view -> view.move(Direction.NORTH)), MOVE_DOWN(view -> view.move(Direction.SOUTH)),
-        MOVE_LEFT(view -> view.move(Direction.WEST)), MOVE_RIGHT(view -> view.move(Direction.EAST)),
-        PAGE_UP(view -> view.movePage(Direction.NORTH)), PAGE_DOWN(view -> view.movePage(Direction.SOUTH)),
-        MOVE_HOME(SheetView::moveHome), MOVE_END(SheetView::moveEnd),
-        START_EDITING(SheetView::startEditing), SHOW_SEARCH_DIALOG(SheetView::showSearchDialog),
+        /**
+         * Represents the action to move the selection in the upward (north) direction.
+         */
+        MOVE_UP(view -> view.move(Direction.NORTH)),
+        /**
+         * Represents the action to move the selection in the downward (south) direction.
+         */
+        MOVE_DOWN(view -> view.move(Direction.SOUTH)),
+        /**
+         * Represents the action to move the selection in the left (west) direction.
+         */
+        MOVE_LEFT(view -> view.move(Direction.WEST)),
+        /**
+         * Represents the action to move the selection in the right (east) direction.
+         */
+        MOVE_RIGHT(view -> view.move(Direction.EAST)),
+        /**
+         * Represents the action to move the selection on page in the upward (north) direction.
+         */
+        PAGE_UP(view -> view.movePage(Direction.NORTH)),
+        /**
+         * Represents the action to move the selection on page in the downward (south) direction.
+         */
+        PAGE_DOWN(view -> view.movePage(Direction.SOUTH)),
+        /**
+         * Represents the action to move the selection to the top left cell of the sheet.
+         */
+        MOVE_HOME(SheetView::moveHome), /**
+         /**
+         * Represents the action to move the selection to the bottom right cell of the sheet.
+         */
+        MOVE_END(SheetView::moveEnd),
+        /**
+         * Represents the action to start editing of the selected cell.
+         */
+        START_EDITING(SheetView::startEditing),
+        /**
+         * Represents the action to show the search dialog.
+         */
+        SHOW_SEARCH_DIALOG(SheetView::showSearchDialog),
+        /**
+         * Represents the action to copy the current selection to the clipboard.
+         */
         COPY(SheetView::copyToClipboard);
 
         private final Consumer<? super SheetView> action;
@@ -209,8 +247,20 @@ public interface SheetView {
      * @param endColumn   the end column (exclusive)
      */
     record SheetArea(com.dua3.utility.math.geometry.Rectangle2f rect, int startRow, int startColumn, int endRow, int endColumn) {
+        /**
+         * A predefined constant representing an empty sheet area.
+         */
         public static final SheetArea EMPTY = new SheetArea(Rectangle2f.of(0, 0, 0, 0), 0, 0, 0, 0);
 
+        /**
+         * Canonical constructor.
+         *
+         * @param rect        the area in the sheet
+         * @param startRow    the start row
+         * @param startColumn the start column
+         * @param endRow      the end row (exclusive)
+         * @param endColumn   the end column (exclusive)
+         */
         public SheetArea {
             assert startRow <= endRow && startColumn <= endColumn;
         }
@@ -229,9 +279,21 @@ public interface SheetView {
      * Each quadrant provides methods to get the start and end positions for rows and columns within the quadrant.
      */
     enum Quadrant {
+        /**
+         * Refers to the top left quadrant of the sheet.
+         */
         TOP_LEFT(true, true),
+        /**
+         * Refers to the top right quadrant of the sheet.
+         */
         TOP_RIGHT(true, false),
+        /**
+         * Refers to the bottom left quadrant of the sheet.
+         */
         BOTTOM_LEFT(false, true),
+        /**
+         * Refers to the bottom right quadrant of the sheet.
+         */
         BOTTOM_RIGHT(false, false);
 
         private final boolean isTop;

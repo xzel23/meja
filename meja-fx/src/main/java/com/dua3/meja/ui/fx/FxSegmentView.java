@@ -106,11 +106,21 @@ public class FxSegmentView extends Control implements SegmentView {
         return -1;
     }
 
+    /**
+     * Determines if this segment view is positioned above the split row in the associated sheet.
+     *
+     * @return {@code true} if this segment is above the split row; {@code false} otherwise.
+     */
     public boolean isAboveSplit() {
         return segmentDelegateLeft.isAboveSplit();
     }
 
-    public VirtualFlowWithHiddenScrollBars<FxRow> getFlow() {
+    /**
+     * Retrieves the flow object associated with this segment view.
+     *
+     * @return the {@link VirtualFlowWithHiddenScrollBars} instance containing {@link FxRow} objects for this segment view.
+     */
+    VirtualFlowWithHiddenScrollBars<FxRow> getFlow() {
         return flow;
     }
 
@@ -138,14 +148,29 @@ public class FxSegmentView extends Control implements SegmentView {
         }
     }
 
+    /**
+     * Retrieves the {@link SegmentViewDelegate} responsible for the left segment of the view.
+     *
+     * @return the delegate associated with the left segment of the segment view.
+     */
     SegmentViewDelegate getSegmentDelegateLeft() {
         return segmentDelegateLeft;
     }
 
+    /**
+     * Retrieves the {@link SegmentViewDelegate} responsible for the right segment of the view.
+     *
+     * @return the delegate associated with the right segment.
+     */
     SegmentViewDelegate getSegmentDelegateRight() {
         return segmentDelegateRight;
     }
 
+    /**
+     * Retrieves the associated {@link FxSheetView} for this segment view.
+     *
+     * @return the {@link FxSheetView} instance this segment belongs to.
+     */
     public FxSheetView getSheetView() {
         return sheetView;
     }

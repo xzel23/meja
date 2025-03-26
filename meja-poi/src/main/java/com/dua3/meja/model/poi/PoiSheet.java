@@ -39,7 +39,27 @@ import java.util.Optional;
 public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(PoiSheet.class);
 
+    /**
+     * Represents the underlying workbook associated with this sheet instance.
+     * <p>
+     * Note: This member is specific to the {@link PoiSheet} class and its lifecycle
+     * is managed in conjunction with the {@link PoiWorkbook} instance provided during
+     * the {@link PoiSheet} construction.
+     */
     protected final PoiWorkbook workbook;
+    /**
+     * Represents the Apache POI sheet instance encapsulated within the {@link PoiSheet}.
+     * <p>
+     * This variable holds a reference to the underlying Apache POI-specific {@link Sheet}
+     * used to handle low-level operations and interactions with the Excel sheet.
+     * <p>
+     * It acts as the bridge for executing operations directly on the underlying Excel sheet,
+     * such as merging cells, retrieving rows, setting zoom levels, and other sheet-level
+     * configurations.
+     * <p>
+     * The usage of this variable is limited to internal operations within the {@link PoiSheet}
+     * class and methods that require access to the raw POI sheet data structure.
+     */
     protected Sheet poiSheet;
     private int firstColumn;
     private int lastColumn;

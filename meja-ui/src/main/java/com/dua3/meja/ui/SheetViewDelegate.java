@@ -31,6 +31,10 @@ import java.util.function.IntFunction;
 public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     private static final Logger LOG = LogManager.getLogger(SheetViewDelegate.class);
 
+    /**
+     * The default stroke width used for selection outlines in graphical components or UI elements.
+     * This value defines the thickness of the border drawn to indicate selection, measured in pixels.
+     */
     public static final int DEFAULT_SELECTION_STROKE_WIDTH = 2;
 
     private final SheetView owner;
@@ -315,6 +319,9 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * Get the row number that the given dy-coordinate belongs to.
      *
      * @param y dy-coordinate
+     * @param clipToSheet if true, restrict the returned row number to the current maximum row number,
+     *                    otherwise calculate the row number based on the assumption that missing rows
+     *                    all have the default row height
      * @return <ul>
      *         <li>-1, if the first row is displayed below the given coordinate
      *         <li>number of rows, if the lower edge of the last row is displayed

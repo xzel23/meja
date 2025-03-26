@@ -32,6 +32,16 @@ import org.jspecify.annotations.Nullable;
 public class FxRow extends IndexedCell<FxRow.Index> {
     private static final Logger LOG = LogManager.getLogger(FxRow.class);
 
+    /**
+     * A container for rendering graphical content of a row in a sheet view.
+     * The FxRowGraphics class is responsible for managing and displaying
+     * the graphical representations of the left and right segments of a row
+     * within a sheet. It uses two canvases to separately handle these
+     * segments and applies transformations to align and scale the content.
+     * <p>
+     * This class extends {@code AnchorPane}, providing layout functionality
+     * for placing its graphical components.
+     */
     public static class FxRowGraphics extends AnchorPane {
         private final Canvas left;
         private final Canvas right;
@@ -161,6 +171,14 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         return fxSheetView.getDelegate().getScale().sy() * getRowHeightInPoints();
     }
 
+    /**
+     * Retrieves the width of a row in pixels for the specified side.
+     *
+     * @param side determines the segment for which to return the row width; the allowed values are {@link Side#LEFT}
+     *             and {@link Side#RIGHT}
+     * @return the width of the row in pixels for the specified side
+     * @throws IllegalArgumentException if an invalid value is passed for {@code side}
+     */
     public float getWidthInPixels(Side side) {
         return getSegmentViewDelegate(side).getWidthInPixels();
     }
@@ -191,7 +209,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         return switch (side) {
             case LEFT -> fxSegmentView.getSegmentDelegateLeft();
             case RIGHT -> fxSegmentView.getSegmentDelegateRight();
-            default -> throw new IllegalStateException("invalid value for side: " + side);
+            default -> throw new IllegalArgumentException("invalid value for side: " + side);
         };
     }
 

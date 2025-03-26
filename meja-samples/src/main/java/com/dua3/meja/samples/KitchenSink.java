@@ -47,6 +47,13 @@ public final class KitchenSink extends JFrame {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The main entry point of the application. This method initializes
+     * the KitchenSink demo application by setting the native look and feel,
+     * creating an instance of the main application window, and making it visible.
+     *
+     * @param args command-line arguments (not used in this implementation)
+     */
     public static void main(String[] args) {
         LOG.info("starting up ...");
         SwingUtilities.invokeLater(() -> {

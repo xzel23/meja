@@ -99,6 +99,15 @@ public class SheetPainter {
         }
     }
 
+    /**
+     * Constructs a SheetPainter with the specified delegate and cell renderer.
+     * This constructor initializes the painter with the components required
+     * to render a sheet view, including handling cell rendering and interactions
+     * through the provided delegate.
+     *
+     * @param delegate the delegate responsible for managing sheet view interactions
+     * @param cellRenderer the renderer used to draw individual cells in the sheet
+     */
     public SheetPainter(SheetViewDelegate delegate, CellRenderer cellRenderer) {
         this.delegate = delegate;
         this.cellRenderer = cellRenderer;

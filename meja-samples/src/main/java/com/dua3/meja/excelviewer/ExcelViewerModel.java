@@ -92,6 +92,13 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
         }
     }
 
+    /**
+     * Splits the current sheet at the position of the current cell in the given view.
+     * If the provided view is null, the method does nothing.
+     *
+     * @param view the {@code SheetView} containing the sheet and current cell,
+     *             or {@code null} if no view is provided
+     */
     protected void splitAtCurrentCell(@Nullable SheetView view) {
         if (view != null) {
             Sheet sheet = view.getSheet();
@@ -109,18 +116,46 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
         return currentUri;
     }
 
+    /**
+     * Retrieves the text of the license formatted with the provided year and author.
+     *
+     * @return the formatted license text as a {@code String}.
+     */
     public String getLicenseText() {
         return String.format(LICENSE, year, author);
     }
 
+    /**
+     * Retrieves the URI associated with the workbook in the current context, if available.
+     *
+     * @return an {@code Optional<URI>} containing the URI of the workbook if the workbook is not null,
+     *         or an empty {@code Optional} if the workbook is null.
+     */
     Optional<URI> getUri() {
         return getUri(workbook);
     }
 
+    /**
+     * Retrieves the current workbook associated with the model, if available.
+     *
+     * @return an {@code Optional<Workbook>} containing the current workbook if it is not null,
+     *         or an empty {@code Optional} if the workbook is null.
+     */
     public Optional<Workbook> getWorkbook() {
         return Optional.ofNullable(workbook);
     }
 
+    /**
+     * Saves the current workbook to the specified URI.
+     *
+     * This method writes the current workbook to the provided URI. If no workbook
+     * is currently open, the method logs a warning and returns without performing
+     * any operation. The format of the saved file is determined by the extension
+     * of the provided URI.
+     *
+     * @param uri the URI to which the workbook is to be saved.
+     * @throws IOException if an I/O error occurs during the saving process.
+     */
     public void saveWorkbook(URI uri) throws IOException {
         if (workbook == null) {
             LOGGER.warn("no workbook open");
@@ -158,6 +193,12 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
         LOGGER.debug("workbook changed to {}", getUri(this.workbook).map(Object::toString).orElse(""));
     }
 
+    /**
+     * Sets the zoom level for all sheets in the current workbook.
+     * If no workbook is open, the method returns without performing any operation.
+     *
+     * @param zoom the zoom level to be applied to all sheets in the workbook.
+     */
     protected void setZoom(float zoom) {
         if (workbook == null) {
             return;
@@ -167,6 +208,11 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
         }
     }
 
+    /**
+     * Retrieves application information, including the application name and license text.
+     *
+     * @return a formatted string containing the application name followed by the license text.
+     */
     protected String getInfo() {
         return String.format("%s%n%n%s%n", appName, getLicenseText());
     }
