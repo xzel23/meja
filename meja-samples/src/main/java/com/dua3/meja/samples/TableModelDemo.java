@@ -75,8 +75,6 @@ public class TableModelDemo extends JFrame {
         super("TableModel demo");
         setSize(800, 600);
 
-        this.sheet = sheet;
-
         JTable table = new JTable();
         setContentPane(new JScrollPane(table));
 
@@ -94,5 +92,4 @@ public class TableModelDemo extends JFrame {
         }).start();
     }
 
-    private final Sheet sheet;
 }

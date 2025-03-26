@@ -29,6 +29,13 @@ import java.net.URI;
 public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
 
     /**
+     * Protected constructor for the {@code WorkbookFactory} class.
+     */
+    protected WorkbookFactory() {
+        // nop
+    }
+
+    /**
      * Creates a deep copy of the given workbook using this factory's implementation.
      * The copy includes all sheets, cell styles, and content from the source workbook.
      * The URI of the source workbook is also copied if present.

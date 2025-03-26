@@ -119,6 +119,13 @@ public final class FxKitchenSink extends Application {
 
     private final Workbook wb = createWorkbook(GenericWorkbookFactory.instance());
 
+    /**
+     * Default constructor for the {@code FxKitchenSink} class.
+     */
+    public FxKitchenSink() {
+        // nop
+    }
+
     @Override
     public void start(Stage primaryStage) {
         final FxWorkbookView view = new FxWorkbookView();

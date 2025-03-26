@@ -69,6 +69,9 @@ public final class ShowTestXlsx extends JFrame {
         });
     }
 
+    /**
+     * The {@link Workbook} instance.
+     */
     private final Workbook wb;
 
     private ShowTestXlsx() throws URISyntaxException, IOException {

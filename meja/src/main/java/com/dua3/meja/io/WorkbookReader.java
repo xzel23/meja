@@ -15,19 +15,26 @@
  */
 package com.dua3.meja.io;
 
+import com.dua3.meja.model.Workbook;
+import com.dua3.meja.model.WorkbookFactory;
+import com.dua3.utility.options.Arguments;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.WorkbookFactory;
-import com.dua3.utility.options.Arguments;
-
 /**
  * Abstract base class for reading workbook data.
  */
 public abstract class WorkbookReader {
+
+    /**
+     * Protected constructor for the {@code WorkbookReader} class.
+     */
+    protected WorkbookReader() {
+        // nop
+    }
 
     /**
      * Read workbook from stream.

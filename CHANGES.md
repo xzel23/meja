@@ -3,7 +3,7 @@
 ## Version 7.2.0
 
 - update utility to 17.0.0
-- GitHub actions: fix CI build
+- GitHub actions: fix CI build, including Qodana scan
 - add/improve Javadoc
 - use a fixed factor to convert between internal units and points to get the same column widths independent of platform
 

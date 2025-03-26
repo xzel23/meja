@@ -149,11 +149,20 @@ public final class KitchenSink extends JFrame {
         return wb;
     }
 
-    private final Workbook wb = createWorkbook(GenericWorkbookFactory.instance());
+    /**
+     * The {@link Workbook} instance.
+     */
+    private final Workbook wb;
 
     private KitchenSink() {
         super("Méja Kitchensink demo");
-        init();
+
+        setSize(800, 600);
+        final SwingWorkbookView view = new SwingWorkbookView();
+        setContentPane(view);
+
+        wb = createWorkbook(GenericWorkbookFactory.instance());
+        view.setWorkbook(wb);
     }
 
     @Override
@@ -166,11 +175,4 @@ public final class KitchenSink extends JFrame {
         super.dispose();
     }
 
-    private void init() {
-        setSize(800, 600);
-        final SwingWorkbookView view = new SwingWorkbookView();
-        setContentPane(view);
-
-        view.setWorkbook(wb);
-    }
 }
