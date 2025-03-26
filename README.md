@@ -96,7 +96,13 @@ Utilities for JavaFX.
 
 Meja uses Log4J2-API for logging facade, the same as the Apache POI library used for reading and writing Excel files.
 
-### Null values
+## Handling of `null` parameters and return values
 
-Only parameters marked @Nullable accept `null` values.
- 
+Meja uses [Cabe](https://github.com/xzel23/cabe) to ensure correct handling of `null` values.
+
+This means that:
+
+- Only parameters marked as @Nullable accept `null` values. When `null` is passed for a parameter not marked as
+`@Nullable`, an `IllegalArgumentException` is thrown. The offending parameter is given in the exception message.
+
+- Only methods where the return value is marked as `@Nullable` will ever return `null`.
