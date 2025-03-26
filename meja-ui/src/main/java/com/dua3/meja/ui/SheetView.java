@@ -30,6 +30,11 @@ import java.util.function.Consumer;
  */
 public interface SheetView {
 
+    /**
+     * The maximum allowable width for a column in the sheet view, expressed in pixels.
+     * This value serves as an upper limit to ensure consistent rendering and layout alignment
+     * in the visual representation of the sheet.
+     */
     double MAX_COLUMN_WIDTH = 800;
 
     /**
@@ -131,6 +136,13 @@ public interface SheetView {
             this.action = action;
         }
 
+        /**
+         * Returns the action associated with this {@code Actions} enum constant.
+         * The action is a {@link Consumer} that accepts a {@link SheetView} instance
+         * and performs the corresponding operation.
+         *
+         * @return a {@link Consumer} representing the action for this enum constant
+         */
         public Consumer<? super SheetView> action() {
             return action;
         }
@@ -190,7 +202,7 @@ public interface SheetView {
     /**
      * Defines a rectangular area of cells in a sheet.
      *
-     * @param rect
+     * @param rect        the area in the sheet
      * @param startRow    the start row
      * @param startColumn the start column
      * @param endRow      the end row (exclusive)
