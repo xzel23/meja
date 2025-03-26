@@ -1,7 +1,8 @@
 description = "Meja spreadsheet library - JavaFX tools"
 
 java {
-    version = JavaVersion.VERSION_21.toString()
+    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = targetCompatibility
 
     withJavadocJar()
     withSourcesJar()
