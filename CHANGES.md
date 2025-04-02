@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 7.2.1
+
+- Apache POI 5.4.1
+
 ## Version 7.2.0
 
 - update utility to 17.0.0
