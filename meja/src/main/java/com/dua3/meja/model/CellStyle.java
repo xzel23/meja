@@ -159,7 +159,7 @@ public interface CellStyle {
     boolean isWrap();
 
     /**
-     * Deterine whether text should be wrapped. Zhis takes into account the value of {@link #isWrap()},
+     * Determine whether text should be wrapped. This takes into account the value of {@link #isWrap()},
      * {@link #getHAlign()} and {@link #getVAlign()}.
      *
      * @return true, if the text should be wrapped when displayed

@@ -208,7 +208,7 @@ public class SegmentViewDelegate {
             // the width is the width for the labels showing row names ...
             float width = isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0;
 
-            // ... plus 1 Pixel for the splitline if there's a vertical split, and we are left of the split
+            // ... plus 1 Pixel for the split line if there's a vertical split, and we are left of the split
             width += hasVLine() ? sheetViewDelegate.getSplitLineWidthInPoints() : 0;
 
             // ... plus the width of the columns displayed ...
@@ -219,7 +219,7 @@ public class SegmentViewDelegate {
                     ? sheetViewDelegate.getColumnLabelHeightInPoints() + sheetViewDelegate.getSplitLineHeightInPoints()
                     : 0;
 
-            // ... plus 1 Pixel for the splitline if there's a horizontal split and we are above of the split
+            // ... plus 1 Pixel for the split line if there's a horizontal split and we are above of the split
             height += hasHLine() ? sheetViewDelegate.get1PxHeightInPoints() : 0;
 
             // ... plus the height of the rows displayed ...

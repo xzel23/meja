@@ -147,7 +147,7 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
 
     /**
      * Saves the current workbook to the specified URI.
-     *
+     * <p>
      * This method writes the current workbook to the provided URI. If no workbook
      * is currently open, the method logs a warning and returns without performing
      * any operation. The format of the saved file is determined by the extension

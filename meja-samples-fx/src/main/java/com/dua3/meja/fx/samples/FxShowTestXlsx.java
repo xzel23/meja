@@ -40,7 +40,7 @@ public final class FxShowTestXlsx extends Application {
 
     /**
      * Constructor.
-     * @throws IOException when the workbork could not be read.
+     * @throws IOException when the workbook could not be read.
      * @throws URISyntaxException when the workbook URI is invalid.
      */
     public FxShowTestXlsx() throws IOException, URISyntaxException {

@@ -28,7 +28,7 @@ import java.net.URISyntaxException;
  * <p>The application also sets a native look and feel, ensures proper resource
  * cleanup by closing the workbook upon disposal, and handles errors during
  * initialization and termination.
- *
+ * <p>
  * <strong>Functional Overview:</strong>
  * <ul>
  *   <li>Loads an XLSX workbook from the {@code test.xlsx} resource.</li>

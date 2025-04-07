@@ -139,7 +139,7 @@ public class DefaultCellEditor implements CellEditor {
         // inform the sheetView
         sheetView.stoppedEditing();
 
-        // give focus back to sheetview
+        // give focus back to sheet view
         SwingUtilities.invokeLater(sheetView::requestFocusInWindow);
     }
 

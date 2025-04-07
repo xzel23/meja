@@ -93,7 +93,7 @@ public final class MejaSwingHelper {
     }
 
     /**
-     * Open a workbook from a given URI. A dialog to sepcify options is shown if required.
+     * Open a workbook from a given URI. A dialog to specify options is shown if required.
      *
      * @param parent the parent component to use
      * @param uri the URI of the workbook to open

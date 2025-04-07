@@ -742,7 +742,7 @@ public interface Sheet extends Iterable<Row> {
     float getDefaultRowHeight();
 
     /**
-     * Get the default column widtht for this sheet, i.e., the width used when creating new columns.
+     * Get the default column width for this sheet, i.e., the width used when creating new columns.
      *
      * @return the default column width
      */

@@ -80,7 +80,7 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
     }
 
     /**
-     * A single long storing meta information.
+     * A single long storing meta-information.
      *
      * <pre>
      * data format (bytes): CCXXYYYT

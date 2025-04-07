@@ -100,7 +100,7 @@ final class SheetTableModel extends AbstractTableModel {
                     LOG.debug("table structure changed, event: {}", item);
                     runOnEDT(SheetTableModel.this::fireTableStructureChanged);
                 }
-                default -> LOG.debug("event igored: {}", item);
+                default -> LOG.debug("event ignored: {}", item);
             }
         }
 

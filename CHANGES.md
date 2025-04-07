@@ -2,7 +2,7 @@
 
 ## Version 7.2.1
 
-- Apache POI 5.4.1
+- Apache POI 5.4.1; update other dependencies
 
 ## Version 7.2.0
 
