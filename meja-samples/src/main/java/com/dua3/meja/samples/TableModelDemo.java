@@ -43,7 +43,7 @@ import java.time.LocalDateTime;
  *   updating the table view in real time.</li>
  * </ol>
  */
-public class TableModelDemo extends JFrame {
+public final class TableModelDemo extends JFrame {
     @Serial
     private static final long serialVersionUID = 1L;
 

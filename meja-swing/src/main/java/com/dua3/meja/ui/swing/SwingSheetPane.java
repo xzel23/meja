@@ -98,9 +98,7 @@ final class SwingSheetPane extends JScrollPane {
         setRowHeaderView(bottomLeftQuadrant);
         setCorner(ScrollPaneConstants.UPPER_LEADING_CORNER, topLeftQuadrant);
 
-        getViewport().addChangeListener(evt -> {
-            updateDimensionWithViewportSize();
-        });
+        getViewport().addChangeListener(evt -> updateDimensionWithViewportSize());
         setViewportBorder(BorderFactory.createEmptyBorder());
     }
 

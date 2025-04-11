@@ -389,28 +389,24 @@ public interface Cell {
         }
 
         arg = getWorkbook().cache(arg);
-        if (arg instanceof Number n) {
-            set(n);
-        } else if (arg instanceof Boolean b) {
-            set(b);
-        } else if (arg instanceof LocalDateTime ldt) {
-            set(ldt);
-        } else if (arg instanceof LocalDate ld) {
-            set(ld);
-        } else if (arg instanceof RichText rt) {
-            set(rt);
-        } else if (arg instanceof Date date) {
-            LocalDateTime dt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
-            LocalTime t = dt.toLocalTime();
-            if (t.toNanoOfDay() == 0) {
-                // set to DATE
-                set(dt.toLocalDate());
-            } else {
-                // set to DATE_TIME
-                set(dt);
+        switch (arg) {
+            case Number n -> set(n);
+            case Boolean b -> set(b);
+            case LocalDateTime ldt -> set(ldt);
+            case LocalDate ld -> set(ld);
+            case RichText rt -> set(rt);
+            case Date date -> {
+                LocalDateTime dt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+                LocalTime t = dt.toLocalTime();
+                if (t.toNanoOfDay() == 0) {
+                    // set to DATE
+                    set(dt.toLocalDate());
+                } else {
+                    // set to DATE_TIME
+                    set(dt);
+                }
             }
-        } else {
-            set(String.valueOf(arg));
+            default -> set(String.valueOf(arg));
         }
         return this;
     }

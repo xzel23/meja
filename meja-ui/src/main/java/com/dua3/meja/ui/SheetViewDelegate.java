@@ -279,7 +279,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param sheet the sheet model to be displayed and managed
      * @param owner the sheet view component that owns this delegate
      */
-    public SheetViewDelegate(Sheet sheet, SheetView owner) {
+    protected SheetViewDelegate(Sheet sheet, SheetView owner) {
         this.sheet = sheet;
         this.owner = owner;
         this.displayScale = owner.getDisplayScale();

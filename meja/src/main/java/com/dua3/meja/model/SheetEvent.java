@@ -132,7 +132,7 @@ public interface SheetEvent extends Event<Sheet> {
          * @param valueOld the old value in the cell, may be null
          * @param valueNew the new value in the cell, may be null
          */
-        public CellChanged(Sheet source, String type, Cell cell, @Nullable V valueOld, @Nullable V valueNew) {
+        protected CellChanged(Sheet source, String type, Cell cell, @Nullable V valueOld, @Nullable V valueNew) {
             super(source, type, valueOld, valueNew);
             this.cell = cell;
         }

@@ -150,8 +150,8 @@ public interface SheetView {
         /**
          * Represents the action to move the selection to the top left cell of the sheet.
          */
-        MOVE_HOME(SheetView::moveHome), /**
-         /**
+        MOVE_HOME(SheetView::moveHome),
+        /**
          * Represents the action to move the selection to the bottom right cell of the sheet.
          */
         MOVE_END(SheetView::moveEnd),
@@ -246,7 +246,13 @@ public interface SheetView {
      * @param endRow      the end row (exclusive)
      * @param endColumn   the end column (exclusive)
      */
-    record SheetArea(com.dua3.utility.math.geometry.Rectangle2f rect, int startRow, int startColumn, int endRow, int endColumn) {
+    record SheetArea(
+            com.dua3.utility.math.geometry.Rectangle2f rect,
+            int startRow,
+            int startColumn,
+            int endRow,
+            int endColumn
+    ) {
         /**
          * A predefined constant representing an empty sheet area.
          */

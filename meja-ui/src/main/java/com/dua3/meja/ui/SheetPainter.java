@@ -161,7 +161,7 @@ public class SheetPainter {
      * @param va the visible area of the sheet where labels should be drawn
      */
     protected void drawLabels(Graphics g, SheetView.SheetArea va) {
-       // draw row labels
+        // draw row labels
         for (int i = va.startRow(); i < va.endRow(); i++) {
             float x = -getRowLabelWidth();
             float w = getRowLabelWidth();

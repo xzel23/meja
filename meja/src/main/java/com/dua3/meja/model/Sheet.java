@@ -444,7 +444,7 @@ public interface Sheet extends Iterable<Row> {
      * Returns an iterator over the rows in this sheet. The iterator traverses the rows
      * sequentially from {@link #getFirstRowNum()} to {@link #getLastRowNum()}, inclusive.
      * Empty rows within this range are included in the iteration.
-     * 
+     *
      * <p>This method is part of the {@link Iterable} interface implementation, allowing
      * the sheet to be used in for-each loops: {@code for (Row row : sheet) {...}}</p>
      *

@@ -80,7 +80,7 @@ public class GenericRow extends AbstractRow<GenericSheet, GenericRow, GenericCel
     }
 
     private int reserve(int col) {
-        int n = Math.max (0, col - cells.size() + 1);
+        int n = Math.max(0, col - cells.size() + 1);
         if (n > 0) {
             GenericCellStyle cellStyle = getSheet().getWorkbook().getDefaultCellStyle();
             cells.ensureCapacity(col + 1);

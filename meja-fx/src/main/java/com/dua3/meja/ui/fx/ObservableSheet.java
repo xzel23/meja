@@ -56,7 +56,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
         this.currentCellProperty = new SimpleObjectProperty<>(sheet.getCurrentCell());
 
         currentCellProperty.addListener((v, o, n) -> {
-            if (n != o || (n.getRowNumber() != o.getRowNumber() || n.getColumnNumber() != o.getColumnNumber()) ) {
+            if (n != o || (n.getRowNumber() != o.getRowNumber() || n.getColumnNumber() != o.getColumnNumber())) {
                 sheet.setCurrentCell(n);
             }
         });
@@ -168,7 +168,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
                     LOG.trace("zoom changed from {} to {}", zoomProperty.getValue(), zoomChanged.newValue());
                     zoomProperty.setValue(zoomChanged.newValue());
                 }
-                case SheetEvent.ColumnsAdded columnsAdded-> {
+                case SheetEvent.ColumnsAdded columnsAdded -> {
                     LOG.trace("columns added");
                     columnCountProperty.setValue(sheet.getColumnCount());
                 }
@@ -187,7 +187,8 @@ public class ObservableSheet extends ObservableListBase<Row> {
                     LOG.trace("layout changed");
                     layoutListeners.forEach(listener -> listener.accept(sheet));
                 }
-                default -> {}}
+                default -> {}
+            }
         }
 
         @Override

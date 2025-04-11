@@ -23,7 +23,7 @@ import java.io.IOException;
  * The {@code FxExcelViewer} class provides a JavaFX application for viewing
  * spreadsheet files. This application allows users to open and displayExcel files.
  */
-public class FxExcelViewer {
+public final class FxExcelViewer {
 
     private static final String APP_NAME = "Meja Spreadsheet Viewer";
     private static final String APP_VERSION = "0.1";

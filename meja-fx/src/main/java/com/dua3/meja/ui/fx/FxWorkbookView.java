@@ -74,7 +74,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
             }
         });
         currentViewZoomProperty.addListener((v, o, n) -> {
-           getCurrentView().map(FxSheetView::getSheet).ifPresent(sheet -> sheet.setZoom(n.floatValue()));
+            getCurrentView().map(FxSheetView::getSheet).ifPresent(sheet -> sheet.setZoom(n.floatValue()));
         });
 
         setCenter(content);

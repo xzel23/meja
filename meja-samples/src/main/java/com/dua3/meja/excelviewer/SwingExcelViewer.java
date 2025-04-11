@@ -114,7 +114,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
                 System.exit(STATUS_ERROR);
             }
 
-            File file = argList.isEmpty() ? null : new File(argList.get(0));
+            File file = argList.isEmpty() ? null : new File(argList.getFirst());
 
             viewer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             viewer.setSize(600, 400);
@@ -395,7 +395,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
                 @SuppressWarnings("unchecked")
                 List<File> files = (List<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
                 if (files.size() == 1) {
-                    URI uri = files.get(0).toURI();
+                    URI uri = files.getFirst().toURI();
                     Optional<Workbook> workbook = MejaSwingHelper.openWorkbook(this, uri);
                     if (workbook.isPresent()) {
                         setWorkbook(workbook.get());

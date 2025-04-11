@@ -296,7 +296,7 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
      * @param columnNumber the column number to mark as used
      */
     void setColumnUsed(int columnNumber) {
-        if (columnNumber > numberOfColumns - 1 ) {
+        if (columnNumber > numberOfColumns - 1) {
             int oldLast = getLastColNum();
             numberOfColumns = columnNumber + 1;
             columnsAdded(oldLast, numberOfColumns);

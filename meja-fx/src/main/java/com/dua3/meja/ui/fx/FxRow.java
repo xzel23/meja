@@ -348,8 +348,6 @@ public class FxRow extends IndexedCell<FxRow.Index> {
 
         int i = index.rowNumber();
 
-
-
         float x = svDelegate.getColumnPos(segmentViewDelegate.getStartColumn());
         float y = svDelegate.getRowPos(i);
         float h = row.getRowHeight();

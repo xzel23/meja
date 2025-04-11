@@ -24,6 +24,7 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
      */
     protected AbstractCell(R row) {
         this.row = row;
+        //noinspection unchecked
         this.logicalCell = (C) this;
     }
 
@@ -90,6 +91,7 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
      * This method is typically called internally when a merged region is unmerged or when a cell is updated in a merged region.
      */
     protected void removedFromMergedRegion() {
+        //noinspection unchecked
         this.logicalCell = (C) this;
         setHorizontalSpan(1);
         setVerticalSpan(1);
