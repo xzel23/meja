@@ -31,9 +31,6 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -373,7 +370,6 @@ public interface Cell {
      * <li>{@link Boolean}
      * <li>{@link LocalDateTime}
      * <li>{@link LocalDate}
-     * <li>{@link Date} (deprecated)
      * <li>{@link String}
      * <li>{@link RichText}
      * </ul>
@@ -395,17 +391,6 @@ public interface Cell {
             case LocalDateTime ldt -> set(ldt);
             case LocalDate ld -> set(ld);
             case RichText rt -> set(rt);
-            case Date date -> {
-                LocalDateTime dt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
-                LocalTime t = dt.toLocalTime();
-                if (t.toNanoOfDay() == 0) {
-                    // set to DATE
-                    set(dt.toLocalDate());
-                } else {
-                    // set to DATE_TIME
-                    set(dt);
-                }
-            }
             default -> set(String.valueOf(arg));
         }
         return this;

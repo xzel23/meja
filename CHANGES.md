@@ -4,6 +4,11 @@
 
 - IMPORTANT: will require Java 21. Stay on 7.x if you are still on Java 17. 7.x will receive bugfixes until the next
   Java LTS version is released (Java 25).
+- BREAKING: when passing `java.util.Date` as argument to `cell.set(Object)`, the cell will be set to 
+  the `Date` object's `toString()` value; previously, the `Date`object was inspected and the
+  value would be converted to either a `LocalTime` or a `LocalDateTime`instance before setting
+  the cell value
+- code cleanup after raising the Java version
 
 ## Version 7.2.2
 
