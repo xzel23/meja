@@ -29,8 +29,9 @@ dependencyResolutionManagement {
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.1.7")
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
+            plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
 
-            version("dua3-utility", "17.1.2")
+            version("dua3-utility", "17.1.3")
             version("dua3-fx", "1.2.1")
             version("ikonli", "12.3.1")
             version("jspecify", "1.0.0")

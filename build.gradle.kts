@@ -28,6 +28,7 @@ plugins {
     alias(libs.plugins.test.logger)
     alias(libs.plugins.spotbugs)
     alias(libs.plugins.cabe)
+    alias(libs.plugins.forbiddenapis)
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -71,6 +72,7 @@ subprojects {
     apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "com.github.spotbugs")
     apply(plugin = "com.dua3.cabe")
+    apply(plugin = "de.thetaphi.forbiddenapis")
 
     java {
         targetCompatibility = JavaVersion.VERSION_17
@@ -80,8 +82,20 @@ subprojects {
         withSourcesJar()
     }
 
-    tasks.withType<JavaCompile>().configureEach {
-        options.compilerArgs.add("-Xlint:-module")
+    tasks.compileJava {
+        options.encoding = "UTF-8"
+        options.compilerArgs.add("-Xlint:deprecation")
+        options.compilerArgs.add("-Xlint:module")
+        options.javaModuleVersion.set(provider { project.version as String })
+        options.release.set(java.targetCompatibility.majorVersion.toInt())
+    }
+
+    tasks.compileTestJava {
+        options.encoding = "UTF-8"
+    }
+
+    tasks.javadoc {
+        options.encoding = "UTF-8"
     }
 
     cabe {
@@ -208,6 +222,12 @@ subprojects {
     signing {
         isRequired = isReleaseVersion && gradle.taskGraph.hasTask("publish")
         sign(publishing.publications["maven"])
+    }
+
+    // === FORBIDDEN APIS ===
+    forbiddenApis {
+        bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
+        ignoreFailures = false
     }
 
     // === SPOTBUGS ===
