@@ -80,7 +80,8 @@ public final class TableModelDemo extends JFrame {
 
         table.setModel(MejaSwingHelper.getTableModel(sheet, TableOptions.FIRST_ROW_IS_HEADER, TableOptions.EDITABLE));
 
-        new Thread(() -> {
+        // Use virtual thread for more efficient I/O operations
+        Thread.startVirtualThread(() -> {
             for (int i = 1; i < 50; i++) {
                 sheet.createRow(i, LocalDateTime.now());
                 try {
@@ -89,7 +90,7 @@ public final class TableModelDemo extends JFrame {
                     Thread.currentThread().interrupt();
                 }
             }
-        }).start();
+        });
     }
 
 }
