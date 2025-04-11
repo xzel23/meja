@@ -1,5 +1,15 @@
 # Meja Changelog
 
+## Version 8.0.0 (next release)
+
+- IMPORTANT: will require Java 21. Stay on 7.x if you are still on Java 17. 7.x will receive bugfixes until the next
+  Java LTS version is released (Java 25).
+
+## Version 7.2.2
+
+- bugfix release; fixes a module dependency and a possible Java 17 incompatibility
+- gradle build: forbiddenapis plugin added; fixed up some build file issues
+
 ## Version 7.2.1
 
 - Apache POI 5.4.1; update other dependencies

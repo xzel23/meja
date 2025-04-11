@@ -12,8 +12,9 @@ indonesian word for table (as in furniture).
 
 ## Using Meja in your projects
 
-* The Minimal Java version is **Java 17**.
-* **Java 21/JavaFX 21** is needed to use the **JavaFX related modules**.
+* The Minimal Java version for the upcoming version 5 will be **Java 21**.
+* The Java 17 compatible version 4.x will be maintained until the next LTS Java version (Java 25) is released.
+  Note that **Java 21/JavaFX 21** is already needed in version 4.x for all JavaFX related modules.
 
 Meja is available in the Maven central repository.
 
