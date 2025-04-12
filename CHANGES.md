@@ -1,6 +1,10 @@
 # Meja Changelog
 
-## Version 8.0.0 (next release)
+## Version 8.0.1
+
+- updated Gradle wrapper so that meja can be built on Java 24
+
+## Version 8.0.0
 
 - IMPORTANT: will require Java 21. Stay on 7.x if you are still on Java 17. 7.x will receive bugfixes until the next
   Java LTS version is released (Java 25).
