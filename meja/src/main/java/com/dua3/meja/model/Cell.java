@@ -377,7 +377,6 @@ public interface Cell {
      * @param arg the value
      * @return this cell
      */
-    @SuppressWarnings("UseOfObsoleteDateTimeApi")
     default Cell set(@Nullable Object arg) {
         if (arg == null) {
             clear();
