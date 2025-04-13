@@ -644,16 +644,18 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
      */
     private String getFormattedText(Locale locale) {
         // is there a special date format?
-        if (getResultType() == CellType.DATE) {
-            DateTimeFormatter df = getCellStyle().getLocaleAwareDateFormat(locale);
-            if (df != null) {
-                return df.format(getDate());
+        switch (getResultType()) {
+            case DATE -> {
+                DateTimeFormatter df = getCellStyle().getLocaleAwareDateFormat(locale);
+                if (df != null) {
+                    return df.format(getDate());
+                }
             }
-        }
-        if (getResultType() == CellType.DATE_TIME) {
-            DateTimeFormatter df = getCellStyle().getLocaleAwareDateTimeFormat(locale);
-            if (df != null) {
-                return df.format(getDateTime());
+            case DATE_TIME -> {
+                DateTimeFormatter df = getCellStyle().getLocaleAwareDateTimeFormat(locale);
+                if (df != null) {
+                    return df.format(getDateTime());
+                }
             }
         }
 

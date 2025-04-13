@@ -32,8 +32,11 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.jspecify.annotations.Nullable;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.FormatStyle;
+import java.time.temporal.ChronoField;
 import java.util.Locale;
 
 /**
@@ -390,9 +393,63 @@ public abstract class PoiCellStyle implements CellStyle {
 
     @Nullable
     DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
-        return poiCellStyle.getDataFormat() == 0x0e
-                ? DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
-                : null;
+        switch (poiCellStyle.getDataFormat()) {
+            case 0x0e, 0x0f, 0x2d -> { return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale); }
+            case 0x1e -> { return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale); }
+        }
+        String formatString = poiCellStyle.getDataFormatString();
+        if (formatString.startsWith("[")) {
+            int i = formatString.indexOf(']');
+            formatString = formatString.substring(i + 1);
+        }
+        if (formatString.endsWith(";@")) {
+            formatString = formatString.substring(0, formatString.length() - 2);
+        }
+
+        // Handle specific format patterns
+        return switch (formatString) {
+            case "yyyy\\-mm\\-dd" -> DateTimeFormatter.ISO_LOCAL_DATE;
+            case "d/m" -> createDayMonthFormat(locale);
+            case "dddd" -> DateTimeFormatter.ofPattern("EEEE").withLocale(locale);
+            case "m/d/yy", "d/m/yy", "dd/mm/yy" -> DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
+            case "m/d/yyyy", "d/m/yyyy" -> DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
+            default -> null;
+        };
+    }
+
+    private static DateTimeFormatter createDayMonthFormat(Locale locale) {
+        // determine separator
+        LocalDate sampleDate = LocalDate.of(2023, 4, 5); // Jan 2, 2023
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
+        String formattedDate = sampleDate.format(formatter);
+
+        String separator = "/";
+        for (int i = 0; i < formattedDate.length() - 1; i++) {
+            char c = formattedDate.charAt(i);
+            if (!Character.isDigit(c) && !Character.isLetter(c)) {
+                separator = String.valueOf(c);
+                break;
+            }
+        }
+
+        // determine the order of fields
+        boolean isMonthFirst = formattedDate.indexOf('4') < formattedDate.indexOf('5');
+
+        DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
+        if (isMonthFirst) {
+            builder.appendValue(ChronoField.MONTH_OF_YEAR, 2);
+            builder.appendLiteral(separator);
+            builder.appendValue(ChronoField.DAY_OF_MONTH, 2);
+        } else {
+            builder.appendValue(ChronoField.DAY_OF_MONTH, 2);
+            builder.appendLiteral(separator);
+            builder.appendValue(ChronoField.MONTH_OF_YEAR, 2);
+            if (separator.equals(".") && locale.getLanguage().equals("de")) {
+                builder.appendLiteral(separator);
+            }
+        }
+        return builder.toFormatter(locale);
     }
 
     @Nullable

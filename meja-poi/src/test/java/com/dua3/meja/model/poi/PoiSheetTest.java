@@ -39,7 +39,7 @@ public class PoiSheetTest {
         PoiWorkbook wb = PoiWorkbookFactory.instance().create();
         Sheet s = wb.createSheet("Test");
 
-        Row r = s.createRow("a", 123.5, null, LocalDate.of(2023, 1, 1), true);
+        Row r = s.createRow("a", 123.5, null, LocalDate.of(2023, 2, 1), true);
 
         assertEquals(1, s.getRowCount());
 
@@ -61,10 +61,10 @@ public class PoiSheetTest {
         // Excel does not have a distinct cell type for dates, so dates are detected using value _and_ formatting.
         // Meja automatically sets a date format when a LocalDate is passed. This test makes sure that locale dependent
         // formatting works.
-        assertEquals(LocalDate.of(2023, 1,1), c3.getDate());
-        assertEquals("Jan 1, 2023", c3.toString(Locale.US));
-        assertEquals("01.01.2023", c3.toString(Locale.GERMANY));
-        assertEquals("1 janv. 2023", c3.toString(Locale.FRANCE));
+        assertEquals(LocalDate.of(2023, 2,1), c3.getDate());
+        assertEquals("2/1/23", c3.toString(Locale.US));
+        assertEquals("01.02.23", c3.toString(Locale.GERMANY));
+        assertEquals("01/02/2023", c3.toString(Locale.FRANCE));
 
         Cell c4 = r.getCell(4);
         assertEquals(CellType.BOOLEAN, c4.getCellType());
