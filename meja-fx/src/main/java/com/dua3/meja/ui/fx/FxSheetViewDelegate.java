@@ -38,8 +38,6 @@ public class FxSheetViewDelegate extends SheetViewDelegate {
 
     @Override
     public void onNext(SheetEvent item) {
-        PlatformHelper.runLater(() -> {
-            super.onNext(item);
-        });
+        PlatformHelper.runLater(() -> super.onNext(item));
     }
 }
