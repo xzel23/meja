@@ -316,21 +316,23 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public boolean setCurrentCell(Cell cell) {
-        LOG.trace("setting current cell to {}", cell::getCellRef);
+    public boolean setCurrentCell(@Nullable Cell cell) {
+        LOG.trace("setting current cell to {}", () -> cell == null ? null : cell.getCellRef());
 
         //noinspection ObjectEquality
-        LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
+        LangUtil.check(cell == null || cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
         Cell old = getCurrentCell();
-
-        cell = cell.getLogicalCell();
         if (cell == old) {
             return false;
         }
 
-        ((PoiCell) cell).poiCell.setAsActiveCell();
-        activeCellChanged(old, cell);
+        if (cell instanceof PoiCell poiCell) {
+            poiCell.poiCell.setAsActiveCell();
+            activeCellChanged(old, cell.getLogicalCell());
+        } else {
+            activeCellChanged(old, null);
+        }
 
         return true;
     }

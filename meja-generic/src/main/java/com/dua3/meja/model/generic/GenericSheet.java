@@ -220,21 +220,29 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
     }
 
     @Override
-    public boolean setCurrentCell(Cell cell) {
-        LOG.trace("setting current cell to {}", cell::getCellRef);
+    public boolean setCurrentCell(@Nullable Cell cell) {
+        LOG.trace("setting current cell to {}", () -> cell == null ? null : cell.getCellRef());
 
         //noinspection ObjectEquality
-        LangUtil.check(cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
+        LangUtil.check(cell == null || cell.getSheet() == this, "Cannot set cell from another sheet as current cell.");
 
         Cell old = getCurrentCell();
         if (cell == old) {
             return false;
         }
 
-        currentRow = cell.getRowNumber();
-        currentColumn = cell.getColumnNumber();
+        if (cell == null) {
+            currentRow = 0;
+            currentColumn = 0;
 
-        activeCellChanged(old, cell.getLogicalCell());
+            activeCellChanged(old, null);
+        } else {
+            currentRow = cell.getRowNumber();
+            currentColumn = cell.getColumnNumber();
+
+            activeCellChanged(old, cell.getLogicalCell());
+        }
+
         return true;
     }
 

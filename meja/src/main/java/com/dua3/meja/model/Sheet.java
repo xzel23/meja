@@ -396,7 +396,7 @@ public interface Sheet extends Iterable<Row> {
      * @see #getCurrentCell()
      * @see #setCurrentCell(int, int)
      */
-    boolean setCurrentCell(Cell cell);
+    boolean setCurrentCell(@Nullable Cell cell);
 
     /**
      * Convenience method to set the current cell by its row and column coordinates.
