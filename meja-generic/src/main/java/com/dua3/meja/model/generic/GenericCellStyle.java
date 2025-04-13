@@ -113,7 +113,7 @@ public class GenericCellStyle implements CellStyle {
                 if (dataFormat.isEmpty()) {
                     dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
                 } else {
-                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat);
+                    dateFormatter = DateTimeFormatter.ofPattern(dataFormat, locale);
                 }
             } catch (@SuppressWarnings("unused") IllegalArgumentException e) {
                 LOGGER.warn("not a date pattern: '{}'", dataFormat);
