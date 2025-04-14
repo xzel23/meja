@@ -425,9 +425,12 @@ public class FxSheetView extends StackPane implements SheetView {
         }
 
         try (var __ = getSheet().readLock("FxSheetView.updateContent()")) {
+            updating = true;
             updateLayout();
             sheetScaleXProperty.set(delegate.getScale().sx());
             sheetScaleYProperty.set(delegate.getScale().sy());
+        } finally {
+            updating = false;
         }
     }
 
