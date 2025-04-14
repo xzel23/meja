@@ -2,7 +2,10 @@
 
 ## Version 8.0.1
 
+- fix localized date formatting for Excel cells
 - updated Gradle wrapper so that meja can be built on Java 24
+- update dependencies
+- code cleanup
 
 ## Version 8.0.0
 

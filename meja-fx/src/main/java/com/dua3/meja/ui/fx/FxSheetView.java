@@ -501,8 +501,8 @@ public class FxSheetView extends StackPane implements SheetView {
      */
     public int getColumnFromXInPoints(double x) {
         x -= delegate.getRowLabelWidthInPoints();
-        boolean isLeft = x <= delegate.getSplitXInPoints();
-        if (!isLeft) {
+        boolean isRight = x > delegate.getSplitXInPoints();
+        if (isRight) {
             x += hScrollbar.getValue();
         }
         return delegate.getColumnNumberFromX((float) x, false);
@@ -516,8 +516,8 @@ public class FxSheetView extends StackPane implements SheetView {
      */
     public int getRowFromYInPoints(double y) {
         y -= delegate.getColumnLabelHeightInPoints();
-        boolean isTop = y <= delegate.getSplitYInPoints();
-        if (!isTop) {
+        boolean isBottom = y > delegate.getSplitYInPoints();
+        if (isBottom) {
             y += vScrollbar.getValue();
         }
         return delegate.getRowNumberFromY((float) y, false);
@@ -531,9 +531,9 @@ public class FxSheetView extends StackPane implements SheetView {
      */
     public int getColumnFromXInPixels(double x) {
         x -= delegate.getRowLabelWidthInPixels();
-        boolean isLeft = x <= delegate.getSplitXInPixels();
+        boolean isRight = x > delegate.getSplitXInPixels();
         x /= delegate.getScale().sx();
-        if (!isLeft) {
+        if (isRight) {
             x += hScrollbar.getValue();
         }
         return delegate.getColumnNumberFromX((float) x, false);
@@ -547,9 +547,9 @@ public class FxSheetView extends StackPane implements SheetView {
      */
     public int getRowFromYInPixels(double y) {
         y -= delegate.getColumnLabelHeightInPixels();
-        boolean isTop = y <= delegate.getSplitYInPixels();
+        boolean isBottom = y > delegate.getSplitYInPixels();
         y /= delegate.getScale().sy();
-        if (!isTop) {
+        if (isBottom) {
             y += vScrollbar.getValue();
         }
         return delegate.getRowNumberFromY((float) y, false);

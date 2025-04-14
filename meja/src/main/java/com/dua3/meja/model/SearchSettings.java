@@ -42,6 +42,6 @@ public record SearchSettings(
      * @return a new SearchSettings object with the specified options
      */
     public static SearchSettings of(SearchOptions... options) {
-        return SearchSettings.of(List.of(options));
+        return of(List.of(options));
     }
 }

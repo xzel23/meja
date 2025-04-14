@@ -459,9 +459,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public void onNext(SheetEvent item) {
         switch (item.type()) {
             case SheetEvent.ZOOM_CHANGED, SheetEvent.LAYOUT_CHANGED, SheetEvent.ROWS_ADDED,
-                 SheetEvent.COLUMNS_ADDED -> {
-                owner.updateContent();
-            }
+                 SheetEvent.COLUMNS_ADDED -> owner.updateContent();
             case SheetEvent.SPLIT_CHANGED -> {
                 owner.updateContent();
                 owner.scrollToCurrentCell();
@@ -480,9 +478,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
                     owner.repaintCell(newCell);
                 }
             }
-            case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED -> {
-                owner.repaintCell(((SheetEvent.CellChanged<?>) item).cell());
-            }
+            case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED -> owner.repaintCell(((SheetEvent.CellChanged<?>) item).cell());
             default -> {
             }
         }
