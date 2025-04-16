@@ -32,6 +32,7 @@ import java.util.Vector;
  */
 public class SettingsDialog extends JDialog {
 
+    // initialize with an empty result
     private Arguments result = Arguments.empty();
 
     @SuppressWarnings({"rawtypes", "unchecked"})
