@@ -23,6 +23,7 @@ import com.dua3.meja.ui.WorkbookView;
 import javafx.application.Platform;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventTarget;
@@ -48,8 +49,8 @@ import java.util.concurrent.Flow;
 public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetView>, Flow.Subscriber<WorkbookEvent> {
     private static final Logger LOG = LogManager.getLogger(FxWorkbookView.class);
 
-    private transient @Nullable Workbook workbook;
     private final TabPane content;
+    private final ObjectProperty<@Nullable Workbook> workbookProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<FxSheetView> currentViewProperty = new SimpleObjectProperty<>();
     private final FloatProperty currentViewZoomProperty = new SimpleFloatProperty();
 
@@ -60,6 +61,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
         content = new TabPane();
         content.setSide(Side.BOTTOM);
         content.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> {
+            Workbook workbook = workbookProperty.get();
             if (workbook != null && n != null && n.getContent() instanceof FxSheetView sv) {
                 workbook.setCurrentSheet(sv.getSheet());
                 currentViewProperty.set(sv);
@@ -67,6 +69,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
             }
         });
         currentViewProperty.addListener((v, o, n) -> {
+            Workbook workbook = workbookProperty.get();
             if (workbook != null) {
                 Sheet sheet = n.getSheet();
                 workbook.setCurrentSheet(sheet);
@@ -165,7 +168,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     @Override
     public Optional<Workbook> getWorkbook() {
-        return Optional.ofNullable(workbook);
+        return Optional.ofNullable(workbookProperty.get());
     }
 
     /**
@@ -198,7 +201,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
             this.subscription = null;
         }
 
-        this.workbook = workbook;
+        workbookProperty.set(workbook);
 
         if (workbook != null) {
             content.getTabs().setAll(
@@ -249,5 +252,13 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
     public void onComplete() {
         LOG.debug("subscription completed");
         this.subscription = null;
+    }
+
+    /**
+     * Get the workbook property (readonly).
+     * @return the readonly property for the workbook
+     */
+    public ReadOnlyObjectProperty<@Nullable Workbook> workbookProperty() {
+        return workbookProperty;
     }
 }

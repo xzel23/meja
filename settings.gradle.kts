@@ -31,7 +31,7 @@ dependencyResolutionManagement {
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
 
-            version("dua3-utility", "18.1.0")
+            version("dua3-utility", "18.1.1-SNAPSHOT")
             version("dua3-fx", "1.3.1")
             version("ikonli", "12.3.1")
             version("jspecify", "1.0.0")
