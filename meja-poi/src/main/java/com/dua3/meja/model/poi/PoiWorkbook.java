@@ -102,7 +102,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * The {@code FactorWidth} class is a utility class responsible for calculating
      * and maintaining the width factor for a workbook. The width factor is used
      * to determine the cell dimensions. The calculation uses Excel's weird units,
-     * specifically 1/256ths of the '0' character width of the default workbbok font.
+     * specifically 1/256ths of the default workbbok font's width of the '0' character.
      *
      * <p>This class is designed to handle both graphical and headless environments,
      * ensuring consistent behavior for text dimension calculations. In headless mode,
@@ -110,12 +110,25 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * different versions.
      */
     private static class FactorWidth {
-        private com.dua3.utility.text.Font font;
+        /**
+         * Width of "0" in the Arial 10 pt font.
+         */
+        private static final float WIDTH_OF_ZERO_ARIAL_10 = 5.5615234375f;
+        /**
+         * Width of "0" in the Calibri 10 pt font.
+         */
+        private static final float WIDTH_OF_ZERO_CALIBRI = 5.068359375f;
+        /**
+         * A generic value used for all other fonts.
+         */
+        private static final float WIDTH_OF_ZERO_GENERIC = 6.0f;
+
+        private com.dua3.utility.text.@Nullable Font font;
         private float factor;
 
         FactorWidth() {
             this.font = null;
-            this.factor = 7.0f / 256.0f;
+            this.factor = 0.0f;
         }
 
         float updateAndGet(com.dua3.utility.text.Font font) {
@@ -127,11 +140,11 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             if (isHeadless) {
                 // use a constant value in headless mode; this also ensures stable unit tests
                 if (font.getFamily().startsWith("Arial")) {
-                    charZeroWidth = 5.5615234375f * font.getSizeInPoints() / 10.0f;
+                    charZeroWidth = WIDTH_OF_ZERO_ARIAL_10 * font.getSizeInPoints() / 10.0f;
                 } else if (font.getFamily().startsWith("Calibri")) {
-                    charZeroWidth = 5.068359375f  * font.getSizeInPoints() / 10.0f;
+                    charZeroWidth = WIDTH_OF_ZERO_CALIBRI * font.getSizeInPoints() / 10.0f;
                 } else {
-                    charZeroWidth = 6.0f;
+                    charZeroWidth = WIDTH_OF_ZERO_GENERIC;
                 }
             } else {
                 charZeroWidth = FontUtil.getInstance().getTextDimension("0", font).width();
