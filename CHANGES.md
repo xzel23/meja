@@ -5,6 +5,11 @@
 - IMPORTANT: will require Java 21. Stay on 7.x if you are still on Java 17. 7.x will receive bugfixes until the next
   Java LTS version is released (Java 25).
 
+## Version 7.2.3
+
+- improve column width calculations in headless mode for the known Excel default fonts Arial and Calibri (backported)
+- enable previously disabled locale dependent test
+
 ## Version 7.2.2
 
 - bugfix release; fixes a module dependency and a possible Java 17 incompatibility
