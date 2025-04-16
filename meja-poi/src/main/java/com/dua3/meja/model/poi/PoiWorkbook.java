@@ -28,6 +28,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.options.Arguments;
+import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.HyperlinkType;
@@ -77,6 +78,9 @@ import java.util.stream.StreamSupport;
 public abstract class PoiWorkbook extends AbstractWorkbook {
 
     private static final Logger LOGGER = LogManager.getLogger(PoiWorkbook.class);
+
+    private static final boolean isHeadless = Boolean.getBoolean("java.awt.headless");
+
     /**
      * The underlying Apache POI {@link Workbook} instance.
      */
@@ -93,6 +97,56 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      * Mapping from cellstyle names to internat Apache POI cell style numbers.
      */
     protected final Map<String, Short> cellStyles = new HashMap<>();
+
+    /**
+     * The {@code FactorWidth} class is a utility class responsible for calculating
+     * and maintaining the width factor for a workbook. The width factor is used
+     * to determine the cell dimensions. The calculation uses Excel's weird units,
+     * specifically 1/256ths of the '0' character width of the default workbbok font.
+     *
+     * <p>This class is designed to handle both graphical and headless environments,
+     * ensuring consistent behavior for text dimension calculations. In headless mode,
+     * default width values are used for the two known default fonts Excel used in
+     * different versions.
+     */
+    private static class FactorWidth {
+        private com.dua3.utility.text.Font font;
+        private float factor;
+
+        FactorWidth() {
+            this.font = null;
+            this.factor = 7.0f / 256.0f;
+        }
+
+        float updateAndGet(com.dua3.utility.text.Font font) {
+            if (font == this.font) {
+                return factor;
+            }
+
+            float charZeroWidth;
+            if (isHeadless) {
+                // use a constant value in headless mode; this also ensures stable unit tests
+                if (font.getFamily().startsWith("Arial")) {
+                    charZeroWidth = 5.56f;
+                } else if (font.getFamily().startsWith("Calibri")) {
+                    charZeroWidth = 7.0f;
+                } else {
+                    charZeroWidth = 7.0f;
+                }
+            } else {
+                charZeroWidth = FontUtil.getInstance().getTextDimension("0", font).width();
+            }
+            this.font = font;
+            this.factor = charZeroWidth / 256.0f;
+
+            return factor;
+        }
+    }
+
+    /**
+     * Factor to convert between Excel widths (measured in characters) and points.
+     */
+    private final FactorWidth factorWidth = new FactorWidth();
 
     /**
      * Construct a new instance.
@@ -448,6 +502,16 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         Iterator<? extends PoiCellStyle> iter = DataUtil.map(cellStyles.keySet().iterator(), this::getCellStyle);
         Spliterator<? extends PoiCellStyle> spliterator = Spliterators.spliterator(iter, cellStyles.size(), 0);
         return StreamSupport.stream(spliterator, false);
+    }
+
+    /**
+     * Calculates and retrieves the width factor for the default cell style's font.
+     * This method updates the factor based on the font characteristics, ensuring proper rendering.
+     *
+     * @return the calculated width factor as a {@code float}.
+     */
+    public float getFactorWidth() {
+        return factorWidth.updateAndGet(getDefaultCellStyle().getFont());
     }
 
     /**

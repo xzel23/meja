@@ -37,8 +37,6 @@ import java.util.Optional;
 public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(PoiSheet.class);
 
-    private static final float FACTOR_WIDTH = 7.0f / 256;
-
     /**
      * Represents the underlying workbook associated with this sheet instance.
      * <p>
@@ -254,11 +252,11 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     private float poiColumnWidthToPoints(int poiWidth) {
-        return poiWidth * FACTOR_WIDTH;
+        return poiWidth * workbook.getFactorWidth();
     }
 
     private int pointsToPoiColumnWidth(float width) {
-        return Math.round(width / FACTOR_WIDTH);
+        return Math.round(width / workbook.getFactorWidth());
     }
 
     @Override
