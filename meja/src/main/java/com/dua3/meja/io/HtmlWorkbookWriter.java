@@ -54,6 +54,22 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     private HtmlWorkbookWriter() {
     }
 
+    private enum Display {
+        BLOCK,
+        NONE;
+
+        private final String value;
+
+        Display() {
+            this.value = name().toLowerCase(Locale.ROOT);
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
     /**
      * Create instance.
      *
@@ -83,7 +99,9 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
         long processedRows = 0;
         for (Sheet sheet : workbook) {
-            processedRows = writeSheet(sheet, out, locale, totalRows, processedRows, updateProgress);
+            Display display = (workbook.getSheetCount() < 2) || (sheet == workbook.getCurrentSheet().orElse(null))
+                    ? Display.BLOCK : Display.NONE;
+            processedRows = writeSheet(sheet, out, locale, totalRows, processedRows, updateProgress, display);
         }
     }
 
@@ -125,7 +143,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     }
 
     /**
-     * Write sheet as HTML.
+     * Write a single sheet as HTML.
      * <p>
      * <em>NOTE:</em> This method does not add HTML header and body tags.
      *
@@ -134,7 +152,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param locale the locale to use
      */
     public void writeSheet(Sheet sheet, Formatter out, Locale locale) {
-        writeSheet(sheet, out, locale, sheet.getRowCount(), 0L, p -> {});
+        writeSheet(sheet, out, locale, sheet.getRowCount(), 0L, p -> {}, Display.BLOCK);
     }
 
     private static String id(CellStyle style) {
@@ -158,24 +176,22 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * <p>
      * <em>NOTE:</em> This method does not add HTML header and body tags.
      *
-     * @param sheet           the sheet to write
-     * @param out             the Formatter to write to
-     * @param locale          the locale to use
-     * @param totalRows       the total number of rows in the sheet
-     * @param processedRows   the number of rows already processed
-     * @param updateProgress  a DoubleConsumer that updates the progress (value between 0 and 1)
+     * @param sheet          the sheet to write
+     * @param out            the Formatter to write to
+     * @param locale         the locale to use
+     * @param totalRows      the total number of rows in the sheet
+     * @param processedRows  the number of rows already processed
+     * @param updateProgress a DoubleConsumer that updates the progress (value between 0 and 1)
+     * @param display        the {@link Display} mode to use
      * @return the number of rows processed after writing the sheet
      */
-    private static long writeSheet(Sheet sheet, Formatter out, Locale locale, long totalRows, long processedRows, DoubleConsumer updateProgress) {
+    private static long writeSheet(Sheet sheet, Formatter out, Locale locale, long totalRows, long processedRows, DoubleConsumer updateProgress, Display display) {
         Optional<URI> baseUri = sheet.getWorkbook().getUri().map(uri -> uri.resolve(""));
-
-        boolean isActive = sheet == sheet.getWorkbook().getCurrentSheet().orElse(null);
 
         // open DIV for sheet
         String sheetId = id(sheet);
 
-        String display = isActive ? "block" : "none";
-        String cls = isActive ? "meja-tab active" : "meja-tab";
+        String cls = display == Display.BLOCK ? "meja-tab active" : "meja-tab";
 
         out.format(Locale.ROOT, "<div id=\"%s\" class=\"%s\" style=\"display: %s\">\n", sheetId, cls, display);
 
