@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 8.0.2
+
+- improve column width calculations in headless mode for the known Excel default fonts Arial and Calibri
+
 ## Version 8.0.1
 
 - fix localized date formatting for Excel cells
