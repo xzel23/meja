@@ -127,7 +127,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             if (isHeadless) {
                 // use a constant value in headless mode; this also ensures stable unit tests
                 if (font.getFamily().startsWith("Arial")) {
-                    charZeroWidth = 5.56f;
+                    charZeroWidth = 5.5615234f;
                 } else if (font.getFamily().startsWith("Calibri")) {
                     charZeroWidth = 7.0f;
                 } else {
