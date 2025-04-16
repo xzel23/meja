@@ -11,7 +11,6 @@ import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.options.Arguments;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -217,15 +216,24 @@ class PoiWorkbookTest {
         testRowGetLastColNumErrorHelper(wb);
     }
 
-    @Test @Disabled // must be fixed in POI, OperandResolver.coerceValueToDouble() does not support Dates
+    @Test
     public void testParseGermanDate() throws IOException {
         PoiWorkbook.PoiXssfWorkbook wb = (PoiWorkbook.PoiXssfWorkbook) MejaHelper.openWorkbook(testdataDir.resolve("Parse German Date.xlsx"));
         wb.evaluateAllFormulaCells();
         Sheet sheet = wb.getSheet(0);
 
+        // date in A1
         LocalDate expected = LocalDate.of(2025, 1, 1);
         Object actual = sheet.getCell(0, 0).getDate();
         assertEquals(expected, actual);
+
+        // month in A3
+        String actualMonthName = sheet.getCell(2, 0).getText().toString();
+        assertEquals("Januar", actualMonthName);
+
+        // year in A4
+        int actualYear = sheet.getCell(3, 0).getNumber().intValue();
+        assertEquals(2025, actualYear);
     }
 
     private void testRowGetLastColNumErrorHelper(Workbook wb) {
