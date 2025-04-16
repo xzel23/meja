@@ -1,5 +1,8 @@
 import org.jspecify.annotations.NullMarked;
 
+/**
+ * A module containing different sample applications.
+ */
 @NullMarked
 module com.dua3.meja.samples {
     requires java.desktop;

@@ -130,8 +130,14 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
         });
     }
 
+    /**
+     * The Model of the ExcelViewer component.
+     */
     private final ExcelViewerModel<SwingWorkbookView, SwingSheetView> model;
 
+    /**
+     * The workbook view component that is used to display the workbook.
+     */
     private @Nullable SwingWorkbookView workbookView;
 
     /**

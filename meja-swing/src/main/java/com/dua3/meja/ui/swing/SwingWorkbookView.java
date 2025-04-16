@@ -42,7 +42,12 @@ import java.util.concurrent.Flow;
 public class SwingWorkbookView extends JComponent implements WorkbookView<SwingSheetView>, ChangeListener, Flow.Subscriber<WorkbookEvent> {
     private static final Logger LOG = LogManager.getLogger(SwingWorkbookView.class);
 
+    // the workbook to show
     private transient @Nullable Workbook workbook;
+
+    /**
+     * Tabbed pane that contains the sheets of the workbook as tabs.
+     */
     private final JTabbedPane content;
 
     /**
