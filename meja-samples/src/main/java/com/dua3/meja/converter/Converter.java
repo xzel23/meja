@@ -3,20 +3,17 @@
  */
 package com.dua3.meja.converter;
 
-import java.io.File;
-import java.io.IOException;
-
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Converter sample application.
  * <p>
- * Demonstrates reading and writing workbooks. The relevant format of the input
- * and output filenames is determined by the file extension.
- * </p>
- *
- * @author Axel Howind (axel@dua3.com)
+ * Demonstrates reading and writing workbooks. The file extension determines the
+ * relevant format of the input and output files.
  */
 public final class Converter {
 

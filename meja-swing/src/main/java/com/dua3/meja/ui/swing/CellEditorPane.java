@@ -152,6 +152,9 @@ public class CellEditorPane extends JTextPane {
         };
     }
 
+    /**
+     * The vertical alignment, initialized to top alignment.
+     */
     private VAlign vAlign = VAlign.ALIGN_TOP;
 
     /**
