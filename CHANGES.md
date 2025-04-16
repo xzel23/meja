@@ -3,6 +3,8 @@
 ## Version 8.0.2
 
 - improve column width calculations in headless mode for the known Excel default fonts Arial and Calibri
+- enable a previously disabled test for correctly parsing dates (only runs whe the build uses a german language locale)
+  as the test is locale dependent)
 
 ## Version 8.0.1
 
