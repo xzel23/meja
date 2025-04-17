@@ -33,7 +33,7 @@ public class FileTypeHtml extends FileTypeWorkbook<Workbook> {
      * and file extensions "html" and "htm".
      */
     public FileTypeHtml() {
-        super("HTML", OpenMode.WRITE, Workbook.class, "html", "htm");
+        super("HTML", OpenMode.WRITE, Workbook.class, Workbook.class, "html", "htm");
     }
 
     @Override

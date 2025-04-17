@@ -2,6 +2,7 @@ package com.dua3.meja.model.poi.io;
 
 import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
+import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbookFactory;
@@ -42,7 +43,7 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
      * The file type is also used for identifying supported file types and filtering files in file selection dialogs.
      */
     public FileTypeExcel() {
-        super("All Excel files", OpenMode.READ, PoiWorkbook.class, "xlsx", "xls", "xlsm");
+        super("All Excel files", OpenMode.READ, PoiWorkbook.class, Workbook.class, "xlsx", "xls", "xlsm");
     }
 
     @Override

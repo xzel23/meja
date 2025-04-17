@@ -2,6 +2,7 @@ package com.dua3.meja.model.poi.io;
 
 import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
+import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
@@ -16,7 +17,7 @@ import java.net.URI;
 import java.util.function.Function;
 
 /**
- * File type for Excel 97-2004 .XLS files.
+ * File type for Excel 97-2003 .XLS files.
  */
 public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
     private static final FileTypeXls INSTANCE = new FileTypeXls();
@@ -31,7 +32,7 @@ public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     private FileTypeXls() {
-        super("Excel 97-2003", OpenMode.READ_AND_WRITE, PoiHssfWorkbook.class, "xls");
+        super("Excel 97-2003", OpenMode.READ_AND_WRITE, PoiHssfWorkbook.class, Workbook.class, "xls");
     }
 
     // loosen access to make init() callable by FileTypeExcel

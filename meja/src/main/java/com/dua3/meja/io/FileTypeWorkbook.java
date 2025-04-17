@@ -22,10 +22,11 @@ public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
      * @param name          the name of the file type (displayed in dialogs)
      * @param mode          the {@link OpenMode}
      * @param cls           the class belonging to this file type that implements the {@link Workbook} interface
+     * @param clsWriteable  the class belonging to this file type that implements the {@link Workbook} interface
      * @param extensions    the file name extensions belonging to this file type
      */
-    protected FileTypeWorkbook(String name, OpenMode mode, Class<? extends W> cls, String... extensions) {
-        super(name, mode, cls, extensions);
+    protected FileTypeWorkbook(String name, OpenMode mode, Class<? extends W> cls, Class<? super W> clsWriteable, String... extensions) {
+        super(name, mode, cls, clsWriteable, extensions);
     }
 
     /**

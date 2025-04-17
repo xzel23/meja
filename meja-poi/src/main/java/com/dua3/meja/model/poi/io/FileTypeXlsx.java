@@ -2,6 +2,7 @@ package com.dua3.meja.model.poi.io;
 
 import com.dua3.meja.io.FileTypeWorkbook;
 import com.dua3.meja.io.WorkbookWriter;
+import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
@@ -31,7 +32,7 @@ public final class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     private FileTypeXlsx() {
-        super("Excel 2007", OpenMode.READ_AND_WRITE, PoiXssfWorkbook.class, "xlsx", "xlsm");
+        super("Excel 2007", OpenMode.READ_AND_WRITE, PoiXssfWorkbook.class, Workbook.class, "xlsx", "xlsm");
     }
 
     // loosen access to make init() callable by FileTypeExcel

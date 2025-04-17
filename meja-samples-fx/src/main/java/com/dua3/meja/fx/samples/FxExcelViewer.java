@@ -6,6 +6,7 @@ import com.dua3.meja.model.poi.io.FileTypeExcel;
 import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.Dialogs;
+import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.SystemInfo;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -106,6 +107,11 @@ public final class FxExcelViewer {
                                     Controls.graphic("fth-folder"))
                             .action(() -> openWorkbook(primaryStage))
                             .build(),
+                    Controls.button().graphic(
+                                    Controls.graphic("fth-save"))
+                            .action(() -> saveWorkbookAs(primaryStage))
+                            .bindEnabled(Bindings.isNotNull(fxWorkbookView.workbookProperty()))
+                            .build(),
                     Controls.slider()
                             .min(0.25)
                             .max(2)
@@ -154,7 +160,12 @@ public final class FxExcelViewer {
         private void saveWorkbookAs(Stage stage) {
             fxWorkbookView.getWorkbook().ifPresent(wb -> {
                 try {
-                    Dialogs.saveToFile(stage, wb, FileTypeExcel.instance());
+                    Dialogs.saveToFile(
+                            stage,
+                            wb,
+                            FileTypeExcel.instance(),
+                            wb.getUri().map(IoUtil::toPath).orElse(null)
+                    );
                 } catch (Dialogs.UnsupportedFileTypeException e) {
                     Dialogs.error(fxWorkbookView.getScene().getWindow())
                             .title("Unsupported file type")

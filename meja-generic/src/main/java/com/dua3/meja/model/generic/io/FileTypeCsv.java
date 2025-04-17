@@ -36,7 +36,7 @@ public class FileTypeCsv extends FileTypeWorkbook<Workbook> {
      * CSV-file type constructor. Not intended for user code, but required by SPI.
      */
     public FileTypeCsv() {
-        super("CSV", OpenMode.READ_AND_WRITE, Workbook.class, "csv", "txt");
+        super("CSV", OpenMode.READ_AND_WRITE, Workbook.class, Workbook.class, "csv", "txt");
     }
 
     @Override
