@@ -1,18 +1,11 @@
 package com.dua3.meja.fx.samples;
 
 import com.dua3.fx.application.FxApplicationHelper;
-import com.dua3.meja.io.FileTypeHtml;
 import com.dua3.meja.model.Workbook;
-import com.dua3.meja.model.generic.io.FileTypeCsv;
 import com.dua3.meja.model.poi.io.FileTypeExcel;
-import com.dua3.meja.model.poi.io.FileTypeXls;
-import com.dua3.meja.model.poi.io.FileTypeXlsx;
 import com.dua3.meja.ui.fx.FxWorkbookView;
-import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.Dialogs;
-import com.dua3.utility.io.FileType;
-import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.lang.SystemInfo;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -22,19 +15,9 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The {@code FxExcelViewer} class provides a JavaFX application for viewing
@@ -100,8 +83,8 @@ public final class FxExcelViewer {
             MenuBar menuBar = new MenuBar(
                     Controls.menu("File",
                             Controls.menuItem("Open", () -> openWorkbook(primaryStage)),
-                            Controls.menuItem("Export...",
-                                    () -> export(primaryStage, FileTypeCsv.instance(), FileTypeHtml.instance()),
+                            Controls.menuItem("Save As...",
+                                    () -> saveWorkbookAs(primaryStage),
                                     Bindings.isNotNull(fxWorkbookView.workbookProperty())),
                             Controls.menuItem("Exit", Platform::exit)
                     ),
@@ -147,23 +130,19 @@ public final class FxExcelViewer {
          * @param stage the stage to use as the dialog parent
          */
         private void openWorkbook(Stage stage) {
-            FileChooser fileChooser = new FileChooser();
-
-            Stream.of(FileTypeExcel.instance(), FileTypeXlsx.instance(), FileTypeXls.instance())
-                    .filter(ft -> ft.isSupported(OpenMode.READ))
-                    .map(ft -> new FileChooser.ExtensionFilter(ft.getName(), ft.getExtensionPatterns()))
-                    .forEach(fileChooser.getExtensionFilters()::add);
-
-            File selectedFile = fileChooser.showOpenDialog(stage);
-            if (selectedFile != null) {
-                try {
-                    fxWorkbookView.setWorkbook(MejaHelper.openWorkbook(selectedFile.toURI()));
-                } catch (IOException e) {
-                    Dialogs.error(fxWorkbookView.getScene().getWindow())
-                            .title("Error opening workbook")
-                            .text("Could not open workbook: " + e.getMessage())
-                            .showAndWait();
-                }
+            try {
+                Dialogs.openFile(stage, Workbook.class, FileTypeExcel.instance())
+                        .ifPresent(fxWorkbookView::setWorkbook);
+            } catch (Dialogs.UnsupportedFileTypeException e) {
+                Dialogs.error(fxWorkbookView.getScene().getWindow())
+                        .title("Unsupported file type")
+                        .text("The correct file type to use for opening the workbook could not be determined.")
+                        .showAndWait();
+            } catch (IOException e) {
+                Dialogs.error(fxWorkbookView.getScene().getWindow())
+                        .title("Error opening workbook")
+                        .text("Could not open workbook: " + e.getMessage())
+                        .showAndWait();
             }
         }
 
@@ -171,43 +150,23 @@ public final class FxExcelViewer {
          * Show a file dialog and let the user export the current workbook to a file of the provided type.
          *
          * @param stage the stage to use as the dialog parent
-         * @param fileTypes vargargs array og the supported {@link FileType} instances
          */
-        @SafeVarargs
-        private void export(Stage stage, FileType<? extends Workbook>... fileTypes) {
-            if (fxWorkbookView.getWorkbook().isEmpty()) {
-                return;
-            }
-
-            // create file chooser
-            FileChooser fileChooser = new FileChooser();
-
-            // add extension filters
-            Map<FileChooser.ExtensionFilter, FileType<? extends Workbook>> types = Arrays.stream(fileTypes)
-                    .collect(Collectors
-                            .toMap(ft ->
-                                    new FileChooser.ExtensionFilter(ft.getName(), ft.getExtensionPatterns()),
-                                    Function.identity(), (a, b) -> b,
-                                    IdentityHashMap::new));
-            fileChooser.getExtensionFilters().addAll(types.keySet());
-
-            // get result file and type
-            File selectedFile = fileChooser.showSaveDialog(stage);
-            FileType<? extends Workbook> fileType = types.get(fileChooser.getSelectedExtensionFilter());
-
-            // export
-            if (selectedFile != null && fileType != null) {
-                fxWorkbookView.getWorkbook().ifPresent(wb -> {
-                    try (OutputStream out = Files.newOutputStream(selectedFile.toPath())) {
-                        wb.write(fileType, out);
-                    } catch (IOException e) {
-                        Dialogs.error(fxWorkbookView.getScene().getWindow())
-                                .title("Error exporting workbook")
-                                .text("Could export the workbook as %s: %s", fileType.getName(), e.getMessage())
-                                .showAndWait();
-                    }
-                });
-            }
+        private void saveWorkbookAs(Stage stage) {
+            fxWorkbookView.getWorkbook().ifPresent(wb -> {
+                try {
+                    Dialogs.saveToFile(stage, wb, FileTypeExcel.instance());
+                } catch (Dialogs.UnsupportedFileTypeException e) {
+                    Dialogs.error(fxWorkbookView.getScene().getWindow())
+                            .title("Unsupported file type")
+                            .text("The correct file type to use for saving the workbook could not be determined.")
+                            .showAndWait();
+                } catch (IOException e) {
+                    Dialogs.error(fxWorkbookView.getScene().getWindow())
+                            .title("Error saving workbook")
+                            .text("Could not save workbook: " + e.getMessage())
+                            .showAndWait();
+                }
+            });
         }
     }
 }
