@@ -6,6 +6,7 @@ import com.dua3.meja.model.poi.io.FileTypeExcel;
 import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.Dialogs;
+import com.dua3.utility.fx.controls.SliderWithButtons;
 import com.dua3.utility.io.IoUtil;
 import com.dua3.utility.lang.SystemInfo;
 import javafx.application.Application;
@@ -30,7 +31,7 @@ public final class FxExcelViewer {
     private static final String APP_VERSION = "0.1";
     private static final String COPYRIGHT = "2025";
     private static final String DEVELOPER_MAIL = "axh@dua3.com";
-    private static final String APP_DESCRIPTION = "An Excel Viewer Application";
+    private static final String APP_DESCRIPTION = "An Excel Viewer";
 
     /**
      * The main entry point for the JavaFX application. This method launches the
@@ -103,16 +104,16 @@ public final class FxExcelViewer {
 
             // create toolbar
             ToolBar toolBar = new ToolBar(
-                    Controls.button().graphic(
-                                    Controls.graphic("fth-folder"))
+                    Controls.button()
+                            .graphic(Controls.graphic("fth-folder"))
                             .action(() -> openWorkbook(primaryStage))
                             .build(),
-                    Controls.button().graphic(
-                                    Controls.graphic("fth-save"))
+                    Controls.button()
+                            .graphic(Controls.graphic("fth-save"))
                             .action(() -> saveWorkbookAs(primaryStage))
                             .bindEnabled(Bindings.isNotNull(fxWorkbookView.workbookProperty()))
                             .build(),
-                    Controls.slider()
+                    Controls.slider(SliderWithButtons.Mode.SLIDER_VALUE, (v,max) -> "%3.0f%%".formatted(100*v))
                             .min(0.25)
                             .max(2)
                             .bind(fxWorkbookView.currentViewZoomProperty())
