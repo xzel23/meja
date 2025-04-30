@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 8.0.4
+
+- dependency updates
+
 ## Version 8.0.3
 
 - add save functionality to the FxExcelViewer
