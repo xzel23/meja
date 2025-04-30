@@ -3,6 +3,7 @@
 ## Version 8.0.4
 
 - dependency updates
+- refactor column and row size calculations; consolidate behaviour of autoSizeColumn() and autosizeColumns()
 
 ## Version 8.0.3
 
