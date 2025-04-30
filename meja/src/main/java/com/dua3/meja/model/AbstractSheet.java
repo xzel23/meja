@@ -4,7 +4,6 @@ import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.concurrent.AutoLock;
 import com.dua3.utility.data.Pair;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.math.geometry.Dimension2f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -219,10 +218,14 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
 
     @Override
     public void autoSizeColumn(int j) {
-        float colWidth = (float) rows().flatMap(Row::cells)
-                .filter(cell -> cell.getColumnNumber() == j && cell.getCellType() != CellType.BLANK)
-                .map(Cell::calcCellDimension)
-                .mapToDouble(Dimension2f::width)
+        float colWidth = (float) rows()
+                .mapMultiToDouble((row, downstream) -> {
+                    row.cells().forEach(cell -> {
+                        if (cell.getColumnNumber() == j && !cell.isEmpty()) {
+                            downstream.accept(cell.calcCellDimension().width());
+                        }
+                    });
+                })
                 .max()
                 .orElse(0.0);
         setColumnWidth(j, colWidth);
@@ -235,13 +238,14 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
         float[] colWidth = new float[n];
         Arrays.fill(colWidth, 0.0f);
 
-        rows().flatMap(Row::cells)
-                .filter(cell -> !cell.isEmpty())
-                .forEach(cell -> {
+        rows().forEach(row -> {
+            row.cells().forEach(cell -> {
+                if (!cell.isEmpty()) {
                     int j = cell.getColumnNumber();
-                    float width = cell.calcCellDimension().width();
-                    colWidth[j] = Math.max(colWidth[j], width);
-                });
+                    colWidth[j] = Math.max(colWidth[j], cell.calcCellDimension().width());
+                }
+            });
+        });
 
         for (int j = 0; j < n; j++) {
             setColumnWidth(j, colWidth[j]);
@@ -253,9 +257,11 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     public void autoSizeRow(int i) {
         getRowIfExists(i).ifPresent(row -> {
             float rowHeight = (float) row.cells()
-                    .filter(cell -> !cell.isEmpty())
-                    .map(Cell::calcCellDimension)
-                    .mapToDouble(Dimension2f::height)
+                    .mapMultiToDouble((cell, downstream) -> {
+                        if (!cell.isEmpty()) {
+                            downstream.accept(cell.calcCellDimension().height());
+                        }
+                    })
                     .max()
                     .orElse(0.0);
             setRowHeight(i, rowHeight);
