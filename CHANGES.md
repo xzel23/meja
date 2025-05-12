@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 8.1.0
+
+- dependency updates
+- fixed HTML export not escaping font names containing spaces (fixed in dependency)
+
 ## Version 8.0.4
 
 - dependency updates
