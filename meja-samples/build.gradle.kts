@@ -23,26 +23,26 @@ dependencies {
     implementation(project(":meja-poi"))
 }
 
-val runExcelViewer = task<JavaExec>("runExcelViewer") {
+val runExcelViewer = tasks.register<JavaExec>("runExcelViewer") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.excelviewer.SwingExcelViewer")
     enableAssertions = true
 }
 
-val runKitchenSink = task<JavaExec>("runKitchenSink") {
+val runKitchenSink = tasks.register<JavaExec>("runKitchenSink") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.samples.KitchenSink")
     enableAssertions = true
     systemProperty("logwindow", "1")
 }
 
-val runTableModel = task<JavaExec>("runTableModel") {
+val runTableModel = tasks.register<JavaExec>("runTableModel") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.samples.TableModelDemo")
     enableAssertions = true
 }
 
-val runShowTestXlsx = task<JavaExec>("runShowTestXlsx") {
+val runShowTestXlsx = tasks.register<JavaExec>("runShowTestXlsx") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.samples.ShowTestXlsx")
     enableAssertions = true
