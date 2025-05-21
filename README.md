@@ -5,6 +5,12 @@
 
 Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
+## Supported file formats
+
+ - Excel (.xls and .xlsx)
+ - CSV
+ - ODF support coming later this year
+
 ## Name
 
 As it's rather common to give everything Java related a name of indo/malay origin, I chose 'meja' which is the
