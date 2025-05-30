@@ -387,7 +387,7 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     @Override
     public float getDefaultColumnWidth() {
         // unit is number of characters and 7 is a common character width in points
-        return poiSheet.getDefaultColumnWidth() * 7;
+        return poiSheet.getDefaultColumnWidth() * 7.0f;
     }
 
     private void init() {
