@@ -30,6 +30,7 @@ dependencyResolutionManagement {
             plugin("spotbugs", "com.github.spotbugs").version("6.1.13")
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
+            plugin("sonar", "org.sonarqube").version("6.2.0.5505")
 
             version("dua3-utility", "19.1.0")
             version("dua3-fx", "1.4.1")
