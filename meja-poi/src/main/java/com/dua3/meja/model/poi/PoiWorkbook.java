@@ -27,6 +27,7 @@ import com.dua3.meja.model.poi.io.FileTypeXlsx;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.io.FileType;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
@@ -79,7 +80,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
 
     private static final Logger LOGGER = LogManager.getLogger(PoiWorkbook.class);
 
-    private static final boolean isHeadless = Boolean.getBoolean("java.awt.headless");
+    private static final boolean IS_HEADLESS = Boolean.getBoolean("java.awt.headless");
 
     /**
      * The underlying Apache POI {@link Workbook} instance.
@@ -137,7 +138,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             }
 
             float charZeroWidth;
-            if (isHeadless) {
+            if (IS_HEADLESS) {
                 // use a constant value in headless mode; this also ensures stable unit tests
                 if (font.getFamily().startsWith("Arial")) {
                     charZeroWidth = WIDTH_OF_ZERO_ARIAL_10 * font.getSizeInPoints() / 10.0f;
@@ -379,7 +380,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      *
      * @return the file type matching the underlying POI implementation
      */
-    protected abstract FileType<?> getStandardFileType();
+    protected abstract FileType<PoiWorkbook> getStandardFileType();
 
     @Override
     public boolean hasCellStyle(String name) {
@@ -651,7 +652,10 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
          */
         public PoiXssfWorkbook(Workbook poiWorkbook, @Nullable URI uri) {
             super(poiWorkbook, uri);
-            assert poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook;
+            LangUtil.check(
+                    poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook,
+                    () -> {throw new IllegalArgumentException("poiWorkbook must be of type XSSFWorkbook or SXSSFWorkbook but is: " + poiWorkbook.getClass().getName());}
+            );
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt(0));
             init();
         }
@@ -688,26 +692,24 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
             }
 
             // try to get RGB values
-            byte[] rgb = xssfColor.hasAlpha() ? xssfColor.getARGB()
-                    : xssfColor.hasTint() ? xssfColor.getRGBWithTint() : xssfColor.getRGB();
+            byte[] rgb = getRgbBytes(xssfColor);
 
-            if (rgb != null) {
-                if (rgb.length == 4) {
-                    int a = rgb[0] & 0xFF;
-                    int r = rgb[1] & 0xFF;
-                    int g = rgb[2] & 0xFF;
-                    int b = rgb[3] & 0xFF;
-                    return Color.rgba(r, g, b, a);
-                } else {
-                    int r = rgb[0] & 0xFF;
-                    int g = rgb[1] & 0xFF;
-                    int b = rgb[2] & 0xFF;
-                    return Color.rgb(r, g, b);
-                }
+            if (rgb == null) {
+                return defaultColor;
             }
 
-            // what should be done now?
-            return defaultColor;
+            if (rgb.length == 4) {
+                int a = rgb[0] & 0xFF;
+                int r = rgb[1] & 0xFF;
+                int g = rgb[2] & 0xFF;
+                int b = rgb[3] & 0xFF;
+                return Color.rgba(r, g, b, a);
+            } else {
+                int r = rgb[0] & 0xFF;
+                int g = rgb[1] & 0xFF;
+                int b = rgb[2] & 0xFF;
+                return Color.rgb(r, g, b);
+            }
         }
 
         @Override
@@ -733,6 +735,26 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
         @Override
         public boolean isFormulaEvaluationSupported() {
             return !(poiWorkbook instanceof SXSSFWorkbook);
+        }
+
+        /**
+         * Retrieves the RGB bytes of the given {@link XSSFColor} instance.
+         * Depending on the properties of the color (e.g., alpha channel, tint),
+         * the method returns the appropriate representation of the color.
+         *
+         * @param xssfColor the {@link XSSFColor} instance from which to extract the RGB bytes.
+         *                  Must not be null.
+         * @return a byte array representing the RGB (or ARGB) bytes of the provided color,
+         *         or {@code null} if POI does not return a byte array
+         */
+        private static byte @Nullable [] getRgbBytes(XSSFColor xssfColor) {
+            if (xssfColor.hasAlpha()) {
+                return xssfColor.getARGB();
+            } else if (xssfColor.hasTint()) {
+                return xssfColor.getRGBWithTint();
+            } else {
+                return xssfColor.getRGB();
+            }
         }
     }
 

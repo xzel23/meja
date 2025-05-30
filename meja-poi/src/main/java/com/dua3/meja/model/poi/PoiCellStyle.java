@@ -394,9 +394,11 @@ public abstract class PoiCellStyle implements CellStyle {
     @Nullable
     DateTimeFormatter getLocaleAwareDateFormat(Locale locale) {
         switch (poiCellStyle.getDataFormat()) {
-            case 0x0e, 0x0f, 0x2d -> { return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale); }
-            case 0x1e -> { return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale); }
+            case 0x0e, 0x0f, 0x2d -> {return DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);}
+            case 0x1e -> {return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);}
+            default -> { /* nothing to do: handled below switch */ }
         }
+
         String formatString = poiCellStyle.getDataFormatString();
         if (formatString.startsWith("[")) {
             int i = formatString.indexOf(']');

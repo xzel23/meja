@@ -4,9 +4,6 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Scale2f;
 
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 /**
  * This class serves as a delegate for the {@link SegmentView} and is responsible for managing
  * its visualization, layout calculations, and interactions with the associated {@link SheetViewDelegate}.
@@ -26,8 +23,6 @@ public class SegmentViewDelegate {
     private float heightInPoints;
     private float widthInPixels;
     private float heightInPixels;
-
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
      * Constructs a {@code SegmentViewDelegate} instance, which manages the interaction

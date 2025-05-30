@@ -190,7 +190,7 @@ public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView>
             }
         }
         this.workbook = workbook;
-        LOGGER.debug("workbook changed to {}", getUri(this.workbook).map(Object::toString).orElse(""));
+        LOGGER.debug("workbook changed to {}", () -> getUri(this.workbook).map(Object::toString).orElse(""));
     }
 
     /**
