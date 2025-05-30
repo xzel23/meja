@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 8.1.1
+
+- dependency updates
+
 ## Version 8.1.0
 
 - dependency updates

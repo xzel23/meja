@@ -2,7 +2,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "8.1.1-SNAPSHOT"
+val projectVersion = "8.1.1"
 
 // define subprojects
 include("meja")
@@ -31,8 +31,8 @@ dependencyResolutionManagement {
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
 
-            version("dua3-utility", "19.1.0-SNAPSHOT")
-            version("dua3-fx", "1.4.1-SNAPSHOT")
+            version("dua3-utility", "19.1.0")
+            version("dua3-fx", "1.4.1")
             version("ikonli", "12.4.0")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.24.3")
