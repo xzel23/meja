@@ -1,5 +1,10 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
+// Enable Foojay Toolchain resolver
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
 // define project name and version
 rootProject.name = "dua3-meja"
 val projectVersion = "8.1.2-SNAPSHOT"
@@ -31,8 +36,10 @@ dependencyResolutionManagement {
             plugin("cabe", "com.dua3.cabe").version("3.0.2")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
+            plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
             version("dua3-utility", "19.1.0")
+            version("javafx", "23")
             version("dua3-fx", "1.4.1")
             version("ikonli", "12.4.0")
             version("jspecify", "1.0.0")

@@ -5,7 +5,10 @@ dependencies {
     implementation(rootProject.libs.dua3.utility)
 
     // Apache POI
-    implementation(rootProject.libs.poi)
+    implementation(rootProject.libs.poi) {
+        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
+        exclude(group = "org.openjfx")
+    }
     implementation(rootProject.libs.poi.ooxml) {
         // SVG support
         exclude(group = "org.apache.xmlgraphics", module = "batik-all")
@@ -15,6 +18,8 @@ dependencies {
         exclude(group = "org.apache.pdfbox", module = "pdfbox")
         exclude(group = "org.apache.pdfbox", module = "fontbox")
         exclude(group = "de.rototor.pdfbox", module = "graphics2d")
+        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
+        exclude(group = "org.openjfx")
     }
 
     constraints {

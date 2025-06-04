@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
-import com.dua3.cabe.processor.Configuration
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 import java.net.URI
@@ -74,12 +73,14 @@ subprojects {
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "com.github.spotbugs")
-    apply(plugin = "com.dua3.cabe")
+    // Temporarily disable Cabe processor to avoid JavaFX module conflicts
+    // apply(plugin = "com.dua3.cabe")
     apply(plugin = "de.thetaphi.forbiddenapis")
 
     java {
-        targetCompatibility = JavaVersion.VERSION_21
-        sourceCompatibility = targetCompatibility
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(21))
+        }
 
         withJavadocJar()
         withSourcesJar()
@@ -101,13 +102,14 @@ subprojects {
         options.encoding = "UTF-8"
     }
 
-    cabe {
+    // Temporarily disable Cabe configuration to avoid JavaFX module conflicts
+    /*cabe {
         if (isReleaseVersion) {
             config.set(Configuration.parse("publicApi=THROW_IAE:privateApi=ASSERT"))
         } else {
             config.set(Configuration.DEVELOPMENT)
         }
-    }
+    }*/
 
     // JaCoCo
     tasks.withType<JacocoReport> {

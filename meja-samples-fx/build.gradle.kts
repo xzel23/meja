@@ -1,16 +1,22 @@
 plugins {
     id("application")
+    alias(libs.plugins.javafx)
 }
 
 description = "Meja spreadsheet library - samples (JavaFX)"
 
 java {
-    targetCompatibility = JavaVersion.VERSION_21
-    sourceCompatibility = targetCompatibility
-    version = targetCompatibility.toString()
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 
     withJavadocJar()
     withSourcesJar()
+}
+
+javafx {
+    version = libs.versions.javafx.get()
+    modules = listOf("javafx.controls", "javafx.graphics", "javafx.fxml")
 }
 
 dependencies {
@@ -23,10 +29,22 @@ dependencies {
     implementation(rootProject.libs.dua3.utility)
     implementation(rootProject.libs.dua3.utility.logging)
     implementation(rootProject.libs.dua3.utility.logging.log4j)
-    implementation(rootProject.libs.dua3.utility.fx)
-    implementation(rootProject.libs.dua3.utility.fx.controls)
-    implementation(rootProject.libs.dua3.utility.fx.icons.ikonli)
-    implementation(rootProject.libs.dua3.fx.application)
+    implementation(rootProject.libs.dua3.utility.fx) {
+        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
+        exclude(group = "org.openjfx")
+    }
+    implementation(rootProject.libs.dua3.utility.fx.controls) {
+        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
+        exclude(group = "org.openjfx")
+    }
+    implementation(rootProject.libs.dua3.utility.fx.icons.ikonli) {
+        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
+        exclude(group = "org.openjfx")
+    }
+    implementation(rootProject.libs.dua3.fx.application) {
+        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
+        exclude(group = "org.openjfx")
+    }
 
     // ikonli is used by fx-icons-ikonli; since there are dozens of icon packs, we must specify the ones to include here
     runtimeOnly(libs.ikonli.feather)
