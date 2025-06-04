@@ -27,13 +27,13 @@ class GenericWorkbookTest {
             .resolve("../../../../../testdata").normalize();
 
     @Test
-    public void testCsv() throws Exception {
+    void testCsv() throws Exception {
         testCountryWorkbook(testdataDir.resolve("population by country_US.csv"), Locale.US);
         testCountryWorkbook(testdataDir.resolve("population by country_DE.csv"), Locale.GERMANY);
     }
 
     @Test
-    public void testSaveAndReloadCsv() throws Exception {
+    void testSaveAndReloadCsv() throws Exception {
         Workbook original = openWorkbookCsv(testdataDir.resolve("population by country_US.csv"), Locale.US);
         Path tempDir = Files.createTempDirectory("meja-test");
         try {
@@ -53,7 +53,7 @@ class GenericWorkbookTest {
     }
 
     @Test
-    public void testConvertToHtml() throws Exception {
+    void testConvertToHtml() throws Exception {
         String[] files = {"population by country_US.csv"};
         Path tempDir = Files.createTempDirectory("meja-test");
         try {
@@ -125,7 +125,7 @@ class GenericWorkbookTest {
     }
 
     @Test
-    public void testRowGetLastColNumError() {
+    void testRowGetLastColNumError() {
         Workbook wb = GenericWorkbookFactory.instance().create();
         testRowGetLastColNumErrorHelper(wb);
     }

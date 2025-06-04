@@ -39,26 +39,26 @@ class PoiWorkbookTest {
     private static Path tempDir;
 
     @BeforeAll
-    public static void setup() throws IOException {
+    static void setup() throws IOException {
         testdataDir = IoUtil.toPath(PoiWorkbookTest.class.getResource("/"))
                 .resolve("../../../../../testdata").normalize();
         tempDir = Files.createTempDirectory("meja-test");
     }
 
     @AfterAll
-    public static void teardown() throws IOException {
+    static void teardown() throws IOException {
         IoUtil.deleteRecursive(tempDir);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"population by country.xlsx", "population by country.xls"})
-    public void testOpenWorkbook(String filename) throws Exception {
+    void testOpenWorkbook(String filename) throws Exception {
         testCountryWorkbook(testdataDir.resolve(filename));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"population by country.xlsx", "population by country.xls"})
-    public void testSaveAndReloadWorkbook(String filename) throws Exception {
+    void testSaveAndReloadWorkbook(String filename) throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve(filename));
         Path pathToCopy = tempDir.resolve(filename);
         original.write(pathToCopy);
@@ -66,7 +66,7 @@ class PoiWorkbookTest {
     }
 
     @Test
-    public void testConvertXlsxToXls() throws Exception {
+    void testConvertXlsxToXls() throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"));
         Path pathToCopy = tempDir.resolve("population by country.xls");
         original.write(pathToCopy);
@@ -74,7 +74,7 @@ class PoiWorkbookTest {
     }
 
     @Test
-    public void testConvertXlsToXlsx() throws Exception {
+    void testConvertXlsToXlsx() throws Exception {
         Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
         Path pathToCopy = tempDir.resolve("population by country.xlsx");
         original.write(pathToCopy);
@@ -87,7 +87,7 @@ class PoiWorkbookTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"population by country.xlsx", "Excel 2015 Calendar.xlsx"})
-    public void testConvertToHtml(String fileName) throws Exception {
+    void testConvertToHtml(String fileName) throws Exception {
         Path inFile = testdataDir.resolve(fileName);
         String outFileName = IoUtil.replaceExtension(fileName, "html");
         Path refFile = testdataDir.resolve(outFileName);
@@ -139,7 +139,7 @@ class PoiWorkbookTest {
     }
 
     @Test
-    public void testHyperLink() throws Exception {
+    void testHyperLink() throws Exception {
         Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("Links.xlsx"));
         Sheet sheet = wb.getSheetByName("Links");
 
@@ -175,7 +175,7 @@ class PoiWorkbookTest {
     }
 
     @Test
-    public void testHtmlExport() throws IOException {
+    void testHtmlExport() throws IOException {
         Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
 
         // make sure workbook URI is the same independent of test environment
@@ -205,20 +205,20 @@ class PoiWorkbookTest {
     }
 
     @Test
-    public void testRowGetLastColNumErrorXlsx() {
+    void testRowGetLastColNumErrorXlsx() {
         Workbook wb = PoiWorkbookFactory.instance().createXlsx();
         testRowGetLastColNumErrorHelper(wb);
     }
 
     @Test
-    public void testRowGetLastColNumErrorXls() {
+    void testRowGetLastColNumErrorXls() {
         Workbook wb = PoiWorkbookFactory.instance().createXls();
         testRowGetLastColNumErrorHelper(wb);
     }
 
     @Test
     @org.junit.jupiter.api.condition.EnabledIfSystemProperty(named = "user.language", matches = "de")
-    public void testParseGermanDate() throws IOException {
+    void testParseGermanDate() throws IOException {
         PoiWorkbook.PoiXssfWorkbook wb = (PoiWorkbook.PoiXssfWorkbook) MejaHelper.openWorkbook(testdataDir.resolve("Parse German Date.xlsx"));
         wb.evaluateAllFormulaCells();
         Sheet sheet = wb.getSheet(0);

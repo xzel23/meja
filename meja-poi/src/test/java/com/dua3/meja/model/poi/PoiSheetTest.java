@@ -12,10 +12,10 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PoiSheetTest {
+class PoiSheetTest {
 
     @Test
-    public void testCreateSheet() {
+    void testCreateSheet() {
         PoiWorkbook wb = PoiWorkbookFactory.instance().create();
 
         wb.createSheet("Test");
@@ -35,7 +35,7 @@ public class PoiSheetTest {
     }
 
     @Test
-    public void testCreateRow() {
+    void testCreateRow() {
         PoiWorkbook wb = PoiWorkbookFactory.instance().create();
         Sheet s = wb.createSheet("Test");
 
