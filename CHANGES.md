@@ -1,8 +1,8 @@
 # Meja Changelog
 
-## Version 8.1.2
+## Version 8.2.0
 
-- added SonarCloud analysis to the GitHub workflow
+- added SonarCloud analysis and code coverage to the GitHub workflow
 - fixed issues reported by sonar
 
 ## Version 8.1.1
