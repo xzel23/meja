@@ -15,8 +15,6 @@ import com.dua3.utility.text.FontUtil;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Map.Entry;
 
@@ -24,7 +22,6 @@ import java.util.Map.Entry;
  * Kitchensink example.
  */
 public final class FxKitchenSink extends Application {
-    private static final Logger LOG = LogManager.getLogger(FxKitchenSink.class);
 
     /**
      * The main entry point for the JavaFX application. This method launches the

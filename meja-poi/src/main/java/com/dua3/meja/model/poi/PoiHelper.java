@@ -17,8 +17,6 @@ package com.dua3.meja.model.poi;
 
 import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.VAlign;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 
@@ -26,8 +24,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
  * Utility class for the Apache POI implementation.
  */
 public final class PoiHelper {
-
-    private static final Logger LOGGER = LogManager.getLogger(PoiHelper.class);
 
     /**
      * Converts a custom horizontal alignment value to a corresponding Apache POI HorizontalAlignment value.

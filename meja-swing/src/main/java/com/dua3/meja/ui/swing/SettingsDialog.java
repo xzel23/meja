@@ -35,7 +35,7 @@ public class SettingsDialog extends JDialog {
     /**
      * Variable that will hold the dialog result, initialized with an empty result.
      */
-    private Arguments result = Arguments.empty();
+    private transient Arguments result = Arguments.empty();
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     SettingsDialog(Component parent, String title, String text, Collection<? extends Option<?>> options) {

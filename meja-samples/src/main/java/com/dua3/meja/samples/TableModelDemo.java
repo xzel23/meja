@@ -6,8 +6,6 @@ import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.ui.swing.MejaSwingHelper;
 import com.dua3.meja.util.TableOptions;
 import com.dua3.utility.swing.SwingUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -46,8 +44,6 @@ import java.time.LocalDateTime;
 public final class TableModelDemo extends JFrame {
     @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Logger LOG = LogManager.getLogger(TableModelDemo.class);
 
     /**
      * The entry point of the application that demonstrates a table model in a Swing GUI.

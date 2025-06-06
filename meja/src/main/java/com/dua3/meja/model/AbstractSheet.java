@@ -219,13 +219,12 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     @Override
     public void autoSizeColumn(int j) {
         float colWidth = (float) rows()
-                .mapMultiToDouble((row, downstream) -> {
-                    row.cells().forEach(cell -> {
-                        if (cell.getColumnNumber() == j && !cell.isEmpty()) {
-                            downstream.accept(cell.calcCellDimension().width());
-                        }
-                    });
-                })
+                .mapMultiToDouble((row, downstream) ->
+                        row.cells().forEach(cell -> {
+                            if (cell.getColumnNumber() == j && !cell.isEmpty()) {
+                                downstream.accept(cell.calcCellDimension().width());
+                            }
+                        }))
                 .max()
                 .orElse(0.0);
         setColumnWidth(j, colWidth);
@@ -238,14 +237,13 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
         float[] colWidth = new float[n];
         Arrays.fill(colWidth, 0.0f);
 
-        rows().forEach(row -> {
-            row.cells().forEach(cell -> {
-                if (!cell.isEmpty()) {
-                    int j = cell.getColumnNumber();
-                    colWidth[j] = Math.max(colWidth[j], cell.calcCellDimension().width());
-                }
-            });
-        });
+        rows().forEach(row ->
+                row.cells().forEach(cell -> {
+                    if (!cell.isEmpty()) {
+                        int j = cell.getColumnNumber();
+                        colWidth[j] = Math.max(colWidth[j], cell.calcCellDimension().width());
+                    }
+                }));
 
         for (int j = 0; j < n; j++) {
             setColumnWidth(j, colWidth[j]);

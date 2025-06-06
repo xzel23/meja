@@ -58,8 +58,6 @@ public class FxSheetView extends StackPane implements SheetView {
     private final Region topSpacer = new Region();
     private final Region bottomRightCorner = new Region();
 
-    private final DoubleProperty scrollXProperty;
-    private final DoubleProperty scrollYProperty;
     private final DoubleProperty sheetScaleXProperty = new SimpleDoubleProperty(1.0);
     private final DoubleProperty sheetScaleYProperty = new SimpleDoubleProperty(1.0);
 
@@ -102,9 +100,6 @@ public class FxSheetView extends StackPane implements SheetView {
             updateHScrollbar();
             updateVScrollbar();
         });
-
-        this.scrollXProperty = hScrollbar.valueProperty();
-        this.scrollYProperty = vScrollbar.valueProperty();
 
         // set up horizontal scrollbar
         leftSpacer.prefHeightProperty().bind(hScrollbar.heightProperty());
