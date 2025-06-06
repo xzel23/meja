@@ -70,6 +70,8 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
     private static final Logger LOG = LogManager.getLogger(SwingExcelViewer.class);
 
     private static final int STATUS_ERROR = 1;
+    private static final String TITLE_ERROR = "Error";
+    private static final String ERROR_LOADING_WORKBOOK = "Error loading workbook: ";
 
     private static final String PROPERTY_FILE_CHANGED = "file changed";
 
@@ -310,12 +312,12 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
             newWorkbook.ifPresent(this::setWorkbook);
         } catch (IOException ex) {
             LOG.error("exception loading workbook", ex);
-            JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
+            JOptionPane.showMessageDialog(this, ERROR_LOADING_WORKBOOK + ex.getMessage(), TITLE_ERROR,
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
             LOG.error("unknown Exception caught, will be rethrown after message dialog: {}",
                     ex.getMessage());
-            JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
+            JOptionPane.showMessageDialog(this, ERROR_LOADING_WORKBOOK + ex.getMessage(), TITLE_ERROR,
                     JOptionPane.ERROR_MESSAGE);
             throw ex; // rethrow
         }
@@ -343,11 +345,11 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
                 });
             } catch (IOException ex) {
                 LOG.error("exception saving workbook", ex);
-                JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), "Error",
+                JOptionPane.showMessageDialog(this, "Error saving workbook: " + ex.getMessage(), TITLE_ERROR,
                         JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
                 LOG.error("unknown exception caught, will be rethrown after message dialog: {}", ex.getMessage());
-                JOptionPane.showMessageDialog(this, "Error loading workbook: " + ex.getMessage(), "Error",
+                JOptionPane.showMessageDialog(this, ERROR_LOADING_WORKBOOK + ex.getMessage(), TITLE_ERROR,
                         JOptionPane.ERROR_MESSAGE);
                 throw ex; // rethrow
             }
