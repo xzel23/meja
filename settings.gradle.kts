@@ -7,7 +7,7 @@ plugins {
 
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "8.2.0-SNAPSHOT"
+val projectVersion = "8.1.2"
 
 // define subprojects
 include("meja")
