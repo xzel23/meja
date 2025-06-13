@@ -21,10 +21,10 @@ import java.util.Optional;
  */
 public class ExcelViewerModel {
 
-    interface ExcelViewer<SV extends SheetView> {
-        Optional<SV> getCurrentView();
+    interface ExcelViewer<V extends SheetView> {
+        Optional<V> getCurrentView();
 
-        Optional<SV> getViewForSheet(Sheet sheet);
+        Optional<V> getViewForSheet(Sheet sheet);
 
         void setEditable(boolean b);
 

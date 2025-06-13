@@ -28,7 +28,9 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     private static final FileTypeExcel INSTANCE;
 
     static {
-        FileType.addType(INSTANCE = new FileTypeExcel());
+        var instance = new FileTypeExcel();
+        FileType.addType(instance);
+        INSTANCE = instance;
     }
 
     /**
