@@ -40,7 +40,7 @@ dependencyResolutionManagement {
 
             version("dua3-utility", "20.0.0-SNAPSHOT")
             version("javafx", "23.0.2")
-            version("dua3-fx", "1.4.2")
+            version("dua3-fx", "1.5.0-SNAPSHOT")
             version("ikonli", "12.4.0")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.24.3")
