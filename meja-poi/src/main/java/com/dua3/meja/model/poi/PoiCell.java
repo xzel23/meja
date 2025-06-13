@@ -177,10 +177,10 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
                         topLeftCell = topRow.getCell(mergedRegion.firstColumn());
                     }
 
-                    int spanX_ = 1 + mergedRegion.lastColumn() - mergedRegion.firstColumn();
-                    int spanY_ = 1 + mergedRegion.lastRow() - mergedRegion.firstRow();
+                    int mergedSpanX = 1 + mergedRegion.lastColumn() - mergedRegion.firstColumn();
+                    int mergedSpanY = 1 + mergedRegion.lastRow() - mergedRegion.firstRow();
 
-                    addedToMergedRegion(topLeftCell, spanX_, spanY_);
+                    addedToMergedRegion(topLeftCell, mergedSpanX, mergedSpanY);
                 });
     }
 
@@ -657,6 +657,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
                     return df.format(getDateTime());
                 }
             }
+            default -> { /* do nothing */ }
         }
 
         // if not, let POI do the formatting
