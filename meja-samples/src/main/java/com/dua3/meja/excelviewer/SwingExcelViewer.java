@@ -65,7 +65,7 @@ import java.util.Optional;
  * It provides a graphical interface for viewing Excel workbooks.
  */
 @SuppressWarnings("serial")
-public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkbookView, SwingSheetView>, DropTargetListener {
+public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingSheetView>, DropTargetListener {
 
     private static final Logger LOG = LogManager.getLogger(SwingExcelViewer.class);
 
@@ -108,7 +108,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
         SwingUtil.setNativeLookAndFeel(APPLICATION_NAME);
 
         SwingUtilities.invokeLater(() -> {
-            ExcelViewerModel<SwingWorkbookView, SwingSheetView> model = new ExcelViewerModel<>(APPLICATION_NAME, YEAR, AUTHOR);
+            ExcelViewerModel model = new ExcelViewerModel(APPLICATION_NAME, YEAR, AUTHOR);
             SwingExcelViewer viewer = new SwingExcelViewer(model);
 
             if (argList.size() > 1) {
@@ -135,7 +135,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
     /**
      * The Model of the ExcelViewer component.
      */
-    private final ExcelViewerModel<SwingWorkbookView, SwingSheetView> model;
+    private final ExcelViewerModel model;
 
     /**
      * The workbook view component that is used to display the workbook.
@@ -147,7 +147,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingWorkboo
      *
      * @param model the model
      */
-    public SwingExcelViewer(ExcelViewerModel<SwingWorkbookView, SwingSheetView> model) {
+    public SwingExcelViewer(ExcelViewerModel model) {
         super(APPLICATION_NAME);
         this.model = model;
         createMenu();

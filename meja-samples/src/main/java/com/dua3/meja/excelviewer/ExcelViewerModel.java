@@ -7,7 +7,6 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.meja.ui.WorkbookView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -19,13 +18,10 @@ import java.util.Optional;
 
 /**
  * The Model class for {@code ExcelViewer} implementations.
- *
- * @param <WV> the {@link WorkbookView} generic parameter
- * @param <SV> the {@link SheetView} generic parameter
  */
-public class ExcelViewerModel<WV extends WorkbookView<SV>, SV extends SheetView> {
+public class ExcelViewerModel {
 
-    interface ExcelViewer<WV extends WorkbookView<SV>, SV extends SheetView> {
+    interface ExcelViewer<SV extends SheetView> {
         Optional<SV> getCurrentView();
 
         Optional<SV> getViewForSheet(Sheet sheet);
