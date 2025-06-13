@@ -1,5 +1,12 @@
 # Meja Changelog
 
+## Version 8.2.0 (in progress)
+
+- HtmlWorkbookWriter
+    - declared methods not intended to be called from non-library code as private
+    - added export methods for single sheets
+    - changed CSS style name ID generation from MD5 to UUID, shortened CSS style names
+
 ## Version 8.1.2
 
 - added SonarCloud analysis and code coverage to the GitHub workflow
