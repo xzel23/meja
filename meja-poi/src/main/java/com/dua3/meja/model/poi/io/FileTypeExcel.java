@@ -22,7 +22,14 @@ import java.util.function.Function;
  * Excel files.
  */
 public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
-    private static final FileType<PoiWorkbook> INSTANCE = new FileTypeExcel();
+
+    private static final FileTypeXlsx FILETYPE_XLSX = FileTypeXlsx.instance();
+    private static final FileTypeXls FILETYPE_XLS = FileTypeXls.instance();
+    private static final FileTypeExcel INSTANCE;
+
+    static {
+        FileType.addType(INSTANCE = new FileTypeExcel());
+    }
 
     /**
      * Returns the instance of FileType for PoiWorkbook.
@@ -57,20 +64,11 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     @Override
-    protected void init() {
-        // register this type
-        super.init();
-        // also register the other types provided by the POI implementation
-        FileTypeXlsx.instance().init();
-        FileTypeXls.instance().init();
-    }
-
-    @Override
     public PoiWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
-        if (FileTypeXlsx.instance().matches(uri.getSchemeSpecificPart())) {
+        if (FILETYPE_XLSX.matches(uri.getSchemeSpecificPart())) {
             return FileTypeXlsx.instance().read(uri, options);
         }
-        if (FileTypeXls.instance().matches(uri.getSchemeSpecificPart())) {
+        if (FILETYPE_XLS.matches(uri.getSchemeSpecificPart())) {
             return FileTypeXls.instance().read(uri, options);
         }
         throw new IllegalArgumentException("cannot determine file type for reading");

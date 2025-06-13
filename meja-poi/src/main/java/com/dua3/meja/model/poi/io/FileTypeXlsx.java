@@ -20,7 +20,11 @@ import java.util.function.Function;
  * File type for Excel .XLSX files.
  */
 public final class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
-    private static final FileTypeXlsx INSTANCE = new FileTypeXlsx();
+    private static final FileTypeXlsx INSTANCE;
+
+    static {
+        FileType.addType(INSTANCE = new FileTypeXlsx());
+    }
 
     /**
      * Get XLSX file type instance.
@@ -33,12 +37,6 @@ public final class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
 
     private FileTypeXlsx() {
         super("Excel 2007", OpenMode.READ_AND_WRITE, PoiXssfWorkbook.class, Workbook.class, "xlsx", "xlsm");
-    }
-
-    // loosen access to make init() callable by FileTypeExcel
-    @Override
-    public void init() {
-        super.init();
     }
 
     @Override

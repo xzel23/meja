@@ -48,8 +48,8 @@ class GenericWorkbookTest {
         }
     }
 
-    private static String maskUriHash(String s) {
-        return s.replaceAll("WB_[a-z0-9]{32}_", "WB_********************************_");
+    private static String maskId(String s) {
+        return s.replaceAll("W[a-z0-9]{32}_", "WB_********************************_");
     }
 
     @Test
@@ -64,8 +64,8 @@ class GenericWorkbookTest {
                 Path outFile = tempDir.resolve(outFileName);
                 copyToHtml(inFile, outFile, Locale.US);
                 assertLinesMatch(
-                        maskUriHash(Files.readString(refFile, StandardCharsets.UTF_8)).lines(),
-                        maskUriHash(Files.readString(outFile, StandardCharsets.UTF_8)).lines()
+                        maskId(Files.readString(refFile, StandardCharsets.UTF_8)).lines(),
+                        maskId(Files.readString(outFile, StandardCharsets.UTF_8)).lines()
                 );
             }
         } finally {

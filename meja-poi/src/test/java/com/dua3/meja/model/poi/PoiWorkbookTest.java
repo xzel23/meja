@@ -81,8 +81,8 @@ class PoiWorkbookTest {
         testCountryWorkbook(pathToCopy);
     }
 
-    private static String maskUriHash(String s) {
-        return s.replaceAll("WB_[a-z0-9]{32}_", "WB_********************************_");
+    private static String maskId(String s) {
+        return s.replaceAll("W[a-z0-9]{32}_", "W********************************_");
     }
 
     @ParameterizedTest
@@ -94,8 +94,8 @@ class PoiWorkbookTest {
         Path outFile = tempDir.resolve(outFileName);
         copyToHtml(inFile, outFile, Locale.US);
         assertLinesMatch(
-                maskUriHash(Files.readString(refFile, StandardCharsets.UTF_8)).lines(),
-                maskUriHash(Files.readString(outFile, StandardCharsets.UTF_8)).lines()
+                maskId(Files.readString(refFile, StandardCharsets.UTF_8)).lines(),
+                maskId(Files.readString(outFile, StandardCharsets.UTF_8)).lines()
         );
     }
 
@@ -187,18 +187,14 @@ class PoiWorkbookTest {
             String refHtml = Files.readString(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
 
             try (Formatter out = new Formatter()) {
-                writer.writeHtmlHeaderStart(out);
-                writer.writeCssForSingleSheet(out, sheet);
-                writer.writeHtmlHeaderEnd(out);
-                writer.writeSheet(sheet, out, Locale.ROOT);
-                writer.writeHtmlFooter(out);
+                writer.exportSingleSheet(out, sheet);
                 String actHtml = out.toString();
 
                 boolean updateResult = false; // set to true to update reference files
                 if (updateResult) {
                     Files.writeString(testdataDir.resolve(sheet.getSheetName() + ".html"), actHtml, StandardCharsets.UTF_8);
                 } else {
-                    assertEquals(refHtml.replaceAll("\r\n", "\n"), actHtml.replaceAll("\r\n", "\n"));
+                    assertLinesMatch(refHtml.lines().map(PoiWorkbookTest::maskId), actHtml.lines().map(PoiWorkbookTest::maskId));
                 }
             }
         }

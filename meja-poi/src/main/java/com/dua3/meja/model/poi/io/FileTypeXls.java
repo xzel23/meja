@@ -20,7 +20,11 @@ import java.util.function.Function;
  * File type for Excel 97-2003 .XLS files.
  */
 public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
-    private static final FileTypeXls INSTANCE = new FileTypeXls();
+    private static final FileTypeXls INSTANCE;
+
+    static {
+        FileType.addType(INSTANCE = new FileTypeXls());
+    }
 
     /**
      * Get XLS file type instance.
@@ -33,12 +37,6 @@ public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
 
     private FileTypeXls() {
         super("Excel 97-2003", OpenMode.READ_AND_WRITE, PoiHssfWorkbook.class, Workbook.class, "xls");
-    }
-
-    // loosen access to make init() callable by FileTypeExcel
-    @Override
-    public void init() {
-        super.init();
     }
 
     @Override
