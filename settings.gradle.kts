@@ -7,7 +7,7 @@ plugins {
 
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "8.1.3-SNAPSHOT"
+val projectVersion = "8.2.0-SNAPSHOT"
 
 // define subprojects
 include("meja")
@@ -32,13 +32,13 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.1.13")
+            plugin("spotbugs", "com.github.spotbugs").version("6.2.0")
             plugin("cabe", "com.dua3.cabe").version("3.1.0")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
-            version("dua3-utility", "19.2.1")
+            version("dua3-utility", "20.0.0-SNAPSHOT")
             version("javafx", "23.0.2")
             version("dua3-fx", "1.4.2")
             version("ikonli", "12.4.0")
