@@ -239,7 +239,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
                 LOG.debug("handling event: {}", item);
                 setWorkbook(item.source());
             }
-            default -> {}
+            default -> { /* do nothing */ }
         }
     }
 
