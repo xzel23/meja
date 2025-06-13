@@ -64,7 +64,7 @@ public final class ShowTestXlsx extends JFrame {
                 throw e;
             } catch (Exception e) {
                 LOG.error("exception occurred while initializing the application", e);
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         });
     }

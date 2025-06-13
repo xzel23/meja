@@ -76,11 +76,8 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
     public Optional<SwingSheetView> getViewForSheet(Sheet sheet) {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
-            if (view instanceof SwingSheetView swingSheetView) {
-                //noinspection ObjectEquality
-                if (sheet == swingSheetView.getSheet()) {
-                    return Optional.of(swingSheetView);
-                }
+            if (view instanceof SwingSheetView swingSheetView && sheet == swingSheetView.getSheet()) {
+                return Optional.of(swingSheetView);
             }
         }
         return Optional.empty();
@@ -95,10 +92,8 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
     public Optional<SwingSheetView> getViewForSheet(String sheetName) {
         for (int i = 0; i < content.getTabCount(); i++) {
             Component view = content.getComponentAt(i);
-            if (view instanceof SwingSheetView swingSheetView) {
-                if (Objects.equals(swingSheetView.getSheet().getSheetName(), sheetName)) {
-                    return Optional.of(swingSheetView);
-                }
+            if (view instanceof SwingSheetView swingSheetView && Objects.equals(swingSheetView.getSheet().getSheetName(), sheetName)) {
+                return Optional.of(swingSheetView);
             }
         }
         return Optional.empty();
@@ -191,7 +186,7 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
                 LOG.debug("handling event: {}", item);
                 SwingUtilities.invokeLater(() -> setWorkbook(item.source()));
             }
-            default -> {}
+            default -> { /* do nothing */ }
         }
     }
 
