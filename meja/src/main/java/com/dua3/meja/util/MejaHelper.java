@@ -42,7 +42,7 @@ public final class MejaHelper {
     private static final Pattern PATTERN_NEWLINE = Pattern.compile("\\R");
 
     /**
-     * Open workbook file.
+     * Open a workbook file.
      * <p>
      * This method inspects the file name extension to determine which factory
      * should be used for loading.
@@ -57,7 +57,7 @@ public final class MejaHelper {
     }
 
     /**
-     * Open workbook file.
+     * Open a workbook file.
      * <p>
      * This method inspects the file name extension to determine which factory
      * should be used for loading.
