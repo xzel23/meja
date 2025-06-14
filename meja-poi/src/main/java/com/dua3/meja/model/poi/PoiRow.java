@@ -112,8 +112,7 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
      * @param last the index (exclusive) of the last added column
      */
     private void columnsAdded(int first, int last) {
-        PoiSheet sheet = getSheet();
-        sheet.setColumnUsed(last);
+        getSheet().setColumnUsed(last);
     }
 
     @Override

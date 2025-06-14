@@ -478,21 +478,4 @@ public class FxRow extends IndexedCell<FxRow.Index> {
             LOG.debug("onMouseClicked(): set current cell to {}", () -> svDelegate.getCurrentLogicalCell().getCellRef());
         }
     }
-
-    /**
-     * draw a border around and a cross inside a Canvas for debugging.
-     * @param canvas    the Canvas
-     * @param color     the Color
-     */
-    private static void drawBorder(Canvas canvas, javafx.scene.paint.Color color) {
-        GraphicsContext g2d = canvas.getGraphicsContext2D();
-        Affine t = g2d.getTransform();
-        g2d.setTransform(IDENTITY_TRANSFORMATION);
-        g2d.setStroke(color);
-        g2d.setLineWidth(1.0);
-        g2d.strokeRect(0.0f, 0.0f, canvas.getWidth(), canvas.getHeight());
-        g2d.strokeLine(0.0f, 0.0f, canvas.getWidth(), canvas.getHeight());
-        g2d.strokeLine(0.0f, canvas.getHeight(), canvas.getWidth(), 0.0f);
-        g2d.setTransform(t);
-    }
 }

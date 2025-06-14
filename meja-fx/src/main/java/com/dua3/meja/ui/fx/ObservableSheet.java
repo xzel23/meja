@@ -187,7 +187,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
                     LOG.trace("layout changed");
                     layoutListeners.forEach(listener -> listener.accept(sheet));
                 }
-                default -> {}
+                default -> { /* do nothing */ }
             }
         }
 
