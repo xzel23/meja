@@ -57,7 +57,7 @@ public class FxSegmentView extends Control implements SegmentView {
         this.segmentDelegateLeft = new SegmentViewDelegate(this, svDelegate, quadrantLeft);
         this.segmentDelegateRight = new SegmentViewDelegate(this, svDelegate, quadrantRight);
         this.rows = rows;
-        this.flow = new VirtualFlowWithHiddenScrollBars<>(true, true);
+        this.flow = new VirtualFlowWithHiddenScrollBars<>();
 
         updateLayout();
 
