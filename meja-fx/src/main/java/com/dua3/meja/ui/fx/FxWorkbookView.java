@@ -221,7 +221,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
         }
     }
 
-    private transient Flow.@Nullable Subscription subscription = null;
+    private Flow.@Nullable Subscription subscription = null;
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {

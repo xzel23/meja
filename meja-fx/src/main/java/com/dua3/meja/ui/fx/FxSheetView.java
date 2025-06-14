@@ -30,7 +30,6 @@ import javafx.stage.Screen;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.Nullable;
 
 import java.awt.Toolkit;
 import java.util.Locale;
@@ -213,17 +212,6 @@ public class FxSheetView extends StackPane implements SheetView {
         vScrollbar.setVisibleAmount(visibleAmount);
         vScrollbar.setUnitIncrement(delegate.getDefaultRowHeightInPixels() * delegate.getScale().sy());
         vScrollbar.setBlockIncrement(delegate.getDefaultRowHeightInPixels() * delegate.getScale().sy() * 8);
-    }
-
-    /**
-     * Get an {@link ObservableList} containing the rows belonging to this quadrant
-     *
-     * @param rows     all rows
-     * @param splitRow the split row, i.e., rows above this row belong to the upper half
-     * @return the filtered {@link ObservableList} of rows
-     */
-    private static ObservableList<@Nullable Row> filterRows(ObservableList<@Nullable Row> rows, boolean isTop, int splitRow) {
-        return new FilteredList<>(rows, row -> row != null && isTop == (row.getRowNumber() < splitRow));
     }
 
     private static ColumnConstraints columnConstraints(Priority prio) {
