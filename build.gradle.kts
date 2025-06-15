@@ -32,6 +32,30 @@ plugins {
     alias(libs.plugins.sonar)
 }
 
+// JaCoCo report aggregation task
+tasks.register<JacocoReport>("jacocoRootReport") {
+    description = "Generates an aggregate report from all subprojects"
+    group = "Verification"
+
+    dependsOn(subprojects.map { it.tasks.withType<Test>() })
+
+    additionalSourceDirs.setFrom(subprojects.map { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
+    sourceDirectories.setFrom(subprojects.map { it.the<SourceSetContainer>()["main"].allSource.srcDirs })
+    classDirectories.setFrom(subprojects.map { it.the<SourceSetContainer>()["main"].output })
+    executionData.setFrom(subprojects.map { it.layout.buildDirectory.file("jacoco/test.exec") })
+
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
+    }
+}
+
+// Make sonarqube task depend on jacocoRootReport
+tasks.named("sonarqube").configure {
+    dependsOn("jacocoRootReport")
+}
+
 /////////////////////////////////////////////////////////////////////////////
 object Meta {
     const val GROUP = "com.dua3.meja"
@@ -128,7 +152,9 @@ subprojects {
     // Sonar
     sonar {
         properties {
-            property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
+            property("sonar.coverage.jacoco.xmlReportPaths", 
+                     "**/build/reports/jacoco/test/jacocoTestReport.xml," +
+                     "${project.buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml")
         }
     }
 
