@@ -74,7 +74,7 @@ subprojects {
     apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "com.github.spotbugs")
     // Temporarily disable Cabe processor to avoid JavaFX module conflicts
-    // apply(plugin = "com.dua3.cabe")
+    apply(plugin = "com.dua3.cabe")
     apply(plugin = "de.thetaphi.forbiddenapis")
 
     java {
