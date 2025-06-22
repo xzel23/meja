@@ -29,45 +29,38 @@ dependencies {
     implementation(rootProject.libs.dua3.utility)
     implementation(rootProject.libs.dua3.utility.logging)
     implementation(rootProject.libs.dua3.utility.logging.log4j)
-    implementation(rootProject.libs.dua3.utility.fx) {
-        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
-        exclude(group = "org.openjfx")
-    }
-    implementation(rootProject.libs.dua3.utility.fx.controls) {
-        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
-        exclude(group = "org.openjfx")
-    }
-    implementation(rootProject.libs.dua3.utility.fx.icons.ikonli) {
-        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
-        exclude(group = "org.openjfx")
-    }
-    implementation(rootProject.libs.dua3.fx.application) {
-        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
-        exclude(group = "org.openjfx")
-    }
+    implementation(rootProject.libs.log4j.api)
+    implementation(rootProject.libs.log4j.core)
+    implementation(rootProject.libs.dua3.utility.fx)
+    implementation(rootProject.libs.dua3.utility.fx.controls)
+    implementation(rootProject.libs.dua3.utility.fx.icons.ikonli)
+    implementation(rootProject.libs.dua3.fx.application)
 
     // ikonli is used by fx-icons-ikonli; since there are dozens of icon packs, we must specify the ones to include here
     runtimeOnly(libs.ikonli.feather)
-
-    implementation(rootProject.libs.log4j.api)
-    implementation(rootProject.libs.log4j.core)
     runtimeOnly(rootProject.libs.log4j.jcl)
     runtimeOnly(rootProject.libs.log4j.jul)
 }
 
-val runExcelViewer = tasks.register<JavaExec>("runFxExcelViewer") {
+tasks.register<JavaExec>("runFxExcelViewer") {
+    description = "Run the FxExcelViewer sample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxExcelViewer")
     enableAssertions = true
 }
 
-val runKitchenSink = tasks.register<JavaExec>("runFxKitchenSink") {
+tasks.register<JavaExec>("runFxKitchenSink") {
+    description = "Run the FxKitchenSink sample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxKitchenSink")
     enableAssertions = true
 }
 
-val runShowTestXlsx = tasks.register<JavaExec>("runFxShowTestXlsx") {
+tasks.register<JavaExec>("runFxShowTestXlsx") {
+    description = "Run the FxShowTestXlsx sample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.fx.samples.FxShowTestXlsx")
     enableAssertions = true
