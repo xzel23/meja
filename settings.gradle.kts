@@ -7,7 +7,7 @@ plugins {
 
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "8.2.0-SNAPSHOT"
+val projectVersion = "8.2.0-BETA1"
 
 // define subprojects
 include("meja-core")
@@ -38,24 +38,25 @@ dependencyResolutionManagement {
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
-            version("dua3-utility", "20.0.0-SNAPSHOT")
+            version("dua3-utility", "20.0.0-BETA1")
             version("javafx", "23.0.2")
-            version("dua3-fx", "1.5.0-SNAPSHOT")
+            version("dua3-fx", "1.5.0-BETA1")
             version("ikonli", "12.4.0")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.24.3")
             version("poi", "5.4.1")
 
             library("dua3-fx-application", "com.dua3.fx", "fx-application").versionRef("dua3-fx")
-            library("dua3-utility", "com.dua3.utility", "utility").versionRef("dua3-utility")
-            library("dua3-utility-db", "com.dua3.utility", "utility-db").versionRef("dua3-utility")
-            library("dua3-utility-logging", "com.dua3.utility", "utility-logging").versionRef("dua3-utility")
-            library("dua3-utility-logging-log4j", "com.dua3.utility", "utility-logging-log4j").versionRef("dua3-utility")
-            library("dua3-utility-swing", "com.dua3.utility", "utility-swing").versionRef("dua3-utility")
-            library("dua3-utility-fx", "com.dua3.utility", "utility-fx").versionRef("dua3-utility")
-            library("dua3-utility-fx-controls", "com.dua3.utility", "utility-fx-controls").versionRef("dua3-utility")
-            library("dua3-utility-fx-icons", "com.dua3.utility", "utility-fx-icons").versionRef("dua3-utility")
-            library("dua3-utility-fx-icons-ikonli", "com.dua3.utility", "utility-fx-icons-ikonli").versionRef("dua3-utility")
+            library("dua3-utility-bom", "com.dua3.utility", "utility-bom").versionRef("dua3-utility")
+            library("dua3-utility", "com.dua3.utility", "utility").withoutVersion()
+            library("dua3-utility-db", "com.dua3.utility", "utility-db").withoutVersion()
+            library("dua3-utility-logging", "com.dua3.utility", "utility-logging").withoutVersion()
+            library("dua3-utility-logging-log4j", "com.dua3.utility", "utility-logging-log4j").withoutVersion()
+            library("dua3-utility-swing", "com.dua3.utility", "utility-swing").withoutVersion()
+            library("dua3-utility-fx", "com.dua3.utility", "utility-fx").withoutVersion()
+            library("dua3-utility-fx-controls", "com.dua3.utility", "utility-fx-controls").withoutVersion()
+            library("dua3-utility-fx-icons", "com.dua3.utility", "utility-fx-icons").withoutVersion()
+            library("dua3-utility-fx-icons-ikonli", "com.dua3.utility", "utility-fx-icons-ikonli").withoutVersion()
             library("ikonli-fontawesome", "org.kordamp.ikonli", "ikonli-fontawesome-pack").versionRef("ikonli")
             library("ikonli-feather", "org.kordamp.ikonli", "ikonli-feather-pack").versionRef("ikonli")
             library("ikonli-javafx", "org.kordamp.ikonli", "ikonli-javafx").versionRef("ikonli")

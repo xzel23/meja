@@ -140,6 +140,9 @@ subprojects {
         // LOG4J
         implementation(platform(rootProject.libs.log4j.bom))
         implementation(rootProject.libs.log4j.api)
+
+        // dua3 utility
+        implementation(platform(rootProject.libs.dua3.utility.bom))
     }
 
     idea {
