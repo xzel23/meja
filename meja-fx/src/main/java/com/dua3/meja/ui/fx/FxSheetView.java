@@ -306,7 +306,6 @@ public class FxSheetView extends StackPane implements SheetView {
         Platform.runLater(() -> {
             try (var __ = delegate.readLock("FxSheetView.scrollToCurrentCell()")) {
                 Cell cell = delegate.getCurrentLogicalCell();
-                Sheet sheet = delegate.getSheet();
                 int i = cell.getRowNumber();
                 int j = cell.getColumnNumber();
                 int splitRow = delegate.getSplitRow();

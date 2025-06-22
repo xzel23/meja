@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 
@@ -144,6 +145,18 @@ public class ObservableSheet extends ObservableListBase<Row> {
      */
     public ObjectProperty<@Nullable Cell> currentCellProperty() {
         return currentCellProperty;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ObservableSheet other)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(sheet, other.sheet) && Objects.equals(layoutListeners, other.layoutListeners) && Objects.equals(zoomProperty, other.zoomProperty) && Objects.equals(columnCountProperty, other.columnCountProperty) && Objects.equals(splitRowProperty, other.splitRowProperty) && Objects.equals(splitColumnProperty, other.splitColumnProperty) && Objects.equals(currentCellProperty, other.currentCellProperty);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), sheet, layoutListeners, zoomProperty, columnCountProperty, splitRowProperty, splitColumnProperty, currentCellProperty);
     }
 
     private class SheetTracker implements Flow.Subscriber<SheetEvent> {
