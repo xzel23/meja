@@ -102,14 +102,14 @@ subprojects {
         options.encoding = "UTF-8"
     }
 
-    // Temporarily disable Cabe configuration to avoid JavaFX module conflicts
-    /*cabe {
+    // Cabe
+    cabe {
         if (isReleaseVersion) {
-            config.set(Configuration.parse("publicApi=THROW_IAE:privateApi=ASSERT"))
+            config.set(com.dua3.cabe.processor.Configuration.STANDARD)
         } else {
-            config.set(Configuration.DEVELOPMENT)
+            config.set(com.dua3.cabe.processor.Configuration.DEVELOPMENT)
         }
-    }*/
+    }
 
     // JaCoCo
     tasks.withType<JacocoReport> {
