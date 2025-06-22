@@ -20,7 +20,7 @@ javafx {
 }
 
 dependencies {
-    implementation(project(":meja"))
+    implementation(project(":meja-core"))
     implementation(project(":meja-generic"))
     implementation(project(":meja-poi"))
     implementation(project(":meja-ui"))

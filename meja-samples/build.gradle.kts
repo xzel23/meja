@@ -5,7 +5,7 @@ plugins {
 description = "Meja spreadsheet library - samples"
 
 dependencies {
-    implementation(project(":meja"))
+    implementation(project(":meja-core"))
     implementation(project(":meja-generic"))
     implementation(project(":meja-ui"))
     implementation(project(":meja-swing"))

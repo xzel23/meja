@@ -1,7 +1,7 @@
 description = "Meja spreadsheet library - Apache POI implementation"
 
 dependencies {
-    implementation(project(":meja"))
+    implementation(project(":meja-core"))
     implementation(rootProject.libs.dua3.utility)
 
     // Apache POI

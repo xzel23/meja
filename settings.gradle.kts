@@ -10,7 +10,7 @@ rootProject.name = "dua3-meja"
 val projectVersion = "8.2.0-SNAPSHOT"
 
 // define subprojects
-include("meja")
+include("meja-core")
 include("meja-generic")
 include("meja-poi")
 include("meja-ui")
