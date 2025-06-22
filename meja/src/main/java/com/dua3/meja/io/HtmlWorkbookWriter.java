@@ -329,7 +329,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     @Override
     public void write(Workbook workbook, OutputStream out, DoubleConsumer updateProgress) throws IOException {
-        write(workbook, out, IoOptions.getLocale(options), updateProgress);
+        write(workbook, out, options.getOrThrow(IoOptions.OPTION_LOCALE), updateProgress);
     }
 
     /**

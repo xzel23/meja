@@ -39,8 +39,8 @@ class GenericWorkbookTest {
         try {
             Path pathToCopy = tempDir.resolve("population by country (copy).csv");
             original.write(pathToCopy, Arguments.of(
-                    Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
-                    Arguments.createEntry(IoOptions.locale(), Locale.US)
+                    Arguments.createEntry(IoOptions.OPTION_FIELD_SEPARATOR, ';'),
+                    Arguments.createEntry(IoOptions.OPTION_LOCALE, Locale.US)
             ));
             testCountryWorkbook(pathToCopy, Locale.US);
         } finally {
@@ -76,7 +76,7 @@ class GenericWorkbookTest {
     private void copyToHtml(Path inFile, Path outFile, Locale locale) throws IOException {
         Workbook original = openWorkbookCsv(inFile, locale);
         original.write(outFile, Arguments.of(
-                Arguments.createEntry(IoOptions.locale(), locale)
+                Arguments.createEntry(IoOptions.OPTION_LOCALE, locale)
         ));
     }
 
@@ -118,8 +118,8 @@ class GenericWorkbookTest {
                 .read(
                         pathToWorkbook,
                         t -> Arguments.of(
-                                Arguments.createEntry(IoOptions.fieldSeparator(), ';'),
-                                Arguments.createEntry(IoOptions.locale(), locale)
+                                Arguments.createEntry(IoOptions.OPTION_FIELD_SEPARATOR, ';'),
+                                Arguments.createEntry(IoOptions.OPTION_LOCALE, locale)
                         )
                 );
     }

@@ -49,8 +49,8 @@ public class SheetRowBuilder implements RowBuilder {
     public SheetRowBuilder(Sheet sheet, Arguments options) {
         this.sheet = sheet;
 
-        Locale locale = IoOptions.getLocale(options);
-        PredefinedDateTimeFormat dateFormat = IoOptions.getDateFormat(options);
+        Locale locale = options.getOrThrow(IoOptions.OPTION_LOCALE);
+        PredefinedDateTimeFormat dateFormat = options.getOrThrow(IoOptions.OPTION_DATE_TIME_FORMAT);
 
         NumberFormat numberFormat = NumberFormat.getInstance(locale);
         DateTimeFormatter dateFormatter = dateFormat.getDateFormatter(locale);

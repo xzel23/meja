@@ -101,7 +101,7 @@ class PoiWorkbookTest {
 
     private void copyToHtml(Path inFile, Path outFile, Locale locale) throws IOException {
         Workbook original = MejaHelper.openWorkbook(inFile);
-        original.write(outFile, Arguments.of(Arguments.createEntry(IoOptions.locale(), locale)));
+        original.write(outFile, Arguments.of(Arguments.createEntry(IoOptions.OPTION_LOCALE, locale)));
     }
 
     private void testCountryWorkbook(Path pathToWorkbook) throws IOException, URISyntaxException {

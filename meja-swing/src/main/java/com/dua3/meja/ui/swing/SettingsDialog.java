@@ -1,7 +1,6 @@
 package com.dua3.meja.ui.swing;
 
 import com.dua3.utility.options.Arguments;
-import com.dua3.utility.options.ChoiceOption;
 import com.dua3.utility.options.Option;
 import com.dua3.utility.swing.SwingUtil;
 
@@ -50,9 +49,9 @@ public class SettingsDialog extends JDialog {
         settingsPanel.setLayout(new GridLayout(options.size(), 2));
         for (Option<?> option : options) {
             settingsPanel.add(new JLabel(option.displayName()));
-            if (option instanceof ChoiceOption co) {
-                JComboBox<ChoiceOption.Choice<?>> cb = new JComboBox<>(new Vector<>(co.choices()));
-                cb.setSelectedItem(co.choice(co.getDefault()));
+            if (option.hasAllowedValues()) {
+                JComboBox<Object> cb = new JComboBox<>(new Vector<>(option.allowedValues()));
+                cb.setSelectedItem(option.getDefault());
                 inputs.add(cb);
                 settingsPanel.add(cb);
             } else {
@@ -69,16 +68,12 @@ public class SettingsDialog extends JDialog {
             for (Option option : options) {
                 JComponent component = inputs.get(i++);
                 Object value;
-                if (option instanceof ChoiceOption) {
+                if (option.hasAllowedValues()) {
                     value = ((JComboBox) component).getSelectedItem();
                 } else {
                     value = ((JTextComponent) component).getText();
                 }
-                if (value != null) {
-                    entries.add(Arguments.createEntry(option, value));
-                } else {
-                    entries.add(Arguments.createEntry(option));
-                }
+                entries.add(Arguments.createEntry(option, value));
             }
             result = Arguments.of(entries.toArray(Arguments.Entry[]::new));
             dispose();
