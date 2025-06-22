@@ -23,26 +23,34 @@ dependencies {
     implementation(project(":meja-poi"))
 }
 
-val runExcelViewer = tasks.register<JavaExec>("runExcelViewer") {
+tasks.register<JavaExec>("runExcelViewer") {
+    description = "Run the SwingExcelViewer sample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.excelviewer.SwingExcelViewer")
     enableAssertions = true
 }
 
-val runKitchenSink = tasks.register<JavaExec>("runKitchenSink") {
+tasks.register<JavaExec>("runKitchenSink") {
+    description = "Run the KitchenSink sample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.samples.KitchenSink")
     enableAssertions = true
     systemProperty("logwindow", "1")
 }
 
-val runTableModel = tasks.register<JavaExec>("runTableModel") {
+tasks.register<JavaExec>("runTableModel") {
+    description = "Run the TableModelDemo sample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.samples.TableModelDemo")
     enableAssertions = true
 }
 
-val runShowTestXlsx = tasks.register<JavaExec>("runShowTestXlsx") {
+tasks.register<JavaExec>("runShowTestXlsx") {
+    description = "Run the ShowTestXlsx sample application."
+    group = ApplicationPlugin.APPLICATION_GROUP
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.dua3.meja.samples.ShowTestXlsx")
     enableAssertions = true
