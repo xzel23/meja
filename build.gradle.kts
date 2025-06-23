@@ -23,7 +23,6 @@ plugins {
     id("maven-publish")
     id("signing")
     id("idea")
-    id("jacoco")
     id("jacoco-report-aggregation")
     alias(libs.plugins.versions)
     alias(libs.plugins.test.logger)
