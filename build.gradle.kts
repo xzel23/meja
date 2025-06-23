@@ -69,6 +69,7 @@ tasks.named<JacocoReport>("testCodeCoverageReport") {
 sonar {
     properties {
         property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+        property("sonar.coverage.exclusions", "**/samples/**")
     }
 }
 
