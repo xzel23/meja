@@ -69,7 +69,7 @@ tasks.named<JacocoReport>("testCodeCoverageReport") {
 // Root project SonarQube configuration - use aggregated report
 sonar {
     properties {
-        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
     }
 }
 
