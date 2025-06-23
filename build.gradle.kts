@@ -24,6 +24,7 @@ plugins {
     id("signing")
     id("idea")
     id("jacoco")
+    id("jacoco-report-aggregation")
     alias(libs.plugins.versions)
     alias(libs.plugins.test.logger)
     alias(libs.plugins.spotbugs)
@@ -46,6 +47,31 @@ object Meta {
     const val ORGANIZATION_URL = "https://www.dua3.com"
 }
 /////////////////////////////////////////////////////////////////////////////
+
+dependencies {
+    // Add all subprojects to aggregation
+    jacocoAggregation(project(":meja-core"))
+    jacocoAggregation(project(":meja-generic"))
+    jacocoAggregation(project(":meja-poi"))
+    jacocoAggregation(project(":meja-ui"))
+    jacocoAggregation(project(":meja-fx"))
+    jacocoAggregation(project(":meja-swing"))
+    jacocoAggregation(project(":meja-db"))
+}
+
+tasks.named<JacocoReport>("testCodeCoverageReport") {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+// Root project SonarQube configuration - use aggregated report
+sonar {
+    properties {
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+    }
+}
 
 subprojects {
 
@@ -73,7 +99,6 @@ subprojects {
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "com.github.spotbugs")
-    // Temporarily disable Cabe processor to avoid JavaFX module conflicts
     apply(plugin = "com.dua3.cabe")
     apply(plugin = "de.thetaphi.forbiddenapis")
 
@@ -111,25 +136,10 @@ subprojects {
         }
     }
 
-    // JaCoCo
-    tasks.withType<JacocoReport> {
-        reports {
-            xml.required.set(true)
-            html.required.set(false)
-        }
-    }
-
     // Configure test task to use JaCoCo
     tasks.withType<Test> {
         useJUnitPlatform()
         finalizedBy(tasks.jacocoTestReport)
-    }
-
-    // Sonar
-    sonar {
-        properties {
-            property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
-        }
     }
 
     // dependencies
@@ -178,19 +188,7 @@ subprojects {
         theme = ThemeType.STANDARD
     }
 
-    tasks.compileJava {
-        options.encoding = "UTF-8"
-    }
-
-    tasks.compileTestJava {
-        options.encoding = "UTF-8"
-    }
-
-    tasks.javadoc {
-        options.encoding = "UTF-8"
-    }
-
-    // === publication: MAVEN = == >
+    // === publication: MAVEN ===
 
     // Create the publication with the pom configuration:
     publishing {
@@ -279,7 +277,6 @@ subprojects {
     tasks.withType<Jar> {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
-
 }
 
 allprojects {

@@ -1,7 +1,8 @@
 # Meja Changelog
 
-## Version 8.2.0 (in progress)
+## Version 8.2.0 (will probably be released as 9.0, in progress)
 
+- renamed the `meja` module to `meja-core`
 - HtmlWorkbookWriter
     - declared methods not intended to be called from non-library code as private
     - added export methods for single sheets
