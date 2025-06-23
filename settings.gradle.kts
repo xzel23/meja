@@ -7,7 +7,7 @@ plugins {
 
 // define project name and version
 rootProject.name = "dua3-meja"
-val projectVersion = "8.2.0-BETA1"
+val projectVersion = "9.0.0-SNAPSHOT"
 
 // define subprojects
 include("meja-core")
@@ -38,9 +38,9 @@ dependencyResolutionManagement {
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
 
-            version("dua3-utility", "20.0.0-BETA1")
+            version("dua3-utility", "20.0.0-SNAPSHOT")
             version("javafx", "23.0.2")
-            version("dua3-fx", "1.5.0-BETA1")
+            version("dua3-fx", "1.5.0-SNAPSHOT")
             version("ikonli", "12.4.0")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.25.0")
