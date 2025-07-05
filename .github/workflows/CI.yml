@@ -47,6 +47,27 @@ jobs:
         id: compile
         continue-on-error: false
 
+      - name: 'publish snapshot build'
+        if: runner.os == 'Linux' && success()
+        run: ./gradlew jreleaserDeploy
+        env:
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_PASSPHRASE }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
+      - name: 'Upload test artifacts from all modules'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ matrix.os }}
+          path: |
+            **/build/test-artifacts/**
+            **/build/jreleaser/output.properties
+            **/build/jreleaser/trace.log
+          if-no-files-found: ignore
+
       - name: 'Create Qodana config'
         if: runner.os == 'Linux'
         run: |
@@ -63,7 +84,7 @@ jobs:
 
       - name: 'Qodana Scan'
         if: runner.os == 'Linux'
-        uses: JetBrains/qodana-action@v2025.1
+        uses: JetBrains/qodana-action@v2025.1.1
         with:
           args: --property,idea.kotlin.plugin.use.k2=false
         env:
@@ -85,3 +106,4 @@ jobs:
           -Dsonar.projectKey=xzel23_meja
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/test/jacocoTestReport.xml
