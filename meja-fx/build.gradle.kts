@@ -1,4 +1,4 @@
-description = "Meja spreadsheet library - JavaFX tools"
+project.description = "Meja spreadsheet library - JavaFX tools"
 
 plugins {
     alias(libs.plugins.javafx)

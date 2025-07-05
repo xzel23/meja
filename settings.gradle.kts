@@ -1,15 +1,8 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
-// Enable Foojay Toolchain resolver
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-}
-
-// define project name and version
 rootProject.name = "dua3-meja"
 val projectVersion = "9.0.0-SNAPSHOT"
 
-// define subprojects
 include("meja-core")
 include("meja-generic")
 include("meja-poi")
@@ -20,7 +13,10 @@ include("meja-samples")
 include("meja-fx")
 include("meja-samples-fx")
 
-// define dependency versions and repositories
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 dependencyResolutionManagement {
 
     val isSnapshot = projectVersion.toDefaultLowerCase().contains("-snapshot")
@@ -37,26 +33,31 @@ dependencyResolutionManagement {
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("sonar", "org.sonarqube").version("6.2.0.5505")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
+            plugin("jmh", "me.champeau.jmh").version("0.7.3")
+            plugin("jreleaser", "org.jreleaser").version("1.19.0")
 
             version("dua3-utility", "20.0.0-SNAPSHOT")
-            version("javafx", "23.0.2")
             version("dua3-fx", "1.5.0-SNAPSHOT")
             version("ikonli", "12.4.0")
+            version("javafx", "23.0.2")
+            version("jmh", "1.37")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.25.0")
             version("poi", "5.4.1")
+            version("spotbugs", "4.9.3")
 
             library("dua3-fx-application", "com.dua3.fx", "fx-application").versionRef("dua3-fx")
             library("dua3-utility-bom", "com.dua3.utility", "utility-bom").versionRef("dua3-utility")
             library("dua3-utility", "com.dua3.utility", "utility").withoutVersion()
             library("dua3-utility-db", "com.dua3.utility", "utility-db").withoutVersion()
             library("dua3-utility-logging", "com.dua3.utility", "utility-logging").withoutVersion()
+            library("dua3-utility-fx-icons", "com.dua3.utility", "utility-fx-icons").withoutVersion()
+            library("dua3-utility-fx-icons-ikonli", "com.dua3.utility", "utility-fx-icons-ikonli").withoutVersion()
             library("dua3-utility-logging-log4j", "com.dua3.utility", "utility-logging-log4j").withoutVersion()
+            library("dua3-utility-logging-slf4j", "com.dua3.utility", "utility-logging-slf4j").withoutVersion()
             library("dua3-utility-swing", "com.dua3.utility", "utility-swing").withoutVersion()
             library("dua3-utility-fx", "com.dua3.utility", "utility-fx").withoutVersion()
             library("dua3-utility-fx-controls", "com.dua3.utility", "utility-fx-controls").withoutVersion()
-            library("dua3-utility-fx-icons", "com.dua3.utility", "utility-fx-icons").withoutVersion()
-            library("dua3-utility-fx-icons-ikonli", "com.dua3.utility", "utility-fx-icons-ikonli").withoutVersion()
             library("ikonli-fontawesome", "org.kordamp.ikonli", "ikonli-fontawesome-pack").versionRef("ikonli")
             library("ikonli-feather", "org.kordamp.ikonli", "ikonli-feather-pack").versionRef("ikonli")
             library("ikonli-javafx", "org.kordamp.ikonli", "ikonli-javafx").versionRef("ikonli")
@@ -70,10 +71,7 @@ dependencyResolutionManagement {
             library("log4j-to-slf4j", "org.apache.logging.log4j", "log4j-to-slf4j").withoutVersion()
             library("poi", "org.apache.poi", "poi").versionRef("poi")
             library("poi-ooxml", "org.apache.poi", "poi-ooxml").versionRef("poi")
-
             // version overrides for libraries
-
-            // use a newer version of commons-compress because of CVE-2024-26308, CVE-2024-25710
             library("commons-compress", "org.apache.commons", "commons-compress").version("1.26.2")
         }
     }
@@ -83,12 +81,11 @@ dependencyResolutionManagement {
 
         // Maven Central Repository
         mavenCentral()
-        mavenLocal()
 
         // Sonatype Releases
         maven {
-            name = "oss.sonatype.org-releases"
-            url = java.net.URI("https://s01.oss.sonatype.org/content/repositories/releases/")
+            name = "central.sonatype.com-releases"
+            url = java.net.URI("https://central.sonatype.com/content/repositories/releases/")
             mavenContent {
                 releasesOnly()
             }
@@ -104,13 +101,12 @@ dependencyResolutionManagement {
         }
 
         if (isSnapshot) {
-            println("snapshot version detected, adding local and snapshot Maven repositories")
-            mavenLocal()
+            println("snapshot version detected, adding Maven snapshot repositories")
 
             // Sonatype Snapshots
             maven {
-                name = "oss.sonatype.org-snapshots"
-                url = java.net.URI("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+                name = "Central Portal Snapshots"
+                url = java.net.URI("https://central.sonatype.com/repository/maven-snapshots/")
                 mavenContent {
                     snapshotsOnly()
                 }
@@ -126,18 +122,8 @@ dependencyResolutionManagement {
             }
         }
 
-        if (isReleaseCandidate || isSnapshot) {
-            println("release candidate version detected, adding local and staging Maven repositories")
-            mavenLocal()
-
-            // Sonatype Snapshots
-            maven {
-                name = "oss.sonatype.org-snapshots"
-                url = java.net.URI("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-                mavenContent {
-                    snapshotsOnly()
-                }
-            }
+        if (isReleaseCandidate) {
+            println("release candidate version detected, adding Maven staging repositories")
 
             // Apache staging
             maven {

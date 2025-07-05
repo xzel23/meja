@@ -1,4 +1,4 @@
-description = "Meja spreadsheet library - generic implementation"
+project.description = "Meja spreadsheet library - generic implementation"
 
 dependencies {
     implementation(project(":meja-core"))

@@ -1,4 +1,4 @@
-description = "Meja spreadsheet library - ui base module"
+project.description = "Meja spreadsheet library - ui base module"
 
 dependencies {
     api(project(":meja-core"))

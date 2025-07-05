@@ -1,4 +1,4 @@
-description = "Meja spreadsheet library - Apache POI implementation"
+project.description = "Meja spreadsheet library - Apache POI implementation"
 
 dependencies {
     implementation(project(":meja-core"))

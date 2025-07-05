@@ -2,7 +2,7 @@ plugins {
     id("application")
 }
 
-description = "Meja spreadsheet library - samples"
+project.description = "Meja spreadsheet library - samples"
 
 dependencies {
     implementation(project(":meja-core"))

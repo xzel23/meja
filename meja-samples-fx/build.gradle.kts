@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.javafx)
 }
 
-description = "Meja spreadsheet library - samples (JavaFX)"
+project.description = "Meja spreadsheet library - samples (JavaFX)"
 
 java {
     toolchain {
