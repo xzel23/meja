@@ -106,4 +106,3 @@ jobs:
           -Dsonar.projectKey=xzel23_meja
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/test/jacocoTestReport.xml
