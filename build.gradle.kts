@@ -117,7 +117,6 @@ subprojects {
     if (!project.name.endsWith("-bom")) {
         apply(plugin = "jacoco")
         apply(plugin = "java-library")
-        apply(plugin = "jvm-test-suite")
         apply(plugin = rootProject.libs.plugins.spotbugs.get().pluginId)
         apply(plugin = rootProject.libs.plugins.cabe.get().pluginId)
         apply(plugin = rootProject.libs.plugins.forbiddenapis.get().pluginId)
