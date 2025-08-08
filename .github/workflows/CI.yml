@@ -49,7 +49,7 @@ jobs:
 
       - name: 'publish build'
         if: runner.os == 'Linux' && success()
-        run: ./gradlew jreleaserDeploy
+        run: ./gradlew --no-daemon --build-cache --no-configuration-cache jreleaserDeploy
         env:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
@@ -102,7 +102,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
-          ./gradlew sonar
+          ./gradlew --no-daemon --build-cache --no-parallel sonar
           -Dsonar.projectKey=xzel23_meja
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
