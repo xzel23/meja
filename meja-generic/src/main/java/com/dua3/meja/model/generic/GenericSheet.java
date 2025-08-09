@@ -191,7 +191,7 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
 
     @Override
     public boolean setCurrentCell(Cell cell) {
-        LOG.trace("setting current cell to {}", () -> cell == null ? null : cell.getCellRef());
+        LOG.trace("setting current cell to {}", cell::getCellRef);
 
         LangUtil.checkArg(cell.getSheet() == this, "cell  belongs to another sheet");
 
