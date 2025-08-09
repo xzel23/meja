@@ -248,23 +248,30 @@ subprojects {
     // Forbidden APIs and SpotBugs for non-BOM projects
     if (!project.name.endsWith("-bom")) {
         // === FORBIDDEN APIS ===
-        forbiddenApis {
+        tasks.withType(de.thetaphi.forbiddenapis.gradle.CheckForbiddenApis::class).configureEach {
             bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
             ignoreFailures = false
         }
 
         // === SPOTBUGS ===
-        spotbugs.toolVersion.set(rootProject.libs.versions.spotbugs)
-        spotbugs.excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
-        tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
+        spotbugs {
+            toolVersion.set(rootProject.libs.versions.spotbugs)
+            excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
+        }
+
+        tasks.named<com.github.spotbugs.snom.SpotBugsTask>("spotbugsMain") {
             reports.create("html") {
                 required.set(true)
-                outputLocation = project.layout.buildDirectory.file("reports/spotbugs.html").get().asFile
+                outputLocation.set(layout.buildDirectory.file("reports/spotbugs/main.html"))
                 setStylesheet("fancy-hist.xsl")
             }
-            reports.create("xml") {
+        }
+
+        tasks.named<com.github.spotbugs.snom.SpotBugsTask>("spotbugsTest") {
+            reports.create("html") {
                 required.set(true)
-                outputLocation = project.layout.buildDirectory.file("reports/spotbugs.xml").get().asFile
+                outputLocation.set(layout.buildDirectory.file("reports/spotbugs/test.html"))
+                setStylesheet("fancy-hist.xsl")
             }
         }
     }
