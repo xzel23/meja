@@ -59,7 +59,6 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
      * class and methods that require access to the raw POI sheet data structure.
      */
     protected Sheet poiSheet;
-    private int firstColumn;
     private int lastColumn;
     private float zoom = 1.0f;
     private int autoFilterRow = -1;
@@ -128,7 +127,7 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
 
     @Override
     public int getColumnCount() {
-        return lastColumn - firstColumn + 1;
+        return lastColumn + 1;
     }
 
     @Override
@@ -147,16 +146,6 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
         return getCell(cellRef.getRow(), cellRef.getColumn());
     }
 
-    @Override
-    public int getLastColNum() {
-        return lastColumn;
-    }
-
-    @Override
-    public int getLastRowNum() {
-        return poiSheet.getLastRowNum();
-    }
-
     /**
      * Get the underlying Apache POI sheet instance.
      * @return the Apache POI sheet used to store sheet data
@@ -169,7 +158,7 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     public PoiRow getRow(int i) {
         Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
-            int oldLast = getLastRowNum();
+            int oldLast = getRowCount() - 1;
             int added = i - oldLast;
             poiRow = poiSheet.createRow(i);
             if (added > 0) {
@@ -181,12 +170,12 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
 
     @Override
     public Optional<PoiRow> getRowIfExists(int i) {
-        return Optional.ofNullable(0 <= i && i <= getLastRowNum() ? getRow(i) : null);
+        return Optional.ofNullable(0 <= i && i < getRowCount() ? getRow(i) : null);
     }
 
     @Override
     public int getRowCount() {
-        return 1 + getLastRowNum();
+        return poiSheet.getLastRowNum() + 1;
     }
 
     @Override
@@ -270,7 +259,6 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     void setColumnUsed(int columnNumber) {
         int first = lastColumn + 1;
 
-        firstColumn = Math.min(firstColumn, columnNumber);
         lastColumn = Math.max(lastColumn, columnNumber);
 
         int last = lastColumn + 1;
@@ -370,25 +358,12 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
 
     private void init() {
         // update row and column information
-        firstColumn = Integer.MAX_VALUE;
         lastColumn = -1;
         for (int i = poiSheet.getFirstRowNum(); i < poiSheet.getLastRowNum() + 1; i++) {
             final Row poiRow = poiSheet.getRow(i);
             if (poiRow != null) {
-                final short firstCellNum = poiRow.getFirstCellNum();
-                if (firstCellNum >= 0) {
-                    firstColumn = Math.min(firstColumn, firstCellNum);
-                }
-                final short lastCellNum = (short) (poiRow.getLastCellNum() - 1);
-                if (lastCellNum > lastColumn) {
-                    lastColumn = lastCellNum;
-                }
+                lastColumn = Math.max(lastColumn, poiRow.getLastCellNum() - 1);
             }
-        }
-
-        if (firstColumn == Integer.MAX_VALUE) {
-            firstColumn = 0;
-            lastColumn = -1;
         }
 
         // extract merged regions

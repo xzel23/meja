@@ -139,7 +139,6 @@ public interface Sheet extends Iterable<Row> {
      * columns contain data.
      *
      * @return the total number of columns in this sheet
-     * @see #getLastColNum()
      */
     int getColumnCount();
 
@@ -162,26 +161,6 @@ public interface Sheet extends Iterable<Row> {
      * @see #setCurrentCell(int, int)
      */
     Cell getCurrentCell();
-
-    /**
-     * Returns the number of the last column in the sheet that contains data.
-     * A column is considered "used" if it contains at least one non-empty cell.
-     *
-     * @return the number of the last column containing data, or -1 if the sheet is empty
-     * @see #getColumnCount()
-     * @see #isEmpty()
-     */
-    int getLastColNum();
-
-    /**
-     * Returns the number of the last row in the sheet that contains data.
-     * A row is considered "used" if it contains at least one non-empty cell.
-     *
-     * @return the number of the last row containing data, or -1 if the sheet is empty
-     * @see #getRowCount()
-     * @see #isEmpty()
-     */
-    int getLastRowNum();
 
     /**
      * Returns a list of all merged regions in this sheet. A merged region is a rectangular area
@@ -235,7 +214,6 @@ public interface Sheet extends Iterable<Row> {
      * rows contain data. Empty rows within this range are included in the count.
      *
      * @return the total number of rows in this sheet
-     * @see #getLastRowNum()
      * @see #isEmpty()
      */
     int getRowCount();
@@ -425,7 +403,6 @@ public interface Sheet extends Iterable<Row> {
      *
      * @return an iterator over the rows in ascending order
      * @see #rows() for a stream-based alternative
-     * @see #getLastRowNum()
      * @throws UnsupportedOperationException if attempting to remove rows through the iterator
      */
     @Override
@@ -436,7 +413,7 @@ public interface Sheet extends Iterable<Row> {
 
             @Override
             public boolean hasNext() {
-                return rowNum <= getLastRowNum();
+                return rowNum <= getRowCount() - 1;
             }
 
             @Override
@@ -487,7 +464,7 @@ public interface Sheet extends Iterable<Row> {
         }
 
         // copy column widths (must be done after copying rows because POI SXSSF overwrites widths when adding the rows)
-        for (int j = 0; j <= other.getLastColNum(); j++) {
+        for (int j = 0; j < other.getColumnCount(); j++) {
             setColumnWidth(j, other.getColumnWidth(j));
         }
     }
@@ -498,7 +475,7 @@ public interface Sheet extends Iterable<Row> {
      * operations on the rows.
      *
      * <p>The stream traverses rows in ascending order from 0 to
-     * {@link #getLastRowNum()}, inclusive. Empty rows within this range are included in
+     * {@link #getColumnCount()}, exclusive. Empty rows within this range are included in
      * the stream. The stream is ordered and non-parallel.</p>
      *
      * <p>Example usage:
@@ -506,7 +483,6 @@ public interface Sheet extends Iterable<Row> {
      *
      * @return a sequential Stream of rows in ascending order
      * @see #iterator()
-     * @see #getLastRowNum()
      */
     default Stream<Row> rows() {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
@@ -687,13 +663,13 @@ public interface Sheet extends Iterable<Row> {
         // move to next cell
         Row row = cell.getRow();
         int j = cell.getColumnNumber();
-        if (j < row.getLastCellNum()) {
+        if (j < row.getColumnCount() - 1) {
             // cell is not the last one in row -> move right
             return row.getCell(j + 1);
         } else {
             // cell is the last one in row...
             int i = row.getRowNumber();
-            if (i < getLastRowNum()) {
+            if (i < getRowCount() - 1) {
                 // not the last row -> move to next row
                 row = getRow(i + 1);
             } else {

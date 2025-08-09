@@ -567,7 +567,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
             // determine row and column positions
             sheetHeightInPoints = 0;
-            rowPos = new float[2 + sheet.getLastRowNum()];
+            rowPos = new float[2 + sheet.getRowCount() - 1];
             rowPos[0] = 0;
             for (int i = 1; i < rowPos.length; i++) {
                 sheetHeightInPoints += sheet.getRowHeight(i - 1);
@@ -575,7 +575,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             }
 
             sheetWidthInPoints = 0;
-            columnPos = new float[2 + sheet.getLastColNum()];
+            columnPos = new float[2 + sheet.getColumnCount() - 1];
             columnPos[0] = 0;
             for (int j = 1; j < columnPos.length; j++) {
                 sheetWidthInPoints += sheet.getColumnWidth(j - 1);
@@ -584,7 +584,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
             // create a string with the maximum number of digits needed to
             // represent the highest row number, using only the digit '9'.
-            String sMax = "9".repeat(String.valueOf(sheet.getLastRowNum()).length());
+            String sMax = "9".repeat(String.valueOf(sheet.getRowCount() - 1).length());
             Rectangle2f dim = FontUtil.getInstance().getTextDimension(sMax, getLabelFont());
             rowLabelWidth = dim.width() + 2 * PADDING_X_IN_POINTS;
             columnLabelHeightInPoints = dim.height() + 2 * PADDING_Y_IN_POINTS;
@@ -931,8 +931,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     public void moveEnd() {
         try (var __ = writeLock("SheetViewDelegate.moveEnd()")) {
-            int row = sheet.getLastRowNum();
-            int col = sheet.getLastColNum();
+            int row = sheet.getRowCount() - 1;
+            int col = sheet.getColumnCount() - 1;
             setCurrentCell(row, col);
         }
     }

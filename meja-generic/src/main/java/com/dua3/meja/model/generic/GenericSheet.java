@@ -92,23 +92,13 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
     }
 
     @Override
-    public int getLastColNum() {
-        return numberOfColumns - 1;
-    }
-
-    @Override
-    public int getLastRowNum() {
-        return getRowCount() - 1;
-    }
-
-    @Override
     public GenericRow getRow(int row) {
         reserve(row);
         return rows.get(row);
     }
 
     public Optional<GenericRow> getRowIfExists(int i) {
-        return Optional.ofNullable(0 <= i && i <= getLastRowNum() ? getRow(i) : null);
+        return Optional.ofNullable(0 <= i && i < getRowCount() ? getRow(i) : null);
     }
 
     @Override
@@ -277,7 +267,7 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
      */
     void setColumnUsed(int columnNumber) {
         if (columnNumber > numberOfColumns - 1) {
-            int oldLast = getLastColNum();
+            int oldLast = getColumnCount() - 1;
             numberOfColumns = columnNumber + 1;
             columnsAdded(oldLast, numberOfColumns);
         }

@@ -46,7 +46,7 @@ public interface Row extends Iterable<Cell> {
      * @return new Cell instance
      */
     default Cell createCell() {
-        return getCell(getLastCellNum() + 1);
+        return getCell(getColumnCount());
     }
 
     /**
@@ -56,7 +56,7 @@ public interface Row extends Iterable<Cell> {
      * @return new Cell instance
      */
     default Cell createCell(@Nullable Object value) {
-        Cell cell = getCell(getLastCellNum() + 1);
+        Cell cell = getCell(getColumnCount());
         cell.set(value);
         return cell;
     }
@@ -70,18 +70,11 @@ public interface Row extends Iterable<Cell> {
     Cell getCell(int j);
 
     /**
-     * Get column number of last cell.
-     * <p>
-     * Workbooks have an area of used cells. All cells outside that area are
-     * blank. If the value returned by this method is less than the number of
-     * columns-1 that means that all the cells to the right of the column returned
-     * are blank. The opposite is not necessarily true, since the area of used cells
-     * might not be updated when a cell is cleared (because that would require a
-     * full sweep of all rows).
+     * Retrieves the total number of columns in this row.
      *
-     * @return number of last cell that potentially contains a value.
+     * @return the number of columns in this row
      */
-    int getLastCellNum();
+    int getColumnCount();
 
     /**
      * Get cell.
@@ -134,7 +127,7 @@ public interface Row extends Iterable<Cell> {
 
             @Override
             public boolean hasNext() {
-                return colNum <= getLastCellNum();
+                return colNum < getColumnCount();
             }
 
             @Override
@@ -178,11 +171,12 @@ public interface Row extends Iterable<Cell> {
             text = text.toLowerCase(Locale.ROOT);
         }
 
-        int jStart = ss.searchFromCurrent() ? getSheet().getCurrentCell().getColumnNumber() : getLastCellNum();
+        int jStart;
+        jStart = ss.searchFromCurrent() ? getSheet().getCurrentCell().getColumnNumber() : getColumnCount() - 1;
         int j = jStart;
         do {
             // move to next cell
-            if (j < getLastCellNum()) {
+            if (j < getColumnCount() - 1) {
                 j++;
             } else {
                 j = 0;

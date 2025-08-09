@@ -51,11 +51,9 @@ public class GenericRow extends AbstractRow<GenericSheet, GenericRow, GenericCel
 
     @Override
     public GenericCell getCell(int col) {
-        int added = reserve(col);
+        reserve(col);
         GenericCell cell = cells.get(col);
-        if (added > 0) {
-            getSheet().setColumnUsed(col);
-        }
+        getSheet().setColumnUsed(col);
         return cell;
     }
 
@@ -70,8 +68,8 @@ public class GenericRow extends AbstractRow<GenericSheet, GenericRow, GenericCel
     }
 
     @Override
-    public int getLastCellNum() {
-        return cells.size() - 1;
+    public int getColumnCount() {
+        return cells.size();
     }
 
     @Override

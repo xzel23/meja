@@ -59,7 +59,7 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
     @Override
     public PoiCell getCell(int j) {
         org.apache.poi.ss.usermodel.Cell poiCell;
-        int oldLast = getLastCellNum();
+        int oldLast = getColumnCount() - 1;
         if (j > oldLast) {
             int jj = oldLast;
             do {
@@ -86,9 +86,8 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public int getLastCellNum() {
-        // POI returns -1 for empty rows
-        return Math.max(0, poiRow.getLastCellNum()) - 1;
+    public int getColumnCount() {
+        return Math.max(0, poiRow.getLastCellNum());
     }
 
     @Override

@@ -132,12 +132,12 @@ class GenericWorkbookTest {
     private void testRowGetLastColNumErrorHelper(Workbook wb) {
         Sheet sheet = wb.createSheet("index");
 
-        assertEquals(-1, sheet.getLastRowNum());
-        assertEquals(-1, sheet.getLastColNum());
+        assertEquals(0, sheet.getRowCount());
+        assertEquals(0, sheet.getColumnCount());
 
         sheet.createRow(1, 2, 3, 4);
-        assertEquals(0, sheet.getLastRowNum());
-        assertEquals(3, sheet.getLastColNum());
+        assertEquals(1, sheet.getRowCount());
+        assertEquals(4, sheet.getColumnCount());
 
         sheet.createRow(1, 2, 3, 4);
     }

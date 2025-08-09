@@ -252,7 +252,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     private static void addMissingRows(Sheet sheet, Formatter out, int lastRowNr, int nextRowNr) {
         while (++lastRowNr < nextRowNr) {
             out.format(Locale.ROOT, "      <tr style=\"height: %.2fpt;\">\n", sheet.getRowHeight(lastRowNr));
-            for (int i = 0; i < sheet.getLastColNum(); i++) {
+            for (int i = 0; i < sheet.getColumnCount(); i++) {
                 out.format(Locale.ROOT, "        <td></td>\n");
             }
             out.format(Locale.ROOT, "      </tr>\n");
@@ -310,7 +310,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     private static void writeColumnWidths(Sheet sheet, Formatter out) {
         out.format(Locale.ROOT, "    <colgroup>\n");
-        for (int j = 0; j <= sheet.getLastColNum(); j++) {
+        for (int j = 0; j < sheet.getColumnCount(); j++) {
             out.format(Locale.ROOT, "<col style=\"width: %.2fpt;\">\n", sheet.getColumnWidth(j));
         }
         out.format(Locale.ROOT, "    </colgroup>\n");
