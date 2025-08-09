@@ -26,7 +26,6 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * A generic implementation of {@link Sheet}.
@@ -95,10 +94,6 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
     public GenericRow getRow(int row) {
         reserve(row);
         return rows.get(row);
-    }
-
-    public Optional<GenericRow> getRowIfExists(int i) {
-        return Optional.ofNullable(0 <= i && i < getRowCount() ? getRow(i) : null);
     }
 
     @Override

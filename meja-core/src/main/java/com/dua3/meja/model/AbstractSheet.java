@@ -205,20 +205,10 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     public abstract R getRow(int i);
 
     @Override
-    public abstract Optional<R> getRowIfExists(int i);
-
-    @Override
     public C getCell(int i, int j) {
         LangUtil.checkArg(i >= 0, "invalid row number: %d", i);
         LangUtil.checkArg(j >= 0, "invalid column number: %d", j);
         return getRow(i).getCell(j);
-    }
-
-    @Override
-    public Optional<C> getCellIfExists(int i, int j) {
-        LangUtil.checkArg(i >= 0, "invalid row number: %d", i);
-        LangUtil.checkArg(j >= 0, "invalid column number: %d", j);
-        return getRowIfExists(i).flatMap(row -> row.getCellIfExists(j));
     }
 
     @Override

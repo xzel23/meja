@@ -29,7 +29,6 @@ import org.apache.poi.ss.util.PaneInformation;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * POI implementation of the {@link com.dua3.meja.model.Sheet} interface.
@@ -166,11 +165,6 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
             }
         }
         return new PoiRow(this, poiRow);
-    }
-
-    @Override
-    public Optional<PoiRow> getRowIfExists(int i) {
-        return Optional.ofNullable(0 <= i && i < getRowCount() ? getRow(i) : null);
     }
 
     @Override

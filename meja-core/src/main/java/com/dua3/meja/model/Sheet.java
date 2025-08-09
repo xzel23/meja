@@ -17,6 +17,7 @@ package com.dua3.meja.model;
 
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.concurrent.AutoLock;
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -140,7 +141,11 @@ public interface Sheet extends Iterable<Row> {
      * @see #getCell(int, int)
      * @see #getRowIfExists(int)
      */
-    Optional<? extends Cell> getCellIfExists(int i, int j);
+    default Optional<Cell> getCellIfExists(int i, int j) {
+        LangUtil.checkArg(i >= 0, "invalid row number: %d", i);
+        LangUtil.checkArg(j >= 0, "invalid column number: %d", j);
+        return getRowIfExists(i).flatMap(row -> row.getCellIfExists(j));
+    }
 
     /**
      * Returns the total number of columns in this sheet. This count includes all columns
@@ -213,7 +218,9 @@ public interface Sheet extends Iterable<Row> {
      * @throws IllegalArgumentException if the row number is negative
      * @see #getRow(int)
      */
-    Optional<? extends Row> getRowIfExists(int i);
+    default Optional<Row> getRowIfExists(int i) {
+        return Optional.ofNullable(0 <= i && i < getRowCount() ? getRow(i) : null);
+    }
 
     /**
      * Returns the total number of rows in this sheet. This count includes all rows
@@ -522,14 +529,14 @@ public interface Sheet extends Iterable<Row> {
      *                                  name
      */
     static int getColumnNumber(String colName) {
-        final int stride = (int) 'z' - (int) 'a' + 1;
+        final int stride = 'z' - 'a' + 1;
         int col = 0;
         for (char c : colName.toLowerCase(Locale.ROOT).toCharArray()) {
             if (c < 'a' || 'z' < c) {
                 throw new IllegalArgumentException("'" + colName + "' ist no valid column name.");
             }
 
-            int d = (int) c - (int) 'a' + 1;
+            int d = c - 'a' + 1;
             col = col * stride + d;
         }
         return col - 1;
