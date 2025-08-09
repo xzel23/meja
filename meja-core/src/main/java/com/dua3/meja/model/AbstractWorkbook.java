@@ -5,7 +5,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 
@@ -25,6 +27,7 @@ public abstract class AbstractWorkbook implements Workbook {
     private @Nullable ObjectCache objectCache;
 
     private final SubmissionPublisher<WorkbookEvent> publisher = new SubmissionPublisher<>();
+    private final Map<Flow.Subscriber<WorkbookEvent>, Flow.Subscription> subscriptions = new ConcurrentHashMap<>();
 
     /**
      * Notifies subscribers that the active sheet of the workbook has changed.
@@ -75,7 +78,39 @@ public abstract class AbstractWorkbook implements Workbook {
 
     @Override
     public void subscribe(Flow.Subscriber<WorkbookEvent> subscriber) {
-        publisher.subscribe(subscriber);
+        Flow.Subscriber<WorkbookEvent> wrapper = new Flow.Subscriber<>() {
+            @Override
+            public void onSubscribe(Flow.Subscription subscription) {
+                subscriptions.put(subscriber, subscription);
+                subscriber.onSubscribe(subscription);
+            }
+
+            @Override
+            public void onNext(WorkbookEvent item) {
+                subscriber.onNext(item);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                subscriptions.remove(subscriber);
+                subscriber.onError(throwable);
+            }
+
+            @Override
+            public void onComplete() {
+                subscriptions.remove(subscriber);
+                subscriber.onComplete();
+            }
+        };
+        publisher.subscribe(wrapper);
+    }
+
+    @Override
+    public void unsubscribe(Flow.Subscriber<WorkbookEvent> subscriber) {
+        Flow.Subscription s = subscriptions.remove(subscriber);
+        if (s != null) {
+            s.cancel();
+        }
     }
 
     @Override
@@ -119,5 +154,6 @@ public abstract class AbstractWorkbook implements Workbook {
     @Override
     public void close() throws IOException {
         publisher.close();
+        subscriptions.clear();
     }
 }

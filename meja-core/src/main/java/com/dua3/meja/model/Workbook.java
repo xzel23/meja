@@ -55,6 +55,18 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     void subscribe(Flow.Subscriber<WorkbookEvent> subscriber);
 
     /**
+     * Unsubscribe from workbook events.
+     * <p>
+     * If the given subscriber is currently subscribed to this workbook's event stream,
+     * it will be deregistered and will no longer receive events. If the subscriber
+     * is not registered, this method does nothing.
+     * </p>
+     *
+     * @param subscriber the previously registered subscriber to remove
+     */
+    void unsubscribe(Flow.Subscriber<WorkbookEvent> subscriber);
+
+    /**
      * Close workbook.
      *
      * @throws IOException if an I/O error occurs
