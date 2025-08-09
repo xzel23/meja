@@ -155,8 +155,10 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Get the current cell in the sheet. The current cell represents the active or focused cell
      * in the sheet, which is typically used for navigation and editing operations.
+     * <p>
+     * If no active cell has been set, the cell at position "A1" is returned
      *
-     * @return the current cell, or null if no cell is currently selected
+     * @return the current cell
      * @see #setCurrentCell(Cell)
      * @see #setCurrentCell(int, int)
      */
@@ -396,7 +398,7 @@ public interface Sheet extends Iterable<Row> {
      * @see #getCurrentCell()
      * @see #setCurrentCell(int, int)
      */
-    boolean setCurrentCell(@Nullable Cell cell);
+    boolean setCurrentCell(Cell cell);
 
     /**
      * Convenience method to set the current cell by its row and column coordinates.
