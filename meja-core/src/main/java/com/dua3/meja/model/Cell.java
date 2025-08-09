@@ -36,6 +36,10 @@ import java.util.Optional;
 
 /**
  * A single cell of a sheet.
+ * <p>
+ * <strong>Units:</strong> Any size-related values derived from this cell (e.g., values returned by
+ * {@link #calcCellDimension()}) are measured in typographical points (1/72 inch), independent of device pixels.
+ * </p>
  *
  * @author axel
  */
@@ -508,8 +512,13 @@ public interface Cell {
 
     /**
      * Calculate the dimension of the cell based on the cell's content.
+     * <p>
+     * The returned {@link com.dua3.utility.math.geometry.Dimension2f} is measured in typographical points (1/72 inch)
+     * and reflects the content as it would be displayed using the cell's font and rotation. A small padding is applied
+     * to width and height to account for spacing.
+     * </p>
      *
-     * @return the calculated dimension of the cell
+     * @return the calculated dimension of the cell in typographical points (1/72 inch)
      */
     default Dimension2f calcCellDimension() {
         // calculate the exact width

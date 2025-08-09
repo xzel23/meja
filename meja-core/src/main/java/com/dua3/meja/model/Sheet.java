@@ -38,6 +38,14 @@ import java.util.stream.StreamSupport;
  * <p>
  * The Sheet interface implements the Iterable&lt;Row&gt; interface, allowing iteration over all rows in the sheet.
  * It also supports an event system through which subscribers can receive notifications about changes to the sheet.
+ * <p>
+ * <strong>Units:</strong>
+ * <ul>
+ *   <li>All physical lengths exposed by the model API (column widths, row heights, default sizes, and cell content dimensions)
+ *       are measured in typographical points (1/72 inch).</li>
+ *   <li>Zoom is a unitless factor where {@code 1.0} corresponds to 100%.</li>
+ *   <li>Row and column indices are 0-based.</li>
+ * </ul>
  *
  * @author axel
  * @see Row
@@ -68,20 +76,29 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Adjusts the size of the column to its contents.
+     * <p>
+     * The computed width is measured in typographical points (1/72 inch) and applied via
+     * {@link #setColumnWidth(int, float)}.
      *
-     * @param j the column to resize
+     * @param j the column to resize (0-based index)
      */
     void autoSizeColumn(int j);
 
     /**
      * Adjusts the size of all columns.
+     * <p>
+     * The computed widths are measured in typographical points (1/72 inch) and applied via
+     * {@link #setColumnWidth(int, float)}.
      */
     void autoSizeColumns();
 
     /**
      * Adjusts the size of the row to its contents.
+     * <p>
+     * The computed height is measured in typographical points (1/72 inch) and applied via
+     * {@link #setRowHeight(int, float)}.
      *
-     * @param i the row to resize
+     * @param i the row to resize (0-based index)
      */
     void autoSizeRow(int i);
 
@@ -673,14 +690,14 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Get the default row height for this sheet, i.e., the height used when creating new rows.
      *
-     * @return the default row height
+     * @return the default row height in typographical points (1/72 inch)
      */
     float getDefaultRowHeight();
 
     /**
      * Get the default column width for this sheet, i.e., the width used when creating new columns.
      *
-     * @return the default column width
+     * @return the default column width in typographical points (1/72 inch)
      */
     float getDefaultColumnWidth();
 }
