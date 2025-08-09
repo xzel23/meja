@@ -111,7 +111,6 @@ class PoiWorkbookTest {
         Sheet sheet = wb.getSheet(0);
         assertNotNull(sheet);
 
-        assertEquals(0, sheet.getFirstRowNum());
         assertEquals(1, sheet.getSplitRow());
         assertEquals(1, sheet.getSplitRow());
 
@@ -178,7 +177,7 @@ class PoiWorkbookTest {
     void testHtmlExport() throws IOException {
         Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
 
-        // make sure workbook URI is the same independent of test environment
+        // make sure the workbook URI is the same independent of the test environment
         wb.setUri(URI.create(""));
 
         for (Sheet sheet : wb) {
@@ -228,14 +227,10 @@ class PoiWorkbookTest {
     private void testRowGetLastColNumErrorHelper(Workbook wb) {
         Sheet sheet = wb.createSheet("index");
 
-        assertEquals(0, sheet.getFirstRowNum());
-        assertEquals(0, sheet.getFirstColNum());
         assertEquals(-1, sheet.getLastRowNum());
         assertEquals(-1, sheet.getLastColNum());
 
         sheet.createRow(1, 2, 3, 4);
-        assertEquals(0, sheet.getFirstRowNum());
-        assertEquals(0, sheet.getFirstColNum());
         assertEquals(0, sheet.getLastRowNum());
         assertEquals(3, sheet.getLastColNum());
 

@@ -89,7 +89,6 @@ class GenericWorkbookTest {
 
         sheet.splitAt(1, 1); // split position cannot be set in CSV files. set it here so that at least part of the functionlaity can be verified.
 
-        assertEquals(0, sheet.getFirstRowNum());
         assertEquals(1, sheet.getSplitRow());
         assertEquals(1, sheet.getSplitRow());
 
@@ -133,14 +132,10 @@ class GenericWorkbookTest {
     private void testRowGetLastColNumErrorHelper(Workbook wb) {
         Sheet sheet = wb.createSheet("index");
 
-        assertEquals(0, sheet.getFirstRowNum());
-        assertEquals(0, sheet.getFirstColNum());
         assertEquals(-1, sheet.getLastRowNum());
         assertEquals(-1, sheet.getLastColNum());
 
         sheet.createRow(1, 2, 3, 4);
-        assertEquals(0, sheet.getFirstRowNum());
-        assertEquals(0, sheet.getFirstColNum());
         assertEquals(0, sheet.getLastRowNum());
         assertEquals(3, sheet.getLastColNum());
 

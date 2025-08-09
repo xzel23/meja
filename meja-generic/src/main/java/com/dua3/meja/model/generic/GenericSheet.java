@@ -92,16 +92,6 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
     }
 
     @Override
-    public int getFirstColNum() {
-        return 0;
-    }
-
-    @Override
-    public int getFirstRowNum() {
-        return 0;
-    }
-
-    @Override
     public int getLastColNum() {
         return numberOfColumns - 1;
     }

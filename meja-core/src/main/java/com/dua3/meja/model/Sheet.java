@@ -139,7 +139,6 @@ public interface Sheet extends Iterable<Row> {
      * columns contain data.
      *
      * @return the total number of columns in this sheet
-     * @see #getFirstColNum()
      * @see #getLastColNum()
      */
     int getColumnCount();
@@ -165,34 +164,10 @@ public interface Sheet extends Iterable<Row> {
     Cell getCurrentCell();
 
     /**
-     * Returns the number of the first column in the sheet that contains data.
-     * A column is considered "used" if it contains at least one non-empty cell.
-     *
-     * @return the number of the first column containing data, or 0 if the sheet is empty
-     * @see #getLastColNum()
-     * @see #getColumnCount()
-     * @see #isEmpty()
-     */
-    int getFirstColNum();
-
-    /**
-     * Returns the number of the first row in the sheet that contains data.
-     * A row is considered "used" if it contains at least one non-empty cell.
-     *
-     * @return the number of the first row containing data, or 0 if the sheet is empty
-     * @see #getLastRowNum()
-     * @see #getRowCount()
-     * @see #isEmpty()
-     */
-    int getFirstRowNum();
-
-    /**
      * Returns the number of the last column in the sheet that contains data.
      * A column is considered "used" if it contains at least one non-empty cell.
-     * All columns between {@link #getFirstColNum()} and this number may contain data.
      *
      * @return the number of the last column containing data, or -1 if the sheet is empty
-     * @see #getFirstColNum()
      * @see #getColumnCount()
      * @see #isEmpty()
      */
@@ -201,10 +176,8 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Returns the number of the last row in the sheet that contains data.
      * A row is considered "used" if it contains at least one non-empty cell.
-     * All rows between {@link #getFirstRowNum()} and this number may contain data.
      *
      * @return the number of the last row containing data, or -1 if the sheet is empty
-     * @see #getFirstRowNum()
      * @see #getRowCount()
      * @see #isEmpty()
      */
@@ -262,7 +235,6 @@ public interface Sheet extends Iterable<Row> {
      * rows contain data. Empty rows within this range are included in the count.
      *
      * @return the total number of rows in this sheet
-     * @see #getFirstRowNum()
      * @see #getLastRowNum()
      * @see #isEmpty()
      */
@@ -443,8 +415,7 @@ public interface Sheet extends Iterable<Row> {
     void splitAt(int i, int j);
 
     /**
-     * Returns an iterator over the rows in this sheet. The iterator traverses the rows
-     * sequentially from {@link #getFirstRowNum()} to {@link #getLastRowNum()}, inclusive.
+     * Returns an iterator over the rows in this sheet.
      * Empty rows within this range are included in the iteration.
      *
      * <p>This method is part of the {@link Iterable} interface implementation, allowing
@@ -454,7 +425,6 @@ public interface Sheet extends Iterable<Row> {
      *
      * @return an iterator over the rows in ascending order
      * @see #rows() for a stream-based alternative
-     * @see #getFirstRowNum()
      * @see #getLastRowNum()
      * @throws UnsupportedOperationException if attempting to remove rows through the iterator
      */
@@ -462,7 +432,7 @@ public interface Sheet extends Iterable<Row> {
     default Iterator<Row> iterator() {
         return new Iterator<>() {
 
-            private int rowNum = getFirstRowNum();
+            private int rowNum = 0;
 
             @Override
             public boolean hasNext() {
@@ -517,7 +487,7 @@ public interface Sheet extends Iterable<Row> {
         }
 
         // copy column widths (must be done after copying rows because POI SXSSF overwrites widths when adding the rows)
-        for (int j = other.getFirstColNum(); j <= other.getLastColNum(); j++) {
+        for (int j = 0; j <= other.getLastColNum(); j++) {
             setColumnWidth(j, other.getColumnWidth(j));
         }
     }
@@ -527,7 +497,7 @@ public interface Sheet extends Iterable<Row> {
      * a stream-based alternative to the {@link #iterator()} method, enabling functional-style
      * operations on the rows.
      *
-     * <p>The stream traverses rows in ascending order from {@link #getFirstRowNum()} to
+     * <p>The stream traverses rows in ascending order from 0 to
      * {@link #getLastRowNum()}, inclusive. Empty rows within this range are included in
      * the stream. The stream is ordered and non-parallel.</p>
      *
@@ -536,7 +506,6 @@ public interface Sheet extends Iterable<Row> {
      *
      * @return a sequential Stream of rows in ascending order
      * @see #iterator()
-     * @see #getFirstRowNum()
      * @see #getLastRowNum()
      */
     default Stream<Row> rows() {
@@ -673,7 +642,7 @@ public interface Sheet extends Iterable<Row> {
             if (ss.searchFromCurrent()) {
                 cell = nextCell(getCurrentCell());
             } else {
-                cell = getCell(getFirstRowNum(), getFirstColNum());
+                cell = getCell(0, 0);
             }
 
             while (end == null || !(cell.getRowNumber() == end.getRowNumber()
@@ -729,7 +698,7 @@ public interface Sheet extends Iterable<Row> {
                 row = getRow(i + 1);
             } else {
                 // last row -> move to first row
-                row = getRow(getFirstRowNum());
+                row = getRow(0);
             }
             // return the first cell of the new row
             return row.getCell(row.getFirstCellNum());

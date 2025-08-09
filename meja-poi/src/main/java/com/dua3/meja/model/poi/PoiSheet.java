@@ -148,16 +148,6 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public int getFirstColNum() {
-        return firstColumn;
-    }
-
-    @Override
-    public int getFirstRowNum() {
-        return Math.max(0, poiSheet.getFirstRowNum());
-    }
-
-    @Override
     public int getLastColNum() {
         return lastColumn;
     }
@@ -196,7 +186,7 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
 
     @Override
     public int getRowCount() {
-        return 1 + getLastRowNum() - getFirstRowNum();
+        return 1 + getLastRowNum();
     }
 
     @Override

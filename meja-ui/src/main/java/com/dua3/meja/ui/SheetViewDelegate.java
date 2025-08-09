@@ -943,9 +943,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     public void moveHome() {
         try (var __ = writeLock("SheetViewDelegate.moveHome()")) {
-            int row = sheet.getFirstRowNum();
-            int col = sheet.getFirstColNum();
-            setCurrentCell(row, col);
+            setCurrentCell(0, 0);
         }
     }
 
