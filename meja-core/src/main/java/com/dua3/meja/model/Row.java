@@ -116,6 +116,9 @@ public interface Row extends Iterable<Cell> {
 
     /**
      * Create cell iterator.
+     * <p>
+     * <strong>Note:</strong> The returned iterator is read-only, i.e., calling {@link Iterator#remove()} will throw a
+     * {@link UnsupportedOperationException}.
      *
      * @return cell iterator
      */
@@ -139,6 +142,14 @@ public interface Row extends Iterable<Cell> {
                 return getCell(colNum++);
             }
 
+            /**
+             * Removes the current element from the underlying collection.
+             * <p>
+             * This implementation is not supported and will always throw an
+             * {@link UnsupportedOperationException}.
+             *
+             * @throws UnsupportedOperationException always thrown as this operation is not supported
+             */
             @Override
             public void remove() {
                 throw new UnsupportedOperationException("Removing of rows is not supported.");
