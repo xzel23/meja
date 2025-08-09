@@ -47,17 +47,9 @@ import java.util.stream.StreamSupport;
 public interface Sheet extends Iterable<Row> {
 
     /**
-     * Subscribes a subscriber to receive sheet events. Events are published when significant changes occur in the sheet,
-     * such as:
-     * <ul>
-     *   <li>Cell content or formatting changes</li>
-     *   <li>Row or column modifications (resize, insert, delete)</li>
-     *   <li>Sheet structure changes (merged regions, autofilter)</li>
-     * </ul>
+     * Subscribe to sheet events.
      *
-     * @param subscriber the subscriber to receive the sheet events
-     * @see SheetEvent
-     * @see Flow.Subscriber
+     * @param subscriber the subscriber to receive events
      */
     void subscribe(Flow.Subscriber<SheetEvent> subscriber);
 
@@ -145,7 +137,7 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Get column width.
      *
-     * @param j the column number
+     * @param j the column index (0-based)
      * @return width of the column with number {@code j} in points
      */
     float getColumnWidth(int j);
@@ -175,12 +167,10 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Returns the merged region that contains the cell at the specified position.
-     * A merged region is a rectangular area of cells that acts as a single cell.
      *
-     * @param rowNum the row number of the cell to check
-     * @param colNum the column number of the cell to check
-     * @return an Optional containing the merged region if the specified cell belongs to one,
-     *         or an empty Optional if the cell is not part of any merged region
+     * @param rowNum the row index (0-based)
+     * @param colNum the column index (0-based)
+     * @return an Optional containing the merged region, or empty if the cell is not part of any merged region
      * @see #getMergedRegions()
      * @see #addMergedRegion(RectangularRegion)
      */
@@ -384,11 +374,10 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Split (freeze) view.
      * <p>
-     * Splits the sheet so that rows <em>above</em> i and columns <em>to the
-     * left</em> of j remain in view when scrolling.
+     * Splits the sheet so that rows above {@code i} and columns to the left of {@code j} remain visible when scrolling.
      *
-     * @param i row number
-     * @param j column number
+     * @param i row index (0-based)
+     * @param j column index (0-based)
      */
     void splitAt(int i, int j);
 

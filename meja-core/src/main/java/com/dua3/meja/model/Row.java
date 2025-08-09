@@ -62,10 +62,10 @@ public interface Row extends Iterable<Cell> {
     }
 
     /**
-     * Get cell at given column, creating a new one if it does not exist.
+     * Get the cell at the given column, creating it if necessary.
      *
-     * @param j the column number
-     * @return this row's cell for the given column
+     * @param j the column index (0-based)
+     * @return the cell at the given column
      */
     Cell getCell(int j);
 
@@ -77,10 +77,10 @@ public interface Row extends Iterable<Cell> {
     int getColumnCount();
 
     /**
-     * Get cell.
+     * Get the cell if it exists.
      *
-     * @param j the column number
-     * @return this row's cell for the given column or null if cell doesn't exist
+     * @param j the column index (0-based)
+     * @return an Optional containing the cell, or empty if it doesn't exist
      */
     Optional<? extends Cell> getCellIfExists(int j);
 

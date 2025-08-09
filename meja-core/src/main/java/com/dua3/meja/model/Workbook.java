@@ -48,9 +48,9 @@ import java.util.stream.StreamSupport;
 public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
-     * Subscribes a subscriber to receive events of a specified class.
+     * Subscribe to workbook events.
      *
-     * @param subscriber   the subscriber to receive the events
+     * @param subscriber the subscriber to receive events
      */
     void subscribe(Flow.Subscriber<WorkbookEvent> subscriber);
 
@@ -176,6 +176,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @param sheetName name of sheet
      * @return sheet
      * @throws IllegalArgumentException if no sheet exists with the given name
+     * @see #findSheetByName(String)
      */
     default Sheet getSheetByName(String sheetName) {
         int idx = getSheetIndexByName(sheetName);
@@ -250,20 +251,17 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
 
     /**
      * Get the URI for this workbook.
-     *
      * <p>
-     * When a workbook is opened, the URI is set so that it can be used to later
-     * save the workbook back to the same location.
-     * </p>
+     * Used when saving and for resolving relative hyperlinks.
      *
      * @return the URI for this workbook
      */
     Optional<URI> getUri();
 
     /**
-     * Set URI for this workbook. See {@link #getUri}.
+     * Set the workbook URI. See {@link #getUri()}.
      *
-     * @param uri the URI to set, or {@code null} if not URI should be set.
+     * @param uri the URI to set, or {@code null} to clear it
      */
     void setUri(@Nullable URI uri);
 
@@ -483,9 +481,9 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     <T> T cache(T obj);
 
     /**
-     * Create a stream of the rows in this sheet.
+     * Create a stream of the sheets in this workbook.
      *
-     * @return stream of rows
+     * @return stream of sheets
      */
     default Stream<? extends Sheet> sheets() {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);

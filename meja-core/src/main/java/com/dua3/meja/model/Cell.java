@@ -138,10 +138,10 @@ public interface Cell {
     RichText getAsText(Locale locale);
 
     /**
-     * Return text representation of value with the cell style applied.
+     * Return the text representation of the value with the cell style applied.
      *
      * @param locale the locale to use during formatting
-     * @return cell value as R, as it would be displayed
+     * @return the value as RichText, as it would be displayed
      */
     default RichText getAsFormattedText(Locale locale) {
         CellStyle cs = getCellStyle();
@@ -472,9 +472,10 @@ public interface Cell {
     /**
      * Get resolved Hyperlink.
      * <p>
-     * For absolute URIs, the Hyperlink is returned unchanged.
-     * Relative links are resolved against the workbook URI.
+     * <strong>Note:</strong> Absolute URIs are returned unchanged; relative URIs are resolved against the workbook URI.
+     *
      * @return an Optional with the resolved Hyperlink or an empty Optional
+     * @throws IllegalStateException if a relative link exists but the workbook URI is not set
      */
     default Optional<URI> getResolvedHyperlink() {
         return getHyperlink().map(link -> {
