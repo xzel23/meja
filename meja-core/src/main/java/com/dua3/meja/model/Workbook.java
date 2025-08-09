@@ -263,7 +263,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Set URI for this workbook. See {@link #getUri}.
      *
-     * @param uri the URI to set.
+     * @param uri the URI to set, or {@code null} if not URI should be set.
      */
     void setUri(@Nullable URI uri);
 
