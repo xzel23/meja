@@ -76,16 +76,6 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
     }
 
     @Override
-    public GenericCell getCell(int i, int j) {
-        return getRow(i).getCell(j);
-    }
-
-    @Override
-    public Optional<GenericCell> getCellIfExists(int i, int j) {
-        return getRowIfExists(i).flatMap(row -> row.getCellIfExists(j));
-    }
-
-    @Override
     public int getColumnCount() {
         return numberOfColumns;
     }
