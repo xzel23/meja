@@ -118,7 +118,7 @@ tasks.register("showTaskIO") {
         } else {
             println("  No declared inputs.")
         }
-        
+
         // Display task outputs
         println("\nOUTPUTS:")
         if (task.outputs.hasOutput) {
@@ -147,7 +147,7 @@ tasks.register("showTaskIO") {
         } else {
             println("  No declared outputs.")
         }
-        
+
         println("\n=== End of Task Info ===\n")
     }
 }
