@@ -66,6 +66,7 @@ public interface Row extends Iterable<Cell> {
      *
      * @param j the column index (0-based)
      * @return the cell at the given column
+     * @see #getCellIfExists(int) for a non-throwing, Optional-returning variant
      */
     Cell getCell(int j);
 
@@ -81,6 +82,7 @@ public interface Row extends Iterable<Cell> {
      *
      * @param j the column index (0-based)
      * @return an Optional containing the cell, or empty if it doesn't exist
+     * @see #getCell(int) to create the cell if it does not exist
      */
     Optional<? extends Cell> getCellIfExists(int j);
 

@@ -412,7 +412,8 @@ public interface Sheet extends Iterable<Row> {
      * <p>This method is part of the {@link Iterable} interface implementation, allowing
      * the sheet to be used in for-each loops: {@code for (Row row : sheet) {...}}</p>
      *
-     * <p>The iterator's {@code remove()} operation is not supported.</p>
+     * <p><strong>Read-only:</strong> The returned iterator is read-only. Calling
+     * {@link Iterator#remove()} will always throw an {@link UnsupportedOperationException}.</p>
      *
      * @return an iterator over the rows in ascending order
      * @see #rows() for a stream-based alternative

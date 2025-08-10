@@ -132,20 +132,45 @@ public interface Cell {
     Object getOrDefault(@Nullable Object defaultValue);
 
     /**
-     * Return text representation of value.
+     * Return the textual representation of the cell's value as RichText, without applying the cell style.
+     * <p>
+     * This method converts the underlying value to text using the given locale, but does not apply the
+     * cell's visual style (font, fill colors, etc.). Use {@link #getAsFormattedText(Locale)} when you
+     * need the value as it would appear to the user, including cell styling.
+     * </p>
      *
-     * <p>The cell value is converted to a RichText, but the cell style is not applied.
+     * <p>Examples (assuming a cell with numeric value 1234.5 and a German locale):
+     * <ul>
+     *   <li>{@code cell.getAsText(Locale.GERMANY)} &rarr; RichText("1234.5") (no thousand separator, no style)</li>
+     *   <li>{@code cell.getAsFormattedText(Locale.GERMANY)} &rarr; RichText("1.234,5") (formatted, styled)</li>
+     *   <li>{@code cell.toString(Locale.GERMANY)} &rarr; "1.234,5" (plain String, formatted)</li>
+     * </ul>
      *
      * @param locale the locale to use during formatting
-     * @return cell value as a RichText instance
+     * @return the cell value as a RichText instance without applying cell style
+     * @see #getAsFormattedText(Locale)
+     * @see #toString(Locale)
      */
     RichText getAsText(Locale locale);
 
     /**
-     * Return the text representation of the value with the cell style applied.
+     * Return the textual representation of the cell's value as it would be displayed, with the cell style applied.
+     * <p>
+     * This method applies the cell's visual style (font, fills) to the textual value generated for the given locale.
+     * It is suitable for UI display when you want to preserve styling information in the returned {@link RichText}.
+     * </p>
+     *
+     * <p>Examples (assuming a date value 2025-01-02 and the cell style uses a short date pattern):
+     * <ul>
+     *   <li>{@code cell.getAsText(Locale.US)} &rarr; RichText("2025-01-02") (raw text, no style)</li>
+     *   <li>{@code cell.getAsFormattedText(Locale.US)} &rarr; RichText("1/2/25") (formatted and styled)</li>
+     *   <li>{@code cell.toString(Locale.US)} &rarr; "1/2/25" (plain String, formatted)</li>
+     * </ul>
      *
      * @param locale the locale to use during formatting
-     * @return the value as RichText, as it would be displayed
+     * @return the value as RichText, including cell style
+     * @see #getAsText(Locale)
+     * @see #toString(Locale)
      */
     default RichText getAsFormattedText(Locale locale) {
         CellStyle cs = getCellStyle();
@@ -555,10 +580,24 @@ public interface Cell {
     String toString();
 
     /**
-     * Return string representation of cell content.
+     * Return the localized string representation of the cell's value.
+     * <p>
+     * This method returns a plain {@link String} suitable for display or export (e.g., CSV). It formats
+     * the value using the provided locale and the cell's data format, but does not carry styling information.
+     * For a styled representation, use {@link #getAsFormattedText(Locale)}. For a non-styled RichText, use
+     * {@link #getAsText(Locale)}.
+     * </p>
+     *
+     * <p>Examples:
+     * <ul>
+     *   <li>Number 1234.5 with German locale: <code>cell.toString(Locale.GERMANY)</code> &rarr; "1.234,5"</li>
+     *   <li>Date 2025-01-02 with US locale (short date style): <code>cell.toString(Locale.US)</code> &rarr; "1/2/25"</li>
+     * </ul>
      *
      * @param locale locale for formatting
-     * @return string representation of cell content
+     * @return string representation of the cell content for the given locale
+     * @see #getAsText(Locale)
+     * @see #getAsFormattedText(Locale)
      */
     String toString(Locale locale);
 
