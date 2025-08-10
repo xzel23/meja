@@ -59,8 +59,23 @@ public interface Sheet extends Iterable<Row> {
      * Subscribe to sheet events.
      *
      * @param subscriber the subscriber to receive events
+     * @see #unsubscribe(Flow.Subscriber)
      */
     void subscribe(Flow.Subscriber<SheetEvent> subscriber);
+
+    /**
+     * Unsubscribe from sheet events.
+     * <p>
+     * If the given subscriber is currently subscribed to this sheet's event stream,
+     * it will be deregistered and will no longer receive events. If the subscriber
+     * is not registered, this method does nothing.
+     * </p>
+     *
+     * <p>Idempotent and thread-safe.</p>
+     *
+     * @param subscriber the previously registered subscriber to remove
+     */
+    void unsubscribe(Flow.Subscriber<SheetEvent> subscriber);
 
     /**
      * Creates a new merged region in the sheet. A merged region is a rectangular area of cells that acts

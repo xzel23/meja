@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Flow;
 import java.util.concurrent.SubmissionPublisher;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -35,6 +37,7 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     private final List<RectangularRegion> mergedRegions = new ArrayList<>();
 
     private final SubmissionPublisher<SheetEvent> publisher = new SubmissionPublisher<>();
+    private final Map<Flow.Subscriber<SheetEvent>, Flow.Subscription> subscriptions = new ConcurrentHashMap<>();
 
     /**
      * Constructor.
@@ -44,7 +47,39 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
 
     @Override
     public void subscribe(Flow.Subscriber<SheetEvent> subscriber) {
-        publisher.subscribe(subscriber);
+        Flow.Subscriber<SheetEvent> wrapper = new Flow.Subscriber<>() {
+            @Override
+            public void onSubscribe(Flow.Subscription subscription) {
+                subscriptions.put(subscriber, subscription);
+                subscriber.onSubscribe(subscription);
+            }
+
+            @Override
+            public void onNext(SheetEvent item) {
+                subscriber.onNext(item);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                subscriptions.remove(subscriber);
+                subscriber.onError(throwable);
+            }
+
+            @Override
+            public void onComplete() {
+                subscriptions.remove(subscriber);
+                subscriber.onComplete();
+            }
+        };
+        publisher.subscribe(wrapper);
+    }
+
+    @Override
+    public void unsubscribe(Flow.Subscriber<SheetEvent> subscriber) {
+        Flow.Subscription s = subscriptions.remove(subscriber);
+        if (s != null) {
+            s.cancel();
+        }
     }
 
     private void submit(SheetEvent event) {
