@@ -156,6 +156,7 @@ tasks.register("showTaskIO") {
 
 dependencies {
     // Aggregate all subprojects for JaCoCo report aggregation
+    jacocoAggregation(rootProject)
     jacocoAggregation(project(":meja-core"))
     jacocoAggregation(project(":meja-generic"))
     jacocoAggregation(project(":meja-poi"))
