@@ -145,10 +145,10 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Set the current sheet.
      *
-     * @param idx index of the sheet to make current
+     * @param sheetIndex index of the sheet to make current (0-based)
      * @throws IndexOutOfBoundsException if no sheet exists at the given index
      */
-    void setCurrentSheet(int idx);
+    void setCurrentSheet(int sheetIndex);
 
     /**
      * Set the current sheet.
@@ -176,11 +176,11 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Get sheet by number.
      *
-     * @param sheetNr number of sheet
+     * @param sheetIndex index of the sheet (0-based)
      * @return sheet
      * @throws IndexOutOfBoundsException if no sheet exists at the given index
      */
-    Sheet getSheet(int sheetNr);
+    Sheet getSheet(int sheetIndex);
 
     /**
      * Get sheet by name.
@@ -288,10 +288,10 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
     /**
      * Remove sheet by number.
      *
-     * @param idx number of sheet
+     * @param sheetIndex index of the sheet to remove (0-based)
      * @throws IndexOutOfBoundsException if no sheet exists at the given index
      */
-    void removeSheet(int idx);
+    void removeSheet(int sheetIndex);
 
     /**
      * Remove sheet by name.

@@ -81,9 +81,9 @@ public interface Sheet extends Iterable<Row> {
      * The computed width is measured in typographical points (1/72 inch) and applied via
      * {@link #setColumnWidth(int, float)}.
      *
-     * @param j the column to resize (0-based index)
+     * @param colIndex the column to resize (0-based index)
      */
-    void autoSizeColumn(int j);
+    void autoSizeColumn(int colIndex);
 
     /**
      * Adjusts the size of all columns.
@@ -99,9 +99,9 @@ public interface Sheet extends Iterable<Row> {
      * The computed height is measured in typographical points (1/72 inch) and applied via
      * {@link #setRowHeight(int, float)}.
      *
-     * @param i the row to resize (0-based index)
+     * @param rowIndex the row to resize (0-based index)
      */
-    void autoSizeRow(int i);
+    void autoSizeRow(int rowIndex);
 
     /**
      * Remove all content from the sheet.
@@ -119,32 +119,32 @@ public interface Sheet extends Iterable<Row> {
      * Returns the cell at the specified position, creating a new empty cell if one doesn't exist.
      * This method ensures a cell is always returned, creating new rows or cells as needed.
      *
-     * @param i the row number (0-based)
-     * @param j the column number (0-based)
+     * @param rowIndex the row index (0-based)
+     * @param colIndex the column index (0-based)
      * @return the cell at the specified position, never null
      * @throws IllegalArgumentException if row or column number is negative
      * @see #getCellIfExists(int, int)
      * @see #getRow(int)
      */
-    Cell getCell(int i, int j);
+    Cell getCell(int rowIndex, int colIndex);
 
     /**
      * Returns the cell at the specified position if it exists, without creating new cells.
      * Unlike {@link #getCell(int, int)}, this method will not create new cells or rows
      * if they don't exist.
      *
-     * @param i the row number (0-based)
-     * @param j the column number (0-based)
+     * @param rowIndex the row index (0-based)
+     * @param colIndex the column index (0-based)
      * @return an Optional containing the cell if it exists, or an empty Optional if the cell
      *         or its containing row doesn't exist
      * @throws IllegalArgumentException if row or column number is negative
      * @see #getCell(int, int)
      * @see #getRowIfExists(int)
      */
-    default Optional<Cell> getCellIfExists(int i, int j) {
-        LangUtil.checkArg(i >= 0, "invalid row number: %d", i);
-        LangUtil.checkArg(j >= 0, "invalid column number: %d", j);
-        return getRowIfExists(i).flatMap(row -> row.getCellIfExists(j));
+    default Optional<Cell> getCellIfExists(int rowIndex, int colIndex) {
+        LangUtil.checkArg(rowIndex >= 0, "invalid row number: %d", rowIndex);
+        LangUtil.checkArg(colIndex >= 0, "invalid column number: %d", colIndex);
+        return getRowIfExists(rowIndex).flatMap(row -> row.getCellIfExists(colIndex));
     }
 
     /**
@@ -159,10 +159,10 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Get column width.
      *
-     * @param j the column index (0-based)
-     * @return width of the column with number {@code j} in points
+     * @param colIndex the column index (0-based)
+     * @return width of the column with number {@code colIndex} in points
      */
-    float getColumnWidth(int j);
+    float getColumnWidth(int colIndex);
 
     /**
      * Get the current cell in the sheet. The current cell represents the active or focused cell
@@ -190,36 +190,36 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Returns the merged region that contains the cell at the specified position.
      *
-     * @param rowNum the row index (0-based)
-     * @param colNum the column index (0-based)
+     * @param rowIndex the row index (0-based)
+     * @param colIndex the column index (0-based)
      * @return an Optional containing the merged region, or empty if the cell is not part of any merged region
      * @see #getMergedRegions()
      * @see #addMergedRegion(RectangularRegion)
      */
-    Optional<RectangularRegion> getMergedRegion(int rowNum, int colNum);
+    Optional<RectangularRegion> getMergedRegion(int rowIndex, int colIndex);
 
     /**
      * Returns the row at the specified index, creating it if it doesn't exist.
      * This method ensures a row is always returned, creating new rows as needed.
      *
-     * @param i the row number (0-based)
+     * @param rowIndex the row index (0-based)
      * @return the row at the specified position, never null
-     * @throws IllegalArgumentException if the row number is negative
+     * @throws IllegalArgumentException if the row index is negative
      * @see #getRowIfExists(int)
      */
-    Row getRow(int i);
+    Row getRow(int rowIndex);
 
     /**
      * Returns the row at the specified index if it exists, without creating new rows.
      * Unlike {@link #getRow(int)}, this method will not create new rows if they don't exist.
      *
-     * @param i the row number (0-based)
+     * @param rowIndex the row index (0-based)
      * @return an Optional containing the row if it exists, or an empty Optional if the row doesn't exist
-     * @throws IllegalArgumentException if the row number is negative
+     * @throws IllegalArgumentException if the row index is negative
      * @see #getRow(int)
      */
-    default Optional<Row> getRowIfExists(int i) {
-        return Optional.ofNullable(0 <= i && i < getRowCount() ? getRow(i) : null);
+    default Optional<Row> getRowIfExists(int rowIndex) {
+        return Optional.ofNullable(0 <= rowIndex && rowIndex < getRowCount() ? getRow(rowIndex) : null);
     }
 
     /**
@@ -236,13 +236,13 @@ public interface Sheet extends Iterable<Row> {
      * Returns the height of the specified row in points. The height affects the visual
      * presentation of the row in the sheet.
      *
-     * @param i the row number (0-based)
+     * @param rowIndex the row index (0-based)
      * @return height of the specified row in points
-     * @throws IllegalArgumentException if the row number is negative
+     * @throws IllegalArgumentException if the row index is negative
      * @see #setRowHeight(int, float)
      * @see #getDefaultRowHeight()
      */
-    float getRowHeight(int i);
+    float getRowHeight(int rowIndex);
 
     /**
      * Returns the name of this sheet. The sheet name is a unique identifier within its workbook
@@ -339,17 +339,17 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Sets an automatic filter on the given row (optional operation).
      *
-     * @param i the row number
+     * @param rowIndex the row index (0-based)
      */
-    void setAutofilterRow(int i);
+    void setAutofilterRow(int rowIndex);
 
     /**
      * Set column width.
      *
-     * @param j     the column number
+     * @param colIndex the column index (0-based)
      * @param width the width of the column in points
      */
-    void setColumnWidth(int j, float width);
+    void setColumnWidth(int colIndex, float width);
 
     /**
      * Sets the current (active) cell in the sheet. The current cell is used for navigation
@@ -369,24 +369,24 @@ public interface Sheet extends Iterable<Row> {
      * This method creates or retrieves the cell at the specified position and sets it
      * as the current cell.
      *
-     * @param i the row number of the cell to set as current
-     * @param j the column number of the cell to set as current
+     * @param rowIndex the row index of the cell to set as current (0-based)
+     * @param colIndex the column index of the cell to set as current (0-based)
      * @return true if the current cell changed, false if the specified cell was already the current cell
      * @see #setCurrentCell(Cell)
      * @see #getCurrentCell()
      * @see #getCell(int, int)
      */
-    default boolean setCurrentCell(int i, int j) {
-        return setCurrentCell(getCell(i, j).getLogicalCell());
+    default boolean setCurrentCell(int rowIndex, int colIndex) {
+        return setCurrentCell(getCell(rowIndex, colIndex).getLogicalCell());
     }
 
     /**
      * Set row height.
      *
-     * @param i      the row number
+     * @param rowIndex the row index (0-based)
      * @param height the height of the row in points
      */
-    void setRowHeight(int i, float height);
+    void setRowHeight(int rowIndex, float height);
 
     /**
      * Set the zoom factor for this sheet.
@@ -398,12 +398,12 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Split (freeze) view.
      * <p>
-     * Splits the sheet so that rows above {@code i} and columns to the left of {@code j} remain visible when scrolling.
+     * Splits the sheet so that rows above {@code rowIndex} and columns to the left of {@code colIndex} remain visible when scrolling.
      *
-     * @param i row index (0-based)
-     * @param j column index (0-based)
+     * @param rowIndex row index (0-based)
+     * @param colIndex column index (0-based)
      */
-    void splitAt(int i, int j);
+    void splitAt(int rowIndex, int colIndex);
 
     /**
      * Returns an iterator over the rows in this sheet.
@@ -505,18 +505,18 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Translate column number to column name.
      *
-     * @param j the column number
+     * @param colIndex the column index (0-based)
      * @return the column name
      */
-    static String getColumnName(int j) {
+    static String getColumnName(int colIndex) {
         StringBuilder sb = new StringBuilder();
         // noinspection CharUsedInArithmeticContext
-        sb.append((char) ('A' + j % 26));
-        j /= 26;
-        while (j > 0) {
+        sb.append((char) ('A' + colIndex % 26));
+        colIndex /= 26;
+        while (colIndex > 0) {
             // noinspection CharUsedInArithmeticContext
-            sb.insert(0, (char) ('A' + j % 26 - 1));
-            j /= 26;
+            sb.insert(0, (char) ('A' + colIndex % 26 - 1));
+            colIndex /= 26;
         }
         return new String(sb);
     }
@@ -546,11 +546,11 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Get row name as String.
      *
-     * @param i the row number
-     * @return the row name (in Excel convention, i.e. "1" for row number 0)
+     * @param rowIndex the row index (0-based)
+     * @return the row name (in Excel convention, i.e. "1" for row index 0)
      */
-    static String getRowName(int i) {
-        return Integer.toString(i + 1);
+    static String getRowName(int rowIndex) {
+        return Integer.toString(rowIndex + 1);
     }
 
     /**
