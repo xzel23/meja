@@ -140,12 +140,12 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="block">Find cell containing text in row.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCell(int)" class="member-name-link">getCell</a><wbr>(int&nbsp;j)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCell(int)" class="member-name-link">getCell</a><wbr>(int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get the cell at the given column, creating it if necessary.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;? extends <a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCellIfExists(int)" class="member-name-link">getCellIfExists</a><wbr>(int&nbsp;j)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCellIfExists(int)" class="member-name-link">getCellIfExists</a><wbr>(int&nbsp;colIndex)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get the cell if it exists.</div>
 </div>
@@ -239,13 +239,19 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <li>
 <section class="detail" id="getCell(int)">
 <h3>getCell</h3>
-<div class="member-signature"><span class="return-type"><a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a></span>&nbsp;<span class="element-name">getCell</span><wbr><span class="parameters">(int&nbsp;j)</span></div>
+<div class="member-signature"><span class="return-type"><a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a></span>&nbsp;<span class="element-name">getCell</span><wbr><span class="parameters">(int&nbsp;colIndex)</span></div>
 <div class="block">Get the cell at the given column, creating it if necessary.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>j</code> - the column index (0-based)</dd>
+<dd><code>colIndex</code> - the column index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>the cell at the given column</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="#getCellIfExists(int)"><code>for a non-throwing, Optional-returning variant</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
@@ -263,13 +269,19 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <li>
 <section class="detail" id="getCellIfExists(int)">
 <h3>getCellIfExists</h3>
-<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;? extends <a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a>&gt;</span>&nbsp;<span class="element-name">getCellIfExists</span><wbr><span class="parameters">(int&nbsp;j)</span></div>
+<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;? extends <a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a>&gt;</span>&nbsp;<span class="element-name">getCellIfExists</span><wbr><span class="parameters">(int&nbsp;colIndex)</span></div>
 <div class="block">Get the cell if it exists.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>j</code> - the column index (0-based)</dd>
+<dd><code>colIndex</code> - the column index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>an Optional containing the cell, or empty if it doesn't exist</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="#getCell(int)"><code>to create the cell if it does not exist</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>

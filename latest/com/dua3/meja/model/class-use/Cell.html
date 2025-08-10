@@ -127,13 +127,13 @@ loadScripts(document, 'script');</script>
 <div class="block">Create new cell to the right of the existing cells.</div>
 </div>
 <div class="col-first even-row-color"><code><a href="../Cell.html" title="interface in com.dua3.meja.model">Cell</a></code></div>
-<div class="col-second even-row-color"><span class="type-name-label">Row.</span><code><a href="../Row.html#getCell(int)" class="member-name-link">getCell</a><wbr>(int&nbsp;j)</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Row.</span><code><a href="../Row.html#getCell(int)" class="member-name-link">getCell</a><wbr>(int&nbsp;colIndex)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Get the cell at the given column, creating it if necessary.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="../Cell.html" title="interface in com.dua3.meja.model">Cell</a></code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">Sheet.</span><code><a href="../Sheet.html#getCell(int,int)" class="member-name-link">getCell</a><wbr>(int&nbsp;i,
- int&nbsp;j)</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Sheet.</span><code><a href="../Sheet.html#getCell(int,int)" class="member-name-link">getCell</a><wbr>(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color">
 <div class="block">Returns the cell at the specified position, creating a new empty cell if one doesn't exist.</div>
 </div>
@@ -242,13 +242,13 @@ loadScripts(document, 'script');</script>
 <div class="block">Find cell containing text in sheet.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;? extends <a href="../Cell.html" title="interface in com.dua3.meja.model">Cell</a>&gt;</code></div>
-<div class="col-second odd-row-color"><span class="type-name-label">Row.</span><code><a href="../Row.html#getCellIfExists(int)" class="member-name-link">getCellIfExists</a><wbr>(int&nbsp;j)</code></div>
+<div class="col-second odd-row-color"><span class="type-name-label">Row.</span><code><a href="../Row.html#getCellIfExists(int)" class="member-name-link">getCellIfExists</a><wbr>(int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color">
 <div class="block">Get the cell if it exists.</div>
 </div>
 <div class="col-first even-row-color"><code>default <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="../Cell.html" title="interface in com.dua3.meja.model">Cell</a>&gt;</code></div>
-<div class="col-second even-row-color"><span class="type-name-label">Sheet.</span><code><a href="../Sheet.html#getCellIfExists(int,int)" class="member-name-link">getCellIfExists</a><wbr>(int&nbsp;i,
- int&nbsp;j)</code></div>
+<div class="col-second even-row-color"><span class="type-name-label">Sheet.</span><code><a href="../Sheet.html#getCellIfExists(int,int)" class="member-name-link">getCellIfExists</a><wbr>(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Returns the cell at the specified position if it exists, without creating new cells.</div>
 </div>

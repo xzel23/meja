@@ -251,15 +251,20 @@ implements <a href="Sheet.html" title="interface in com.dua3.meja.model">Sheet</
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.dua3.utility.concurrent.AutoLock</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#writeLock(java.lang.String)" class="member-name-link">writeLock</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unsubscribe(java.util.concurrent.Flow.Subscriber)" class="member-name-link">unsubscribe</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Flow.Subscriber.html" title="class or interface in java.util.concurrent" class="external-link">Flow.Subscriber</a>&lt;<a href="SheetEvent.html" title="interface in com.dua3.meja.model">SheetEvent</a>&gt;&nbsp;subscriber)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Unsubscribe from sheet events.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.dua3.utility.concurrent.AutoLock</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#writeLock(java.lang.String)" class="member-name-link">writeLock</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Acquires an exclusive write lock for thread-safe modifications to the sheet.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#zoomChanged(float,float)" class="member-name-link">zoomChanged</a><wbr>(float&nbsp;valueOld,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#zoomChanged(float,float)" class="member-name-link">zoomChanged</a><wbr>(float&nbsp;valueOld,
  float&nbsp;valueNew)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Broadcasts an event indicating a change in the zoom factor of the sheet.</div>
 </div>
 </div>
@@ -311,6 +316,33 @@ implements <a href="Sheet.html" title="interface in com.dua3.meja.model">Sheet</
 <dd><code><a href="Sheet.html#subscribe(java.util.concurrent.Flow.Subscriber)">subscribe</a></code>&nbsp;in interface&nbsp;<code><a href="Sheet.html" title="interface in com.dua3.meja.model">Sheet</a></code></dd>
 <dt>Parameters:</dt>
 <dd><code>subscriber</code> - the subscriber to receive events</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="Sheet.html#unsubscribe(java.util.concurrent.Flow.Subscriber)"><code>Sheet.unsubscribe(Flow.Subscriber)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="unsubscribe(java.util.concurrent.Flow.Subscriber)">
+<h3>unsubscribe</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">unsubscribe</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Flow.Subscriber.html" title="class or interface in java.util.concurrent" class="external-link">Flow.Subscriber</a>&lt;<a href="SheetEvent.html" title="interface in com.dua3.meja.model">SheetEvent</a>&gt;&nbsp;subscriber)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="Sheet.html#unsubscribe(java.util.concurrent.Flow.Subscriber)">Sheet</a></code></span></div>
+<div class="block">Unsubscribe from sheet events.
+ <p>
+ If the given subscriber is currently subscribed to this sheet's event stream,
+ it will be deregistered and will no longer receive events. If the subscriber
+ is not registered, this method does nothing.
+ </p>
+
+ <p>Idempotent and thread-safe.</p></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="Sheet.html#unsubscribe(java.util.concurrent.Flow.Subscriber)">unsubscribe</a></code>&nbsp;in interface&nbsp;<code><a href="Sheet.html" title="interface in com.dua3.meja.model">Sheet</a></code></dd>
+<dt>Parameters:</dt>
+<dd><code>subscriber</code> - the previously registered subscriber to remove</dd>
 </dl>
 </section>
 </li>
@@ -587,7 +619,7 @@ implements <a href="Sheet.html" title="interface in com.dua3.meja.model">Sheet</
 <dt>Specified by:</dt>
 <dd><code><a href="Sheet.html#getRow(int)">getRow</a></code>&nbsp;in interface&nbsp;<code><a href="Sheet.html" title="interface in com.dua3.meja.model">Sheet</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number (0-based)</dd>
+<dd><code>i</code> - the row index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>the row at the specified position, never null</dd>
 <dt>See Also:</dt>
@@ -611,8 +643,8 @@ implements <a href="Sheet.html" title="interface in com.dua3.meja.model">Sheet</
 <dt>Specified by:</dt>
 <dd><code><a href="Sheet.html#getCell(int,int)">getCell</a></code>&nbsp;in interface&nbsp;<code><a href="Sheet.html" title="interface in com.dua3.meja.model">Sheet</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number (0-based)</dd>
-<dd><code>j</code> - the column number (0-based)</dd>
+<dd><code>i</code> - the row index (0-based)</dd>
+<dd><code>j</code> - the column index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>the cell at the specified position, never null</dd>
 <dt>See Also:</dt>

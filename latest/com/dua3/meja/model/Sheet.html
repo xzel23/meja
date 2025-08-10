@@ -142,7 +142,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="block">Creates a new merged region in the sheet.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#autoSizeColumn(int)" class="member-name-link">autoSizeColumn</a><wbr>(int&nbsp;j)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#autoSizeColumn(int)" class="member-name-link">autoSizeColumn</a><wbr>(int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Adjusts the size of the column to its contents.</div>
 </div>
@@ -152,7 +152,7 @@ extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/ja
 <div class="block">Adjusts the size of all columns.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#autoSizeRow(int)" class="member-name-link">autoSizeRow</a><wbr>(int&nbsp;i)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#autoSizeRow(int)" class="member-name-link">autoSizeRow</a><wbr>(int&nbsp;rowIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Adjusts the size of the row to its contents.</div>
 </div>
@@ -189,14 +189,14 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="block">Get auto filter row number.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCell(int,int)" class="member-name-link">getCell</a><wbr>(int&nbsp;i,
- int&nbsp;j)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCell(int,int)" class="member-name-link">getCell</a><wbr>(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns the cell at the specified position, creating a new empty cell if one doesn't exist.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getCellIfExists(int,int)" class="member-name-link">getCellIfExists</a><wbr>(int&nbsp;i,
- int&nbsp;j)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getCellIfExists(int,int)" class="member-name-link">getCellIfExists</a><wbr>(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the cell at the specified position if it exists, without creating new cells.</div>
 </div>
@@ -206,7 +206,7 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="block">Returns the total number of columns in this sheet.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#getColumnName(int)" class="member-name-link">getColumnName</a><wbr>(int&nbsp;j)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#getColumnName(int)" class="member-name-link">getColumnName</a><wbr>(int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Translate column number to column name.</div>
 </div>
@@ -216,7 +216,7 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="block">Translate column name to column number.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>float</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getColumnWidth(int)" class="member-name-link">getColumnWidth</a><wbr>(int&nbsp;j)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getColumnWidth(int)" class="member-name-link">getColumnWidth</a><wbr>(int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Get column width.</div>
 </div>
@@ -236,8 +236,8 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="block">Get the default row height for this sheet, i.e., the height used when creating new rows.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="../util/RectangularRegion.html" title="class in com.dua3.meja.util">RectangularRegion</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getMergedRegion(int,int)" class="member-name-link">getMergedRegion</a><wbr>(int&nbsp;rowNum,
- int&nbsp;colNum)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getMergedRegion(int,int)" class="member-name-link">getMergedRegion</a><wbr>(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns the merged region that contains the cell at the specified position.</div>
 </div>
@@ -247,7 +247,7 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="block">Returns a list of all merged regions in this sheet.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Row.html" title="interface in com.dua3.meja.model">Row</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRow(int)" class="member-name-link">getRow</a><wbr>(int&nbsp;i)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRow(int)" class="member-name-link">getRow</a><wbr>(int&nbsp;rowIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns the row at the specified index, creating it if it doesn't exist.</div>
 </div>
@@ -257,17 +257,17 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="block">Returns the total number of rows in this sheet.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>float</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRowHeight(int)" class="member-name-link">getRowHeight</a><wbr>(int&nbsp;i)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getRowHeight(int)" class="member-name-link">getRowHeight</a><wbr>(int&nbsp;rowIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Returns the height of the specified row in points.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Row.html" title="interface in com.dua3.meja.model">Row</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getRowIfExists(int)" class="member-name-link">getRowIfExists</a><wbr>(int&nbsp;i)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getRowIfExists(int)" class="member-name-link">getRowIfExists</a><wbr>(int&nbsp;rowIndex)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Returns the row at the specified index if it exists, without creating new rows.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#getRowName(int)" class="member-name-link">getRowName</a><wbr>(int&nbsp;i)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#getRowName(int)" class="member-name-link">getRowName</a><wbr>(int&nbsp;rowIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Get row name as String.</div>
 </div>
@@ -317,19 +317,19 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="block">Returns a sequential <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/Stream.html" title="class or interface in java.util.stream" class="external-link"><code>Stream</code></a> of all rows in this sheet.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setAutofilterRow(int)" class="member-name-link">setAutofilterRow</a><wbr>(int&nbsp;i)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setAutofilterRow(int)" class="member-name-link">setAutofilterRow</a><wbr>(int&nbsp;rowIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Sets an automatic filter on the given row (optional operation).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setColumnWidth(int,float)" class="member-name-link">setColumnWidth</a><wbr>(int&nbsp;j,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setColumnWidth(int,float)" class="member-name-link">setColumnWidth</a><wbr>(int&nbsp;colIndex,
  float&nbsp;width)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Set column width.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#setCurrentCell(int,int)" class="member-name-link">setCurrentCell</a><wbr>(int&nbsp;i,
- int&nbsp;j)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#setCurrentCell(int,int)" class="member-name-link">setCurrentCell</a><wbr>(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Convenience method to set the current cell by its row and column coordinates.</div>
 </div>
@@ -339,7 +339,7 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="block">Sets the current (active) cell in the sheet.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setRowHeight(int,float)" class="member-name-link">setRowHeight</a><wbr>(int&nbsp;i,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setRowHeight(int,float)" class="member-name-link">setRowHeight</a><wbr>(int&nbsp;rowIndex,
  float&nbsp;height)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Set row height.</div>
@@ -350,8 +350,8 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="block">Set the zoom factor for this sheet.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#splitAt(int,int)" class="member-name-link">splitAt</a><wbr>(int&nbsp;i,
- int&nbsp;j)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#splitAt(int,int)" class="member-name-link">splitAt</a><wbr>(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Split (freeze) view.</div>
 </div>
@@ -360,9 +360,14 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Subscribe to sheet events.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>com.dua3.utility.concurrent.AutoLock</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#writeLock(java.lang.String)" class="member-name-link">writeLock</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#unsubscribe(java.util.concurrent.Flow.Subscriber)" class="member-name-link">unsubscribe</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Flow.Subscriber.html" title="class or interface in java.util.concurrent" class="external-link">Flow.Subscriber</a>&lt;<a href="SheetEvent.html" title="interface in com.dua3.meja.model">SheetEvent</a>&gt;&nbsp;subscriber)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Unsubscribe from sheet events.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>com.dua3.utility.concurrent.AutoLock</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#writeLock(java.lang.String)" class="member-name-link">writeLock</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Acquires an exclusive write lock for thread-safe modifications to the sheet.</div>
 </div>
 </div>
@@ -390,6 +395,30 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>subscriber</code> - the subscriber to receive events</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#unsubscribe(java.util.concurrent.Flow.Subscriber)"><code>unsubscribe(Flow.Subscriber)</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="unsubscribe(java.util.concurrent.Flow.Subscriber)">
+<h3>unsubscribe</h3>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">unsubscribe</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Flow.Subscriber.html" title="class or interface in java.util.concurrent" class="external-link">Flow.Subscriber</a>&lt;<a href="SheetEvent.html" title="interface in com.dua3.meja.model">SheetEvent</a>&gt;&nbsp;subscriber)</span></div>
+<div class="block">Unsubscribe from sheet events.
+ <p>
+ If the given subscriber is currently subscribed to this sheet's event stream,
+ it will be deregistered and will no longer receive events. If the subscriber
+ is not registered, this method does nothing.
+ </p>
+
+ <p>Idempotent and thread-safe.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>subscriber</code> - the previously registered subscriber to remove</dd>
 </dl>
 </section>
 </li>
@@ -419,14 +448,14 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="autoSizeColumn(int)">
 <h3>autoSizeColumn</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">autoSizeColumn</span><wbr><span class="parameters">(int&nbsp;j)</span></div>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">autoSizeColumn</span><wbr><span class="parameters">(int&nbsp;colIndex)</span></div>
 <div class="block">Adjusts the size of the column to its contents.
  <p>
  The computed width is measured in typographical points (1/72 inch) and applied via
  <a href="#setColumnWidth(int,float)"><code>setColumnWidth(int, float)</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>j</code> - the column to resize (0-based index)</dd>
+<dd><code>colIndex</code> - the column to resize (0-based index)</dd>
 </dl>
 </section>
 </li>
@@ -443,14 +472,14 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="autoSizeRow(int)">
 <h3>autoSizeRow</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">autoSizeRow</span><wbr><span class="parameters">(int&nbsp;i)</span></div>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">autoSizeRow</span><wbr><span class="parameters">(int&nbsp;rowIndex)</span></div>
 <div class="block">Adjusts the size of the row to its contents.
  <p>
  The computed height is measured in typographical points (1/72 inch) and applied via
  <a href="#setRowHeight(int,float)"><code>setRowHeight(int, float)</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row to resize (0-based index)</dd>
+<dd><code>rowIndex</code> - the row to resize (0-based index)</dd>
 </dl>
 </section>
 </li>
@@ -475,14 +504,14 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="getCell(int,int)">
 <h3>getCell</h3>
-<div class="member-signature"><span class="return-type"><a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a></span>&nbsp;<span class="element-name">getCell</span><wbr><span class="parameters">(int&nbsp;i,
- int&nbsp;j)</span></div>
+<div class="member-signature"><span class="return-type"><a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a></span>&nbsp;<span class="element-name">getCell</span><wbr><span class="parameters">(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</span></div>
 <div class="block">Returns the cell at the specified position, creating a new empty cell if one doesn't exist.
  This method ensures a cell is always returned, creating new rows or cells as needed.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number (0-based)</dd>
-<dd><code>j</code> - the column number (0-based)</dd>
+<dd><code>rowIndex</code> - the row index (0-based)</dd>
+<dd><code>colIndex</code> - the column index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>the cell at the specified position, never null</dd>
 <dt>Throws:</dt>
@@ -500,15 +529,15 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="getCellIfExists(int,int)">
 <h3>getCellIfExists</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a>&gt;</span>&nbsp;<span class="element-name">getCellIfExists</span><wbr><span class="parameters">(int&nbsp;i,
- int&nbsp;j)</span></div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Cell.html" title="interface in com.dua3.meja.model">Cell</a>&gt;</span>&nbsp;<span class="element-name">getCellIfExists</span><wbr><span class="parameters">(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</span></div>
 <div class="block">Returns the cell at the specified position if it exists, without creating new cells.
  Unlike <a href="#getCell(int,int)"><code>getCell(int, int)</code></a>, this method will not create new cells or rows
  if they don't exist.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number (0-based)</dd>
-<dd><code>j</code> - the column number (0-based)</dd>
+<dd><code>rowIndex</code> - the row index (0-based)</dd>
+<dd><code>colIndex</code> - the column index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>an Optional containing the cell if it exists, or an empty Optional if the cell
          or its containing row doesn't exist</dd>
@@ -540,13 +569,13 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="getColumnWidth(int)">
 <h3>getColumnWidth</h3>
-<div class="member-signature"><span class="return-type">float</span>&nbsp;<span class="element-name">getColumnWidth</span><wbr><span class="parameters">(int&nbsp;j)</span></div>
+<div class="member-signature"><span class="return-type">float</span>&nbsp;<span class="element-name">getColumnWidth</span><wbr><span class="parameters">(int&nbsp;colIndex)</span></div>
 <div class="block">Get column width.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>j</code> - the column index (0-based)</dd>
+<dd><code>colIndex</code> - the column index (0-based)</dd>
 <dt>Returns:</dt>
-<dd>width of the column with number <code>j</code> in points</dd>
+<dd>width of the column with number <code>colIndex</code> in points</dd>
 </dl>
 </section>
 </li>
@@ -594,13 +623,13 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="getMergedRegion(int,int)">
 <h3>getMergedRegion</h3>
-<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="../util/RectangularRegion.html" title="class in com.dua3.meja.util">RectangularRegion</a>&gt;</span>&nbsp;<span class="element-name">getMergedRegion</span><wbr><span class="parameters">(int&nbsp;rowNum,
- int&nbsp;colNum)</span></div>
+<div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="../util/RectangularRegion.html" title="class in com.dua3.meja.util">RectangularRegion</a>&gt;</span>&nbsp;<span class="element-name">getMergedRegion</span><wbr><span class="parameters">(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</span></div>
 <div class="block">Returns the merged region that contains the cell at the specified position.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>rowNum</code> - the row index (0-based)</dd>
-<dd><code>colNum</code> - the column index (0-based)</dd>
+<dd><code>rowIndex</code> - the row index (0-based)</dd>
+<dd><code>colIndex</code> - the column index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>an Optional containing the merged region, or empty if the cell is not part of any merged region</dd>
 <dt>See Also:</dt>
@@ -616,16 +645,16 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="getRow(int)">
 <h3>getRow</h3>
-<div class="member-signature"><span class="return-type"><a href="Row.html" title="interface in com.dua3.meja.model">Row</a></span>&nbsp;<span class="element-name">getRow</span><wbr><span class="parameters">(int&nbsp;i)</span></div>
+<div class="member-signature"><span class="return-type"><a href="Row.html" title="interface in com.dua3.meja.model">Row</a></span>&nbsp;<span class="element-name">getRow</span><wbr><span class="parameters">(int&nbsp;rowIndex)</span></div>
 <div class="block">Returns the row at the specified index, creating it if it doesn't exist.
  This method ensures a row is always returned, creating new rows as needed.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number (0-based)</dd>
+<dd><code>rowIndex</code> - the row index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>the row at the specified position, never null</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the row number is negative</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the row index is negative</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list">
@@ -638,16 +667,16 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="getRowIfExists(int)">
 <h3>getRowIfExists</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Row.html" title="interface in com.dua3.meja.model">Row</a>&gt;</span>&nbsp;<span class="element-name">getRowIfExists</span><wbr><span class="parameters">(int&nbsp;i)</span></div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Row.html" title="interface in com.dua3.meja.model">Row</a>&gt;</span>&nbsp;<span class="element-name">getRowIfExists</span><wbr><span class="parameters">(int&nbsp;rowIndex)</span></div>
 <div class="block">Returns the row at the specified index if it exists, without creating new rows.
  Unlike <a href="#getRow(int)"><code>getRow(int)</code></a>, this method will not create new rows if they don't exist.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number (0-based)</dd>
+<dd><code>rowIndex</code> - the row index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>an Optional containing the row if it exists, or an empty Optional if the row doesn't exist</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the row number is negative</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the row index is negative</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list">
@@ -679,16 +708,16 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="getRowHeight(int)">
 <h3>getRowHeight</h3>
-<div class="member-signature"><span class="return-type">float</span>&nbsp;<span class="element-name">getRowHeight</span><wbr><span class="parameters">(int&nbsp;i)</span></div>
+<div class="member-signature"><span class="return-type">float</span>&nbsp;<span class="element-name">getRowHeight</span><wbr><span class="parameters">(int&nbsp;rowIndex)</span></div>
 <div class="block">Returns the height of the specified row in points. The height affects the visual
  presentation of the row in the sheet.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number (0-based)</dd>
+<dd><code>rowIndex</code> - the row index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>height of the specified row in points</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the row number is negative</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if the row index is negative</dd>
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list-long">
@@ -845,23 +874,23 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="setAutofilterRow(int)">
 <h3>setAutofilterRow</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setAutofilterRow</span><wbr><span class="parameters">(int&nbsp;i)</span></div>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setAutofilterRow</span><wbr><span class="parameters">(int&nbsp;rowIndex)</span></div>
 <div class="block">Sets an automatic filter on the given row (optional operation).</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number</dd>
+<dd><code>rowIndex</code> - the row index (0-based)</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="setColumnWidth(int,float)">
 <h3>setColumnWidth</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setColumnWidth</span><wbr><span class="parameters">(int&nbsp;j,
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setColumnWidth</span><wbr><span class="parameters">(int&nbsp;colIndex,
  float&nbsp;width)</span></div>
 <div class="block">Set column width.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>j</code> - the column number</dd>
+<dd><code>colIndex</code> - the column index (0-based)</dd>
 <dd><code>width</code> - the width of the column in points</dd>
 </dl>
 </section>
@@ -893,15 +922,15 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="setCurrentCell(int,int)">
 <h3>setCurrentCell</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">setCurrentCell</span><wbr><span class="parameters">(int&nbsp;i,
- int&nbsp;j)</span></div>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">setCurrentCell</span><wbr><span class="parameters">(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</span></div>
 <div class="block">Convenience method to set the current cell by its row and column coordinates.
  This method creates or retrieves the cell at the specified position and sets it
  as the current cell.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number of the cell to set as current</dd>
-<dd><code>j</code> - the column number of the cell to set as current</dd>
+<dd><code>rowIndex</code> - the row index of the cell to set as current (0-based)</dd>
+<dd><code>colIndex</code> - the column index of the cell to set as current (0-based)</dd>
 <dt>Returns:</dt>
 <dd>true if the current cell changed, false if the specified cell was already the current cell</dd>
 <dt>See Also:</dt>
@@ -918,12 +947,12 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="setRowHeight(int,float)">
 <h3>setRowHeight</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setRowHeight</span><wbr><span class="parameters">(int&nbsp;i,
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setRowHeight</span><wbr><span class="parameters">(int&nbsp;rowIndex,
  float&nbsp;height)</span></div>
 <div class="block">Set row height.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number</dd>
+<dd><code>rowIndex</code> - the row index (0-based)</dd>
 <dd><code>height</code> - the height of the row in points</dd>
 </dl>
 </section>
@@ -942,15 +971,15 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="splitAt(int,int)">
 <h3>splitAt</h3>
-<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">splitAt</span><wbr><span class="parameters">(int&nbsp;i,
- int&nbsp;j)</span></div>
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">splitAt</span><wbr><span class="parameters">(int&nbsp;rowIndex,
+ int&nbsp;colIndex)</span></div>
 <div class="block">Split (freeze) view.
  <p>
- Splits the sheet so that rows above <code>i</code> and columns to the left of <code>j</code> remain visible when scrolling.</div>
+ Splits the sheet so that rows above <code>rowIndex</code> and columns to the left of <code>colIndex</code> remain visible when scrolling.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - row index (0-based)</dd>
-<dd><code>j</code> - column index (0-based)</dd>
+<dd><code>rowIndex</code> - row index (0-based)</dd>
+<dd><code>colIndex</code> - column index (0-based)</dd>
 </dl>
 </section>
 </li>
@@ -964,7 +993,8 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
  <p>This method is part of the <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link"><code>Iterable</code></a> interface implementation, allowing
  the sheet to be used in for-each loops: <code>for (Row row : sheet) {...}</code></p>
 
- <p>The iterator's <code>remove()</code> operation is not supported.</p></div>
+ <p><strong>Read-only:</strong> The returned iterator is read-only. Calling
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Iterator.html#remove()" title="class or interface in java.util" class="external-link"><code>Iterator.remove()</code></a> will always throw an <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link"><code>UnsupportedOperationException</code></a>.</p></div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Iterable.html#iterator()" title="class or interface in java.lang" class="external-link">iterator</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;<a href="Row.html" title="interface in com.dua3.meja.model">Row</a>&gt;</code></dd>
@@ -1021,11 +1051,11 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="getColumnName(int)">
 <h3>getColumnName</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getColumnName</span><wbr><span class="parameters">(int&nbsp;j)</span></div>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getColumnName</span><wbr><span class="parameters">(int&nbsp;colIndex)</span></div>
 <div class="block">Translate column number to column name.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>j</code> - the column number</dd>
+<dd><code>colIndex</code> - the column index (0-based)</dd>
 <dt>Returns:</dt>
 <dd>the column name</dd>
 </dl>
@@ -1050,13 +1080,13 @@ C extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/
 <li>
 <section class="detail" id="getRowName(int)">
 <h3>getRowName</h3>
-<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getRowName</span><wbr><span class="parameters">(int&nbsp;i)</span></div>
+<div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getRowName</span><wbr><span class="parameters">(int&nbsp;rowIndex)</span></div>
 <div class="block">Get row name as String.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>i</code> - the row number</dd>
+<dd><code>rowIndex</code> - the row index (0-based)</dd>
 <dt>Returns:</dt>
-<dd>the row name (in Excel convention, i.e. "1" for row number 0)</dd>
+<dd>the row name (in Excel convention, i.e. "1" for row index 0)</dd>
 </dl>
 </section>
 </li>

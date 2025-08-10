@@ -174,12 +174,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default com.dua3.utility.text.RichText</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#getAsFormattedText(java.util.Locale)" class="member-name-link">getAsFormattedText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Return the text representation of the value with the cell style applied.</div>
+<div class="block">Return the textual representation of the cell's value as it would be displayed, with the cell style applied.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>com.dua3.utility.text.RichText</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getAsText(java.util.Locale)" class="member-name-link">getAsText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Return text representation of value.</div>
+<div class="block">Return the textual representation of the cell's value as RichText, without applying the cell style.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getBoolean()" class="member-name-link">getBoolean</a>()</code></div>
@@ -385,7 +385,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#toString(java.util.Locale)" class="member-name-link">toString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Return string representation of cell content.</div>
+<div class="block">Return the localized string representation of the cell's value.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#unMerge()" class="member-name-link">unMerge</a>()</code></div>
@@ -475,14 +475,31 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getAsText(java.util.Locale)">
 <h3>getAsText</h3>
 <div class="member-signature"><span class="return-type">com.dua3.utility.text.RichText</span>&nbsp;<span class="element-name">getAsText</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</span></div>
-<div class="block">Return text representation of value.
+<div class="block">Return the textual representation of the cell's value as RichText, without applying the cell style.
+ <p>
+ This method converts the underlying value to text using the given locale, but does not apply the
+ cell's visual style (font, fill colors, etc.). Use <a href="#getAsFormattedText(java.util.Locale)"><code>getAsFormattedText(Locale)</code></a> when you
+ need the value as it would appear to the user, including cell styling.
+ </p>
 
- <p>The cell value is converted to a RichText, but the cell style is not applied.</div>
+ <p>Examples (assuming a cell with numeric value 1234.5 and a German locale):
+ <ul>
+   <li><code>cell.getAsText(Locale.GERMANY)</code> &rarr; RichText("1234.5") (no thousand separator, no style)</li>
+   <li><code>cell.getAsFormattedText(Locale.GERMANY)</code> &rarr; RichText("1.234,5") (formatted, styled)</li>
+   <li><code>cell.toString(Locale.GERMANY)</code> &rarr; "1.234,5" (plain String, formatted)</li>
+ </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>locale</code> - the locale to use during formatting</dd>
 <dt>Returns:</dt>
-<dd>cell value as a RichText instance</dd>
+<dd>the cell value as a RichText instance without applying cell style</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#getAsFormattedText(java.util.Locale)"><code>getAsFormattedText(Locale)</code></a></li>
+<li><a href="#toString(java.util.Locale)"><code>toString(Locale)</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
@@ -490,12 +507,30 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getAsFormattedText(java.util.Locale)">
 <h3>getAsFormattedText</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">com.dua3.utility.text.RichText</span>&nbsp;<span class="element-name">getAsFormattedText</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</span></div>
-<div class="block">Return the text representation of the value with the cell style applied.</div>
+<div class="block">Return the textual representation of the cell's value as it would be displayed, with the cell style applied.
+ <p>
+ This method applies the cell's visual style (font, fills) to the textual value generated for the given locale.
+ It is suitable for UI display when you want to preserve styling information in the returned <code>RichText</code>.
+ </p>
+
+ <p>Examples (assuming a date value 2025-01-02 and the cell style uses a short date pattern):
+ <ul>
+   <li><code>cell.getAsText(Locale.US)</code> &rarr; RichText("2025-01-02") (raw text, no style)</li>
+   <li><code>cell.getAsFormattedText(Locale.US)</code> &rarr; RichText("1/2/25") (formatted and styled)</li>
+   <li><code>cell.toString(Locale.US)</code> &rarr; "1/2/25" (plain String, formatted)</li>
+ </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>locale</code> - the locale to use during formatting</dd>
 <dt>Returns:</dt>
-<dd>the value as RichText, as it would be displayed</dd>
+<dd>the value as RichText, including cell style</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#getAsText(java.util.Locale)"><code>getAsText(Locale)</code></a></li>
+<li><a href="#toString(java.util.Locale)"><code>toString(Locale)</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
@@ -1007,12 +1042,31 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="toString(java.util.Locale)">
 <h3>toString</h3>
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">toString</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Locale.html" title="class or interface in java.util" class="external-link">Locale</a>&nbsp;locale)</span></div>
-<div class="block">Return string representation of cell content.</div>
+<div class="block">Return the localized string representation of the cell's value.
+ <p>
+ This method returns a plain <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link"><code>String</code></a> suitable for display or export (e.g., CSV). It formats
+ the value using the provided locale and the cell's data format, but does not carry styling information.
+ For a styled representation, use <a href="#getAsFormattedText(java.util.Locale)"><code>getAsFormattedText(Locale)</code></a>. For a non-styled RichText, use
+ <a href="#getAsText(java.util.Locale)"><code>getAsText(Locale)</code></a>.
+ </p>
+
+ <p>Examples:
+ <ul>
+   <li>Number 1234.5 with German locale: <code>cell.toString(Locale.GERMANY)</code> &rarr; "1.234,5"</li>
+   <li>Date 2025-01-02 with US locale (short date style): <code>cell.toString(Locale.US)</code> &rarr; "1/2/25"</li>
+ </ul></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>locale</code> - locale for formatting</dd>
 <dt>Returns:</dt>
-<dd>string representation of cell content</dd>
+<dd>string representation of the cell content for the given locale</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="#getAsText(java.util.Locale)"><code>getAsText(Locale)</code></a></li>
+<li><a href="#getAsFormattedText(java.util.Locale)"><code>getAsFormattedText(Locale)</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
