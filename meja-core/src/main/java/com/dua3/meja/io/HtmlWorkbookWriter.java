@@ -25,7 +25,9 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.data.Color;
 import com.dua3.utility.io.IoOptions;
+import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -223,7 +225,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         for (Row row : sheet) {
             int nextRowNr = row.getRowNumber();
             addMissingRows(sheet, out, lastRownr, nextRowNr);
-            writeRow(sheet, out, locale, row, defaultCellStyle, baseUri);
+            writeRow(sheet, out, locale, row, defaultCellStyle, baseUri.orElse(null));
 
             processedRows += nextRowNr - lastRownr;
             lastRownr = nextRowNr;
@@ -269,7 +271,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param defaultCellStyle The default cell style to compare against when setting custom styles for table cells.
      * @param baseUri An {@link Optional} containing the base URI used to resolve relative hyperlinks for the row's cells.
      */
-    private void writeRow(Sheet sheet, Formatter out, Locale locale, Row row, CellStyle defaultCellStyle, Optional<URI> baseUri) {
+    private void writeRow(Sheet sheet, Formatter out, Locale locale, Row row, CellStyle defaultCellStyle, @Nullable URI baseUri) {
         out.format(Locale.ROOT, "      <tr style=\"height: %.2fpt;\">\n", sheet.getRowHeight(row.getRowNumber()));
 
         int colnr = 0;
@@ -297,7 +299,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             out.format(Locale.ROOT, ">");
 
             Optional<URI> hyperlink = cell.getHyperlink();
-            hyperlink.ifPresent(link -> out.format(Locale.ROOT, "<a href=\"%s\">", baseUri.map(base -> base.relativize(link)).orElse(link)));
+            hyperlink.ifPresent(link -> out.format(Locale.ROOT, "<a href=\"%s\">", LangUtil.mapNonNullOrElse(baseUri, base -> base.relativize(link), link)));
             out.format(Locale.ROOT, "%s", cell.getAsText(locale));
             hyperlink.ifPresent(link -> out.format(Locale.ROOT, "</a>"));
 
