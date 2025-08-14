@@ -78,12 +78,6 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public int getFirstCellNum() {
-        // POI returns -1 for empty rows
-        return Math.max(0, poiRow.getFirstCellNum());
-    }
-
-    @Override
     public int getColumnCount() {
         return Math.max(0, poiRow.getLastCellNum());
     }
@@ -100,15 +94,5 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
      */
     void setColumnUsed(int columnNumber) {
         getAbstractSheet().setColumnUsed(columnNumber);
-    }
-
-    /**
-     * Broadcast event: columns added.
-     *
-     * @param first the index (inclusive) of the first added column
-     * @param last the index (exclusive) of the last added column
-     */
-    private void columnsAdded(int first, int last) {
-        getAbstractSheet().setColumnUsed(last);
     }
 }

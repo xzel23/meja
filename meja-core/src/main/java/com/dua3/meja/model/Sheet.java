@@ -703,7 +703,7 @@ public interface Sheet extends Iterable<Row> {
                 row = getRow(0);
             }
             // return the first cell of the new row
-            return row.getCell(row.getFirstCellNum());
+            return row.getCell(0);
         }
     }
 

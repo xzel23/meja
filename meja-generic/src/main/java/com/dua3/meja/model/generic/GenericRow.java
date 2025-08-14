@@ -63,11 +63,6 @@ public class GenericRow extends AbstractRow<GenericSheet, GenericRow, GenericCel
     }
 
     @Override
-    public final int getFirstCellNum() {
-        return 0;
-    }
-
-    @Override
     public final int getColumnCount() {
         return cells.size();
     }

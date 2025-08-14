@@ -128,7 +128,7 @@ public interface Row extends Iterable<Cell> {
     default Iterator<Cell> iterator() {
         return new Iterator<>() {
 
-            private int colNum = getFirstCellNum();
+            private int colNum = 0;
 
             @Override
             public boolean hasNext() {
@@ -158,19 +158,6 @@ public interface Row extends Iterable<Cell> {
             }
         };
     }
-
-    /**
-     * Get column number of first cell.
-     * <p>
-     * Workbooks have an area of used cells. All cells outside that area are
-     * blank. If the value returned by this method is greater than 0 that means that
-     * all the cells to the left of the column returned are blank. The opposite is
-     * not necessarily true, since the area of used cells might not be updated when
-     * a cell is cleared (because that would require a full sweep of all rows).
-     *
-     * @return number of first cell that potentially contains a value.
-     */
-    int getFirstCellNum();
 
     /**
      * Find cell containing text in row.
