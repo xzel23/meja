@@ -17,7 +17,6 @@ package com.dua3.meja.model;
 
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.concurrent.AutoLock;
-import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -157,8 +156,6 @@ public interface Sheet extends Iterable<Row> {
      * @see #getRowIfExists(int)
      */
     default Optional<Cell> getCellIfExists(int rowIndex, int colIndex) {
-        LangUtil.checkArg(rowIndex >= 0, "invalid row number: %d", rowIndex);
-        LangUtil.checkArg(colIndex >= 0, "invalid column number: %d", colIndex);
         return getRowIfExists(rowIndex).flatMap(row -> row.getCellIfExists(colIndex));
     }
 

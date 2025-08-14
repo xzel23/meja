@@ -173,8 +173,8 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
                     if (isTopLeft) {
                         topLeftCell = this;
                     } else {
-                        PoiRow topRow = isTop ? row : row.getSheet().getRow(mergedRegion.firstRow());
-                        topLeftCell = topRow.getCell(mergedRegion.firstColumn());
+                        PoiRow topRow = isTop ? row : getAbstractSheet().getAbstractRow(mergedRegion.firstRow());
+                        topLeftCell = topRow.getAbstractCell(mergedRegion.firstColumn());
                     }
 
                     int mergedSpanX = 1 + mergedRegion.lastColumn() - mergedRegion.firstColumn();
@@ -233,8 +233,13 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
+    protected PoiWorkbook getAbstractWorkbook() {
+        return getAbstractSheet().getAbstractWorkbook();
+    }
+
+    @Override
     public PoiCellStyle getCellStyle() {
-        return getWorkbook().getPoiCellStyle(poiCell.getCellStyle());
+        return getAbstractWorkbook().getPoiCellStyle(poiCell.getCellStyle());
     }
 
     @Override
@@ -276,7 +281,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
             return ((PoiHssfWorkbook) getWorkbook()).getFont(hssfRichText.getFontOfFormattingRun(i))
                     .getFont();
         } else {
-            return getWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i)).getFont();
+            return getAbstractWorkbook().getFont(((XSSFRichTextString) richText).getFontOfFormattingRun(i)).getFont();
         }
     }
 
@@ -326,11 +331,6 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     @Override
     public int getVerticalSpan() {
         return spanY;
-    }
-
-    @Override
-    public PoiWorkbook getWorkbook() {
-        return getRow().getWorkbook();
     }
 
     @Override
@@ -435,9 +435,10 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
 
         arg = getWorkbook().cache(arg);
         Object old = getOrDefault(null);
-        RichTextString richText = getWorkbook().createRichTextString(arg.toString());
+        PoiWorkbook workbook = getAbstractWorkbook();
+        RichTextString richText = workbook.createRichTextString(arg.toString());
         for (Run run : arg) {
-            PoiFont font = getWorkbook().getPoiFont(FontUtil.getInstance().deriveFont(getCellStyle().getFont(), run.getFontDef()));
+            PoiFont font = workbook.getPoiFont(FontUtil.getInstance().deriveFont(getCellStyle().getFont(), run.getFontDef()));
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
         poiCell.setCellValue(richText);
@@ -489,7 +490,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         if (!getWorkbook().hasCellStyle(dateStyleName)) {
             // if that doesn't exist, create a new format
             LOGGER.debug("setting cell style to a date/time compatible format");
-            PoiCellStyle dateStyle = getWorkbook().getCellStyle(dateStyleName);
+            PoiCellStyle dateStyle = getAbstractWorkbook().getCellStyle(dateStyleName);
             dateStyle.copyStyle(cellStyle);
             dateStyle.setDataFormat(CellStyle.StandardDataFormats.MEDIUM.name());
         }
@@ -525,7 +526,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
             clear();
         } else {
             poiCell.setCellFormula(arg);
-            final PoiWorkbook wb = getWorkbook();
+            final PoiWorkbook wb = getAbstractWorkbook();
             if (wb.isFormulaEvaluationSupported()) {
                 try {
                     wb.evaluator.evaluateFormulaCell(poiCell);
@@ -546,7 +547,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
 
     @Override
     public PoiCell setHyperlink(URI target) {
-        Hyperlink link = getWorkbook().createHyperLink(target);
+        Hyperlink link = getAbstractWorkbook().createHyperLink(target);
         poiCell.setHyperlink(link);
         return this;
     }
@@ -661,7 +662,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         }
 
         // if not, let POI do the formatting
-        FormulaEvaluator evaluator = getWorkbook().evaluator;
+        FormulaEvaluator evaluator = getAbstractWorkbook().evaluator;
         DataFormatter dataFormatter = PoiWorkbook.getDataFormatter(locale);
         try {
             return dataFormatter.formatCellValue(poiCell, evaluator);
@@ -675,7 +676,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
      */
     private void updateRow() {
         if (getCellType() != CellType.BLANK) {
-            getRow().setColumnUsed(getColumnNumber());
+            getAbstractRow().setColumnUsed(getColumnNumber());
         }
     }
 

@@ -22,9 +22,9 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
      *
      * @param row the row the new cell belongs to
      */
+    @SuppressWarnings("unchecked")
     protected AbstractCell(R row) {
         this.row = row;
-        //noinspection unchecked
         this.logicalCell = (C) this;
     }
 
@@ -72,7 +72,7 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
      * @param arg The new value of the cell.
      */
     protected void valueChanged(@Nullable Object old, @Nullable Object arg) {
-        getSheet().cellValueChanged(this, old, arg);
+        getAbstractSheet().cellValueChanged(this, old, arg);
     }
 
     /**
@@ -82,7 +82,7 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
      * @param arg The new value of the cell.
      */
     protected void styleChanged(Object old, CellStyle arg) {
-        getSheet().cellStyleChanged(this, old, arg);
+        getAbstractSheet().cellStyleChanged(this, old, arg);
     }
 
     /**
@@ -90,6 +90,7 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
      * It sets the logicalCell property of the cell to itself, and sets the horizontal and vertical spans to 1.
      * This method is typically called internally when a merged region is unmerged or when a cell is updated in a merged region.
      */
+    @SuppressWarnings("unchecked")
     protected void removedFromMergedRegion() {
         //noinspection unchecked
         this.logicalCell = (C) this;
@@ -97,9 +98,20 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
         setVerticalSpan(1);
     }
 
-    @Override
-    public C getLogicalCell() {
+    protected final C getLogicalAbstractCell() {
         return logicalCell;
+    }
+
+    protected abstract AbstractWorkbook<S, R, C> getAbstractWorkbook();
+
+    @Override
+    public final Workbook getWorkbook() {
+        return getAbstractWorkbook();
+    }
+
+    @Override
+    public final Cell getLogicalCell() {
+        return getLogicalAbstractCell();
     }
 
     @Override
@@ -107,25 +119,36 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
         //noinspection ObjectEquality
         LangUtil.check(logicalCell == this, "Cell is not the top left cell of a merged region");
 
-        getSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
+        getAbstractSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
 
         int originalSpanX = getHorizontalSpan();
         int originalSpanY = getVerticalSpan();
         for (int i = getRowNumber(); i < getRowNumber() + originalSpanY; i++) {
             for (int j = getColumnNumber(); j < getColumnNumber() + originalSpanX; j++) {
-                getRow().getCellIfExists(j).ifPresent(AbstractCell::removedFromMergedRegion);
+                C mergedCell = row.getAbstractCellOrNull(j);
+                if (mergedCell != null) {
+                    mergedCell.removedFromMergedRegion();
+                }
             }
         }
     }
 
+    protected S getAbstractSheet()  {
+        return getAbstractRow().getAbstractSheet();
+    }
+
+    protected R getAbstractRow() {
+        return row;
+    }
+
     @Override
-    public S getSheet() {
+    public final Sheet getSheet() {
         return getRow().getSheet();
     }
 
     @Override
-    public R getRow() {
-        return row;
+    public final Row getRow() {
+        return getAbstractRow();
     }
 
     @Override

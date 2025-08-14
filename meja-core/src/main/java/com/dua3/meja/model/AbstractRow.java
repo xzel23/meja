@@ -1,5 +1,7 @@
 package com.dua3.meja.model;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Optional;
 
 /**
@@ -25,22 +27,62 @@ public abstract class AbstractRow<S extends AbstractSheet<S, R, C>, R extends Ab
         this.rowNumber = rowNumber;
     }
 
-    @Override
-    public abstract C getCell(int col);
+    /**
+     * Retrieves the {@link AbstractWorkbook} associated with the current row.
+     *
+     * @return the {@link AbstractWorkbook} instance to which this row belongs.
+     */
+    protected final AbstractWorkbook<S, R, C> getAbstractWorkbook() {
+        return sheet.getAbstractWorkbook();
+    }
+
+    /**
+     * Retrieves the {@link AbstractSheet} instance associated with the current row.
+     *
+     * @return the {@link AbstractSheet} instance to which this row belongs.
+     */
+    protected final S getAbstractSheet() {
+        return sheet;
+    }
+
+    /**
+     * Retrieves the cell at the specified column index in this row.
+     *
+     * @param col the column index (0-based) of the cell to retrieve
+     * @return the instance of the cell at the given column index
+     */
+    protected abstract C getAbstractCell(int col);
+
+    /**
+     * Retrieves the cell at the specified column index in this row, or {@code null} if the cell does not exist.
+     *
+     * @param col the column index (0-based) of the cell to retrieve
+     * @return the instance of the cell at the given column index, or {@code null} if the cell does not exist
+     */
+    protected abstract @Nullable C getAbstractCellOrNull(int col);
 
     @Override
-    public abstract Optional<C> getCellIfExists(int j);
+    public final Cell getCell(int colIndex) {
+        return getAbstractCell(colIndex);
+    }
 
     @Override
-    public int getRowNumber() {
+    public final Optional<Cell> getCellIfExists(int colIndex) {
+        return Optional.ofNullable(getAbstractCellOrNull(colIndex));
+    }
+
+    @Override
+    public final int getRowNumber() {
         return rowNumber;
     }
 
     @Override
-    public S getSheet() {
-        return sheet;
+    public final Sheet getSheet() {
+        return getAbstractSheet();
     }
 
     @Override
-    public abstract AbstractWorkbook getWorkbook();
+    public final Workbook getWorkbook() {
+        return getAbstractWorkbook();
+    }
 }

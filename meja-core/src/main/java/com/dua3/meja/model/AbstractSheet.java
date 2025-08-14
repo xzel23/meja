@@ -45,6 +45,40 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     protected AbstractSheet() {
     }
 
+    /**
+     * Retrieves the abstract workbook associated with the sheet.
+     *
+     * @return the {@link AbstractWorkbook} instance associated with this sheet.
+     */
+    protected abstract AbstractWorkbook<S, R, C> getAbstractWorkbook();
+
+    /**
+     * Retrieves the abstract row at the specified index.
+     *
+     * @param i the index of the row to retrieve
+     * @return the abstract row at the specified index
+     */
+    protected abstract R getAbstractRow(int i);
+
+    /**
+     * Retrieves the abstract cell located at the specified row and column
+     * indices within the sheet.
+     *
+     * @param i the zero-based index of the row
+     * @param j the zero-based index of the column
+     * @return the abstract cell located at the specified row and column indices
+     */
+    protected C getAbstractCell(int i, int j) {
+        return getAbstractRow(i).getAbstractCell(j);
+    }
+
+    /**
+     * Retrieves the currently active abstract cell within the sheet.
+     *
+     * @return the currently active abstract cell of type {@code C}.
+     */
+    protected abstract C getCurrentAbstractCell();
+
     @Override
     public void subscribe(Flow.Subscriber<SheetEvent> subscriber) {
         Flow.Subscriber<SheetEvent> wrapper = new Flow.Subscriber<>() {
@@ -190,10 +224,10 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
         // update cell data
         int spanX = cells.lastColumn() - cells.firstColumn() + 1;
         int spanY = cells.lastRow() - cells.firstRow() + 1;
-        C topLeftCell = getCell(cells.firstRow(), cells.firstColumn());
+        C topLeftCell = getAbstractCell(cells.firstRow(), cells.firstColumn());
         for (int i = 0; i < spanY; i++) {
             for (int j = 0; j < spanX; j++) {
-                C cell = getCell(cells.firstRow() + i, cells.firstColumn() + j);
+                C cell = getAbstractCell(cells.firstRow() + i, cells.firstColumn() + j);
                 cell.addedToMergedRegion(topLeftCell, spanX, spanY);
             }
         }
@@ -226,9 +260,12 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
             if (rr.firstRow() == rowNumber && rr.firstColumn() == columnNumber) {
                 mergedRegions.remove(idx--);
                 for (int i = rr.firstRow(); i <= rr.lastRow(); i++) {
-                    R row = getRow(i);
+                    R row = getAbstractRow(i);
                     for (int j = rr.firstColumn(); j <= rr.lastColumn(); j++) {
-                        row.getCellIfExists(j).ifPresent(C::removedFromMergedRegion);
+                        C cell = row.getAbstractCellOrNull(j);
+                        if (cell != null) {
+                            cell.removedFromMergedRegion();
+                        }
                     }
                 }
             }
@@ -237,20 +274,29 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     }
 
     @Override
-    public abstract R getRow(int i);
-
-    @Override
-    public C getCell(int i, int j) {
-        LangUtil.checkArg(i >= 0, "invalid row number: %d", i);
-        LangUtil.checkArg(j >= 0, "invalid column number: %d", j);
-        return getRow(i).getCell(j);
+    public final Workbook getWorkbook() {
+        return getAbstractWorkbook();
     }
 
     @Override
-    public abstract AbstractWorkbook getWorkbook();
+    public final Row getRow(int i) {
+        return getAbstractRow(i);
+    }
 
     @Override
-    public void autoSizeColumn(int j) {
+    public final Cell getCell(int i, int j) {
+        LangUtil.checkArg(i >= 0, "invalid row number: %d", i);
+        LangUtil.checkArg(j >= 0, "invalid column number: %d", j);
+        return getAbstractCell(i, j);
+    }
+
+    @Override
+    public final Cell getCurrentCell() {
+        return getCurrentAbstractCell();
+    }
+
+    @Override
+    public final void autoSizeColumn(int j) {
         float colWidth = (float) rows()
                 .mapMultiToDouble((row, downstream) ->
                         row.cells().forEach(cell -> {
@@ -264,7 +310,7 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     }
 
     @Override
-    public void autoSizeColumns() {
+    public final void autoSizeColumns() {
         final int n = getColumnCount();
 
         float[] colWidth = new float[n];
@@ -285,7 +331,7 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     }
 
     @Override
-    public void autoSizeRow(int i) {
+    public final void autoSizeRow(int i) {
         getRowIfExists(i).ifPresent(row -> {
             float rowHeight = (float) row.cells()
                     .mapMultiToDouble((cell, downstream) -> {
@@ -300,7 +346,7 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getClass().getSimpleName() + "{" +
                 "name=" + getSheetName() +
                 '}';

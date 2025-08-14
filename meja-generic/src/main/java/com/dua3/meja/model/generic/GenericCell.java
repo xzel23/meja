@@ -230,11 +230,6 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
         return (int) ((data & 0x0000_0000_ffff_ff00L) >> 8);
     }
 
-    @Override
-    public GenericWorkbook getWorkbook() {
-        return getRow().getWorkbook();
-    }
-
     private void initData(int colNr) {
         LangUtil.check(colNr >= 0 && colNr <= MAX_COLUMN_NUMBER, () -> new CellException(this, "column number out of range: " + colNr));
         data = (((long) colNr) << 48) | INITIAL_DATA;
@@ -269,7 +264,7 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
         if (arg == null) {
             clear();
         } else {
-            GenericSheet sheet = getSheet();
+            GenericSheet sheet = getAbstractSheet();
             arg = sheet.getWorkbook().cache(arg);
             if (arg != value || type != getCellType()) {
                 Object old = value;
@@ -362,6 +357,11 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
                 () -> new CellException(this, "invalid value for horizontal span: " + spanX));
 
         data = (data & 0xffff_0000_ffff_ffffL) | (((long) spanX) << 32);
+    }
+
+    @Override
+    protected GenericWorkbook getAbstractWorkbook() {
+        return getAbstractSheet().getAbstractWorkbook();
     }
 
     @Override

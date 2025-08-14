@@ -14,7 +14,7 @@ import java.util.concurrent.SubmissionPublisher;
 /**
  * Abstract base class for implementations of the {@link Workbook} interface.
  */
-public abstract class AbstractWorkbook implements Workbook {
+public abstract class AbstractWorkbook<S extends AbstractSheet<S, R, C>, R extends AbstractRow<S, R, C>, C extends AbstractCell<S, R, C>> implements Workbook {
 
     /**
      * The path of this workbook.
@@ -76,6 +76,13 @@ public abstract class AbstractWorkbook implements Workbook {
         this.uri = uri;
     }
 
+    /**
+     * Retrieves the current active sheet in the workbook, or {@code null} if no sheet is active.
+     *
+     * @return the current active {@link AbstractSheet}, or {@code null} if no sheet is active.
+     */
+    protected abstract @Nullable S getCurrentAbstractSheetOrNull();
+
     @Override
     public void subscribe(Flow.Subscriber<WorkbookEvent> subscriber) {
         Flow.Subscriber<WorkbookEvent> wrapper = new Flow.Subscriber<>() {
@@ -114,12 +121,12 @@ public abstract class AbstractWorkbook implements Workbook {
     }
 
     @Override
-    public <T> T cache(T obj) {
+    public final <T> T cache(T obj) {
         return objectCache != null ? objectCache.get(obj) : obj;
     }
 
     @Override
-    public Optional<URI> getUri() {
+    public final Optional<URI> getUri() {
         return Optional.ofNullable(uri);
     }
 
@@ -145,10 +152,15 @@ public abstract class AbstractWorkbook implements Workbook {
     }
 
     @Override
-    public void setUri(@Nullable URI uri) {
+    public final void setUri(@Nullable URI uri) {
         URI oldUri = this.uri;
         this.uri = uri;
         uriChanged(oldUri, uri);
+    }
+
+    @Override
+    public final Optional<Sheet> getCurrentSheet() {
+        return Optional.ofNullable(getCurrentAbstractSheetOrNull());
     }
 
     @Override

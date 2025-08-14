@@ -84,7 +84,7 @@ public interface Row extends Iterable<Cell> {
      * @return an Optional containing the cell, or empty if it doesn't exist
      * @see #getCell(int) to create the cell if it does not exist
      */
-    Optional<? extends Cell> getCellIfExists(int colIndex);
+    Optional<Cell> getCellIfExists(int colIndex);
 
     /**
      * Get row number.

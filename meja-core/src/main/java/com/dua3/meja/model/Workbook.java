@@ -133,14 +133,14 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *
      * @return stream of cell styles
      */
-    Stream<? extends CellStyle> cellStyles();
+    Stream<CellStyle> cellStyles();
 
     /**
      * Get the current sheet.
      *
      * @return the current sheet.
      */
-    Optional<? extends Sheet> getCurrentSheet();
+    Optional<Sheet> getCurrentSheet();
 
     /**
      * Set the current sheet.
@@ -497,7 +497,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      *
      * @return stream of sheets
      */
-    default Stream<? extends Sheet> sheets() {
+    default Stream<Sheet> sheets() {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator(), Spliterator.ORDERED), false);
     }
 

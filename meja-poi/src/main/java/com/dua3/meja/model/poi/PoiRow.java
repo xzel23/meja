@@ -21,8 +21,6 @@ import com.dua3.meja.model.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Optional;
-
 /**
  * Concrete Implementation of {@link AbstractRow} for Apache POI based workbooks.
  */
@@ -57,7 +55,7 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public PoiCell getCell(int j) {
+    protected PoiCell getAbstractCell(int j) {
         org.apache.poi.ss.usermodel.Cell poiCell;
         int oldLast = getColumnCount() - 1;
         if (j > oldLast) {
@@ -65,7 +63,7 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
             do {
                 poiCell = poiRow.createCell(++jj);
             } while (jj < j);
-            getSheet().setColumnUsed(j);
+            getAbstractSheet().setColumnUsed(j);
         } else {
             poiCell = poiRow.getCell(j, MissingCellPolicy.CREATE_NULL_AS_BLANK);
         }
@@ -74,9 +72,9 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public Optional<PoiCell> getCellIfExists(int col) {
+    protected @Nullable PoiCell getAbstractCellOrNull(int col) {
         org.apache.poi.ss.usermodel.Cell poiCell = col < 0 ? null : poiRow.getCell(col);
-        return Optional.ofNullable(poiCell != null ? new PoiCell(this, poiCell) : null);
+        return poiCell != null ? new PoiCell(this, poiCell) : null;
     }
 
     @Override
@@ -101,7 +99,7 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
      * @param columnNumber the column number
      */
     void setColumnUsed(int columnNumber) {
-        getSheet().setColumnUsed(columnNumber);
+        getAbstractSheet().setColumnUsed(columnNumber);
     }
 
     /**
@@ -111,11 +109,6 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
      * @param last the index (exclusive) of the last added column
      */
     private void columnsAdded(int first, int last) {
-        getSheet().setColumnUsed(last);
-    }
-
-    @Override
-    public PoiWorkbook getWorkbook() {
-        return getSheet().getWorkbook();
+        getAbstractSheet().setColumnUsed(last);
     }
 }

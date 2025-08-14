@@ -33,7 +33,7 @@ import java.util.Objects;
 /**
  * POI implementation of the {@link com.dua3.meja.model.Sheet} interface.
  */
-public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
+public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(PoiSheet.class);
 
     /**
@@ -135,14 +135,14 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public PoiCell getCurrentCell() {
+    protected PoiCell getCurrentAbstractCell() {
         CellAddress cellRef = poiSheet.getActiveCell();
 
         if (cellRef == null) {
-            return getCell(0, 0);
+            return getAbstractCell(0, 0);
         }
 
-        return getCell(cellRef.getRow(), cellRef.getColumn());
+        return getAbstractCell(cellRef.getRow(), cellRef.getColumn());
     }
 
     /**
@@ -154,7 +154,7 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public PoiRow getRow(int i) {
+    protected PoiRow getAbstractRow(int i) {
         Row poiRow = poiSheet.getRow(i);
         if (poiRow == null) {
             int oldLast = getRowCount() - 1;
@@ -196,7 +196,7 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public PoiWorkbook getWorkbook() {
+    protected PoiWorkbook getAbstractWorkbook() {
         return workbook;
     }
 
@@ -237,9 +237,9 @@ public class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
         LOG.trace("setting auto filter row {}", rowNumber);
         LangUtil.check(rowNumber >= 0, "Invalid row number: %d", rowNumber);
 
-        int rowNumber1 = getRow(rowNumber).poiRow.getRowNum();
-        short col1 = getRow(rowNumber).poiRow.getFirstCellNum();
-        short coln = getRow(rowNumber).poiRow.getLastCellNum();
+        int rowNumber1 = getAbstractRow(rowNumber).poiRow.getRowNum();
+        short col1 = getAbstractRow(rowNumber).poiRow.getFirstCellNum();
+        short coln = getAbstractRow(rowNumber).poiRow.getLastCellNum();
         poiSheet.setAutoFilter(new CellRangeAddress(rowNumber1, rowNumber1, col1, coln));
 
         autoFilterRow = rowNumber;

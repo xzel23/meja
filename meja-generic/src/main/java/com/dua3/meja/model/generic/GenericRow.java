@@ -19,10 +19,10 @@ import com.dua3.meja.model.AbstractRow;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.util.IteratorAdapter;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Optional;
 
 /**
  * Implementation of the {@link Row} interface for {@link GenericSheet}.
@@ -50,25 +50,25 @@ public class GenericRow extends AbstractRow<GenericSheet, GenericRow, GenericCel
     }
 
     @Override
-    public GenericCell getCell(int col) {
+    protected GenericCell getAbstractCell(int col) {
         reserve(col);
         GenericCell cell = cells.get(col);
-        getSheet().setColumnUsed(col);
+        getAbstractSheet().setColumnUsed(col);
         return cell;
     }
 
     @Override
-    public Optional<GenericCell> getCellIfExists(int col) {
-        return Optional.ofNullable(0 <= col && col < cells.size() ? cells.get(col) : null);
+    protected @Nullable GenericCell getAbstractCellOrNull(int col) {
+        return 0 <= col && col < cells.size() ? cells.get(col) : null;
     }
 
     @Override
-    public int getFirstCellNum() {
+    public final int getFirstCellNum() {
         return 0;
     }
 
     @Override
-    public int getColumnCount() {
+    public final int getColumnCount() {
         return cells.size();
     }
 
@@ -80,18 +80,13 @@ public class GenericRow extends AbstractRow<GenericSheet, GenericRow, GenericCel
     private int reserve(int col) {
         int n = Math.max(0, col - cells.size() + 1);
         if (n > 0) {
-            GenericCellStyle cellStyle = getSheet().getWorkbook().getDefaultCellStyle();
+            GenericCellStyle cellStyle = getAbstractSheet().getAbstractWorkbook().getDefaultCellStyle();
             cells.ensureCapacity(col + 1);
             for (int colNum = cells.size(); colNum <= col; colNum++) {
                 cells.add(new GenericCell(this, colNum, cellStyle));
             }
-            getSheet().reserveColumn(col);
+            getAbstractSheet().reserveColumn(col);
         }
         return n;
-    }
-
-    @Override
-    public GenericWorkbook getWorkbook() {
-        return getSheet().getWorkbook();
     }
 }

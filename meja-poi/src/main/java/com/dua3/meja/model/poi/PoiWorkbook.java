@@ -76,7 +76,7 @@ import java.util.stream.StreamSupport;
 /**
  * Implementation of the {@link com.dua3.meja.model.Workbook} interface based on the Apache POI implementation.
  */
-public abstract class PoiWorkbook extends AbstractWorkbook {
+public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, PoiCell> {
 
     private static final Logger LOGGER = LogManager.getLogger(PoiWorkbook.class);
 
@@ -280,13 +280,14 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
      */
     public abstract Color getColor(Font poiFont, Color dfltColor);
 
+
     @Override
-    public Optional<PoiSheet> getCurrentSheet() {
+    public @Nullable PoiSheet getCurrentAbstractSheetOrNull() {
         int currentSheetIdx = getCurrentSheetIndex();
         if (currentSheetIdx < sheets.size()) {
-            return Optional.of(getSheet(currentSheetIdx));
+            return getSheet(currentSheetIdx);
         } else {
-            return Optional.empty();
+            return null;
         }
     }
 
@@ -512,10 +513,10 @@ public abstract class PoiWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public Stream<? extends PoiCellStyle> cellStyles() {
+    public Stream<CellStyle> cellStyles() {
         Iterator<? extends PoiCellStyle> iter = DataUtil.map(cellStyles.keySet().iterator(), this::getCellStyle);
         Spliterator<? extends PoiCellStyle> spliterator = Spliterators.spliterator(iter, cellStyles.size(), 0);
-        return StreamSupport.stream(spliterator, false);
+        return StreamSupport.stream(spliterator, false).map(PoiCellStyle.class::cast);
     }
 
     /**

@@ -30,7 +30,7 @@ import java.util.Objects;
 /**
  * A generic implementation of {@link Sheet}.
  */
-public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, GenericCell> {
+public final class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, GenericCell> {
     private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(GenericSheet.class);
 
     private static final float DEFAULT_COLUMN_WIDTH = 80.0f;
@@ -86,12 +86,12 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
     }
 
     @Override
-    public GenericCell getCurrentCell() {
-        return getCell(currentRow, currentColumn);
+    protected GenericCell getCurrentAbstractCell() {
+        return getAbstractCell(currentRow, currentColumn);
     }
 
     @Override
-    public GenericRow getRow(int row) {
+    protected GenericRow getAbstractRow(int row) {
         reserve(row);
         return rows.get(row);
     }
@@ -123,7 +123,7 @@ public class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, Generi
     }
 
     @Override
-    public GenericWorkbook getWorkbook() {
+    protected GenericWorkbook getAbstractWorkbook() {
         return workbook;
     }
 

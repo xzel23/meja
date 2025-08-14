@@ -35,14 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.DoubleConsumer;
 import java.util.stream.Stream;
 
 /**
  * Generic implementation of {@link Workbook}.
  */
-public class GenericWorkbook extends AbstractWorkbook {
+public final class GenericWorkbook extends AbstractWorkbook<GenericSheet, GenericRow, GenericCell> {
 
     private final List<GenericSheet> sheets = new ArrayList<>();
     private final Map<String, GenericCellStyle> cellStyles = new HashMap<>();
@@ -69,7 +68,7 @@ public class GenericWorkbook extends AbstractWorkbook {
 
     @Override
     public GenericSheet createSheet(String sheetName) {
-        final GenericSheet sheet = new GenericSheet(this, sheetName);
+        GenericSheet sheet = new GenericSheet(this, sheetName);
         sheets.add(sheet);
         sheetAdded(sheets.size() - 1);
         return sheet;
@@ -96,16 +95,16 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public Stream<? extends CellStyle> cellStyles() {
-        return cellStyles.values().stream();
+    public Stream<CellStyle> cellStyles() {
+        return cellStyles.values().stream().map(CellStyle.class::cast);
     }
 
     @Override
-    public Optional<GenericSheet> getCurrentSheet() {
+    protected @Nullable GenericSheet getCurrentAbstractSheetOrNull() {
         if (currentSheetIdx < sheets.size()) {
-            return Optional.of(getSheet(currentSheetIdx));
+            return getSheet(currentSheetIdx);
         } else {
-            return Optional.empty();
+            return null;
         }
     }
 
@@ -120,8 +119,8 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public GenericSheet getSheet(int sheetNr) {
-        return sheets.get(sheetNr);
+    public GenericSheet getSheet(int sheetIndex) {
+        return sheets.get(sheetIndex);
     }
 
     @Override
@@ -157,27 +156,27 @@ public class GenericWorkbook extends AbstractWorkbook {
     }
 
     @Override
-    public void removeSheet(int sheetNr) {
-        sheets.remove(sheetNr);
-        sheetRemoved(sheetNr);
+    public void removeSheet(int sheetIndex) {
+        sheets.remove(sheetIndex);
+        sheetRemoved(sheetIndex);
     }
 
     @Override
-    public void setCurrentSheet(int idx) {
-        if (idx >= 0) {
-            Objects.checkIndex(idx, sheets.size());
+    public void setCurrentSheet(int sheetIndex) {
+        if (sheetIndex >= 0) {
+            Objects.checkIndex(sheetIndex, sheets.size());
         }
 
         int oldIdx = currentSheetIdx;
-        if (idx != oldIdx) {
-            currentSheetIdx = idx;
-            activeSheetChanged(oldIdx, idx);
+        if (sheetIndex != oldIdx) {
+            currentSheetIdx = sheetIndex;
+            activeSheetChanged(oldIdx, sheetIndex);
         }
     }
 
     @Override
-    public void write(FileType<?> type, OutputStream out, Arguments options, DoubleConsumer updateProgress) throws IOException {
-        WorkbookWriter writer = ((FileTypeWorkbook<?>) type).getWorkbookWriter();
+    public void write(FileType<?> fileType, OutputStream out, Arguments options, DoubleConsumer updateProgress) throws IOException {
+        WorkbookWriter writer = ((FileTypeWorkbook<?>) fileType).getWorkbookWriter();
         writer.setOptions(options);
         writer.write(this, out, updateProgress);
     }
