@@ -98,6 +98,376 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
      * Mapping from cellstyle names to internat Apache POI cell style numbers.
      */
     protected final Map<String, Short> cellStyles = new HashMap<>();
+    /**
+     * Factor to convert between Excel widths (measured in characters) and points.
+     */
+    private final FactorWidth factorWidth = new FactorWidth();
+
+    /**
+     * Construct a new instance.
+     *
+     * @param poiWorkbook the POI workbook instance
+     * @param uri         the URI of this workbook
+     */
+    protected PoiWorkbook(Workbook poiWorkbook, @Nullable URI uri) {
+        super(uri);
+        this.poiWorkbook = poiWorkbook;
+        this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
+
+        // init cell TextAttributes map
+        for (short i = 0; i < poiWorkbook.getNumCellStyles(); i++) {
+            cellStyles.put("style#" + i, i);
+        }
+    }
+
+    static DataFormatter getDataFormatter(Locale locale) {
+        return new DataFormatter(locale);
+    }
+
+    @Override
+    public PoiCellStyle copyCellStyle(String styleName, CellStyle style) {
+        PoiCellStyle cellStyle = getCellStyle(styleName);
+        cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
+        return cellStyle;
+    }
+
+    @Override
+    public Sheet createSheet(String sheetName) {
+        org.apache.poi.ss.usermodel.Sheet poiSheet = poiWorkbook.createSheet(sheetName);
+        PoiSheet sheet = new PoiSheet(this, poiSheet);
+        sheets.add(sheet);
+        sheetAdded(sheets.size() - 1);
+        return sheet;
+    }
+
+    @Override
+    public PoiCellStyle getCellStyle(String name) {
+        Short index = cellStyles.get(name);
+        org.apache.poi.ss.usermodel.CellStyle poiCellStyle;
+        if (index == null) {
+            poiCellStyle = poiWorkbook.createCellStyle();
+            index = poiCellStyle.getIndex();
+            cellStyles.put(name, index);
+        } else {
+            poiCellStyle = poiWorkbook.getCellStyleAt(index);
+        }
+        return getPoiCellStyle(poiCellStyle);
+    }
+
+    @Override
+    public List<String> getCellStyleNames() {
+        return new ArrayList<>(cellStyles.keySet());
+    }
+
+    @Override
+    public Stream<CellStyle> cellStyles() {
+        Iterator<? extends PoiCellStyle> iter = DataUtil.map(cellStyles.keySet().iterator(), this::getCellStyle);
+        Spliterator<? extends PoiCellStyle> spliterator = Spliterators.spliterator(iter, cellStyles.size(), 0);
+        return StreamSupport.stream(spliterator, false).map(PoiCellStyle.class::cast);
+    }
+
+    @Override
+    public void setCurrentSheet(int sheetIndex) {
+        Objects.checkIndex(sheetIndex, sheets.size());
+
+        int oldIdx = getCurrentSheetIndex();
+        if (sheetIndex != oldIdx) {
+            poiWorkbook.setActiveSheet(sheetIndex);
+            activeSheetChanged(oldIdx, sheetIndex);
+        }
+    }
+
+    @Override
+    public int getCurrentSheetIndex() {
+        return poiWorkbook.getActiveSheetIndex();
+    }
+
+    @Override
+    public abstract PoiCellStyle getDefaultCellStyle();
+
+    @Override
+    public PoiSheet getSheet(int sheetIndex) {
+        return sheets.get(sheetIndex);
+    }
+
+    @Override
+    public int getSheetCount() {
+        assert poiWorkbook.getNumberOfSheets() == sheets.size();
+        return sheets.size();
+    }
+
+    @Override
+    public boolean hasCellStyle(String name) {
+        return cellStyles.containsKey(name);
+    }
+
+    @Override
+    public void removeSheet(int sheetIndex) {
+        sheets.remove(sheetIndex);
+        poiWorkbook.removeSheetAt(sheetIndex);
+        sheetRemoved(sheetIndex);
+    }
+
+    @Override
+    public void write(FileType<?> fileType, OutputStream out, Arguments options, DoubleConsumer updateProgress) throws IOException {
+        //noinspection ObjectEquality
+        if (fileType == getStandardFileType()) {
+            // if the workbook is to be saved in the same format, write it out
+            // directly so that
+            // features not yet supported by Meja don't get lost in the process
+            updateProgress.accept(WorkbookWriter.PROGRESS_INDETERMINATE);
+            poiWorkbook.write(out);
+            updateProgress.accept(1.0);
+        } else if (fileType instanceof FileTypeWorkbook<?> fileTypeWorkbook) {
+            WorkbookWriter writer = fileTypeWorkbook.getWorkbookWriter();
+            writer.setOptions(options);
+            writer.write(this, out, updateProgress);
+        } else {
+            throw new IllegalStateException("could not write workbook");
+        }
+    }
+
+    /**
+     * Return the standard file type for this implementation.
+     *
+     * @return the file type matching the underlying POI implementation
+     */
+    protected abstract FileType<PoiWorkbook> getStandardFileType();
+
+    /**
+     * Get {@link PoiCellStyle} from {@link org.apache.poi.ss.usermodel.CellStyle}.
+     *
+     * @param cellStyle POI cell style
+     * @return instance of {@link PoiCellStyle}
+     */
+    public abstract PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle cellStyle);
+
+    /**
+     * Convert {@link String} to {@link RichTextString}.
+     *
+     * @param s the {@link String} to convert
+     * @return {@link RichTextString} with the same text as {@code s}
+     */
+    public abstract RichTextString createRichTextString(String s);
+
+    String getCellStyleName(PoiCellStyle cellStyle) {
+        final short styleIndex = cellStyle.poiCellStyle.getIndex();
+        for (Entry<String, Short> entry : cellStyles.entrySet()) {
+            if (entry.getValue() == styleIndex) {
+                return entry.getKey();
+            }
+        }
+        throw new IllegalArgumentException("CellStyle is not from this workbook.");
+    }
+
+    /**
+     * Get the color from the given POI color. If the POI color is null, return the default color.
+     *
+     * @param poiColor     the POI color
+     * @param defaultColor the default color
+     * @return the color
+     */
+    public abstract Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor);
+
+    @Override
+    public @Nullable PoiSheet getCurrentAbstractSheetOrNull() {
+        int currentSheetIdx = getCurrentSheetIndex();
+        if (currentSheetIdx < sheets.size()) {
+            return getSheet(currentSheetIdx);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        poiWorkbook.close();
+    }
+
+    /**
+     * Get instance of {@link PoiFont}.
+     *
+     * @param poiFont the POI font instance
+     * @return instance of {@link PoiFont} for the given font
+     */
+    public PoiFont getFont(@Nullable Font poiFont) {
+        return poiFont == null ? getDefaultCellStyle().getPoiFont() : new PoiFont(this, poiFont);
+    }
+
+    /**
+     * Get POI color.
+     *
+     * @param color the color
+     * @return POI color
+     */
+    public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
+
+    PoiFont getPoiFont(com.dua3.utility.text.Font font) {
+        // try to find existing font
+        for (int i = 0; i < poiWorkbook.getNumberOfFonts(); i++) {
+            Font poiFont = poiWorkbook.getFontAt(i);
+
+            if (poiFont.getFontName().equalsIgnoreCase(font.getFamily())
+                    && poiFont.getFontHeightInPoints() == font.getSizeInPoints()
+                    && poiFont.getBold() == font.isBold()
+                    && poiFont.getItalic() == font.isItalic()
+                    && (poiFont.getUnderline() != Font.U_NONE) == font.isUnderline()
+                    && poiFont.getStrikeout() == font.isStrikeThrough()
+                    && getColor(poiFont, Color.BLACK).equals(font.getColor())
+                    && poiFont.getTypeOffset() == Font.SS_NONE) {
+                return new PoiFont(this, poiFont);
+            }
+        }
+
+        // if not found, create it
+        return createFont(font);
+    }
+
+    /**
+     * Get font color.
+     *
+     * @param poiFont   instance of POI font
+     * @param dfltColor color return if none is set
+     * @return the color for the given font
+     */
+    public abstract Color getColor(Font poiFont, Color dfltColor);
+
+    /**
+     * Create a new font.
+     *
+     * @param font the font to create a POI version of
+     * @return an instance of {@link PoiFont}
+     */
+    protected abstract PoiFont createFont(com.dua3.utility.text.Font font);
+
+    Workbook getPoiWorkbook() {
+        return poiWorkbook;
+    }
+
+    @Override
+    public int hashCode() {
+        return poiWorkbook.hashCode();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return obj instanceof PoiWorkbook other && Objects.equals(poiWorkbook, other.poiWorkbook);
+    }
+
+    /**
+     * Initialise the workbook by creating {@link PoiSheet} instances for the sheets contained in the workbook.
+     */
+    protected final void init() {
+        for (int i = 0; i < poiWorkbook.getNumberOfSheets(); i++) {
+            createSheet(poiWorkbook.getSheetAt(i));
+        }
+    }
+
+    /**
+     * Create instance of {@link PoiSheet} for the given POI sheet.
+     *
+     * @param poiSheet the POI sheet
+     * @return instance of {@link PoiSheet}
+     */
+    protected PoiSheet createSheet(org.apache.poi.ss.usermodel.Sheet poiSheet) {
+        PoiSheet sheet = new PoiSheet(this, poiSheet);
+        sheets.add(sheet);
+        return sheet;
+    }
+
+    /**
+     * Try to evaluate all formula cells.
+     */
+    public void evaluateAllFormulaCells() {
+        if (isFormulaEvaluationSupported()) {
+            try {
+                evaluator.evaluateAll();
+            } catch (NotImplementedException e) {
+                LOGGER.warn("unsupported function in formula; flagging workbook as needing recalculation", e);
+                setForceFormulaRecalculation(true);
+            }
+        }
+    }
+
+    /**
+     * Test if formula evaluation is supported.
+     *
+     * @return true if formula evaluation is supported
+     */
+    public abstract boolean isFormulaEvaluationSupported();
+
+    /**
+     * Returns the flag indicating whether force formula recalculation is enabled.
+     *
+     * @return true if force formula recalculation is enabled, false otherwise.
+     */
+    public boolean getForceFormulaRecalculation() {
+        return poiWorkbook.getForceFormulaRecalculation();
+    }
+
+    /**
+     * Sets the flag indicating whether force formula recalculation is enabled.
+     *
+     * @param flag the flag to set. Pass true to enable force formula recalculation, false to disable it.
+     */
+    public void setForceFormulaRecalculation(boolean flag) {
+        poiWorkbook.setForceFormulaRecalculation(flag);
+        LOGGER.debug("setForceFormulaRecalculation({})", flag);
+    }
+
+    @Override
+    public Iterator<Sheet> iterator() {
+        return new Iterator<>() {
+            private final Iterator<PoiSheet> iter = sheets.iterator();
+
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public Sheet next() {
+                return iter.next();
+            }
+
+            @Override
+            public void remove() {
+                iter.remove();
+            }
+        };
+    }
+
+    /**
+     * Creates a hyperlink based on the target URI.
+     *
+     * @param target the target URI for the hyperlink.
+     * @return a Hyperlink object representing the created hyperlink.
+     * @throws IllegalArgumentException if the target URI's protocol is not supported.
+     */
+    public Hyperlink createHyperLink(URI target) {
+        HyperlinkType type;
+        String address = target.toString();
+        type = switch (Optional.ofNullable(target.getScheme()).map(s -> s.toLowerCase(Locale.ROOT)).orElse("")) {
+            case "http", "https" -> HyperlinkType.URL;
+            case "file" -> HyperlinkType.FILE;
+            case "mailto" -> HyperlinkType.EMAIL;
+            case "" -> HyperlinkType.FILE; // workbook-relative link
+            default -> throw new IllegalArgumentException("unsupported protocol: " + target.getScheme());
+        };
+        Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(type);
+        link.setAddress(address);
+        return link;
+    }
+
+    /**
+     * Calculates and retrieves the width factor for the default cell style's font.
+     * This method updates the factor based on the font characteristics, ensuring proper rendering.
+     *
+     * @return the calculated width factor as a {@code float}.
+     */
+    public float getFactorWidth() {
+        return factorWidth.updateAndGet(getDefaultCellStyle().getFont());
+    }
 
     /**
      * The {@code FactorWidth} class is a utility class responsible for calculating
@@ -158,378 +528,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
     }
 
     /**
-     * Factor to convert between Excel widths (measured in characters) and points.
-     */
-    private final FactorWidth factorWidth = new FactorWidth();
-
-    /**
-     * Construct a new instance.
-     *
-     * @param poiWorkbook the POI workbook instance
-     * @param uri         the URI of this workbook
-     */
-    protected PoiWorkbook(Workbook poiWorkbook, @Nullable URI uri) {
-        super(uri);
-        this.poiWorkbook = poiWorkbook;
-        this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
-
-        // init cell TextAttributes map
-        for (short i = 0; i < poiWorkbook.getNumCellStyles(); i++) {
-            cellStyles.put("style#" + i, i);
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        poiWorkbook.close();
-    }
-
-    @Override
-    public PoiCellStyle copyCellStyle(String styleName, CellStyle style) {
-        PoiCellStyle cellStyle = getCellStyle(styleName);
-        cellStyle.poiCellStyle.cloneStyleFrom(((PoiCellStyle) style).poiCellStyle);
-        return cellStyle;
-    }
-
-    /**
-     * Create a new font.
-     *
-     * @param font the font to create a POI version of
-     * @return an instance of {@link PoiFont}
-     */
-    protected abstract PoiFont createFont(com.dua3.utility.text.Font font);
-
-    /**
-     * Convert {@link String} to {@link RichTextString}.
-     *
-     * @param s the {@link String} to convert
-     * @return {@link RichTextString} with the same text as {@code s}
-     */
-    public abstract RichTextString createRichTextString(String s);
-
-    /**
-     * Create instance of {@link PoiSheet} for the given POI sheet.
-     *
-     * @param poiSheet the POI sheet
-     * @return instance of {@link PoiSheet}
-     */
-    protected PoiSheet createSheet(org.apache.poi.ss.usermodel.Sheet poiSheet) {
-        PoiSheet sheet = new PoiSheet(this, poiSheet);
-        sheets.add(sheet);
-        return sheet;
-    }
-
-    @Override
-    public Sheet createSheet(String sheetName) {
-        org.apache.poi.ss.usermodel.Sheet poiSheet = poiWorkbook.createSheet(sheetName);
-        PoiSheet sheet = new PoiSheet(this, poiSheet);
-        sheets.add(sheet);
-        sheetAdded(sheets.size() - 1);
-        return sheet;
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        return obj instanceof PoiWorkbook other && Objects.equals(poiWorkbook, other.poiWorkbook);
-    }
-
-    @Override
-    public PoiCellStyle getCellStyle(String name) {
-        Short index = cellStyles.get(name);
-        org.apache.poi.ss.usermodel.CellStyle poiCellStyle;
-        if (index == null) {
-            poiCellStyle = poiWorkbook.createCellStyle();
-            index = poiCellStyle.getIndex();
-            cellStyles.put(name, index);
-        } else {
-            poiCellStyle = poiWorkbook.getCellStyleAt(index);
-        }
-        return getPoiCellStyle(poiCellStyle);
-    }
-
-    String getCellStyleName(PoiCellStyle cellStyle) {
-        final short styleIndex = cellStyle.poiCellStyle.getIndex();
-        for (Entry<String, Short> entry : cellStyles.entrySet()) {
-            if (entry.getValue() == styleIndex) {
-                return entry.getKey();
-            }
-        }
-        throw new IllegalArgumentException("CellStyle is not from this workbook.");
-    }
-
-    @Override
-    public List<String> getCellStyleNames() {
-        return new ArrayList<>(cellStyles.keySet());
-    }
-
-    /**
-     * Get the color from the given POI color. If the POI color is null, return the default color.
-     *
-     * @param poiColor     the POI color
-     * @param defaultColor the default color
-     * @return the color
-     */
-    public abstract Color getColor(org.apache.poi.ss.usermodel.Color poiColor, Color defaultColor);
-
-    /**
-     * Get font color.
-     *
-     * @param poiFont   instance of POI font
-     * @param dfltColor color return if none is set
-     * @return the color for the given font
-     */
-    public abstract Color getColor(Font poiFont, Color dfltColor);
-
-
-    @Override
-    public @Nullable PoiSheet getCurrentAbstractSheetOrNull() {
-        int currentSheetIdx = getCurrentSheetIndex();
-        if (currentSheetIdx < sheets.size()) {
-            return getSheet(currentSheetIdx);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void setCurrentSheet(int idx) {
-        Objects.checkIndex(idx, sheets.size());
-
-        int oldIdx = getCurrentSheetIndex();
-        if (idx != oldIdx) {
-            poiWorkbook.setActiveSheet(idx);
-            activeSheetChanged(oldIdx, idx);
-        }
-    }
-
-    @Override
-    public int getCurrentSheetIndex() {
-        return poiWorkbook.getActiveSheetIndex();
-    }
-
-    static DataFormatter getDataFormatter(Locale locale) {
-        return new DataFormatter(locale);
-    }
-
-    @Override
-    public abstract PoiCellStyle getDefaultCellStyle();
-
-    /**
-     * Get instance of {@link PoiFont}.
-     *
-     * @param poiFont the POI font instance
-     * @return instance of {@link PoiFont} for the given font
-     */
-    public PoiFont getFont(@Nullable Font poiFont) {
-        return poiFont == null ? getDefaultCellStyle().getPoiFont() : new PoiFont(this, poiFont);
-    }
-
-    /**
-     * Get {@link PoiCellStyle} from {@link org.apache.poi.ss.usermodel.CellStyle}.
-     *
-     * @param cellStyle POI cell style
-     * @return instance of {@link PoiCellStyle}
-     */
-    public abstract PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle cellStyle);
-
-    /**
-     * Get POI color.
-     *
-     * @param color the color
-     * @return POI color
-     */
-    public abstract org.apache.poi.ss.usermodel.Color getPoiColor(Color color);
-
-    PoiFont getPoiFont(com.dua3.utility.text.Font font) {
-        // try to find existing font
-        for (int i = 0; i < poiWorkbook.getNumberOfFonts(); i++) {
-            Font poiFont = poiWorkbook.getFontAt(i);
-
-            if (poiFont.getFontName().equalsIgnoreCase(font.getFamily())
-                    && poiFont.getFontHeightInPoints() == font.getSizeInPoints()
-                    && poiFont.getBold() == font.isBold()
-                    && poiFont.getItalic() == font.isItalic()
-                    && (poiFont.getUnderline() != Font.U_NONE) == font.isUnderline()
-                    && poiFont.getStrikeout() == font.isStrikeThrough()
-                    && getColor(poiFont, Color.BLACK).equals(font.getColor())
-                    && poiFont.getTypeOffset() == Font.SS_NONE) {
-                return new PoiFont(this, poiFont);
-            }
-        }
-
-        // if not found, create it
-        return createFont(font);
-    }
-
-    Workbook getPoiWorkbook() {
-        return poiWorkbook;
-    }
-
-    @Override
-    public PoiSheet getSheet(int sheetNr) {
-        return sheets.get(sheetNr);
-    }
-
-    @Override
-    public int getSheetCount() {
-        assert poiWorkbook.getNumberOfSheets() == sheets.size();
-        return sheets.size();
-    }
-
-    /**
-     * Return the standard file type for this implementation.
-     *
-     * @return the file type matching the underlying POI implementation
-     */
-    protected abstract FileType<PoiWorkbook> getStandardFileType();
-
-    @Override
-    public boolean hasCellStyle(String name) {
-        return cellStyles.containsKey(name);
-    }
-
-    @Override
-    public int hashCode() {
-        return poiWorkbook.hashCode();
-    }
-
-    /**
-     * Initialise the workbook by creating {@link PoiSheet} instances for the sheets contained in the workbook.
-     */
-    protected final void init() {
-        for (int i = 0; i < poiWorkbook.getNumberOfSheets(); i++) {
-            createSheet(poiWorkbook.getSheetAt(i));
-        }
-    }
-
-    /**
-     * Test if formula evaluation is supported.
-     *
-     * @return true if formula evaluation is supported
-     */
-    public abstract boolean isFormulaEvaluationSupported();
-
-    /**
-     * Try to evaluate all formula cells.
-     */
-    public void evaluateAllFormulaCells() {
-        if (isFormulaEvaluationSupported()) {
-            try {
-                evaluator.evaluateAll();
-            } catch (NotImplementedException e) {
-                LOGGER.warn("unsupported function in formula; flagging workbook as needing recalculation", e);
-                setForceFormulaRecalculation(true);
-            }
-        }
-    }
-
-    /**
-     * Returns the flag indicating whether force formula recalculation is enabled.
-     *
-     * @return true if force formula recalculation is enabled, false otherwise.
-     */
-    public boolean getForceFormulaRecalculation() {
-        return poiWorkbook.getForceFormulaRecalculation();
-    }
-
-    /**
-     * Sets the flag indicating whether force formula recalculation is enabled.
-     *
-     * @param flag the flag to set. Pass true to enable force formula recalculation, false to disable it.
-     */
-    public void setForceFormulaRecalculation(boolean flag) {
-        poiWorkbook.setForceFormulaRecalculation(flag);
-        LOGGER.debug("setForceFormulaRecalculation({})", flag);
-    }
-
-    @Override
-    public Iterator<Sheet> iterator() {
-        return new Iterator<>() {
-            private final Iterator<PoiSheet> iter = sheets.iterator();
-
-            @Override
-            public boolean hasNext() {
-                return iter.hasNext();
-            }
-
-            @Override
-            public Sheet next() {
-                return iter.next();
-            }
-
-            @Override
-            public void remove() {
-                iter.remove();
-            }
-        };
-    }
-
-    @Override
-    public void removeSheet(int sheetNr) {
-        sheets.remove(sheetNr);
-        poiWorkbook.removeSheetAt(sheetNr);
-        sheetRemoved(sheetNr);
-    }
-
-    @Override
-    public void write(FileType<?> type, OutputStream out, Arguments options, DoubleConsumer updateProgress) throws IOException {
-        //noinspection ObjectEquality
-        if (type == getStandardFileType()) {
-            // if the workbook is to be saved in the same format, write it out
-            // directly so that
-            // features not yet supported by Meja don't get lost in the process
-            updateProgress.accept(WorkbookWriter.PROGRESS_INDETERMINATE);
-            poiWorkbook.write(out);
-            updateProgress.accept(1.0);
-        } else if (type instanceof FileTypeWorkbook<?> fileTypeWorkbook) {
-            WorkbookWriter writer = fileTypeWorkbook.getWorkbookWriter();
-            writer.setOptions(options);
-            writer.write(this, out, updateProgress);
-        } else {
-            throw new IllegalStateException("could not write workbook");
-        }
-    }
-
-    /**
-     * Creates a hyperlink based on the target URI.
-     *
-     * @param target the target URI for the hyperlink.
-     * @return a Hyperlink object representing the created hyperlink.
-     * @throws IllegalArgumentException if the target URI's protocol is not supported.
-     */
-    public Hyperlink createHyperLink(URI target) {
-        HyperlinkType type;
-        String address = target.toString();
-        type = switch (Optional.ofNullable(target.getScheme()).map(s -> s.toLowerCase(Locale.ROOT)).orElse("")) {
-            case "http", "https" -> HyperlinkType.URL;
-            case "file" -> HyperlinkType.FILE;
-            case "mailto" -> HyperlinkType.EMAIL;
-            case "" -> HyperlinkType.FILE; // workbook-relative link
-            default -> throw new IllegalArgumentException("unsupported protocol: " + target.getScheme());
-        };
-        Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(type);
-        link.setAddress(address);
-        return link;
-    }
-
-    @Override
-    public Stream<CellStyle> cellStyles() {
-        Iterator<? extends PoiCellStyle> iter = DataUtil.map(cellStyles.keySet().iterator(), this::getCellStyle);
-        Spliterator<? extends PoiCellStyle> spliterator = Spliterators.spliterator(iter, cellStyles.size(), 0);
-        return StreamSupport.stream(spliterator, false).map(PoiCellStyle.class::cast);
-    }
-
-    /**
-     * Calculates and retrieves the width factor for the default cell style's font.
-     * This method updates the factor based on the font characteristics, ensuring proper rendering.
-     *
-     * @return the calculated width factor as a {@code float}.
-     */
-    public float getFactorWidth() {
-        return factorWidth.updateAndGet(getDefaultCellStyle().getFont());
-    }
-
-    /**
      * Concrete implementation of {@link PoiWorkbook} for HSSF-workbooks (the old
      * Excel format).
      */
@@ -551,27 +549,23 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         }
 
         @Override
-        public PoiFont createFont(com.dua3.utility.text.Font font) {
-            Font poiFont = poiWorkbook.createFont();
-            poiFont.setFontName(font.getFamily());
-            poiFont.setFontHeight(((short) Math.round(20 * font.getSizeInPoints())));
-            poiFont.setColor(getPoiColor(font.getColor()).getIndex());
-            poiFont.setBold(font.isBold());
-            poiFont.setItalic(font.isItalic());
-            poiFont.setUnderline(font.isUnderline() ? Font.U_SINGLE
-                    : Font.U_NONE);
-            poiFont.setStrikeout(font.isStrikeThrough());
-            return new PoiFont(this, poiFont);
+        public PoiCellStyle getDefaultCellStyle() {
+            return defaultCellStyle;
+        }
+
+        @Override
+        protected FileType<PoiWorkbook> getStandardFileType() {
+            return FileTypeXls.instance();
+        }
+
+        @Override
+        public PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle cellStyle) {
+            return new PoiHssfCellStyle(this, (HSSFCellStyle) cellStyle);
         }
 
         @Override
         public HSSFRichTextString createRichTextString(String s) {
             return new HSSFRichTextString(s);
-        }
-
-        @Override
-        public Color getColor(Font poiFont, Color dfltColor) {
-            return getColor(((HSSFFont) poiFont).getHSSFColor(((HSSFWorkbook) getPoiWorkbook())), Color.BLACK);
         }
 
         @Override
@@ -593,30 +587,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
             return Color.rgba(r, g, b, a);
         }
 
-        Color getColor(short idx) {
-            return getColor(((HSSFWorkbook) poiWorkbook).getCustomPalette().getColor(idx), Color.BLACK);
-        }
-
-        @Override
-        public PoiCellStyle getDefaultCellStyle() {
-            return defaultCellStyle;
-        }
-
-        /**
-         * Retrieves the font at the given index.
-         *
-         * @param idx the index of the font to retrieve
-         * @return the PoiFont instance representing the font at the given index
-         */
-        public PoiFont getFont(int idx) {
-            return getFont(poiWorkbook.getFontAt(idx));
-        }
-
-        @Override
-        public PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
-            return new PoiHssfCellStyle(this, (HSSFCellStyle) poiStyle);
-        }
-
         @Override
         public HSSFColor getPoiColor(Color color) {
             HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
@@ -628,13 +598,41 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         }
 
         @Override
-        protected FileType<PoiWorkbook> getStandardFileType() {
-            return FileTypeXls.instance();
+        public Color getColor(Font poiFont, Color dfltColor) {
+            return getColor(((HSSFFont) poiFont).getHSSFColor(((HSSFWorkbook) getPoiWorkbook())), Color.BLACK);
+        }
+
+        @Override
+        public PoiFont createFont(com.dua3.utility.text.Font font) {
+            Font poiFont = poiWorkbook.createFont();
+            poiFont.setFontName(font.getFamily());
+            poiFont.setFontHeight(((short) Math.round(20 * font.getSizeInPoints())));
+            poiFont.setColor(getPoiColor(font.getColor()).getIndex());
+            poiFont.setBold(font.isBold());
+            poiFont.setItalic(font.isItalic());
+            poiFont.setUnderline(font.isUnderline() ? Font.U_SINGLE
+                    : Font.U_NONE);
+            poiFont.setStrikeout(font.isStrikeThrough());
+            return new PoiFont(this, poiFont);
         }
 
         @Override
         public boolean isFormulaEvaluationSupported() {
             return true;
+        }
+
+        Color getColor(short idx) {
+            return getColor(((HSSFWorkbook) poiWorkbook).getCustomPalette().getColor(idx), Color.BLACK);
+        }
+
+        /**
+         * Retrieves the font at the given index.
+         *
+         * @param idx the index of the font to retrieve
+         * @return the PoiFont instance representing the font at the given index
+         */
+        public PoiFont getFont(int idx) {
+            return getFont(poiWorkbook.getFontAt(idx));
         }
     }
 
@@ -655,34 +653,32 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
             super(poiWorkbook, uri);
             LangUtil.check(
                     poiWorkbook instanceof XSSFWorkbook || poiWorkbook instanceof SXSSFWorkbook,
-                    () -> {throw new IllegalArgumentException("poiWorkbook must be of type XSSFWorkbook or SXSSFWorkbook but is: " + poiWorkbook.getClass().getName());}
+                    () -> {
+                        throw new IllegalArgumentException("poiWorkbook must be of type XSSFWorkbook or SXSSFWorkbook but is: " + poiWorkbook.getClass().getName());
+                    }
             );
             this.defaultCellStyle = new PoiXssfCellStyle(this, (XSSFCellStyle) poiWorkbook.getCellStyleAt(0));
             init();
         }
 
         @Override
-        public PoiFont createFont(com.dua3.utility.text.Font font) {
-            XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();
-            poiFont.setFontName(font.getFamily());
-            poiFont.setFontHeight(((short) Math.round(20 * font.getSizeInPoints())));
-            poiFont.setColor(getPoiColor(font.getColor()));
-            poiFont.setBold(font.isBold());
-            poiFont.setItalic(font.isItalic());
-            poiFont.setUnderline(font.isUnderline() ? Font.U_SINGLE
-                    : Font.U_NONE);
-            poiFont.setStrikeout(font.isStrikeThrough());
-            return new PoiFont(this, poiFont);
+        public PoiCellStyle getDefaultCellStyle() {
+            return defaultCellStyle;
+        }
+
+        @Override
+        protected FileType<PoiWorkbook> getStandardFileType() {
+            return FileTypeXlsx.instance();
+        }
+
+        @Override
+        public PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle cellStyle) {
+            return new PoiXssfCellStyle(this, (XSSFCellStyle) cellStyle);
         }
 
         @Override
         public XSSFRichTextString createRichTextString(String s) {
             return new XSSFRichTextString(s);
-        }
-
-        @Override
-        public Color getColor(Font poiFont, Color dfltColor) {
-            return getColor(((XSSFFont) poiFont).getXSSFColor(), Color.BLACK);
         }
 
         @Override
@@ -714,23 +710,27 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         }
 
         @Override
-        public PoiCellStyle getDefaultCellStyle() {
-            return defaultCellStyle;
-        }
-
-        @Override
-        public PoiCellStyle getPoiCellStyle(org.apache.poi.ss.usermodel.CellStyle poiStyle) {
-            return new PoiXssfCellStyle(this, (XSSFCellStyle) poiStyle);
-        }
-
-        @Override
         public XSSFColor getPoiColor(Color color) {
             return new XSSFColor(color.toByteArrayRGB());
         }
 
         @Override
-        protected FileType<PoiWorkbook> getStandardFileType() {
-            return FileTypeXlsx.instance();
+        public Color getColor(Font poiFont, Color dfltColor) {
+            return getColor(((XSSFFont) poiFont).getXSSFColor(), Color.BLACK);
+        }
+
+        @Override
+        public PoiFont createFont(com.dua3.utility.text.Font font) {
+            XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();
+            poiFont.setFontName(font.getFamily());
+            poiFont.setFontHeight(((short) Math.round(20 * font.getSizeInPoints())));
+            poiFont.setColor(getPoiColor(font.getColor()));
+            poiFont.setBold(font.isBold());
+            poiFont.setItalic(font.isItalic());
+            poiFont.setUnderline(font.isUnderline() ? Font.U_SINGLE
+                    : Font.U_NONE);
+            poiFont.setStrikeout(font.isStrikeThrough());
+            return new PoiFont(this, poiFont);
         }
 
         @Override
@@ -746,7 +746,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
          * @param xssfColor the {@link XSSFColor} instance from which to extract the RGB bytes.
          *                  Must not be null.
          * @return a byte array representing the RGB (or ARGB) bytes of the provided color,
-         *         or {@code null} if POI does not return a byte array
+         * or {@code null} if POI does not return a byte array
          */
         private static byte @Nullable [] getRgbBytes(XSSFColor xssfColor) {
             if (xssfColor.hasAlpha()) {

@@ -50,10 +50,10 @@ public class GenericRow extends AbstractRow<GenericSheet, GenericRow, GenericCel
     }
 
     @Override
-    protected GenericCell getAbstractCell(int col) {
-        reserve(col);
-        GenericCell cell = cells.get(col);
-        getAbstractSheet().setColumnUsed(col);
+    protected GenericCell getAbstractCell(int colIndex) {
+        reserve(colIndex);
+        GenericCell cell = cells.get(colIndex);
+        getAbstractSheet().setColumnUsed(colIndex);
         return cell;
     }
 

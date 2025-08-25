@@ -80,8 +80,8 @@ public final class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, 
     }
 
     @Override
-    public float getColumnWidth(int j) {
-        Float width = j < columnWidth.size() ? columnWidth.get(j) : null;
+    public float getColumnWidth(int colIndex) {
+        Float width = colIndex < columnWidth.size() ? columnWidth.get(colIndex) : null;
         return width != null ? width : DEFAULT_COLUMN_WIDTH;
     }
 
@@ -91,9 +91,9 @@ public final class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, 
     }
 
     @Override
-    protected GenericRow getAbstractRow(int row) {
-        reserve(row);
-        return rows.get(row);
+    protected GenericRow getAbstractRow(int rowIndex) {
+        reserve(rowIndex);
+        return rows.get(rowIndex);
     }
 
     @Override
@@ -102,8 +102,8 @@ public final class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, 
     }
 
     @Override
-    public float getRowHeight(int i) {
-        Float height = i < rowHeight.size() ? rowHeight.get(i) : null;
+    public float getRowHeight(int rowIndex) {
+        Float height = rowIndex < rowHeight.size() ? rowHeight.get(rowIndex) : null;
         return height != null ? height : DEFAULT_ROW_HEIGHT;
     }
 
@@ -159,24 +159,24 @@ public final class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, 
     }
 
     @Override
-    public void setAutofilterRow(int i) {
-        LOG.trace("setting auto filter row {}", i);
-        LangUtil.check(i >= 0, "Invalid row number: %d", i);
-        autoFilterRow = i;
+    public void setAutofilterRow(int rowIndex) {
+        LOG.trace("setting auto filter row {}", rowIndex);
+        LangUtil.check(rowIndex >= 0, "Invalid row number: %d", rowIndex);
+        autoFilterRow = rowIndex;
     }
 
     @Override
-    public void setColumnWidth(int j, float width) {
-        LOG.trace("setting column width of column {} to {}", j, width);
+    public void setColumnWidth(int colIndex, float width) {
+        LOG.trace("setting column width of column {} to {}", colIndex, width);
         LangUtil.check(width >= 0, "Invalid column width: %f", width);
 
-        if (j < columnWidth.size()) {
-            if (!Objects.equals(columnWidth.set(j, width), width)) { // use Objects.equals to avoid NPE!
+        if (colIndex < columnWidth.size()) {
+            if (!Objects.equals(columnWidth.set(colIndex, width), width)) { // use Objects.equals to avoid NPE!
                 layoutChanged();
             }
         } else {
-            columnWidth.ensureCapacity(j + 1);
-            while (columnWidth.size() < j) {
+            columnWidth.ensureCapacity(colIndex + 1);
+            while (columnWidth.size() < colIndex) {
                 columnWidth.add(null); // use default width
             }
             columnWidth.add(width);
@@ -204,15 +204,15 @@ public final class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, 
     }
 
     @Override
-    public void setRowHeight(int i, float height) {
-        LOG.trace("setting row height of row {} to {}", i, height);
+    public void setRowHeight(int rowIndex, float height) {
+        LOG.trace("setting row height of row {} to {}", rowIndex, height);
         LangUtil.check(height >= 0, "Invalid row height: %f", height);
 
-        if (i < rowHeight.size()) {
-            rowHeight.set(i, height);
+        if (rowIndex < rowHeight.size()) {
+            rowHeight.set(rowIndex, height);
         } else {
-            rowHeight.ensureCapacity(i + 1);
-            while (rowHeight.size() < i) {
+            rowHeight.ensureCapacity(rowIndex + 1);
+            while (rowHeight.size() < rowIndex) {
                 rowHeight.add(null); // use default width
             }
             rowHeight.add(height);
@@ -233,14 +233,14 @@ public final class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, 
     }
 
     @Override
-    public void splitAt(int i, int j) {
-        LOG.trace("setting split to ({}, {})", i, j);
-        LangUtil.check(i >= 0 && j >= 0, "Invalid split position: (%d, %d)", i, j);
+    public void splitAt(int rowIndex, int colIndex) {
+        LOG.trace("setting split to ({}, {})", rowIndex, colIndex);
+        LangUtil.check(rowIndex >= 0 && colIndex >= 0, "Invalid split position: (%d, %d)", rowIndex, colIndex);
 
         Pair<Integer, Integer> oldSplit = Pair.of(getSplitRow(), getSplitColumn());
-        splitRow = i;
-        splitColumn = j;
-        splitChanged(oldSplit, Pair.of(i, j));
+        splitRow = rowIndex;
+        splitColumn = colIndex;
+        splitChanged(oldSplit, Pair.of(rowIndex, colIndex));
     }
 
     @Override

@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 import java.io.IOException;
 import java.io.Serial;
 import java.net.URISyntaxException;
@@ -57,7 +56,7 @@ public final class ShowTestXlsx extends JFrame {
             try {
                 SwingUtil.setNativeLookAndFeel();
                 ShowTestXlsx instance = new ShowTestXlsx();
-                instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                instance.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                 instance.setVisible(true);
             } catch (RuntimeException e) {
                 LOG.error("exception occurred while initializing the application", e);

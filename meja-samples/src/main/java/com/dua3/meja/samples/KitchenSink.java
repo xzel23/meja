@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 import java.io.IOException;
 import java.io.Serial;
 import java.util.Map.Entry;
@@ -59,7 +58,7 @@ public final class KitchenSink extends JFrame {
         SwingUtilities.invokeLater(() -> {
             SwingUtil.setNativeLookAndFeel();
             KitchenSink instance = new KitchenSink();
-            instance.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            instance.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             instance.setVisible(true);
         });
     }

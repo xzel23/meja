@@ -138,7 +138,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     private void init() {
         add(sheetPane);
         // setup input map for ...
-        final InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        final InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
         // ... keyboard navigation
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), Actions.MOVE_UP);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_UP, 0), Actions.MOVE_UP);

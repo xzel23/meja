@@ -43,7 +43,7 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
      * is managed in conjunction with the {@link PoiWorkbook} instance provided during
      * the {@link PoiSheet} construction.
      */
-    protected final PoiWorkbook workbook;
+    private final PoiWorkbook workbook;
     /**
      * Represents the Apache POI sheet instance encapsulated within the {@link PoiSheet}.
      * <p>
@@ -57,7 +57,7 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
      * The usage of this variable is limited to internal operations within the {@link PoiSheet}
      * class and methods that require access to the raw POI sheet data structure.
      */
-    protected Sheet poiSheet;
+    private Sheet poiSheet;
     private int lastColumn;
     private float zoom = 1.0f;
     private int autoFilterRow = -1;
@@ -68,7 +68,7 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
      * @param workbook the {@link PoiWorkbook} the sheet belongs to
      * @param poiSheet the {@link Sheet}
      */
-    protected PoiSheet(PoiWorkbook workbook, Sheet poiSheet) {
+    PoiSheet(PoiWorkbook workbook, Sheet poiSheet) {
         this.workbook = workbook;
         this.poiSheet = poiSheet;
         init();
@@ -130,8 +130,8 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public float getColumnWidth(int col) {
-        return poiColumnWidthToPoints(poiSheet.getColumnWidth(col));
+    public float getColumnWidth(int colIndex) {
+        return poiColumnWidthToPoints(poiSheet.getColumnWidth(colIndex));
     }
 
     @Override
@@ -154,12 +154,12 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    protected PoiRow getAbstractRow(int i) {
-        Row poiRow = poiSheet.getRow(i);
+    protected PoiRow getAbstractRow(int rowIndex) {
+        Row poiRow = poiSheet.getRow(rowIndex);
         if (poiRow == null) {
             int oldLast = getRowCount() - 1;
-            int added = i - oldLast;
-            poiRow = poiSheet.createRow(i);
+            int added = rowIndex - oldLast;
+            poiRow = poiSheet.createRow(rowIndex);
             if (added > 0) {
                 rowsAdded(oldLast + 1, oldLast + added + 1);
             }
@@ -173,8 +173,8 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public float getRowHeight(int rowNum) {
-        final Row poiRow = poiSheet.getRow(rowNum);
+    public float getRowHeight(int rowIndex) {
+        final Row poiRow = poiSheet.getRow(rowIndex);
         return poiRow == null ? poiSheet.getDefaultRowHeightInPoints() : poiRow.getHeightInPoints();
     }
 
@@ -233,16 +233,16 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public void setAutofilterRow(int rowNumber) {
-        LOG.trace("setting auto filter row {}", rowNumber);
-        LangUtil.check(rowNumber >= 0, "Invalid row number: %d", rowNumber);
+    public void setAutofilterRow(int rowIndex) {
+        LOG.trace("setting auto filter row {}", rowIndex);
+        LangUtil.check(rowIndex >= 0, "Invalid row number: %d", rowIndex);
 
-        int rowNumber1 = getAbstractRow(rowNumber).poiRow.getRowNum();
-        short col1 = getAbstractRow(rowNumber).poiRow.getFirstCellNum();
-        short coln = getAbstractRow(rowNumber).poiRow.getLastCellNum();
+        int rowNumber1 = getAbstractRow(rowIndex).poiRow.getRowNum();
+        short col1 = getAbstractRow(rowIndex).poiRow.getFirstCellNum();
+        short coln = getAbstractRow(rowIndex).poiRow.getLastCellNum();
         poiSheet.setAutoFilter(new CellRangeAddress(rowNumber1, rowNumber1, col1, coln));
 
-        autoFilterRow = rowNumber;
+        autoFilterRow = rowIndex;
     }
 
     /**
@@ -265,11 +265,11 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public void setColumnWidth(int j, float width) {
-        LOG.trace("setting column width of column {} to {}", j, width);
+    public void setColumnWidth(int colIndex, float width) {
+        LOG.trace("setting column width of column {} to {}", colIndex, width);
         LangUtil.check(width >= 0, "Invalid column width: %f", width);
 
-        poiSheet.setColumnWidth(j, pointsToPoiColumnWidth(width));
+        poiSheet.setColumnWidth(colIndex, pointsToPoiColumnWidth(width));
         layoutChanged();
     }
 
@@ -296,13 +296,13 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public void setRowHeight(int i, float height) {
-        LOG.trace("setting row height of row {} to {}", i, height);
+    public void setRowHeight(int rowIndex, float height) {
+        LOG.trace("setting row height of row {} to {}", rowIndex, height);
         LangUtil.check(height >= 0, "Invalid row height: %f", height);
 
-        Row poiRow = poiSheet.getRow(i);
+        Row poiRow = poiSheet.getRow(rowIndex);
         if (poiRow == null) {
-            poiRow = poiSheet.createRow(i);
+            poiRow = poiSheet.createRow(rowIndex);
         }
         poiRow.setHeightInPoints(height);
         layoutChanged();
@@ -329,13 +329,13 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public void splitAt(int i, int j) {
-        LOG.trace("setting split to ({}, {})", i, j);
-        LangUtil.check(i >= 0 && j >= 0, "Invalid split position: (%d, %d)", i, j);
+    public void splitAt(int rowIndex, int colIndex) {
+        LOG.trace("setting split to ({}, {})", rowIndex, colIndex);
+        LangUtil.check(rowIndex >= 0 && colIndex >= 0, "Invalid split position: (%d, %d)", rowIndex, colIndex);
 
         Pair<Integer, Integer> old = Pair.of(getSplitRow(), getSplitColumn());
-        Pair<Integer, Integer> newSplit = Pair.of(i, j);
-        poiSheet.createFreezePane(j, i);
+        Pair<Integer, Integer> newSplit = Pair.of(rowIndex, colIndex);
+        poiSheet.createFreezePane(colIndex, rowIndex);
         splitChanged(old, newSplit);
     }
 

@@ -147,8 +147,8 @@ final class SheetTableModel extends AbstractTableModel {
     }
 
     @Override
-    public @Nullable Object getValueAt(int i, int j) {
-        return sheet.getCellIfExists(convertRowNumberJTableToSheet(i), j).flatMap(Cell::get).orElse(null);
+    public @Nullable Object getValueAt(int rowIndex, int columnIndex) {
+        return sheet.getCellIfExists(convertRowNumberJTableToSheet(rowIndex), columnIndex).flatMap(Cell::get).orElse(null);
     }
 
     @Override
@@ -157,8 +157,8 @@ final class SheetTableModel extends AbstractTableModel {
     }
 
     @Override
-    public void setValueAt(Object value, int i, int j) {
-        sheet.getCell(convertRowNumberSheetToJTable(i), j).set(value);
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        sheet.getCell(convertRowNumberSheetToJTable(rowIndex), columnIndex).set(aValue);
     }
 
     /**

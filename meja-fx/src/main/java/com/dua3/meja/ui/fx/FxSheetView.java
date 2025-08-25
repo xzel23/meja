@@ -293,7 +293,7 @@ public class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public Scale2f getDisplayScale() {
-        Scene scene = this.getScene();
+        Scene scene = getScene();
         Window window = scene == null ? null : scene.getWindow();
         Screen screen = window == null ? Screen.getPrimary() : FxUtil.getScreen(window);
         return FxUtil.getDisplayScale(screen);

@@ -38,7 +38,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.WindowConstants;
 import java.awt.BorderLayout;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -118,7 +117,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingSheetVi
 
             File file = argList.isEmpty() ? null : new File(argList.getFirst());
 
-            viewer.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            viewer.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             viewer.setSize(600, 400);
             viewer.setVisible(true);
 

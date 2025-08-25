@@ -84,19 +84,6 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Constructs a new {@code SettingsDialog} with the given parameters and initializes
-     * it with the specified options.
-     *
-     * @param parent the parent frame for this dialog
-     * @param title the title of the dialog
-     * @param text the text or message to display at the top of the dialog
-     * @param options the array of {@link Option} objects representing the configurable settings
-     */
-    SettingsDialog(JFrame parent, String title, String text, Option<?>... options) {
-        this(parent, title, text, List.of(options));
-    }
-
-    /**
      * Retrieves the result of the user's input from the options dialog.
      *
      * @return an {@link Arguments} object containing the values input by the user

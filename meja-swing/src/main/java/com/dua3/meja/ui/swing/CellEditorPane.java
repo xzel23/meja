@@ -46,7 +46,6 @@ import java.util.Arrays;
  * A custom text pane for editing cell content with support for styling, alignment,
  * and rendering specific to spreadsheet-like cells.
  */
-@SuppressWarnings("serial")
 public class CellEditorPane extends JTextPane {
 
     /**

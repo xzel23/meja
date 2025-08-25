@@ -10,7 +10,6 @@ import org.jspecify.annotations.Nullable;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
-import javax.swing.ScrollPaneConstants;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -96,7 +95,7 @@ final class SwingSheetPane extends JScrollPane {
         setViewportView(bottomRightQuadrant);
         setColumnHeaderView(topRightQuadrant);
         setRowHeaderView(bottomLeftQuadrant);
-        setCorner(ScrollPaneConstants.UPPER_LEADING_CORNER, topLeftQuadrant);
+        setCorner(UPPER_LEADING_CORNER, topLeftQuadrant);
 
         getViewport().addChangeListener(evt -> updateDimensionWithViewportSize());
         setViewportBorder(BorderFactory.createEmptyBorder());

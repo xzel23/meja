@@ -98,10 +98,25 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
         setVerticalSpan(1);
     }
 
+    /**
+     * Retrieves the logical abstract cell associated with this cell.
+     * This method returns the logical representation of the cell that may
+     * be part of a merged region or share properties with other cells.
+     *
+     * @return the logical abstract cell of type {@code C} associated with this cell
+     */
     protected final C getLogicalAbstractCell() {
         return logicalCell;
     }
 
+    /**
+     * Retrieves the abstract workbook associated with the current cell.
+     * The abstract workbook encapsulates the structural representation
+     * of sheets, rows, and cells within the workbook.
+     *
+     * @return the associated abstract workbook of type {@code AbstractWorkbook<S, R, C>}
+     *         providing access to the workbook operations and metadata
+     */
     protected abstract AbstractWorkbook<S, R, C> getAbstractWorkbook();
 
     @Override
@@ -133,10 +148,20 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
         }
     }
 
-    protected S getAbstractSheet()  {
+    /**
+     * Retrieves the abstract sheet object associated with this cell.
+     *
+     * @return the abstract sheet object of type {@code S} to which this cell belongs.
+     */
+    protected S getAbstractSheet() {
         return getAbstractRow().getAbstractSheet();
     }
 
+    /**
+     * Retrieves the abstract row object associated with this cell.
+     *
+     * @return the abstract row object of type {@code R} associated with this cell
+     */
     protected R getAbstractRow() {
         return row;
     }

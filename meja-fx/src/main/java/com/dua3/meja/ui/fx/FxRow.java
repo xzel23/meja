@@ -156,7 +156,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
 
         setText(null);
         FxRowGraphics fxrg = new FxRowGraphics(this);
-        fxrg.prefWidthProperty().bind(this.widthProperty());
+        fxrg.prefWidthProperty().bind(widthProperty());
         setGraphic(fxrg);
 
         setOnMouseClicked(this::onMouseClicked);
@@ -214,12 +214,12 @@ public class FxRow extends IndexedCell<FxRow.Index> {
     }
 
     @Override
-    protected double computePrefHeight(double v) {
+    protected double computePrefHeight(double width) {
         return Math.round(getRowHeightInPixels());
     }
 
     @Override
-    protected double computePrefWidth(double v) {
+    protected double computePrefWidth(double height) {
         return fxSegmentView.getSegmentDelegateLeft().getWidthInPixels() + fxSegmentView.getSegmentDelegateRight().getWidthInPixels();
     }
 
@@ -229,27 +229,27 @@ public class FxRow extends IndexedCell<FxRow.Index> {
     }
 
     @Override
-    public void updateIndex(int i) {
-        LOG.trace("updateIndex({})", i);
+    public void updateIndex(int newIndex) {
+        LOG.trace("updateIndex({})", newIndex);
 
         PlatformHelper.checkApplicationThread();
 
-        super.updateIndex(i);
+        super.updateIndex(newIndex);
 
-        int rowIdx = i;
-        if (i < 0) {
+        int rowIdx = newIndex;
+        if (newIndex < 0) {
             // empty row
             updateItem(new Index(ROW_INDEX_UNUSED, -1, null), true);
             return;
         } else if (fxSegmentView.isAboveSplit()) {
             // row is above split
-            if (i == 0) {
+            if (newIndex == 0) {
                 // row 0 is the column headers
                 updateItem(new Index(ROW_INDEX_COLUMN_LABELS, -1, null), false);
                 return;
             } else {
                 rowIdx--;
-                if (i - 1 == fxSheetView.getDelegate().getSplitRow()) {
+                if (newIndex - 1 == fxSheetView.getDelegate().getSplitRow()) {
                     // row is the split line
                     updateItem(new Index(ROW_INDEX_SPLIT_LINE, -1, null), false);
                     return;

@@ -590,8 +590,8 @@ public interface Cell {
      *
      * <p>Examples:
      * <ul>
-     *   <li>Number 1234.5 with German locale: <code>cell.toString(Locale.GERMANY)</code> &rarr; "1.234,5"</li>
-     *   <li>Date 2025-01-02 with US locale (short date style): <code>cell.toString(Locale.US)</code> &rarr; "1/2/25"</li>
+     *   <li>Number 1234.5 with German locale: {@code cell.toString(Locale.GERMANY)} &rarr; "1.234,5"</li>
+     *   <li>Date 2025-01-02 with US locale (short date style): {@code cell.toString(Locale.US)} &rarr; "1/2/25"</li>
      * </ul>
      *
      * @param locale locale for formatting

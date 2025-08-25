@@ -413,7 +413,8 @@ public abstract class PoiCellStyle implements CellStyle {
             case "yyyy\\-mm\\-dd" -> DateTimeFormatter.ISO_LOCAL_DATE;
             case "d/m" -> createDayMonthFormat(locale);
             case "dddd" -> DateTimeFormatter.ofPattern("EEEE").withLocale(locale);
-            case "m/d/yy", "d/m/yy", "dd/mm/yy" -> DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
+            case "m/d/yy", "d/m/yy", "dd/mm/yy" ->
+                    DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale);
             case "m/d/yyyy", "d/m/yyyy" -> DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale);
             default -> null;
         };

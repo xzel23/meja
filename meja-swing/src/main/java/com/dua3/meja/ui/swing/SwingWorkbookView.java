@@ -134,8 +134,8 @@ public class SwingWorkbookView extends JComponent implements WorkbookView<SwingS
     public void setWorkbook(@Nullable Workbook workbook) {
         content.removeAll();
 
-        if (this.subscription != null) {
-            this.subscription.cancel();
+        if (subscription != null) {
+            subscription.cancel();
             this.subscription = null;
         }
 

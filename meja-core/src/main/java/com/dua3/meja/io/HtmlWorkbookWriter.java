@@ -434,7 +434,6 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             try {
                 List<Sheet> sheets = workbook.sheets()
                         .filter(predicate)
-                        .map(Sheet.class::cast)
                         .toList();
 
                 writeHtmlHeaderStart(fmt);

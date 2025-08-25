@@ -33,6 +33,10 @@ public final class FxExcelViewer {
     private static final String DEVELOPER_MAIL = "axh@dua3.com";
     private static final String APP_DESCRIPTION = "An Excel Viewer";
 
+    private FxExcelViewer() {
+        // nothing to do
+    }
+
     /**
      * The main entry point for the JavaFX application. This method launches the
      * JavaFX Runtime environment and initializes the primary application stage.
@@ -49,10 +53,6 @@ public final class FxExcelViewer {
                 DEVELOPER_MAIL,
                 APP_DESCRIPTION
         );
-    }
-
-    private FxExcelViewer() {
-        // nothing to do
     }
 
     /**
@@ -113,7 +113,7 @@ public final class FxExcelViewer {
                             .action(() -> saveWorkbookAs(primaryStage))
                             .bindEnabled(Bindings.isNotNull(fxWorkbookView.workbookProperty()))
                             .build(),
-                    Controls.slider(SliderWithButtons.Mode.SLIDER_VALUE, (v,max) -> "%3.0f%%".formatted(100*v))
+                    Controls.slider(SliderWithButtons.Mode.SLIDER_VALUE, (v, max) -> "%3.0f%%".formatted(100 * v))
                             .min(0.25)
                             .max(2)
                             .bind(fxWorkbookView.currentViewZoomProperty())

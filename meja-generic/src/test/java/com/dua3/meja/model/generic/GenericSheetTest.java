@@ -59,7 +59,7 @@ class GenericSheetTest {
 
         Cell c3 = r.getCell(3);
         assertEquals(CellType.DATE, c3.getCellType());
-        assertEquals(LocalDate.of(2023, 1,1), c3.getDate());
+        assertEquals(LocalDate.of(2023, 1, 1), c3.getDate());
         assertEquals("Jan 1, 2023", c3.toString(Locale.US));
         assertEquals("01.01.2023", c3.toString(Locale.GERMANY));
         assertEquals("1 janv. 2023", c3.toString(Locale.FRANCE));

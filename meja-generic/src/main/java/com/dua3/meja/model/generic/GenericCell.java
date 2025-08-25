@@ -241,8 +241,8 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
     }
 
     @Override
-    public GenericCell set(@Nullable Boolean arg) {
-        return set(arg, CellType.BOOLEAN);
+    public GenericCell set(@Nullable Boolean b) {
+        return set(b, CellType.BOOLEAN);
     }
 
     @Override
@@ -277,22 +277,22 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
     }
 
     @Override
-    public GenericCell set(@Nullable RichText arg) {
-        if (arg == null || arg.isEmpty()) {
+    public GenericCell set(@Nullable RichText s) {
+        if (s == null || s.isEmpty()) {
             clear();
             return this;
         } else {
-            return set(arg, CellType.TEXT);
+            return set(s, CellType.TEXT);
         }
     }
 
     @Override
-    public GenericCell set(@Nullable String arg) {
-        if (arg == null || arg.isEmpty()) {
+    public GenericCell set(@Nullable String s) {
+        if (s == null || s.isEmpty()) {
             clear();
             return this;
         }
-        return set(RichText.valueOf(arg), CellType.TEXT);
+        return set(RichText.valueOf(s), CellType.TEXT);
     }
 
     @Override

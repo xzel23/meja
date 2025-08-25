@@ -48,10 +48,10 @@ public abstract class AbstractRow<S extends AbstractSheet<S, R, C>, R extends Ab
     /**
      * Retrieves the cell at the specified column index in this row.
      *
-     * @param col the column index (0-based) of the cell to retrieve
+     * @param colIndex the column index (0-based) of the cell to retrieve
      * @return the instance of the cell at the given column index
      */
-    protected abstract C getAbstractCell(int col);
+    protected abstract C getAbstractCell(int colIndex);
 
     /**
      * Retrieves the cell at the specified column index in this row, or {@code null} if the cell does not exist.

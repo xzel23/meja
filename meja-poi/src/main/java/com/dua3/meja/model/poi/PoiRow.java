@@ -55,17 +55,17 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    protected PoiCell getAbstractCell(int j) {
+    protected PoiCell getAbstractCell(int colIndex) {
         org.apache.poi.ss.usermodel.Cell poiCell;
         int oldLast = getColumnCount() - 1;
-        if (j > oldLast) {
+        if (colIndex > oldLast) {
             int jj = oldLast;
             do {
                 poiCell = poiRow.createCell(++jj);
-            } while (jj < j);
-            getAbstractSheet().setColumnUsed(j);
+            } while (jj < colIndex);
+            getAbstractSheet().setColumnUsed(colIndex);
         } else {
-            poiCell = poiRow.getCell(j, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            poiCell = poiRow.getCell(colIndex, MissingCellPolicy.CREATE_NULL_AS_BLANK);
         }
 
         return new PoiCell(this, poiCell);

@@ -11,7 +11,7 @@ class CellTypeTest {
     void testCellTypeValues() {
         // Test that all expected enum values exist
         assertEquals(8, CellType.values().length);
-        
+
         assertNotNull(CellType.BLANK);
         assertNotNull(CellType.BOOLEAN);
         assertNotNull(CellType.ERROR);
@@ -21,7 +21,7 @@ class CellTypeTest {
         assertNotNull(CellType.DATE);
         assertNotNull(CellType.DATE_TIME);
     }
-    
+
     @Test
     void testCellTypeOrdinals() {
         // Test the ordinal values of the enum constants

@@ -56,7 +56,7 @@ public final class GenericWorkbook extends AbstractWorkbook<GenericSheet, Generi
     public GenericWorkbook(@Nullable URI uri) {
         super(uri);
         this.defaultCellStyle = new GenericCellStyle(this);
-        this.cellStyles.put("", defaultCellStyle);
+        cellStyles.put("", defaultCellStyle);
     }
 
     @Override

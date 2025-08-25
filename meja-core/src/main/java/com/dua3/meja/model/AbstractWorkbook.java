@@ -13,6 +13,10 @@ import java.util.concurrent.SubmissionPublisher;
 
 /**
  * Abstract base class for implementations of the {@link Workbook} interface.
+ *
+ * @param <S> the type of sheet contained in the workbook
+ * @param <R> the type of row contained in the sheets of the workbook
+ * @param <C> the type of cell contained in the rows of the sheets in the workbook
  */
 public abstract class AbstractWorkbook<S extends AbstractSheet<S, R, C>, R extends AbstractRow<S, R, C>, C extends AbstractCell<S, R, C>> implements Workbook {
 
@@ -143,12 +147,12 @@ public abstract class AbstractWorkbook<S extends AbstractSheet<S, R, C>, R exten
     /**
      * Enable or disable object caching.
      *
-     * @param enabled true, if the object cache should be enabled;
+     * @param enable true, if the object cache should be enabled;
      *                false, if objects should not be cached anymore and the cash cleared
      */
     @Override
-    public void setObjectCaching(boolean enabled) {
-        objectCache = enabled && !isObjectCachingEnabled() ? new ObjectCache() : null;
+    public void setObjectCaching(boolean enable) {
+        objectCache = enable && !isObjectCachingEnabled() ? new ObjectCache() : null;
     }
 
     @Override

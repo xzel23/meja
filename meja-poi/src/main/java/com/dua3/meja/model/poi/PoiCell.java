@@ -367,18 +367,18 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public PoiCell set(@Nullable Boolean arg) {
-        if (arg == null) {
+    public PoiCell set(@Nullable Boolean b) {
+        if (b == null) {
             clear();
             return this;
         }
 
         Object old = getOrDefault(null);
-        arg = getWorkbook().cache(arg);
-        poiCell.setCellValue(arg);
+        b = getWorkbook().cache(b);
+        poiCell.setCellValue(b);
         setCellStylePlain();
         updateRow();
-        valueChanged(old, arg);
+        valueChanged(old, b);
         return this;
     }
 
@@ -427,41 +427,41 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public Cell set(@Nullable RichText arg) {
-        if (arg == null) {
+    public Cell set(@Nullable RichText s) {
+        if (s == null) {
             clear();
             return this;
         }
 
-        arg = getWorkbook().cache(arg);
+        s = getWorkbook().cache(s);
         Object old = getOrDefault(null);
         PoiWorkbook workbook = getAbstractWorkbook();
-        RichTextString richText = workbook.createRichTextString(arg.toString());
-        for (Run run : arg) {
+        RichTextString richText = workbook.createRichTextString(s.toString());
+        for (Run run : s) {
             PoiFont font = workbook.getPoiFont(FontUtil.getInstance().deriveFont(getCellStyle().getFont(), run.getFontDef()));
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
         poiCell.setCellValue(richText);
         setCellStylePlain();
         updateRow();
-        valueChanged(old, arg);
+        valueChanged(old, s);
 
         return this;
     }
 
     @Override
-    public PoiCell set(@Nullable String arg) {
-        if (arg == null) {
+    public PoiCell set(@Nullable String s) {
+        if (s == null) {
             clear();
             return this;
         }
 
-        arg = getWorkbook().cache(arg);
+        s = getWorkbook().cache(s);
         Object old = getOrDefault(null);
-        poiCell.setCellValue(arg);
+        poiCell.setCellValue(s);
         setCellStylePlain();
         updateRow();
-        valueChanged(old, arg);
+        valueChanged(old, s);
         return this;
     }
 
@@ -520,12 +520,12 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public PoiCell setFormula(@Nullable String arg) {
+    public PoiCell setFormula(@Nullable String value) {
         Object old = getOrDefault(null);
-        if (arg == null) {
+        if (value == null) {
             clear();
         } else {
-            poiCell.setCellFormula(arg);
+            poiCell.setCellFormula(value);
             final PoiWorkbook wb = getAbstractWorkbook();
             if (wb.isFormulaEvaluationSupported()) {
                 try {
@@ -667,7 +667,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         try {
             return dataFormatter.formatCellValue(poiCell, evaluator);
         } catch (@SuppressWarnings("unused") IllegalArgumentException ex) {
-            return Cell.ERROR_TEXT;
+            return ERROR_TEXT;
         }
     }
 

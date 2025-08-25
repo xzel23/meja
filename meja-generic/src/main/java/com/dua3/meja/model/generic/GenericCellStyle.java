@@ -211,18 +211,18 @@ public class GenericCellStyle implements CellStyle {
     }
 
     @Override
-    public void setFillBgColor(Color fillBgColor) {
-        this.fillBgColor = fillBgColor;
+    public void setFillBgColor(Color color) {
+        this.fillBgColor = color;
     }
 
     @Override
-    public void setFillFgColor(Color fillFgColor) {
-        this.fillFgColor = fillFgColor;
+    public void setFillFgColor(Color color) {
+        this.fillFgColor = color;
     }
 
     @Override
-    public void setFillPattern(FillPattern fillPattern) {
-        this.fillPattern = fillPattern;
+    public void setFillPattern(FillPattern pattern) {
+        this.fillPattern = pattern;
     }
 
     @Override

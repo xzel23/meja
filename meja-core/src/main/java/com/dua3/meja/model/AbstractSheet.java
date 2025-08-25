@@ -55,10 +55,10 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     /**
      * Retrieves the abstract row at the specified index.
      *
-     * @param i the index of the row to retrieve
+     * @param rowIndex the index of the row to retrieve
      * @return the abstract row at the specified index
      */
-    protected abstract R getAbstractRow(int i);
+    protected abstract R getAbstractRow(int rowIndex);
 
     /**
      * Retrieves the abstract cell located at the specified row and column
@@ -244,8 +244,8 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     }
 
     @Override
-    public Optional<RectangularRegion> getMergedRegion(int rowNum, int colNum) {
-        return mergedRegions.stream().filter(rr -> rr.contains(rowNum, colNum)).findFirst();
+    public Optional<RectangularRegion> getMergedRegion(int rowIndex, int colIndex) {
+        return mergedRegions.stream().filter(rr -> rr.contains(rowIndex, colIndex)).findFirst();
     }
 
     /**
@@ -279,15 +279,15 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     }
 
     @Override
-    public final Row getRow(int i) {
-        return getAbstractRow(i);
+    public final Row getRow(int rowIndex) {
+        return getAbstractRow(rowIndex);
     }
 
     @Override
-    public final Cell getCell(int i, int j) {
-        LangUtil.checkArg(i >= 0, "invalid row number: %d", i);
-        LangUtil.checkArg(j >= 0, "invalid column number: %d", j);
-        return getAbstractCell(i, j);
+    public final Cell getCell(int rowIndex, int colIndex) {
+        LangUtil.checkArg(rowIndex >= 0, "invalid row number: %d", rowIndex);
+        LangUtil.checkArg(colIndex >= 0, "invalid column number: %d", colIndex);
+        return getAbstractCell(rowIndex, colIndex);
     }
 
     @Override
@@ -296,17 +296,17 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     }
 
     @Override
-    public final void autoSizeColumn(int j) {
+    public final void autoSizeColumn(int colIndex) {
         float colWidth = (float) rows()
                 .mapMultiToDouble((row, downstream) ->
                         row.cells().forEach(cell -> {
-                            if (cell.getColumnNumber() == j && !cell.isEmpty()) {
+                            if (cell.getColumnNumber() == colIndex && !cell.isEmpty()) {
                                 downstream.accept(cell.calcCellDimension().width());
                             }
                         }))
                 .max()
                 .orElse(0.0);
-        setColumnWidth(j, colWidth);
+        setColumnWidth(colIndex, colWidth);
     }
 
     @Override
@@ -331,8 +331,8 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
     }
 
     @Override
-    public final void autoSizeRow(int i) {
-        getRowIfExists(i).ifPresent(row -> {
+    public final void autoSizeRow(int rowIndex) {
+        getRowIfExists(rowIndex).ifPresent(row -> {
             float rowHeight = (float) row.cells()
                     .mapMultiToDouble((cell, downstream) -> {
                         if (!cell.isEmpty()) {
@@ -341,7 +341,7 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
                     })
                     .max()
                     .orElse(0.0);
-            setRowHeight(i, rowHeight);
+            setRowHeight(rowIndex, rowHeight);
         });
     }
 

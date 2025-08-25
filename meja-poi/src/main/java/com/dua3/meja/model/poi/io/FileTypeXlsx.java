@@ -24,7 +24,7 @@ public final class FileTypeXlsx extends FileTypeWorkbook<PoiWorkbook> {
 
     static {
         var instance = new FileTypeXlsx();
-        FileType.addType(instance);
+        addType(instance);
         INSTANCE = instance;
     }
 
