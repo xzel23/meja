@@ -134,7 +134,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
      */
     public record Index(int rowIndex, int rowNumber, @Nullable Row row) {}
 
-    private static final Affine IDENTITY_TRANSFORMATION = FxUtil.convert(AffineTransformation2f.IDENTITY);
+    private static final Affine IDENTITY_TRANSFORMATION = FxUtil.convert(AffineTransformation2f.identity());
 
     private final FxSheetView fxSheetView;
     private final FxSegmentView fxSegmentView;

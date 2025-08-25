@@ -53,7 +53,7 @@ public final class CreateCalendar {
             Path file = Paths.get("calendar.html");
 
             writeCalendar(file);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             System.out.println("Exception: " + t.getMessage());
             t.printStackTrace(System.err);
         }
