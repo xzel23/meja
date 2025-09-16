@@ -42,7 +42,7 @@ plugins {
 /////////////////////////////////////////////////////////////////////////////
 object Meta {
     const val DESCRIPTION = "Meja spreadsheet library."
-    const val INCEPTION_YEAR = "2019"
+    const val INCEPTION_YEAR = "2015"
     const val GROUP = "com.dua3.meja"
     const val SCM = "https://github.com/xzel23/meja.git"
     const val LICENSE_NAME = "The Apache Software License, Version 2.0"
@@ -71,10 +71,10 @@ tasks.register("printVersion") {
 tasks.register("showTaskIO") {
     description = "Shows the inputs and outputs of a specified Gradle task."
     group = HelpTasksPlugin.HELP_GROUP
-    
+
     // Define a property for the task name
     val taskName = project.findProperty("taskName") as String? ?: "help"
-    
+
     doLast {
         val task = project.tasks.findByName(taskName)
         if (task == null) {
@@ -82,9 +82,9 @@ tasks.register("showTaskIO") {
             project.tasks.names.sorted().forEach { println("  $it") }
             return@doLast
         }
-        
+
         println("\n=== Task: ${task.path} ===")
-        
+
         // Display task inputs
         println("\nINPUTS:")
         if (task.inputs.hasInputs) {
@@ -101,7 +101,7 @@ tasks.register("showTaskIO") {
             } catch (e: Exception) {
                 println("  Error accessing input properties: ${e.message}")
             }
-            
+
             println("\n  Input Files:")
             try {
                 val files = task.inputs.files.files
@@ -132,7 +132,7 @@ tasks.register("showTaskIO") {
                 } else {
                     println("    No output files.")
                 }
-                
+
                 println("\n  Output Directories:")
                 if (files.any { it.isDirectory }) {
                     files.filter { it.isDirectory }.forEach { dir ->
@@ -176,7 +176,10 @@ tasks.named<JacocoReport>("testCodeCoverageReport") {
 // SonarQube root project config
 sonar {
     properties {
-        property("sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        )
         property("sonar.coverage.exclusions", "**/samples/**")
     }
 }
@@ -416,6 +419,7 @@ subprojects {
 
                     pom {
                         name.set(project.name)
+                        description.set(project.description)
                         url.set(Meta.SCM)
 
                         licenses {
@@ -443,7 +447,7 @@ subprojects {
 
                         withXml {
                             val root = asNode()
-                            root.appendNode("inceptionYear", "2019")
+                            root.appendNode("inceptionYear", "2015")
                         }
                     }
                 }
@@ -563,11 +567,6 @@ tasks.register<Javadoc>("aggregateJavadoc") {
         // Disable module path to avoid module-related errors
         addBooleanOption("module-path", false)
     }
-}
-
-// Make jreleaserDeploy depend on the root-level publishToStagingDirectory task
-tasks.named("jreleaserDeploy") {
-    dependsOn("publishToStagingDirectory")
 }
 
 jreleaser {

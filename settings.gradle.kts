@@ -3,6 +3,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 rootProject.name = "dua3-meja"
 val projectVersion = "9.0.0-beta7-SNAPSHOT"
 
+include("meja-bom")
 include("meja-core")
 include("meja-generic")
 include("meja-poi")
@@ -36,17 +37,18 @@ dependencyResolutionManagement {
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.20.0")
 
-            version("dua3-utility", "20.0.0-beta14")
-            version("dua3-fx", "1.5.0-beta7")
+            version("dua3-utility", "20.0.0-beta16")
+            version("dua3-fx", "1.5.0-beta9")
             version("ikonli", "12.4.0")
             version("javafx", "23.0.2")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.25.1")
             version("poi", "5.4.1")
-            version("spotbugs", "4.9.4")
+            version("spotbugs", "4.9.5")
 
             library("dua3-fx-application", "com.dua3.fx", "fx-application").versionRef("dua3-fx")
+
             library("dua3-utility-bom", "com.dua3.utility", "utility-bom").versionRef("dua3-utility")
             library("dua3-utility", "com.dua3.utility", "utility").withoutVersion()
             library("dua3-utility-db", "com.dua3.utility", "utility-db").withoutVersion()
