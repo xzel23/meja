@@ -38,7 +38,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
     private final IntegerProperty columnCountProperty;
     private final IntegerProperty splitRowProperty;
     private final IntegerProperty splitColumnProperty;
-    private final ObjectProperty<@Nullable Cell> currentCellProperty;
+    private final ObjectProperty<Cell> currentCellProperty;
 
     /**
      * Constructs an ObservableSheet that wraps a given {@code Sheet}.
@@ -57,7 +57,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
         this.currentCellProperty = new SimpleObjectProperty<>(sheet.getCurrentCell());
 
         currentCellProperty.addListener((v, o, n) -> {
-            if (n != o || (n != null && (n.getRowNumber() != o.getRowNumber() || n.getColumnNumber() != o.getColumnNumber()))) {
+            if (n != o) {
                 sheet.setCurrentCell(n);
             }
         });
