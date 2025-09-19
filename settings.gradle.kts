@@ -1,7 +1,7 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 rootProject.name = "dua3-meja"
-val projectVersion = "9.0.0-beta8-SNAPSHOT"
+val projectVersion = "9.0.0-beta8"
 
 include("meja-bom")
 include("meja-core")
@@ -29,7 +29,7 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.52.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.4.1")
+            plugin("spotbugs", "com.github.spotbugs").version("6.4.2")
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
             plugin("sonar", "org.sonarqube").version("6.3.1.5724")
@@ -37,15 +37,15 @@ dependencyResolutionManagement {
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.20.0")
 
-            version("dua3-utility", "20.0.0-beta16")
-            version("dua3-fx", "1.5.0-beta9")
+            version("dua3-utility", "20.0.0-beta17")
+            version("dua3-fx", "1.5.0-beta10")
             version("ikonli", "12.4.0")
             version("javafx", "23.0.2")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
             version("log4j-bom", "2.25.1")
             version("poi", "5.4.1")
-            version("spotbugs", "4.9.5")
+            version("spotbugs", "4.9.6")
 
             library("dua3-fx-application", "com.dua3.fx", "fx-application").versionRef("dua3-fx")
 
