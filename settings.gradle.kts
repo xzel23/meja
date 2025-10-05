@@ -1,7 +1,7 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 rootProject.name = "dua3-meja"
-val projectVersion = "9.0.0-beta9"
+val projectVersion = "9.0.0-beta10-SNAPSHOT"
 
 include("meja-bom")
 include("meja-core")
@@ -31,13 +31,13 @@ dependencyResolutionManagement {
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
             plugin("spotbugs", "com.github.spotbugs").version("6.4.2")
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
-            plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.9")
+            plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.10")
             plugin("sonar", "org.sonarqube").version("6.3.1.5724")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.20.0")
 
-            version("dua3-utility", "20.0.0-beta22")
+            version("dua3-utility", "20.0.0-beta24")
             version("dua3-fx", "1.5.0-beta11")
             version("ikonli", "12.4.0")
             version("javafx", "23.0.2")
