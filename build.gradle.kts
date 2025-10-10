@@ -268,7 +268,7 @@ subprojects {
     // Dependencies for non-BOM projects
     if (!project.name.endsWith("-bom")) {
         dependencies {
-            api(rootProject.libs.dua3.utility.fx)
+            api(rootProject.libs.dua3.utility)
             implementation(platform(rootProject.libs.dua3.utility.bom))
             implementation(rootProject.libs.jspecify)
             implementation(platform(rootProject.libs.log4j.bom))
