@@ -12,6 +12,7 @@ import com.dua3.utility.lang.SystemInfo;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ToolBar;
@@ -92,7 +93,7 @@ public final class FxExcelViewer {
                     ),
                     Controls.menu("Help",
                             Controls.menuItem("System Information", () ->
-                                    Dialogs.information(primaryStage)
+                                    Dialogs.alert(AlertType.INFORMATION, primaryStage)
                                             .title("System Information")
                                             .header(SystemInfo.getSystemInfo().formatted())
                                             .build()
@@ -141,12 +142,12 @@ public final class FxExcelViewer {
                 Dialogs.openFile(stage, Workbook.class, FileTypeExcel.instance())
                         .ifPresent(fxWorkbookView::setWorkbook);
             } catch (Dialogs.UnsupportedFileTypeException e) {
-                Dialogs.error(fxWorkbookView.getScene().getWindow())
+                Dialogs.alert(AlertType.ERROR, fxWorkbookView.getScene().getWindow())
                         .title("Unsupported file type")
                         .text("The correct file type to use for opening the workbook could not be determined.")
                         .showAndWait();
             } catch (IOException e) {
-                Dialogs.error(fxWorkbookView.getScene().getWindow())
+                Dialogs.alert(AlertType.ERROR, fxWorkbookView.getScene().getWindow())
                         .title("Error opening workbook")
                         .text("Could not open workbook: " + e.getMessage())
                         .showAndWait();
@@ -168,12 +169,12 @@ public final class FxExcelViewer {
                             wb.getUri().map(IoUtil::toPath).orElse(null)
                     );
                 } catch (Dialogs.UnsupportedFileTypeException e) {
-                    Dialogs.error(fxWorkbookView.getScene().getWindow())
+                    Dialogs.alert(AlertType.ERROR, fxWorkbookView.getScene().getWindow())
                             .title("Unsupported file type")
                             .text("The correct file type to use for saving the workbook could not be determined.")
                             .showAndWait();
                 } catch (IOException e) {
-                    Dialogs.error(fxWorkbookView.getScene().getWindow())
+                    Dialogs.alert(AlertType.ERROR, fxWorkbookView.getScene().getWindow())
                             .title("Error saving workbook")
                             .text("Could not save workbook: " + e.getMessage())
                             .showAndWait();
