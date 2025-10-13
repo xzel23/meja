@@ -1,9 +1,9 @@
 package com.dua3.meja.fx.samples;
 
-import com.dua3.fx.application.FxApplicationHelper;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.poi.io.FileTypeExcel;
 import com.dua3.meja.ui.fx.FxWorkbookView;
+import com.dua3.utility.fx.FxLauncher;
 import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.SliderWithButtons;
@@ -45,7 +45,7 @@ public final class FxExcelViewer {
      * @param args the command-line arguments passed to the application
      */
     public static void main(String[] args) {
-        FxApplicationHelper.runApplication(
+        FxLauncher.launchApplication(
                 FxExcelViewerApplication.class.getName(),
                 args,
                 APP_NAME,
@@ -60,7 +60,7 @@ public final class FxExcelViewer {
      * The Application class.
      *
      * <p><strong>Note:</strong> The application class must not be a top level class when using the
-     * {@link FxApplicationHelper} to start the application as JavaFX "hacks" the startup code to
+     * {@link FxLauncher} to start the application as JavaFX "hacks" the startup code to
      * start the JavaFX platform before {@code main()} is called.
      */
     public static class FxExcelViewerApplication extends Application {
@@ -80,7 +80,7 @@ public final class FxExcelViewer {
         public void start(Stage primaryStage) {
             primaryStage.setTitle("Excel Viewer");
 
-            FxApplicationHelper.showLogWindow(primaryStage);
+            FxLauncher.showLogWindow(primaryStage);
 
             // create menu
             MenuBar menuBar = new MenuBar(
@@ -93,7 +93,7 @@ public final class FxExcelViewer {
                     ),
                     Controls.menu("Help",
                             Controls.menuItem("System Information", () ->
-                                    Dialogs.alert(AlertType.INFORMATION, primaryStage)
+                                    Dialogs.alert(primaryStage, AlertType.INFORMATION)
                                             .title("System Information")
                                             .header(SystemInfo.getSystemInfo().formatted())
                                             .build()
@@ -142,12 +142,12 @@ public final class FxExcelViewer {
                 Dialogs.openFile(stage, Workbook.class, FileTypeExcel.instance())
                         .ifPresent(fxWorkbookView::setWorkbook);
             } catch (Dialogs.UnsupportedFileTypeException e) {
-                Dialogs.alert(AlertType.ERROR, fxWorkbookView.getScene().getWindow())
+                Dialogs.alert(stage, AlertType.ERROR)
                         .title("Unsupported file type")
                         .text("The correct file type to use for opening the workbook could not be determined.")
                         .showAndWait();
             } catch (IOException e) {
-                Dialogs.alert(AlertType.ERROR, fxWorkbookView.getScene().getWindow())
+                Dialogs.alert(stage, AlertType.ERROR)
                         .title("Error opening workbook")
                         .text("Could not open workbook: " + e.getMessage())
                         .showAndWait();
@@ -169,12 +169,12 @@ public final class FxExcelViewer {
                             wb.getUri().map(IoUtil::toPath).orElse(null)
                     );
                 } catch (Dialogs.UnsupportedFileTypeException e) {
-                    Dialogs.alert(AlertType.ERROR, fxWorkbookView.getScene().getWindow())
+                    Dialogs.alert(stage, AlertType.ERROR)
                             .title("Unsupported file type")
                             .text("The correct file type to use for saving the workbook could not be determined.")
                             .showAndWait();
                 } catch (IOException e) {
-                    Dialogs.alert(AlertType.ERROR, fxWorkbookView.getScene().getWindow())
+                    Dialogs.alert(stage, AlertType.ERROR)
                             .title("Error saving workbook")
                             .text("Could not save workbook: " + e.getMessage())
                             .showAndWait();
