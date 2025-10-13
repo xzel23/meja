@@ -7,7 +7,6 @@ import org.jspecify.annotations.NullMarked;
 open module com.dua3.meja.fx.samples {
     exports com.dua3.meja.fx.samples;
 
-    requires com.dua3.fx.application;
     requires com.dua3.meja.generic;
     requires com.dua3.meja.fx;
     requires com.dua3.meja.poi;

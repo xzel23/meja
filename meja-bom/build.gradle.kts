@@ -43,9 +43,6 @@ dependencies {
         api(rootProject.libs.ikonli.javafx)
         api(rootProject.libs.ikonli.fontawesome)
         api(rootProject.libs.ikonli.feather)
-
-        // dua3 FX application helper (used in samples-fx)
-        api(rootProject.libs.dua3.fx.application)
     }
 }
 
