@@ -102,6 +102,8 @@ dependencyResolutionManagement {
         if (isSnapshot) {
             println("snapshot version detected, adding Maven snapshot repositories")
 
+            mavenLocal()
+
             // Sonatype Snapshots
             maven {
                 name = "Central Portal Snapshots"

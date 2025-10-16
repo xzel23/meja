@@ -82,7 +82,7 @@ public final class FxKitchenSink extends Application {
 
         CellStyle csDefault = wb.getDefaultCellStyle();
         Font fontDefault = csDefault.getFont();
-        FontUtil<?> fontUtil = FontUtil.getInstance();
+        FontUtil fontUtil = FontUtil.getInstance();
         for (Entry<String, Color> e : Color.palette().entrySet()) {
             String name = "font" + e.getKey();
 
