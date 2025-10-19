@@ -114,11 +114,13 @@ public final class FxExcelViewer {
                             .action(() -> saveWorkbookAs(primaryStage))
                             .bindEnabled(Bindings.isNotNull(fxWorkbookView.workbookProperty()))
                             .build(),
-                    Controls.slider(SliderWithButtons.Mode.SLIDER_VALUE, (v, max) -> "%3.0f%%".formatted(100 * v))
+                    Controls.slider()
+                            .mode(SliderWithButtons.Mode.SLIDER_VALUE)
+                            .formatter((v, max) -> "%3.0f%%".formatted(100 * v))
                             .min(0.25)
                             .max(2)
-                            .bind(fxWorkbookView.currentViewZoomProperty())
                             .blockIncrement(0.25)
+                            .bind(fxWorkbookView.currentViewZoomProperty())
                             .build()
             );
 
