@@ -120,7 +120,7 @@ public final class FxExcelViewer {
                             .min(0.25)
                             .max(2)
                             .blockIncrement(0.25)
-                            .bind(fxWorkbookView.currentViewZoomProperty())
+                            .bindBidirectional(fxWorkbookView.currentViewZoomProperty())
                             .build()
             );
 
