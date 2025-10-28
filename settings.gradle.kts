@@ -21,7 +21,7 @@ plugins {
 dependencyResolutionManagement {
 
     val isSnapshot = projectVersion.toDefaultLowerCase().contains("-snapshot")
-    val isReleaseCandidate = projectVersion.toDefaultLowerCase().contains("-rc")
+    val isReleaseCandidate = !isSnapshot && projectVersion.toDefaultLowerCase().contains("-rc")
 
     versionCatalogs {
         create("libs") {
