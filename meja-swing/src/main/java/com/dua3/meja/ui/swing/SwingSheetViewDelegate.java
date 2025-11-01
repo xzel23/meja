@@ -22,7 +22,6 @@ import java.util.function.Function;
  */
 public class SwingSheetViewDelegate extends SheetViewDelegate {
 
-    private final CellRenderer cellRenderer;
     private final SheetPainter sheetPainter;
 
     /**
@@ -40,7 +39,7 @@ public class SwingSheetViewDelegate extends SheetViewDelegate {
             Function<SwingSheetViewDelegate, CellRenderer> cellRendererFactory
     ) {
         super(sheet, owner);
-        this.cellRenderer = cellRendererFactory.apply(this);
+        CellRenderer cellRenderer = cellRendererFactory.apply(this);
         this.sheetPainter = new SheetPainter(this, cellRenderer);
     }
 

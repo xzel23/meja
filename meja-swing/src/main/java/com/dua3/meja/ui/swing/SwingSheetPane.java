@@ -102,7 +102,6 @@ final class SwingSheetPane extends JScrollPane {
     }
 
     private void updateDimensionWithViewportSize() {
-        JViewport viewport = getViewport();
         Dimension vpSize = viewport.getSize();
         Point vpPosition = viewport.getViewPosition();
         int w = vpPosition.x + vpSize.width;

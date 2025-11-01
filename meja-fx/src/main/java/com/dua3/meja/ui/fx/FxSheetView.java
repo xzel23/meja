@@ -48,14 +48,11 @@ public class FxSheetView extends StackPane implements SheetView {
     private final FxSheetViewDelegate delegate;
     private final FxSegmentView topSegment;
     private final FxSegmentView bottomSegment;
-    private final GridPane gridPane;
 
     private final ScrollBar hScrollbar = new ScrollBar();
     private final ScrollBar vScrollbar = new ScrollBar();
 
     private final Region leftSpacer = new Region();
-    private final Region topSpacer = new Region();
-    private final Region bottomRightCorner = new Region();
 
     private final DoubleProperty sheetScaleXProperty = new SimpleDoubleProperty(1.0);
     private final DoubleProperty sheetScaleYProperty = new SimpleDoubleProperty(1.0);
@@ -73,7 +70,7 @@ public class FxSheetView extends StackPane implements SheetView {
         LOG.debug("FxSheetView({})", sheet);
 
         this.delegate = new FxSheetViewDelegate(sheet, this, getDpi());
-        this.gridPane = new GridPane();
+        GridPane gridPane = new GridPane();
 
         // Create quadrants
         this.observableSheet = new ObservableSheet(sheet);
@@ -105,6 +102,7 @@ public class FxSheetView extends StackPane implements SheetView {
         observableSheet.splitColumnProperty().addListener((v, o, n) -> updateLeftSpacer());
         updateLeftSpacer();
 
+        Region bottomRightCorner = new Region();
         bottomRightCorner.prefWidthProperty().bind(vScrollbar.widthProperty());
         bottomRightCorner.prefHeightProperty().bind(hScrollbar.heightProperty());
 
@@ -114,6 +112,7 @@ public class FxSheetView extends StackPane implements SheetView {
         HBox.setHgrow(bottomRightCorner, Priority.NEVER);
 
         // set up vertical scrollbar
+        Region topSpacer = new Region();
         topSpacer.prefWidthProperty().bind(vScrollbar.widthProperty());
         topSpacer.prefHeightProperty().bind(topSegment.heightProperty());
 

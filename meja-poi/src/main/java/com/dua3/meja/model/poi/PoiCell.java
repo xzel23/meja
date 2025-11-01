@@ -184,6 +184,10 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
                 });
     }
 
+    private static DataFormatter getDataFormatter(Locale locale) {
+        return new DataFormatter(locale);
+    }
+
     @Override
     public void clear() {
         if (!isEmpty()) {
@@ -663,7 +667,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
 
         // if not, let POI do the formatting
         FormulaEvaluator evaluator = getAbstractWorkbook().evaluator;
-        DataFormatter dataFormatter = PoiWorkbook.getDataFormatter(locale);
+        DataFormatter dataFormatter = getDataFormatter(locale);
         try {
             return dataFormatter.formatCellValue(poiCell, evaluator);
         } catch (@SuppressWarnings("unused") IllegalArgumentException ex) {

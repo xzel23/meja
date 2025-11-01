@@ -41,7 +41,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
@@ -118,10 +117,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         for (short i = 0; i < poiWorkbook.getNumCellStyles(); i++) {
             cellStyles.put("style#" + i, i);
         }
-    }
-
-    static DataFormatter getDataFormatter(Locale locale) {
-        return new DataFormatter(locale);
     }
 
     @Override
