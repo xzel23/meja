@@ -37,7 +37,7 @@ dependencyResolutionManagement {
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
             plugin("jreleaser", "org.jreleaser").version("1.21.0")
 
-            version("dua3-utility", "20.0.0-rc-4")
+            version("dua3-utility", "20.0.0-rc-5")
             version("ikonli", "12.4.0")
             version("javafx", "23.0.2")
             version("jmh", "1.37")
