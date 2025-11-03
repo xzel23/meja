@@ -1,7 +1,7 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 rootProject.name = "dua3-meja"
-val projectVersion = "9.0.0-beta16"
+val projectVersion = "9.0.0-beta17-SNAPSHOT"
 
 include("meja-bom")
 include("meja-core")
@@ -29,22 +29,23 @@ dependencyResolutionManagement {
 
             plugin("versions", "com.github.ben-manes.versions").version("0.53.0")
             plugin("test-logger", "com.adarshr.test-logger").version("4.0.0")
-            plugin("spotbugs", "com.github.spotbugs").version("6.4.3")
+            plugin("spotbugs", "com.github.spotbugs").version("6.4.4")
             plugin("cabe", "com.dua3.cabe").version("3.3.0")
             plugin("forbiddenapis", "de.thetaphi.forbiddenapis").version("3.10")
             plugin("sonar", "org.sonarqube").version("7.0.1.6134")
             plugin("javafx", "org.openjfx.javafxplugin").version("0.1.0")
             plugin("jmh", "me.champeau.jmh").version("0.7.3")
-            plugin("jreleaser", "org.jreleaser").version("1.20.0")
+            plugin("jreleaser", "org.jreleaser").version("1.21.0")
 
-            version("dua3-utility", "20.0.0-rc-3")
+            version("dua3-utility", "20.0.0-rc-4")
             version("ikonli", "12.4.0")
             version("javafx", "23.0.2")
             version("jmh", "1.37")
             version("jspecify", "1.0.0")
+            version("junit-bom", "6.0.1")
             version("log4j-bom", "2.25.2")
             version("poi", "5.4.1")
-            version("spotbugs", "4.9.7")
+            version("spotbugs", "4.9.8")
 
             library("dua3-utility-bom", "com.dua3.utility", "utility-bom").versionRef("dua3-utility")
             library("dua3-utility", "com.dua3.utility", "utility").withoutVersion()
@@ -61,6 +62,10 @@ dependencyResolutionManagement {
             library("ikonli-feather", "org.kordamp.ikonli", "ikonli-feather-pack").versionRef("ikonli")
             library("ikonli-javafx", "org.kordamp.ikonli", "ikonli-javafx").versionRef("ikonli")
             library("jspecify", "org.jspecify", "jspecify").versionRef("jspecify")
+            library("junit-bom", "org.junit", "junit-bom").versionRef("junit-bom")
+            library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").withoutVersion()
+            library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").withoutVersion()
+            library("junit-platform-launcher", "org.junit.platform", "junit-platform-launcher").withoutVersion()
             library("log4j-bom", "org.apache.logging.log4j", "log4j-bom").versionRef("log4j-bom")
             library("log4j-api", "org.apache.logging.log4j", "log4j-api").withoutVersion()
             library("log4j-core", "org.apache.logging.log4j", "log4j-core").withoutVersion()
