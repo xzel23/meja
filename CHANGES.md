@@ -11,6 +11,7 @@
     - declared methods not intended to be called from non-library code as private
     - added export methods for single sheets
     - changed CSS style name ID generation from MD5 to UUID, shortened CSS style names
+- update Apache POI to 5.5.0
 
 ## Version 8.1.2
 

@@ -44,7 +44,7 @@ dependencyResolutionManagement {
             version("jspecify", "1.0.0")
             version("junit-bom", "6.0.1")
             version("log4j-bom", "2.25.2")
-            version("poi", "5.4.1")
+            version("poi", "5.5.0")
             version("spotbugs", "4.9.8")
 
             library("dua3-utility-bom", "com.dua3.utility", "utility-bom").versionRef("dua3-utility")
@@ -125,6 +125,12 @@ dependencyResolutionManagement {
                 mavenContent {
                     snapshotsOnly()
                 }
+            }
+
+            // Apache staging
+            maven {
+                name = "apache-staging"
+                url = java.net.URI( "https://repository.apache.org/content/repositories/staging/")
             }
         }
 
