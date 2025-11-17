@@ -3,7 +3,7 @@
 ## Version 9.0.0 (in progress)
 
 - snapshot builds are published to maven snapshots
-- migrate rom OSS-RH to Central Publishing Portal
+- migrate from OSS-RH to Central Publishing Portal
 - use JReleaser dor deploying/publishing
 - renamed the `meja` module to `meja-core`
 - use SonarQube static analysis, jacoco aggregate reporting
