@@ -185,7 +185,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
                     LOG.trace("columns added");
                     columnCountProperty.setValue(sheet.getColumnCount());
                 }
-                case SheetEvent.ActiveCellChanged activeCellChanged -> {
+                case SheetEvent.ActiveCellChanged activeCellChanged when activeCellChanged.newValue() != null -> {
                     LOG.trace("active cell changed");
                     currentCellProperty.set(activeCellChanged.newValue());
                 }
