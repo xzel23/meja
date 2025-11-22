@@ -16,7 +16,7 @@ java {
 
 javafx {
     version = libs.versions.javafx.get()
-    modules = listOf("javafx.controls", "javafx.graphics", "javafx.fxml")
+    modules = listOf("javafx.controls", "javafx.graphics")
 }
 
 dependencies {
