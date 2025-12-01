@@ -7,11 +7,12 @@
 - use JReleaser dor deploying/publishing
 - renamed the `meja` module to `meja-core`
 - use SonarQube static analysis, jacoco aggregate reporting
+- update Apache POI to 5.5.1
 - HtmlWorkbookWriter
     - declared methods not intended to be called from non-library code as private
     - added export methods for single sheets
     - changed CSS style name ID generation from MD5 to UUID, shortened CSS style names
-- update Apache POI to 5.5.0
+- small fixes and improvements
 
 ## Version 8.1.2
 
