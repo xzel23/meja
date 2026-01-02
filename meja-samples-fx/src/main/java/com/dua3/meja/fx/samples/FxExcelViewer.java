@@ -8,7 +8,6 @@ import com.dua3.utility.fx.controls.Controls;
 import com.dua3.utility.fx.controls.Dialogs;
 import com.dua3.utility.fx.controls.SliderWithButtons;
 import com.dua3.utility.io.IoUtil;
-import com.dua3.utility.lang.SystemInfo;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -84,22 +83,19 @@ public final class FxExcelViewer {
 
             // create menu
             MenuBar menuBar = new MenuBar(
-                    Controls.menu("File",
-                            Controls.menuItem("Open", () -> openWorkbook(primaryStage)),
-                            Controls.menuItem("Save As...",
-                                    () -> saveWorkbookAs(primaryStage),
-                                    Bindings.isNotNull(fxWorkbookView.workbookProperty())),
-                            Controls.menuItem("Exit", Platform::exit)
-                    ),
-                    Controls.menu("Help",
-                            Controls.menuItem("System Information", () ->
-                                    Dialogs.alert(primaryStage, AlertType.INFORMATION)
-                                            .title("System Information")
-                                            .header(SystemInfo.getSystemInfo().formatted())
-                                            .build()
-                                            .showAndWait()
+                    Controls.menu()
+                            .text("File")
+                            .items(
+                                    Controls.menuItem().text("Open").action(() -> openWorkbook(primaryStage)).build(),
+                                    Controls.menuItem().text("Save As...").action(() -> saveWorkbookAs(primaryStage)).build(),
+                                    Controls.menuItem().text("Exit").action(Platform::exit).build()
                             )
-                    )
+                            .build(),
+                    Controls.menu()
+                            .text("Help").items(
+                                    Controls.menuItem().text("System Information").action(() -> Dialogs.alert(primaryStage, AlertType.INFORMATION)).build()
+                            )
+                            .build()
             );
             menuBar.setUseSystemMenuBar(true);
 
@@ -112,7 +108,7 @@ public final class FxExcelViewer {
                     Controls.button()
                             .graphic(Controls.graphic("fth-save"))
                             .action(() -> saveWorkbookAs(primaryStage))
-                            .bindEnabled(Bindings.isNotNull(fxWorkbookView.workbookProperty()))
+                            .enabled(Bindings.isNotNull(fxWorkbookView.workbookProperty()))
                             .build(),
                     Controls.slider()
                             .mode(SliderWithButtons.Mode.SLIDER_VALUE)
