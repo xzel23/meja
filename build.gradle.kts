@@ -108,6 +108,19 @@ fun isDevelopmentVersion(versionString: String): Boolean {
 val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
 val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snapshot")
 
+allprojects {
+    if (!project.name.endsWith("-bom")) {
+        apply(plugin = "java-library")
+        apply(plugin = rootProject.libs.plugins.jdk.get().pluginId)
+
+        jdk {
+            version = 21
+            javaFxBundled = true
+            nativeImageCapable = false
+        }
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // Subprojects configuration
 /////////////////////////////////////////////////////////////////////////////
@@ -129,17 +142,10 @@ subprojects {
     // Skip some plugins for BOM project
     if (!project.name.endsWith("-bom")) {
         apply(plugin = "jacoco")
-        apply(plugin = "java-library")
         apply(plugin = "jvm-test-suite")
         apply(plugin = rootProject.libs.plugins.spotbugs.get().pluginId)
         apply(plugin = rootProject.libs.plugins.cabe.get().pluginId)
         apply(plugin = rootProject.libs.plugins.jmh.get().pluginId)
-    }
-
-    jdk {
-        version = 21
-        javaFxBundled = true
-        nativeImageCapable = false
     }
 
     // Java configuration for non-BOM projects
