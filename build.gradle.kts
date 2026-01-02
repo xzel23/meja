@@ -26,12 +26,11 @@ plugins {
     id("signing")
     id("idea")
     id("jacoco-report-aggregation")
+    alias(libs.plugins.jdk)
     alias(libs.plugins.versions)
     alias(libs.plugins.test.logger)
     alias(libs.plugins.spotbugs)
     alias(libs.plugins.cabe)
-    alias(libs.plugins.forbiddenapis)
-    alias(libs.plugins.javafx)
     alias(libs.plugins.jmh)
     alias(libs.plugins.sonar)
     alias(libs.plugins.jreleaser)
@@ -67,91 +66,6 @@ tasks.register("printVersion") {
     doLast { println(project.version) }
 }
 
-// Task to display inputs and outputs of a specified task
-tasks.register("showTaskIO") {
-    description = "Shows the inputs and outputs of a specified Gradle task."
-    group = HelpTasksPlugin.HELP_GROUP
-
-    // Define a property for the task name
-    val taskName = project.findProperty("taskName") as String? ?: "help"
-
-    doLast {
-        val task = project.tasks.findByName(taskName)
-        if (task == null) {
-            println("Task '$taskName' not found. Available tasks:")
-            project.tasks.names.sorted().forEach { println("  $it") }
-            return@doLast
-        }
-
-        println("\n=== Task: ${task.path} ===")
-
-        // Display task inputs
-        println("\nINPUTS:")
-        if (task.inputs.hasInputs) {
-            // Safely access properties
-            try {
-                val properties = task.inputs.properties
-                if (properties.isNotEmpty()) {
-                    properties.entries.forEach { entry ->
-                        println("  ${entry.key}: ${entry.value}")
-                    }
-                } else {
-                    println("  No input properties.")
-                }
-            } catch (e: Exception) {
-                println("  Error accessing input properties: ${e.message}")
-            }
-
-            println("\n  Input Files:")
-            try {
-                val files = task.inputs.files.files
-                if (files.isNotEmpty()) {
-                    files.forEach { file ->
-                        println("    ${file.absolutePath} (exists: ${file.exists()})")
-                    }
-                } else {
-                    println("    No input files.")
-                }
-            } catch (e: Exception) {
-                println("  Error accessing input files: ${e.message}")
-            }
-        } else {
-            println("  No declared inputs.")
-        }
-
-        // Display task outputs
-        println("\nOUTPUTS:")
-        if (task.outputs.hasOutput) {
-            println("  Output Files:")
-            try {
-                val files = task.outputs.files.files
-                if (files.isNotEmpty()) {
-                    files.filter { !it.isDirectory }.forEach { file ->
-                        println("    ${file.absolutePath} (exists: ${file.exists()})")
-                    }
-                } else {
-                    println("    No output files.")
-                }
-
-                println("\n  Output Directories:")
-                if (files.any { it.isDirectory }) {
-                    files.filter { it.isDirectory }.forEach { dir ->
-                        println("    ${dir.absolutePath} (exists: ${dir.exists()})")
-                    }
-                } else {
-                    println("    No output directories.")
-                }
-            } catch (e: Exception) {
-                println("  Error accessing output files: ${e.message}")
-            }
-        } else {
-            println("  No declared outputs.")
-        }
-
-        println("\n=== End of Task Info ===\n")
-    }
-}
-
 // Aggregate all subprojects for JaCoCo report aggregation
 
 dependencies {
@@ -184,6 +98,7 @@ sonar {
     }
 }
 
+// check for development/release version
 fun isDevelopmentVersion(versionString: String): Boolean {
     val v = versionString.toDefaultLowerCase()
     val markers = listOf("snapshot", "alpha", "beta")
@@ -207,7 +122,7 @@ subprojects {
     apply(plugin = "version-catalog")
     apply(plugin = "signing")
     apply(plugin = "idea")
-    apply(plugin = rootProject.libs.plugins.javafx.get().pluginId)
+    apply(plugin = rootProject.libs.plugins.jdk.get().pluginId)
     apply(plugin = rootProject.libs.plugins.versions.get().pluginId)
     apply(plugin = rootProject.libs.plugins.test.logger.get().pluginId)
 
@@ -218,19 +133,18 @@ subprojects {
         apply(plugin = "jvm-test-suite")
         apply(plugin = rootProject.libs.plugins.spotbugs.get().pluginId)
         apply(plugin = rootProject.libs.plugins.cabe.get().pluginId)
-        apply(plugin = rootProject.libs.plugins.forbiddenapis.get().pluginId)
         apply(plugin = rootProject.libs.plugins.jmh.get().pluginId)
+    }
+
+    jdk {
+        version = 21
+        javaFxBundled = true
+        nativeImageCapable = false
     }
 
     // Java configuration for non-BOM projects
     if (!project.name.endsWith("-bom")) {
         java {
-            toolchain {
-                languageVersion.set(JavaLanguageVersion.of(21))
-            }
-            targetCompatibility = JavaVersion.VERSION_21
-            sourceCompatibility = targetCompatibility
-
             withJavadocJar()
             withSourcesJar()
         }
@@ -324,7 +238,6 @@ subprojects {
             options.encoding = "UTF-8"
             options.compilerArgs.addAll(listOf("-Xlint:deprecation", "-Xlint:-module", "-Xlint:unchecked"))
             options.javaModuleVersion.set(provider { project.version as String })
-            options.release.set(java.targetCompatibility.majorVersion.toInt())
         }
         tasks.compileTestJava {
             options.encoding = "UTF-8"
@@ -349,13 +262,8 @@ subprojects {
         }
     }
 
-    // Forbidden APIs and SpotBugs for non-BOM projects
+    // SpotBugs for non-BOM projects
     if (!project.name.endsWith("-bom")) {
-        // === FORBIDDEN APIS ===
-        tasks.withType(de.thetaphi.forbiddenapis.gradle.CheckForbiddenApis::class).configureEach {
-            bundledSignatures = setOf("jdk-internal", "jdk-deprecated")
-            ignoreFailures = false
-        }
 
         // === SPOTBUGS ===
         spotbugs {
@@ -519,7 +427,9 @@ tasks.register("publishToStagingDirectory") {
 tasks.register<Javadoc>("aggregateJavadoc") {
     group = "documentation"
     description = "Generates aggregated Javadoc for all subprojects"
-
+    executable = jdk.jdkHome.get()
+        .file("bin/javadoc${if (System.getProperty("os.name").contains("Windows", ignoreCase = true)) ".exe" else ""}")
+        .toString()
     setDestinationDir(layout.buildDirectory.dir("docs/javadoc").get().asFile)
     setTitle("${rootProject.name} ${project.version} API")
 
@@ -588,11 +498,13 @@ jreleaser {
     }
 
     signing {
-        publicKey.set(System.getenv("SIGNING_PUBLIC_KEY"))
-        secretKey.set(System.getenv("SIGNING_SECRET_KEY"))
-        passphrase.set(System.getenv("SIGNING_PASSWORD"))
         active.set(org.jreleaser.model.Active.ALWAYS)
-        armored.set(true)
+        pgp {
+            armored.set(true)
+            publicKey.set(System.getenv("SIGNING_PUBLIC_KEY"))
+            secretKey.set(System.getenv("SIGNING_SECRET_KEY"))
+            passphrase.set(System.getenv("SIGNING_PASSWORD"))
+        }
     }
 
     deploy {

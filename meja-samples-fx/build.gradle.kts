@@ -1,22 +1,12 @@
 plugins {
     id("application")
-    alias(libs.plugins.javafx)
 }
 
 project.description = "Meja spreadsheet library - samples (JavaFX)"
 
 java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
-
     withJavadocJar()
     withSourcesJar()
-}
-
-javafx {
-    version = libs.versions.javafx.get()
-    modules = listOf("javafx.controls", "javafx.graphics")
 }
 
 dependencies {
