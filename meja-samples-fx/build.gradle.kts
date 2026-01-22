@@ -20,7 +20,7 @@ dependencies {
     implementation(rootProject.libs.dua3.utility.logging)
     implementation(rootProject.libs.dua3.utility.logging.log4j)
     implementation(rootProject.libs.log4j.api)
-    implementation(rootProject.libs.log4j.core)
+    implementation(rootProject.libs.slb4j)
     implementation(rootProject.libs.dua3.utility.fx)
     implementation(rootProject.libs.dua3.utility.fx.controls)
     implementation(rootProject.libs.dua3.utility.fx.icons.ikonli)

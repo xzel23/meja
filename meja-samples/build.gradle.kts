@@ -16,7 +16,7 @@ dependencies {
     implementation(rootProject.libs.dua3.utility.swing)
 
     implementation(rootProject.libs.log4j.api)
-    implementation(rootProject.libs.log4j.core)
+    implementation(rootProject.libs.slb4j)
     implementation(rootProject.libs.log4j.jul)
     implementation(rootProject.libs.log4j.jcl)
 

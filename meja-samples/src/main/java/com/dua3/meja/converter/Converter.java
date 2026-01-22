@@ -17,6 +17,10 @@ import java.io.IOException;
  */
 public final class Converter {
 
+    static {
+        SLB4J.init();
+    }
+
     private Converter() {
     }
 

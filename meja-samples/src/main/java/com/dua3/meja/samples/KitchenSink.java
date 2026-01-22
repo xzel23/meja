@@ -34,6 +34,8 @@ public final class KitchenSink extends JFrame {
     private static final boolean SHOW_LOG_WINDOW = System.getProperty("logwindow") != null;
 
     static {
+        SLB4J.init();
+
         // this must be done before any logger is created!
         if (SHOW_LOG_WINDOW) {
             LogUtilLog4J.init(LogLevel.TRACE);

@@ -66,6 +66,10 @@ import java.util.Optional;
 @SuppressWarnings("serial")
 public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingSheetView>, DropTargetListener {
 
+    static {
+        SLB4J.init();
+    }
+
     private static final Logger LOG = LogManager.getLogger(SwingExcelViewer.class);
 
     private static final int STATUS_ERROR = 1;

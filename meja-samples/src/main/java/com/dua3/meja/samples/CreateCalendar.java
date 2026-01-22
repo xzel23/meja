@@ -37,6 +37,10 @@ import java.util.Locale;
  */
 public final class CreateCalendar {
 
+    static {
+        SLB4J.init();
+    }
+
     private CreateCalendar() {
     }
 
