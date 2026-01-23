@@ -26,9 +26,6 @@ dependencies {
         // dua3 utility
         api(rootProject.libs.dua3.utility)
         api(rootProject.libs.dua3.utility.db)
-        api(rootProject.libs.dua3.utility.logging)
-        api(rootProject.libs.dua3.utility.logging.log4j)
-        api(rootProject.libs.dua3.utility.logging.slf4j)
         api(rootProject.libs.dua3.utility.swing)
         api(rootProject.libs.dua3.utility.fx)
         api(rootProject.libs.dua3.utility.fx.controls)

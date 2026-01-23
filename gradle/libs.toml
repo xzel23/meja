@@ -1,0 +1,54 @@
+[versions]
+jdk = "0.4.0"
+versions = "0.53.0"
+test-logger = "4.0.0"
+spotbugs-plugin = "6.4.8"
+cabe = "3.3.0"
+sonar = "7.2.2.6593"
+jmh-plugin = "0.7.3"
+jreleaser = "1.22.0"
+
+dua3-utility = "20.4.2"
+ikonli = "12.4.0"
+jmh = "1.37"
+jspecify = "1.0.0"
+junit-bom = "6.0.2"
+log4j-bom = "2.25.3"
+poi = "5.5.1"
+spotbugs = "4.9.8"
+slb4j = "0.1-beta2"
+commons-compress = "1.26.2"
+
+[libraries]
+dua3-utility-bom = { group = "com.dua3.utility", name = "utility-bom", version.ref = "dua3-utility" }
+dua3-utility = { group = "com.dua3.utility", name = "utility" }
+dua3-utility-db = { group = "com.dua3.utility", name = "utility-db" }
+dua3-utility-fx-icons = { group = "com.dua3.utility", name = "utility-fx-icons" }
+dua3-utility-fx-icons-ikonli = { group = "com.dua3.utility", name = "utility-fx-icons-ikonli" }
+dua3-utility-swing = { group = "com.dua3.utility", name = "utility-swing" }
+dua3-utility-fx = { group = "com.dua3.utility", name = "utility-fx" }
+dua3-utility-fx-controls = { group = "com.dua3.utility", name = "utility-fx-controls" }
+ikonli-fontawesome = { group = "org.kordamp.ikonli", name = "ikonli-fontawesome-pack", version.ref = "ikonli" }
+ikonli-feather = { group = "org.kordamp.ikonli", name = "ikonli-feather-pack", version.ref = "ikonli" }
+ikonli-javafx = { group = "org.kordamp.ikonli", name = "ikonli-javafx", version.ref = "ikonli" }
+jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }
+junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit-bom" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
+log4j-bom = { group = "org.apache.logging.log4j", name = "log4j-bom", version.ref = "log4j-bom" }
+log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api" }
+slb4j = { group = "org.slb4j", name = "slb4j", version.ref = "slb4j" }
+poi = { group = "org.apache.poi", name = "poi", version.ref = "poi" }
+poi-ooxml = { group = "org.apache.poi", name = "poi-ooxml", version.ref = "poi" }
+commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commons-compress" }
+
+[plugins]
+jdk = { id = "com.dua3.gradle.jdkprovider", version.ref = "jdk" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
+test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger" }
+spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs-plugin" }
+cabe = { id = "com.dua3.cabe", version.ref = "cabe" }
+sonar = { id = "org.sonarqube", version.ref = "sonar" }
+jmh = { id = "me.champeau.jmh", version.ref = "jmh-plugin" }
+jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }

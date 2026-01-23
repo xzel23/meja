@@ -11,14 +11,10 @@ dependencies {
     implementation(project(":meja-swing"))
 
     implementation(rootProject.libs.dua3.utility)
-    implementation(rootProject.libs.dua3.utility.logging)
-    implementation(rootProject.libs.dua3.utility.logging.log4j)
     implementation(rootProject.libs.dua3.utility.swing)
 
     implementation(rootProject.libs.log4j.api)
     implementation(rootProject.libs.slb4j)
-    implementation(rootProject.libs.log4j.jul)
-    implementation(rootProject.libs.log4j.jcl)
 
     implementation(project(":meja-poi"))
 }

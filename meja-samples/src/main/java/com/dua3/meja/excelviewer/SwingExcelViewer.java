@@ -22,12 +22,13 @@ import com.dua3.meja.ui.swing.MejaSwingHelper;
 import com.dua3.meja.ui.swing.SwingSheetView;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.meja.util.MejaHelper;
-import com.dua3.utility.logging.LogLevel;
-import com.dua3.utility.logging.log4j.LogUtilLog4J;
 import com.dua3.utility.swing.SwingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
+import org.slb4j.LogFilter;
+import org.slb4j.LogLevel;
+import org.slb4j.SLB4J;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
@@ -105,7 +106,7 @@ public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingSheetVi
     public static void main(String[] args) {
         List<String> argList = new ArrayList<>(List.of(args));
         if (argList.remove("--debug")) {
-            LogUtilLog4J.init(LogLevel.TRACE);
+            SLB4J.getDispatcher().setFilter(LogFilter.allPass());
         }
 
         SwingUtil.setNativeLookAndFeel(APPLICATION_NAME);

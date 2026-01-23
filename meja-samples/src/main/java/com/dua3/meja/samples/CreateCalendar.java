@@ -8,6 +8,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.utility.data.Color;
+import org.slb4j.SLB4J;
 
 import java.io.IOException;
 import java.net.URI;

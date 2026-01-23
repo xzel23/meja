@@ -1,6 +1,12 @@
 # Meja Changelog
 
-## Version 9.0.0 (in progress)
+## Version 10
+
+- support building on Wndows ARM
+- use SLB4J logging backend for samples; remove other backends and bridge implementations
+- dependency updates
+
+## Version 9.0.0
 
 - snapshot builds are published to maven snapshots
 - migrate from OSS-RH to Central Publishing Portal

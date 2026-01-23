@@ -5,14 +5,12 @@ import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.meja.util.MejaHelper;
 import com.dua3.utility.fx.FxLogWindow;
 import com.dua3.utility.lang.LangUtil;
-import com.dua3.utility.logging.LogBuffer;
-import com.dua3.utility.logging.LogLevel;
-import com.dua3.utility.logging.LogUtil;
-import com.dua3.utility.logging.log4j.LogUtilLog4J;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
+import org.slb4j.LogLevel;
+import org.slb4j.SLB4J;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -22,18 +20,8 @@ import java.net.URISyntaxException;
  */
 public final class FxShowTestXlsx extends Application {
 
-    private static final @Nullable LogBuffer logBuffer;
-
-    private static final boolean SHOW_LOG_WINDOW = false;
-
     static {
-        LogBuffer buffer = null;
-        if (SHOW_LOG_WINDOW) {
-            LogUtilLog4J.init(LogLevel.TRACE);
-            buffer = new LogBuffer(100000);
-            LogUtil.getGlobalDispatcher().addLogEntryHandler(buffer);
-        }
-        logBuffer = buffer;
+        SLB4J.init();
     }
 
     private final Workbook wb;
@@ -59,10 +47,6 @@ public final class FxShowTestXlsx extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        if (logBuffer != null) {
-            new FxLogWindow(logBuffer).show();
-        }
-
         final FxWorkbookView view = new FxWorkbookView();
         Scene scene = new Scene(view, 1000, 600);
 
