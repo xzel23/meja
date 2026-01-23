@@ -3,13 +3,10 @@ package com.dua3.meja.fx.samples;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.ui.fx.FxWorkbookView;
 import com.dua3.meja.util.MejaHelper;
-import com.dua3.utility.fx.FxLogWindow;
 import com.dua3.utility.lang.LangUtil;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.jspecify.annotations.Nullable;
-import org.slb4j.LogLevel;
 import org.slb4j.SLB4J;
 
 import java.io.IOException;

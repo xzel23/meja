@@ -13,4 +13,5 @@ module com.dua3.meja.samples {
     requires org.apache.logging.log4j;
     requires org.jspecify;
     requires org.slb4j;
+    requires org.slb4j.ext.swing;
 }

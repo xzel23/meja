@@ -15,6 +15,7 @@ dependencies {
 
     implementation(rootProject.libs.log4j.api)
     implementation(rootProject.libs.slb4j)
+    implementation(rootProject.libs.slb4j.ext.swing)
 
     implementation(project(":meja-poi"))
 }

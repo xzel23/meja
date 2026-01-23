@@ -9,15 +9,14 @@ import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
 import com.dua3.meja.ui.swing.SwingWorkbookView;
 import com.dua3.utility.data.Color;
-import com.dua3.utility.swing.SwingLogFrame;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slb4j.LogLevel;
 import org.slb4j.SLB4J;
+import org.slb4j.ext.swing.SwingLogWindow;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -38,7 +37,7 @@ public final class KitchenSink extends JFrame {
 
         // this must be done before any logger is created!
         if (SHOW_LOG_WINDOW) {
-            new SwingLogFrame("LOG").setVisible(true);
+            new SwingLogWindow("LOG").setVisible(true);
         }
 
         LOG = LogManager.getLogger("KitchenSink");
