@@ -7,7 +7,6 @@ import com.dua3.utility.lang.LangUtil;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.slb4j.SLB4J;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -16,10 +15,6 @@ import java.net.URISyntaxException;
  * A simple demo application that just displays the file 'test.xlsx'.
  */
 public final class FxShowTestXlsx extends Application {
-
-    static {
-        SLB4J.init();
-    }
 
     private final Workbook wb;
 

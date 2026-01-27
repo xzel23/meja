@@ -15,7 +15,6 @@ import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.slb4j.SLB4J;
 import org.slb4j.ext.swing.SwingLogWindow;
 
 import javax.swing.JFrame;
@@ -28,19 +27,15 @@ import java.util.Map.Entry;
  * Kitchensink example.
  */
 public final class KitchenSink extends JFrame {
-    private static final Logger LOG;
+    private static final Logger LOG = LogManager.getLogger("KitchenSink");
 
     private static final boolean SHOW_LOG_WINDOW = System.getProperty("logwindow") != null;
 
     static {
-        SLB4J.init();
-
         // this must be done before any logger is created!
         if (SHOW_LOG_WINDOW) {
             new SwingLogWindow("LOG").setVisible(true);
         }
-
-        LOG = LogManager.getLogger("KitchenSink");
     }
 
     @Serial

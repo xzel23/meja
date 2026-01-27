@@ -5,7 +5,6 @@ package com.dua3.meja.converter;
 
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.generic.GenericWorkbookFactory;
-import org.slb4j.SLB4J;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,10 +16,6 @@ import java.io.IOException;
  * relevant format of the input and output files.
  */
 public final class Converter {
-
-    static {
-        SLB4J.init();
-    }
 
     private Converter() {
     }

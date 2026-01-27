@@ -27,7 +27,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import org.slb4j.LogFilter;
-import org.slb4j.LogLevel;
 import org.slb4j.SLB4J;
 
 import javax.swing.AbstractAction;
@@ -66,10 +65,6 @@ import java.util.Optional;
  */
 @SuppressWarnings("serial")
 public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingSheetView>, DropTargetListener {
-
-    static {
-        SLB4J.init();
-    }
 
     private static final Logger LOG = LogManager.getLogger(SwingExcelViewer.class);
 
