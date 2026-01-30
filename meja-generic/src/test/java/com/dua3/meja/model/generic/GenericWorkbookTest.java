@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class GenericWorkbookTest {
 
     private static final Path testdataDir = IoUtil.toPath(GenericWorkbookTest.class.getResource("/"))
-            .resolve("../../../../../testdata").normalize();
+            .resolve("../../../../testdata").normalize();
 
     @Test
     void testCsv() throws Exception {

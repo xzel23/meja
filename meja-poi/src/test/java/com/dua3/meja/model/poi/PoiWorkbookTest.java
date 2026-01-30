@@ -41,7 +41,7 @@ class PoiWorkbookTest {
     @BeforeAll
     static void setup() throws IOException {
         testdataDir = IoUtil.toPath(PoiWorkbookTest.class.getResource("/"))
-                .resolve("../../../../../testdata").normalize();
+                .resolve("../../../../testdata").normalize();
         tempDir = Files.createTempDirectory("meja-test");
     }
 
