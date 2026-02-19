@@ -22,9 +22,7 @@ dependencies {
     implementation(rootProject.libs.dua3.utility.fx)
     implementation(rootProject.libs.dua3.utility.fx.controls)
     implementation(rootProject.libs.dua3.utility.fx.icons.ikonli)
-
-    // ikonli is used by fx-icons-ikonli; since there are dozens of icon packs, we must specify the ones to include here
-    runtimeOnly(libs.ikonli.feather)
+    implementation(rootProject.libs.ikonli.feather)
 }
 
 tasks.register<JavaExec>("runFxExcelViewer") {

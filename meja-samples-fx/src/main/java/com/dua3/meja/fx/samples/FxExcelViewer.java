@@ -18,6 +18,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.kordamp.ikonli.feather.Feather;
 
 import java.io.IOException;
 
@@ -102,11 +103,11 @@ public final class FxExcelViewer {
             // create toolbar
             ToolBar toolBar = new ToolBar(
                     Controls.button()
-                            .graphic(Controls.graphic("fth-folder"))
+                            .graphic(Controls.graphic(Feather.FOLDER.getDescription()))
                             .action(() -> openWorkbook(primaryStage))
                             .build(),
                     Controls.button()
-                            .graphic(Controls.graphic("fth-save"))
+                            .graphic(Controls.graphic(Feather.SAVE.getDescription()))
                             .action(() -> saveWorkbookAs(primaryStage))
                             .enabled(Bindings.isNotNull(fxWorkbookView.workbookProperty()))
                             .build(),
