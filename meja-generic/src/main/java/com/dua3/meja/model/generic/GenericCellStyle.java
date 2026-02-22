@@ -247,7 +247,7 @@ public class GenericCellStyle implements CellStyle {
 
     @Override
     public void setRotation(short angle) {
-        this.rotation = LangUtil.requireInInterval(angle, (short) -90, (short) 90, "angle must be in range [-90, 90]: %d", angle);
+        this.rotation = LangUtil.requireInInterval(angle, (short) -90, (short) 90);
     }
 
     @Override
