@@ -29,7 +29,7 @@ import org.jspecify.annotations.Nullable;
  * A custom cell implementation for rendering rows in a spreadsheet. It extends the IndexedCell class and overrides several methods to customize the appearance and behavior of the
  *  cell.
  */
-public class FxRow extends IndexedCell<FxRow.Index> {
+public final class FxRow extends IndexedCell<FxRow.Index> {
     private static final Logger LOG = LogManager.getLogger(FxRow.class);
 
     /**
@@ -332,7 +332,7 @@ public class FxRow extends IndexedCell<FxRow.Index> {
         renderColumnLabels(Side.RIGHT, fxrg);
     }
 
-    private void renderEmpty(FxRowGraphics fxrg) {
+    private static void renderEmpty(FxRowGraphics fxrg) {
         fxrg.setVisible(false);
     }
 

@@ -4,7 +4,7 @@ import javafx.event.Event;
 import javafx.scene.control.IndexedCell;
 import javafx.scene.control.skin.VirtualFlow;
 
-class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends VirtualFlow<T> {
+final class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends VirtualFlow<T> {
     VirtualFlowWithHiddenScrollBars() {
         getChildren().remove(getVbar());
         getChildren().remove(getHbar());

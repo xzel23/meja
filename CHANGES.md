@@ -1,8 +1,14 @@
 # Meja Changelog
 
+## Version 10.1.0
+
+- update utility to 21.1.0
+- declare classes not intended for inheritance final
+- declare some private methods static
+
 ## Version 10
 
-- support building on Wndows ARM
+- support building on Windows ARM
 - use SLB4J logging backend for samples; remove other backends and bridge implementations
 - dependency updates
 

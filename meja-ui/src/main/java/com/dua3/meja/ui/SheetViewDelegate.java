@@ -553,7 +553,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * If the coordinate is outside bounds, the returned index may be extrapolated
      * or clipped based on the clipToExisting parameter.
      */
-    private int getPositionIndexFromCoordinate(
+    private static int getPositionIndexFromCoordinate(
             float[] positions,
             float coord,
             float defaultItemSizeInPixels,

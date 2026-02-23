@@ -99,12 +99,12 @@ class PoiWorkbookTest {
         );
     }
 
-    private void copyToHtml(Path inFile, Path outFile, Locale locale) throws IOException {
+    private static void copyToHtml(Path inFile, Path outFile, Locale locale) throws IOException {
         Workbook original = MejaHelper.openWorkbook(inFile);
         original.write(outFile, Arguments.of(Arguments.createEntry(IoOptions.OPTION_LOCALE, locale)));
     }
 
-    private void testCountryWorkbook(Path pathToWorkbook) throws IOException, URISyntaxException {
+    private static void testCountryWorkbook(Path pathToWorkbook) throws IOException, URISyntaxException {
         Workbook wb = MejaHelper.openWorkbook(pathToWorkbook);
         assertEquals(1, wb.getSheetCount());
 
@@ -224,7 +224,7 @@ class PoiWorkbookTest {
         assertEquals(expected, actual);
     }
 
-    private void testRowGetLastColNumErrorHelper(Workbook wb) {
+    private static void testRowGetLastColNumErrorHelper(Workbook wb) {
         Sheet sheet = wb.createSheet("index");
 
         assertEquals(0, sheet.getRowCount());

@@ -29,7 +29,7 @@ import java.util.Vector;
  * This dialog is a subclass of JDialog and provides a user interface for
  * configuring settings using various options.
  */
-public class SettingsDialog extends JDialog {
+public final class SettingsDialog extends JDialog {
 
     /**
      * Variable that will hold the dialog result, initialized with an empty result.

@@ -132,7 +132,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         out.format(Locale.ROOT, " }\n");
     }
 
-    private void writeCellStyleAttributes(Formatter out, CellStyle cs) {
+    private static void writeCellStyleAttributes(Formatter out, CellStyle cs) {
         out.format(Locale.ROOT, " %s ", cs.getFont().getCssStyle());
         out.format(Locale.ROOT, "%s ", cs.getHAlign().getCssStyle());
         out.format(Locale.ROOT, "%s", cs.getVAlign().getCssStyle());
@@ -472,7 +472,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      *
      * @param out the Formatter to write the HTML header to
      */
-    private void writeHtmlHeaderStart(Formatter out) {
+    private static void writeHtmlHeaderStart(Formatter out) {
         out.format(Locale.ROOT, "<html>\n<head>\n  <meta charset=\"utf-8\">\n");
     }
 
@@ -481,7 +481,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      *
      * @param out the Formatter to write the HTML header to
      */
-    private void writeHtmlHeaderEnd(Formatter out) {
+    private static void writeHtmlHeaderEnd(Formatter out) {
         out.format(Locale.ROOT, """
                 </head>
                 <body>
@@ -508,7 +508,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      *
      * @param out the Formatter to write the HTML footer to
      */
-    private void writeHtmlFooter(Formatter out) {
+    private static void writeHtmlFooter(Formatter out) {
         out.format(Locale.ROOT, "</body>\n</html>\n");
     }
 
@@ -531,7 +531,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param out the Formatter to write the CSS styles to
      * @param defaultCellStyle the default cell style
      */
-    private void writeCommonCss(Formatter out, CellStyle defaultCellStyle) {
+    private static void writeCommonCss(Formatter out, CellStyle defaultCellStyle) {
         out.format(Locale.ROOT, """
                 .meja-tabbar {
                   overflow: hidden;

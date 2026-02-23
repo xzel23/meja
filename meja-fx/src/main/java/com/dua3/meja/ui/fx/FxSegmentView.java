@@ -20,7 +20,7 @@ import org.jspecify.annotations.Nullable;
  * The class manages layout and interactions for a section of rows displayed in a grid-like
  * interface with customization options for scaling and displaying without scrollbars.
  */
-public class FxSegmentView extends Control implements SegmentView {
+public final class FxSegmentView extends Control implements SegmentView {
 
     private static final Logger LOG = LogManager.getLogger(FxSegmentView.class);
 

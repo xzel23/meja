@@ -39,7 +39,7 @@ import java.util.concurrent.Flow;
 /**
  * Swing component for displaying instances of class {@link Workbook}.
  */
-public class SwingWorkbookView extends JComponent implements WorkbookView<SwingSheetView>, ChangeListener, Flow.Subscriber<WorkbookEvent> {
+public final class SwingWorkbookView extends JComponent implements WorkbookView<SwingSheetView>, ChangeListener, Flow.Subscriber<WorkbookEvent> {
     private static final Logger LOG = LogManager.getLogger(SwingWorkbookView.class);
 
     // the workbook to show

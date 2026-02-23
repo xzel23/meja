@@ -63,8 +63,7 @@ import java.util.Optional;
  * This class extends {@code JFrame} and implements the {@code ExcelViewer} and {@code DropTargetListener} interfaces.
  * It provides a graphical interface for viewing Excel workbooks.
  */
-@SuppressWarnings("serial")
-public class SwingExcelViewer extends JFrame implements ExcelViewer<SwingSheetView>, DropTargetListener {
+public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingSheetView>, DropTargetListener {
 
     private static final Logger LOG = LogManager.getLogger(SwingExcelViewer.class);
 

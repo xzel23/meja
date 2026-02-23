@@ -10,7 +10,7 @@ import com.dua3.utility.fx.PlatformHelper;
  * SheetViewDelegate class. This class is designed to interface with an FxSheetView, allowing for behavior
  * and operations tailored to the FxSheetView's requirements and attributes.
  */
-public class FxSheetViewDelegate extends SheetViewDelegate {
+public final class FxSheetViewDelegate extends SheetViewDelegate {
 
     /**
      * Constructs an FxSheetViewDelegate instance linked to the specified FxSheetView.

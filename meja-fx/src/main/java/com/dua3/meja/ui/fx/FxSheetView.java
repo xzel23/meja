@@ -42,7 +42,7 @@ import java.util.Objects;
  * keyboard inputs for navigation. It also entangles scrollbar movements to ensure synchronized scrolling
  * across different quadrants.
  */
-public class FxSheetView extends StackPane implements SheetView {
+public final class FxSheetView extends StackPane implements SheetView {
     private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
     private final ObservableSheet observableSheet;
     private final FxSheetViewDelegate delegate;
