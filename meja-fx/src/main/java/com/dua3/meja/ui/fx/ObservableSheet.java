@@ -151,7 +151,7 @@ public class ObservableSheet extends ObservableListBase<Row> {
     public boolean equals(@Nullable Object o) {
         if (!(o instanceof ObservableSheet other)) return false;
         if (!super.equals(o)) return false;
-        return Objects.equals(sheet, other.sheet) && Objects.equals(layoutListeners, other.layoutListeners) && Objects.equals(zoomProperty, other.zoomProperty) && Objects.equals(columnCountProperty, other.columnCountProperty) && Objects.equals(splitRowProperty, other.splitRowProperty) && Objects.equals(splitColumnProperty, other.splitColumnProperty) && Objects.equals(currentCellProperty, other.currentCellProperty);
+        return sheet.equals(other.sheet) && layoutListeners.equals(other.layoutListeners) && zoomProperty.equals(other.zoomProperty) && columnCountProperty.equals(other.columnCountProperty) && splitRowProperty.equals(other.splitRowProperty) && splitColumnProperty.equals(other.splitColumnProperty) && currentCellProperty.equals(other.currentCellProperty);
     }
 
     @Override

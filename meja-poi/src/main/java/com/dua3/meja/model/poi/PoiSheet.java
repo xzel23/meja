@@ -116,7 +116,7 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof PoiSheet other && Objects.equals(poiSheet, other.poiSheet);
+        return obj instanceof PoiSheet other && poiSheet.equals(other.poiSheet);
     }
 
     @Override

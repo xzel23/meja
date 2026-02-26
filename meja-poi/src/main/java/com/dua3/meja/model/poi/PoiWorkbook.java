@@ -346,7 +346,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof PoiWorkbook other && Objects.equals(poiWorkbook, other.poiWorkbook);
+        return obj instanceof PoiWorkbook other && poiWorkbook.equals(other.poiWorkbook);
     }
 
     /**

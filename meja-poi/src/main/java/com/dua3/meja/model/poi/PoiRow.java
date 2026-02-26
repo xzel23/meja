@@ -51,7 +51,7 @@ public final class PoiRow extends AbstractRow<PoiSheet, PoiRow, PoiCell> {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj != null && getClass() == obj.getClass() && poiRow.equals(((PoiRow) obj).poiRow);
+        return obj instanceof PoiRow other && poiRow.equals(other.poiRow);
     }
 
     @Override

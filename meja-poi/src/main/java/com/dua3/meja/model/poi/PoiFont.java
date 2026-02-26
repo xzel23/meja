@@ -117,7 +117,7 @@ public class PoiFont {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof PoiFont other && Objects.equals(poiFont, other.poiFont);
+        return obj instanceof PoiFont other && poiFont.equals(other.poiFont);
     }
 
     /**

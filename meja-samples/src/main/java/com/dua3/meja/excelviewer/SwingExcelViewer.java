@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import org.slb4j.LogFilter;
+import org.slb4j.LogLevel;
 import org.slb4j.SLB4J;
 
 import javax.swing.AbstractAction;
@@ -100,7 +101,7 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
     public static void main(String[] args) {
         List<String> argList = new ArrayList<>(List.of(args));
         if (argList.remove("--debug")) {
-            SLB4J.getDispatcher().setFilter(LogFilter.allPass());
+            SLB4J.getDispatcher().setRootLevel(LogLevel.TRACE);
         }
 
         SwingUtil.setNativeLookAndFeel(APPLICATION_NAME);
