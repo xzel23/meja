@@ -25,8 +25,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Objects;
-
 /**
  * A class that wraps {@link org.apache.poi.ss.usermodel.Font} instances and provides mappings to the {@link Font}
  * class.

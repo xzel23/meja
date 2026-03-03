@@ -28,8 +28,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Objects;
-
 /**
  * POI implementation of the {@link com.dua3.meja.model.Sheet} interface.
  */
