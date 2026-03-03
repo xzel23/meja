@@ -126,7 +126,6 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     @Override
     public Optional<FxSheetView> getCurrentView() {
-        //noinspection ReturnOfNull
         return Optional.of(content)
                 .map(TabPane::getSelectionModel)
                 .map(SelectionModel::getSelectedItem)
