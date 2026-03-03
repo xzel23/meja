@@ -1,7 +1,7 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 rootProject.name = "dua3-meja"
-val projectVersion = "10.2.0-beta2-SNAPSHOT"
+val projectVersion = "10.2.0-beta2"
 
 include("meja-bom")
 include("meja-core")
