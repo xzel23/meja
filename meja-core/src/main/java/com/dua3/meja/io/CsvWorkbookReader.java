@@ -57,6 +57,7 @@ public final class CsvWorkbookReader extends WorkbookReader {
      * @return the workbook read
      * @throws IOException if an io-error occurs during reading
      */
+    @SuppressWarnings("java:S2095") // the caller is responsible for closing the returned workbook instance
     public <W extends Workbook> W read(WorkbookFactory<W> factory, BufferedReader in, URI uri) throws IOException {
         W workbook = factory.create();
         workbook.setUri(uri);
@@ -70,6 +71,7 @@ public final class CsvWorkbookReader extends WorkbookReader {
         return workbook;
     }
 
+    @SuppressWarnings("java:S2095") // the caller is responsible for closing the returned workbook instance
     @Override
     protected <W extends Workbook> W read(WorkbookFactory<W> factory, InputStream in, URI uri) throws IOException {
         W workbook = factory.create();
