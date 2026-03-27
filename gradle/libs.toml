@@ -1,5 +1,5 @@
 [versions]
-jdk = "0.4.0"
+jdk = "0.5.1"
 versions = "0.53.0"
 test-logger = "4.0.0"
 spotbugs-plugin = "6.4.8"
