@@ -98,7 +98,7 @@ public final class FxExcelViewer {
                             )
                             .build()
             );
-            menuBar.setUseSystemMenuBar(true);
+            Controls.useSystemMenuBar(menuBar, true);
 
             // create toolbar
             ToolBar toolBar = new ToolBar(
