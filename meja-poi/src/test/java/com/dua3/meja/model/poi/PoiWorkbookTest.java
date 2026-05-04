@@ -59,25 +59,28 @@ class PoiWorkbookTest {
     @ParameterizedTest
     @ValueSource(strings = {"population by country.xlsx", "population by country.xls"})
     void testSaveAndReloadWorkbook(String filename) throws Exception {
-        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve(filename));
         Path pathToCopy = tempDir.resolve(filename);
-        original.write(pathToCopy);
+        try (Workbook original = MejaHelper.openWorkbook(testdataDir.resolve(filename))) {
+            original.write(pathToCopy);
+        }
         testCountryWorkbook(pathToCopy);
     }
 
     @Test
     void testConvertXlsxToXls() throws Exception {
-        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"));
         Path pathToCopy = tempDir.resolve("population by country.xls");
-        original.write(pathToCopy);
+        try (Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xlsx"))) {
+            original.write(pathToCopy);
+        }
         testCountryWorkbook(pathToCopy);
     }
 
     @Test
     void testConvertXlsToXlsx() throws Exception {
-        Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"));
         Path pathToCopy = tempDir.resolve("population by country.xlsx");
-        original.write(pathToCopy);
+        try (Workbook original = MejaHelper.openWorkbook(testdataDir.resolve("population by country.xls"))) {
+            original.write(pathToCopy);
+        }
         testCountryWorkbook(pathToCopy);
     }
 
@@ -100,128 +103,134 @@ class PoiWorkbookTest {
     }
 
     private static void copyToHtml(Path inFile, Path outFile, Locale locale) throws IOException {
-        Workbook original = MejaHelper.openWorkbook(inFile);
-        original.write(outFile, Arguments.of(Arguments.createEntry(IoOptions.OPTION_LOCALE, locale)));
+        try (Workbook original = MejaHelper.openWorkbook(inFile)) {
+            original.write(outFile, Arguments.of(Arguments.createEntry(IoOptions.OPTION_LOCALE, locale)));
+        }
     }
 
     private static void testCountryWorkbook(Path pathToWorkbook) throws IOException, URISyntaxException {
-        Workbook wb = MejaHelper.openWorkbook(pathToWorkbook);
-        assertEquals(1, wb.getSheetCount());
+        try (Workbook wb = MejaHelper.openWorkbook(pathToWorkbook)) {
+            assertEquals(1, wb.getSheetCount());
 
-        Sheet sheet = wb.getSheet(0);
-        assertNotNull(sheet);
+            Sheet sheet = wb.getSheet(0);
+            assertNotNull(sheet);
 
-        assertEquals(1, sheet.getSplitRow());
-        assertEquals(1, sheet.getSplitRow());
+            assertEquals(1, sheet.getSplitRow());
+            assertEquals(1, sheet.getSplitRow());
 
-        Cell cChina = sheet.getCell(1, 0);
-        assertNotNull(cChina);
-        assertEquals("China", Objects.toString(cChina.getOrDefault(null)));
-        assertEquals("China", Objects.toString(cChina.getText()));
-        assertEquals("China", cChina.toString());
+            Cell cChina = sheet.getCell(1, 0);
+            assertNotNull(cChina);
+            assertEquals("China", Objects.toString(cChina.getOrDefault(null)));
+            assertEquals("China", Objects.toString(cChina.getText()));
+            assertEquals("China", cChina.toString());
 
-        Optional<URI> lChina = cChina.getHyperlink();
-        assertNotNull(lChina);
-        assertEquals(new URI("https://www.worldometers.info/world-population/china-population/"), lChina.get());
+            Optional<URI> lChina = cChina.getHyperlink();
+            assertNotNull(lChina);
+            assertEquals(new URI("https://www.worldometers.info/world-population/china-population/"), lChina.get());
 
-        double[] sums = {0.0, 7_794_798_739.0, 2.5957, 81_330_639.0, 111_806.0, 130_094_083.0, 1_263.0, 541.3, 6_152.0, 131.5, 0.9998};
+            double[] sums = {0.0, 7_794_798_739.0, 2.5957, 81_330_639.0, 111_806.0, 130_094_083.0, 1_263.0, 541.3, 6_152.0, 131.5, 0.9998};
 
-        for (int j = 0; j < sums.length; j++) {
-            final int jj = j;
-            double expected = sums[j];
-            double actual = sheet.rows()
-                    .map(row -> row.getCell(jj))
-                    .mapToDouble(c -> c.getCellType() == CellType.NUMERIC ? c.getNumber().doubleValue() : 0.0)
-                    .sum();
-            assertEquals(expected, actual);
+            for (int j = 0; j < sums.length; j++) {
+                final int jj = j;
+                double expected = sums[j];
+                double actual = sheet.rows()
+                        .map(row -> row.getCell(jj))
+                        .mapToDouble(c -> c.getCellType() == CellType.NUMERIC ? c.getNumber().doubleValue() : 0.0)
+                        .sum();
+                assertEquals(expected, actual);
+            }
         }
     }
 
     @Test
     void testHyperLink() throws Exception {
-        Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("Links.xlsx"));
-        Sheet sheet = wb.getSheetByName("Links");
+        try (Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("Links.xlsx"));
+             Workbook wb2 = PoiWorkbookFactory.instance().createXlsx()) {
+            Sheet sheet = wb.getSheetByName("Links");
 
-        Cell cCalendar = sheet.getCell(0, 1);
-        assertEquals("Calendar", cCalendar.toString());
+            Cell cCalendar = sheet.getCell(0, 1);
+            assertEquals("Calendar", cCalendar.toString());
 
-        // test relative hyperlink
-        Optional<URI> lCalendar = cCalendar.getHyperlink();
-        assertTrue(lCalendar.isPresent());
-        assertEquals(URI.create("Excel%202015%20Calendar.xlsx"), lCalendar.get());
+            // test relative hyperlink
+            Optional<URI> lCalendar = cCalendar.getHyperlink();
+            assertTrue(lCalendar.isPresent());
+            assertEquals(URI.create("Excel%202015%20Calendar.xlsx"), lCalendar.get());
 
-        // test resolving relative hyperlink
-        lCalendar = cCalendar.getResolvedHyperlink();
-        assertTrue(lCalendar.isPresent());
-        assertEquals(wb.getUri().get().resolve("Excel%202015%20Calendar.xlsx"), lCalendar.get());
+            // test resolving relative hyperlink
+            lCalendar = cCalendar.getResolvedHyperlink();
+            assertTrue(lCalendar.isPresent());
+            assertEquals(wb.getUri().get().resolve("Excel%202015%20Calendar.xlsx"), lCalendar.get());
 
-        Cell cEmail = sheet.getCell(2, 1);
-        assertEquals("Email Developer", cEmail.toString());
-        Optional<URI> lEmail = cEmail.getHyperlink();
-        assertTrue(lEmail.isPresent());
-        assertEquals(new URI("mailto:axel@dua3.com?subject=Meja%20Test%20Email"), lEmail.get());
+            Cell cEmail = sheet.getCell(2, 1);
+            assertEquals("Email Developer", cEmail.toString());
+            Optional<URI> lEmail = cEmail.getHyperlink();
+            assertTrue(lEmail.isPresent());
+            assertEquals(new URI("mailto:axel@dua3.com?subject=Meja%20Test%20Email"), lEmail.get());
 
-        Workbook wb2 = PoiWorkbookFactory.instance().createXlsx();
-        Sheet sheet2 = wb2.createSheet("Links");
+            Sheet sheet2 = wb2.createSheet("Links");
 
-        Cell cellLinkToFile = sheet2.getCell(0, 0);
-        cellLinkToFile.setHyperlink(lCalendar.get());
-        assertEquals(lCalendar.get(), cellLinkToFile.getHyperlink().get());
+            Cell cellLinkToFile = sheet2.getCell(0, 0);
+            cellLinkToFile.setHyperlink(lCalendar.get());
+            assertEquals(lCalendar.get(), cellLinkToFile.getHyperlink().get());
 
-        Cell cellLinkToEmail = sheet2.getCell(1, 0);
-        cellLinkToEmail.setHyperlink(lEmail.get());
-        assertEquals(lEmail.get(), cellLinkToEmail.getHyperlink().get());
+            Cell cellLinkToEmail = sheet2.getCell(1, 0);
+            cellLinkToEmail.setHyperlink(lEmail.get());
+            assertEquals(lEmail.get(), cellLinkToEmail.getHyperlink().get());
+        }
     }
 
     @Test
     void testHtmlExport() throws IOException {
-        Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
+        try (Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"))) {
+            // make sure the workbook URI is the same independent of the test environment
+            wb.setUri(URI.create(""));
 
-        // make sure the workbook URI is the same independent of the test environment
-        wb.setUri(URI.create(""));
+            for (Sheet sheet : wb) {
+                HtmlWorkbookWriter writer = HtmlWorkbookWriter.create();
 
-        for (Sheet sheet : wb) {
-            HtmlWorkbookWriter writer = HtmlWorkbookWriter.create();
+                String refHtml = Files.readString(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
 
-            String refHtml = Files.readString(testdataDir.resolve(sheet.getSheetName() + ".html"), StandardCharsets.UTF_8);
+                try (Formatter out = new Formatter()) {
+                    writer.exportSingleSheet(out, sheet);
+                    String actHtml = out.toString();
 
-            try (Formatter out = new Formatter()) {
-                writer.exportSingleSheet(out, sheet);
-                String actHtml = out.toString();
-
-                boolean updateResult = false; // set to true to update reference files
-                if (updateResult) {
-                    Files.writeString(testdataDir.resolve(sheet.getSheetName() + ".html"), actHtml, StandardCharsets.UTF_8);
-                } else {
-                    assertLinesMatch(refHtml.lines().map(PoiWorkbookTest::maskId), actHtml.lines().map(PoiWorkbookTest::maskId));
+                    boolean updateResult = false; // set to true to update reference files
+                    if (updateResult) {
+                        Files.writeString(testdataDir.resolve(sheet.getSheetName() + ".html"), actHtml, StandardCharsets.UTF_8);
+                    } else {
+                        assertLinesMatch(refHtml.lines().map(PoiWorkbookTest::maskId), actHtml.lines().map(PoiWorkbookTest::maskId));
+                    }
                 }
             }
         }
     }
 
     @Test
-    void testRowGetLastColNumErrorXlsx() {
-        Workbook wb = PoiWorkbookFactory.instance().createXlsx();
-        testRowGetLastColNumErrorHelper(wb);
+    void testRowGetLastColNumErrorXlsx() throws IOException {
+        try (Workbook wb = PoiWorkbookFactory.instance().createXlsx()) {
+            testRowGetLastColNumErrorHelper(wb);
+        }
     }
 
     @Test
-    void testRowGetLastColNumErrorXls() {
-        Workbook wb = PoiWorkbookFactory.instance().createXls();
-        testRowGetLastColNumErrorHelper(wb);
+    void testRowGetLastColNumErrorXls() throws IOException {
+        try (Workbook wb = PoiWorkbookFactory.instance().createXls()) {
+            testRowGetLastColNumErrorHelper(wb);
+        }
     }
 
     @Test
     @org.junit.jupiter.api.condition.EnabledIfSystemProperty(named = "user.language", matches = "de")
     void testParseGermanDate() throws IOException {
-        PoiWorkbook.PoiXssfWorkbook wb = (PoiWorkbook.PoiXssfWorkbook) MejaHelper.openWorkbook(testdataDir.resolve("Parse German Date.xlsx"));
-        wb.evaluateAllFormulaCells();
-        Sheet sheet = wb.getSheet(0);
+        try (PoiWorkbook.PoiXssfWorkbook wb = (PoiWorkbook.PoiXssfWorkbook) MejaHelper.openWorkbook(testdataDir.resolve("Parse German Date.xlsx"))) {
+            wb.evaluateAllFormulaCells();
+            Sheet sheet = wb.getSheet(0);
 
-        // date in A1
-        LocalDate expected = LocalDate.of(2025, 1, 1);
-        Object actual = sheet.getCell(0, 0).getDate();
-        assertEquals(expected, actual);
+            // date in A1
+            LocalDate expected = LocalDate.of(2025, 1, 1);
+            Object actual = sheet.getCell(0, 0).getDate();
+            assertEquals(expected, actual);
+        }
     }
 
     private static void testRowGetLastColNumErrorHelper(Workbook wb) {
