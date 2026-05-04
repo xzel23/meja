@@ -117,7 +117,6 @@ public class CellEditorPane extends JTextPane {
             }
 
             return switch (kind) {
-                case AbstractDocument.ContentElementName -> new LabelView(elem);
                 case AbstractDocument.ParagraphElementName -> new ParagraphView(elem);
                 case AbstractDocument.SectionElementName -> new AlignedBoxView(elem, View.Y_AXIS);
                 case StyleConstants.ComponentElementName -> new ComponentView(elem);
