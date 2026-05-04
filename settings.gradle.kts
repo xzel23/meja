@@ -1,7 +1,21 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 rootProject.name = "dua3-meja"
-val projectVersion = "10.2.1-SNAPSHOT"
+
+fun versionCatalogVersion(alias: String): String {
+    val catalog = file("gradle/libs.toml")
+    val versions = catalog.readLines()
+        .dropWhile { it.trim() != "[versions]" }
+        .drop(1)
+        .takeWhile { !it.trim().startsWith("[") }
+
+    val versionDeclaration = Regex("""^\s*${Regex.escape(alias)}\s*=\s*"([^"]+)"\s*(?:#.*)?$""")
+    return versions.firstNotNullOfOrNull { line ->
+        versionDeclaration.matchEntire(line)?.groupValues?.get(1)
+    } ?: throw GradleException("version '$alias' not found in ${catalog.path}")
+}
+
+val projectVersion = versionCatalogVersion("projectVersion")
 
 include("meja-bom")
 include("meja-core")
@@ -14,6 +28,12 @@ include("meja-samples")
 include("meja-fx")
 include("meja-samples-fx")
 
+gradle.projectsLoaded {
+    rootProject.allprojects {
+        version = projectVersion
+    }
+}
+
 dependencyResolutionManagement {
 
     val isSnapshot = projectVersion.toDefaultLowerCase().contains("-snapshot")
@@ -22,7 +42,6 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             from(files("gradle/libs.toml"))
-            version("projectVersion", projectVersion)
         }
     }
 

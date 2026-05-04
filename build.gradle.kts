@@ -63,7 +63,8 @@ project.description = Meta.DESCRIPTION
 tasks.register("printVersion") {
     description = "Print the project version to stdout."
     group = HelpTasksPlugin.HELP_GROUP
-    doLast { println(project.version) }
+    val version = project.version.toString()
+    doLast { println(version) }
 }
 
 // Aggregate all subprojects for JaCoCo report aggregation
@@ -159,9 +160,6 @@ allprojects {
 /////////////////////////////////////////////////////////////////////////////
 
 subprojects {
-
-    // Set project version from root libs.versions
-    project.version = rootProject.libs.versions.projectVersion.get()
 
     // Apply common plugins
     apply(plugin = "maven-publish")
@@ -311,7 +309,6 @@ subprojects {
     // JMH config for non-BOM projects
     if (!project.name.endsWith("-bom")) {
         jmh {
-            jmhVersion = rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs").findVersion("jmh").get().requiredVersion
             warmupIterations = 2
             iterations = 5
             fork = 1
@@ -323,7 +320,6 @@ subprojects {
 
         // === SPOTBUGS ===
         spotbugs {
-            toolVersion.set(rootProject.extensions.getByType<VersionCatalogsExtension>().named("libs").findVersion("spotbugs").get().requiredVersion)
             excludeFilter.set(rootProject.file("spotbugs-exclude.xml"))
         }
 
