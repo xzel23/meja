@@ -40,6 +40,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Flow;
+import java.util.stream.Stream;
 
 /**
  * Swing component for displaying instances of class {@link Workbook}.
@@ -130,17 +131,28 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
                 .map(TabPane::getSelectionModel)
                 .map(SelectionModel::getSelectedItem)
                 .map(Tab::getContent)
-                .map(content -> content instanceof FxSheetView sv ? sv : null);
+                .map(node -> node instanceof FxSheetView sv ? sv : null);
     }
 
     @Override
     public Optional<FxSheetView> getViewForSheet(Sheet sheet) {
-        return content.getTabs().stream()
-                .map(Tab::getContent)
-                .map(content -> content instanceof FxSheetView sv ? sv : null)
-                .filter(Objects::nonNull)
+        return streamViews()
                 .filter(sv -> sv.getSheet() == sheet)
                 .findFirst();
+    }
+
+    /**
+     * Creates a stream of {@link FxSheetView} instances from the tabs of the current workbook view.
+     * The method filters through the tabs, extracts their content, checks if the content is
+     * an instance of {@link FxSheetView}, and includes only non-null values in the resulting stream.
+     *
+     * @return a {@link Stream} of {@link FxSheetView} instances representing the views for each tab
+     */
+    private Stream<FxSheetView> streamViews() {
+        return content.getTabs().stream()
+                .map(Tab::getContent)
+                .map(node -> node instanceof FxSheetView sv ? sv : null)
+                .filter(Objects::nonNull);
     }
 
     /**
@@ -150,10 +162,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      * @return the view for the requested sheet or {@code null} if not found
      */
     public Optional<FxSheetView> getViewForSheet(String sheetName) {
-        return content.getTabs().stream()
-                .map(Tab::getContent)
-                .map(content -> content instanceof FxSheetView sv ? sv : null)
-                .filter(Objects::nonNull)
+        return streamViews()
                 .filter(sv -> Objects.equals(sv.getSheet().getSheetName(), sheetName))
                 .findFirst();
     }
@@ -176,10 +185,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     @Override
     public void setEditable(boolean editable) {
-        content.getTabs().stream()
-                .map(Tab::getContent)
-                .map(content -> content instanceof FxSheetView sv ? sv : null)
-                .filter(Objects::nonNull)
+        streamViews()
                 .forEach(sv -> sv.setEditable(editable));
     }
 
