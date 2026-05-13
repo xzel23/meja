@@ -1,6 +1,6 @@
 [versions]
 projectVersion = "10.2.1"
-jdk = "0.7.0-beta5"
+jdk = "0.7.0"
 versions = "0.54.0"
 test-logger = "4.0.0"
 spotbugs-plugin = "6.5.4"
