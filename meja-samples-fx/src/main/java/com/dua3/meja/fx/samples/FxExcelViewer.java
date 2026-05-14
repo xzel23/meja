@@ -113,7 +113,7 @@ public final class FxExcelViewer {
                             .build(),
                     Controls.slider()
                             .mode(SliderWithButtons.Mode.SLIDER_VALUE)
-                            .formatter((v, max) -> "%3.0f%%".formatted(100 * v))
+                            .formatter(v -> "%3.0f%%".formatted(100 * v))
                             .min(0.25)
                             .max(2)
                             .blockIncrement(0.25)
