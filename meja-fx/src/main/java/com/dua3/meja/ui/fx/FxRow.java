@@ -11,6 +11,7 @@ import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.AffineTransformation2f;
 import com.dua3.utility.math.geometry.Rectangle2f;
+import javafx.collections.ObservableList;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -60,6 +61,11 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
                                     .multiply(fxRow.fxSheetView.sheetScaleXProperty())
                             )
             );
+        }
+
+        @Override
+        public final ObservableList<Node> getChildren() {
+            return super.getChildren();
         }
 
         void setSize(SegmentViewDelegate segmentDelegateLeft, SegmentViewDelegate segmentDelegateRight, float rowY, float rowHeightInPoints) {
@@ -199,8 +205,8 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
                 yield row != null
                         ? row.getRowHeight()
                         : getSegmentViewDelegate(Side.LEFT).isAboveSplit() && getIndex() == 0
-                        ? fxSheetView.getDelegate().getColumnLabelHeightInPoints()
-                        : fxSheetView.getDelegate().getDefaultRowHeightInPoints();
+                          ? fxSheetView.getDelegate().getColumnLabelHeightInPoints()
+                          : fxSheetView.getDelegate().getDefaultRowHeightInPoints();
             }
         };
     }

@@ -9,7 +9,7 @@ Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 
  - Excel (.xls and .xlsx)
  - CSV
- - ODF support coming later this year
+ - ODF support planned
 
 ## Name
 

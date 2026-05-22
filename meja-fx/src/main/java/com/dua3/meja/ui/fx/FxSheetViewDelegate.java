@@ -21,6 +21,7 @@ public final class FxSheetViewDelegate extends SheetViewDelegate {
      * @param sheet The sheet to show.
      * @param dpi   the resolution in DPI for the display device
      */
+    @SuppressWarnings("TypeMayBeWeakened")
     public FxSheetViewDelegate(
             Sheet sheet,
             FxSheetView owner,

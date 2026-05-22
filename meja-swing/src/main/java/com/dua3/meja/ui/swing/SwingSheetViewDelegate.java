@@ -33,6 +33,7 @@ public class SwingSheetViewDelegate extends SheetViewDelegate {
      * @param cellRendererFactory a factory function that provides a {@code CellRenderer}
      *                            instance using this {@code SwingSheetViewDelegate}.
      */
+    @SuppressWarnings("TypeMayBeWeakened")
     public SwingSheetViewDelegate(
             Sheet sheet,
             SwingSheetView owner,

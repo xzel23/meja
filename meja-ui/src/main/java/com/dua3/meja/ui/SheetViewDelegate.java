@@ -636,6 +636,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             case SheetEvent.CELL_VALUE_CHANGED, SheetEvent.CELL_STYLE_CHANGED ->
                     owner.repaintCell(((SheetEvent.CellChanged<?>) item).cell());
             default -> {
+                // do nothing
             }
         }
     }
@@ -876,7 +877,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public void movePage(Direction d) {
         try (var __ = writeLock("SheetViewDelegate.movePage()")) {
             Cell cell = getCurrentLogicalCell();
-            Rectangle2f cellRect = getCellRect(cell.getLogicalCell());
             switch (d) {
                 case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
                 case SOUTH -> setCurrentRowNum(cell.getRowNumber() + cell.getVerticalSpan());
@@ -1260,7 +1260,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param r    the rectangle defining the boundaries of the label
      * @param text the text to be displayed in the label, centered both horizontally and vertically
      */
-    public void drawLabel(Graphics g, Rectangle2f r, String text) {
+    public void drawLabel(Graphics g, Rectangle2f r, CharSequence text) {
         g.setFill(getLabelBackgroundColor());
         g.fillRect(r);
 

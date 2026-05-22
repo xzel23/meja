@@ -1,5 +1,28 @@
 # Meja Changelog
 
+## Version 10.3.1
+
+- update dependencies
+- code cleanup
+
+## Version 10.3.0
+
+- dependency updates
+- code cleanup
+- refactorings
+
+## Version 10.2.1
+
+- code cleanups
+- dependency updates
+- minor bug fixes
+
+## Version 10.2.0
+
+- code cleanups
+- dependency updates
+- minor bug fixes
+
 ## Version 10.1.0
 
 - update utility to 21.1.0

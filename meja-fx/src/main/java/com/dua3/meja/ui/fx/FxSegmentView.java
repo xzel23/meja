@@ -70,8 +70,7 @@ public final class FxSegmentView extends Control implements SegmentView {
             }
         }));
 
-        FxSegmentViewSkin skin = new FxSegmentViewSkin(this);
-        setSkin(skin);
+        setSkin(new FxSegmentViewSkin(this));
 
         setFocusTraversable(false);
     }

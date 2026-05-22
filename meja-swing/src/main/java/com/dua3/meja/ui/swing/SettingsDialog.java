@@ -19,8 +19,6 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -63,7 +61,7 @@ public final class SettingsDialog extends JDialog {
         add(settingsPanel, BorderLayout.CENTER);
 
         add(new JButton(SwingUtil.createAction("OK", () -> {
-            Deque<Arguments.Entry<?>> entries = new LinkedList<>();
+            List<Arguments.Entry<?>> entries = new ArrayList<>(options.size());
             int i = 0;
             for (Option option : options) {
                 JComponent component = inputs.get(i++);

@@ -56,6 +56,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.SequencedCollection;
 
 /**
  * A GUI application for viewing Excel files using Swing.
@@ -133,7 +134,7 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
     /**
      * The Model of the ExcelViewer component.
      */
-    private final ExcelViewerModel model;
+    private final transient ExcelViewerModel model;
 
     /**
      * The workbook view component that is used to display the workbook.
@@ -399,7 +400,7 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
             if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 dtde.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
                 @SuppressWarnings("unchecked")
-                List<File> files = (List<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
+                SequencedCollection<File> files = (SequencedCollection<File>) tr.getTransferData(DataFlavor.javaFileListFlavor);
                 if (files.size() == 1) {
                     URI uri = files.getFirst().toURI();
                     Optional<Workbook> workbook = MejaSwingHelper.openWorkbook(this, uri);

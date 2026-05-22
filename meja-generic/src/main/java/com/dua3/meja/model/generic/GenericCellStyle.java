@@ -32,10 +32,10 @@ import org.jspecify.annotations.Nullable;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 
 /**
@@ -92,6 +92,7 @@ public class GenericCellStyle implements CellStyle {
      * @param arg    the datetime to format
      * @return text representation of {@code date}
      */
+    @SuppressWarnings("TypeMayBeWeakened")
     public String format(LocalDateTime arg, Locale locale) {
         return getDateFormatter(locale).format(arg);
     }
@@ -103,7 +104,8 @@ public class GenericCellStyle implements CellStyle {
      * @param arg    the date to format
      * @return text representation of {@code date}
      */
-    public String format(TemporalAccessor arg, Locale locale) {
+    @SuppressWarnings("TypeMayBeWeakened")
+    public String format(LocalDate arg, Locale locale) {
         return getDateFormatter(locale).format(arg);
     }
 
