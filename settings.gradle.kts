@@ -34,10 +34,15 @@ gradle.projectsLoaded {
     }
 }
 
+// define dependency versions and repositories
 dependencyResolutionManagement {
 
     val isSnapshot = projectVersion.toDefaultLowerCase().contains("-snapshot")
     val isReleaseCandidate = !isSnapshot && projectVersion.toDefaultLowerCase().contains("-rc")
+
+    if (isSnapshot && !projectVersion.endsWith("-SNAPSHOT")) {
+        throw GradleException("inconsistent version definition: $projectVersion does not end with SNAPSHOT")
+    }
 
     versionCatalogs {
         create("libs") {
