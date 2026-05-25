@@ -143,6 +143,10 @@ val isReleaseVersion = !isDevelopmentVersion(project.version.toString())
 val isSnapshot = project.version.toString().toDefaultLowerCase().contains("snapshot")
 
 allprojects {
+    dependencyLocking {
+        lockAllConfigurations()
+    }
+
     if (!project.name.endsWith("-bom")) {
         apply(plugin = "java-library")
         apply(plugin = rootProject.libs.plugins.jdk.get().pluginId)

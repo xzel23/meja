@@ -1,21 +1,21 @@
 [versions]
-projectVersion = "10.3.1"
-jdk = "0.7.0"
-versions = "0.54.0"
-test-logger = "4.0.0"
+projectVersion = "10.4.2-SNAPSHOT"
+jdkprovider-plugin = "0.7.0"
+versions-plugin = "0.54.0"
+test-logger-plugin = "4.0.0"
 spotbugs-plugin = "6.5.5"
-cabe = "4.2.0"
-sonar = "7.3.0.8198"
+cabe-plugin = "4.3.0-rc"
+sonar-plugin = "7.3.0.8198"
 jmh-plugin = "0.7.3"
-jreleaser = "1.24.0"
+jreleaser-plugin = "1.24.0"
 
-dua3-utility = "22.3.1"
+dua3-utility = "22.4.0-SNAPSHOT"
 ikonli = "12.4.0"
 jspecify = "1.0.0"
 junit-bom = "6.1.0"
 log4j-bom = "2.26.0"
 poi = "5.5.1"
-slb4j = "0.9.0"
+slb4j = "0.10.0"
 commons-compress = "1.26.2"
 
 [libraries]
@@ -46,11 +46,11 @@ poi-ooxml = { group = "org.apache.poi", name = "poi-ooxml", version.ref = "poi" 
 commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commons-compress" }
 
 [plugins]
-jdk = { id = "com.dua3.gradle.jdkprovider", version.ref = "jdk" }
-versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
-test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger" }
+jdk = { id = "com.dua3.gradle.jdkprovider", version.ref = "jdkprovider-plugin" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions-plugin" }
+test-logger = { id = "com.adarshr.test-logger", version.ref = "test-logger-plugin" }
 spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs-plugin" }
-cabe = { id = "com.dua3.cabe", version.ref = "cabe" }
-sonar = { id = "org.sonarqube", version.ref = "sonar" }
+cabe = { id = "com.dua3.cabe", version.ref = "cabe-plugin" }
+sonar = { id = "org.sonarqube", version.ref = "sonar-plugin" }
 jmh = { id = "me.champeau.jmh", version.ref = "jmh-plugin" }
-jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
+jreleaser = { id = "org.jreleaser", version.ref = "jreleaser-plugin" }
