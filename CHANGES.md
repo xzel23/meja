@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 10.3.2
+
+- update dependencies
+- update cabe to 4.3.0; might change behaviour when invalid null values are passed to record types
+
 ## Version 10.3.1
 
 - update dependencies

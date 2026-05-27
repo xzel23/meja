@@ -2,9 +2,9 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,jmhCompileClasspath,testCompileClasspath
-com.dua3.utility:utility-bom:22.4.0-SNAPSHOT=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-com.dua3.utility:utility-swing:22.4.0-SNAPSHOT=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-com.dua3.utility:utility:22.4.0-SNAPSHOT=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-bom:22.4.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-swing:22.4.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility:22.4.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.github.spotbugs:spotbugs-annotations:4.9.8=spotbugs
 com.github.spotbugs:spotbugs:4.9.8=spotbugs
 com.github.stephenc.jcip:jcip-annotations:1.0-1=spotbugs
@@ -67,9 +67,9 @@ org.ow2.asm:asm-tree:9.9=jacocoAnt,spotbugs
 org.ow2.asm:asm-util:9.9=spotbugs
 org.ow2.asm:asm:9.0=jmhCompileClasspath
 org.ow2.asm:asm:9.9=jacocoAnt,spotbugs
-org.slb4j:slb4j-ext-swing:0.10.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-org.slb4j:slb4j-ext:0.10.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-org.slb4j:slb4j:0.10.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.slb4j:slb4j-ext-swing:0.11.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.slb4j:slb4j-ext:0.11.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.slb4j:slb4j:0.11.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.slf4j:slf4j-api:2.0.17=spotbugs,spotbugsSlf4j
 org.slf4j:slf4j-simple:2.0.17=spotbugsSlf4j
 org.xmlresolver:xmlresolver:5.3.3=spotbugs

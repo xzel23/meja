@@ -1,21 +1,21 @@
 [versions]
-projectVersion = "10.4.2-SNAPSHOT"
+projectVersion = "10.3.2"
 jdkprovider-plugin = "0.7.0"
 versions-plugin = "0.54.0"
 test-logger-plugin = "4.0.0"
 spotbugs-plugin = "6.5.5"
-cabe-plugin = "4.3.0-rc2"
+cabe-plugin = "4.3.0"
 sonar-plugin = "7.3.0.8198"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.24.0"
 
-dua3-utility = "22.4.0-SNAPSHOT"
+dua3-utility = "22.4.0"
 ikonli = "12.4.0"
 jspecify = "1.0.0"
 junit-bom = "6.1.0"
 log4j-bom = "2.26.0"
 poi = "5.5.1"
-slb4j = "0.10.0"
+slb4j = "0.11.0"
 commons-compress = "1.26.2"
 
 [libraries]
