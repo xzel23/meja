@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 10.4.0
+
+- update utility to new minor release
+- update slb4j
+
 ## Version 10.3.2
 
 - update dependencies
