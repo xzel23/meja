@@ -34,6 +34,9 @@ import org.jspecify.annotations.Nullable;
 public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     private static final Logger LOG = org.apache.logging.log4j.LogManager.getLogger(PoiSheet.class);
 
+    /** The maximum coumn widtth for POI cells. */
+    private static final int POI_COLUMN_MAX_WIDTH = 255 * 256;
+
     /**
      * Represents the underlying workbook associated with this sheet instance.
      * <p>
@@ -215,7 +218,12 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     private int pointsToPoiColumnWidth(float width) {
-        return Math.round(width / workbook.getFactorWidth());
+        int colWidth = Math.round(width / workbook.getFactorWidth());
+        if (colWidth > POI_COLUMN_MAX_WIDTH) {
+            LOG.warn("Column width exceeds maximum allowed value of {}. Setting to maximum.", POI_COLUMN_MAX_WIDTH);
+            colWidth = POI_COLUMN_MAX_WIDTH;
+        }
+        return colWidth;
     }
 
     @Override
