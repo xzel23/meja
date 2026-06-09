@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 10.4.1
+
+- dependency and plugin updates
+
 ## Version 10.4.0
 
 - update utility to new minor release
