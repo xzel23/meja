@@ -218,12 +218,7 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     }
 
     private int pointsToPoiColumnWidth(float width) {
-        int colWidth = Math.round(width / workbook.getFactorWidth());
-        if (colWidth > POI_COLUMN_MAX_WIDTH) {
-            LOG.warn("Column width exceeds maximum allowed value of {}. Setting to maximum.", POI_COLUMN_MAX_WIDTH);
-            colWidth = POI_COLUMN_MAX_WIDTH;
-        }
-        return colWidth;
+        return Math.round(width / workbook.getFactorWidth());
     }
 
     @Override
@@ -275,7 +270,13 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
         LOG.trace("setting column width of column {} to {}", colIndex, width);
         LangUtil.check(width >= 0, "Invalid column width: %f", width);
 
-        poiSheet.setColumnWidth(colIndex, pointsToPoiColumnWidth(width));
+        int colWidth = pointsToPoiColumnWidth(width);
+        if (colWidth > POI_COLUMN_MAX_WIDTH) {
+            LOG.info("Column width {} exceeds the maximum allowed value of {}. Setting to maximum allowed value.", colWidth, POI_COLUMN_MAX_WIDTH);
+            colWidth = POI_COLUMN_MAX_WIDTH;
+        }
+
+        poiSheet.setColumnWidth(colIndex, colWidth);
         layoutChanged();
     }
 
