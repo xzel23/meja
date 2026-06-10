@@ -12,6 +12,8 @@ import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontUtil;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -1268,7 +1270,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         g.strokeRect(r);
 
         g.setFont(getLabelFont());
-        g.drawText(text, r.xCenter(), r.yCenter(), Graphics.HAnchor.CENTER, Graphics.VAnchor.MIDDLE);
+        g.drawText(text, r.xCenter(), r.yCenter(), HAnchor.CENTER, VAnchor.MIDDLE);
     }
 
     /**

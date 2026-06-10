@@ -1,15 +1,15 @@
 [versions]
-projectVersion = "10.4.3"
+projectVersion = "10.5.0-SNAPSHOT"
 jdkprovider-plugin = "0.7.0"
 versions-plugin = "0.54.0"
 test-logger-plugin = "4.0.0"
-spotbugs-plugin = "6.5.5"
+spotbugs-plugin = "6.5.6"
 cabe-plugin = "4.3.0"
 sonar-plugin = "7.3.1.8318"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.23.0"
 
-dua3-utility = "22.7.0"
+dua3-utility = "23.0.0-SNAPSHOT"
 
 ikonli = "12.4.0"
 jspecify = "1.0.0"

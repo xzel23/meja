@@ -14,6 +14,8 @@ import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.RichText;
 import com.dua3.utility.text.VerticalAlignment;
 import com.dua3.utility.ui.Graphics;
+import com.dua3.utility.ui.HAnchor;
+import com.dua3.utility.ui.VAnchor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -162,51 +164,51 @@ public class CellRenderer {
         CellStyle cs = cell.getCellStyle();
 
         Alignment hAlign;
-        Graphics.HAnchor hAnchor;
+        HAnchor hAnchor;
         HAlign alignment = cs.effectiveHAlign(cell.getCellType());
         switch (alignment) {
             case ALIGN_LEFT -> {
                 hAlign = Alignment.LEFT;
-                hAnchor = Graphics.HAnchor.LEFT;
+                hAnchor = HAnchor.LEFT;
             }
             case ALIGN_CENTER -> {
                 hAlign = Alignment.CENTER;
-                hAnchor = Graphics.HAnchor.CENTER;
+                hAnchor = HAnchor.CENTER;
             }
             case ALIGN_RIGHT -> {
                 hAlign = Alignment.RIGHT;
-                hAnchor = Graphics.HAnchor.RIGHT;
+                hAnchor = HAnchor.RIGHT;
             }
             case ALIGN_DISTRIBUTED -> {
                 hAlign = Alignment.DISTRIBUTE;
-                hAnchor = Graphics.HAnchor.LEFT;
+                hAnchor = HAnchor.LEFT;
             }
             case ALIGN_JUSTIFY -> {
                 hAlign = Alignment.JUSTIFY;
-                hAnchor = Graphics.HAnchor.LEFT;
+                hAnchor = HAnchor.LEFT;
             }
             default -> throw new IllegalStateException(alignment.name() + " not allowed here");
         }
 
         VerticalAlignment vAlign;
-        Graphics.VAnchor vAnchor;
+        VAnchor vAnchor;
         VAlign verticalAlignment = cs.getVAlign();
         switch (verticalAlignment) {
             case ALIGN_TOP -> {
                 vAlign = VerticalAlignment.TOP;
-                vAnchor = Graphics.VAnchor.TOP;
+                vAnchor = VAnchor.TOP;
             }
             case ALIGN_MIDDLE -> {
                 vAlign = VerticalAlignment.MIDDLE;
-                vAnchor = Graphics.VAnchor.MIDDLE;
+                vAnchor = VAnchor.MIDDLE;
             }
             case ALIGN_BOTTOM -> {
                 vAlign = VerticalAlignment.BOTTOM;
-                vAnchor = Graphics.VAnchor.BOTTOM;
+                vAnchor = VAnchor.BOTTOM;
             }
             case ALIGN_DISTRIBUTED, ALIGN_JUSTIFY -> {
                 vAlign = VerticalAlignment.DISTRIBUTED;
-                vAnchor = Graphics.VAnchor.TOP;
+                vAnchor = VAnchor.TOP;
             }
             default -> throw new IllegalStateException("unsupported vertical alignment: " + verticalAlignment.name());
         }
