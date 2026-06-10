@@ -1,5 +1,9 @@
 # Meja Changelog
 
+## Version 10.4.3
+
+- avoid exception when convert sheets to Excel format.
+
 ## Version 10.4.2
 
 - avoid exception when setting column width exceeds maximum allowed value
