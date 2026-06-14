@@ -5,6 +5,7 @@ biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,jmhCompileClasspat
 com.dua3.utility:utility-bom:23.0.0-SNAPSHOT=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.dua3.utility:utility-swing:23.0.0-SNAPSHOT=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.dua3.utility:utility:23.0.0-SNAPSHOT=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.github.joniles:rtfparserkit:1.16.0=runtimeClasspath,testRuntimeClasspath
 com.github.spotbugs:spotbugs-annotations:4.10.2=spotbugs
 com.github.spotbugs:spotbugs:4.10.2=spotbugs
 com.github.stephenc.jcip:jcip-annotations:1.0-1=spotbugs
