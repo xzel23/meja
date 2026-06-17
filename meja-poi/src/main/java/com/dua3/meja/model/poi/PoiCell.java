@@ -608,12 +608,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
                 continue;
             }
 
-            Map<String, Object> properties = new HashMap<>();
-            // apply font attributes for formatting run
-            Font runFont = getFontForFormattingRun(rts, i);
-            properties.put(Style.FONT, runFont);
-
-            Style style = Style.create("style", properties);
+            Style style = Style.create(getFontForFormattingRun(rts, i));
             rtb.push(style);
             rtb.append(text, start, end);
             rtb.pop(style);

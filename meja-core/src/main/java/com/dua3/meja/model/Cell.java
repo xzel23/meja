@@ -174,7 +174,7 @@ public interface Cell {
      */
     default RichText getAsFormattedText(Locale locale) {
         CellStyle cs = getCellStyle();
-        return getAsText(locale).apply(Style.create(cs.getFont(), cs.getFillFgColor(), cs.getFillBgColor()));
+        return getAsText(locale).apply(Style.create(cs.getFont().toFontDef(), cs.getFillFgColor(), cs.getFillBgColor()));
     }
 
     /**
