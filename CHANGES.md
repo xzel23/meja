@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 11.0.0-M1
+
+- changes due to refactorings in dependencies
+- better compatibility for SPI loading of implementations when using shaded JARs or Spring Boot
+
 ## Version 10.4.3
 
 - avoid exception when convert sheets to Excel format.
