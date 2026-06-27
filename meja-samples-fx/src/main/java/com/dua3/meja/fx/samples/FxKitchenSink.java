@@ -38,9 +38,9 @@ public final class FxKitchenSink extends Application {
 
         Row row = sheet.getRow(0);
         row.getCell(0).set("Color");
-        row.getCell(1).set("Code");
-        row.getCell(2).set("darker");
-        row.getCell(3).set("brighter");
+        row.getCell(1).set("brighter");
+        row.getCell(2).set("Code");
+        row.getCell(3).set("darker");
 
         sheet.splitAt(1, 0);
 
@@ -61,9 +61,9 @@ public final class FxKitchenSink extends Application {
 
             row = sheet.getRow(sheet.getRowCount());
             row.getCell(0).set(name).setCellStyle(cs);
-            row.getCell(1).set(e.getValue().toString()).setCellStyle(cs);
-            row.getCell(2).set("darker").setCellStyle(csDark);
-            row.getCell(3).set("brighter").setCellStyle(csBright);
+            row.getCell(1).set("brighter").setCellStyle(csBright);
+            row.getCell(2).set(e.getValue().toString()).setCellStyle(cs);
+            row.getCell(3).set("darker").setCellStyle(csDark);
         }
 
         sheet.autoSizeColumn(0);
@@ -74,9 +74,9 @@ public final class FxKitchenSink extends Application {
 
         Row row = sheet.getRow(0);
         row.getCell(0).set("Color");
-        row.getCell(1).set("Code");
-        row.getCell(2).set("darker");
-        row.getCell(3).set("brighter");
+        row.getCell(1).set("brighter");
+        row.getCell(2).set("Code");
+        row.getCell(3).set("darker");
 
         sheet.splitAt(1, 0);
 
@@ -97,9 +97,9 @@ public final class FxKitchenSink extends Application {
 
             row = sheet.getRow(sheet.getRowCount());
             row.getCell(0).set(e.getKey()).setCellStyle(cs);
-            row.getCell(1).set(e.getValue().toString()).setCellStyle(cs);
-            row.getCell(2).set("darker").setCellStyle(csDark);
-            row.getCell(3).set("brighter").setCellStyle(csBright);
+            row.getCell(1).set("brighter").setCellStyle(csBright);
+            row.getCell(2).set(e.getValue().toString()).setCellStyle(cs);
+            row.getCell(3).set("darker").setCellStyle(csDark);
         }
 
         sheet.autoSizeColumn(0);
