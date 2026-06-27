@@ -132,7 +132,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     }
 
     public void copyToClipboard() {
-        SwingUtil.setClipboardText(delegate.getSheet().getCurrentCell().getAsText(getLocale()).toString());
+        SwingUtil.copyToClipboard(delegate.getSheet().getCurrentCell().getAsText(getLocale()).toString());
     }
 
     private void init() {
