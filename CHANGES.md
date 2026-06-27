@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 11.0.0-M2
+
+- track dependency changes; clipboard handling
+- changed columns in kitchensink sample
+
 ## Version 11.0.0-M1
 
 - changes due to refactorings in dependencies
