@@ -94,5 +94,6 @@ public final class ShowTestXlsx extends JFrame {
         final SwingWorkbookView view = new SwingWorkbookView();
         setContentPane(view);
         view.setWorkbook(wb);
+        view.setEditable(true);
     }
 }
