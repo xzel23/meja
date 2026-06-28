@@ -19,8 +19,7 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.util.CellValueHelper;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.swing.SwingUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.dua3.utility.ui.RichTextPane;
 import org.jspecify.annotations.Nullable;
 
 import javax.swing.Action;
@@ -30,8 +29,6 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
@@ -42,8 +39,6 @@ import java.util.Locale;
  * Default implementation for cell editor.
  */
 public class DefaultCellEditor implements CellEditor {
-
-    private static final Logger LOGGER = LogManager.getLogger(DefaultCellEditor.class);
 
     /**
      * Actions for key bindings.
@@ -66,7 +61,8 @@ public class DefaultCellEditor implements CellEditor {
         abstract Action getAction(DefaultCellEditor editor);
     }
 
-    private final CellEditorPane component;
+    private final RichTextPane component;
+    private final CellEditorPane editorComponent;
     private @Nullable Cell cell;
 
     private final SwingSheetView sheetView;
@@ -81,16 +77,19 @@ public class DefaultCellEditor implements CellEditor {
      */
     public DefaultCellEditor(SwingSheetView sheetView) {
         this.sheetView = sheetView;
-        component = new CellEditorPane();
-        component.setOpaque(true);
-        component.setBorder(BorderFactory.createEmptyBorder());
+        CellEditorPane editor = new CellEditorPane();
+        editor.setOpaque(true);
+        editor.setBorder(BorderFactory.createEmptyBorder());
+        this.component = editor;
+        this.editorComponent = editor;
 
         // setup input map for keyboard navigation
-        final InputMap inputMap = component.getInputMap(JComponent.WHEN_FOCUSED);
+        final JComponent textComponent = editorComponent.getTextComponent();
+        final InputMap inputMap = textComponent.getInputMap(JComponent.WHEN_FOCUSED);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), Actions.COMMIT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), Actions.ABORT);
 
-        final ActionMap actionMap = component.getActionMap();
+        final ActionMap actionMap = textComponent.getActionMap();
         for (Actions action : Actions.values()) {
             actionMap.put(action, action.getAction(this));
         }
@@ -108,14 +107,15 @@ public class DefaultCellEditor implements CellEditor {
 
         this.cell = cell;
 
-        component.setContent(cell, sheetView.getScale(), false);
+        editorComponent.setVisible(true);
+        editorComponent.setContent(cell, sheetView.getScale(), false);
 
-        component.revalidate();
-        component.setCaretPosition(component.getDocument().getLength());
-        component.selectAll();
-        SwingUtilities.invokeLater(component::requestFocusInWindow);
+        editorComponent.revalidate();
+        editorComponent.setCaretPosition(component.getText().length());
+        editorComponent.selectAll();
+        SwingUtilities.invokeLater(() -> editorComponent.getTextComponent().requestFocusInWindow());
 
-        return component;
+        return editorComponent;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class DefaultCellEditor implements CellEditor {
         // reset editor state
         this.cell = null;
         component.setText("");
-        component.setVisible(false);
+        editorComponent.setVisible(false);
 
         // inform the sheetView
         sheetView.stoppedEditing();
@@ -144,32 +144,11 @@ public class DefaultCellEditor implements CellEditor {
     }
 
     /**
-     * Updates the content of the cell being edited by fetching the text from the
-     * associated component's document, formatting it, and applying it to the cell.
-     * <p>
-     * This method retrieves the text from the document linked to the editor
-     * component. If an error occurs during retrieval, it assigns a default error
-     * value ("#ERROR") to the text. The retrieved text is then processed and set
-     * to the cell using a {@code CellValueHelper}, which handles parsing and
-     * formatting of the value based on locale-specific number and date formats.
-     * <p>
-     * The {@code CellValueHelper} ensures the proper conversion and application
-     * of the text to the cell, accommodating various types of values, such as
-     * numbers, dates, booleans, formulas, or plain text.
-     * <p>
-     * If assertions are enabled, this method will throw an {@code AssertionError}
-     * if the cell is {@code null}.
+     * Updates the content of the edited cell using the current plain text value.
      */
     protected void updateCellContent() {
         assert cell != null;
-        String text;
-        try {
-            Document doc = component.getDocument();
-            text = doc.getText(0, doc.getLength());
-        } catch (BadLocationException ex) {
-            text = "#ERROR";
-            LOGGER.warn("could not get text from document", ex);
-        }
+        String text = component.getText().toString();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
         NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
         CellValueHelper helper = new CellValueHelper(numberFormat, dateFormatter);
@@ -177,7 +156,7 @@ public class DefaultCellEditor implements CellEditor {
     }
 
     private Locale getLocale() {
-        return component.getLocale();
+        return editorComponent.getLocale();
     }
 
 }
