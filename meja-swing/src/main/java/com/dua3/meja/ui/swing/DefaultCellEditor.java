@@ -29,6 +29,7 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
@@ -49,6 +50,12 @@ public class DefaultCellEditor implements CellEditor {
             @Override
             public Action getAction(final DefaultCellEditor editor) {
                 return SwingUtil.createAction("COMMIT", e -> editor.stopEditing(true));
+            }
+        },
+        NEWLINE {
+            @Override
+            public Action getAction(final DefaultCellEditor editor) {
+                return SwingUtil.createAction("NEWLINE", e -> editor.editorComponent.replaceSelection("\n"));
             }
         },
         ABORT {
@@ -80,6 +87,7 @@ public class DefaultCellEditor implements CellEditor {
         CellEditorPane editor = new CellEditorPane();
         editor.setOpaque(true);
         editor.setBorder(BorderFactory.createEmptyBorder());
+        configureEditorEnterBehavior(editor);
         this.component = editor;
         this.editorComponent = editor;
 
@@ -87,6 +95,7 @@ public class DefaultCellEditor implements CellEditor {
         final JComponent textComponent = editorComponent.getTextComponent();
         final InputMap inputMap = textComponent.getInputMap(JComponent.WHEN_FOCUSED);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), Actions.COMMIT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK), Actions.NEWLINE);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), Actions.ABORT);
 
         final ActionMap actionMap = textComponent.getActionMap();
@@ -157,6 +166,10 @@ public class DefaultCellEditor implements CellEditor {
 
     private Locale getLocale() {
         return editorComponent.getLocale();
+    }
+
+    private static void configureEditorEnterBehavior(CellEditorPane editor) {
+        editor.setEnterKeyInsertsNewline(false);
     }
 
 }
