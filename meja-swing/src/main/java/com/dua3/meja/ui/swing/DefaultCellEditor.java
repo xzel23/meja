@@ -16,10 +16,16 @@
 package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
 import com.dua3.meja.util.CellValueHelper;
+import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.swing.SwingUtil;
-import com.dua3.utility.ui.RichTextPane;
+import com.dua3.utility.swing.TextEditorPane;
+import com.dua3.utility.text.Font;
+import com.dua3.utility.text.RichText;
 import org.jspecify.annotations.Nullable;
 
 import javax.swing.Action;
@@ -55,7 +61,7 @@ public class DefaultCellEditor implements CellEditor {
         NEWLINE {
             @Override
             public Action getAction(final DefaultCellEditor editor) {
-                return SwingUtil.createAction("NEWLINE", e -> editor.editorComponent.replaceSelection("\n"));
+                return SwingUtil.createAction("NEWLINE", e -> editor.component.replaceSelection("\n"));
             }
         },
         ABORT {
@@ -68,8 +74,7 @@ public class DefaultCellEditor implements CellEditor {
         abstract Action getAction(DefaultCellEditor editor);
     }
 
-    private final RichTextPane component;
-    private final CellEditorPane editorComponent;
+    private final TextEditorPane component;
     private @Nullable Cell cell;
 
     private final SwingSheetView sheetView;
@@ -84,15 +89,16 @@ public class DefaultCellEditor implements CellEditor {
      */
     public DefaultCellEditor(SwingSheetView sheetView) {
         this.sheetView = sheetView;
-        CellEditorPane editor = new CellEditorPane();
-        editor.setOpaque(true);
-        editor.setBorder(BorderFactory.createEmptyBorder());
-        configureEditorEnterBehavior(editor);
-        this.component = editor;
-        this.editorComponent = editor;
+        this.component = new TextEditorPane();
+        final JComponent textComponent = component.getTextComponent();
+
+        component.setWrapText(false);
+        component.setEditable(true);
+        component.setEnterKeyInsertsNewline(false);
+        component.setOpaque(true);
+        component.setBorder(BorderFactory.createEmptyBorder());
 
         // setup input map for keyboard navigation
-        final JComponent textComponent = editorComponent.getTextComponent();
         final InputMap inputMap = textComponent.getInputMap(JComponent.WHEN_FOCUSED);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), Actions.COMMIT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK), Actions.NEWLINE);
@@ -102,6 +108,7 @@ public class DefaultCellEditor implements CellEditor {
         for (Actions action : Actions.values()) {
             actionMap.put(action, action.getAction(this));
         }
+
         cell = null;
     }
 
@@ -116,15 +123,13 @@ public class DefaultCellEditor implements CellEditor {
 
         this.cell = cell;
 
-        editorComponent.setContent(cell, sheetView.getScale(), false);
-        editorComponent.revalidate();
-        editorComponent.setCaretPosition(component.getText().length());
-        editorComponent.selectAll();
-        editorComponent.setVisible(true);
+        setContent(sheetView.getScale(), false);
+        component.setVisible(true);
+        component.setEditable(true);
 
-        SwingUtilities.invokeLater(() -> editorComponent.getTextComponent().requestFocusInWindow());
+        SwingUtilities.invokeLater(() -> component.getTextComponent().requestFocusInWindow());
 
-        return editorComponent;
+        return component;
     }
 
     @Override
@@ -132,6 +137,8 @@ public class DefaultCellEditor implements CellEditor {
         if (!isEditing()) {
             return;
         }
+
+        component.setEditable(false);
 
         // update the cell with the new value
         if (commit) {
@@ -143,7 +150,7 @@ public class DefaultCellEditor implements CellEditor {
         // reset editor state
         this.cell = null;
         component.setText("");
-        editorComponent.setVisible(false);
+        component.setVisible(false);
 
         // inform the sheetView
         sheetView.stoppedEditing();
@@ -165,11 +172,43 @@ public class DefaultCellEditor implements CellEditor {
     }
 
     private Locale getLocale() {
-        return editorComponent.getLocale();
+        return component.getLocale();
     }
 
-    private static void configureEditorEnterBehavior(CellEditorPane editor) {
-        editor.setEnterKeyInsertsNewline(false);
+    /**
+     * Set the editor content to the content of the given cell.
+     *
+     * @param scale the font scaling factor to use
+     * @param eval set to true to display formula results instead of the formula
+     *             itself
+     */
+    private void setContent(Scale2f scale, boolean eval) {
+        assert cell != null : "cell must not be null";
+
+        CellStyle cellStyle = cell.getCellStyle();
+
+        Color fg = cellStyle.getFillFgColor();
+        Color bg = cellStyle.getFillBgColor();
+        Font font = cellStyle.getFont();
+
+        component.setBackground(SwingUtil.convert(fg));
+        component.setForeground(SwingUtil.convert(bg));
+        component.setTextFont(font.scaled(scale.sy()));
+
+        final RichText text;
+        if (!eval && cell.getCellType() == CellType.FORMULA) {
+            text = RichText.valueOf("=" + cell.getFormula());
+        } else {
+            text = cell.getAsText(getLocale());
+        }
+
+        component.setText(text);
+
+        component.revalidate();
+        component.setCaretPosition(component.getText().length());
+        component.selectAll();
+
+        component.repaint();
     }
 
 }
