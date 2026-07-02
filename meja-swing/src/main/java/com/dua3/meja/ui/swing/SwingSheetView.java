@@ -68,7 +68,8 @@ public class SwingSheetView extends JPanel implements SheetView {
      * @param sheet the {@link Sheet}
      */
     public SwingSheetView(Sheet sheet) {
-        super(new GridLayout(1, 1));
+        super(new GridLayout(1, 1, 0, 0));
+
         this.delegate = new SwingSheetViewDelegate(sheet, this, CellRenderer::new);
         this.sheetPane = new SwingSheetPane(delegate);
 

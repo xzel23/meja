@@ -30,11 +30,16 @@ import org.slb4j.LogLevel;
 import org.slb4j.SLB4J;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -48,8 +53,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -136,10 +139,21 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
      */
     private final transient ExcelViewerModel model;
 
+    private JPanel optionalToolbarParent = new JPanel();
+    private Box northDock = Box.createHorizontalBox();
+
     /**
      * The workbook view component that is used to display the workbook.
      */
     private @Nullable SwingWorkbookView workbookView;
+
+    private final Action openAction = SwingUtil.createAction("\uD83D\uDCC2", this::showOpenDialog);
+    private final Action saveAction = new AbstractAction("\uD83D\uDCBE") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            saveWorkbook();
+        }
+    };
 
     /**
      * Constructor.
@@ -149,6 +163,8 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
     public SwingExcelViewer(ExcelViewerModel model) {
         super(APPLICATION_NAME);
         this.model = model;
+        saveAction.setEnabled(false);
+        addPropertyChangeListener(PROPERTY_FILE_CHANGED, evt -> saveAction.setEnabled(evt.getNewValue() != null));
         createMenu();
         createContent();
         pack();
@@ -165,9 +181,21 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
 
     private void createContent() {
         setLayout(new BorderLayout());
+        add(northDock, BorderLayout.NORTH);
+        northDock.add(createToolbar());
+        northDock.add(optionalToolbarParent);
         SwingWorkbookView view = new SwingWorkbookView();
         add(view, BorderLayout.CENTER);
+        view.setEditable(true);
         this.workbookView = view;
+    }
+
+    private JToolBar createToolbar() {
+        JToolBar toolbar = new JToolBar();
+        toolbar.setFloatable(false);
+        toolbar.add(new JButton(openAction));
+        toolbar.add(new JButton(saveAction));
+        return toolbar;
     }
 
     /**
@@ -178,24 +206,8 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
 
         // File menu
         JMenu mnFile = new JMenu("File");
-        mnFile.add(SwingUtil.createAction("Open...", this::showOpenDialog));
-        mnFile.add(new AbstractAction("Save") {
-            {
-                // enable when workbook is loaded
-                PropertyChangeListener listener = (PropertyChangeEvent evt) -> {
-                    if (PROPERTY_FILE_CHANGED.equals(evt.getPropertyName())) {
-                        setEnabled(evt.getNewValue() != null);
-                    }
-                };
-                SwingExcelViewer.this.addPropertyChangeListener(PROPERTY_FILE_CHANGED, listener);
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveWorkbook();
-            }
-
-        });
+        mnFile.add(openAction);
+        mnFile.add(saveAction);
         mnFile.add(SwingUtil.createAction("Save as...", this::showSaveAsDialog));
         mnFile.addSeparator();
         mnFile.add(SwingUtil.createAction("Exit", this::closeApplication));
@@ -306,15 +318,17 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
      */
     private void showOpenDialog() {
         try {
-            final Optional<Workbook> newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(this,
-                    model.getCurrentUri());
+            final Optional<Workbook> newWorkbook = MejaSwingHelper.showDialogAndOpenWorkbook(
+                    this,
+                    model.getCurrentUri()
+            );
             newWorkbook.ifPresent(this::setWorkbook);
         } catch (IOException ex) {
             LOG.error("exception loading workbook", ex);
             JOptionPane.showMessageDialog(this, ERROR_LOADING_WORKBOOK + ex.getMessage(), TITLE_ERROR,
                     JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            LOG.error("unknown Exception caught, will be rethrown after message dialog: {}",
+            LOG.error("unknown Exception caught, it will be rethrown after displaying the message dialog: {}",
                     ex.getMessage());
             JOptionPane.showMessageDialog(this, ERROR_LOADING_WORKBOOK + ex.getMessage(), TITLE_ERROR,
                     JOptionPane.ERROR_MESSAGE);

@@ -61,6 +61,13 @@ public interface WorkbookView<SV extends SheetView> {
     void setEditable(boolean editable);
 
     /**
+     * Get the editable state.
+     *
+     * @return {@code true} if editable, {@code false} otherwise.
+     */
+    boolean isEditable();
+
+    /**
      * Set the workbook.
      *
      * @param workbook the workbook to display

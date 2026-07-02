@@ -30,8 +30,10 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Insets;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Flow;
@@ -44,6 +46,7 @@ public final class SwingWorkbookView extends JComponent implements WorkbookView<
 
     // the workbook to show
     private transient @Nullable Workbook workbook;
+    private boolean editable;
 
     /**
      * Tabbed pane that contains the sheets of the workbook as tabs.
@@ -57,15 +60,16 @@ public final class SwingWorkbookView extends JComponent implements WorkbookView<
         setLayout(new CardLayout());
 
         content = new JTabbedPane(SwingConstants.BOTTOM);
+        content.setUI(new BasicTabbedPaneUI() {
+            @Override
+            protected Insets getContentBorderInsets(int tabPlacement) {
+                return new Insets(0, 0, 0, 0);
+            }
+        });
         content.addChangeListener(this);
         add(content);
     }
 
-    /**
-     * Get the {@link SwingSheetView} that is currently visible.
-     *
-     * @return the {@link SwingSheetView} displayed on the visible tab of this view
-     */
     @Override
     public Optional<SwingSheetView> getCurrentView() {
         Component component = content.getSelectedComponent();
@@ -99,37 +103,21 @@ public final class SwingWorkbookView extends JComponent implements WorkbookView<
         return Optional.empty();
     }
 
-    /**
-     * Get Workbook.
-     *
-     * @return the workbook displayed
-     */
     @Override
     public Optional<Workbook> getWorkbook() {
         return Optional.ofNullable(workbook);
     }
 
-    /**
-     * Set editable state.
-     *
-     * @param editable set to {@code true} to allow editing of the displayed
-     *                 workbook
-     */
     @Override
     public void setEditable(boolean editable) {
-        for (int i = 0; i < content.getTabCount(); i++) {
-            Component view = content.getComponentAt(i);
-            if (view instanceof SwingSheetView swingSheetView) {
-                swingSheetView.setEditable(editable);
-            }
-        }
+        this.editable = editable;
     }
 
-    /**
-     * Set the workbook.
-     *
-     * @param workbook the workbook to display
-     */
+    @Override
+    public boolean isEditable() {
+        return editable;
+    }
+
     @Override
     public void setWorkbook(@Nullable Workbook workbook) {
         content.removeAll();
@@ -145,6 +133,7 @@ public final class SwingWorkbookView extends JComponent implements WorkbookView<
             for (int i = 0; i < workbook.getSheetCount(); i++) {
                 Sheet sheet = workbook.getSheet(i);
                 final SwingSheetView sheetView = new SwingSheetView(sheet);
+                sheetView.setEditable(isEditable());
                 sheetView.updateContent();
                 content.addTab(sheet.getSheetName(), sheetView);
             }
