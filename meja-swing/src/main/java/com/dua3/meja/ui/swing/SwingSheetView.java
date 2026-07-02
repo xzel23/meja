@@ -29,6 +29,7 @@ import com.dua3.utility.swing.SwingGraphics;
 import com.dua3.utility.swing.SwingUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.NonNull;
 
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -36,7 +37,11 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.border.StrokeBorder;
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -193,21 +198,27 @@ public class SwingSheetView extends JPanel implements SheetView {
 
         final JComponent editorComp = editor.startEditing(cell);
 
-        final Rectangle2f cellRect = sheetPane.getCellRectInViewCoordinates(cell);
-        SwingSegmentView sv = getViewContainingCell(cell);
-        SegmentViewDelegate svDelegate = sv.getSvDelegate();
-        AffineTransformation2f t = svDelegate.getTransformation();
-        editorComp.setBounds(SwingGraphics.convert(Rectangle2f.withCorners(
-                t.transform(cellRect.min()),
-                t.transform(cellRect.max())
-        )));
+        Rectangle cellRectInLocal = getCellRectInLocal(cell);
 
         sheetPane.add(editorComp);
+        editorComp.setBorder(new StrokeBorder(new BasicStroke(1.0f), Color.RED));
+        editorComp.setBounds(cellRectInLocal);
         editorComp.validate();
         editorComp.setVisible(true);
         editorComp.repaint();
 
         delegate.setEditing(true);
+    }
+
+    private @NonNull Rectangle getCellRectInLocal(Cell cell) {
+        Rectangle2f cellRect = sheetPane.getCellRectInViewCoordinates(cell);
+        SwingSegmentView sv = getViewContainingCell(cell);
+        SegmentViewDelegate svDelegate = sv.getSvDelegate();
+        AffineTransformation2f t = svDelegate.getTransformation();
+        return SwingGraphics.convert(Rectangle2f.withCorners(
+                t.transform(cellRect.min()),
+                t.transform(cellRect.max())
+        ));
     }
 
     private SwingSegmentView getViewContainingCell(Cell cell) {

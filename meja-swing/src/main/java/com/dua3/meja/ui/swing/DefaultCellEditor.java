@@ -116,12 +116,12 @@ public class DefaultCellEditor implements CellEditor {
 
         this.cell = cell;
 
-        editorComponent.setVisible(true);
         editorComponent.setContent(cell, sheetView.getScale(), false);
-
         editorComponent.revalidate();
         editorComponent.setCaretPosition(component.getText().length());
         editorComponent.selectAll();
+        editorComponent.setVisible(true);
+
         SwingUtilities.invokeLater(() -> editorComponent.getTextComponent().requestFocusInWindow());
 
         return editorComponent;
