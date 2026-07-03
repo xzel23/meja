@@ -165,7 +165,7 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
         fxrg.prefWidthProperty().bind(widthProperty());
         setGraphic(fxrg);
 
-        setOnMouseClicked(this::onMouseClicked);
+        setOnMousePressed(this::onMousePressed);
     }
 
     /**
@@ -463,8 +463,8 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
         }
     }
 
-    private void onMouseClicked(MouseEvent evt) {
-        LOG.debug("onMouseClicked({})", evt);
+    private void onMousePressed(MouseEvent evt) {
+        LOG.debug("onMousePressed({})", evt);
 
         fxSheetView.requestFocus();
         FxSheetViewDelegate svDelegate = fxSheetView.getDelegate();
@@ -473,16 +473,16 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
         int i = getItem().rowNumber();
         if (j < 0) {
             if (i < 0) {
-                LOG.debug("onMouseClicked(): left top corner clicked");
+                LOG.debug("onMousePressed(): left top corner clicked");
             } else {
-                LOG.debug("onMouseClicked(): row header clicked for row {}", i);
+                LOG.debug("onMousePressed(): row header clicked for row {}", i);
             }
         } else if (i < 0) {
-            LOG.debug("onMouseClicked(): column header clicked for column {}", j);
+            LOG.debug("onMousePressed(): column header clicked for column {}", j);
         } else {
             Cell cell = svDelegate.getSheet().getCell(i, j);
             svDelegate.onMousePressed(cell);
-            LOG.debug("onMouseClicked(): pressed cell {}", () -> svDelegate.getCurrentLogicalCell().getCellRef());
+            LOG.debug("onMousePressed(): pressed cell {}", () -> svDelegate.getCurrentLogicalCell().getCellRef());
         }
     }
 }

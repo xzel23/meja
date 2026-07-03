@@ -23,11 +23,13 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -79,6 +81,7 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     private @Nullable Cell editingCell;
     private boolean updating = false;
+    private final EventHandler<KeyEvent> editorNavigationKeyFilter = this::handleEditorNavigationKeys;
 
     private final ObjectProperty<@Nullable Pane> toolbarParentProperty = new SimpleObjectProperty<>(null);
 
@@ -187,6 +190,14 @@ public final class FxSheetView extends StackPane implements SheetView {
         // Add the GridPane to the StackPane
         getChildren().add(gridPane);
         initEditor();
+        sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (oldScene != null) {
+                oldScene.removeEventFilter(KeyEvent.KEY_PRESSED, editorNavigationKeyFilter);
+            }
+            if (newScene != null) {
+                newScene.addEventFilter(KeyEvent.KEY_PRESSED, editorNavigationKeyFilter);
+            }
+        });
 
         hScrollbar.setValue(0);
         vScrollbar.setValue(0);
@@ -273,36 +284,63 @@ public final class FxSheetView extends StackPane implements SheetView {
         editor.setWrapText(false);
         editor.setEditable(false);
         editor.setEnterKeyInsertsNewline(false);
-        editor.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            switch (event.getCode()) {
-                case ENTER -> {
-                    stopEditing(true);
-                    event.consume();
-                }
-                case LEFT -> {
-                    moveSelectionFromEditor(Direction.WEST);
-                    event.consume();
-                }
-                case RIGHT -> {
-                    moveSelectionFromEditor(Direction.EAST);
-                    event.consume();
-                }
-                case UP -> {
-                    moveSelectionFromEditor(Direction.NORTH);
-                    event.consume();
-                }
-                case DOWN -> {
-                    moveSelectionFromEditor(Direction.SOUTH);
-                    event.consume();
-                }
-                default -> {
-                    // no-op
-                }
-            }
-        });
         editor.documentVersionProperty().addListener((v, o, n) -> updateEditorBounds());
-        editor.skinProperty().addListener((v, o, n) -> Platform.runLater(this::hideEditorScrollbars));
+        editor.skinProperty().addListener((v, o, n) -> Platform.runLater(() -> {
+            configureEditorScrollPane();
+            hideEditorScrollbars();
+        }));
         getChildren().add(editor);
+    }
+
+    private void handleEditorNavigationKeys(KeyEvent event) {
+        if (event.isConsumed() || !delegate.isEditing() || !isFocusInsideEditor()) {
+            return;
+        }
+
+        switch (event.getCode()) {
+            case ENTER -> {
+                stopEditing(true);
+                event.consume();
+            }
+            case LEFT -> {
+                moveSelectionFromEditor(Direction.WEST);
+                event.consume();
+            }
+            case RIGHT -> {
+                moveSelectionFromEditor(Direction.EAST);
+                event.consume();
+            }
+            case UP -> {
+                moveSelectionFromEditor(Direction.NORTH);
+                event.consume();
+            }
+            case DOWN -> {
+                moveSelectionFromEditor(Direction.SOUTH);
+                event.consume();
+            }
+            default -> {
+                // no-op
+            }
+        }
+    }
+
+    private boolean isFocusInsideEditor() {
+        Scene scene = getScene();
+        if (scene == null) {
+            return false;
+        }
+
+        Node focusOwner = scene.getFocusOwner();
+        return focusOwner != null && isNodeInsideEditor(focusOwner);
+    }
+
+    private boolean isNodeInsideEditor(Node node) {
+        for (Node current = node; current != null; current = current.getParent()) {
+            if (current == editor) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void moveSelectionFromEditor(Direction direction) {
@@ -515,13 +553,13 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void startEditing() {
-        if (!isEditable() || delegate.isEditing()) {
+        if (!isEditable() || delegate.isEditing() && editingCell != null) {
             return;
         }
 
         scrollToCurrentCell();
         Platform.runLater(() -> {
-            if (!isEditable() || delegate.isEditing()) {
+            if (!isEditable() || delegate.isEditing() && editingCell != null) {
                 return;
             }
 
@@ -539,6 +577,7 @@ public final class FxSheetView extends StackPane implements SheetView {
             editor.setVisible(true);
             editor.toFront();
             updateEditorBounds();
+            configureEditorScrollPane();
             hideEditorScrollbars();
             editor.requestFocus();
         });
@@ -594,6 +633,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight);
         editor.setWrapText(editorSize.wrapText());
         editor.resizeRelocate(x, y, editorSize.width(), editorSize.height());
+        configureEditorScrollPane();
         hideEditorScrollbars();
     }
 
@@ -640,6 +680,29 @@ public final class FxSheetView extends StackPane implements SheetView {
             measurement.setWrappingWidth(wrappingWidth);
         }
         return measurement.getLayoutBounds().getHeight();
+    }
+
+    private void configureEditorScrollPane() {
+        Node direct = editor.lookup(".scroll-pane");
+        if (direct instanceof ScrollPane scrollPane) {
+            configureEditorScrollPane(scrollPane);
+            return;
+        }
+
+        for (Node node : editor.lookupAll(".scroll-pane")) {
+            if (node instanceof ScrollPane scrollPane) {
+                configureEditorScrollPane(scrollPane);
+                return;
+            }
+        }
+    }
+
+    private void configureEditorScrollPane(ScrollPane scrollPane) {
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setPannable(false);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(false);
     }
 
     private void hideEditorScrollbars() {
