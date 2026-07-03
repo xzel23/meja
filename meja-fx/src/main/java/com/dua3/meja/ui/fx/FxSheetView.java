@@ -25,6 +25,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.input.KeyEvent;
@@ -37,6 +38,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
@@ -116,6 +118,11 @@ public final class FxSheetView extends StackPane implements SheetView {
         observableSheet.addLayoutListener(s -> {
             updateHScrollbar();
             updateVScrollbar();
+        });
+        observableSheet.currentCellProperty().addListener((v, o, n) -> {
+            if (delegate.isEditing() && !isSameLogicalCell(editingCell, n)) {
+                stopEditing(true);
+            }
         });
 
         // set up horizontal scrollbar
@@ -272,8 +279,20 @@ public final class FxSheetView extends StackPane implements SheetView {
                     stopEditing(true);
                     event.consume();
                 }
-                case ESCAPE -> {
-                    stopEditing(false);
+                case LEFT -> {
+                    moveSelectionFromEditor(Direction.WEST);
+                    event.consume();
+                }
+                case RIGHT -> {
+                    moveSelectionFromEditor(Direction.EAST);
+                    event.consume();
+                }
+                case UP -> {
+                    moveSelectionFromEditor(Direction.NORTH);
+                    event.consume();
+                }
+                case DOWN -> {
+                    moveSelectionFromEditor(Direction.SOUTH);
                     event.consume();
                 }
                 default -> {
@@ -281,12 +300,18 @@ public final class FxSheetView extends StackPane implements SheetView {
                 }
             }
         });
-        editor.focusedProperty().addListener((v, o, n) -> {
-            if (n != Boolean.TRUE && delegate.isEditing()) {
-                stopEditing(true);
-            }
-        });
+        editor.documentVersionProperty().addListener((v, o, n) -> updateEditorBounds());
+        editor.skinProperty().addListener((v, o, n) -> Platform.runLater(this::hideEditorScrollbars));
         getChildren().add(editor);
+    }
+
+    private void moveSelectionFromEditor(Direction direction) {
+        if (!delegate.isEditing()) {
+            return;
+        }
+        stopEditing(true);
+        move(direction);
+        scrollToCurrentCell();
     }
 
     void onKeyPressed(KeyEvent event) {
@@ -507,39 +532,43 @@ public final class FxSheetView extends StackPane implements SheetView {
             editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
             editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()).toString());
             editor.selectAll();
-            editor.setToolbarApplicationParent(toolbarParentProperty.get());
-            editor.setToolbarLocation(DetachableNode.Location.APPLICATION);
+            editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
             editor.setEditable(true);
 
             delegate.setEditing(true);
-            updateEditorBounds();
             editor.setVisible(true);
             editor.toFront();
+            updateEditorBounds();
+            hideEditorScrollbars();
             editor.requestFocus();
         });
     }
 
     @Override
     public void stopEditing(boolean commit) {
-        if (!delegate.isEditing() || editingCell == null) {
+        Cell cell = editingCell;
+
+        if (!delegate.isEditing() || cell == null) {
             return;
         }
 
-        Cell cell = editingCell;
-        if (commit) {
-            updateCellContent(cell);
-            repaintCell(cell);
-        }
+        PlatformHelper.runAndWait(() -> {
+            if (commit) {
+                updateCellContent(cell);
+                repaintCell(cell);
+            }
 
-        editingCell = null;
-        delegate.setEditing(false);
+            editingCell = null;
+            delegate.setEditing(false);
 
-        editor.setEditable(false);
-        editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
-        editor.setVisible(false);
-        editor.setText("");
+            editor.setEditable(false);
+            editor.setWrapText(false);
+            editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
+            editor.setVisible(false);
+            editor.setText("");
 
-        requestFocus();
+            requestFocus();
+        });
     }
 
     private void updateCellContent(Cell cell) {
@@ -550,17 +579,97 @@ public final class FxSheetView extends StackPane implements SheetView {
     }
 
     private void updateEditorBounds() {
-        if (!delegate.isEditing() || editingCell == null) {
+        Cell cell = editingCell;
+
+        if (!delegate.isEditing() || cell == null) {
             return;
         }
 
-        Rectangle2f cellRectInLocal = getCellRectInLocal(editingCell);
+        Rectangle2f cellRectInLocal = getCellRectInLocal(cell);
         double x = Math.rint(cellRectInLocal.x());
         double y = Math.rint(cellRectInLocal.y());
-        double w = Math.max(1.0, Math.rint(cellRectInLocal.width()));
-        double h = Math.max(1.0, Math.rint(cellRectInLocal.height()));
-        editor.resizeRelocate(x, y, w, h);
+        double minWidth = Math.max(1.0, Math.rint(cellRectInLocal.width()));
+        double minHeight = Math.max(1.0, Math.rint(cellRectInLocal.height()));
+
+        EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight);
+        editor.setWrapText(editorSize.wrapText());
+        editor.resizeRelocate(x, y, editorSize.width(), editorSize.height());
+        hideEditorScrollbars();
     }
+
+    private EditorSize computeEditorSize(double x, double y, double minWidth, double minHeight) {
+        String text = editor.getText().toString();
+        String displayText = text.isEmpty() ? " " : text;
+
+        double hPadding = Math.max(8.0, editor.getInsets().getLeft() + editor.getInsets().getRight() + 6.0);
+        double vPadding = Math.max(6.0, editor.getInsets().getTop() + editor.getInsets().getBottom() + 4.0);
+
+        double naturalWidth = measureLongestLineWidth(displayText) + hPadding;
+        double maxWidth = Math.max(minWidth, getEditorRightLimitX() - x);
+        boolean wrapText = naturalWidth > maxWidth + 0.5;
+        double width = wrapText ? maxWidth : Math.max(minWidth, naturalWidth);
+
+        double contentWidth = Math.max(1.0, width - hPadding);
+        double naturalHeight = measureTextHeight(displayText, wrapText ? contentWidth : 0.0) + vPadding;
+        double height = Math.max(minHeight, naturalHeight);
+
+        return new EditorSize(Math.rint(width), Math.rint(height), wrapText);
+    }
+
+    private double getEditorRightLimitX() {
+        double verticalScrollBarWidth = vScrollbar.isVisible() ? vScrollbar.getWidth() : 0.0;
+        return Math.max(1.0, getWidth() - verticalScrollBarWidth);
+    }
+
+    private double measureLongestLineWidth(String text) {
+        Text measurement = new Text();
+        measurement.setFont(editor.getFxFont());
+
+        double width = 0.0;
+        for (String line : text.split("\n", -1)) {
+            measurement.setText(line.isEmpty() ? " " : line);
+            width = Math.max(width, measurement.getLayoutBounds().getWidth());
+        }
+        return width;
+    }
+
+    private double measureTextHeight(String text, double wrappingWidth) {
+        Text measurement = new Text(text.isEmpty() ? " " : text);
+        measurement.setFont(editor.getFxFont());
+        if (wrappingWidth > 0.0) {
+            measurement.setWrappingWidth(wrappingWidth);
+        }
+        return measurement.getLayoutBounds().getHeight();
+    }
+
+    private void hideEditorScrollbars() {
+        for (Node node : editor.lookupAll(".scroll-bar")) {
+            node.setManaged(false);
+            node.setVisible(false);
+            node.setMouseTransparent(true);
+            if (node instanceof Region region) {
+                region.setMinSize(0.0, 0.0);
+                region.setPrefSize(0.0, 0.0);
+                region.setMaxSize(0.0, 0.0);
+            }
+        }
+    }
+
+    private static boolean isSameLogicalCell(@Nullable Cell c1, @Nullable Cell c2) {
+        if (c1 == c2) {
+            return true;
+        }
+        if (c1 == null || c2 == null) {
+            return false;
+        }
+        Cell logical1 = c1.getLogicalCell();
+        Cell logical2 = c2.getLogicalCell();
+        return logical1.getSheet() == logical2.getSheet()
+                && logical1.getRowNumber() == logical2.getRowNumber()
+                && logical1.getColumnNumber() == logical2.getColumnNumber();
+    }
+
+    private record EditorSize(double width, double height, boolean wrapText) {}
 
     private Rectangle2f getCellRectInLocal(Cell cell) {
         Rectangle2f cellRectInSheet = delegate.getCellRect(cell.getLogicalCell());

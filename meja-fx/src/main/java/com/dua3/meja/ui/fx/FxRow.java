@@ -480,8 +480,9 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
         } else if (i < 0) {
             LOG.debug("onMouseClicked(): column header clicked for column {}", j);
         } else {
-            svDelegate.setCurrentCell(i, j);
-            LOG.debug("onMouseClicked(): set current cell to {}", () -> svDelegate.getCurrentLogicalCell().getCellRef());
+            Cell cell = svDelegate.getSheet().getCell(i, j);
+            svDelegate.onMousePressed(cell);
+            LOG.debug("onMouseClicked(): pressed cell {}", () -> svDelegate.getCurrentLogicalCell().getCellRef());
         }
     }
 }
