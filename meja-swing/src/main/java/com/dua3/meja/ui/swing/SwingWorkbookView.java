@@ -20,6 +20,7 @@ import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookEvent;
 import com.dua3.meja.ui.WorkbookView;
+import com.dua3.utility.lang.LangUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -111,6 +112,13 @@ public final class SwingWorkbookView extends JComponent implements WorkbookView<
     @Override
     public void setEditable(boolean editable) {
         this.editable = editable;
+        if (workbook != null) {
+            LangUtil.asUnmodifiableList(content.getComponents())
+                    .stream()
+                    .filter(SwingSheetView.class::isInstance)
+                    .map(SwingSheetView.class::cast)
+                    .forEach(sv -> sv.setEditable(editable));
+        }
     }
 
     @Override

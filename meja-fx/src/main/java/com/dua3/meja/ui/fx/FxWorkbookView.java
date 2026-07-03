@@ -55,6 +55,8 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
     private final ObjectProperty<FxSheetView> currentViewProperty = new SimpleObjectProperty<>();
     private final FloatProperty currentViewZoomProperty = new SimpleFloatProperty();
 
+    private boolean editable;
+
     /**
      * Construct a new {@code WorkbookView}.
      */
@@ -185,8 +187,13 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     @Override
     public void setEditable(boolean editable) {
-        streamViews()
-                .forEach(sv -> sv.setEditable(editable));
+        this.editable = editable;
+        streamViews().forEach(sv -> sv.setEditable(editable));
+    }
+
+    @Override
+    public boolean isEditable() {
+        return editable;
     }
 
     /**
