@@ -139,7 +139,7 @@ public final class FxExcelViewer {
         private void openWorkbook(Stage stage) {
             try {
                 Dialogs.openFile(stage, Workbook.class, FileTypeExcel.instance())
-                        .ifPresent(fxWorkbookView::setWorkbook);
+                        .ifPresent(wb -> {fxWorkbookView.setWorkbook(wb); fxWorkbookView.setEditable(true);});
             } catch (Dialogs.UnsupportedFileTypeException e) {
                 Dialogs.alert(stage, AlertType.ERROR)
                         .title("Unsupported file type")

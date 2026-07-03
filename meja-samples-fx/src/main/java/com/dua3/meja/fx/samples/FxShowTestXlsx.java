@@ -40,6 +40,8 @@ public final class FxShowTestXlsx extends Application {
     @Override
     public void start(Stage primaryStage) {
         final FxWorkbookView view = new FxWorkbookView();
+        view.setEditable(true);
+
         Scene scene = new Scene(view, 1000, 600);
 
         primaryStage.setTitle(getClass().getSimpleName());

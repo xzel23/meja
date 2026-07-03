@@ -15,6 +15,7 @@ module com.dua3.meja.fx {
     requires transitive com.dua3.meja.ui;
     requires com.dua3.utility;
     requires com.dua3.utility.fx;
+    requires com.dua3.utility.fx.controls;
     requires org.apache.logging.log4j;
     requires java.desktop;
     requires org.jspecify;

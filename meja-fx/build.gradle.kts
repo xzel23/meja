@@ -9,8 +9,7 @@ dependencies {
     api(project(":meja-core"))
     api(project(":meja-ui"))
     implementation(rootProject.libs.dua3.utility)
-    api(rootProject.libs.dua3.utility.fx) {
-        // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
-        exclude(group = "org.openjfx")
-    }
+    // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
+    api(rootProject.libs.dua3.utility.fx) { exclude(group = "org.openjfx") }
+    implementation(rootProject.libs.dua3.utility.fx.controls) { exclude(group = "org.openjfx") }
 }

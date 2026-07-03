@@ -1,13 +1,19 @@
 package com.dua3.meja.ui.fx;
 
 import com.dua3.meja.model.Cell;
+import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.ui.SheetView;
+import com.dua3.meja.util.CellValueHelper;
+import com.dua3.utility.fx.controls.TextEditorPane;
 import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
+import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
+import com.dua3.utility.ui.DetachableNode;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -32,6 +38,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.Toolkit;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -51,12 +60,14 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     private final ScrollBar hScrollbar = new ScrollBar();
     private final ScrollBar vScrollbar = new ScrollBar();
+    private final TextEditorPane editor = new TextEditorPane();
 
     private final Region leftSpacer = new Region();
 
     private final DoubleProperty sheetScaleXProperty = new SimpleDoubleProperty(1.0);
     private final DoubleProperty sheetScaleYProperty = new SimpleDoubleProperty(1.0);
 
+    private Cell editingCell;
     private boolean updating = false;
 
     /**
@@ -143,10 +154,12 @@ public final class FxSheetView extends StackPane implements SheetView {
         gridPane.add(hScrollbarContainer, 0, 2, 2, 1);
 
         // bind vertical scrollbar
+        hScrollbar.valueProperty().addListener((v, o, n) -> updateEditorBounds());
         vScrollbar.valueProperty().addListener((v, o, n) -> {
             LOG.trace("set vscrollbar value to {}", n);
             double position = n.doubleValue() / Math.max(1.0, vScrollbar.getMax() - vScrollbar.getMin());
             bottomSegment.getFlow().setPosition(position);
+            updateEditorBounds();
         });
         bottomSegment.getFlow().positionProperty().addListener((v, o, n) -> {
             double position = n.doubleValue() * (vScrollbar.getMax() - vScrollbar.getMin());
@@ -156,6 +169,7 @@ public final class FxSheetView extends StackPane implements SheetView {
 
         // Add the GridPane to the StackPane
         getChildren().add(gridPane);
+        initEditor();
 
         hScrollbar.setValue(0);
         vScrollbar.setValue(0);
@@ -199,6 +213,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         hScrollbar.setVisibleAmount(visibleAmount);
         hScrollbar.setUnitIncrement(delegate.getDefaultColumnWidthInPixels() * delegate.getScale().sx() / 8);
         hScrollbar.setBlockIncrement(delegate.getDefaultColumnWidthInPixels() * delegate.getScale().sx());
+        updateEditorBounds();
     }
 
     private void updateVScrollbar() {
@@ -211,6 +226,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         vScrollbar.setVisibleAmount(visibleAmount);
         vScrollbar.setUnitIncrement(delegate.getDefaultRowHeightInPixels() * delegate.getScale().sy());
         vScrollbar.setBlockIncrement(delegate.getDefaultRowHeightInPixels() * delegate.getScale().sy() * 8);
+        updateEditorBounds();
     }
 
     private static ColumnConstraints columnConstraints(Priority prio) {
@@ -232,6 +248,36 @@ public final class FxSheetView extends StackPane implements SheetView {
      */
     static int getDpi() {
         return Toolkit.getDefaultToolkit().getScreenResolution();
+    }
+
+    private void initEditor() {
+        editor.setManaged(false);
+        editor.setVisible(false);
+        editor.setWrapText(false);
+        editor.setEditable(true);
+        editor.setEnterKeyInsertsNewline(false);
+        editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
+        editor.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            switch (event.getCode()) {
+                case ENTER -> {
+                    stopEditing(true);
+                    event.consume();
+                }
+                case ESCAPE -> {
+                    stopEditing(false);
+                    event.consume();
+                }
+                default -> {
+                    // no-op
+                }
+            }
+        });
+        editor.focusedProperty().addListener((v, o, n) -> {
+            if (!n && delegate.isEditing()) {
+                stopEditing(true);
+            }
+        });
+        getChildren().add(editor);
     }
 
     void onKeyPressed(KeyEvent event) {
@@ -266,6 +312,10 @@ public final class FxSheetView extends StackPane implements SheetView {
                 }
                 case PAGE_DOWN -> {
                     movePage(Direction.SOUTH);
+                    event.consume();
+                }
+                case F2 -> {
+                    startEditing();
                     event.consume();
                 }
                 case C -> {
@@ -324,7 +374,7 @@ public final class FxSheetView extends StackPane implements SheetView {
                     double sx = delegate.getScale().sx();
                     double splitX = delegate.getSplitXInPoints();
                     double xMin = delegate.getColumnPos(j);
-                    double xMax = delegate.getColumnPos(j + 1);
+                    double xMax = delegate.getColumnPos(j + cell.getHorizontalSpan());
                     double sheetWidth = delegate.getSheetWidthInPoints();
                     double segmentWidth = sheetWidth - splitX;
 
@@ -393,6 +443,7 @@ public final class FxSheetView extends StackPane implements SheetView {
             bottomSegment.updateLayout();
             updateHScrollbar();
             updateVScrollbar();
+            updateEditorBounds();
         }
     }
 
@@ -434,12 +485,111 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void startEditing() {
-        LOG.warn("startEditing() not implemented");
+        if (!delegate.isEditable() || delegate.isEditing()) {
+            return;
+        }
+
+        scrollToCurrentCell();
+        Platform.runLater(() -> {
+            if (!delegate.isEditable() || delegate.isEditing()) {
+                return;
+            }
+
+            Cell cell = delegate.getCurrentLogicalCell();
+            editingCell = cell;
+
+            CellStyle cellStyle = cell.getCellStyle();
+            editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
+            editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()).toString());
+            editor.selectAll();
+
+            delegate.setEditing(true);
+            updateEditorBounds();
+            editor.setVisible(true);
+            editor.toFront();
+            editor.requestFocus();
+        });
     }
 
     @Override
     public void stopEditing(boolean commit) {
-        LOG.warn("stopEditing() not implemented");
+        if (!delegate.isEditing() || editingCell == null) {
+            return;
+        }
+
+        Cell cell = editingCell;
+        if (commit) {
+            updateCellContent(cell);
+            repaintCell(cell);
+        }
+
+        editingCell = null;
+        delegate.setEditing(false);
+
+        editor.setVisible(false);
+        editor.setText("");
+
+        requestFocus();
+    }
+
+    private void updateCellContent(Cell cell) {
+        String text = editor.getText().toString();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+        NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
+        new CellValueHelper(numberFormat, dateFormatter).setCellValue(cell, text);
+    }
+
+    private void updateEditorBounds() {
+        if (!delegate.isEditing() || editingCell == null) {
+            return;
+        }
+
+        Rectangle2f cellRectInLocal = getCellRectInLocal(editingCell);
+        double x = Math.rint(cellRectInLocal.x());
+        double y = Math.rint(cellRectInLocal.y());
+        double w = Math.max(1.0, Math.rint(cellRectInLocal.width()));
+        double h = Math.max(1.0, Math.rint(cellRectInLocal.height()));
+        editor.resizeRelocate(x, y, w, h);
+    }
+
+    private Rectangle2f getCellRectInLocal(Cell cell) {
+        Rectangle2f cellRectInSheet = delegate.getCellRect(cell.getLogicalCell());
+        double xMin = toLocalX(cellRectInSheet.xMin(), true);
+        double xMax = toLocalX(cellRectInSheet.xMax(), false);
+        double yMin = toLocalY(cellRectInSheet.yMin(), true);
+        double yMax = toLocalY(cellRectInSheet.yMax(), false);
+        return Rectangle2f.of(
+                (float) xMin,
+                (float) yMin,
+                (float) Math.max(1.0, xMax - xMin),
+                (float) Math.max(1.0, yMax - yMin)
+        );
+    }
+
+    private double toLocalX(float xInPoints, boolean leadingEdge) {
+        double splitX = delegate.getSplitXInPoints();
+        double x = delegate.getRowLabelWidthInPixels() + xInPoints * delegate.getScale().sx();
+        boolean rightPane = leadingEdge ? xInPoints >= splitX : xInPoints > splitX;
+        if (rightPane) {
+            x -= hScrollbar.getValue() * delegate.getScale().sx();
+            if (delegate.getSplitColumn() > 0) {
+                x += delegate.getSplitLineWidth();
+            }
+        }
+        return x;
+    }
+
+    private double toLocalY(float yInPoints, boolean leadingEdge) {
+        double splitY = delegate.getSplitYInPoints();
+        double y = delegate.getColumnLabelHeightInPixels() + yInPoints * delegate.getScale().sy();
+        boolean bottomPane = leadingEdge ? yInPoints >= splitY : yInPoints > splitY;
+        if (bottomPane) {
+            y -= vScrollbar.getValue() * delegate.getScale().sy();
+            if (delegate.getSplitRow() > 0) {
+                y += delegate.getSplitLineHeight();
+            }
+        }
+        return y;
     }
 
     /**
