@@ -41,4 +41,5 @@ public final class FxSheetViewDelegate extends SheetViewDelegate {
     public void onNext(SheetEvent item) {
         PlatformHelper.runLater(() -> super.onNext(item));
     }
+
 }

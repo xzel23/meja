@@ -21,9 +21,11 @@ import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookEvent;
 import com.dua3.meja.ui.WorkbookView;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventTarget;
@@ -54,8 +56,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
     private final ObjectProperty<@Nullable Workbook> workbookProperty = new SimpleObjectProperty<>();
     private final ObjectProperty<FxSheetView> currentViewProperty = new SimpleObjectProperty<>();
     private final FloatProperty currentViewZoomProperty = new SimpleFloatProperty();
-
-    private boolean editable;
+    private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
     /**
      * Construct a new {@code WorkbookView}.
@@ -187,13 +188,12 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     @Override
     public void setEditable(boolean editable) {
-        this.editable = editable;
-        streamViews().forEach(sv -> sv.setEditable(editable));
+        editableProperty.set(editable);
     }
 
     @Override
     public boolean isEditable() {
-        return editable;
+        return editableProperty.get();
     }
 
     /**
@@ -216,7 +216,9 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
             content.getTabs().setAll(
                     workbook.sheets()
                             .map(sheet -> {
-                                Tab tab = new Tab(sheet.getSheetName(), new FxSheetView(sheet));
+                                FxSheetView sheetView = new FxSheetView(sheet);
+                                sheetView.editableProperty().bind(editableProperty);
+                                Tab tab = new Tab(sheet.getSheetName(), sheetView);
                                 tab.setClosable(false);
                                 return tab;
                             })

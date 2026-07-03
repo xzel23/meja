@@ -111,10 +111,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     private transient Color gridColor = Color.LIGHTGRAY;
     /**
-     * Read-only mode.
-     */
-    private boolean editable;
-    /**
      * Editing state.
      */
     private boolean editing;
@@ -959,7 +955,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
             }
         } else {
             // otherwise start cell editing
-            if (isEditable()) {
+            if (owner.isEditable()) {
                 owner.startEditing();
                 setEditing(true);
             }
@@ -986,30 +982,6 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     public boolean isEditing() {
         return editing;
-    }
-
-    /**
-     * Checks whether the sheet view allows editing of cell content.
-     * This setting controls whether users can modify cell values through the UI.
-     *
-     * @return true if editing is enabled, false if the sheet view is read-only
-     */
-    public boolean isEditable() {
-        return editable;
-    }
-
-    /**
-     * Sets whether the sheet view allows editing of cell content.
-     * When editing is disabled, users cannot modify cell values through the UI.
-     * The method is thread-safe and uses a write lock to ensure proper synchronization.
-     *
-     * @param editable true to enable editing, false to make the sheet view read-only
-     */
-    public void setEditable(boolean editable) {
-        LOG.trace("setEditable({})", editable);
-        try (var __ = writeLock("SheetViewDelegate.setEditable()")) {
-            this.editable = editable;
-        }
     }
 
     /**

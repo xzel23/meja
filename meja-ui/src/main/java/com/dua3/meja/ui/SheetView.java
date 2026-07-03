@@ -63,15 +63,6 @@ public interface SheetView {
     }
 
     /**
-     * Enable/disable sheet editing.
-     *
-     * @param editable true to allow editing
-     */
-    default void setEditable(boolean editable) {
-        getDelegate().setEditable(editable);
-    }
-
-    /**
      * End edit mode for the current cell.
      *
      * @param commit true if the content of the edited cell is to be updated
@@ -195,6 +186,13 @@ public interface SheetView {
      * Displays a search dialog that allows users to search for specific content within the sheet.
      */
     void showSearchDialog();
+
+    /**
+     * Determines whether the sheet view is currently editable.
+     *
+     * @return true if editing is enabled for the sheet view, false otherwise
+     */
+    boolean isEditable();
 
     /**
      * Initiates the editing mode for the currently selected cell in the sheet.

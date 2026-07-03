@@ -189,7 +189,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      * Enter edit mode for the current cell.
      */
     public void startEditing() {
-        if (!delegate.isEditable() || delegate.isEditing()) {
+        if (!isEditable() || delegate.isEditing()) {
             return;
         }
 

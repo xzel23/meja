@@ -15,7 +15,9 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.ui.DetachableNode;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -66,6 +68,8 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     private final DoubleProperty sheetScaleXProperty = new SimpleDoubleProperty(1.0);
     private final DoubleProperty sheetScaleYProperty = new SimpleDoubleProperty(1.0);
+
+    private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
     private Cell editingCell;
     private boolean updating = false;
@@ -254,9 +258,8 @@ public final class FxSheetView extends StackPane implements SheetView {
         editor.setManaged(false);
         editor.setVisible(false);
         editor.setWrapText(false);
-        editor.setEditable(true);
+        editor.setEditable(false);
         editor.setEnterKeyInsertsNewline(false);
-        editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
         editor.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
                 case ENTER -> {
@@ -273,7 +276,7 @@ public final class FxSheetView extends StackPane implements SheetView {
             }
         });
         editor.focusedProperty().addListener((v, o, n) -> {
-            if (!n && delegate.isEditing()) {
+            if (n != Boolean.TRUE && delegate.isEditing()) {
                 stopEditing(true);
             }
         });
@@ -375,13 +378,9 @@ public final class FxSheetView extends StackPane implements SheetView {
                     double splitX = delegate.getSplitXInPoints();
                     double xMin = delegate.getColumnPos(j);
                     double xMax = delegate.getColumnPos(j + cell.getHorizontalSpan());
-                    double sheetWidth = delegate.getSheetWidthInPoints();
-                    double segmentWidth = sheetWidth - splitX;
 
-                    double sbMax = hScrollbar.getMax();
                     double sbMin = hScrollbar.getMin();
                     double sbValue = hScrollbar.getValue();
-                    double sbRange = sbMax - sbMin;
                     double visibleWidth = (getWidth() - vScrollbar.getWidth() - getDelegate().getColumnLabelHeightInPixels() - delegate.getSplitLineWidth()) / sx - splitX;
                     double visibleMaxX = splitX + sbValue + visibleWidth;
 
@@ -485,13 +484,13 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void startEditing() {
-        if (!delegate.isEditable() || delegate.isEditing()) {
+        if (!isEditable() || delegate.isEditing()) {
             return;
         }
 
         scrollToCurrentCell();
         Platform.runLater(() -> {
-            if (!delegate.isEditable() || delegate.isEditing()) {
+            if (!isEditable() || delegate.isEditing()) {
                 return;
             }
 
@@ -502,6 +501,8 @@ public final class FxSheetView extends StackPane implements SheetView {
             editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
             editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()).toString());
             editor.selectAll();
+            editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
+            editor.setEditable(true);
 
             delegate.setEditing(true);
             updateEditorBounds();
@@ -526,6 +527,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         editingCell = null;
         delegate.setEditing(false);
 
+        editor.setEditable(false);
         editor.setVisible(false);
         editor.setText("");
 
@@ -622,6 +624,10 @@ public final class FxSheetView extends StackPane implements SheetView {
         return observableSheet;
     }
 
+    public BooleanProperty editableProperty() {
+        return editableProperty;
+    }
+
     record SheetPosition(int row, int column, float xSheet, float ySheet) {}
 
     /**
@@ -685,4 +691,14 @@ public final class FxSheetView extends StackPane implements SheetView {
         }
         return delegate.getRowNumberFromY((float) y, false);
     }
+
+    public void setEditable(boolean editable) {
+        this.editableProperty.set(editable);
+    }
+
+    @Override
+    public boolean isEditable() {
+        return editableProperty.get();
+    }
+
 }
