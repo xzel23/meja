@@ -17,8 +17,10 @@ import com.dua3.utility.ui.DetachableNode;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Orientation;
@@ -29,6 +31,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
@@ -38,6 +41,7 @@ import javafx.stage.Screen;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jspecify.annotations.Nullable;
 
 import java.awt.Toolkit;
 import java.text.NumberFormat;
@@ -71,8 +75,10 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
-    private Cell editingCell;
+    private @Nullable Cell editingCell;
     private boolean updating = false;
+
+    private final ObjectProperty<@Nullable Pane> toolbarParentProperty = new SimpleObjectProperty<>(null);
 
     /**
      * Constructs a new instance of FxSheetView using the specified Sheet object.
@@ -501,7 +507,8 @@ public final class FxSheetView extends StackPane implements SheetView {
             editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
             editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()).toString());
             editor.selectAll();
-            editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
+            editor.setToolbarApplicationParent(toolbarParentProperty.get());
+            editor.setToolbarLocation(DetachableNode.Location.APPLICATION);
             editor.setEditable(true);
 
             delegate.setEditing(true);
@@ -528,6 +535,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         delegate.setEditing(false);
 
         editor.setEditable(false);
+        editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
         editor.setVisible(false);
         editor.setText("");
 
@@ -693,7 +701,7 @@ public final class FxSheetView extends StackPane implements SheetView {
     }
 
     public void setEditable(boolean editable) {
-        this.editableProperty.set(editable);
+        editableProperty.set(editable);
     }
 
     @Override
@@ -701,4 +709,15 @@ public final class FxSheetView extends StackPane implements SheetView {
         return editableProperty.get();
     }
 
+    /**
+     * Returns the property that holds the parent Pane for the toolbar.
+     * This property allows the association of a toolbar's parent container
+     * in the FxSheetView.
+     *
+     * @return an ObjectProperty containing the parent Pane for the toolbar,
+     *         or null if no parent is defined
+     */
+    public ObjectProperty<@Nullable Pane> toolbarParentProperty() {
+        return toolbarParentProperty;
+    }
 }

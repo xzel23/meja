@@ -35,6 +35,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -57,6 +59,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
     private final ObjectProperty<FxSheetView> currentViewProperty = new SimpleObjectProperty<>();
     private final FloatProperty currentViewZoomProperty = new SimpleFloatProperty();
     private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
+    private final ObjectProperty<@Nullable Pane> toolbarParentProperty = new SimpleObjectProperty<>();
 
     /**
      * Construct a new {@code WorkbookView}.
@@ -217,6 +220,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
                     workbook.sheets()
                             .map(sheet -> {
                                 FxSheetView sheetView = new FxSheetView(sheet);
+                                sheetView.toolbarParentProperty().bind(toolbarParentProperty);
                                 sheetView.editableProperty().bind(editableProperty);
                                 Tab tab = new Tab(sheet.getSheetName(), sheetView);
                                 tab.setClosable(false);
@@ -271,5 +275,25 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
      */
     public ReadOnlyObjectProperty<@Nullable Workbook> workbookProperty() {
         return workbookProperty;
+    }
+
+    /**
+     * Provides access to the property representing the parent container
+     * of the toolbar in this workbook view.
+     *
+     * @return the property representing the toolbar's parent container
+     */
+    public ObjectProperty<@Nullable Pane> toolbarParentProperty() {
+        return toolbarParentProperty;
+    }
+
+    /**
+     * Sets the parent container for the toolbar in this workbook view.
+     *
+     * @param toolbarParent the {@link Pane} to set as the parent container of the toolbar.
+     *                      Pass {@code null} to unset the toolbar's parent.
+     */
+    public void setToolbarParent(@Nullable Pane toolbarParent) {
+        toolbarParentProperty.set(toolbarParent);
     }
 }
