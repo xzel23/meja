@@ -944,22 +944,28 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         LOG.trace("onMousePressed({})", cell::getCellRef);
 
         Cell logicalCell = cell.getLogicalCell();
+        Cell currentLogicalCell = getCurrentLogicalCell();
+        boolean sameCell =
+                currentLogicalCell.getSheet() == logicalCell.getSheet()
+                        && currentLogicalCell.getRowNumber() == logicalCell.getRowNumber()
+                        && currentLogicalCell.getColumnNumber() == logicalCell.getColumnNumber();
 
         // make the cell the current cell
-        boolean currentCellChanged = setCurrentCell(logicalCell);
+        boolean currentCellChanged = !sameCell;
+        if (currentCellChanged) {
+            setCurrentCell(logicalCell);
+        }
         requestFocus();
 
         if (currentCellChanged) {
             // if cell changed, stop cell editing
             if (isEditing()) {
                 owner.stopEditing(true);
-                setEditing(false);
             }
         } else {
             // otherwise start cell editing
             if (owner.isEditable()) {
                 owner.startEditing();
-                setEditing(true);
             }
         }
     }

@@ -489,13 +489,13 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void startEditing() {
-        if (!isEditable() || delegate.isEditing() && editingCell != null) {
+        if (!isEditable() || editingCell != null) {
             return;
         }
 
         scrollToCurrentCell();
         Platform.runLater(() -> {
-            if (!isEditable() || delegate.isEditing() && editingCell != null) {
+            if (!isEditable() || editingCell != null) {
                 return;
             }
 
@@ -516,6 +516,11 @@ public final class FxSheetView extends StackPane implements SheetView {
             configureEditorScrollPane();
             hideEditorScrollbars();
             editor.requestFocus();
+            Platform.runLater(() -> {
+                if (delegate.isEditing() && isSameLogicalCell(editingCell, cell)) {
+                    editor.requestFocus();
+                }
+            });
         });
     }
 
