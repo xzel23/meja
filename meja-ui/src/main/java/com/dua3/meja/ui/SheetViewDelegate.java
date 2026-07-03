@@ -943,8 +943,10 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     public void onMousePressed(Cell cell) {
         LOG.trace("onMousePressed({})", cell::getCellRef);
 
+        Cell logicalCell = cell.getLogicalCell();
+
         // make the cell the current cell
-        boolean currentCellChanged = setCurrentCell(cell);
+        boolean currentCellChanged = setCurrentCell(logicalCell);
         requestFocus();
 
         if (currentCellChanged) {
