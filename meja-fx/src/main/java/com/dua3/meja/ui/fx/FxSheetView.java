@@ -23,6 +23,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -80,6 +82,8 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     private @Nullable Cell editingCell;
     private boolean updating = false;
+    private boolean forwardingNavigationKey = false;
+    private final EventHandler<KeyEvent> editingNavigationKeyFilter = this::handleEditingNavigationKey;
 
     private final ObjectProperty<@Nullable Pane> toolbarParentProperty = new SimpleObjectProperty<>(null);
 
@@ -188,6 +192,14 @@ public final class FxSheetView extends StackPane implements SheetView {
         // Add the GridPane to the StackPane
         getChildren().add(gridPane);
         initEditor();
+        sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (oldScene != null) {
+                oldScene.removeEventFilter(KeyEvent.KEY_PRESSED, editingNavigationKeyFilter);
+            }
+            if (newScene != null) {
+                newScene.addEventFilter(KeyEvent.KEY_PRESSED, editingNavigationKeyFilter);
+            }
+        });
 
         hScrollbar.setValue(0);
         vScrollbar.setValue(0);
@@ -271,6 +283,7 @@ public final class FxSheetView extends StackPane implements SheetView {
     private void initEditor() {
         editor.setManaged(false);
         editor.setVisible(false);
+        editor.setMinSize(0.0, 0.0);
         editor.setWrapText(false);
         editor.setEditable(false);
         editor.setEnterKeyInsertsNewline(true);
@@ -286,6 +299,28 @@ public final class FxSheetView extends StackPane implements SheetView {
             hideEditorScrollbars();
         }));
         getChildren().add(editor);
+    }
+
+    private void handleEditingNavigationKey(KeyEvent event) {
+        if (event.isConsumed() || !delegate.isEditing() || editingCell == null || forwardingNavigationKey) {
+            return;
+        }
+
+        switch (event.getCode()) {
+            case LEFT, RIGHT, UP, DOWN -> {
+                forwardingNavigationKey = true;
+                try {
+                    editor.requestFocus();
+                    Event.fireEvent(editor, event.copyFor(editor, editor));
+                } finally {
+                    forwardingNavigationKey = false;
+                }
+                event.consume();
+            }
+            default -> {
+                // no-op
+            }
+        }
     }
 
     void onKeyPressed(KeyEvent event) {
@@ -566,10 +601,15 @@ public final class FxSheetView extends StackPane implements SheetView {
         }
 
         Rectangle2f cellRectInLocal = getCellRectInLocal(cell);
-        double x = Math.rint(cellRectInLocal.x());
-        double y = Math.rint(cellRectInLocal.y());
-        double minWidth = Math.max(1.0, Math.rint(cellRectInLocal.width()));
-        double minHeight = Math.max(1.0, Math.rint(cellRectInLocal.height()));
+        double xMin = cellRectInLocal.x();
+        double yMin = cellRectInLocal.y();
+        double xMax = cellRectInLocal.x() + cellRectInLocal.width();
+        double yMax = cellRectInLocal.y() + cellRectInLocal.height();
+
+        double x = Math.floor(xMin);
+        double y = Math.floor(yMin);
+        double minWidth = Math.max(1.0, Math.ceil(xMax) - x);
+        double minHeight = Math.max(1.0, Math.ceil(yMax) - y);
 
         EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight);
         editor.setWrapText(editorSize.wrapText());
@@ -582,17 +622,21 @@ public final class FxSheetView extends StackPane implements SheetView {
         String text = editor.getText().toString();
         String displayText = text.isEmpty() ? " " : text;
 
-        double hPadding = Math.max(8.0, editor.getInsets().getLeft() + editor.getInsets().getRight() + 6.0);
-        double vPadding = Math.max(6.0, editor.getInsets().getTop() + editor.getInsets().getBottom() + 4.0);
+        double hPadding = Math.max(4.0, 2.0 * delegate.getPaddingX() * delegate.getScale().sx());
+        double vPadding = Math.max(2.0, 2.0 * delegate.getPaddingY() * delegate.getScale().sy());
 
         double naturalWidth = measureLongestLineWidth(displayText) + hPadding;
         double maxWidth = Math.max(minWidth, getEditorRightLimitX() - x);
         boolean wrapText = naturalWidth > maxWidth + 0.5;
         double width = wrapText ? maxWidth : Math.max(minWidth, naturalWidth);
 
-        double contentWidth = Math.max(1.0, width - hPadding);
-        double naturalHeight = measureTextHeight(displayText, wrapText ? contentWidth : 0.0) + vPadding;
-        double height = Math.max(minHeight, naturalHeight);
+        boolean multiline = wrapText || text.indexOf('\n') >= 0;
+        double height = minHeight;
+        if (multiline) {
+            double contentWidth = Math.max(1.0, width - hPadding);
+            double naturalHeight = measureTextHeight(displayText, wrapText ? contentWidth : 0.0) + vPadding;
+            height = Math.max(minHeight, naturalHeight);
+        }
 
         return new EditorSize(Math.rint(width), Math.rint(height), wrapText);
     }
