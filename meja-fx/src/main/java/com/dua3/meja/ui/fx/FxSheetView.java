@@ -601,15 +601,10 @@ public final class FxSheetView extends StackPane implements SheetView {
         }
 
         Rectangle2f cellRectInLocal = getCellRectInLocal(cell);
-        double xMin = cellRectInLocal.x();
-        double yMin = cellRectInLocal.y();
-        double xMax = cellRectInLocal.x() + cellRectInLocal.width();
-        double yMax = cellRectInLocal.y() + cellRectInLocal.height();
-
-        double x = Math.floor(xMin);
-        double y = Math.floor(yMin);
-        double minWidth = Math.max(1.0, Math.ceil(xMax) - x);
-        double minHeight = Math.max(1.0, Math.ceil(yMax) - y);
+        double x = cellRectInLocal.x();
+        double y = cellRectInLocal.y();
+        double minWidth = Math.max(1.0, cellRectInLocal.width());
+        double minHeight = Math.max(1.0, cellRectInLocal.height());
 
         EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight);
         editor.setWrapText(editorSize.wrapText());
