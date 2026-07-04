@@ -80,7 +80,6 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
-    private @Nullable Cell editingCell;
     private boolean updating = false;
     private boolean forwardingNavigationKey = false;
     private final EventHandler<KeyEvent> editingNavigationKeyFilter = this::handleEditingNavigationKey;
@@ -125,7 +124,7 @@ public final class FxSheetView extends StackPane implements SheetView {
             updateVScrollbar();
         });
         observableSheet.currentCellProperty().addListener((v, o, n) -> {
-            if (delegate.isEditing() && !isSameLogicalCell(editingCell, n)) {
+            if (!isSameLogicalCell(delegate.getEditingCell().orElse(null), n)) {
                 stopEditing(true);
             }
         });
@@ -288,7 +287,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         editor.setEditable(false);
         editor.setEnterKeyInsertsNewline(true);
         editor.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (delegate.isEditing() && event.getCode() == javafx.scene.input.KeyCode.ENTER && !event.isShiftDown()) {
+            if (event.getCode() == javafx.scene.input.KeyCode.ENTER && !event.isShiftDown()) {
                 stopEditing(true);
                 event.consume();
             }
@@ -302,7 +301,7 @@ public final class FxSheetView extends StackPane implements SheetView {
     }
 
     private void handleEditingNavigationKey(KeyEvent event) {
-        if (event.isConsumed() || !delegate.isEditing() || editingCell == null || forwardingNavigationKey) {
+        if (event.isConsumed() || !delegate.isEditing() || forwardingNavigationKey) {
             return;
         }
 
@@ -524,66 +523,49 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     @Override
     public void startEditing() {
-        if (!isEditable() || editingCell != null) {
+        if (!isEditable()) {
             return;
         }
 
-        scrollToCurrentCell();
-        Platform.runLater(() -> {
-            if (!isEditable() || editingCell != null) {
-                return;
-            }
-
-            Cell cell = delegate.getCurrentLogicalCell();
-            editingCell = cell;
-
-            CellStyle cellStyle = cell.getCellStyle();
-            editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
-            editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()).toString());
-            editor.selectAll();
-            editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
-            editor.setEditable(true);
-
-            delegate.setEditing(true);
-            editor.setVisible(true);
-            editor.toFront();
-            updateEditorBounds();
-            configureEditorScrollPane();
-            hideEditorScrollbars();
-            editor.requestFocus();
+        delegate.startEditing().ifPresent(cell -> {
+            scrollToCurrentCell();
             Platform.runLater(() -> {
-                if (delegate.isEditing() && isSameLogicalCell(editingCell, cell)) {
-                    editor.requestFocus();
-                }
+                CellStyle cellStyle = cell.getCellStyle();
+                editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
+                editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()).toString());
+                editor.selectAll();
+                editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
+                editor.setEditable(true);
+
+                editor.setVisible(true);
+                editor.toFront();
+                updateEditorBounds();
+                configureEditorScrollPane();
+                hideEditorScrollbars();
+                editor.requestFocus();
             });
         });
     }
 
     @Override
     public void stopEditing(boolean commit) {
-        Cell cell = editingCell;
+        delegate.stopEditing().ifPresent(cell ->
+                PlatformHelper.runAndWait(() -> {
+                    if (commit) {
+                        LOG.debug("committing cell content: {}", cell);
+                        updateCellContent(cell);
+                        repaintCell(cell);
+                    }
 
-        if (!delegate.isEditing() || cell == null) {
-            return;
-        }
+                    editor.setEditable(false);
+                    editor.setWrapText(false);
+                    editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
+                    editor.setVisible(false);
+                    editor.setText("");
 
-        PlatformHelper.runAndWait(() -> {
-            if (commit) {
-                updateCellContent(cell);
-                repaintCell(cell);
-            }
-
-            editingCell = null;
-            delegate.setEditing(false);
-
-            editor.setEditable(false);
-            editor.setWrapText(false);
-            editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
-            editor.setVisible(false);
-            editor.setText("");
-
-            requestFocus();
-        });
+                    requestFocus();
+                })
+        );
     }
 
     private void updateCellContent(Cell cell) {
@@ -594,23 +576,19 @@ public final class FxSheetView extends StackPane implements SheetView {
     }
 
     private void updateEditorBounds() {
-        Cell cell = editingCell;
+        delegate.getEditingCell().ifPresent(cell -> {
+            Rectangle2f cellRectInLocal = getCellRectInLocal(cell);
+            double x = cellRectInLocal.x();
+            double y = cellRectInLocal.y();
+            double minWidth = Math.max(1.0, cellRectInLocal.width());
+            double minHeight = Math.max(1.0, cellRectInLocal.height());
 
-        if (!delegate.isEditing() || cell == null) {
-            return;
-        }
-
-        Rectangle2f cellRectInLocal = getCellRectInLocal(cell);
-        double x = cellRectInLocal.x();
-        double y = cellRectInLocal.y();
-        double minWidth = Math.max(1.0, cellRectInLocal.width());
-        double minHeight = Math.max(1.0, cellRectInLocal.height());
-
-        EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight);
-        editor.setWrapText(editorSize.wrapText());
-        editor.resizeRelocate(x, y, editorSize.width(), editorSize.height());
-        configureEditorScrollPane();
-        hideEditorScrollbars();
+            EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight);
+            editor.setWrapText(editorSize.wrapText());
+            editor.resizeRelocate(x, y, editorSize.width(), editorSize.height());
+            configureEditorScrollPane();
+            hideEditorScrollbars();
+        });
     }
 
     private EditorSize computeEditorSize(double x, double y, double minWidth, double minHeight) {

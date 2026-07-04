@@ -19,7 +19,10 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.Optional;
 import java.util.concurrent.Flow;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.IntFunction;
@@ -56,8 +59,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     /**
      * Width of the selection rectangle borders.
      */
-    private float selectionStrokeWidth = DEFAULT_SELECTION_STROKE_WIDTH;
-    private boolean layoutChanged = true;
+    private volatile float selectionStrokeWidth = DEFAULT_SELECTION_STROKE_WIDTH;
+    private final AtomicBoolean layoutChanged = new AtomicBoolean(true);
     /**
      * Color used to draw the selection rectangle.
      */
@@ -70,18 +73,18 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * Array with column positions (dy-axis) in points.
      */
     private float[] rowPos = {0};
-    private float sheetHeightInPoints;
-    private float sheetWidthInPoints;
-    private float rowLabelWidth;
-    private float columnLabelHeightInPoints;
+    private volatile float sheetHeightInPoints;
+    private volatile float sheetWidthInPoints;
+    private volatile float rowLabelWidth;
+    private volatile float columnLabelHeightInPoints;
     private Font labelFont = FontUtil.getInstance().getDefaultFont().withSize(8);
     private Color labelBackgroundColor = Color.WHITESMOKE;
     private Color labelBorderColor = labelBackgroundColor.darker();
-    private float labelBorderWidthInPixels = 1.0f;
-    private float pixelWidthInPoints = 1.0f;
-    private float pixelHeightInPoints = 1.0f;
-    private int splitColumn;
-    private int splitRow;
+    private volatile float labelBorderWidthInPixels = 1.0f;
+    private volatile float pixelWidthInPoints = 1.0f;
+    private volatile float pixelHeightInPoints = 1.0f;
+    private volatile int splitColumn;
+    private volatile int splitRow;
     /**
      * Flow-API {@link java.util.concurrent.Flow.Subscription} instance.
      */
@@ -113,7 +116,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     /**
      * Editing state.
      */
-    private boolean editing;
+    private final AtomicReference<@Nullable Cell> editingCell = new AtomicReference<>(null);
 
     /**
      * Creates a new SheetViewDelegate instance.
@@ -146,31 +149,32 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     public void updateLayout() {
         try (var __ = writeLock("SheetViewDelegate.updateLayout()")) {
-            if (!layoutChanged) {
+            if (!layoutChanged.compareAndSet(true, false)) {
                 LOG.trace("updateLayout() - layout is clean, nothing to do");
                 return;
             }
-            layoutChanged = false;
 
             this.pixelWidthInPoints = 1.0f / scale.sx();
             this.pixelHeightInPoints = 1.0f / scale.sy();
 
             // determine row and column positions
-            sheetHeightInPoints = 0;
+            float shp = 0;
             rowPos = new float[2 + sheet.getRowCount() - 1];
             rowPos[0] = 0;
             for (int i = 1; i < rowPos.length; i++) {
-                sheetHeightInPoints += sheet.getRowHeight(i - 1);
-                rowPos[i] = sheetHeightInPoints;
+                shp += sheet.getRowHeight(i - 1);
+                rowPos[i] = shp;
             }
+            sheetHeightInPoints = shp;
 
-            sheetWidthInPoints = 0;
+            float swp = 0;
             columnPos = new float[2 + sheet.getColumnCount() - 1];
             columnPos[0] = 0;
             for (int j = 1; j < columnPos.length; j++) {
-                sheetWidthInPoints += sheet.getColumnWidth(j - 1);
-                columnPos[j] = sheetWidthInPoints;
+                swp += sheet.getColumnWidth(j - 1);
+                columnPos[j] = swp;
             }
+            sheetWidthInPoints = swp;
 
             // create a string with the maximum number of digits needed to
             // represent the highest row number, using only the digit '9'.
@@ -227,9 +231,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     private void markLayoutChanged() {
         LOG.trace("markLayoutChanged()");
-        try (var __ = writeLock("SheetViewDelegate.markLayoutChanged()")) {
-            this.layoutChanged = true;
-        }
+        layoutChanged.set(true);
     }
 
     /**
@@ -959,14 +961,10 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
 
         if (currentCellChanged) {
             // if cell changed, stop cell editing
-            if (isEditing()) {
-                owner.stopEditing(true);
-            }
+            owner.stopEditing(true);
         } else {
             // otherwise start cell editing
-            if (owner.isEditable()) {
-                owner.startEditing();
-            }
+            owner.startEditing();
         }
     }
 
@@ -982,29 +980,26 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     }
 
     /**
-     * Checks whether a cell is currently being edited.
-     * This indicates whether the sheet view is in cell editing mode,
-     * where the user can directly modify the content of the current cell.
-     *
-     * @return true if a cell is currently being edited, false otherwise
-     */
-    public boolean isEditing() {
-        return editing;
-    }
-
-    /**
      * Sets the editing state of the sheet view.
      * This method is called internally to manage the cell editing state.
      * The method is thread-safe and uses a write lock to ensure proper synchronization.
      *
-     * @param editing true to indicate that cell editing is in progress,
-     *                false to indicate that editing has ended
+     * @return an {@link Optional} holding the cell to be edited or an empty {@code Optional} if the editing state was not successfully set
      */
-    public void setEditing(boolean editing) {
-        LOG.trace("setEditing({})", editing);
-        try (var __ = writeLock("SheetViewDelegate.setEditing()")) {
-            this.editing = editing;
-        }
+    public Optional<Cell> startEditing() {
+        Cell cell = getCurrentLogicalCell();
+        return editingCell.compareAndSet(null, cell) ? Optional.of(cell) : Optional.empty();
+    }
+
+    /**
+     * Stops the current editing session, if any, by clearing the reference
+     * to the currently edited cell.
+     *
+     * @return an {@link Optional} holding thethe cell that was being edited or an empty {@code Optional} if no cell was being edited
+     */
+    public Optional<Cell> stopEditing() {
+        LOG.trace("stopEditing()");
+        return Optional.ofNullable(editingCell.getAndSet(null));
     }
 
     /**
@@ -1434,5 +1429,13 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     public double getSplitLineHeight() {
         return SPLIT_LINE_PIXELS;
+    }
+
+    public Optional<Cell> getEditingCell() {
+        return Optional.ofNullable(editingCell.get());
+    }
+
+    public boolean isEditing() {
+        return editingCell.get() != null;
     }
 }

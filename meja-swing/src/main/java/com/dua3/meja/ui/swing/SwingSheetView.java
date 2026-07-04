@@ -62,6 +62,8 @@ public class SwingSheetView extends JPanel implements SheetView {
 
     private final transient SwingSearchDialog searchDialog = new SwingSearchDialog(this);
 
+    private boolean editable;
+
     /**
      * Constructor.
      *
@@ -124,7 +126,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      */
     @Override
     public void stopEditing(boolean commit) {
-        editor.stopEditing(commit);
+        delegate.stopEditing().ifPresent(cell -> editor.stopEditing(commit));
     }
 
     /**
@@ -133,7 +135,7 @@ public class SwingSheetView extends JPanel implements SheetView {
      * subclasses.
      */
     public void stoppedEditing() {
-        delegate.setEditing(false);
+        stopEditing(false);
         sheetPane.setScrollable(true);
     }
 
@@ -189,26 +191,25 @@ public class SwingSheetView extends JPanel implements SheetView {
      * Enter edit mode for the current cell.
      */
     public void startEditing() {
-        if (!isEditable() || delegate.isEditing()) {
+        if (!isEditable()) {
             return;
         }
 
-        Cell cell = delegate.getCurrentLogicalCell();
-        sheetPane.ensureCellIsVisible(cell);
-        sheetPane.setScrollable(false);
+        delegate.startEditing().ifPresent(cell -> {
+            sheetPane.ensureCellIsVisible(cell);
+            sheetPane.setScrollable(false);
 
-        final JComponent editorComp = editor.startEditing(cell);
+            final JComponent editorComp = editor.startEditing(cell);
 
-        Rectangle cellRectInLocal = getCellRectInLocal(cell);
+            Rectangle cellRectInLocal = getCellRectInLocal(cell);
 
-        sheetPane.add(editorComp);
-        editorComp.setBorder(new StrokeBorder(new BasicStroke(1.0f), Color.RED));
-        editorComp.setBounds(cellRectInLocal);
-        editorComp.validate();
-        editorComp.setVisible(true);
-        editorComp.repaint();
-
-        delegate.setEditing(true);
+            sheetPane.add(editorComp);
+            editorComp.setBorder(new StrokeBorder(new BasicStroke(1.0f), Color.RED));
+            editorComp.setBounds(cellRectInLocal);
+            editorComp.validate();
+            editorComp.setVisible(true);
+            editorComp.repaint();
+        });
     }
 
     private @NonNull Rectangle getCellRectInLocal(Cell cell) {
@@ -273,5 +274,14 @@ public class SwingSheetView extends JPanel implements SheetView {
     public void validate() {
         super.validate();
         delegate.updateLayout();
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return editable;
     }
 }
