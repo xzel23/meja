@@ -24,7 +24,10 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
+import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -42,6 +45,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,6 +67,7 @@ import java.util.Objects;
  */
 public final class FxSheetView extends StackPane implements SheetView {
     private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
+    private static final double FLOATING_TOOLBAR_GAP = 4.0;
 
     private final ObservableSheet observableSheet;
     private final FxSheetViewDelegate delegate;
@@ -543,6 +548,7 @@ public final class FxSheetView extends StackPane implements SheetView {
                 configureEditorScrollPane();
                 hideEditorScrollbars();
                 editor.requestFocus();
+                Platform.runLater(this::updateEditorBounds);
             });
         });
     }
@@ -589,7 +595,78 @@ public final class FxSheetView extends StackPane implements SheetView {
             editor.resizeRelocate(x, y, editorSize.width(), editorSize.height());
             configureEditorScrollPane();
             hideEditorScrollbars();
+            updateFloatingToolbarPosition(x, y, editorSize.width(), editorSize.height());
         });
+    }
+
+    private void updateFloatingToolbarPosition(double editorX, double editorY, double editorWidth, double editorHeight) {
+        if (editor.getToolbarLocation() != DetachableNode.Location.FLOATING || !editor.isVisible()) {
+            return;
+        }
+
+        Bounds editorBoundsOnScreen = localToScreen(new BoundingBox(editorX, editorY, editorWidth, editorHeight));
+        if (editorBoundsOnScreen == null) {
+            return;
+        }
+
+        Window toolbarWindow = findFloatingToolbarWindow();
+        if (toolbarWindow == null) {
+            return;
+        }
+
+        double toolbarWidth = Math.max(1.0, toolbarWindow.getWidth());
+        double toolbarHeight = Math.max(1.0, toolbarWindow.getHeight());
+        double probeX = editorBoundsOnScreen.getMinX() + editorBoundsOnScreen.getWidth() * 0.5;
+        double probeY = editorBoundsOnScreen.getMinY() + editorBoundsOnScreen.getHeight() * 0.5;
+        Screen screen = Screen.getScreensForRectangle(probeX, probeY, 1, 1).stream()
+                .findFirst()
+                .orElse(Screen.getPrimary());
+        Rectangle2D visualBounds = screen.getVisualBounds();
+
+        double x = Math.clamp(
+                editorBoundsOnScreen.getMinX(),
+                visualBounds.getMinX(),
+                Math.max(visualBounds.getMinX(), visualBounds.getMaxX() - toolbarWidth)
+        );
+
+        double aboveY = editorBoundsOnScreen.getMinY() - toolbarHeight - FLOATING_TOOLBAR_GAP;
+        double belowY = editorBoundsOnScreen.getMaxY() + FLOATING_TOOLBAR_GAP;
+        double y = aboveY >= visualBounds.getMinY()
+                ? aboveY
+                : Math.clamp(
+                belowY,
+                visualBounds.getMinY(),
+                Math.max(visualBounds.getMinY(), visualBounds.getMaxY() - toolbarHeight)
+        );
+
+        toolbarWindow.setX(x);
+        toolbarWindow.setY(y);
+    }
+
+    private @Nullable Window findFloatingToolbarWindow() {
+        Scene scene = getScene();
+        if (scene == null) {
+            return null;
+        }
+
+        Window owner = scene.getWindow();
+        if (owner == null) {
+            return null;
+        }
+
+        for (Window window : Window.getWindows()) {
+            if (!(window instanceof Stage stage) || !stage.isShowing() || stage.getOwner() != owner) {
+                continue;
+            }
+
+            Scene windowScene = stage.getScene();
+            Node root = windowScene == null ? null : windowScene.getRoot();
+            if (root != null && root.getClass().getName().contains("ToolBarEx$FloatingPane")) {
+                return stage;
+            }
+        }
+
+        return null;
     }
 
     private EditorSize computeEditorSize(double x, double y, double minWidth, double minHeight, boolean styleWrapping) {
