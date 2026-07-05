@@ -578,10 +578,10 @@ public final class FxSheetView extends StackPane implements SheetView {
     private void updateEditorBounds() {
         delegate.getEditingCell().ifPresent(cell -> {
             Rectangle2f cellRectInLocal = getCellRectInLocal(cell);
-            double x = cellRectInLocal.x();
-            double y = cellRectInLocal.y();
-            double minWidth = Math.max(1.0, cellRectInLocal.width());
-            double minHeight = Math.max(1.0, cellRectInLocal.height());
+            double x = cellRectInLocal.x() + 1;
+            double y = cellRectInLocal.y() + 1;
+            double minWidth = Math.max(1.0, cellRectInLocal.width() - 2);
+            double minHeight = Math.max(1.0, cellRectInLocal.height() - 2);
 
             EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight);
             editor.setWrapText(editorSize.wrapText());
@@ -700,9 +700,9 @@ public final class FxSheetView extends StackPane implements SheetView {
         double yMax = toLocalY(cellRectInSheet.yMax(), false);
         return Rectangle2f.of(
                 (float) xMin,
-                (float) yMin,
+                (float) yMin + 1,
                 (float) Math.max(1.0, xMax - xMin),
-                (float) Math.max(1.0, yMax - yMin)
+                (float) Math.max(1.0, yMax - yMin + 1)
         );
     }
 
