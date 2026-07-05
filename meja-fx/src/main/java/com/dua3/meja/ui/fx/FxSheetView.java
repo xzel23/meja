@@ -197,6 +197,7 @@ public final class FxSheetView extends StackPane implements SheetView {
 
         setFocusTraversable(true);
         setOnKeyPressed(this::onKeyPressed);
+        setOnKeyTyped(this::onKeyTyped);
 
         updateContent();
 
@@ -282,6 +283,9 @@ public final class FxSheetView extends StackPane implements SheetView {
             if (event.getCode() == javafx.scene.input.KeyCode.ENTER && !event.isShiftDown()) {
                 stopEditing(true);
                 event.consume();
+            } else if (event.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+                stopEditing(false);
+                event.consume();
             }
         });
         editor.documentVersionProperty().addListener((v, o, n) -> updateEditorBounds());
@@ -362,6 +366,30 @@ public final class FxSheetView extends StackPane implements SheetView {
                 }
             }
         }
+    }
+
+    void onKeyTyped(KeyEvent event) {
+        if (event.isConsumed() || delegate.isEditing() || !isFocused() || !isEditable() || event.isShortcutDown()) {
+            return;
+        }
+
+        String chars = event.getCharacter();
+        if (chars == null || chars.isEmpty()) {
+            return;
+        }
+
+        boolean hasPrintable = chars.chars().anyMatch(c -> c >= 0x20);
+        if (!hasPrintable) {
+            return;
+        }
+
+        startEditing();
+        Platform.runLater(() -> {
+            if (delegate.isEditing() && editor.isVisible() && editor.isEditable()) {
+                editor.replaceSelection(chars);
+            }
+        });
+        event.consume();
     }
 
     @Override
