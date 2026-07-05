@@ -23,8 +23,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.Node;
@@ -64,6 +62,7 @@ import java.util.Objects;
  */
 public final class FxSheetView extends StackPane implements SheetView {
     private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
+
     private final ObservableSheet observableSheet;
     private final FxSheetViewDelegate delegate;
     private final FxSegmentView topSegment;
@@ -81,8 +80,6 @@ public final class FxSheetView extends StackPane implements SheetView {
     private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
     private boolean updating = false;
-    private boolean forwardingNavigationKey = false;
-    private final EventHandler<KeyEvent> editingNavigationKeyFilter = this::handleEditingNavigationKey;
 
     private final ObjectProperty<@Nullable Pane> toolbarParentProperty = new SimpleObjectProperty<>(null);
 
@@ -294,28 +291,6 @@ public final class FxSheetView extends StackPane implements SheetView {
             hideEditorScrollbars();
         }));
         getChildren().add(editor);
-    }
-
-    private void handleEditingNavigationKey(KeyEvent event) {
-        if (event.isConsumed() || !delegate.isEditing() || forwardingNavigationKey) {
-            return;
-        }
-
-        switch (event.getCode()) {
-            case LEFT, RIGHT, UP, DOWN -> {
-                forwardingNavigationKey = true;
-                try {
-                    editor.requestFocus();
-                    Event.fireEvent(editor, event.copyFor(editor, editor));
-                } finally {
-                    forwardingNavigationKey = false;
-                }
-                event.consume();
-            }
-            default -> {
-                // no-op
-            }
-        }
     }
 
     void onKeyPressed(KeyEvent event) {
@@ -552,6 +527,7 @@ public final class FxSheetView extends StackPane implements SheetView {
             Platform.runLater(() -> {
                 CellStyle cellStyle = cell.getCellStyle();
                 editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
+                editor.setWrapText(cellStyle.isStyleWrapping());
                 editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()).toString());
                 editor.selectAll();
                 editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
@@ -578,7 +554,6 @@ public final class FxSheetView extends StackPane implements SheetView {
                     }
 
                     editor.setEditable(false);
-                    editor.setWrapText(false);
                     editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
                     editor.setVisible(false);
                     editor.setText("");
