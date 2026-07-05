@@ -279,6 +279,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         editor.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == javafx.scene.input.KeyCode.ENTER && !event.isShiftDown()) {
                 stopEditing(true);
+                move(Direction.SOUTH);
                 event.consume();
             } else if (event.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
                 stopEditing(false);
@@ -577,8 +578,9 @@ public final class FxSheetView extends StackPane implements SheetView {
             double y = cellRectInLocal.y() + 1;
             double minWidth = Math.max(1.0, cellRectInLocal.width() - 2);
             double minHeight = Math.max(1.0, cellRectInLocal.height() - 2);
+            boolean styleWrapping = cell.getCellStyle().isStyleWrapping();
 
-            EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight);
+            EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight, styleWrapping);
             editor.setWrapText(editorSize.wrapText());
             editor.resizeRelocate(x, y, editorSize.width(), editorSize.height());
             configureEditorScrollPane();
@@ -586,17 +588,24 @@ public final class FxSheetView extends StackPane implements SheetView {
         });
     }
 
-    private EditorSize computeEditorSize(double x, double y, double minWidth, double minHeight) {
+    private EditorSize computeEditorSize(double x, double y, double minWidth, double minHeight, boolean styleWrapping) {
         String text = editor.getText().toString();
         String displayText = text.isEmpty() ? " " : text;
 
         double hPadding = Math.max(4.0, 2.0 * delegate.getPaddingX() * delegate.getScale().sx());
         double vPadding = Math.max(2.0, 2.0 * delegate.getPaddingY() * delegate.getScale().sy());
 
-        double naturalWidth = measureLongestLineWidth(displayText) + hPadding;
-        double maxWidth = Math.max(minWidth, getEditorRightLimitX() - x);
-        boolean wrapText = naturalWidth > maxWidth + 0.5;
-        double width = wrapText ? maxWidth : Math.max(minWidth, naturalWidth);
+        double width;
+        boolean wrapText;
+        if (styleWrapping) {
+            wrapText = true;
+            width = minWidth;
+        } else {
+            double naturalWidth = measureLongestLineWidth(displayText) + hPadding;
+            double maxWidth = Math.max(minWidth, getEditorRightLimitX() - x);
+            wrapText = naturalWidth > maxWidth + 0.5;
+            width = wrapText ? maxWidth : Math.max(minWidth, naturalWidth);
+        }
 
         boolean multiline = wrapText || text.indexOf('\n') >= 0;
         double height = minHeight;
