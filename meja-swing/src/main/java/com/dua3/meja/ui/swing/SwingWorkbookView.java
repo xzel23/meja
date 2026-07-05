@@ -34,6 +34,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Insets;
 import java.util.Objects;
 import java.util.Optional;
@@ -48,6 +49,7 @@ public final class SwingWorkbookView extends JComponent implements WorkbookView<
     // the workbook to show
     private transient @Nullable Workbook workbook;
     private boolean editable;
+    private transient @Nullable Container toolbarParent;
 
     /**
      * Tabbed pane that contains the sheets of the workbook as tabs.
@@ -126,6 +128,32 @@ public final class SwingWorkbookView extends JComponent implements WorkbookView<
         return editable;
     }
 
+    /**
+     * Returns the container used as application toolbar parent for all sheet views.
+     *
+     * @return the toolbar parent container or {@code null}
+     */
+    public @Nullable Container getToolbarParent() {
+        return toolbarParent;
+    }
+
+    /**
+     * Sets the application toolbar parent for all current and future sheet views.
+     * If {@code null}, sheets will show the edit toolbar as floating while editing.
+     *
+     * @param toolbarParent the toolbar parent container or {@code null}
+     */
+    public void setToolbarParent(@Nullable Container toolbarParent) {
+        this.toolbarParent = toolbarParent;
+        if (workbook != null) {
+            LangUtil.asUnmodifiableList(content.getComponents())
+                    .stream()
+                    .filter(SwingSheetView.class::isInstance)
+                    .map(SwingSheetView.class::cast)
+                    .forEach(sv -> sv.setToolbarParent(toolbarParent));
+        }
+    }
+
     @Override
     public void setWorkbook(@Nullable Workbook workbook) {
         content.removeAll();
@@ -142,6 +170,7 @@ public final class SwingWorkbookView extends JComponent implements WorkbookView<
                 Sheet sheet = workbook.getSheet(i);
                 final SwingSheetView sheetView = new SwingSheetView(sheet);
                 sheetView.setEditable(isEditable());
+                sheetView.setToolbarParent(toolbarParent);
                 sheetView.updateContent();
                 content.addTab(sheet.getSheetName(), sheetView);
             }

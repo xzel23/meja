@@ -28,6 +28,7 @@ import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.swing.SwingUtil;
 import com.dua3.utility.swing.TextEditorPane;
+import com.dua3.utility.ui.DetachableNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
@@ -35,13 +36,24 @@ import org.jspecify.annotations.Nullable;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.JToolBar;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.FontMetrics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
@@ -65,6 +77,7 @@ import java.util.concurrent.Flow;
  */
 public final class SwingSheetView extends JPanel implements SheetView {
     private static final Logger LOG = LogManager.getLogger(SwingSheetView.class);
+    private static final double FLOATING_TOOLBAR_GAP = 4.0;
 
     private static final String ACTION_EDITOR_COMMIT = "editor.commit";
     private static final String ACTION_EDITOR_NEWLINE = "editor.newline";
@@ -111,6 +124,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
 
     private boolean editable;
     private boolean updating;
+    private transient @Nullable Container toolbarParent;
 
     /**
      * Constructor.
@@ -209,6 +223,8 @@ public final class SwingSheetView extends JPanel implements SheetView {
             }
 
             editor.setEditable(false);
+            editor.setToolbarApplicationParent(null);
+            editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
             editor.setVisible(false);
             editor.setText("");
             requestFocusInWindow();
@@ -335,6 +351,8 @@ public final class SwingSheetView extends JPanel implements SheetView {
             editor.setWrapText(cellStyle.isStyleWrapping());
             editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()));
             editor.selectAll();
+            editor.setToolbarApplicationParent(toolbarParent);
+            editor.setToolbarLocation(toolbarParent == null ? DetachableNode.Location.FLOATING : DetachableNode.Location.APPLICATION);
             editor.setEditable(true);
             editor.setVisible(true);
             layeredPane.moveToFront(editor);
@@ -405,6 +423,32 @@ public final class SwingSheetView extends JPanel implements SheetView {
     }
 
     /**
+     * Returns the container used as toolbar application parent.
+     *
+     * @return the toolbar parent container or {@code null}
+     */
+    public @Nullable Container getToolbarParent() {
+        return toolbarParent;
+    }
+
+    /**
+     * Sets the container used as toolbar application parent.
+     * A {@code null} parent causes the toolbar to be shown as floating while editing.
+     *
+     * @param toolbarParent the toolbar parent container or {@code null}
+     */
+    public void setToolbarParent(@Nullable Container toolbarParent) {
+        runOnEdt(() -> {
+            this.toolbarParent = toolbarParent;
+            if (delegate.isEditing() && editor.isVisible()) {
+                editor.setToolbarApplicationParent(toolbarParent);
+                editor.setToolbarLocation(toolbarParent == null ? DetachableNode.Location.FLOATING : DetachableNode.Location.APPLICATION);
+                updateEditorBounds();
+            }
+        });
+    }
+
+    /**
      * Returns the screen resolution in dots per inch (DPI).
      *
      * @return the screen resolution in DPI
@@ -465,6 +509,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
             );
             editor.revalidate();
             editor.repaint();
+            updateFloatingToolbarPosition(x, y, editorSize.width(), editorSize.height());
         }));
     }
 
@@ -548,6 +593,126 @@ public final class SwingSheetView extends JPanel implements SheetView {
         }
 
         return Math.max(totalHeight, fm.getHeight());
+    }
+
+    private void updateFloatingToolbarPosition(double editorX, double editorY, double editorWidth, double editorHeight) {
+        if (editor.getToolbarLocation() != DetachableNode.Location.FLOATING || !editor.isVisible()) {
+            return;
+        }
+
+        Window toolbarWindow = findFloatingToolbarWindow();
+        if (toolbarWindow == null) {
+            return;
+        }
+
+        Point editorTopLeftOnScreen = new Point((int) Math.round(editorX), (int) Math.round(editorY));
+        SwingUtilities.convertPointToScreen(editorTopLeftOnScreen, this);
+        Rectangle editorBoundsOnScreen = new Rectangle(
+                editorTopLeftOnScreen.x,
+                editorTopLeftOnScreen.y,
+                Math.max(1, (int) Math.round(editorWidth)),
+                Math.max(1, (int) Math.round(editorHeight))
+        );
+
+        Rectangle visualBounds = getVisualBounds(editorBoundsOnScreen);
+        double toolbarWidth = Math.max(1.0, toolbarWindow.getWidth());
+        double toolbarHeight = Math.max(1.0, toolbarWindow.getHeight());
+
+        double x = clamp(
+                editorBoundsOnScreen.getMinX(),
+                visualBounds.getMinX(),
+                Math.max(visualBounds.getMinX(), visualBounds.getMaxX() - toolbarWidth)
+        );
+
+        double aboveY = editorBoundsOnScreen.getMinY() - toolbarHeight - FLOATING_TOOLBAR_GAP;
+        double belowY = editorBoundsOnScreen.getMaxY() + FLOATING_TOOLBAR_GAP;
+        double y = aboveY >= visualBounds.getMinY()
+                ? aboveY
+                : clamp(
+                belowY,
+                visualBounds.getMinY(),
+                Math.max(visualBounds.getMinY(), visualBounds.getMaxY() - toolbarHeight)
+        );
+
+        toolbarWindow.setLocation((int) Math.round(x), (int) Math.round(y));
+    }
+
+    private Rectangle getVisualBounds(Rectangle editorBoundsOnScreen) {
+        GraphicsConfiguration gc = findGraphicsConfiguration(editorBoundsOnScreen);
+        Rectangle bounds = gc.getBounds();
+        Insets insets = Toolkit.getDefaultToolkit().getScreenInsets(gc);
+        return new Rectangle(
+                bounds.x + insets.left,
+                bounds.y + insets.top,
+                Math.max(1, bounds.width - insets.left - insets.right),
+                Math.max(1, bounds.height - insets.top - insets.bottom)
+        );
+    }
+
+    private GraphicsConfiguration findGraphicsConfiguration(Rectangle editorBoundsOnScreen) {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        Point probe = new Point(
+                (int) Math.round(editorBoundsOnScreen.getCenterX()),
+                (int) Math.round(editorBoundsOnScreen.getCenterY())
+        );
+
+        for (GraphicsDevice device : ge.getScreenDevices()) {
+            GraphicsConfiguration gc = device.getDefaultConfiguration();
+            if (gc.getBounds().contains(probe)) {
+                return gc;
+            }
+        }
+
+        GraphicsConfiguration ownConfig = getGraphicsConfiguration();
+        if (ownConfig != null) {
+            return ownConfig;
+        }
+
+        return ge.getDefaultScreenDevice().getDefaultConfiguration();
+    }
+
+    private static double clamp(double value, double min, double max) {
+        if (value < min) {
+            return min;
+        }
+        if (value > max) {
+            return max;
+        }
+        return value;
+    }
+
+    private @Nullable Window findFloatingToolbarWindow() {
+        Window owner = SwingUtilities.getWindowAncestor(this);
+        if (owner == null) {
+            return null;
+        }
+
+        for (Window window : Window.getWindows()) {
+            if (!(window instanceof JDialog dialog) || !dialog.isShowing() || dialog.getOwner() != owner) {
+                continue;
+            }
+
+            if (containsToolbar(dialog.getContentPane())) {
+                return dialog;
+            }
+        }
+
+        return null;
+    }
+
+    private static boolean containsToolbar(Component component) {
+        if (component instanceof JToolBar) {
+            return true;
+        }
+        if (!(component instanceof Container container)) {
+            return false;
+        }
+        for (Component child : container.getComponents()) {
+            if (containsToolbar(child)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Rectangle2f getCellRectInLocal(Cell cell) {
