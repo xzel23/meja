@@ -531,7 +531,9 @@ public final class FxSheetView extends StackPane implements SheetView {
                 editor.setWrapText(cellStyle.isStyleWrapping());
                 editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()).toString());
                 editor.selectAll();
-                editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
+                Pane toolbarParent = toolbarParentProperty().getValue();
+                editor.setToolbarApplicationParent(toolbarParent);
+                editor.setToolbarLocation(toolbarParent == null ? DetachableNode.Location.FLOATING : DetachableNode.Location.APPLICATION);
                 editor.setEditable(true);
 
                 editor.setVisible(true);
@@ -555,6 +557,7 @@ public final class FxSheetView extends StackPane implements SheetView {
                     }
 
                     editor.setEditable(false);
+                    editor.setToolbarApplicationParent(null);
                     editor.setToolbarLocation(DetachableNode.Location.HIDDEN);
                     editor.setVisible(false);
                     editor.setText("");
