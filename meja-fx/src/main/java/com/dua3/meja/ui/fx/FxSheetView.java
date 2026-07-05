@@ -535,7 +535,7 @@ public final class FxSheetView extends StackPane implements SheetView {
                 CellStyle cellStyle = cell.getCellStyle();
                 editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
                 editor.setWrapText(cellStyle.isStyleWrapping());
-                editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()).toString());
+                editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()));
                 editor.selectAll();
                 Pane toolbarParent = toolbarParentProperty().getValue();
                 editor.setToolbarApplicationParent(toolbarParent);
