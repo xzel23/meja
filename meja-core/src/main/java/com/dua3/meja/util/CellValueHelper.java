@@ -16,6 +16,7 @@
 package com.dua3.meja.util;
 
 import com.dua3.meja.model.Cell;
+import com.dua3.utility.text.TextUtil;
 
 import java.text.NumberFormat;
 import java.text.ParsePosition;
@@ -49,35 +50,37 @@ public class CellValueHelper {
      * @param cell  the cell whose value is to be set
      * @param value the value to set
      */
-    public void setCellValue(Cell cell, String value) {
+    public void setCellValue(Cell cell, CharSequence value) {
         // blank
         if (value.isEmpty()) {
             cell.clear();
             return;
         }
 
+        String valueString = value.toString();
+
         // formula
-        if (value.startsWith("=")) {
-            cell.setFormula(value.substring(1));
+        if (valueString.startsWith("=")) {
+            cell.setFormula(valueString.substring(1));
             return;
         }
 
         // boolean
-        Optional<Boolean> b = parseBoolean(value);
+        Optional<Boolean> b = parseBoolean(valueString);
         if (b.isPresent()) {
             cell.set(b.get());
             return;
         }
 
         // number
-        Optional<Number> number = parseNumber(value);
+        Optional<Number> number = parseNumber(valueString);
         if (number.isPresent()) {
             cell.set(number.get());
             return;
         }
 
         // date
-        Optional<LocalDateTime> date = parseDate(value);
+        Optional<LocalDateTime> date = parseDate(valueString);
         if (date.isPresent()) {
             cell.set(date.get());
             return;

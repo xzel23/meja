@@ -13,6 +13,7 @@ import com.dua3.utility.fx.FxUtil;
 import com.dua3.utility.fx.PlatformHelper;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
+import com.dua3.utility.text.RichText;
 import com.dua3.utility.ui.DetachableNode;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -568,7 +569,7 @@ public final class FxSheetView extends StackPane implements SheetView {
     }
 
     private void updateCellContent(Cell cell) {
-        String text = editor.getText().toString();
+        RichText text = editor.getText();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
         NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
         new CellValueHelper(numberFormat, dateFormatter).setCellValue(cell, text);
