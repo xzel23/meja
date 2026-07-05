@@ -191,14 +191,6 @@ public final class FxSheetView extends StackPane implements SheetView {
         // Add the GridPane to the StackPane
         getChildren().add(gridPane);
         initEditor();
-        sceneProperty().addListener((obs, oldScene, newScene) -> {
-            if (oldScene != null) {
-                oldScene.removeEventFilter(KeyEvent.KEY_PRESSED, editingNavigationKeyFilter);
-            }
-            if (newScene != null) {
-                newScene.addEventFilter(KeyEvent.KEY_PRESSED, editingNavigationKeyFilter);
-            }
-        });
 
         hScrollbar.setValue(0);
         vScrollbar.setValue(0);

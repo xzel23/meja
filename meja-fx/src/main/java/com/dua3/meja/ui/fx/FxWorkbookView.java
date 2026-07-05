@@ -35,7 +35,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -101,7 +100,6 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
                         view.onKeyPressed(event);
                     }
                 });
-                event.consume();
             }
         });
     }
