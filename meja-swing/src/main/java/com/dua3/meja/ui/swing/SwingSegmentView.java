@@ -222,7 +222,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
     }
 
     public void scrollIntoView(Cell cell) {
-        if (ssvDelegate.isAboveSplit() || ssvDelegate.isAboveSplit()) {
+        if (ssvDelegate.isAboveSplit() || ssvDelegate.isLeftOfSplit()) {
             // only the bottom right quadrant is responsible for scrolling
             return;
         }

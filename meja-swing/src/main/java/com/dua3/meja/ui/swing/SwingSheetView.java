@@ -17,52 +17,100 @@ package com.dua3.meja.ui.swing;
 
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.ui.CellRenderer;
-import com.dua3.meja.ui.SegmentViewDelegate;
 import com.dua3.meja.ui.SheetView;
-import com.dua3.utility.math.geometry.AffineTransformation2f;
+import com.dua3.meja.util.CellValueHelper;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
-import com.dua3.utility.swing.SwingGraphics;
 import com.dua3.utility.swing.SwingUtil;
+import com.dua3.utility.swing.TextEditorPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.border.StrokeBorder;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
+import java.awt.BorderLayout;
+import java.awt.FontMetrics;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.concurrent.Flow;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
  */
-public class SwingSheetView extends JPanel implements SheetView {
-
-    private final transient SwingSheetViewDelegate delegate;
-
+public final class SwingSheetView extends JPanel implements SheetView {
     private static final Logger LOG = LogManager.getLogger(SwingSheetView.class);
 
-    private final transient CellEditor editor = new DefaultCellEditor(this);
+    private static final String ACTION_EDITOR_COMMIT = "editor.commit";
+    private static final String ACTION_EDITOR_NEWLINE = "editor.newline";
+    private static final String ACTION_EDITOR_ABORT = "editor.abort";
 
+    private final transient SwingSheetViewDelegate delegate;
     private final transient SwingSheetPane sheetPane;
-
     private final transient SwingSearchDialog searchDialog = new SwingSearchDialog(this);
+    private final transient TextEditorPane editor = new TextEditorPane();
+    private final transient JLayeredPane layeredPane;
+
+    private final transient Flow.Subscriber<SheetEvent> sheetEventSubscriber = new Flow.Subscriber<>() {
+        @Override
+        public void onSubscribe(Flow.Subscription subscription) {
+            if (sheetSubscription != null) {
+                sheetSubscription.cancel();
+            }
+            sheetSubscription = subscription;
+            sheetSubscription.request(Long.MAX_VALUE);
+        }
+
+        @Override
+        public void onNext(SheetEvent item) {
+            if (Objects.equals(item.type(), SheetEvent.ACTIVE_CELL_CHANGED)) {
+                SheetEvent.ActiveCellChanged evt = (SheetEvent.ActiveCellChanged) item;
+                if (!isSameLogicalCell(delegate.getEditingCell().orElse(null), evt.newValue())) {
+                    runOnEdt(() -> stopEditing(true));
+                }
+            }
+        }
+
+        @Override
+        public void onError(Throwable throwable) {
+            LOG.error("error with subscription", throwable);
+        }
+
+        @Override
+        public void onComplete() {
+            sheetSubscription = null;
+        }
+    };
+
+    private transient Flow.@Nullable Subscription sheetSubscription;
 
     private boolean editable;
+    private boolean updating;
 
     /**
      * Constructor.
@@ -70,33 +118,55 @@ public class SwingSheetView extends JPanel implements SheetView {
      * @param sheet the {@link Sheet}
      */
     public SwingSheetView(Sheet sheet) {
-        super(new GridLayout(1, 1, 0, 0));
+        super(new BorderLayout());
 
         this.delegate = new SwingSheetViewDelegate(sheet, this, CellRenderer::new);
         this.sheetPane = new SwingSheetPane(delegate);
+        this.layeredPane = createLayeredPane();
 
         init();
+        getSheet().subscribe(sheetEventSubscriber);
+    }
+
+    private JLayeredPane createLayeredPane() {
+        return new JLayeredPane() {
+            @Override
+            public void doLayout() {
+                sheetPane.setBounds(0, 0, getWidth(), getHeight());
+                updateEditorBounds();
+            }
+        };
     }
 
     @Override
     public void removeNotify() {
+        stopEditing(false);
+        if (sheetSubscription != null) {
+            sheetSubscription.cancel();
+            sheetSubscription = null;
+        }
         searchDialog.dispose();
         super.removeNotify();
     }
 
     @Override
     public void repaintCell(Cell cell) {
-        cell = cell.getLogicalCell();
-        Rectangle2f r = delegate.getCellRect(cell);
-        float m = getDelegate().getSelectionStrokeWidth() / 2.0f;
-        CellStyle cs = cell.getCellStyle();
-        r = r.addMargin(
-                Math.max(m, cs.getBorderStyle(Direction.WEST).width()),
-                Math.max(m, cs.getBorderStyle(Direction.NORTH).width()),
-                Math.max(m, cs.getBorderStyle(Direction.EAST).width()),
-                Math.max(m, cs.getBorderStyle(Direction.SOUTH).width())
-        );
-        sheetPane.repaintSheet(r);
+        runOnEdt(() -> {
+            Cell logicalCell = cell.getLogicalCell();
+            Rectangle2f r = delegate.getCellRect(logicalCell);
+            float m = getDelegate().getSelectionStrokeWidth() / 2.0f;
+            CellStyle cs = logicalCell.getCellStyle();
+            r = r.addMargin(
+                    Math.max(m, cs.getBorderStyle(Direction.WEST).width()),
+                    Math.max(m, cs.getBorderStyle(Direction.NORTH).width()),
+                    Math.max(m, cs.getBorderStyle(Direction.EAST).width()),
+                    Math.max(m, cs.getBorderStyle(Direction.SOUTH).width())
+            );
+            sheetPane.repaintSheet(r);
+            if (isSameLogicalCell(delegate.getEditingCell().orElse(null), logicalCell)) {
+                updateEditorBounds();
+            }
+        });
     }
 
     /**
@@ -104,7 +174,12 @@ public class SwingSheetView extends JPanel implements SheetView {
      */
     @Override
     public void scrollToCurrentCell() {
-        SwingUtilities.invokeLater(() -> sheetPane.ensureCellIsVisible(delegate.getCurrentLogicalCell()));
+        runOnEdt(() -> {
+            try (var __ = delegate.readLock("SwingSheetView.scrollToCurrentCell()")) {
+                sheetPane.ensureCellIsVisible(delegate.getCurrentLogicalCell());
+            }
+            updateEditorBounds();
+        });
     }
 
     /**
@@ -126,28 +201,89 @@ public class SwingSheetView extends JPanel implements SheetView {
      */
     @Override
     public void stopEditing(boolean commit) {
-        delegate.stopEditing().ifPresent(cell -> editor.stopEditing(commit));
+        runOnEdt(() -> delegate.stopEditing().ifPresent(cell -> {
+            if (commit) {
+                LOG.debug("committing cell content: {}", cell);
+                updateCellContent(cell);
+                repaintCell(cell);
+            }
+
+            editor.setEditable(false);
+            editor.setVisible(false);
+            editor.setText("");
+            requestFocusInWindow();
+        }));
     }
 
     /**
-     * Reset editing state when finished editing. This method should only be called
-     * from the {@link CellEditor#stopEditing} method of {@link CellEditor}
-     * subclasses.
+     * Backward-compatible method previously used by the old {@link CellEditor} path.
      */
     public void stoppedEditing() {
         stopEditing(false);
-        sheetPane.setScrollable(true);
     }
 
+    @Override
     public void copyToClipboard() {
-        SwingUtil.copyToClipboard(delegate.getSheet().getCurrentCell().getAsText(getLocale()).toString());
+        SwingUtil.copyToClipboard(delegate.getCurrentLogicalCell().getAsFormattedText(getLocale()));
     }
 
     private void init() {
-        add(sheetPane);
-        // setup input map for ...
-        final InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
-        // ... keyboard navigation
+        layeredPane.add(sheetPane, JLayeredPane.DEFAULT_LAYER);
+
+        initEditor();
+        layeredPane.add(editor, JLayeredPane.PALETTE_LAYER);
+
+        add(layeredPane, BorderLayout.CENTER);
+
+        initKeyBindings();
+
+        setFocusable(true);
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent event) {
+                onKeyTyped(event);
+            }
+        });
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateEditorBounds();
+            }
+        });
+        sheetPane.getViewport().addChangeListener(evt -> updateEditorBounds());
+        sheetPane.getHorizontalScrollBar().addAdjustmentListener(e -> updateEditorBounds());
+        sheetPane.getVerticalScrollBar().addAdjustmentListener(e -> updateEditorBounds());
+
+        SwingUtilities.invokeLater(this::focusView);
+    }
+
+    private void initEditor() {
+        editor.setVisible(false);
+        editor.setEditable(false);
+        editor.setWrapText(false);
+        editor.setEnterKeyInsertsNewline(true);
+        editor.addPropertyChangeListener("text", evt -> updateEditorBounds());
+
+        InputMap inputMap = editor.getTextComponent().getInputMap(JComponent.WHEN_FOCUSED);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), ACTION_EDITOR_COMMIT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK), ACTION_EDITOR_NEWLINE);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), ACTION_EDITOR_ABORT);
+
+        ActionMap actionMap = editor.getTextComponent().getActionMap();
+        actionMap.put(ACTION_EDITOR_COMMIT, SwingUtil.createAction("CommitCellEdit", () -> {
+            boolean wasEditing = delegate.isEditing();
+            stopEditing(true);
+            if (wasEditing) {
+                move(Direction.SOUTH);
+            }
+        }));
+        actionMap.put(ACTION_EDITOR_NEWLINE, SwingUtil.createAction("InsertEditorNewLine", () -> editor.replaceSelection("\n")));
+        actionMap.put(ACTION_EDITOR_ABORT, SwingUtil.createAction("AbortCellEdit", () -> stopEditing(false)));
+    }
+
+    private void initKeyBindings() {
+        final InputMap inputMap = getInputMap(WHEN_FOCUSED);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), Actions.MOVE_UP);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_UP, 0), Actions.MOVE_UP);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), Actions.MOVE_DOWN);
@@ -158,21 +294,16 @@ public class SwingSheetView extends JPanel implements SheetView {
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK),
-                Actions.MOVE_HOME);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK),
-                Actions.MOVE_END);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK), Actions.MOVE_HOME);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_END, InputEvent.CTRL_DOWN_MASK), Actions.MOVE_END);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), Actions.START_EDITING);
-        // ... other stuff
-        inputMap.put(KeyStroke.getKeyStroke('F', InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
-        inputMap.put(KeyStroke.getKeyStroke('C', InputEvent.CTRL_DOWN_MASK), Actions.COPY);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK), Actions.SHOW_SEARCH_DIALOG);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK), Actions.COPY);
+
         final ActionMap actionMap = getActionMap();
         for (Actions action : Actions.values()) {
             actionMap.put(action, SwingUtil.createAction(action.name(), () -> action.action().accept(this)));
         }
-        // make focusable
-        setFocusable(true);
-        SwingUtilities.invokeLater(this::focusView);
     }
 
     @Override
@@ -183,6 +314,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     /**
      * Show the search dialog.
      */
+    @Override
     public void showSearchDialog() {
         searchDialog.setVisible(true);
     }
@@ -190,62 +322,48 @@ public class SwingSheetView extends JPanel implements SheetView {
     /**
      * Enter edit mode for the current cell.
      */
+    @Override
     public void startEditing() {
         if (!isEditable()) {
             return;
         }
 
-        delegate.startEditing().ifPresent(cell -> {
-            sheetPane.ensureCellIsVisible(cell);
-            sheetPane.setScrollable(false);
-
-            final JComponent editorComp = editor.startEditing(cell);
-
-            Rectangle cellRectInLocal = getCellRectInLocal(cell);
-
-            sheetPane.add(editorComp);
-            editorComp.setBorder(new StrokeBorder(new BasicStroke(1.0f), Color.RED));
-            editorComp.setBounds(cellRectInLocal);
-            editorComp.validate();
-            editorComp.setVisible(true);
-            editorComp.repaint();
-        });
-    }
-
-    private @NonNull Rectangle getCellRectInLocal(Cell cell) {
-        Rectangle2f cellRect = sheetPane.getCellRectInViewCoordinates(cell);
-        SwingSegmentView sv = getViewContainingCell(cell);
-        SegmentViewDelegate svDelegate = sv.getSvDelegate();
-        AffineTransformation2f t = svDelegate.getTransformation();
-        return SwingGraphics.convert(Rectangle2f.withCorners(
-                t.transform(cellRect.min()),
-                t.transform(cellRect.max())
-        ));
-    }
-
-    private SwingSegmentView getViewContainingCell(Cell cell) {
-        int idx = (cell.getRowNumber() < getDelegate().getSplitRow() ? 0 : 2)
-                + (cell.getColumnNumber() < getDelegate().getSplitColumn() ? 0 : 1);
-
-        return switch (idx) {
-            case 0 -> sheetPane.topLeftQuadrant;
-            case 1 -> sheetPane.topRightQuadrant;
-            case 2 -> sheetPane.bottomLeftQuadrant;
-            case 3 -> sheetPane.bottomRightQuadrant;
-            default -> throw new IllegalStateException("Unexpected value: " + idx);
-        };
+        runOnEdt(() -> delegate.startEditing().ifPresent(cell -> {
+            scrollToCurrentCell();
+            CellStyle cellStyle = cell.getCellStyle();
+            editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
+            editor.setWrapText(cellStyle.isStyleWrapping());
+            editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()));
+            editor.selectAll();
+            editor.setEditable(true);
+            editor.setVisible(true);
+            layeredPane.moveToFront(editor);
+            updateEditorBounds();
+            editor.requestFocusInWindow();
+            SwingUtilities.invokeLater(this::updateEditorBounds);
+        }));
     }
 
     @Override
     public void updateContent() {
         LOG.trace("updateContent()");
 
-        Sheet sheet = getSheet();
-        delegate.update(Toolkit.getDefaultToolkit().getScreenResolution());
-        SwingUtilities.invokeLater(() -> {
-            delegate.getSheetPainter().update(sheet);
-            revalidate();
-            repaint();
+        runOnEdt(() -> {
+            if (updating) {
+                return;
+            }
+
+            try (var __ = getSheet().readLock("SwingSheetView.updateContent()")) {
+                updating = true;
+                Sheet sheet = getSheet();
+                delegate.update(getDpi());
+                delegate.getSheetPainter().update(sheet);
+                revalidate();
+                repaint();
+                updateEditorBounds();
+            } finally {
+                updating = false;
+            }
         });
     }
 
@@ -274,6 +392,7 @@ public class SwingSheetView extends JPanel implements SheetView {
     public void validate() {
         super.validate();
         delegate.updateLayout();
+        updateEditorBounds();
     }
 
     public void setEditable(boolean editable) {
@@ -284,4 +403,214 @@ public class SwingSheetView extends JPanel implements SheetView {
     public boolean isEditable() {
         return editable;
     }
+
+    /**
+     * Returns the screen resolution in dots per inch (DPI).
+     *
+     * @return the screen resolution in DPI
+     */
+    static int getDpi() {
+        return Toolkit.getDefaultToolkit().getScreenResolution();
+    }
+
+    private void updateCellContent(Cell cell) {
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+        NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
+        new CellValueHelper(numberFormat, dateFormatter).setCellValue(cell, editor.getText());
+    }
+
+    private void onKeyTyped(KeyEvent event) {
+        if (event.isConsumed() || delegate.isEditing() || !isFocusOwner() || !isEditable()) {
+            return;
+        }
+
+        if (event.isAltDown() || event.isControlDown() || event.isMetaDown()) {
+            return;
+        }
+
+        char c = event.getKeyChar();
+        if (c == KeyEvent.CHAR_UNDEFINED || Character.isISOControl(c)) {
+            return;
+        }
+
+        startEditing();
+        SwingUtilities.invokeLater(() -> {
+            if (delegate.isEditing() && editor.isVisible() && editor.isEditable()) {
+                editor.replaceSelection(String.valueOf(c));
+            }
+        });
+        event.consume();
+    }
+
+    private void updateEditorBounds() {
+        runOnEdt(() -> delegate.getEditingCell().ifPresent(cell -> {
+            if (!editor.isVisible()) {
+                return;
+            }
+
+            Rectangle2f cellRectInLocal = getCellRectInLocal(cell);
+            double x = cellRectInLocal.x() + 1;
+            double y = cellRectInLocal.y() + 1;
+            double minWidth = Math.max(1.0, cellRectInLocal.width() - 2);
+            double minHeight = Math.max(1.0, cellRectInLocal.height() - 2);
+            boolean styleWrapping = cell.getCellStyle().isStyleWrapping();
+
+            EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight, styleWrapping);
+            editor.setWrapText(editorSize.wrapText());
+            editor.setBounds(
+                    (int) Math.round(x),
+                    (int) Math.round(y),
+                    (int) Math.round(editorSize.width()),
+                    (int) Math.round(editorSize.height())
+            );
+            editor.revalidate();
+            editor.repaint();
+        }));
+    }
+
+    private EditorSize computeEditorSize(double x, double y, double minWidth, double minHeight, boolean styleWrapping) {
+        String text = editor.getText().toString();
+        String displayText = text.isEmpty() ? " " : text;
+
+        double hPadding = Math.max(4.0, 2.0 * delegate.getPaddingX() * delegate.getScale().sx());
+        double vPadding = Math.max(2.0, 2.0 * delegate.getPaddingY() * delegate.getScale().sy());
+
+        double width;
+        boolean wrapText;
+        if (styleWrapping) {
+            wrapText = true;
+            width = minWidth;
+        } else {
+            double naturalWidth = measureLongestLineWidth(displayText) + hPadding;
+            double maxWidth = Math.max(minWidth, getEditorRightLimitX() - x);
+            wrapText = naturalWidth > maxWidth + 0.5;
+            width = wrapText ? maxWidth : Math.max(minWidth, naturalWidth);
+        }
+
+        boolean multiline = wrapText || text.indexOf('\n') >= 0;
+        double height = minHeight;
+        if (multiline) {
+            double contentWidth = Math.max(1.0, width - hPadding);
+            double naturalHeight = measureTextHeight(displayText, wrapText ? contentWidth : 0.0) + vPadding;
+            height = Math.max(minHeight, naturalHeight);
+        }
+
+        return new EditorSize(Math.rint(width), Math.rint(height), wrapText);
+    }
+
+    private double getEditorRightLimitX() {
+        double verticalScrollBarWidth = sheetPane.getVerticalScrollBar().isVisible()
+                ? sheetPane.getVerticalScrollBar().getWidth()
+                : 0.0;
+        return Math.max(1.0, getWidth() - verticalScrollBarWidth);
+    }
+
+    private double measureLongestLineWidth(String text) {
+        FontMetrics fm = editor.getTextComponent().getFontMetrics(editor.getTextComponent().getFont());
+        double width = 0.0;
+        for (String line : text.split("\n", -1)) {
+            width = Math.max(width, fm.stringWidth(line.isEmpty() ? " " : line));
+        }
+        return width;
+    }
+
+    private double measureTextHeight(String text, double wrappingWidth) {
+        FontMetrics fm = editor.getTextComponent().getFontMetrics(editor.getTextComponent().getFont());
+        if (wrappingWidth <= 0.0) {
+            int lineCount = Math.max(1, text.split("\n", -1).length);
+            return lineCount * fm.getHeight();
+        }
+
+        FontRenderContext frc = new FontRenderContext(null, true, true);
+        float width = (float) Math.max(1.0, wrappingWidth);
+        double totalHeight = 0.0;
+
+        for (String line : text.split("\n", -1)) {
+            String content = line.isEmpty() ? " " : line;
+            AttributedString attributedText = new AttributedString(content);
+            attributedText.addAttribute(TextAttribute.FONT, editor.getTextComponent().getFont());
+            AttributedCharacterIterator it = attributedText.getIterator();
+            LineBreakMeasurer lbm = new LineBreakMeasurer(it, frc);
+            int end = it.getEndIndex();
+
+            if (lbm.getPosition() >= end) {
+                totalHeight += fm.getHeight();
+                continue;
+            }
+
+            while (lbm.getPosition() < end) {
+                TextLayout layout = lbm.nextLayout(width);
+                if (layout == null) {
+                    break;
+                }
+                totalHeight += layout.getAscent() + layout.getDescent() + layout.getLeading();
+            }
+        }
+
+        return Math.max(totalHeight, fm.getHeight());
+    }
+
+    private Rectangle2f getCellRectInLocal(Cell cell) {
+        Rectangle2f cellRectInSheet = delegate.getCellRect(cell.getLogicalCell());
+        double xMin = toLocalX(cellRectInSheet.xMin(), true);
+        double xMax = toLocalX(cellRectInSheet.xMax(), false);
+        double yMin = toLocalY(cellRectInSheet.yMin(), true);
+        double yMax = toLocalY(cellRectInSheet.yMax(), false);
+        return Rectangle2f.of(
+                (float) xMin,
+                (float) yMin + 1,
+                (float) Math.max(1.0, xMax - xMin),
+                (float) Math.max(1.0, yMax - yMin + 1)
+        );
+    }
+
+    private double toLocalX(float xInPoints, boolean leadingEdge) {
+        double splitX = delegate.getSplitXInPoints();
+        double x = delegate.getRowLabelWidthInPixels() + xInPoints * delegate.getScale().sx();
+        boolean rightPane = leadingEdge ? xInPoints >= splitX : xInPoints > splitX;
+        if (rightPane) {
+            x -= sheetPane.getHorizontalScrollBar().getValue();
+            if (delegate.getSplitColumn() > 0) {
+                x += delegate.getSplitLineWidth();
+            }
+        }
+        return x;
+    }
+
+    private double toLocalY(float yInPoints, boolean leadingEdge) {
+        double splitY = delegate.getSplitYInPoints();
+        double y = delegate.getColumnLabelHeightInPixels() + yInPoints * delegate.getScale().sy();
+        boolean bottomPane = leadingEdge ? yInPoints >= splitY : yInPoints > splitY;
+        if (bottomPane) {
+            y -= sheetPane.getVerticalScrollBar().getValue();
+            if (delegate.getSplitRow() > 0) {
+                y += delegate.getSplitLineHeight();
+            }
+        }
+        return y;
+    }
+
+    private static boolean isSameLogicalCell(@Nullable Cell c1, @Nullable Cell c2) {
+        if (c1 == c2) {
+            return true;
+        }
+        if (c1 == null || c2 == null) {
+            return false;
+        }
+        Cell logical1 = c1.getLogicalCell();
+        Cell logical2 = c2.getLogicalCell();
+        return logical1.getSheet() == logical2.getSheet()
+                && logical1.getRowNumber() == logical2.getRowNumber()
+                && logical1.getColumnNumber() == logical2.getColumnNumber();
+    }
+
+    private static void runOnEdt(Runnable runnable) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            runnable.run();
+        } else {
+            SwingUtilities.invokeLater(runnable);
+        }
+    }
+
+    private record EditorSize(double width, double height, boolean wrapText) {}
 }
