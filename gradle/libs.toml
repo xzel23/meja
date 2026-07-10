@@ -9,7 +9,7 @@ sonar-plugin = "7.3.1.8318"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.23.0"
 
-dua3-utility = "23.0.0-rc"
+dua3-utility = "23.0.0-rc2"
 
 ikonli = "12.4.0"
 jspecify = "1.0.0"

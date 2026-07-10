@@ -4,15 +4,15 @@
 # To regenerate this file, run: ./gradlew :meja-fx:dependencies --write-locks
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,jmhCompileClasspath,testCompileClasspath
 com.dua3.utility:utility-bom:23.0.0-beta4-SNAPSHOT=jmhRuntimeClasspath
-com.dua3.utility:utility-bom:23.0.0-rc=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-bom:23.0.0-rc2=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.dua3.utility:utility-fx-controls:23.0.0-beta4-SNAPSHOT=jmhRuntimeClasspath
-com.dua3.utility:utility-fx-controls:23.0.0-rc=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-fx-controls:23.0.0-rc2=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.dua3.utility:utility-fx-icons:23.0.0-beta4-SNAPSHOT=jmhRuntimeClasspath
-com.dua3.utility:utility-fx-icons:23.0.0-rc=runtimeClasspath,testRuntimeClasspath
+com.dua3.utility:utility-fx-icons:23.0.0-rc2=runtimeClasspath,testRuntimeClasspath
 com.dua3.utility:utility-fx:23.0.0-beta4-SNAPSHOT=jmhRuntimeClasspath
-com.dua3.utility:utility-fx:23.0.0-rc=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-fx:23.0.0-rc2=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.dua3.utility:utility:23.0.0-beta4-SNAPSHOT=jmhRuntimeClasspath
-com.dua3.utility:utility:23.0.0-rc=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility:23.0.0-rc2=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.github.joniles:rtfparserkit:1.16.0=jmhRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
 com.github.spotbugs:spotbugs-annotations:4.10.2=spotbugs
 com.github.spotbugs:spotbugs:4.10.2=spotbugs
