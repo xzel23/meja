@@ -34,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
 import javax.swing.ActionMap;
+import javax.swing.BorderFactory;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -50,6 +51,8 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -88,6 +91,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
     private final transient SwingSearchDialog searchDialog = new SwingSearchDialog(this);
     private final transient ScaledTextEditorPane editor = new ScaledTextEditorPane();
     private final transient JLayeredPane layeredPane;
+    private final transient KeyEventDispatcher editingKeyEventDispatcher = this::dispatchEditingKeyEvent;
 
     private final transient Flow.Subscriber<SheetEvent> sheetEventSubscriber = new Flow.Subscriber<>() {
         @Override
@@ -124,6 +128,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
 
     private boolean editable;
     private boolean updating;
+    private boolean editingDispatcherInstalled;
     private transient @Nullable Container toolbarParent;
 
     /**
@@ -153,7 +158,20 @@ public final class SwingSheetView extends JPanel implements SheetView {
     }
 
     @Override
+    public void addNotify() {
+        super.addNotify();
+        if (!editingDispatcherInstalled) {
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(editingKeyEventDispatcher);
+            editingDispatcherInstalled = true;
+        }
+    }
+
+    @Override
     public void removeNotify() {
+        if (editingDispatcherInstalled) {
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(editingKeyEventDispatcher);
+            editingDispatcherInstalled = false;
+        }
         stopEditing(false);
         if (sheetSubscription != null) {
             sheetSubscription.cancel();
@@ -279,6 +297,9 @@ public final class SwingSheetView extends JPanel implements SheetView {
         editor.setEditable(false);
         editor.setWrapText(false);
         editor.setEnterKeyInsertsNewline(true);
+        editor.setBorder(BorderFactory.createEmptyBorder());
+        editor.setViewportBorder(BorderFactory.createEmptyBorder());
+        editor.getTextComponent().setBorder(BorderFactory.createEmptyBorder());
         editor.addPropertyChangeListener("text", evt -> updateEditorBounds());
 
         InputMap inputMap = editor.getTextComponent().getInputMap(JComponent.WHEN_FOCUSED);
@@ -358,9 +379,73 @@ public final class SwingSheetView extends JPanel implements SheetView {
             editor.setVisible(true);
             layeredPane.moveToFront(editor);
             updateEditorBounds();
-            editor.requestFocusInWindow();
-            SwingUtilities.invokeLater(this::updateEditorBounds);
+            requestEditorFocusWithRetry();
+            SwingUtilities.invokeLater(() -> {
+                updateEditorBounds();
+                requestEditorFocusWithRetry();
+            });
         }));
+    }
+
+    private void requestEditorFocusWithRetry() {
+        requestEditorFocus();
+        scheduleEditorFocusRetry(50);
+        scheduleEditorFocusRetry(150);
+    }
+
+    private void scheduleEditorFocusRetry(int delayMs) {
+        javax.swing.Timer timer = new javax.swing.Timer(delayMs, evt -> {
+            ((javax.swing.Timer) evt.getSource()).stop();
+            if (delegate.isEditing() && editor.isVisible()) {
+                requestEditorFocus();
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
+    }
+
+    private void requestEditorFocus() {
+        Window window = SwingUtilities.getWindowAncestor(this);
+        if (window != null) {
+            window.toFront();
+        }
+        if (window != null && !window.isFocused()) {
+            window.requestFocus();
+        }
+        editor.getTextComponent().requestFocusInWindow();
+        editor.getTextComponent().requestFocus();
+        editor.requestFocusInWindow();
+    }
+
+    private boolean dispatchEditingKeyEvent(KeyEvent event) {
+        if (!delegate.isEditing() || !editor.isVisible() || !editor.isEditable() || event.isConsumed()) {
+            return false;
+        }
+
+        if (event.getID() != KeyEvent.KEY_PRESSED
+                && event.getID() != KeyEvent.KEY_RELEASED
+                && event.getID() != KeyEvent.KEY_TYPED) {
+            return false;
+        }
+
+        Component textComponent = editor.getTextComponent();
+        Object source = event.getSource();
+        if (source == textComponent || source instanceof Component c && SwingUtilities.isDescendingFrom(c, textComponent)) {
+            return false;
+        }
+
+        KeyEvent forwarded = new KeyEvent(
+                textComponent,
+                event.getID(),
+                event.getWhen(),
+                event.getModifiersEx(),
+                event.getKeyCode(),
+                event.getKeyChar(),
+                event.getKeyLocation()
+        );
+        textComponent.dispatchEvent(forwarded);
+        event.consume();
+        return true;
     }
 
     @Override
@@ -502,11 +587,15 @@ public final class SwingSheetView extends JPanel implements SheetView {
 
             EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight, styleWrapping);
             editor.setWrapText(editorSize.wrapText());
+            int left = (int) Math.round(x + 1);
+            int top = (int) Math.round(y + 1);
+            int right = (int) Math.round(x + editorSize.width());
+            int bottom = (int) Math.round(y + editorSize.height());
             editor.setBounds(
-                    (int) Math.round(x),
-                    (int) Math.round(y),
-                    (int) Math.round(editorSize.width()),
-                    (int) Math.round(editorSize.height())
+                    left,
+                    top,
+                    Math.max(1, right - left + 1),
+                    Math.max(1, bottom - top + 1)
             );
             editor.revalidate();
             editor.repaint();
@@ -564,7 +653,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
         FontMetrics fm = editor.getTextComponent().getFontMetrics(editor.getTextComponent().getFont());
         if (wrappingWidth <= 0.0) {
             int lineCount = Math.max(1, text.split("\n", -1).length);
-            return lineCount * fm.getHeight();
+            return lineCount * (double) fm.getHeight();
         }
 
         FontRenderContext frc = new FontRenderContext(null, true, true);
