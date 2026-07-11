@@ -274,6 +274,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
         initKeyBindings();
 
         setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent event) {
@@ -337,6 +338,10 @@ public final class SwingSheetView extends JPanel implements SheetView {
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_LEFT, 0), Actions.MOVE_LEFT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), Actions.MOVE_RIGHT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_KP_RIGHT, 0), Actions.MOVE_RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), Actions.MOVE_RIGHT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK), Actions.MOVE_LEFT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), Actions.MOVE_DOWN);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK), Actions.MOVE_UP);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0), Actions.PAGE_UP);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0), Actions.PAGE_DOWN);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_HOME, InputEvent.CTRL_DOWN_MASK), Actions.MOVE_HOME);

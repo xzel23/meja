@@ -199,7 +199,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         vScrollbar.setValue(0);
 
         setFocusTraversable(true);
-        addEventFilter(KeyEvent.KEY_PRESSED, this::onEditingNavigationKeyPressed);
+        addEventFilter(KeyEvent.KEY_PRESSED, this::onNavigationKeyPressed);
         setOnKeyPressed(this::onKeyPressed);
         setOnKeyTyped(this::onKeyTyped);
 
@@ -351,21 +351,32 @@ public final class FxSheetView extends StackPane implements SheetView {
         }
     }
 
-    private void onEditingNavigationKeyPressed(KeyEvent event) {
-        if (event.isConsumed() || !delegate.isEditing() || !editor.isVisible() || !editor.isEditable()) {
+    private void onNavigationKeyPressed(KeyEvent event) {
+        if (event.isConsumed() || event.isShortcutDown() || event.isAltDown()) {
             return;
         }
 
-        if (event.isShortcutDown() || event.isAltDown()) {
+        if (delegate.isEditing()) {
+            if (!editor.isVisible() || !editor.isEditable()) {
+                return;
+            }
+
+            if (event.getCode() == javafx.scene.input.KeyCode.TAB) {
+                boolean wasEditing = delegate.isEditing();
+                stopEditing(true);
+                if (wasEditing) {
+                    move(event.isShiftDown() ? Direction.WEST : Direction.EAST);
+                }
+                event.consume();
+            }
             return;
         }
 
         if (event.getCode() == javafx.scene.input.KeyCode.TAB) {
-            boolean wasEditing = delegate.isEditing();
-            stopEditing(true);
-            if (wasEditing) {
-                move(event.isShiftDown() ? Direction.WEST : Direction.EAST);
-            }
+            move(event.isShiftDown() ? Direction.WEST : Direction.EAST);
+            event.consume();
+        } else if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
+            move(event.isShiftDown() ? Direction.NORTH : Direction.SOUTH);
             event.consume();
         }
     }
