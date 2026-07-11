@@ -533,7 +533,8 @@ public final class FxSheetView extends StackPane implements SheetView {
             scrollToCurrentCell();
             Platform.runLater(() -> {
                 CellStyle cellStyle = cell.getCellStyle();
-                editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
+                editor.setTextFont(cellStyle.getFont());
+                editor.setDisplayScale(delegate.getScale().sy());
                 editor.setWrapText(cellStyle.isStyleWrapping());
                 editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()));
                 editor.selectAll();
@@ -707,11 +708,12 @@ public final class FxSheetView extends StackPane implements SheetView {
     private double measureLongestLineWidth(String text) {
         Text measurement = new Text();
         measurement.setFont(editor.getFxFont());
+        double scale = editor.getDisplayScale();
 
         double width = 0.0;
         for (String line : text.split("\n", -1)) {
             measurement.setText(line.isEmpty() ? " " : line);
-            width = Math.max(width, measurement.getLayoutBounds().getWidth());
+            width = Math.max(width, measurement.getLayoutBounds().getWidth() * scale);
         }
         return width;
     }
@@ -719,10 +721,11 @@ public final class FxSheetView extends StackPane implements SheetView {
     private double measureTextHeight(String text, double wrappingWidth) {
         Text measurement = new Text(text.isEmpty() ? " " : text);
         measurement.setFont(editor.getFxFont());
+        double scale = editor.getDisplayScale();
         if (wrappingWidth > 0.0) {
-            measurement.setWrappingWidth(wrappingWidth);
+            measurement.setWrappingWidth(wrappingWidth / scale);
         }
-        return measurement.getLayoutBounds().getHeight();
+        return measurement.getLayoutBounds().getHeight() * scale;
     }
 
     private void configureEditorScrollPane() {
