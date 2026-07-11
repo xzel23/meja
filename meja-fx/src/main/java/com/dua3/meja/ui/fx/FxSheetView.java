@@ -199,6 +199,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         vScrollbar.setValue(0);
 
         setFocusTraversable(true);
+        addEventFilter(KeyEvent.KEY_PRESSED, this::onEditingNavigationKeyPressed);
         setOnKeyPressed(this::onKeyPressed);
         setOnKeyTyped(this::onKeyTyped);
 
@@ -347,6 +348,25 @@ public final class FxSheetView extends StackPane implements SheetView {
                     // No action for other keys
                 }
             }
+        }
+    }
+
+    private void onEditingNavigationKeyPressed(KeyEvent event) {
+        if (event.isConsumed() || !delegate.isEditing() || !editor.isVisible() || !editor.isEditable()) {
+            return;
+        }
+
+        if (event.isShortcutDown() || event.isAltDown()) {
+            return;
+        }
+
+        if (event.getCode() == javafx.scene.input.KeyCode.TAB) {
+            boolean wasEditing = delegate.isEditing();
+            stopEditing(true);
+            if (wasEditing) {
+                move(event.isShiftDown() ? Direction.WEST : Direction.EAST);
+            }
+            event.consume();
         }
     }
 

@@ -83,6 +83,8 @@ public final class SwingSheetView extends JPanel implements SheetView {
     private static final double FLOATING_TOOLBAR_GAP = 4.0;
 
     private static final String ACTION_EDITOR_COMMIT = "editor.commit";
+    private static final String ACTION_EDITOR_COMMIT_NEXT = "editor.commit.next";
+    private static final String ACTION_EDITOR_COMMIT_PREVIOUS = "editor.commit.previous";
     private static final String ACTION_EDITOR_NEWLINE = "editor.newline";
     private static final String ACTION_EDITOR_ABORT = "editor.abort";
 
@@ -296,27 +298,33 @@ public final class SwingSheetView extends JPanel implements SheetView {
         editor.setVisible(false);
         editor.setEditable(false);
         editor.setWrapText(false);
-        editor.setEnterKeyInsertsNewline(true);
+        editor.setEnterKeyInsertsNewline(false);
         editor.setBorder(BorderFactory.createEmptyBorder());
         editor.setViewportBorder(BorderFactory.createEmptyBorder());
         editor.getTextComponent().setBorder(BorderFactory.createEmptyBorder());
         editor.addPropertyChangeListener("text", evt -> updateEditorBounds());
 
         InputMap inputMap = editor.getTextComponent().getInputMap(JComponent.WHEN_FOCUSED);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), ACTION_EDITOR_COMMIT_NEXT);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK), ACTION_EDITOR_COMMIT_PREVIOUS);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), ACTION_EDITOR_COMMIT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK), ACTION_EDITOR_NEWLINE);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), ACTION_EDITOR_ABORT);
 
         ActionMap actionMap = editor.getTextComponent().getActionMap();
-        actionMap.put(ACTION_EDITOR_COMMIT, SwingUtil.createAction("CommitCellEdit", () -> {
-            boolean wasEditing = delegate.isEditing();
-            stopEditing(true);
-            if (wasEditing) {
-                move(Direction.SOUTH);
-            }
-        }));
+        actionMap.put(ACTION_EDITOR_COMMIT, SwingUtil.createAction("CommitCellEdit", () -> commitEditingAndMove(Direction.SOUTH)));
+        actionMap.put(ACTION_EDITOR_COMMIT_NEXT, SwingUtil.createAction("CommitCellEditNext", () -> commitEditingAndMove(Direction.EAST)));
+        actionMap.put(ACTION_EDITOR_COMMIT_PREVIOUS, SwingUtil.createAction("CommitCellEditPrevious", () -> commitEditingAndMove(Direction.WEST)));
         actionMap.put(ACTION_EDITOR_NEWLINE, SwingUtil.createAction("InsertEditorNewLine", () -> editor.replaceSelection("\n")));
         actionMap.put(ACTION_EDITOR_ABORT, SwingUtil.createAction("AbortCellEdit", () -> stopEditing(false)));
+    }
+
+    private void commitEditingAndMove(Direction direction) {
+        boolean wasEditing = delegate.isEditing();
+        stopEditing(true);
+        if (wasEditing) {
+            move(direction);
+        }
     }
 
     private void initKeyBindings() {
