@@ -27,7 +27,7 @@ import com.dua3.meja.util.CellValueHelper;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.swing.SwingUtil;
-import com.dua3.utility.swing.TextEditorPane;
+import com.dua3.utility.text.RichText;
 import com.dua3.utility.ui.DetachableNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,7 +86,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
     private final transient SwingSheetViewDelegate delegate;
     private final transient SwingSheetPane sheetPane;
     private final transient SwingSearchDialog searchDialog = new SwingSearchDialog(this);
-    private final transient TextEditorPane editor = new TextEditorPane();
+    private final transient ScaledTextEditorPane editor = new ScaledTextEditorPane();
     private final transient JLayeredPane layeredPane;
 
     private final transient Flow.Subscriber<SheetEvent> sheetEventSubscriber = new Flow.Subscriber<>() {
@@ -348,8 +348,9 @@ public final class SwingSheetView extends JPanel implements SheetView {
             scrollToCurrentCell();
             CellStyle cellStyle = cell.getCellStyle();
             editor.setTextFont(cellStyle.getFont().scaled(delegate.getScale().sy()));
+            editor.setFontScale(delegate.getScale().sy());
             editor.setWrapText(cellStyle.isStyleWrapping());
-            editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()));
+            editor.setCellText(cell.getCellType() == CellType.FORMULA ? RichText.valueOf("=" + cell.getFormula()) : cell.getAsText(getLocale()));
             editor.selectAll();
             editor.setToolbarApplicationParent(toolbarParent);
             editor.setToolbarLocation(toolbarParent == null ? DetachableNode.Location.FLOATING : DetachableNode.Location.APPLICATION);

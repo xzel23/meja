@@ -23,7 +23,6 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.swing.SwingUtil;
-import com.dua3.utility.swing.TextEditorPane;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.RichText;
 import org.jspecify.annotations.Nullable;
@@ -74,7 +73,7 @@ public class DefaultCellEditor implements CellEditor {
         abstract Action getAction(DefaultCellEditor editor);
     }
 
-    private final TextEditorPane component;
+    private final ScaledTextEditorPane component;
     private @Nullable Cell cell;
 
     private final SwingSheetView sheetView;
@@ -89,7 +88,7 @@ public class DefaultCellEditor implements CellEditor {
      */
     public DefaultCellEditor(SwingSheetView sheetView) {
         this.sheetView = sheetView;
-        this.component = new TextEditorPane();
+        this.component = new ScaledTextEditorPane();
         final JComponent textComponent = component.getTextComponent();
 
         component.setWrapText(false);
@@ -194,6 +193,7 @@ public class DefaultCellEditor implements CellEditor {
         component.setBackground(SwingUtil.convert(fg));
         component.setForeground(SwingUtil.convert(bg));
         component.setTextFont(font.scaled(scale.sy()));
+        component.setFontScale(scale.sy());
 
         final RichText text;
         if (!eval && cell.getCellType() == CellType.FORMULA) {
@@ -202,7 +202,7 @@ public class DefaultCellEditor implements CellEditor {
             text = cell.getAsText(getLocale());
         }
 
-        component.setText(text);
+        component.setCellText(text);
 
         component.revalidate();
         component.setCaretPosition(component.getText().length());
