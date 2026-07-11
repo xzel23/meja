@@ -548,10 +548,25 @@ public final class FxSheetView extends StackPane implements SheetView {
                 updateEditorBounds();
                 configureEditorScrollPane();
                 hideEditorScrollbars();
-                editor.requestFocus();
-                Platform.runLater(this::updateEditorBounds);
+                requestEditorFocus();
+                Platform.runLater(() -> {
+                    updateEditorBounds();
+                    requestEditorFocus();
+                    Platform.runLater(this::requestEditorFocus);
+                });
             });
         });
+    }
+
+    private void requestEditorFocus() {
+        if (delegate.isEditing() && editor.isVisible() && editor.isEditable()) {
+            Scene scene = getScene();
+            Window window = scene == null ? null : scene.getWindow();
+            if (window != null && !window.isFocused()) {
+                window.requestFocus();
+            }
+            editor.requestFocus();
+        }
     }
 
     @Override
