@@ -152,7 +152,7 @@ allprojects {
         apply(plugin = rootProject.libs.plugins.jdk.get().pluginId)
 
         jdk {
-            version = 21
+            version = rootProject.libs.versions.jdkVersion.get().toInt()
             javaFxBundled = true
             nativeImageCapable = false
         }

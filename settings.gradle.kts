@@ -3,7 +3,7 @@ import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 rootProject.name = "dua3-meja"
 
 fun versionCatalogVersion(alias: String): String {
-    val catalog = file("gradle/libs.toml")
+    val catalog = file("gradle/version.toml")
     val versions = catalog.readLines()
         .dropWhile { it.trim() != "[versions]" }
         .drop(1)
@@ -46,7 +46,7 @@ dependencyResolutionManagement {
 
     versionCatalogs {
         create("libs") {
-            from(files("gradle/libs.toml"))
+            from(files("gradle/version.toml"))
         }
     }
 
