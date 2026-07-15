@@ -63,11 +63,6 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
             );
         }
 
-        @Override
-        public final ObservableList<Node> getChildren() {
-            return super.getChildren();
-        }
-
         void setSize(SegmentViewDelegate segmentDelegateLeft, SegmentViewDelegate segmentDelegateRight, float rowY, float rowHeightInPoints) {
             SheetViewDelegate sheetViewDelegate = segmentDelegateLeft.getSheetViewDelegate();
 
