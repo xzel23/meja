@@ -14,7 +14,7 @@ dua3-utility = "23.0.3"
 
 ikonli = "12.4.0"
 jspecify = "1.0.0"
-junit-bom = "6.1.1"
+junit-bom = "6.1.2"
 log4j-bom = "2.26.1"
 poi = "5.5.1"
 slb4j = "0.12.2"
