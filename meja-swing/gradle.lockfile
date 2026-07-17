@@ -3,9 +3,9 @@
 # This file is expected to be part of source control.
 # To regenerate this file, run: ./gradlew :meja-swing:dependencies --write-locks
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,jmhCompileClasspath,testCompileClasspath
-com.dua3.utility:utility-bom:23.0.3=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-com.dua3.utility:utility-swing:23.0.3=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-com.dua3.utility:utility:23.0.3=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-bom:23.0.4=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-swing:23.0.4=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility:23.0.4=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.github.joniles:rtfparserkit:1.16.0=runtimeClasspath,testRuntimeClasspath
 com.github.spotbugs:spotbugs-annotations:4.10.3=spotbugs
 com.github.spotbugs:spotbugs:4.10.3=spotbugs
@@ -32,15 +32,14 @@ org.jacoco:org.jacoco.ant:0.8.14=jacocoAnt
 org.jacoco:org.jacoco.core:0.8.14=jacocoAnt
 org.jacoco:org.jacoco.report:0.8.14=jacocoAnt
 org.jspecify:jspecify:1.0.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-org.junit.jupiter:junit-jupiter-api:6.1.1=testCompileClasspath,testRuntimeClasspath
-org.junit.jupiter:junit-jupiter-engine:6.1.1=testRuntimeClasspath
-org.junit.jupiter:junit-jupiter-params:6.1.1=testCompileClasspath,testRuntimeClasspath
-org.junit.jupiter:junit-jupiter:6.1.1=testCompileClasspath,testRuntimeClasspath
-org.junit.platform:junit-platform-commons:6.1.1=testCompileClasspath,testRuntimeClasspath
-org.junit.platform:junit-platform-engine:6.1.1=testRuntimeClasspath
-org.junit.platform:junit-platform-launcher:6.1.1=testRuntimeClasspath
-org.junit:junit-bom:6.1.1=testCompileClasspath,testRuntimeClasspath
-org.junit:junit-bom:6.1.2=spotbugs
+org.junit.jupiter:junit-jupiter-api:6.1.2=testCompileClasspath,testRuntimeClasspath
+org.junit.jupiter:junit-jupiter-engine:6.1.2=testRuntimeClasspath
+org.junit.jupiter:junit-jupiter-params:6.1.2=testCompileClasspath,testRuntimeClasspath
+org.junit.jupiter:junit-jupiter:6.1.2=testCompileClasspath,testRuntimeClasspath
+org.junit.platform:junit-platform-commons:6.1.2=testCompileClasspath,testRuntimeClasspath
+org.junit.platform:junit-platform-engine:6.1.2=testRuntimeClasspath
+org.junit.platform:junit-platform-launcher:6.1.2=testRuntimeClasspath
+org.junit:junit-bom:6.1.2=spotbugs,testCompileClasspath,testRuntimeClasspath
 org.openjdk.jmh:jmh-core:1.36=jmhCompileClasspath
 org.openjdk.jmh:jmh-generator-asm:1.36=jmhCompileClasspath
 org.openjdk.jmh:jmh-generator-bytecode:1.36=jmhCompileClasspath
