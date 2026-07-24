@@ -3,8 +3,8 @@
 # This file is expected to be part of source control.
 # To regenerate this file, run: ./gradlew :meja-ui:dependencies --write-locks
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,jmhCompileClasspath,testCompileClasspath
-com.dua3.utility:utility-bom:23.0.6=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
-com.dua3.utility:utility:23.0.6=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-bom:23.0.7=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility:23.0.7=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.github.joniles:rtfparserkit:1.16.0=runtimeClasspath,testRuntimeClasspath
 com.github.spotbugs:spotbugs-annotations:4.10.3=spotbugs
 com.github.spotbugs:spotbugs:4.10.3=spotbugs
