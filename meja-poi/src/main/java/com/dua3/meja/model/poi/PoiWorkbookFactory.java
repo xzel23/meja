@@ -30,7 +30,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jspecify.annotations.Nullable;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -57,24 +56,6 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      */
     public static PoiWorkbookFactory instance() {
         return INSTANCE;
-    }
-
-    /**
-     * Open Workbook from InputStream.
-     *
-     * @param in  the stream to read from
-     * @param uri the URI to set
-     * @return the workbook
-     * @throws IOException if an error occurs when reading
-     */
-    private static PoiWorkbook open(InputStream in, @Nullable URI uri) throws IOException {
-        try {
-            final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
-                    .create(in);
-            return createWorkbook(poiWorkbook, uri);
-        } catch (RecordFormatException ex) {
-            throw new FileFormatException("Invalid file format or corrupted data", ex);
-        }
     }
 
     /**
@@ -153,29 +134,13 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @see #open(URI)
      */
     @Override
-    public PoiWorkbook open(URI uri, Arguments importSettings) throws IOException {
-        // Read Excel files directly using POI methods
-        // Do not use the `create(File)` method to avoid exception when trying
-        // to save the workbook again to the same file.
-        try (InputStream in = new BufferedInputStream(uri.toURL().openStream())) {
-            return open(in, uri);
-        }
-    }
-
-    /**
-     * Opens an existing workbook from the specified URI. The workbook format (XLS or XLSX)
-     * is automatically detected.
-     *
-     * @param uri URI of the workbook to open
-     * @return the opened workbook
-     * @throws IOException if an I/O error occurs while reading the file
-     * @throws FileFormatException if the file format is invalid or the file is corrupted
-     * @see #open(URI, Arguments)
-     */
-    @Override
-    public PoiWorkbook open(URI uri) throws IOException {
-        try (InputStream in = new BufferedInputStream(uri.toURL().openStream())) {
-            return open(in, uri);
+    public PoiWorkbook open(URI uri, Arguments importSettings, InputStream in) throws IOException {
+        try {
+            final org.apache.poi.ss.usermodel.Workbook poiWorkbook = org.apache.poi.ss.usermodel.WorkbookFactory
+                    .create(in);
+            return createWorkbook(poiWorkbook, uri);
+        } catch (RecordFormatException ex) {
+            throw new FileFormatException("Invalid file format or corrupted data", ex);
         }
     }
 

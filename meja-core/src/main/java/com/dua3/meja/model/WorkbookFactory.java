@@ -17,16 +17,18 @@ package com.dua3.meja.model;
 
 import com.dua3.utility.options.Arguments;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 /**
  * Abstract base class for workbook factories.
  *
- * @param <WORKBOOK> the concrete workbook class
+ * @param <W> the concrete workbook class
  * @author axel
  */
-public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
+public abstract class WorkbookFactory<W extends Workbook> {
 
     /**
      * Protected constructor for the {@code WorkbookFactory} class.
@@ -44,8 +46,8 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * @return a new workbook instance of type {@code WORKBOOK} containing all content from the source
      * @see #create()
      */
-    public WORKBOOK copyOf(Workbook other) {
-        WORKBOOK workbook = create();
+    public W copyOf(Workbook other) {
+        W workbook = create();
         workbook.setUri(other.getUri().orElse(null));
 
         // copy styles
@@ -72,7 +74,7 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * @see #createStreaming()
      * @see #copyOf(Workbook)
      */
-    public abstract WORKBOOK create();
+    public abstract W create();
 
     /**
      * Creates a new empty workbook instance optimized for streaming operations.
@@ -82,7 +84,7 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * @return a new empty workbook instance configured for streaming
      * @see #create()
      */
-    public abstract WORKBOOK createStreaming();
+    public abstract W createStreaming();
 
     /**
      * Load workbook from file.
@@ -95,7 +97,7 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * @return workbook
      * @throws IOException if an input/output error occurs
      */
-    public WORKBOOK open(URI uri) throws IOException {
+    public W open(URI uri) throws IOException {
         return open(uri, Arguments.empty());
     }
 
@@ -111,6 +113,25 @@ public abstract class WorkbookFactory<WORKBOOK extends Workbook> {
      * @return workbook
      * @throws IOException if an input/output error occurs
      */
-    public abstract WORKBOOK open(URI uri, Arguments importSettings) throws IOException;
+    public W open(URI uri, Arguments importSettings) throws IOException {
+        try (InputStream in = new BufferedInputStream(uri.toURL().openStream())) {
+            return open(uri, importSettings, in);
+        }
+    }
+
+    /**
+     * Load workbook from file.
+     * <p>
+     * The file type is determined automatically based on the extension so that it
+     * is possible to open a CSV file as Excel workbook.
+     * </p>
+     *
+     * @param uri            the workbook URI
+     * @param importSettings settings to configure the input process
+     * @param in             the {@link InputStream} to read from
+     * @return workbook
+     * @throws IOException if an input/output error occurs
+     */
+    public abstract W open(URI uri, Arguments importSettings, InputStream in) throws IOException;
 
 }

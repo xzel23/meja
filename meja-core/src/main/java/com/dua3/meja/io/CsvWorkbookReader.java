@@ -73,7 +73,7 @@ public final class CsvWorkbookReader extends WorkbookReader {
 
     @SuppressWarnings("java:S2095") // the caller is responsible for closing the returned workbook instance
     @Override
-    protected <W extends Workbook> W read(WorkbookFactory<W> factory, InputStream in, URI uri) throws IOException {
+    protected <W extends Workbook> W read(WorkbookFactory<W> factory, URI uri, InputStream in) throws IOException {
         W workbook = factory.create();
         workbook.setUri(uri);
         RowBuilder builder = new SheetRowBuilder(workbook.createSheet("Sheet 1"), options);
