@@ -512,6 +512,11 @@ public final class SwingSheetView extends JPanel implements SheetView {
         updateEditorBounds();
     }
 
+    /**
+     * Sets the editable state of this component.
+     *
+     * @param editable a boolean value indicating whether the component should be editable
+     */
     public void setEditable(boolean editable) {
         this.editable = editable;
     }

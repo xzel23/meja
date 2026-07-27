@@ -1431,10 +1431,24 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         return SPLIT_LINE_PIXELS;
     }
 
+    /**
+     * Retrieves the cell currently being edited, if any.
+     * This method returns an Optional that contains the Cell being edited,
+     * or an empty Optional if no cell is currently in edit mode.
+     *
+     * @return an Optional containing the Cell that is currently being edited,
+     *         or an empty Optional if no cell is in editing mode.
+     */
     public Optional<Cell> getEditingCell() {
         return Optional.ofNullable(editingCell.get());
     }
 
+    /**
+     * Determines if the current state is in editing mode.
+     * The method checks whether there is an active editing cell.
+     *
+     * @return true if an editing cell is currently active, false otherwise.
+     */
     public boolean isEditing() {
         return editingCell.get() != null;
     }

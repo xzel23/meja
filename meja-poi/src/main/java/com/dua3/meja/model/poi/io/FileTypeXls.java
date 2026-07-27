@@ -13,6 +13,7 @@ import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.function.Function;
 
@@ -42,7 +43,7 @@ public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     @Override
-    public PoiHssfWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
+    public PoiHssfWorkbook read(URI uri, InputStream in, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
         PoiWorkbook wb = PoiWorkbookFactory.instance().open(uri);
         LangUtil.check(wb instanceof PoiHssfWorkbook, "internal error: expected an instance of PoiWorkbook but got %s", wb.getClass());
         return (PoiHssfWorkbook) wb;

@@ -148,12 +148,7 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
     private @Nullable SwingWorkbookView workbookView;
 
     private final Action openAction = SwingUtil.createAction("\uD83D\uDCC2", this::showOpenDialog);
-    private final Action saveAction = new AbstractAction("\uD83D\uDCBE") {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            saveWorkbook();
-        }
-    };
+    private final Action saveAction = SwingUtil.createAction("\uD83D\uDCBE", this::saveWorkbook);
 
     /**
      * Constructor.

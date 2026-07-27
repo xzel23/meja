@@ -896,6 +896,12 @@ public final class FxSheetView extends StackPane implements SheetView {
         return observableSheet;
     }
 
+    /**
+     * Returns the BooleanProperty that represents the editable state of the FxSheetView.
+     * This property allows listeners to be attached to respond to changes in editability.
+     *
+     * @return a BooleanProperty indicating whether the sheet view is editable
+     */
     public BooleanProperty editableProperty() {
         return editableProperty;
     }

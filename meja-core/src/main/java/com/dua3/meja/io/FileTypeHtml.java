@@ -7,6 +7,7 @@ import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.Arguments;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.function.Function;
 
@@ -47,7 +48,7 @@ public class FileTypeHtml extends FileTypeWorkbook<Workbook> {
     }
 
     @Override
-    public Workbook read(URI uri, Function<FileType<? extends Workbook>, Arguments> options) throws IOException {
+    public Workbook read(URI uri, InputStream in, Function<FileType<? extends Workbook>, Arguments> options) throws IOException {
         throw new UnsupportedOperationException("not implemented: reading workbook from HTML file");
     }
 }

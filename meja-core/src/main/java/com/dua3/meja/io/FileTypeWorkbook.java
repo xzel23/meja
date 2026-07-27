@@ -7,6 +7,7 @@ import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.Arguments;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.function.Function;
 
@@ -44,7 +45,7 @@ public abstract class FileTypeWorkbook<W extends Workbook> extends FileType<W> {
     public abstract WorkbookFactory<? extends W> getWorkbookFactory();
 
     @Override
-    public void write(URI uri, W document, Function<FileType<? super W>, Arguments> options) throws IOException {
-        getWorkbookWriter().write(document, uri);
+    public void write(W document, URI uri, OutputStream out, Function<FileType<? super W>, Arguments> options) throws IOException {
+        getWorkbookWriter().write(document, out);
     }
 }

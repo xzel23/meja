@@ -11,6 +11,7 @@ import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.Arguments;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.function.Function;
 
@@ -66,7 +67,7 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     }
 
     @Override
-    public PoiWorkbook read(URI uri, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
+    public PoiWorkbook read(URI uri, InputStream in, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
         if (FILETYPE_XLSX.matches(uri.getSchemeSpecificPart())) {
             return FileTypeXlsx.instance().read(uri, options);
         }

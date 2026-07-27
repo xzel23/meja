@@ -13,6 +13,7 @@ import com.dua3.utility.options.Arguments;
 import com.dua3.utility.options.Option;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.function.Function;
@@ -40,7 +41,7 @@ public class FileTypeCsv extends FileTypeWorkbook<Workbook> {
     }
 
     @Override
-    public GenericWorkbook read(URI uri, Function<FileType<? extends Workbook>, Arguments> options) throws IOException {
+    public GenericWorkbook read(URI uri, InputStream in, Function<FileType<? extends Workbook>, Arguments> options) throws IOException {
         return GenericWorkbookFactory.instance().open(uri, options.apply(this));
     }
 
