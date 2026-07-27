@@ -19,6 +19,7 @@ import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
 import com.dua3.utility.io.FileType;
+import com.dua3.utility.io.ReadableObjectStore;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.text.Alignment;
 import com.dua3.utility.text.TextUtil;
@@ -41,6 +42,8 @@ public final class MejaHelper {
 
     private static final Pattern PATTERN_NEWLINE = Pattern.compile("\\R");
 
+    private static final String COULD_NOT_READ_WORKBOOK = "could not read workbook: ";
+
     /**
      * Open a workbook file.
      * <p>
@@ -53,7 +56,7 @@ public final class MejaHelper {
      * @throws IOException if workbook could not be loaded
      */
     public static Workbook openWorkbook(URI uri) throws IOException {
-        return FileType.read(uri, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: " + uri));
+        return FileType.read(uri, Workbook.class).orElseThrow(() -> new IOException(COULD_NOT_READ_WORKBOOK + uri));
     }
 
     /**
@@ -68,7 +71,23 @@ public final class MejaHelper {
      * @throws IOException if workbook could not be loaded
      */
     public static Workbook openWorkbook(Path path) throws IOException {
-        return FileType.read(path, Workbook.class).orElseThrow(() -> new IOException("could not read workbook: " + path));
+        return FileType.read(path, Workbook.class).orElseThrow(() -> new IOException(COULD_NOT_READ_WORKBOOK + path));
+    }
+
+    /**
+     * Open a workbook file.
+     * <p>
+     * This method inspects the file name extension to determine which factory
+     * should be used for loading.
+     * </p>
+     *
+     * @param objectStore the {@link com.dua3.utility.io.ObjectStore} containing the workbook
+     * @param relativeUri the relative {@link URI} of the workbook within the object store
+     * @return the workbook loaded from the {@code com.dua3.utility.io.ObjectStore}
+     * @throws IOException if the workbook could not be loaded
+     */
+    public static Workbook openWorkbook(ReadableObjectStore objectStore, URI relativeUri) throws IOException {
+        return FileType.read(objectStore, relativeUri, Workbook.class).orElseThrow(() -> new IOException(COULD_NOT_READ_WORKBOOK + relativeUri));
     }
 
     /**
@@ -117,6 +136,7 @@ public final class MejaHelper {
      * @param printOptions the {@link PrintOptions} to use
      * @return the Appendable
      */
+    @SuppressWarnings("java:S3457")
     public static <A extends Appendable> A printTable(A app, Sheet sheet, Locale locale, PrintOptions... printOptions) {
         EnumSet<PrintOptions> options = LangUtil.enumSet(PrintOptions.class, printOptions);
 
