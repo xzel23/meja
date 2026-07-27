@@ -47,7 +47,7 @@ public final class CreateCalendar {
      *
      * @param args command-line arguments (not used in this implementation)
      */
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    @SuppressWarnings({"UseOfSystemOutOrSystemErr", "java:S106"})
     public static void main(String[] args) {
         try {
             Path file = Paths.get("calendar.html");
@@ -99,17 +99,17 @@ public final class CreateCalendar {
 
                 LocalDate firstOfMonth = LocalDate.of(year, month.getValue(), 1);
                 int offset = (firstOfMonth.getDayOfWeek().getValue() - firstDayOfWeek.getValue()) % daysPerWeek;
-                for (LocalDate d = firstOfMonth; d.getMonth() == month; d = d.plusDays(1)) {
+                for (LocalDate date = firstOfMonth; date.getMonth() == month; date = date.plusDays(1)) {
                     // write date
-                    int idx = offset + d.getDayOfMonth() - 1;
+                    int idx = offset + date.getDayOfMonth() - 1;
                     int ii = idx / daysPerWeek;
                     int jj = idx % daysPerWeek;
-                    Cell cell = sheet.getCell(i + ii, j + jj + 1).set(d.getDayOfMonth());
-                    setStyle(cell, d);
+                    Cell cell = sheet.getCell(i + ii, j + jj + 1).set(date.getDayOfMonth());
+                    setStyle(cell, date);
 
                     // write week number
-                    if (d.getDayOfMonth() == 1 || d.getDayOfWeek() == firstDayOfWeek) {
-                        sheet.getCell(i + ii, j).set(d.get(weekFields.weekOfWeekBasedYear()));
+                    if (date.getDayOfMonth() == 1 || date.getDayOfWeek() == firstDayOfWeek) {
+                        sheet.getCell(i + ii, j).set(date.get(weekFields.weekOfWeekBasedYear()));
                     }
                 }
             }

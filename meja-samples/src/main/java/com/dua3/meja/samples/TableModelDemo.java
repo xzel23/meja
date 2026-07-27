@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import java.io.IOException;
 import java.io.Serial;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * Demonstrates the usage of a table model in a Swing application.
@@ -78,7 +79,7 @@ public final class TableModelDemo extends JFrame {
         // Use virtual thread for more efficient I/O operations
         Thread.startVirtualThread(() -> {
             for (int i = 1; i < 50; i++) {
-                sheet.createRow(i, LocalDateTime.now());
+                sheet.createRow(i, LocalDateTime.now(ZoneId.systemDefault()));
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
