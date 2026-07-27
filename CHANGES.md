@@ -1,5 +1,13 @@
 # Meja Changelog
 
+## Version 11.0.0 (in progess)
+
+- Refactorings of the WorkbookFactory and FilteType interfaces
+
+## Version 11.0.0+
+
+- in-place editing support for table cells
+
 ## Version 11.0.0-M2
 
 - track dependency changes; clipboard handling

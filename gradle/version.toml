@@ -1,5 +1,5 @@
 [versions]
-projectVersion = "11.1.0-SNAPSHOT"
+projectVersion = "11.1.0-beta"
 jdkVersion = "21"
 jdkprovider-plugin = "0.11.0"
 versions-plugin = "0.54.0"
