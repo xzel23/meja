@@ -2,7 +2,8 @@
 
 ## Version 11.0.0 (in progess)
 
-- Refactorings of the WorkbookFactory and FilteType interfaces
+- Refactorings of the WorkbookFactory and FilterType interfaces
+- support reading from and writing to ObjectStore instances
 
 ## Version 11.0.0+
 
