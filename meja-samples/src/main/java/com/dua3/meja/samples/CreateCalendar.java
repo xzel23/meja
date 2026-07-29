@@ -16,9 +16,11 @@ import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZoneId;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * The {@code CreateCalendar} class is a sample application tha generates
@@ -65,7 +67,7 @@ public final class CreateCalendar {
         // week fields for locale
         WeekFields weekFields = WeekFields.of(locale);
         // get the current year
-        int year = LocalDate.now().getYear();
+        int year = LocalDate.now(ZoneId.systemDefault()).getYear();
         // get the first day of week (generally monday or sunday)
         DayOfWeek firstDayOfWeek = weekFields.getFirstDayOfWeek();
         // Days per week (should be 7)
