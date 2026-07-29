@@ -28,7 +28,6 @@ plugins {
     id("idea")
     id("jacoco-report-aggregation")
     alias(libs.plugins.jdk)
-    alias(libs.plugins.versions)
     alias(libs.plugins.test.logger)
     alias(libs.plugins.spotbugs)
     alias(libs.plugins.cabe)
@@ -171,7 +170,6 @@ subprojects {
     apply(plugin = "signing")
     apply(plugin = "idea")
     apply(plugin = rootProject.libs.plugins.jdk.get().pluginId)
-    apply(plugin = rootProject.libs.plugins.versions.get().pluginId)
     apply(plugin = rootProject.libs.plugins.test.logger.get().pluginId)
 
     // Skip some plugins for BOM project

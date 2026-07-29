@@ -1,5 +1,17 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
+pluginManagement {
+    val versionsPluginVersion = Regex("""(?m)^\s*versions-plugin\s*=\s*"([^"]+)"""")
+        .find(file("gradle/version.toml").readText())!!.groupValues[1]
+    plugins {
+        id("io.github.ben-manes.versions.settings") version versionsPluginVersion
+    }
+}
+
+plugins {
+    id("io.github.ben-manes.versions.settings")
+}
+
 rootProject.name = "dua3-meja"
 
 fun versionCatalogVersion(alias: String): String {
