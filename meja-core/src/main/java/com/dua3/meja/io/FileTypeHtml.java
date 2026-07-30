@@ -16,14 +16,14 @@ import java.util.function.Function;
  */
 @SuppressWarnings("RedundantThrows")
 public class FileTypeHtml extends FileTypeWorkbook<Workbook> {
-    private static final FileType<Workbook> INSTANCE = new FileTypeHtml();
+    private static final FileTypeHtml INSTANCE = new FileTypeHtml();
 
     /**
      * Returns the singleton instance of FileType for Workbooks in HTML format.
      *
      * @return The singleton instance of FileType for Workbooks in HTML format.
      */
-    public static FileType<Workbook> instance() {
+    public static FileTypeHtml instance() {
         return INSTANCE;
     }
 

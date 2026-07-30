@@ -22,14 +22,14 @@ import java.util.function.Function;
  * File type for CSV files.
  */
 public class FileTypeCsv extends FileTypeWorkbook<Workbook> {
-    private static final FileType<Workbook> INSTANCE = new FileTypeCsv();
+    private static final FileTypeCsv INSTANCE = new FileTypeCsv();
 
     /**
      * Return instance of this file type.
      *
      * @return instance of file type
      */
-    public static FileType<Workbook> instance() {
+    public static FileTypeCsv instance() {
         return INSTANCE;
     }
 

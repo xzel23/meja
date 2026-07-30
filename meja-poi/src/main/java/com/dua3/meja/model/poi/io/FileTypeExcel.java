@@ -39,7 +39,7 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
      *
      * @return the instance of FileType for PoiWorkbook
      */
-    public static FileType<PoiWorkbook> instance() {
+    public static FileTypeExcel instance() {
         return INSTANCE;
     }
 
