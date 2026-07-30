@@ -44,7 +44,7 @@ public final class FileTypeXls extends FileTypeWorkbook<PoiWorkbook> {
 
     @Override
     public PoiHssfWorkbook read(URI uri, InputStream in, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
-        PoiWorkbook wb = PoiWorkbookFactory.instance().open(uri);
+        PoiWorkbook wb = PoiWorkbookFactory.instance().open(uri, options.apply(this), in);
         LangUtil.check(wb instanceof PoiHssfWorkbook, "internal error: expected an instance of PoiWorkbook but got %s", wb.getClass());
         return (PoiHssfWorkbook) wb;
     }

@@ -69,10 +69,10 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     @Override
     public PoiWorkbook read(URI uri, InputStream in, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
         if (FILETYPE_XLSX.matches(uri.getSchemeSpecificPart())) {
-            return FileTypeXlsx.instance().read(uri, options);
+            return FileTypeXlsx.instance().read(uri, in, options);
         }
         if (FILETYPE_XLS.matches(uri.getSchemeSpecificPart())) {
-            return FileTypeXls.instance().read(uri, options);
+            return FileTypeXls.instance().read(uri, in, options);
         }
         throw new IllegalArgumentException("cannot determine file type for reading");
     }
