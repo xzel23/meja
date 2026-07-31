@@ -13,7 +13,7 @@ jreleaser-plugin = "1.23.0"
 dua3-utility = "23.1.2"
 
 ikonli = "12.4.0"
-jspecify = "1.0.0"
+jspecify = "1.0.1"
 junit-bom = "6.1.2"
 log4j-bom = "2.26.1"
 poi = "5.5.1"
