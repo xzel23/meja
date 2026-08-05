@@ -206,6 +206,25 @@ class PoiWorkbookTest {
     }
 
     @Test
+    void testHtmlExportRetainsInlineTextStyles() throws IOException {
+        try (Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
+             Formatter out = new Formatter()) {
+            Sheet sheet = wb.getSheetByName("Inline styles");
+            assertNotNull(sheet);
+
+            HtmlWorkbookWriter.create().exportSingleSheet(out, sheet);
+
+            String html = out.toString();
+            assertTrue(html.contains("font-family: \"Courier New\";"));
+            assertTrue(html.contains("font-style: italic;"));
+            assertTrue(html.contains("font-size: 14.0pt;"));
+            assertTrue(html.contains("font-weight: bold;"));
+            assertTrue(html.contains("text-decoration: underline;"));
+            assertTrue(html.contains("color: #ff3333;"));
+        }
+    }
+
+    @Test
     void testRowGetLastColNumErrorXlsx() throws IOException {
         try (Workbook wb = PoiWorkbookFactory.instance().createXlsx()) {
             testRowGetLastColNumErrorHelper(wb);

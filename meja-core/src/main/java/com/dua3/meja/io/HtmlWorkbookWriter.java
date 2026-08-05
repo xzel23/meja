@@ -27,6 +27,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.io.IoOptions;
 import com.dua3.utility.lang.LangUtil;
 import com.dua3.utility.options.Arguments;
+import com.dua3.utility.text.HtmlConverter;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -332,7 +333,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
             Optional<URI> hyperlink = cell.getHyperlink();
             hyperlink.ifPresent(link -> out.format(Locale.ROOT, "<a href=\"%s\">", LangUtil.mapNonNullOrElse(baseUri, base -> base.relativize(link), link)));
-            out.format(Locale.ROOT, "%s", cell.getAsText(locale));
+            out.format(Locale.ROOT, "%s", HtmlConverter.create().convert(cell.getAsText(locale)));
             hyperlink.ifPresent(link -> out.format(Locale.ROOT, "</a>"));
 
             out.format(Locale.ROOT, "</td>\n");
