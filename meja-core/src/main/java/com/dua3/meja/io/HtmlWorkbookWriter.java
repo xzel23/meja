@@ -142,12 +142,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             out.format(Locale.ROOT, " transform-origin: %s; transform: rotate(%ddeg);", origin, -alpha);
         }
         for (Direction d : Direction.values()) {
-            BorderStyle bs = cs.getBorderStyle(d);
-            Color c = bs.color();
-            float w = bs.width();
-            if (!c.isTransparent() && w > 0) {
-                out.format(Locale.ROOT, " border-%s: %.2fpt solid %s !important;", d.getCssName(), w, c.toCss());
-            }
+            writeBorderStyle(out, d, cs.getBorderStyle(d), false);
         }
         if (cs.getFillPattern() != FillPattern.NONE) {
             out.format(Locale.ROOT, " background-color: %s;", cs.getFillFgColor().toCss());
@@ -156,6 +151,39 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         if (cs.isWrap()) {
             out.format(Locale.ROOT, " white-space: pre-wrap; overflow-wrap: break-word;");
         }
+    }
+
+    private static void writeBorderStyle(Formatter out, Direction direction, BorderStyle borderStyle, boolean writeNone) {
+        Color color = borderStyle.color();
+        float width = borderStyle.width();
+        if (!color.isTransparent() && width > 0) {
+            out.format(Locale.ROOT, " border-%s: %.2fpt solid %s !important;", direction.getCssName(), width, color.toCss());
+        } else if (writeNone) {
+            out.format(Locale.ROOT, " border-%s: none !important;", direction.getCssName());
+        }
+    }
+
+    private static String getMergedCellBorderStyle(Cell cell) {
+        if (!cell.isMerged()) {
+            return "";
+        }
+
+        StringBuilder result = new StringBuilder();
+        CellStyle cellStyle = cell.getCellStyle();
+        try (Formatter formatter = new Formatter(result, Locale.ROOT)) {
+            for (Direction direction : Direction.values()) {
+                Cell borderCell = switch (direction) {
+                    case NORTH, WEST -> cell;
+                    case EAST -> cell.getSheet().getCell(cell.getRowNumber(), cell.getColumnNumber() + cell.getHorizontalSpan() - 1);
+                    case SOUTH -> cell.getSheet().getCell(cell.getRowNumber() + cell.getVerticalSpan() - 1, cell.getColumnNumber());
+                };
+                BorderStyle borderStyle = borderCell.getCellStyle().getBorderStyle(direction);
+                if (!borderStyle.equals(cellStyle.getBorderStyle(direction))) {
+                    writeBorderStyle(formatter, direction, borderStyle, true);
+                }
+            }
+        }
+        return result.toString();
     }
 
     @Override
@@ -295,6 +323,10 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v > 1, Object::toString);
             if (!style.equals(defaultCellStyle)) {
                 writeAttribute(out, "class", id(style));
+            }
+            String mergedCellBorderStyle = getMergedCellBorderStyle(cell);
+            if (!mergedCellBorderStyle.isEmpty()) {
+                writeAttribute(out, "style", mergedCellBorderStyle);
             }
             out.format(Locale.ROOT, ">");
 
