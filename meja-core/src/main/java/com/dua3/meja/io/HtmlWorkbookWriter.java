@@ -417,7 +417,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         synchronized (lock) {
             generateNewWorkbookId();
             try (Formatter fmt = new Formatter(out, StandardCharsets.UTF_8.name())) {
-                writeHtmlHeaderStart(fmt);
+                writeHtmlHeaderStart(fmt, locale);
                 writeCss(fmt, workbook);
                 writeHtmlHeaderEnd(fmt);
                 writeSheets(workbook, fmt, locale, updateProgress);
@@ -469,7 +469,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                         .filter(predicate)
                         .toList();
 
-                writeHtmlHeaderStart(fmt);
+                writeHtmlHeaderStart(fmt, Locale.ROOT);
                 AtomicBoolean first = new AtomicBoolean(true);
                 sheets.forEach(sheet -> writeCssForSingleSheet(fmt, sheet, first.getAndSet(false)));
                 writeHtmlHeaderEnd(fmt);
@@ -486,7 +486,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             generateNewWorkbookId();
             try {
                 if (writeHtmlHeader) {
-                    writeHtmlHeaderStart(fmt);
+                    writeHtmlHeaderStart(fmt, Locale.ROOT);
                     writeCssForSingleSheet(fmt, sheet, true);
                     writeHtmlHeaderEnd(fmt);
                 }
@@ -503,10 +503,12 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
     /**
      * Write the start of the HTML header.
      *
-     * @param out the Formatter to write the HTML header to
+     * @param out    the Formatter to write the HTML header to
+     * @param locale the locale that determines the document language
      */
-    private static void writeHtmlHeaderStart(Formatter out) {
-        out.format(Locale.ROOT, "<html>\n<head>\n  <meta charset=\"utf-8\">\n");
+    private static void writeHtmlHeaderStart(Formatter out, Locale locale) {
+        String language = locale.getLanguage();
+        out.format(Locale.ROOT, "<html lang=\"%s\">\n<head>\n  <meta charset=\"utf-8\">\n", language.isEmpty() ? "und" : language);
     }
 
     /**

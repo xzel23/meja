@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -221,6 +222,16 @@ class PoiWorkbookTest {
             assertTrue(html.contains("font-weight: bold;"));
             assertTrue(html.contains("text-decoration: underline;"));
             assertTrue(html.contains("color: #ff3333;"));
+        }
+    }
+
+    @Test
+    void testHtmlExportUsesLocaleLanguageTag() throws IOException {
+        try (Workbook wb = MejaHelper.openWorkbook(testdataDir.resolve("test.xlsx"));
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            HtmlWorkbookWriter.create().write(wb, out, Locale.GERMANY, p -> {});
+
+            assertTrue(out.toString(StandardCharsets.UTF_8).startsWith("<html lang=\"de\">"));
         }
     }
 
