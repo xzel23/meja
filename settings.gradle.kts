@@ -1,5 +1,54 @@
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
+private val publishableModuleNames = listOf(
+    "meja-core",
+    "meja-db",
+    "meja-fx",
+    "meja-generic",
+    "meja-poi",
+    "meja-swing",
+    "meja-ui"
+)
+
+private data class ReleaseVersions(
+    val bomVersion: String,
+    val moduleVersions: Map<String, String>,
+    val selectedModules: Set<String>
+)
+
+private fun readReleaseVersions(file: File, requireSelection: Boolean): ReleaseVersions {
+    require(file.isFile) { "release file does not exist: ${file.path}" }
+    var section = ""
+    val values = mutableMapOf<String, MutableMap<String, String>>()
+    val tablePattern = Regex("""^\[([A-Za-z0-9_.-]+)]$""")
+    val valuePattern = Regex("""^([A-Za-z][A-Za-z0-9_-]*)\s*=\s*(.+)$""")
+    file.forEachLine { rawLine ->
+        val line = rawLine.substringBefore('#').trim()
+        if (line.isEmpty()) return@forEachLine
+        tablePattern.matchEntire(line)?.let {
+            section = it.groupValues[1]
+            values.getOrPut(section) { mutableMapOf() }
+            return@forEachLine
+        }
+        valuePattern.matchEntire(line)?.let {
+            require(section.isNotEmpty()) { "value outside a TOML table in ${file.path}: $line" }
+            values.getOrPut(section) { mutableMapOf() }[it.groupValues[1]] = it.groupValues[2].trim().removeSurrounding("\"")
+            return@forEachLine
+        }
+        throw GradleException("unsupported release TOML syntax in ${file.path}: $line")
+    }
+    val release = values["release"] ?: throw GradleException("[release] table missing from ${file.path}")
+    val bomVersion = release["bomVersion"] ?: throw GradleException("release.bomVersion missing from ${file.path}")
+    val moduleVersions = publishableModuleNames.associateWith { name ->
+        values["modules.$name"]?.get("version") ?: throw GradleException("modules.$name.version missing from ${file.path}")
+    }
+    val selectedModules = if (requireSelection) publishableModuleNames.filter { name ->
+        values["modules.$name"]?.get("selected")?.toBooleanStrictOrNull()
+            ?: throw GradleException("modules.$name.selected missing or invalid in ${file.path}")
+    }.toSet() else emptySet()
+    return ReleaseVersions(bomVersion, moduleVersions, selectedModules)
+}
+
 pluginManagement {
     val versionsPluginVersion = Regex("""(?m)^\s*versions-plugin\s*=\s*"([^"]+)"""")
         .find(file("gradle/version.toml").readText())!!.groupValues[1]
@@ -27,7 +76,23 @@ fun versionCatalogVersion(alias: String): String {
     } ?: throw GradleException("version '$alias' not found in ${catalog.path}")
 }
 
-val projectVersion = versionCatalogVersion("projectVersion")
+private val developmentVersion = versionCatalogVersion("projectVersion")
+private val releaseStateFile = file("gradle/release-state.toml")
+private val publishedRelease = readReleaseVersions(releaseStateFile, requireSelection = false)
+private val preparedReleasePlanFile = file("gradle/prepared-release.toml")
+private val preparedRelease = preparedReleasePlanFile.takeIf(File::isFile)?.let { readReleaseVersions(it, requireSelection = true) }
+private val effectiveBomVersion = preparedRelease?.bomVersion ?: developmentVersion
+private val effectiveModuleVersions = preparedRelease?.moduleVersions ?: publishableModuleNames.associateWith { developmentVersion }
+private val selectedReleaseModules = preparedRelease?.selectedModules ?: emptySet()
+
+gradle.extra["releaseStateFile"] = releaseStateFile
+gradle.extra["publishedReleaseBomVersion"] = publishedRelease.bomVersion
+gradle.extra["publishedReleaseModuleVersions"] = publishedRelease.moduleVersions
+gradle.extra["preparedReleasePlanFile"] = preparedReleasePlanFile
+gradle.extra["releaseBomVersion"] = effectiveBomVersion
+gradle.extra["releaseModuleVersions"] = effectiveModuleVersions
+gradle.extra["releasePlanPresent"] = (preparedRelease != null)
+gradle.extra["releaseSelectedModules"] = selectedReleaseModules
 
 include("meja-bom")
 include("meja-core")
@@ -42,18 +107,18 @@ include("meja-samples-fx")
 
 gradle.projectsLoaded {
     rootProject.allprojects {
-        version = projectVersion
+        version = effectiveModuleVersions[name] ?: effectiveBomVersion
     }
 }
 
 // define dependency versions and repositories
 dependencyResolutionManagement {
 
-    val isSnapshot = projectVersion.toDefaultLowerCase().contains("-snapshot")
-    val isReleaseCandidate = !isSnapshot && projectVersion.toDefaultLowerCase().contains("-rc")
+    val isSnapshot = effectiveBomVersion.toDefaultLowerCase().contains("-snapshot")
+    val isReleaseCandidate = !isSnapshot && effectiveBomVersion.toDefaultLowerCase().contains("-rc")
 
-    if (isSnapshot && !projectVersion.endsWith("-SNAPSHOT")) {
-        throw GradleException("inconsistent version definition: $projectVersion does not end with SNAPSHOT")
+    if (isSnapshot && !effectiveBomVersion.endsWith("-SNAPSHOT")) {
+        throw GradleException("inconsistent version definition: $effectiveBomVersion does not end with SNAPSHOT")
     }
 
     versionCatalogs {

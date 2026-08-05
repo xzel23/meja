@@ -16,8 +16,16 @@
 
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.dua3.cabe.processor.Configuration
+import com.dua3.meja.release.PrepareReleaseTask
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.net.HttpURLConnection
+import java.net.URI
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.security.MessageDigest
+import java.util.Properties
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 plugins {
@@ -53,17 +61,183 @@ object Meta {
     const val ORGANIZATION_URL = "https://www.dua3.com"
 }
 
+private val publishableModuleNames = listOf(
+    "meja-core", "meja-db", "meja-fx", "meja-generic", "meja-poi", "meja-swing", "meja-ui"
+)
+
+private data class PreparedModule(val version: String, val sourceRevision: String, val selected: Boolean)
+private data class PreparedPlan(val type: String, val bomVersion: String, val sourceRevision: String, val modules: Map<String, PreparedModule>)
+
+private fun parseReleaseToml(file: File): Map<String, Map<String, String>> {
+    var section = ""
+    val values = mutableMapOf<String, MutableMap<String, String>>()
+    val table = Regex("""^\[([A-Za-z0-9_.-]+)]$""")
+    val value = Regex("""^([A-Za-z][A-Za-z0-9_-]*)\s*=\s*(.+)$""")
+    file.forEachLine { raw ->
+        val line = raw.substringBefore('#').trim()
+        if (line.isEmpty()) return@forEachLine
+        table.matchEntire(line)?.let { section = it.groupValues[1]; values.getOrPut(section) { mutableMapOf() }; return@forEachLine }
+        value.matchEntire(line)?.let {
+            values.getOrPut(section) { mutableMapOf() }[it.groupValues[1]] = it.groupValues[2].trim().removeSurrounding("\"")
+            return@forEachLine
+        }
+        throw GradleException("unsupported release TOML syntax in ${file.path}: $line")
+    }
+    return values
+}
+
+private fun readPreparedPlan(file: File): PreparedPlan {
+    check(file.isFile) { "no prepared release plan exists at ${file.path}" }
+    val values = parseReleaseToml(file)
+    val release = values["release"] ?: error("[release] table missing from ${file.path}")
+    val modules = publishableModuleNames.associateWith { name ->
+        val module = values["modules.$name"] ?: error("[modules.$name] table missing from ${file.path}")
+        PreparedModule(
+            module["version"] ?: error("modules.$name.version missing"),
+            module["sourceRevision"] ?: error("modules.$name.sourceRevision missing"),
+            module["selected"]?.toBooleanStrictOrNull() ?: error("modules.$name.selected missing or invalid")
+        )
+    }
+    return PreparedPlan(
+        release["releaseType"] ?: error("release.releaseType missing"),
+        release["bomVersion"] ?: error("release.bomVersion missing"),
+        release["sourceRevision"] ?: error("release.sourceRevision missing"), modules
+    )
+}
+
+private fun git(vararg args: String): Pair<Int, String> {
+    val output = ByteArrayOutputStream()
+    val process = ProcessBuilder(listOf("git") + args).directory(rootDir).redirectErrorStream(true).start()
+    process.inputStream.copyTo(output)
+    return process.waitFor() to output.toString(StandardCharsets.UTF_8).trim()
+}
+
+private fun requireGit(description: String, vararg args: String): String {
+    val (status, output) = git(*args)
+    check(status == 0) { "$description failed: $output" }
+    return output
+}
+
+private fun sha256(file: File): String {
+    val digest = MessageDigest.getInstance("SHA-256")
+    file.inputStream().use { input ->
+        val buffer = ByteArray(64 * 1024)
+        while (true) { val count = input.read(buffer); if (count < 0) break; digest.update(buffer, 0, count) }
+    }
+    return digest.digest().joinToString("") { "%02x".format(it.toInt() and 0xff) }
+}
+
+private fun isMavenCentralCoordinatePublished(artifactId: String, version: String): Boolean {
+    val path = "${Meta.GROUP.replace('.', '/')}/$artifactId/$version/$artifactId-$version.pom"
+    val connection = (URI("https://repo1.maven.org/maven2/$path").toURL().openConnection() as HttpURLConnection).apply {
+        requestMethod = "HEAD"; connectTimeout = 10_000; readTimeout = 10_000
+    }
+    return try {
+        when (connection.responseCode) {
+            HttpURLConnection.HTTP_NOT_FOUND -> false
+            in 200..399 -> true
+            else -> throw GradleException("could not check Maven Central for $artifactId:$version (HTTP ${connection.responseCode})")
+        }
+    } finally { connection.disconnect() }
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // Root project configuration
 /////////////////////////////////////////////////////////////////////////////
 
 project.description = Meta.DESCRIPTION
 
+private val japicmpTool = configurations.create("japicmpTool") {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+dependencies {
+    add(japicmpTool.name, "com.github.siom79.japicmp:japicmp:0.26.1:jar-with-dependencies") {
+        isTransitive = false
+    }
+}
+
 tasks.register("printVersion") {
     description = "Print the project version to stdout."
     group = HelpTasksPlugin.HELP_GROUP
     val version = project.version.toString()
     doLast { println(version) }
+}
+
+@Suppress("UNCHECKED_CAST")
+private val configuredModuleVersions = gradle.extra["releaseModuleVersions"] as Map<String, String>
+@Suppress("UNCHECKED_CAST")
+private val selectedReleaseModules = gradle.extra["releaseSelectedModules"] as Set<String>
+private val releasePlanPresent = gradle.extra["releasePlanPresent"] as Boolean
+private val releaseStateFile = gradle.extra["releaseStateFile"] as File
+private val preparedReleasePlanFile = gradle.extra["preparedReleasePlanFile"] as File
+private val ciReleaseBundleMode = providers.gradleProperty("ciReleaseBundle").map(String::toBoolean).orElse(false).get()
+private val prebuiltReleaseBundleMode = providers.gradleProperty("prebuiltReleaseBundle").map(String::toBoolean).orElse(false).get()
+
+tasks.register<PrepareReleaseTask>("prepareRelease") {
+    group = "release"
+    description = "Plans a selective release; add -PconfirmRelease=true to write gradle/prepared-release.toml."
+    repositoryDirectory.set(layout.projectDirectory)
+    releaseStateFile.set(layout.projectDirectory.file("gradle/release-state.toml"))
+    preparedReleasePlanPath.set(layout.projectDirectory.file("gradle/prepared-release.toml").asFile.absolutePath)
+    releaseType.convention(providers.gradleProperty("releaseType").orElse(""))
+    requestedReleaseVersion.convention(providers.gradleProperty("releaseVersion").orElse(""))
+    additionalReleaseModules.convention(providers.gradleProperty("additionalReleaseModules").orElse(""))
+    confirmRelease.convention(providers.gradleProperty("confirmRelease").map { it == "true" }.orElse(false))
+}
+
+tasks.register("verifyPreparedRelease") {
+    group = "release"
+    description = "Validates the persisted prepared plan, configured versions, and selected modules."
+    notCompatibleWithConfigurationCache("The task reads release state and Git history at execution time.")
+    doLast {
+        check(releasePlanPresent) { "no prepared release plan exists at ${preparedReleasePlanFile.path}" }
+        val plan = readPreparedPlan(preparedReleasePlanFile)
+        check(plan.type in setOf("patch", "minor", "major")) { "invalid prepared release type: ${plan.type}" }
+        check(plan.modules.filterValues { it.selected }.keys == selectedReleaseModules) { "prepared plan selection changed during configuration" }
+        check(project.version.toString() == plan.bomVersion) { "configured BOM version does not match prepared plan" }
+        check(git("merge-base", "--is-ancestor", plan.sourceRevision, "HEAD").first == 0) { "prepared source revision is not an ancestor of HEAD" }
+        plan.modules.forEach { (name, module) -> check(configuredModuleVersions[name] == module.version) { "configured version differs for $name" } }
+        logger.lifecycle("Prepared release plan is valid.")
+    }
+}
+
+tasks.register("checkReleaseCompatibility") {
+    group = "verification"
+    description = "Checks selected patch-release modules against their last published binary API."
+    dependsOn("verifyPreparedRelease")
+    doLast {
+        val plan = readPreparedPlan(preparedReleasePlanFile)
+        if (plan.type != "patch") {
+            logger.lifecycle("Skipping binary compatibility enforcement for ${plan.type} release ${plan.bomVersion}.")
+            return@doLast
+        }
+        val state = parseReleaseToml(releaseStateFile)
+        plan.modules.filterValues { it.selected }.forEach { (module, candidate) ->
+            val oldVersion = state.getValue("modules.$module").getValue("version")
+            val previous = layout.buildDirectory.file("release-compatibility/$module-$oldVersion.jar").get().asFile
+            if (!previous.isFile) {
+                previous.parentFile.mkdirs()
+                URI("https://repo1.maven.org/maven2/$groupPath/$module/$oldVersion/$module-$oldVersion.jar").toURL()
+                    .openStream().use { Files.copy(it, previous.toPath()) }
+            }
+            val current = if (prebuiltReleaseBundleMode) {
+                stagingDirectory.resolve("$groupPath/$module/${candidate.version}/$module-${candidate.version}.jar")
+            } else {
+                project(":$module").layout.buildDirectory.file("libs/$module-${candidate.version}.jar").get().asFile
+            }
+            check(current.isFile) { "candidate artifact was not built: ${current.path}" }
+            val process = ProcessBuilder(
+                File(System.getProperty("java.home"), "bin/java").absolutePath,
+                "-jar", japicmpTool.singleFile.absolutePath,
+                "--old", previous.absolutePath, "--new", current.absolutePath,
+                "--only-modified", "--error-on-binary-incompatibility",
+                "--error-on-source-incompatibility", "--ignore-missing-classes"
+            ).inheritIO().start()
+            check(process.waitFor() == 0) { "binary compatibility check failed for $module" }
+        }
+    }
 }
 
 // Aggregate all subprojects for JaCoCo report aggregation
@@ -351,6 +525,7 @@ subprojects {
 
     // --- PUBLISHING ---
 
+    if (name == "meja-bom" || name in publishableModuleNames) {
     configure<PublishingExtension> {
         // Repositories for publishing
         repositories {
@@ -431,6 +606,21 @@ subprojects {
         })
     }
 
+    // A prepared plan may stage only its selected library modules and the BOM.
+    if (releasePlanPresent && name != "meja-bom" && name !in selectedReleaseModules) {
+        tasks.withType<PublishToMavenRepository>().configureEach {
+            if (repository.name == "stagingDirectory") {
+                onlyIf("module is not selected by the prepared release plan") { false }
+            }
+        }
+    }
+    if (ciReleaseBundleMode) {
+        tasks.withType<org.gradle.plugins.signing.Sign>().configureEach {
+            onlyIf("signing is deferred to the protected release workflow") { false }
+        }
+    }
+    }
+
     // Signing configuration deferred until after evaluation
     afterEvaluate {
         configure<SigningExtension> {
@@ -474,7 +664,120 @@ tasks.register("publishToStagingDirectory") {
     group = "publishing"
     description = "Publish all subprojects' artifacts to root staging directory for JReleaser"
 
-    dependsOn(subprojects.mapNotNull { it.tasks.findByName("publishToStagingDirectory") })
+    dependsOn(subprojects.filter { it.name == "meja-bom" || it.name in publishableModuleNames }
+        .filter { !releasePlanPresent || it.name == "meja-bom" || it.name in selectedReleaseModules }
+        .mapNotNull { it.tasks.findByName("publishToStagingDirectory") })
+}
+
+private val stagingDirectory = layout.buildDirectory.dir("staging-deploy").get().asFile
+private val releaseBundleDirectory = layout.buildDirectory.dir("release-bundle").get().asFile
+private val releaseBundleManifest = releaseBundleDirectory.resolve("manifest.sha256")
+private val releaseBundleMetadata = releaseBundleDirectory.resolve("metadata.properties")
+private val groupPath = Meta.GROUP.replace('.', '/')
+
+private fun stagingFiles() = stagingDirectory.walkTopDown().filter(File::isFile).sortedBy { it.relativeTo(stagingDirectory).path }.toList()
+
+private fun validateReleaseBundle(plan: PreparedPlan) {
+    check(stagingDirectory.isDirectory && releaseBundleManifest.isFile && releaseBundleMetadata.isFile) { "CI release bundle is incomplete" }
+    val metadata = Properties().also { releaseBundleMetadata.inputStream().use(it::load) }
+    check(metadata.getProperty("commit") == requireGit("resolving current revision", "rev-parse", "HEAD")) { "release bundle belongs to a different commit" }
+    check(metadata.getProperty("sourceRevision") == plan.sourceRevision && metadata.getProperty("bomVersion") == plan.bomVersion) { "release bundle does not match the prepared plan" }
+    check(metadata.getProperty("selectedModules") == selectedReleaseModules.sorted().joinToString(",")) { "release bundle selection does not match the prepared plan" }
+    val manifest = releaseBundleManifest.readLines().associate { line ->
+        val separator = line.indexOf("  ")
+        check(separator == 64) { "invalid release bundle manifest" }
+        line.substring(separator + 2) to line.substring(0, separator)
+    }
+    check(manifest.keys == stagingFiles().map { it.relativeTo(stagingDirectory).invariantSeparatorsPath }.toSet()) { "release bundle manifest does not match staging" }
+    manifest.forEach { (path, digest) -> check(sha256(stagingDirectory.resolve(path)) == digest) { "release bundle checksum mismatch: $path" } }
+    fun required(module: String, version: String, suffix: String) = stagingDirectory.resolve("$groupPath/$module/$version/$module-$version$suffix").isFile
+    check(required("meja-bom", plan.bomVersion, ".pom") && required("meja-bom", plan.bomVersion, ".module")) { "release bundle is missing the BOM" }
+    plan.modules.filterValues { it.selected }.forEach { (module, item) ->
+        listOf(".jar", "-sources.jar", "-javadoc.jar", ".pom", ".module").forEach { suffix -> check(required(module, item.version, suffix)) { "release bundle is missing $module$item$suffix" } }
+    }
+    check(stagingFiles().none { it.name.endsWith(".asc") }) { "CI release bundle must be unsigned" }
+}
+
+val cleanPreparedReleaseStaging = tasks.register<Delete>("cleanPreparedReleaseStaging") {
+    group = "release"
+    delete(stagingDirectory)
+}
+
+val prepareCiReleaseBundle = tasks.register("prepareCiReleaseBundle") {
+    group = "release"
+    description = "Creates an unsigned, checksummed Maven bundle from the CI build outputs."
+    dependsOn("verifyPreparedRelease", cleanPreparedReleaseStaging, "publishToStagingDirectory")
+    doLast {
+        check(ciReleaseBundleMode) { "prepareCiReleaseBundle requires -PciReleaseBundle=true" }
+        val plan = readPreparedPlan(preparedReleasePlanFile)
+        releaseBundleDirectory.deleteRecursively(); releaseBundleDirectory.mkdirs()
+        releaseBundleMetadata.writeText("commit=${requireGit("resolving bundle revision", "rev-parse", "HEAD")}\nsourceRevision=${plan.sourceRevision}\nbomVersion=${plan.bomVersion}\nselectedModules=${selectedReleaseModules.sorted().joinToString(",")}\n")
+        releaseBundleManifest.writeText(stagingFiles().joinToString("\n", postfix = "\n") { "${sha256(it)}  ${it.relativeTo(stagingDirectory).invariantSeparatorsPath}" })
+        validateReleaseBundle(plan)
+    }
+}
+
+val verifyCiReleaseBundle = tasks.register("verifyCiReleaseBundle") {
+    group = "release"
+    description = "Verifies the checksummed Maven bundle produced by CI."
+    doLast {
+        check(prebuiltReleaseBundleMode) { "verifyCiReleaseBundle requires -PprebuiltReleaseBundle=true" }
+        validateReleaseBundle(readPreparedPlan(preparedReleasePlanFile))
+    }
+}
+
+tasks.register("publishSnapshotsToMavenLocal") {
+    group = "publishing"
+    onlyIf { isSnapshot }
+    dependsOn(publishableModuleNames.map { ":$it:publishToMavenLocal" } + ":meja-bom:publishToMavenLocal")
+}
+
+val jreleaserDeploy = tasks.named("jreleaserDeploy")
+tasks.register("stagePreparedRelease") { dependsOn("verifyPreparedRelease", "checkReleaseCompatibility", cleanPreparedReleaseStaging, "publishToStagingDirectory") }
+tasks.register("publishPreparedRelease") { dependsOn("stagePreparedRelease", jreleaserDeploy) }
+tasks.register("publishPreparedReleaseFromCi") { dependsOn("verifyPreparedRelease", verifyCiReleaseBundle, "checkReleaseCompatibility", jreleaserDeploy) }
+jreleaserDeploy.configure { mustRunAfter("verifyPreparedRelease", verifyCiReleaseBundle, "checkReleaseCompatibility") }
+
+tasks.register("finalizeRelease") {
+    group = "release"
+    description = "Records a published prepared release, advances development, and creates its Git tag."
+    notCompatibleWithConfigurationCache("Finalization modifies release files and Git state.")
+    doLast {
+        check(providers.gradleProperty("confirmFinalize").orNull == "true") { "re-run with -PconfirmFinalize=true" }
+        val plan = readPreparedPlan(preparedReleasePlanFile)
+        buildList {
+            add("meja-bom" to plan.bomVersion)
+            plan.modules.filterValues { it.selected }.forEach { (name, module) -> add(name to module.version) }
+        }.forEach { (artifact, version) ->
+            check(isMavenCentralCoordinatePublished(artifact, version)) { "Maven Central does not yet expose $artifact:$version" }
+        }
+        val releaseState = parseReleaseToml(releaseStateFile)
+        val stateText = buildString {
+            appendLine("[release]"); appendLine("schemaVersion = 1"); appendLine("bomVersion = \"${plan.bomVersion}\"")
+            publishableModuleNames.forEach { module ->
+                val old = releaseState.getValue("modules.$module")
+                val current = plan.modules.getValue(module)
+                appendLine(); appendLine("[modules.$module]")
+                appendLine("version = \"${if (current.selected) current.version else old.getValue("version")}\"")
+                appendLine("publishedRevision = \"${if (current.selected) current.sourceRevision else old.getValue("publishedRevision")}\"")
+                appendLine("paths = ${old.getValue("paths")}")
+            }
+        }
+        releaseStateFile.writeText(stateText)
+        val nextVersion = plan.bomVersion.split('.').let { "${it[0]}.${it[1]}.${it[2].toInt() + 1}-SNAPSHOT" }
+        val versionCatalog = file("gradle/version.toml")
+        versionCatalog.writeText(versionCatalog.readText().replace(Regex("""(?m)^(\\s*projectVersion\\s*=\\s*")[^"]+(".*)$"""), "${'$'}1$nextVersion${'$'}2"))
+        Files.delete(preparedReleasePlanFile.toPath())
+        requireGit("staging release state", "add", "gradle/release-state.toml", "gradle/version.toml", "gradle/prepared-release.toml")
+        requireGit("committing release state", "commit", "-m", "Release ${plan.bomVersion}")
+        val tag = "v${plan.bomVersion}"
+        requireGit("creating release tag", "tag", "-a", tag, "-m", "Release ${plan.bomVersion}")
+        if (providers.gradleProperty("pushReleaseTag").orNull == "true") {
+            val branch = providers.gradleProperty("releaseBranch").orNull ?: error("supply -PreleaseBranch when pushing from detached HEAD")
+            requireGit("pushing finalized release", "push", "origin", "HEAD:refs/heads/$branch")
+            requireGit("pushing release tag", "push", "origin", tag)
+        }
+    }
 }
 
 // add a task to create aggregate javadoc in the root projects build/docs/javadoc folder
@@ -537,10 +840,12 @@ tasks.register<Javadoc>("aggregateJavadoc") {
     }
 }
 
+val jreleaserProjectVersion = rootProject.version.toString()
+
 jreleaser {
     project {
         name.set(rootProject.name)
-        version.set(rootProject.libs.versions.projectVersion.get())
+        version.set(jreleaserProjectVersion)
         group = Meta.GROUP
         authors.set(listOf(Meta.DEVELOPER_NAME))
         license.set(Meta.LICENSE_NAME)
@@ -555,7 +860,6 @@ jreleaser {
         active.set(org.jreleaser.model.Active.ALWAYS)
         pgp {
             armored.set(true)
-            publicKey.set(System.getenv("SIGNING_PUBLIC_KEY"))
             secretKey.set(System.getenv("SIGNING_SECRET_KEY"))
             passphrase.set(System.getenv("SIGNING_PASSWORD"))
         }
@@ -569,21 +873,6 @@ jreleaser {
                     create("release-deploy") {
                         active.set(org.jreleaser.model.Active.RELEASE)
                         url.set("https://central.sonatype.com/api/v1/publisher")
-                        stagingRepositories.add("build/staging-deploy")
-                        username.set(System.getenv("SONATYPE_USERNAME"))
-                        password.set(System.getenv("SONATYPE_PASSWORD"))
-                    }
-                }
-            } else {
-                println("adding snapshot-deploy")
-                nexus2 {
-                    create("snapshot-deploy") {
-                        active.set(org.jreleaser.model.Active.SNAPSHOT)
-                        snapshotUrl.set("https://central.sonatype.com/repository/maven-snapshots/")
-                        applyMavenCentralRules.set(true)
-                        snapshotSupported.set(true)
-                        closeRepository.set(true)
-                        releaseRepository.set(true)
                         stagingRepositories.add("build/staging-deploy")
                         username.set(System.getenv("SONATYPE_USERNAME"))
                         password.set(System.getenv("SONATYPE_PASSWORD"))

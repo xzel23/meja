@@ -1,5 +1,11 @@
 project.description = "Bill of Materials (BOM) for meja libraries"
 
+@Suppress("UNCHECKED_CAST")
+val releaseModuleVersions = gradle.extra["releaseModuleVersions"] as Map<String, String>
+
+fun releaseModuleVersion(moduleName: String): String = releaseModuleVersions[moduleName]
+    ?: throw GradleException("no release version configured for module '$moduleName'")
+
 plugins {
     id("java-platform")
     id("maven-publish")
@@ -8,13 +14,13 @@ plugins {
 dependencies {
     constraints {
         // Define constraints for all meja modules
-        api("com.dua3.meja:meja-core:${project.version}")
-        api("com.dua3.meja:meja-db:${project.version}")
-        api("com.dua3.meja:meja-fx:${project.version}")
-        api("com.dua3.meja:meja-generic:${project.version}")
-        api("com.dua3.meja:meja-poi:${project.version}")
-        api("com.dua3.meja:meja-swing:${project.version}")
-        api("com.dua3.meja:meja-ui:${project.version}")
+        api("com.dua3.meja:meja-core:${releaseModuleVersion("meja-core")}")
+        api("com.dua3.meja:meja-db:${releaseModuleVersion("meja-db")}")
+        api("com.dua3.meja:meja-fx:${releaseModuleVersion("meja-fx")}")
+        api("com.dua3.meja:meja-generic:${releaseModuleVersion("meja-generic")}")
+        api("com.dua3.meja:meja-poi:${releaseModuleVersion("meja-poi")}")
+        api("com.dua3.meja:meja-swing:${releaseModuleVersion("meja-swing")}")
+        api("com.dua3.meja:meja-ui:${releaseModuleVersion("meja-ui")}")
 
         // External dependencies used by utility modules
         // Common dependencies
