@@ -54,7 +54,7 @@ table.meja-sheet td:empty::after{
 </head>
 <body>
   <script>
-  function mejaShowTab(evt, tabName) {
+  function mejaShowTab(tablink, tabName) {
     let i, tabs, tablinks;
     tabs = document.getElementsByClassName("meja-tab");
     for (i = 0; i < tabs.length; i++) {
@@ -65,7 +65,7 @@ table.meja-sheet td:empty::after{
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
     document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
+    tablink.className += " active";
   }
   </script>
 <div id="Wa9fb939453944f02bfa82fa5e269c4a9_S4c696e6b73" class="meja-tab active" style="display: block">

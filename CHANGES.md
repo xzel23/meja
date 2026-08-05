@@ -1,6 +1,6 @@
 # Meja Changelog
 
-## Version 11.0.0 (in progess)
+## Version 11.0.0 (in progress)
 
 - Refactorings of the WorkbookFactory and FilterType interfaces
 - support reading from and writing to ObjectStore instances
@@ -119,7 +119,7 @@
 
 - improve column width calculations in headless mode for the known Excel default fonts Arial and Calibri
 - enable a previously disabled test for correctly parsing dates (only runs whe the build uses a german language locale)
-  as the test is locale-dependent)
+  as the test is locale-dependent
 
 ## Version 8.0.1
 
@@ -314,7 +314,7 @@
 ## Version 3.1.6
 
 - update dependencies
-- enable Github CI
+- enable GitHub CI
 - fix unit tests on windows
 - fix unit tests depending on system locale
 - **breaking:** remove Workbook.resolve()

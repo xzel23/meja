@@ -108,7 +108,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
             String cls = isActive ? "meja-tablink active" : "meja-tablink";
 
-            out.format("  <button class=\"%s\" onclick=\"mejaShowTab(event, '%s')\">%s</button>\n",
+            out.format("  <button class=\"%s\" onclick=\"mejaShowTab(this, '%s')\">%s</button>\n",
                     cls,
                     id(sheet),
                     sheet.getSheetName()
@@ -486,7 +486,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                 </head>
                 <body>
                   <script>
-                  function mejaShowTab(evt, tabName) {
+                  function mejaShowTab(tablink, tabName) {
                     let i, tabs, tablinks;
                     tabs = document.getElementsByClassName("meja-tab");
                     for (i = 0; i < tabs.length; i++) {
@@ -497,7 +497,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                       tablinks[i].className = tablinks[i].className.replace(" active", "");
                     }
                     document.getElementById(tabName).style.display = "block";
-                    evt.currentTarget.className += " active";
+                    tablink.className += " active";
                   }
                   </script>
                 """);

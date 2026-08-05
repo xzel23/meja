@@ -317,7 +317,7 @@ table.meja-sheet td:empty::after{
 </head>
 <body>
   <script>
-  function mejaShowTab(evt, tabName) {
+  function mejaShowTab(tablink, tabName) {
     let i, tabs, tablinks;
     tabs = document.getElementsByClassName("meja-tab");
     for (i = 0; i < tabs.length; i++) {
@@ -328,22 +328,22 @@ table.meja-sheet td:empty::after{
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
     document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
+    tablink.className += " active";
   }
   </script>
 <div class="meja-tabbar">
-  <button class="meja-tablink active" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4a616e2032303135')">Jan 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4665622032303135')">Feb 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4d61722032303135')">Mar 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4170722032303135')">Apr 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4d61792032303135')">May 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4a756e2032303135')">Jun 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4a756c2032303135')">Jul 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4175672032303135')">Aug 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S5365702032303135')">Sep 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4f63742032303135')">Oct 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4e6f762032303135')">Nov 2015</button>
-  <button class="meja-tablink" onclick="mejaShowTab(event, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4465632032303135')">Dec 2015</button>
+  <button class="meja-tablink active" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4a616e2032303135')">Jan 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4665622032303135')">Feb 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4d61722032303135')">Mar 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4170722032303135')">Apr 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4d61792032303135')">May 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4a756e2032303135')">Jun 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4a756c2032303135')">Jul 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4175672032303135')">Aug 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S5365702032303135')">Sep 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4f63742032303135')">Oct 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4e6f762032303135')">Nov 2015</button>
+  <button class="meja-tablink" onclick="mejaShowTab(this, 'W64d2bf49c9ab482bb62625d289c9b8e6_S4465632032303135')">Dec 2015</button>
 </div>
 <div id="W64d2bf49c9ab482bb62625d289c9b8e6_S4a616e2032303135" class="meja-tab active" style="display: block">
   <table class="meja-sheet">

@@ -14,7 +14,7 @@ Meja is a library for handling tabular data such as Excel-Sheets, CSV-data etc.
 ## Name
 
 As it's rather common to give everything Java related a name of indo/malay origin, I chose 'meja' which is the
-indonesian word for table (as in furniture).
+Indonesian word for table (as in furniture).
 
 ## Using Meja in your projects
 
