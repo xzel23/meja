@@ -18,8 +18,10 @@ package com.dua3.meja.io;
 import com.dua3.meja.model.BorderStyle;
 import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellStyle;
+import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Direction;
 import com.dua3.meja.model.FillPattern;
+import com.dua3.meja.model.HAlign;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
 import com.dua3.meja.model.Workbook;
@@ -187,6 +189,15 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         return result.toString();
     }
 
+    private static boolean isAutomaticallyRightAligned(Cell cell) {
+        if (cell.getCellType() == CellType.BLANK) {
+            return false;
+        }
+        CellStyle cellStyle = cell.getCellStyle();
+        return cellStyle.getHAlign() == HAlign.ALIGN_AUTOMATIC
+                && cellStyle.effectiveHAlign(cell.getCellType()) == HAlign.ALIGN_RIGHT;
+    }
+
     @Override
     public void setOptions(Arguments options) {
         this.options = options;
@@ -322,8 +333,12 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             out.format(Locale.ROOT, "        <td");
             writeAttribute(out, "colspan", cell, Cell::getHorizontalSpan, v -> v > 1, Object::toString);
             writeAttribute(out, "rowspan", cell, Cell::getVerticalSpan, v -> v > 1, Object::toString);
-            if (!style.equals(defaultCellStyle)) {
-                writeAttribute(out, "class", id(style));
+            String classNames = !style.equals(defaultCellStyle) ? id(style) : "";
+            if (isAutomaticallyRightAligned(cell)) {
+                classNames = classNames.isEmpty() ? "meja-align-right" : classNames + " meja-align-right";
+            }
+            if (!classNames.isEmpty()) {
+                writeAttribute(out, "class", classNames);
             }
             String mergedCellBorderStyle = getMergedCellBorderStyle(cell);
             if (!mergedCellBorderStyle.isEmpty()) {
@@ -610,6 +625,9 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
                   border: 1px solid #d4d4d4;
                   max-width: 0;
                   max-height: 0;
+                }
+                table.meja-sheet td.meja-align-right {
+                  text-align: right;
                 }
                 table.meja-sheet a {
                   color: inherit;

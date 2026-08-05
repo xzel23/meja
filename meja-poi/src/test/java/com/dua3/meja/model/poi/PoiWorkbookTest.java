@@ -236,6 +236,21 @@ class PoiWorkbookTest {
     }
 
     @Test
+    void testHtmlExportAutomaticallyRightAlignsNumbers() throws IOException {
+        try (Workbook wb = PoiWorkbookFactory.instance().createXlsx();
+             Formatter out = new Formatter()) {
+            Sheet sheet = wb.createSheet("Automatic alignment");
+            sheet.getCell(0, 0).set("text");
+            sheet.getCell(0, 1).set(42);
+
+            HtmlWorkbookWriter.create().exportSingleSheet(out, sheet);
+
+            String html = out.toString();
+            assertTrue(html.contains("meja-align-right\">42</td>"));
+        }
+    }
+
+    @Test
     void testRowGetLastColNumErrorXlsx() throws IOException {
         try (Workbook wb = PoiWorkbookFactory.instance().createXlsx()) {
             testRowGetLastColNumErrorHelper(wb);
