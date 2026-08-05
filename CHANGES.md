@@ -1,6 +1,17 @@
 # Meja Changelog
 
-## Version 11.0.0 (in progress)
+## Version 12.0.0
+
+- refactor the build and release process; implement selective publishing
+- HTML export: add lang attribute in HTML header; automatically apply default formatting rules (text left, numbers 
+  right aligned); support inline styles; fix missing border segments for merged cells; fix JavaScript warnings in 
+  exported HTML
+
+## Version 11.1.0
+
+- minor release due to incompatible dependency changes
+
+## Version 11.0.0
 
 - Refactorings of the WorkbookFactory and FilterType interfaces
 - support reading from and writing to ObjectStore instances
