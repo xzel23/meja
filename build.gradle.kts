@@ -686,7 +686,13 @@ private fun validateReleaseBundle(plan: PreparedPlan) {
     val manifest = releaseBundleManifest.readLines().associate { line ->
         val separator = line.indexOf("  ")
         check(separator == 64) { "invalid release bundle manifest" }
-        line.substring(separator + 2) to line.substring(0, separator)
+        val path = line.substring(separator + 2)
+        check(path.startsWith("staging-deploy/")) { "release bundle manifest path is outside staging: $path" }
+        val relativePath = path.removePrefix("staging-deploy/")
+        check(relativePath.isNotBlank() && !relativePath.startsWith("/") && !relativePath.split('/').contains("..")) {
+            "invalid release bundle manifest path: $path"
+        }
+        relativePath to line.substring(0, separator)
     }
     check(manifest.keys == stagingFiles().map { it.relativeTo(stagingDirectory).invariantSeparatorsPath }.toSet()) { "release bundle manifest does not match staging" }
     manifest.forEach { (path, digest) -> check(sha256(stagingDirectory.resolve(path)) == digest) { "release bundle checksum mismatch: $path" } }
@@ -712,7 +718,9 @@ val prepareCiReleaseBundle = tasks.register("prepareCiReleaseBundle") {
         val plan = readPreparedPlan(preparedReleasePlanFile)
         releaseBundleDirectory.deleteRecursively(); releaseBundleDirectory.mkdirs()
         releaseBundleMetadata.writeText("commit=${requireGit("resolving bundle revision", "rev-parse", "HEAD")}\nsourceRevision=${plan.sourceRevision}\nbomVersion=${plan.bomVersion}\nselectedModules=${selectedReleaseModules.sorted().joinToString(",")}\n")
-        releaseBundleManifest.writeText(stagingFiles().joinToString("\n", postfix = "\n") { "${sha256(it)}  ${it.relativeTo(stagingDirectory).invariantSeparatorsPath}" })
+        // The artifact is restored into build/, so preserve staging-deploy in manifest paths.
+        // This is the same bundle layout consumed by the utility release workflow.
+        releaseBundleManifest.writeText(stagingFiles().joinToString("\n", postfix = "\n") { "${sha256(it)}  staging-deploy/${it.relativeTo(stagingDirectory).invariantSeparatorsPath}" })
         validateReleaseBundle(plan)
     }
 }
