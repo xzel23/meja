@@ -6,7 +6,7 @@ versions-plugin = "0.59.0"
 test-logger-plugin = "4.0.0"
 spotbugs-plugin = "6.5.10"
 cabe-plugin = "4.5.0"
-sonar-plugin = "7.3.1.8318"
+sonar-plugin = "7.4.0.8496"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.25.0"
 
