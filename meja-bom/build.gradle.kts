@@ -11,7 +11,14 @@ plugins {
     id("maven-publish")
 }
 
+javaPlatform {
+    allowDependencies()
+}
+
 dependencies {
+    // Import the Ikonli BOM so its constraints are propagated to consumers.
+    api(platform(libs.ikonli.bom))
+
     constraints {
         // Define constraints for all meja modules
         api("com.dua3.meja:meja-core:${releaseModuleVersion("meja-core")}")
@@ -43,7 +50,6 @@ dependencies {
         api(rootProject.libs.poi.ooxml)
 
         // Ikonli (used by FX icon module and samples)
-        api(api(libs.ikonli.bom))
         api(rootProject.libs.ikonli.javafx)
         api(rootProject.libs.ikonli.fontawesome)
         api(rootProject.libs.ikonli.feather)
