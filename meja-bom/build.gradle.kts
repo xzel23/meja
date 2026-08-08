@@ -43,6 +43,7 @@ dependencies {
         api(rootProject.libs.poi.ooxml)
 
         // Ikonli (used by FX icon module and samples)
+        api(api(libs.ikonli.bom))
         api(rootProject.libs.ikonli.javafx)
         api(rootProject.libs.ikonli.fontawesome)
         api(rootProject.libs.ikonli.feather)

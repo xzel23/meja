@@ -14,6 +14,7 @@ dependencies {
     implementation(rootProject.libs.dua3.utility.swing)
 
     implementation(rootProject.libs.log4j.api)
+    implementation(platform(rootProject.libs.slb4j.bom))
     implementation(rootProject.libs.slb4j)
     implementation(rootProject.libs.slb4j.ext.swing)
 

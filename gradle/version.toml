@@ -2,7 +2,7 @@
 projectVersion = "12.0.0"
 jdkVersion = "21"
 jdkprovider-plugin = "0.11.0"
-versions-plugin = "0.59.0"
+versions-plugin = "0.60.0"
 test-logger-plugin = "4.0.0"
 spotbugs-plugin = "6.5.10"
 cabe-plugin = "4.5.0"
@@ -17,7 +17,7 @@ jspecify = "1.0.1"
 junit-bom = "6.1.2"
 log4j-bom = "2.26.1"
 poi = "5.5.1"
-slb4j = "0.12.3"
+slb4j = "0.12.4"
 commons-compress = "1.26.2"
 
 [libraries]
@@ -29,9 +29,10 @@ dua3-utility-fx-icons-ikonli = { group = "com.dua3.utility", name = "utility-fx-
 dua3-utility-swing = { group = "com.dua3.utility", name = "utility-swing" }
 dua3-utility-fx = { group = "com.dua3.utility", name = "utility-fx" }
 dua3-utility-fx-controls = { group = "com.dua3.utility", name = "utility-fx-controls" }
-ikonli-fontawesome = { group = "org.kordamp.ikonli", name = "ikonli-fontawesome-pack", version.ref = "ikonli" }
-ikonli-feather = { group = "org.kordamp.ikonli", name = "ikonli-feather-pack", version.ref = "ikonli" }
-ikonli-javafx = { group = "org.kordamp.ikonli", name = "ikonli-javafx", version.ref = "ikonli" }
+ikonli-bom = { group = "org.kordamp.ikonli", name = "ikonli-bom", version.ref = "ikonli" }
+ikonli-fontawesome = { group = "org.kordamp.ikonli", name = "ikonli-fontawesome-pack" }
+ikonli-feather = { group = "org.kordamp.ikonli", name = "ikonli-feather-pack" }
+ikonli-javafx = { group = "org.kordamp.ikonli", name = "ikonli-javafx" }
 jspecify = { group = "org.jspecify", name = "jspecify", version.ref = "jspecify" }
 junit-bom = { group = "org.junit", name = "junit-bom", version.ref = "junit-bom" }
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api" }
@@ -39,10 +40,11 @@ junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engi
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 log4j-bom = { group = "org.apache.logging.log4j", name = "log4j-bom", version.ref = "log4j-bom" }
 log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api" }
-slb4j = { group = "org.slb4j", name = "slb4j", version.ref = "slb4j" }
-slb4j-ext = { group = "org.slb4j", name = "slb4j-ext", version.ref = "slb4j" }
-slb4j-ext-fx = { group = "org.slb4j", name = "slb4j-ext-fx", version.ref = "slb4j" }
-slb4j-ext-swing = { group = "org.slb4j", name = "slb4j-ext-swing", version.ref = "slb4j" }
+slb4j-bom = { group = "org.slb4j", name = "slb4j-bom", version.ref = "slb4j" }
+slb4j = { group = "org.slb4j", name = "slb4j" }
+slb4j-ext = { group = "org.slb4j", name = "slb4j-ext" }
+slb4j-ext-fx = { group = "org.slb4j", name = "slb4j-ext-fx" }
+slb4j-ext-swing = { group = "org.slb4j", name = "slb4j-ext-swing" }
 poi = { group = "org.apache.poi", name = "poi", version.ref = "poi" }
 poi-ooxml = { group = "org.apache.poi", name = "poi-ooxml", version.ref = "poi" }
 commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commons-compress" }

@@ -436,6 +436,7 @@ subprojects {
                 val test by getting(JvmTestSuite::class) {
                     useJUnitJupiter()
                     dependencies {
+                        implementation(platform(rootProject.libs.slb4j.bom))
                         implementation(rootProject.libs.slb4j)
                     }
                     targets {

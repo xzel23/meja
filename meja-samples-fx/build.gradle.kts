@@ -18,10 +18,12 @@ dependencies {
 
     implementation(rootProject.libs.dua3.utility)
     implementation(rootProject.libs.log4j.api)
+    implementation(platform(rootProject.libs.slb4j.bom))
     implementation(rootProject.libs.slb4j)
     implementation(rootProject.libs.dua3.utility.fx)
     implementation(rootProject.libs.dua3.utility.fx.controls)
     implementation(rootProject.libs.dua3.utility.fx.icons.ikonli)
+    implementation(platform(rootProject.libs.ikonli.bom))
     implementation(rootProject.libs.ikonli.feather)
 }
 
