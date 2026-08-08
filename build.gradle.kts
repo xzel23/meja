@@ -762,7 +762,8 @@ tasks.register("finalizeRelease") {
         }
         val releaseState = parseReleaseToml(releaseStateFile)
         val stateText = buildString {
-            appendLine("[release]"); appendLine("schemaVersion = 1"); appendLine("bomVersion = \"${plan.bomVersion}\"")
+            appendLine("[release]"); appendLine("schemaVersion = 2"); appendLine("bomVersion = \"${plan.bomVersion}\"")
+            appendLine("publishedRevision = \"${plan.sourceRevision}\"")
             publishableModuleNames.forEach { module ->
                 val old = releaseState.getValue("modules.$module")
                 val current = plan.modules.getValue(module)

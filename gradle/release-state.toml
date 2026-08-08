@@ -1,6 +1,7 @@
 [release]
-schemaVersion = 1
+schemaVersion = 2
 bomVersion = "12.0.0"
+publishedRevision = "7f5728e2842cdb4406081c18da359a1f9438ba64"
 
 [modules.meja-core]
 version = "12.0.0"

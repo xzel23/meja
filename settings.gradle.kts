@@ -81,6 +81,12 @@ private val releaseStateFile = file("gradle/release-state.toml")
 private val publishedRelease = readReleaseVersions(releaseStateFile, requireSelection = false)
 private val preparedReleasePlanFile = file("gradle/prepared-release.toml")
 private val preparedRelease = preparedReleasePlanFile.takeIf(File::isFile)?.let { readReleaseVersions(it, requireSelection = true) }
+if (preparedRelease != null && developmentVersion != preparedRelease.bomVersion) {
+    throw GradleException(
+        "prepared release ${preparedRelease.bomVersion} requires gradle/version.toml projectVersion " +
+            "to be ${preparedRelease.bomVersion}, but it is $developmentVersion"
+    )
+}
 private val effectiveBomVersion = preparedRelease?.bomVersion ?: developmentVersion
 private val effectiveModuleVersions = preparedRelease?.moduleVersions ?: publishableModuleNames.associateWith { developmentVersion }
 private val selectedReleaseModules = preparedRelease?.selectedModules ?: emptySet()
