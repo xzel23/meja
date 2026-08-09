@@ -1,5 +1,11 @@
 # Meja Changelog
 
+## Version 12.1.0
+
+- fix selective publishing issues
+- fix wrong instrumenttion configuration being selected
+- update plugins and dependencies
+
 ## Version 12.0.0
 
 - refactor the build and release process; implement selective publishing
