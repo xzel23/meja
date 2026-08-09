@@ -2,12 +2,12 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 # To regenerate this file, run: ./gradlew :dependencies --write-locks
-com.dua3.utility:utility-bom:24.0.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility-fx-controls:24.0.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility-fx-icons:24.0.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility-fx:24.0.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility-swing:24.0.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility:24.0.0=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-bom:24.2.0=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-fx-controls:24.2.0=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-fx-icons:24.2.0=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-fx:24.2.0=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-swing:24.2.0=aggregateCodeCoverageReportResults
+com.dua3.utility:utility:24.2.0=aggregateCodeCoverageReportResults
 com.github.joniles:rtfparserkit:1.16.0=aggregateCodeCoverageReportResults
 com.github.siom79.japicmp:japicmp:0.26.1=japicmpTool
 com.github.spotbugs:spotbugs-annotations:4.10.3=spotbugs
@@ -38,6 +38,7 @@ org.apache.poi:poi-ooxml-lite:5.5.1=aggregateCodeCoverageReportResults
 org.apache.poi:poi-ooxml:5.5.1=aggregateCodeCoverageReportResults
 org.apache.poi:poi:5.5.1=aggregateCodeCoverageReportResults
 org.apache.xmlbeans:xmlbeans:5.3.0=aggregateCodeCoverageReportResults
+org.bouncycastle:bc-jdk18on-bom:1.85.2=aggregateCodeCoverageReportResults
 org.dom4j:dom4j:2.2.0=spotbugs
 org.jacoco:org.jacoco.agent:0.8.14=jacocoAgent,jacocoAnt
 org.jacoco:org.jacoco.ant:0.8.14=jacocoAnt
@@ -45,6 +46,7 @@ org.jacoco:org.jacoco.core:0.8.14=jacocoAnt
 org.jacoco:org.jacoco.report:0.8.14=jacocoAnt
 org.jspecify:jspecify:1.0.1=aggregateCodeCoverageReportResults
 org.junit:junit-bom:6.1.2=spotbugs
+org.kordamp.ikonli:ikonli-bom:12.4.0=aggregateCodeCoverageReportResults
 org.kordamp.ikonli:ikonli-core:12.4.0=aggregateCodeCoverageReportResults
 org.kordamp.ikonli:ikonli-feather-pack:12.4.0=aggregateCodeCoverageReportResults
 org.openjdk.jmh:jmh-core:1.36=jmh,jmhCompileClasspath,jmhRuntimeClasspath
