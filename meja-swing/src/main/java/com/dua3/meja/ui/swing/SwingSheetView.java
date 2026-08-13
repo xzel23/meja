@@ -305,7 +305,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
         editor.getTextComponent().setBorder(BorderFactory.createEmptyBorder());
         editor.addPropertyChangeListener("text", evt -> updateEditorBounds());
 
-        InputMap inputMap = editor.getTextComponent().getInputMap(JComponent.WHEN_FOCUSED);
+        InputMap inputMap = editor.getTextComponent().getInputMap(WHEN_FOCUSED);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), ACTION_EDITOR_COMMIT_NEXT);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK), ACTION_EDITOR_COMMIT_PREVIOUS);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), ACTION_EDITOR_COMMIT);
