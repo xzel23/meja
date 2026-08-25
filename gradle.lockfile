@@ -2,12 +2,12 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 # To regenerate this file, run: ./gradlew :dependencies --write-locks
-com.dua3.utility:utility-bom:24.2.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility-fx-controls:24.2.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility-fx-icons:24.2.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility-fx:24.2.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility-swing:24.2.0=aggregateCodeCoverageReportResults
-com.dua3.utility:utility:24.2.0=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-bom:24.3.3-SNAPSHOT=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-fx-controls:24.3.3-SNAPSHOT=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-fx-icons:24.3.3-SNAPSHOT=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-fx:24.3.3-SNAPSHOT=aggregateCodeCoverageReportResults
+com.dua3.utility:utility-swing:24.3.3-SNAPSHOT=aggregateCodeCoverageReportResults
+com.dua3.utility:utility:24.3.3-SNAPSHOT=aggregateCodeCoverageReportResults
 com.github.joniles:rtfparserkit:1.16.0=aggregateCodeCoverageReportResults
 com.github.siom79.japicmp:japicmp:0.26.1=japicmpTool
 com.github.spotbugs:spotbugs-annotations:4.10.4=spotbugs
