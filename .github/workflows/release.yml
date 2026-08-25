@@ -149,7 +149,7 @@ jobs:
           (cd build && sha256sum --check --strict release-bundle/manifest.sha256)
 
       - name: Set up JDKs
-        uses: actions/setup-java@v.6.0.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           distribution: zulu
           java-version: |
