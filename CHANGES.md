@@ -8,7 +8,7 @@
 ## Version 12.1.0
 
 - fix selective publishing issues
-- fix wrong instrumenttion configuration being selected
+- fix wrong instrumentation configuration being selected
 - update plugins and dependencies
 
 ## Version 12.0.0
