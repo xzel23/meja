@@ -36,7 +36,6 @@ import org.jspecify.annotations.Nullable;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -46,6 +45,8 @@ import javax.swing.JToolBar;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.FontMetrics;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -66,6 +67,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
+import java.net.URI;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 import java.text.NumberFormat;
@@ -73,6 +75,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Flow;
 
 /**
@@ -129,6 +132,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
     private transient Flow.@Nullable Subscription sheetSubscription;
 
     private boolean editable;
+    private boolean allowOpenLinks;
     private boolean updating;
     private boolean editingDispatcherInstalled;
     private transient @Nullable Container toolbarParent;
@@ -359,6 +363,60 @@ public final class SwingSheetView extends JPanel implements SheetView {
     @Override
     public void focusView() {
         requestFocusInWindow();
+    }
+
+    @Override
+    public void setAllowOpenLinks(boolean allowOpenLinks) {
+        this.allowOpenLinks = allowOpenLinks;
+        if (!allowOpenLinks) {
+            sheetPane.resetLinkCursors();
+        }
+    }
+
+    @Override
+    public boolean getAllowOpenLinks() {
+        return allowOpenLinks;
+    }
+
+    void updateLinkCursor(SwingSegmentView segment, @Nullable Cell cell) {
+        boolean link = allowOpenLinks && cell != null && resolveHyperlink(cell).isPresent();
+        segment.setCursor(Cursor.getPredefinedCursor(link ? Cursor.HAND_CURSOR : Cursor.DEFAULT_CURSOR));
+    }
+
+    void openHyperlink(Cell cell) {
+        if (!allowOpenLinks) {
+            return;
+        }
+
+        resolveHyperlink(cell).ifPresent(this::openHyperlink);
+    }
+
+    private Optional<URI> resolveHyperlink(Cell cell) {
+        try {
+            return cell.getResolvedHyperlink();
+        } catch (IllegalStateException ex) {
+            LOG.debug("Cannot resolve hyperlink for cell " + cell.getCellRef(), ex);
+            return Optional.empty();
+        }
+    }
+
+    private void openHyperlink(URI uri) {
+        try {
+            if (!Desktop.isDesktopSupported()) {
+                LOG.warn("Cannot open hyperlink: desktop browsing is not supported ({})", uri);
+                return;
+            }
+            Desktop desktop = Desktop.getDesktop();
+            if ("mailto".equalsIgnoreCase(uri.getScheme()) && desktop.isSupported(Desktop.Action.MAIL)) {
+                desktop.mail(uri);
+            } else if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                desktop.browse(uri);
+            } else {
+                LOG.warn("Cannot open hyperlink: desktop browsing is not supported ({})", uri);
+            }
+        } catch (Exception ex) {
+            LOG.warn("Cannot open hyperlink {}", uri, ex);
+        }
     }
 
     /**

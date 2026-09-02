@@ -97,6 +97,20 @@ public interface SheetView {
     void focusView();
 
     /**
+     * Set whether hyperlinks may be opened directly from this view.
+     *
+     * @param allowOpenLinks {@code true} to enable hyperlink hover and opening
+     */
+    void setAllowOpenLinks(boolean allowOpenLinks);
+
+    /**
+     * Returns whether hyperlinks may be opened directly from this view.
+     *
+     * @return {@code true} when hyperlink hover and opening are enabled
+     */
+    boolean getAllowOpenLinks();
+
+    /**
      * Retrieve the current locale settings for this sheet view.
      *
      * @return the locale associated with this sheet view

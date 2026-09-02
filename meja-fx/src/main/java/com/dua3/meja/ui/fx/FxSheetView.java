@@ -51,12 +51,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 
+import java.awt.Desktop;
 import java.awt.Toolkit;
+import java.net.URI;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The FxSheetView class is responsible for rendering a spreadsheet-like UI component,
@@ -86,6 +89,8 @@ public final class FxSheetView extends StackPane implements SheetView {
     private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
     private boolean updating = false;
+    private boolean allowOpenLinks;
+    private @Nullable FxRow hoveredLinkRow;
 
     private final ObjectProperty<@Nullable Pane> toolbarParentProperty = new SimpleObjectProperty<>(null);
 
@@ -904,6 +909,72 @@ public final class FxSheetView extends StackPane implements SheetView {
      */
     public BooleanProperty editableProperty() {
         return editableProperty;
+    }
+
+    @Override
+    public void setAllowOpenLinks(boolean allowOpenLinks) {
+        this.allowOpenLinks = allowOpenLinks;
+        if (!allowOpenLinks && hoveredLinkRow != null) {
+            hoveredLinkRow.setCursor(javafx.scene.Cursor.DEFAULT);
+            hoveredLinkRow = null;
+        }
+    }
+
+    @Override
+    public boolean getAllowOpenLinks() {
+        return allowOpenLinks;
+    }
+
+    void updateLinkCursor(FxRow row, @Nullable Cell cell) {
+        if (hoveredLinkRow != null && hoveredLinkRow != row) {
+            hoveredLinkRow.setCursor(javafx.scene.Cursor.DEFAULT);
+        }
+        hoveredLinkRow = row;
+        boolean link = allowOpenLinks && cell != null && resolveHyperlink(cell).isPresent();
+        row.setCursor(link ? javafx.scene.Cursor.HAND : javafx.scene.Cursor.DEFAULT);
+    }
+
+    void clearLinkCursor(FxRow row) {
+        if (hoveredLinkRow == row) {
+            hoveredLinkRow = null;
+        }
+        row.setCursor(javafx.scene.Cursor.DEFAULT);
+    }
+
+    void openHyperlink(Cell cell) {
+        if (!allowOpenLinks) {
+            return;
+        }
+
+        resolveHyperlink(cell).ifPresent(this::openHyperlink);
+    }
+
+    private Optional<URI> resolveHyperlink(Cell cell) {
+        try {
+            return cell.getResolvedHyperlink();
+        } catch (IllegalStateException ex) {
+            LOG.debug("Cannot resolve hyperlink for cell " + cell.getCellRef(), ex);
+            return Optional.empty();
+        }
+    }
+
+    private void openHyperlink(URI uri) {
+        try {
+            if (!Desktop.isDesktopSupported()) {
+                LOG.warn("Cannot open hyperlink: desktop browsing is not supported ({})", uri);
+                return;
+            }
+            Desktop desktop = Desktop.getDesktop();
+            if ("mailto".equalsIgnoreCase(uri.getScheme()) && desktop.isSupported(Desktop.Action.MAIL)) {
+                desktop.mail(uri);
+            } else if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                desktop.browse(uri);
+            } else {
+                LOG.warn("Cannot open hyperlink: desktop browsing is not supported ({})", uri);
+            }
+        } catch (Exception ex) {
+            LOG.warn("Cannot open hyperlink {}", uri, ex);
+        }
     }
 
     record SheetPosition(int row, int column, float xSheet, float ySheet) {}

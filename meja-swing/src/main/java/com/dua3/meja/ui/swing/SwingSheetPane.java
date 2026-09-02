@@ -133,4 +133,11 @@ final class SwingSheetPane extends JScrollPane {
         getViewport().getView().setEnabled(b);
     }
 
+    void resetLinkCursors() {
+        topLeftQuadrant.setCursor(java.awt.Cursor.getDefaultCursor());
+        topRightQuadrant.setCursor(java.awt.Cursor.getDefaultCursor());
+        bottomLeftQuadrant.setCursor(java.awt.Cursor.getDefaultCursor());
+        bottomRightQuadrant.setCursor(java.awt.Cursor.getDefaultCursor());
+    }
+
 }

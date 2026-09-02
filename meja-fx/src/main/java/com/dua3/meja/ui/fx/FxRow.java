@@ -160,6 +160,8 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
         setGraphic(fxrg);
 
         setOnMousePressed(this::onMousePressed);
+        setOnMouseMoved(this::onMouseMoved);
+        setOnMouseExited(evt -> fxSheetView.clearLinkCursor(this));
     }
 
     /**
@@ -476,7 +478,27 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
         } else {
             Cell cell = svDelegate.getSheet().getCell(i, j);
             svDelegate.onMousePressed(cell);
+            if (evt.getButton() == javafx.scene.input.MouseButton.PRIMARY && evt.isShortcutDown()) {
+                fxSheetView.openHyperlink(cell);
+            }
             LOG.debug("onMousePressed(): pressed cell {}", () -> svDelegate.getCurrentLogicalCell().getCellRef());
         }
+    }
+
+    private void onMouseMoved(MouseEvent evt) {
+        Index item = getItem();
+        if (item == null || item.rowNumber() < 0 || evt.getX() < fxSheetView.getDelegate().getRowLabelWidthInPixels()) {
+            fxSheetView.updateLinkCursor(this, null);
+            return;
+        }
+
+        int column = fxSheetView.getColumnFromXInPixels(evt.getX());
+        if (column < 0 || column >= fxSheetView.getDelegate().getColumnCount()) {
+            fxSheetView.updateLinkCursor(this, null);
+            return;
+        }
+
+        Cell cell = fxSheetView.getDelegate().getSheet().getCell(item.rowNumber(), column);
+        fxSheetView.updateLinkCursor(this, cell);
     }
 }

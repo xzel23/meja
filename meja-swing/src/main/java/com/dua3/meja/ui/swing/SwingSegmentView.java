@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -163,6 +164,32 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
                     Vector2f q = ti.transform(p.x, p.y);
                     Cell cell = svDelegate.getCellAt(q.x(), q.y());
                     svDelegate.onMousePressed(cell);
+                    if (SwingUtilities.isLeftMouseButton(e)
+                            && (e.isControlDown() || e.isMetaDown())) {
+                        svDelegate.getSheetView().openHyperlink(cell);
+                    }
+                });
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                svDelegate.getSheetView().updateLinkCursor(SwingSegmentView.this, null);
+            }
+        });
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                Point p = e.getPoint();
+                ssvDelegate.getTransformation().inverse().ifPresent(ti -> {
+                    Vector2f q = ti.transform(p.x, p.y);
+                    if (q.x() < 0 || q.y() < 0
+                            || q.x() >= svDelegate.getSheetWidthInPoints()
+                            || q.y() >= svDelegate.getSheetHeightInPoints()) {
+                        svDelegate.getSheetView().updateLinkCursor(SwingSegmentView.this, null);
+                        return;
+                    }
+                    Cell cell = svDelegate.getCellAt(q.x(), q.y());
+                    svDelegate.getSheetView().updateLinkCursor(SwingSegmentView.this, cell);
                 });
             }
         });

@@ -170,6 +170,7 @@ public final class SwingWorkbookView extends JComponent implements WorkbookView<
                 Sheet sheet = workbook.getSheet(i);
                 final SwingSheetView sheetView = new SwingSheetView(sheet);
                 sheetView.setEditable(isEditable());
+                sheetView.setAllowOpenLinks(true);
                 sheetView.setToolbarParent(toolbarParent);
                 sheetView.updateContent();
                 content.addTab(sheet.getSheetName(), sheetView);

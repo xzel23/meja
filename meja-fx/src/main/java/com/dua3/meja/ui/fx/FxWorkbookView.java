@@ -220,6 +220,7 @@ public class FxWorkbookView extends BorderPane implements WorkbookView<FxSheetVi
                                 FxSheetView sheetView = new FxSheetView(sheet);
                                 sheetView.toolbarParentProperty().bind(toolbarParentProperty);
                                 sheetView.editableProperty().bind(editableProperty);
+                                sheetView.setAllowOpenLinks(true);
                                 Tab tab = new Tab(sheet.getSheetName(), sheetView);
                                 tab.setClosable(false);
                                 return tab;
