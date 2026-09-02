@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 12.2.0
+
+- add hyperlink support to SheetView implementations
+- update plugins and dependencies
+
 ## Version 12.1.0
 
 - fix selective publishing issues
