@@ -1,39 +1,39 @@
 [release]
 schemaVersion = 2
-bomVersion = "12.1.0"
-publishedRevision = "9385754e0e2c2868dc5032ebae5ae15e524b4ac5"
+bomVersion = "12.2.0"
+publishedRevision = "d2df0c2be4866b4c18805ce706a7648911417371"
 
 [modules.meja-core]
-version = "12.1.0"
-publishedRevision = "9385754e0e2c2868dc5032ebae5ae15e524b4ac5"
+version = "12.2.0"
+publishedRevision = "d2df0c2be4866b4c18805ce706a7648911417371"
 paths = ["meja-core"]
 
 [modules.meja-db]
-version = "12.1.0"
-publishedRevision = "9385754e0e2c2868dc5032ebae5ae15e524b4ac5"
+version = "12.2.0"
+publishedRevision = "d2df0c2be4866b4c18805ce706a7648911417371"
 paths = ["meja-db"]
 
 [modules.meja-fx]
-version = "12.1.0"
-publishedRevision = "9385754e0e2c2868dc5032ebae5ae15e524b4ac5"
+version = "12.2.0"
+publishedRevision = "d2df0c2be4866b4c18805ce706a7648911417371"
 paths = ["meja-fx"]
 
 [modules.meja-generic]
-version = "12.1.0"
-publishedRevision = "9385754e0e2c2868dc5032ebae5ae15e524b4ac5"
+version = "12.2.0"
+publishedRevision = "d2df0c2be4866b4c18805ce706a7648911417371"
 paths = ["meja-generic"]
 
 [modules.meja-poi]
-version = "12.1.0"
-publishedRevision = "9385754e0e2c2868dc5032ebae5ae15e524b4ac5"
+version = "12.2.0"
+publishedRevision = "d2df0c2be4866b4c18805ce706a7648911417371"
 paths = ["meja-poi"]
 
 [modules.meja-swing]
-version = "12.1.0"
-publishedRevision = "9385754e0e2c2868dc5032ebae5ae15e524b4ac5"
+version = "12.2.0"
+publishedRevision = "d2df0c2be4866b4c18805ce706a7648911417371"
 paths = ["meja-swing"]
 
 [modules.meja-ui]
-version = "12.1.0"
-publishedRevision = "9385754e0e2c2868dc5032ebae5ae15e524b4ac5"
+version = "12.2.0"
+publishedRevision = "d2df0c2be4866b4c18805ce706a7648911417371"
 paths = ["meja-ui"]
