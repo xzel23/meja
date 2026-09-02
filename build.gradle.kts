@@ -326,6 +326,8 @@ allprojects {
 
         jdk {
             version = rootProject.libs.versions.jdkVersion.get().toInt()
+            langVersion = rootProject.libs.versions.jdkVersion.get().toInt()
+            vendor = JvmVendorSpec.BELLSOFT
             javaFxBundled = true
             nativeImageCapable = false
         }
