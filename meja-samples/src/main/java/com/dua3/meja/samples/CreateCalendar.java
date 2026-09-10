@@ -20,7 +20,6 @@ import java.time.ZoneId;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * The {@code CreateCalendar} class is a sample application tha generates

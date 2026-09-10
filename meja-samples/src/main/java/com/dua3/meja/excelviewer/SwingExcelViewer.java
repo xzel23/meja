@@ -29,7 +29,6 @@ import org.jspecify.annotations.Nullable;
 import org.slb4j.LogLevel;
 import org.slb4j.SLB4J;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -52,7 +51,6 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -100,7 +98,7 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
      *
      * @param args the command line arguments
      */
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    @SuppressWarnings({"UseOfSystemOutOrSystemErr", "java:S106"})
     public static void main(String[] args) {
         List<String> argList = new ArrayList<>(List.of(args));
         if (argList.remove("--debug")) {
