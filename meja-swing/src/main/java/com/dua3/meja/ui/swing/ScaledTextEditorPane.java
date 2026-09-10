@@ -39,7 +39,7 @@ final class ScaledTextEditorPane extends TextEditorPane {
     }
 
     void setCellText(RichText value) {
-        super.setText(scaleFontSizes(value, fontScale));
+        setText(scaleFontSizes(value, fontScale));
     }
 
     @Override

@@ -137,8 +137,8 @@ public final class SwingExcelViewer extends JFrame implements ExcelViewer<SwingS
      */
     private final transient ExcelViewerModel model;
 
-    private JPanel optionalToolbarParent = new JPanel();
-    private Box northDock = Box.createHorizontalBox();
+    private final JPanel optionalToolbarParent = new JPanel();
+    private final Box northDock = Box.createHorizontalBox();
 
     /**
      * The workbook view component that is used to display the workbook.

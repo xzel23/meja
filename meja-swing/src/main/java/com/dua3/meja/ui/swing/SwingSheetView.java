@@ -395,7 +395,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
         try {
             return cell.getResolvedHyperlink();
         } catch (IllegalStateException ex) {
-            LOG.debug("Cannot resolve hyperlink for cell " + cell.getCellRef(), ex);
+            LOG.debug("Cannot resolve hyperlink for cell {}", cell.getCellRef(), ex);
             return Optional.empty();
         }
     }
