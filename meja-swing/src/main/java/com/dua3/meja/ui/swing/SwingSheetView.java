@@ -213,7 +213,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
     @Override
     public void scrollToCurrentCell() {
         runOnEdt(() -> {
-            try (var __ = delegate.readLock("SwingSheetView.scrollToCurrentCell()")) {
+            try (var unused = delegate.readLock("SwingSheetView.scrollToCurrentCell()")) {
                 sheetPane.ensureCellIsVisible(delegate.getCurrentLogicalCell());
             }
             updateEditorBounds();
@@ -528,7 +528,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
                 return;
             }
 
-            try (var __ = getSheet().readLock("SwingSheetView.updateContent()")) {
+            try (var unused = getSheet().readLock("SwingSheetView.updateContent()")) {
                 updating = true;
                 Sheet sheet = getSheet();
                 delegate.update(getDpi());
@@ -661,7 +661,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
             double minHeight = Math.max(1.0, cellRectInLocal.height() - 2);
             boolean styleWrapping = cell.getCellStyle().isStyleWrapping();
 
-            EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight, styleWrapping);
+            EditorSize editorSize = computeEditorSize(x, minWidth, minHeight, styleWrapping);
             editor.setWrapText(editorSize.wrapText());
             int left = (int) Math.round(x + 1);
             int top = (int) Math.round(y + 1);
@@ -679,7 +679,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
         }));
     }
 
-    private EditorSize computeEditorSize(double x, double y, double minWidth, double minHeight, boolean styleWrapping) {
+    private EditorSize computeEditorSize(double x, double minWidth, double minHeight, boolean styleWrapping) {
         String text = editor.getText().toString();
         String displayText = text.isEmpty() ? " " : text;
 
@@ -866,6 +866,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
         return null;
     }
 
+    @SuppressWarnings("ChainOfInstanceofChecks")
     private static boolean containsToolbar(Component component) {
         if (component instanceof JToolBar) {
             return true;
