@@ -93,15 +93,6 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
             g2dRight.translate(tx, ty);
         }
 
-        /**
-         * Updates the translation for the right part to create a scrolling effect within the viewport.
-         *
-         * @param scrollX The current scroll offset in the X direction.
-         */
-        void updateScrollX(double scrollX) {
-            //translation.setX(-scrollX); // Apply negative scroll to translate
-        }
-
         FxGraphics getGraphicsContext(Side side) {
             Canvas canvas = getCanvas(side);
             GraphicsContext g2d = canvas.getGraphicsContext2D();
@@ -293,7 +284,7 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
     private void render() {
         LOG.trace("render()");
         PlatformHelper.checkApplicationThread();
-        try (var __ = fxSheetView.getDelegate().readLock("FxRow.render()")) {
+        try (var unused = fxSheetView.getDelegate().readLock("FxRow.render()")) {
             if (!(getGraphic() instanceof FxRowGraphics fxrg)) {
                 return;
             }
