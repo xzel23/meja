@@ -17,6 +17,7 @@ package com.dua3.meja.model;
 
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.concurrent.AutoLock;
+import com.dua3.utility.lang.LangUtil;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
@@ -313,7 +314,7 @@ public interface Sheet extends Iterable<Row> {
      * @see #getRowCount()
      */
     default Row createRow(@Nullable Object... values) {
-        return createRowWith(Arrays.asList(values));
+        return createRowWith(LangUtil.asUnmodifiableList(values));
     }
 
     /**
