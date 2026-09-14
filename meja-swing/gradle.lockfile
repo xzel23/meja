@@ -4,11 +4,11 @@
 # To regenerate this file, run: ./gradlew :meja-swing:dependencies --write-locks
 biz.aQute.bnd:biz.aQute.bnd.annotation:7.1.0=compileClasspath,jmhCompileClasspath,testCompileClasspath
 com.dua3.utility:utility-bom:24.2.0=jmhRuntimeClasspath
-com.dua3.utility:utility-bom:24.7.1-SNAPSHOT=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-bom:24.8.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.dua3.utility:utility-swing:24.2.0=jmhRuntimeClasspath
-com.dua3.utility:utility-swing:24.7.1-SNAPSHOT=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility-swing:24.8.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.dua3.utility:utility:24.2.0=jmhRuntimeClasspath
-com.dua3.utility:utility:24.7.1-SNAPSHOT=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+com.dua3.utility:utility:24.8.0=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 com.github.joniles:rtfparserkit:1.16.0=jmhRuntimeClasspath,runtimeClasspath,testRuntimeClasspath
 com.github.spotbugs:spotbugs-annotations:4.10.4=spotbugs
 com.github.spotbugs:spotbugs:4.10.4=spotbugs
@@ -29,7 +29,8 @@ org.apache.logging.log4j:log4j-api:2.26.1=compileClasspath,jmhCompileClasspath,j
 org.apache.logging.log4j:log4j-bom:2.26.1=compileClasspath,jmhCompileClasspath,jmhRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.apache.logging.log4j:log4j-core:2.26.1=spotbugs
 org.apiguardian:apiguardian-api:1.1.2=testCompileClasspath
-org.bouncycastle:bc-jdk18on-bom:1.85.2=compileClasspath,jmhCompileClasspath,jmhRuntimeClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
+org.bouncycastle:bc-jdk18on-bom:1.85.2=jmhRuntimeClasspath
+org.bouncycastle:bc-jdk18on-bom:1.86=compileClasspath,jmhCompileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.dom4j:dom4j:2.2.0=spotbugs
 org.jacoco:org.jacoco.agent:0.8.14=jacocoAgent,jacocoAnt
 org.jacoco:org.jacoco.ant:0.8.14=jacocoAnt
