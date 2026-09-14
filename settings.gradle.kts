@@ -50,7 +50,7 @@ private fun readReleaseVersions(file: File, requireSelection: Boolean): ReleaseV
 }
 
 plugins {
-    id("io.github.ben-manes.versions.settings") version "0.61.0"
+    id("io.github.ben-manes.versions.settings") version "0.62.0"
 }
 
 rootProject.name = "dua3-meja"

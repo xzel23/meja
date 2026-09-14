@@ -1,11 +1,11 @@
 [versions]
-projectVersion = "12.2.1-SNAPSHOT"
+projectVersion = "12.2.1"
 jdkVersion = "21"
 jdkprovider-plugin = "0.11.0"
 test-logger-plugin = "4.0.0"
 spotbugs-plugin = "6.5.11"
 cabe-plugin = "4.5.0"
-sonar-plugin = "7.4.0.8496"
+sonar-plugin = "7.5.0.8588"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.26.0"
 
