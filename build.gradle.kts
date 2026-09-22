@@ -529,99 +529,99 @@ subprojects {
     // --- PUBLISHING ---
 
     if (name == "meja-bom" || name in publishableModuleNames) {
-    configure<PublishingExtension> {
-        // Repositories for publishing
-        repositories {
-            // Sonatype snapshots for snapshot versions
-            if (isSnapshot) {
+        configure<PublishingExtension> {
+            // Repositories for publishing
+            repositories {
+                // Sonatype snapshots for snapshot versions
+                if (isSnapshot) {
+                    maven {
+                        name = "sonatypeSnapshots"
+                        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+                        credentials {
+                            username = System.getenv("SONATYPE_USERNAME")
+                            password = System.getenv("SONATYPE_PASSWORD")
+                        }
+                    }
+                }
+
+                // Always add root-level staging directory for JReleaser
                 maven {
-                    name = "sonatypeSnapshots"
-                    url = uri("https://central.sonatype.com/repository/maven-snapshots/")
-                    credentials {
-                        username = System.getenv("SONATYPE_USERNAME")
-                        password = System.getenv("SONATYPE_PASSWORD")
-                    }
+                    name = "stagingDirectory"
+                    url = rootProject.layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
                 }
             }
 
-            // Always add root-level staging directory for JReleaser
-            maven {
-                name = "stagingDirectory"
-                url = rootProject.layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
-            }
-        }
+            // Publications for non-BOM projects
+            if (!project.name.endsWith("-bom")) {
+                publications {
+                    create<MavenPublication>("mavenJava") {
+                        from(components["java"])
 
-        // Publications for non-BOM projects
-        if (!project.name.endsWith("-bom")) {
-            publications {
-                create<MavenPublication>("mavenJava") {
-                    from(components["java"])
+                        groupId = Meta.GROUP
+                        artifactId = project.name
+                        version = project.version.toString()
 
-                    groupId = Meta.GROUP
-                    artifactId = project.name
-                    version = project.version.toString()
-
-                    pom {
-                        name.set(project.name)
-                        description.set(project.description)
-                        url.set(Meta.SCM)
-
-                        licenses {
-                            license {
-                                name.set(Meta.LICENSE_NAME)
-                                url.set(Meta.LICENSE_URL)
-                            }
-                        }
-
-                        developers {
-                            developer {
-                                id.set(Meta.DEVELOPER_ID)
-                                name.set(Meta.DEVELOPER_NAME)
-                                email.set(Meta.DEVELOPER_EMAIL)
-                                organization.set(Meta.ORGANIZATION_NAME)
-                                organizationUrl.set(Meta.ORGANIZATION_URL)
-                            }
-                        }
-
-                        scm {
-                            connection.set("scm:git:${Meta.SCM}")
-                            developerConnection.set("scm:git:${Meta.SCM}")
+                        pom {
+                            name.set(project.name)
+                            description.set(project.description)
                             url.set(Meta.SCM)
-                        }
 
-                        withXml {
-                            val root = asNode()
-                            root.appendNode("inceptionYear", "2015")
+                            licenses {
+                                license {
+                                    name.set(Meta.LICENSE_NAME)
+                                    url.set(Meta.LICENSE_URL)
+                                }
+                            }
+
+                            developers {
+                                developer {
+                                    id.set(Meta.DEVELOPER_ID)
+                                    name.set(Meta.DEVELOPER_NAME)
+                                    email.set(Meta.DEVELOPER_EMAIL)
+                                    organization.set(Meta.ORGANIZATION_NAME)
+                                    organizationUrl.set(Meta.ORGANIZATION_URL)
+                                }
+                            }
+
+                            scm {
+                                connection.set("scm:git:${Meta.SCM}")
+                                developerConnection.set("scm:git:${Meta.SCM}")
+                                url.set(Meta.SCM)
+                            }
+
+                            withXml {
+                                val root = asNode()
+                                root.appendNode("inceptionYear", "2015")
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    // Task to publish to staging directory per subproject
-    val publishToStagingDirectory by tasks.registering {
-        group = "publishing"
-        description = "Publish artifacts to root staging directory for JReleaser"
+        // Task to publish to staging directory per subproject
+        val publishToStagingDirectory by tasks.registering {
+            group = "publishing"
+            description = "Publish artifacts to root staging directory for JReleaser"
 
-        dependsOn(tasks.withType<PublishToMavenRepository>().matching {
-            it.repository.name == "stagingDirectory"
-        })
-    }
+            dependsOn(tasks.withType<PublishToMavenRepository>().matching {
+                it.repository.name == "stagingDirectory"
+            })
+        }
 
-    // A prepared plan may stage only its selected library modules and the BOM.
-    if (releasePlanPresent && name != "meja-bom" && name !in selectedReleaseModules) {
-        tasks.withType<PublishToMavenRepository>().configureEach {
-            if (repository.name == "stagingDirectory") {
-                onlyIf("module is not selected by the prepared release plan") { false }
+        // A prepared plan may stage only its selected library modules and the BOM.
+        if (releasePlanPresent && name != "meja-bom" && name !in selectedReleaseModules) {
+            tasks.withType<PublishToMavenRepository>().configureEach {
+                if (repository.name == "stagingDirectory") {
+                    onlyIf("module is not selected by the prepared release plan") { false }
+                }
             }
         }
-    }
-    if (ciReleaseBundleMode) {
-        tasks.withType<org.gradle.plugins.signing.Sign>().configureEach {
-            onlyIf("signing is deferred to the protected release workflow") { false }
+        if (ciReleaseBundleMode) {
+            tasks.withType<org.gradle.plugins.signing.Sign>().configureEach {
+                onlyIf("signing is deferred to the protected release workflow") { false }
+            }
         }
-    }
     }
 
     // Signing configuration deferred until after evaluation
@@ -778,7 +778,9 @@ tasks.register("finalizeRelease") {
         releaseStateFile.writeText(stateText)
         val nextVersion = plan.bomVersion.split('.').let { "${it[0]}.${it[1]}.${it[2].toInt() + 1}-SNAPSHOT" }
         val versionCatalog = file("gradle/version.toml")
-        versionCatalog.writeText(versionCatalog.readText().replace(Regex("""(?m)^(\\s*projectVersion\\s*=\\s*")[^"]+(".*)$"""), "${'$'}1$nextVersion${'$'}2"))
+        versionCatalog.writeText(versionCatalog.readText().replace(Regex("""(?m)^(\\s*projectVersion\\s*=\\s*")[^"]+(".*)$"""),
+                $$"$1$$nextVersion$2"
+            ))
         Files.delete(preparedReleasePlanFile.toPath())
         requireGit("staging release state", "add", "gradle/release-state.toml", "gradle/version.toml", "gradle/prepared-release.toml")
         requireGit("committing release state", "commit", "-m", "Release ${plan.bomVersion}")
