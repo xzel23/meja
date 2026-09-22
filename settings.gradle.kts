@@ -50,7 +50,7 @@ private fun readReleaseVersions(file: File, requireSelection: Boolean): ReleaseV
 }
 
 plugins {
-    id("io.github.ben-manes.versions.settings") version "0.62.0"
+    id("io.github.ben-manes.versions.settings") version "0.64.0"
 }
 
 rootProject.name = "dua3-meja"
@@ -154,28 +154,13 @@ dependencyResolutionManagement {
 
             mavenLocal()
 
-            // Sonatype Snapshots
-            maven {
-                name = "Central Portal Snapshots"
-                url = java.net.URI("https://central.sonatype.com/repository/maven-snapshots/")
-                mavenContent {
-                    snapshotsOnly()
-                }
-            }
-
-            // Apache snapshots
-            maven {
-                name = "apache-snapshots"
-                url = java.net.URI("https://repository.apache.org/content/repositories/snapshots/")
-                mavenContent {
-                    snapshotsOnly()
-                }
-            }
-
             // Apache staging
             maven {
                 name = "apache-staging"
-                url = java.net.URI( "https://repository.apache.org/content/repositories/staging/")
+                url = java.net.URI("https://repository.apache.org/content/repositories/staging/")
+                mavenContent {
+                    releasesOnly()
+                }
             }
         }
 
