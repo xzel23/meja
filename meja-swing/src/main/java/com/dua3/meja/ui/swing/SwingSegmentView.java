@@ -26,7 +26,8 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Objects;
-import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.ToIntFunction;
 
 final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
     private static final Logger LOG = LogManager.getLogger(SwingSegmentView.class);
@@ -73,32 +74,32 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
         AffineTransformation2f t = ssvDelegate.getTransformation();
         AffineTransformation2f ti = t.inverse().orElse(AffineTransformation2f.identity());
 
-        Function<Integer, Float> xD2S = x -> ti.transform(Vector2f.of(x, 0)).x();
-        Function<Float, Integer> xS2Di = x -> Math.round(t.transform(x, 0).x());
+        IntFunction<Float> xD2S = x -> ti.transform(Vector2f.of(x, 0)).x();
+        ToIntFunction<Float> xS2Di = x -> Math.round(t.transform(x, 0).x());
 
-        Function<Integer, Float> yD2S = y -> ti.transform(Vector2f.of(0, y)).y();
-        Function<Float, Integer> yS2Di = y -> Math.round(t.transform(0, y).y());
+        IntFunction<Float> yD2S = y -> ti.transform(Vector2f.of(0, y)).y();
+        ToIntFunction<Float> yS2Di = y -> Math.round(t.transform(0, y).y());
 
         if (orientation == SwingConstants.VERTICAL) {
             // scroll vertical
             if (direction < 0) {
                 // scroll up
                 final float y = yD2S.apply(visibleRect.y);
-                final int yD = yS2Di.apply(y);
+                final int yD = yS2Di.applyAsInt(y);
                 int i = svDelegate.getRowNumberFromY(y, false);
                 int posD = yD;
                 while (i >= 0 && yD <= posD) {
-                    posD = yS2Di.apply(svDelegate.getRowPos(i--));
+                    posD = yS2Di.applyAsInt(svDelegate.getRowPos(i--));
                 }
                 return yD - posD;
             } else {
                 // scroll down
                 final float y = yD2S.apply(visibleRect.y + visibleRect.height);
-                final int yD = yS2Di.apply(y);
+                final int yD = yS2Di.applyAsInt(y);
                 int i = svDelegate.getRowNumberFromY(y, false);
                 int posD = yD;
                 while (i <= svDelegate.getRowCount() && posD <= yD) {
-                    posD = yS2Di.apply(svDelegate.getRowPos(i++));
+                    posD = yS2Di.applyAsInt(svDelegate.getRowPos(i++));
                 }
                 return posD - yD;
             }
@@ -107,21 +108,21 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             if (direction < 0) {
                 // scroll left
                 final float x = xD2S.apply(visibleRect.x);
-                final int xD = xS2Di.apply(x);
+                final int xD = xS2Di.applyAsInt(x);
                 int j = svDelegate.getColumnNumberFromX(x, false);
                 int posD = xD;
                 while (j >= 0 && xD <= posD) {
-                    posD = xS2Di.apply(svDelegate.getColumnPos(j--));
+                    posD = xS2Di.applyAsInt(svDelegate.getColumnPos(j--));
                 }
                 return xD - posD;
             } else {
                 // scroll right
                 final float x = xD2S.apply(visibleRect.x + visibleRect.width);
-                int xD = xS2Di.apply(x);
+                int xD = xS2Di.applyAsInt(x);
                 int j = svDelegate.getColumnNumberFromX(x, false);
                 int posD = xD;
                 while (j <= svDelegate.getColumnCount() && posD <= xD) {
-                    posD = xS2Di.apply(svDelegate.getColumnPos(j++));
+                    posD = xS2Di.applyAsInt(svDelegate.getColumnPos(j++));
                 }
                 return posD - xD;
             }
@@ -197,7 +198,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
 
     @Override
     protected void paintComponent(Graphics g) {
-        try (var __ = svDelegate.readLock("SwingSegmentView.paintComponent()")) {
+        try (var ignored = svDelegate.readLock("SwingSegmentView.paintComponent()")) {
             // clear background by calling super method
             super.paintComponent(g);
 
@@ -254,7 +255,7 @@ final class SwingSegmentView extends JPanel implements Scrollable, SegmentView {
             return;
         }
 
-        try (var __ = svDelegate.readLock("SwingSegmentView.scrollIntoView()")) {
+        try (var ignored = svDelegate.readLock("SwingSegmentView.scrollIntoView()")) {
             Rectangle2f r = svDelegate.getCellRect(cell);
             AffineTransformation2f t = ssvDelegate.getTransformation();
             Rectangle bounds = SwingGraphics.convert(Rectangle2f.withCorners(

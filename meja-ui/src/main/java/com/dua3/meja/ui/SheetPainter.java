@@ -127,7 +127,7 @@ public class SheetPainter {
             return;
         }
 
-        try (var __ = sheet.readLock("SheetPainter.drawSheet()")) {
+        try (var ignored = sheet.readLock("SheetPainter.drawSheet()")) {
             SheetView.SheetArea va = delegate.getSheetArea(r, false);
 
             drawBackground(g, va);

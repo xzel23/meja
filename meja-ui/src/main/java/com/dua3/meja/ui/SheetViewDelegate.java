@@ -92,11 +92,11 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     /**
      * Function that provides the column names.
      */
-    private transient IntFunction<String> columnNames = Sheet::getColumnName;
+    private IntFunction<String> columnNames = Sheet::getColumnName;
     /**
      * Function that provides the row names.
      */
-    private transient IntFunction<String> rowNames = Sheet::getRowName;
+    private IntFunction<String> rowNames = Sheet::getRowName;
     /**
      * Rhe background color of the sheet.
      */
@@ -112,7 +112,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
     /**
      * The color to use for the grid lines.
      */
-    private transient Color gridColor = Color.LIGHTGRAY;
+    private Color gridColor = Color.LIGHTGRAY;
     /**
      * Editing state.
      */
@@ -148,7 +148,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * to avoid unnecessary recalculations.
      */
     public void updateLayout() {
-        try (var __ = writeLock("SheetViewDelegate.updateLayout()")) {
+        try (var ignored = writeLock("SheetViewDelegate.updateLayout()")) {
             if (!layoutChanged.compareAndSet(true, false)) {
                 LOG.trace("updateLayout() - layout is clean, nothing to do");
                 return;
@@ -216,7 +216,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param labelFont the new font to use for row and column labels. Must not be null.
      */
     public void setLabelFont(Font labelFont) {
-        try (var __ = writeLock("SheetViewDelegate.setLabelFont()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setLabelFont()")) {
             this.labelFont = labelFont;
             markLayoutChanged();
         }
@@ -258,7 +258,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      */
     public void update(int dpi) {
         LOG.trace("update - {} DPI", dpi);
-        try (var __ = writeLock("SheetViewDelegate.update()")) {
+        try (var ignored = writeLock("SheetViewDelegate.update()")) {
             setDisplayScale(getDisplayScale());
             setScale(new Scale2f(sheet.getZoom() * dpi / 72.0f));
             onSetRowCount(sheet.getRowCount());
@@ -367,7 +367,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param j the column number (0-based) where the vertical split should occur
      */
     public void setSplitColumn(int j) {
-        try (var __ = writeLock("SheetViewDelegate.setSplitColumn()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setSplitColumn()")) {
             if (j != splitColumn) {
                 splitColumn = j;
                 markLayoutChanged();
@@ -429,7 +429,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param i the row number (0-based) where the horizontal split should occur
      */
     public void setSplitRow(int i) {
-        try (var __ = writeLock("SheetViewDelegate.setSplitRow()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setSplitRow()")) {
             if (i != splitRow) {
                 splitRow = i;
                 markLayoutChanged();
@@ -680,7 +680,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      *               be clamped to 0.
      */
     public void setCurrentColNum(int colNum) {
-        try (var __ = writeLock("SheetViewDelegate.setCurrentColNum()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setCurrentColNum()")) {
             int rowNum = sheet.getCurrentCell().getRowNumber();
             setCurrentCell(sheet.getCell(rowNum, Math.max(0, colNum)));
         }
@@ -712,7 +712,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      *               be clamped to 0.
      */
     public void setCurrentRowNum(int rowNum) {
-        try (var __ = writeLock("SheetViewDelegate.setCurrentRowNum()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setCurrentRowNum()")) {
             int colNum = sheet.getCurrentCell().getColumnNumber();
             setCurrentCell(Math.max(0, rowNum), colNum);
         }
@@ -736,7 +736,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param gridColor the new color for grid lines. Must not be null.
      */
     public void setGridColor(Color gridColor) {
-        try (var __ = writeLock("SheetViewDelegate.setGridColor()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setGridColor()")) {
             this.gridColor = gridColor;
         }
     }
@@ -762,7 +762,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      *                    the display name for that column. Must not be null.
      */
     public void setColumnNames(IntFunction<String> columnNames) {
-        try (var __ = writeLock("SheetViewDelegate.setColumnNames()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setColumnNames()")) {
             this.columnNames = columnNames;
             markLayoutChanged();
         }
@@ -778,7 +778,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      *                 the display name for that row. Must not be null.
      */
     public void setRowNames(IntFunction<String> rowNames) {
-        try (var __ = writeLock("SheetViewDelegate.setRowNames()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setRowNames()")) {
             this.rowNames = rowNames;
             markLayoutChanged();
         }
@@ -802,7 +802,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param background the new background color to use. Must not be null.
      */
     public void setBackground(Color background) {
-        try (var __ = writeLock("SheetViewDelegate.setBackground()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setBackground()")) {
             this.background = background;
         }
     }
@@ -815,7 +815,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param d the direction to move (NORTH, SOUTH, EAST, or WEST)
      */
     public void move(Direction d) {
-        try (var __ = writeLock("SheetViewDelegate.move()")) {
+        try (var ignored = writeLock("SheetViewDelegate.move()")) {
             Cell cell = getCurrentLogicalCell();
             switch (d) {
                 case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
@@ -848,7 +848,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * was already selected or the indices were out of bounds
      */
     public boolean setCurrentCell(int i, int j) {
-        try (var __ = writeLock("SheetViewDelegate.setCurrentCell()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setCurrentCell()")) {
             return sheet.setCurrentCell(i, j);
         }
     }
@@ -861,7 +861,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * was already selected or the cell was invalid (null or from a different sheet)
      */
     public boolean setCurrentCell(Cell cell) {
-        try (var __ = writeLock("SheetViewDelegate.setCurrentCell()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setCurrentCell()")) {
             return sheet.setCurrentCell(cell);
         }
     }
@@ -875,7 +875,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      *          depends on the current view area and cell spans.
      */
     public void movePage(Direction d) {
-        try (var __ = writeLock("SheetViewDelegate.movePage()")) {
+        try (var ignored = writeLock("SheetViewDelegate.movePage()")) {
             Cell cell = getCurrentLogicalCell();
             switch (d) {
                 case NORTH -> setCurrentRowNum(cell.getRowNumber() - 1);
@@ -909,7 +909,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * the cell at the intersection of the last row and last column that contain data.
      */
     public void moveEnd() {
-        try (var __ = writeLock("SheetViewDelegate.moveEnd()")) {
+        try (var ignored = writeLock("SheetViewDelegate.moveEnd()")) {
             int row = sheet.getRowCount() - 1;
             int col = sheet.getColumnCount() - 1;
             setCurrentCell(row, col);
@@ -921,7 +921,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * the cell at the intersection of the first row and first column that contain data.
      */
     public void moveHome() {
-        try (var __ = writeLock("SheetViewDelegate.moveHome()")) {
+        try (var ignored = writeLock("SheetViewDelegate.moveHome()")) {
             setCurrentCell(0, 0);
         }
     }
@@ -1118,7 +1118,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param scale the new scale factor to apply. Must not be null.
      */
     public void setScale(Scale2f scale) {
-        try (var __ = writeLock("SheetViewDelegate.setScale()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setScale()")) {
             if (!scale.equals(this.scale)) {
                 this.scale = scale;
                 markLayoutChanged();
@@ -1179,7 +1179,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * @param displayScale the new display scale factor to apply. Must not be null.
      */
     public void setDisplayScale(Scale2f displayScale) {
-        try (var __ = writeLock("SheetViewDelegate.setDisplayScale()")) {
+        try (var ignored = writeLock("SheetViewDelegate.setDisplayScale()")) {
             if (!displayScale.equals(this.displayScale)) {
                 this.displayScale = displayScale;
                 markLayoutChanged();

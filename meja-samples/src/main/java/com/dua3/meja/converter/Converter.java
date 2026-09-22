@@ -27,7 +27,7 @@ public final class Converter {
      *             The first argument should be the path of the input file,
      *             and the second argument should be the path of the output file.
      */
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
+    @SuppressWarnings({"UseOfSystemOutOrSystemErr", "java:S106"})
     public static void main(String[] args) {
         if (args.length != 2) {
             System.out.format("Usage: %s <input_file> <output_file>%n", Converter.class.getName());

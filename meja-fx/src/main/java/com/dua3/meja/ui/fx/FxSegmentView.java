@@ -65,7 +65,7 @@ public final class FxSegmentView extends Control implements SegmentView {
         flow.setCellCount(rows.size());
 
         this.rows.addListener((ListChangeListener<? super Row>) change -> PlatformHelper.runLater(() -> {
-            try (var __ = svDelegate.readLock("FxSegmentView - rows changed")) {
+            try (var ignored = svDelegate.readLock("FxSegmentView - rows changed")) {
                 flow.setCellCount(rows.size());
             }
         }));

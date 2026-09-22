@@ -630,7 +630,7 @@ public interface Sheet extends Iterable<Row> {
      * @return {@code Optional} holding the cell found or empty
      */
     default Optional<Cell> find(String text, SearchSettings ss) {
-        try (var __ = readLock("AbstractSheet.find()")) {
+        try (var ignored = readLock("AbstractSheet.find()")) {
             if (isEmpty()) {
                 return Optional.empty();
             }

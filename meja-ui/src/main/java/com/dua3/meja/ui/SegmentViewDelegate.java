@@ -199,7 +199,7 @@ public class SegmentViewDelegate {
      * where segments might be positioned above, below, left, or right of splits.
      */
     public void updateLayout() {
-        try (var __ = sheetViewDelegate.readLock("SegmentViewDelegate.updateLayout()")) {
+        try (var ignored = sheetViewDelegate.readLock("SegmentViewDelegate.updateLayout()")) {
             // the width is the width for the labels showing row names ...
             float width = isLeftOfSplit() ? sheetViewDelegate.getRowLabelWidthInPoints() : 0;
 
