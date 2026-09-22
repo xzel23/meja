@@ -284,7 +284,7 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
     private void render() {
         LOG.trace("render()");
         PlatformHelper.checkApplicationThread();
-        try (var unused = fxSheetView.getDelegate().readLock("FxRow.render()")) {
+        try (var ignored = fxSheetView.getDelegate().readLock("FxRow.render()")) {
             if (!(getGraphic() instanceof FxRowGraphics fxrg)) {
                 return;
             }
@@ -478,6 +478,7 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
 
     private void onMouseMoved(MouseEvent evt) {
         Index item = getItem();
+        //noinspection ConstantValue - JavaFX does not guarantee that getItem() will never return null
         if (item == null || item.rowNumber() < 0 || evt.getX() < fxSheetView.getDelegate().getRowLabelWidthInPixels()) {
             fxSheetView.updateLinkCursor(this, null);
             return;
