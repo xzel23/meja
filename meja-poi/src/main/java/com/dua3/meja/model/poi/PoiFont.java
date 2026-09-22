@@ -113,11 +113,6 @@ public class PoiFont {
         return workbook.createFont(derivedFont);
     }
 
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        return obj instanceof PoiFont other && poiFont.equals(other.poiFont);
-    }
-
     /**
      * Returns the current font.
      *
@@ -134,6 +129,11 @@ public class PoiFont {
      */
     protected org.apache.poi.ss.usermodel.Font getPoiFont() {
         return poiFont;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return obj instanceof PoiFont other && font.equals(other.font) && poiFont.equals(other.poiFont);
     }
 
     @Override
