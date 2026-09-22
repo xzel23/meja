@@ -95,8 +95,8 @@ public interface Event<T> {
         @Override
         public String toString() {
             return "EventWithIndex{" +
-                    "type=" + type() +
-                    ", source=" + source() +
+                    "type=" + super.type() +
+                    ", source=" + super.source() +
                     ", idx=" + idx +
                     '}';
         }
@@ -147,8 +147,8 @@ public interface Event<T> {
         @Override
         public String toString() {
             return "EventValueChanged{" +
-                    "type=" + type() +
-                    ", source=" + source() +
+                    "type=" + super.type() +
+                    ", source=" + super.source() +
                     ", oldValue=" + oldValue +
                     ", newValue=" + newValue +
                     '}';
@@ -199,8 +199,8 @@ public interface Event<T> {
         @Override
         public String toString() {
             return "EventIntValueChanged{" +
-                    "type=" + type() +
-                    ", source=" + source() +
+                    "type=" + super.type() +
+                    ", source=" + super.source() +
                     ", oldValue=" + oldValue +
                     ", newValue=" + newValue +
                     '}';
