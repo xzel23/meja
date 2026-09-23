@@ -4,10 +4,12 @@
 
 - fix a circular dependency in static initialization of FileTypeExcel, FileTypeXlsx, and FileTypeXls that could lead 
   to NullPointerException when trying to load or save Workbooks.
-- update plugins and dependencies
-- fix Qodana and Sonar warnings
 - fix an error in PoiFont equals() that could possibly lead to incorrect return value
 - fix jacoco coverage reporting in CI
+- several small fixes and refactorings
+- update plugins and dependencies
+- fix Qodana and Sonar warnings
+- increase test coverage
 
 ## Version 12.2.0
 
