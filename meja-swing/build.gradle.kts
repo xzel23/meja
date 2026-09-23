@@ -6,4 +6,6 @@ dependencies {
 
     implementation(rootProject.libs.dua3.utility)
     implementation(rootProject.libs.dua3.utility.swing)
+
+    testImplementation(project(":meja-generic"))
 }

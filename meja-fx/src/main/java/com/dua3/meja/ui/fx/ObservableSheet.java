@@ -51,10 +51,10 @@ public class ObservableSheet extends ObservableListBase<Row> {
         this.sheet = sheet;
         this.layoutListeners = new java.util.ArrayList<>();
         this.zoomProperty = new SimpleFloatProperty(sheet.getZoom());
+        this.currentCellProperty = new SimpleObjectProperty<>(sheet.getCurrentCell());
         this.columnCountProperty = new SimpleIntegerProperty(sheet.getColumnCount());
         this.splitRowProperty = new SimpleIntegerProperty(sheet.getSplitRow());
         this.splitColumnProperty = new SimpleIntegerProperty(sheet.getSplitColumn());
-        this.currentCellProperty = new SimpleObjectProperty<>(sheet.getCurrentCell());
 
         currentCellProperty.addListener((v, o, n) -> {
             if (n != o) {
@@ -149,14 +149,21 @@ public class ObservableSheet extends ObservableListBase<Row> {
 
     @Override
     public boolean equals(@Nullable Object o) {
+        if (this == o) return true;
         if (!(o instanceof ObservableSheet other)) return false;
         if (!super.equals(o)) return false;
-        return sheet.equals(other.sheet) && layoutListeners.equals(other.layoutListeners) && zoomProperty.equals(other.zoomProperty) && columnCountProperty.equals(other.columnCountProperty) && splitRowProperty.equals(other.splitRowProperty) && splitColumnProperty.equals(other.splitColumnProperty) && currentCellProperty.equals(other.currentCellProperty);
+        return Float.compare(zoomProperty.get(), other.zoomProperty.get()) == 0
+                && columnCountProperty.get() == other.columnCountProperty.get()
+                && splitRowProperty.get() == other.splitRowProperty.get()
+                && splitColumnProperty.get() == other.splitColumnProperty.get()
+                && Objects.equals(currentCellProperty.get(), other.currentCellProperty.get())
+                && sheet.equals(other.sheet)
+                && layoutListeners.equals(other.layoutListeners);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), sheet, layoutListeners, zoomProperty, columnCountProperty, splitRowProperty, splitColumnProperty, currentCellProperty);
+        return Objects.hash(super.hashCode(), sheet, layoutListeners, zoomProperty.get(), columnCountProperty.get(), splitRowProperty.get(), splitColumnProperty.get(), currentCellProperty.get());
     }
 
     private class SheetTracker implements Flow.Subscriber<SheetEvent> {

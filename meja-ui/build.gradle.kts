@@ -4,4 +4,6 @@ dependencies {
     api(project(":meja-core"))
 
     implementation(rootProject.libs.dua3.utility)
+
+    testImplementation(project(":meja-generic"))
 }

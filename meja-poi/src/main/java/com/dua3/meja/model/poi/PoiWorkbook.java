@@ -114,8 +114,8 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         this.evaluator = poiWorkbook.getCreationHelper().createFormulaEvaluator();
 
         // init cell TextAttributes map
-        for (short i = 0; i < poiWorkbook.getNumCellStyles(); i++) {
-            cellStyles.put("style#" + i, i);
+        for (short idx = 0; idx < poiWorkbook.getNumCellStyles(); idx++) {
+            cellStyles.put("style#" + idx, idx);
         }
     }
 
@@ -497,7 +497,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
             this.factor = 0.0f;
         }
 
-        float updateAndGet(com.dua3.utility.text.Font font) {
+        float updateAndGet(@SuppressWarnings("ParameterHidesMemberVariable") com.dua3.utility.text.Font font) {
             if (font == this.font) {
                 return factor;
             }
@@ -564,6 +564,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         }
 
         @Override
+        @SuppressWarnings("StandardVariableNames")
         public Color getColor(org.apache.poi.ss.usermodel.@Nullable Color poiColor, Color defaultColor) {
             if (poiColor == null || poiColor.equals(HSSFColorPredefined.AUTOMATIC.getColor())) {
                 return defaultColor;
@@ -583,6 +584,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         }
 
         @Override
+        @SuppressWarnings("StandardVariableNames")
         public HSSFColor getPoiColor(Color color) {
             HSSFPalette palette = ((HSSFWorkbook) poiWorkbook).getCustomPalette();
             int argb = color.argb();
@@ -677,6 +679,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         }
 
         @Override
+        @SuppressWarnings("StandardVariableNames")
         public Color getColor(org.apache.poi.ss.usermodel.@Nullable Color poiColor, Color defaultColor) {
             XSSFColor xssfColor = (XSSFColor) poiColor;
             if (poiColor == null || xssfColor.isAuto()) {

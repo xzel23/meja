@@ -131,6 +131,8 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
         this.sheet = sheet;
         this.owner = owner;
         this.displayScale = owner.getDisplayScale();
+        this.splitRow = sheet.getSplitRow();
+        this.splitColumn = sheet.getSplitColumn();
         updateLayout();
         sheet.subscribe(this);
     }

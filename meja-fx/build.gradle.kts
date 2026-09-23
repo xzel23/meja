@@ -12,4 +12,6 @@ dependencies {
     // Exclude JavaFX dependencies to avoid conflicts with the JavaFX plugin
     api(rootProject.libs.dua3.utility.fx) { exclude(group = "org.openjfx") }
     implementation(rootProject.libs.dua3.utility.fx.controls) { exclude(group = "org.openjfx") }
+
+    testImplementation(project(":meja-generic"))
 }

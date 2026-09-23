@@ -111,7 +111,7 @@ public final class MejaSwingHelper {
     private static Arguments showOptionsDialog(Component parent, FileType<?> fileType) {
         Collection<Option<?>> settings = fileType.getSettings();
         Arguments importSettings = Arguments.empty(); // default is empty
-        if (!settings.isEmpty()) {
+        if (!settings.isEmpty() && !java.awt.GraphicsEnvironment.isHeadless()) {
             SettingsDialog dialog = new SettingsDialog(parent, fileType.getName() + " - Settings",
                     "Please verify the import settings:", settings);
             dialog.setVisible(true);

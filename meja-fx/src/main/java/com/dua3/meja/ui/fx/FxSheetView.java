@@ -278,6 +278,9 @@ public final class FxSheetView extends StackPane implements SheetView {
      * @return the screen resolution in DPI
      */
     static int getDpi() {
+        if (java.awt.GraphicsEnvironment.isHeadless()) {
+            return 96;
+        }
         return Toolkit.getDefaultToolkit().getScreenResolution();
     }
 
