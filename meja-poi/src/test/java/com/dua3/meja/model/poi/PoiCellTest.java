@@ -211,13 +211,13 @@ class PoiCellTest {
 
     @Test
     void testCellRef() {
-        Cell c = sheet.getCell(2, 3); // D3
-        assertEquals("D3", c.getCellRef());
-        assertEquals("'TestSheet'!D3", c.getCellRef(com.dua3.meja.model.RefOption.WITH_SHEET));
-        assertEquals("$D3", c.getCellRef(com.dua3.meja.model.RefOption.FIX_COLUMN));
-        assertEquals("D$3", c.getCellRef(com.dua3.meja.model.RefOption.FIX_ROW));
-        assertEquals("$D$3", c.getCellRef(com.dua3.meja.model.RefOption.FIX_COLUMN, com.dua3.meja.model.RefOption.FIX_ROW));
-        assertEquals("'TestSheet'!$D$3", c.getCellRef(com.dua3.meja.model.RefOption.WITH_SHEET, com.dua3.meja.model.RefOption.FIX_COLUMN, com.dua3.meja.model.RefOption.FIX_ROW));
+        Cell cell = sheet.getCell(2, 3); // D3
+        assertEquals("D3", cell.getCellRef());
+        assertEquals("'TestSheet'!D3", cell.getCellRef(com.dua3.meja.model.RefOption.WITH_SHEET));
+        assertEquals("$D3", cell.getCellRef(com.dua3.meja.model.RefOption.FIX_COLUMN));
+        assertEquals("D$3", cell.getCellRef(com.dua3.meja.model.RefOption.FIX_ROW));
+        assertEquals("$D$3", cell.getCellRef(com.dua3.meja.model.RefOption.FIX_COLUMN, com.dua3.meja.model.RefOption.FIX_ROW));
+        assertEquals("'TestSheet'!$D$3", cell.getCellRef(com.dua3.meja.model.RefOption.WITH_SHEET, com.dua3.meja.model.RefOption.FIX_COLUMN, com.dua3.meja.model.RefOption.FIX_ROW));
     }
 
     @Test
