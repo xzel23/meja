@@ -400,7 +400,10 @@ subprojects {
     // SonarQube properties
     sonar {
         properties {
-            property("sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml")
+            property(
+                "sonar.coverage.jacoco.xmlReportPaths",
+                "${rootProject.layout.buildDirectory.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+            )
             property("sonar.coverage.exclusions", "**/samples/**")
 
             // use Cabe instrumented classes if they exist

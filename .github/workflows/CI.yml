@@ -259,7 +259,7 @@ jobs:
           -Dsonar.projectKey=xzel23_meja
           -Dsonar.organization=xzel23
           -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/**/*.xml
+          -Dsonar.coverage.jacoco.xmlReportPaths=${{ github.workspace }}/build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
 
   qodana:
     needs: build
