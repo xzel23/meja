@@ -115,4 +115,34 @@ class GenericCellStyleTest {
         assertEquals("0.0%", copy.getDataFormat());
         assertTrue(copy.isWrap());
     }
+
+    @Test
+    void testRotationBounds() {
+        style.setRotation((short) -90);
+        assertEquals((short) -90, style.getRotation());
+
+        style.setRotation((short) 90);
+        assertEquals((short) 90, style.getRotation());
+
+        assertThrows(IllegalArgumentException.class, () -> style.setRotation((short) -91));
+        assertThrows(IllegalArgumentException.class, () -> style.setRotation((short) 91));
+    }
+
+    @Test
+    void testInvalidFormatFallbacks() {
+        // Invalid date format should fallback gracefully
+        style.setDataFormat("invalid [[[]]] pattern");
+        LocalDate date = LocalDate.of(2023, 1, 1);
+        assertNotNull(style.format(date, Locale.US));
+
+        // Invalid number format should fallback gracefully
+        style.setDataFormat("invalid [[[]]] number pattern");
+        assertNotNull(style.format(123.45, Locale.US));
+    }
+
+    @Test
+    void testStyleName() {
+        GenericCellStyle registered = workbook.getCellStyle("NamedStyle");
+        assertEquals("NamedStyle", registered.getName());
+    }
 }

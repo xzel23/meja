@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -168,5 +169,134 @@ class PoiCellTest {
         c00.unMerge();
         assertFalse(row.getCell(0).isMerged());
         assertFalse(row.getCell(1).isMerged());
+    }
+
+    @Test
+    void testSetObject() {
+        Cell cell = row.getCell(0);
+
+        cell.set((Object) Boolean.TRUE);
+        assertEquals(CellType.BOOLEAN, cell.getCellType());
+        assertTrue(cell.getBoolean());
+
+        cell.set((Object) 123);
+        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(123, cell.getNumber().intValue());
+
+        LocalDate date = LocalDate.of(2024, 1, 1);
+        cell.set((Object) date);
+        assertEquals(date, cell.getDate());
+
+        LocalDateTime dt = LocalDateTime.of(2024, 1, 1, 12, 0);
+        cell.set((Object) dt);
+        assertEquals(dt, cell.getDateTime());
+
+        RichText rt = RichText.valueOf("Rich");
+        cell.set((Object) rt);
+        assertEquals(CellType.TEXT, cell.getCellType());
+        assertEquals(rt.toString(), cell.getText().toString());
+
+        cell.set((Object) "Simple String");
+        assertEquals(CellType.TEXT, cell.getCellType());
+        assertEquals("Simple String", cell.getText().toString());
+
+        cell.set((Object) URI.create("https://test.com"));
+        assertEquals(CellType.TEXT, cell.getCellType());
+        assertEquals("https://test.com", cell.getText().toString());
+
+        cell.set((Object) null);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertTrue(cell.isEmpty());
+    }
+
+    @Test
+    void testCellRef() {
+        Cell c = sheet.getCell(2, 3); // D3
+        assertEquals("D3", c.getCellRef());
+        assertEquals("'TestSheet'!D3", c.getCellRef(com.dua3.meja.model.RefOption.WITH_SHEET));
+        assertEquals("$D3", c.getCellRef(com.dua3.meja.model.RefOption.FIX_COLUMN));
+        assertEquals("D$3", c.getCellRef(com.dua3.meja.model.RefOption.FIX_ROW));
+        assertEquals("$D$3", c.getCellRef(com.dua3.meja.model.RefOption.FIX_COLUMN, com.dua3.meja.model.RefOption.FIX_ROW));
+        assertEquals("'TestSheet'!$D$3", c.getCellRef(com.dua3.meja.model.RefOption.WITH_SHEET, com.dua3.meja.model.RefOption.FIX_COLUMN, com.dua3.meja.model.RefOption.FIX_ROW));
+    }
+
+    @Test
+    void testResolvedHyperlink() {
+        Cell cell = row.getCell(0);
+        assertFalse(cell.getResolvedHyperlink().isPresent());
+
+        // Absolute URI
+        cell.setHyperlink(URI.create("https://example.com/test"));
+        assertEquals(Optional.of(URI.create("https://example.com/test")), cell.getResolvedHyperlink());
+
+        // With workbook URI
+        workbook.setUri(URI.create("file:///base/dir/workbook.xlsx"));
+        cell.setHyperlink(URI.create("relative/path.txt"));
+        assertTrue(cell.getResolvedHyperlink().isPresent());
+    }
+
+    @Test
+    void testCalcCellDimension() {
+        Cell cell = row.getCell(0);
+        var dimBlank = cell.calcCellDimension();
+        assertTrue(dimBlank.width() >= 0);
+        assertTrue(dimBlank.height() >= 0);
+
+        cell.set("Hello World");
+        var dimText = cell.calcCellDimension();
+        assertTrue(dimText.width() > 0);
+        assertTrue(dimText.height() > 0);
+
+        cell.set("Line 1\nLine 2\nLine 3");
+        var dimMulti = cell.calcCellDimension();
+        assertTrue(dimMulti.height() >= dimText.height());
+
+        // Rotated text
+        PoiCellStyle style = workbook.getCellStyle("Rotated");
+        style.setRotation((short) 45);
+        cell.setCellStyle(style);
+        var dimRotated = cell.calcCellDimension();
+        assertTrue(dimRotated.width() > 0);
+        assertTrue(dimRotated.height() > 0);
+    }
+
+    @Test
+    void testEffectiveBorderStyle() {
+        Cell c11 = sheet.getCell(1, 1);
+        for (com.dua3.meja.model.Direction dir : com.dua3.meja.model.Direction.values()) {
+            assertNotNull(c11.getEffectiveBorderStyle(dir));
+        }
+
+        PoiCellStyle style = workbook.getCellStyle("Bordered");
+        style.setBorderStyle(com.dua3.meja.model.Direction.NORTH, new com.dua3.meja.model.BorderStyle(2.0f, com.dua3.utility.data.Color.RED));
+        c11.setCellStyle(style);
+
+        assertTrue(c11.getEffectiveBorderStyle(com.dua3.meja.model.Direction.NORTH).width() > 0);
+    }
+
+    @Test
+    void testCellMergeConvenience() {
+        Cell cell = sheet.getCell(2, 2);
+        cell.merge(2, 3);
+        assertTrue(cell.isMerged());
+        assertEquals(2, cell.getHorizontalSpan());
+        assertEquals(3, cell.getVerticalSpan());
+        cell.unMerge();
+        assertFalse(cell.isMerged());
+    }
+
+    @Test
+    void testCellStyle() {
+        Cell cell = row.getCell(0);
+        PoiCellStyle defaultStyle = (PoiCellStyle) cell.getCellStyle();
+        assertNotNull(defaultStyle);
+
+        PoiCellStyle customStyle = workbook.getCellStyle("CustomStyle");
+        customStyle.setHAlign(com.dua3.meja.model.HAlign.ALIGN_RIGHT);
+        cell.setCellStyle(customStyle);
+        assertEquals(com.dua3.meja.model.HAlign.ALIGN_RIGHT, cell.getCellStyle().getHAlign());
+
+        cell.setCellStyle("Default");
+        assertNotNull(cell.getCellStyle());
     }
 }

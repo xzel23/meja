@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -289,6 +290,86 @@ class PoiWorkbookTest {
         assertEquals(4, sheet.getColumnCount());
 
         sheet.createRow(1, 2, 3, 4);
+    }
+
+    @Test
+    void testSheetManagement() throws IOException {
+        try (PoiWorkbook wb = PoiWorkbookFactory.instance().createXlsx()) {
+            assertEquals(0, wb.getSheetCount());
+            assertFalse(wb.getCurrentSheet().isPresent());
+
+            Sheet s1 = wb.createSheet("Sheet1");
+            Sheet s2 = wb.createSheet("Sheet2");
+            assertEquals(2, wb.getSheetCount());
+
+            // Get by index & name
+            assertEquals(s1, wb.getSheet(0));
+            assertEquals(s2, wb.getSheet(1));
+            assertEquals(s1, wb.getSheetByName("Sheet1"));
+            assertEquals(s2, wb.getSheetByName("Sheet2"));
+            org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> wb.getSheetByName("NonExistent"));
+
+            // Find by name
+            assertEquals(java.util.Optional.of(s1), wb.findSheetByName("Sheet1"));
+            assertTrue(wb.findSheetByName("NonExistent").isEmpty());
+
+            // Index queries
+            assertEquals(0, wb.getSheetIndexByName("Sheet1"));
+            assertEquals(1, wb.getSheetIndexByName("Sheet2"));
+            assertEquals(-1, wb.getSheetIndexByName("NonExistent"));
+            assertEquals(0, wb.getSheetIndex(s1));
+            assertEquals(1, wb.getSheetIndex(s2));
+            assertEquals(-1, wb.getSheetIndex(null));
+
+            // Get or create
+            assertEquals(s1, wb.getOrCreateSheet("Sheet1"));
+            Sheet s3 = wb.getOrCreateSheet("Sheet3");
+            assertEquals(3, wb.getSheetCount());
+            assertEquals("Sheet3", s3.getSheetName());
+
+            // Current sheet
+            wb.setCurrentSheet(1);
+            assertEquals(1, wb.getCurrentSheetIndex());
+            assertEquals(java.util.Optional.of(s2), wb.getCurrentSheet());
+
+            wb.setCurrentSheet(s1);
+            assertEquals(0, wb.getCurrentSheetIndex());
+            assertEquals(java.util.Optional.of(s1), wb.getCurrentSheet());
+
+            // Iterator and streams
+            assertEquals(3, wb.sheets().count());
+            java.util.List<String> names = new java.util.ArrayList<>();
+            for (Sheet s : wb) {
+                names.add(s.getSheetName());
+            }
+            assertEquals(java.util.List.of("Sheet1", "Sheet2", "Sheet3"), names);
+
+            // Remove sheet
+            wb.removeSheetByName("Sheet2");
+            assertEquals(2, wb.getSheetCount());
+            assertEquals(-1, wb.getSheetIndexByName("Sheet2"));
+            org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, () -> wb.removeSheetByName("NonExistent"));
+
+            wb.removeSheet(0);
+            assertEquals(1, wb.getSheetCount());
+            assertEquals("Sheet3", wb.getSheet(0).getSheetName());
+        }
+    }
+
+    @Test
+    void testCopyWorkbook() throws IOException {
+        try (PoiWorkbook wb1 = PoiWorkbookFactory.instance().createXlsx()) {
+            Sheet s1 = wb1.createSheet("Data");
+            s1.getCell(0, 0).set("Copied Content");
+
+            try (PoiWorkbook wb2 = PoiWorkbookFactory.instance().createXlsx()) {
+                wb2.copy(wb1);
+
+                assertEquals(1, wb2.getSheetCount());
+                assertEquals("Data", wb2.getSheet(0).getSheetName());
+                assertEquals("Copied Content", wb2.getSheet(0).getCell(0, 0).getText().toString());
+            }
+        }
     }
 
 }

@@ -47,4 +47,35 @@ class PoiFontTest {
         PoiFont derived = poiFont.deriveFont(fd);
         assertEquals(Color.RED, derived.getFont().getColor());
     }
+
+    @Test
+    @SuppressWarnings({"java:S5845", "AssertBetweenInconvertibleTypes"})
+    void testComprehensiveFontStyles() {
+        PoiWorkbook hssfWb = PoiWorkbookFactory.instance().createXls();
+        PoiWorkbook xssfWb = PoiWorkbookFactory.instance().createXlsx();
+
+        Font complexFont = FontUtil.getInstance().getFont("Verdana-16-bold-italic-underline-strikethrough");
+
+        PoiFont hssfFont = hssfWb.createFont(complexFont);
+        assertTrue(hssfFont.getFont().isBold());
+        assertTrue(hssfFont.getFont().isItalic());
+        assertTrue(hssfFont.getFont().isUnderline());
+        assertTrue(hssfFont.getFont().isStrikeThrough());
+        assertEquals("Verdana", hssfFont.getFont().getFamily());
+        assertEquals(16.0f, hssfFont.getFont().getSizeInPoints());
+
+        PoiFont xssfFont = xssfWb.createFont(complexFont);
+        assertTrue(xssfFont.getFont().isBold());
+        assertTrue(xssfFont.getFont().isItalic());
+        assertTrue(xssfFont.getFont().isUnderline());
+        assertTrue(xssfFont.getFont().isStrikeThrough());
+        assertEquals("Verdana", xssfFont.getFont().getFamily());
+        assertEquals(16.0f, xssfFont.getFont().getSizeInPoints());
+
+        // Equals and HashCode
+        assertEquals(xssfFont, xssfWb.getPoiFont(complexFont));
+        assertEquals(xssfFont.hashCode(), xssfWb.getPoiFont(complexFont).hashCode());
+        assertNotEquals(null, xssfFont);
+        assertNotEquals("not-a-font", xssfFont);
+    }
 }
