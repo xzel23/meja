@@ -24,8 +24,6 @@ import java.util.function.Function;
  */
 public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
 
-    private static final FileTypeXlsx FILETYPE_XLSX = FileTypeXlsx.instance();
-    private static final FileTypeXls FILETYPE_XLS = FileTypeXls.instance();
     private static final FileTypeExcel INSTANCE;
 
     static {
@@ -68,10 +66,10 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
 
     @Override
     public PoiWorkbook read(URI uri, InputStream in, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
-        if (FILETYPE_XLSX.matches(uri.getSchemeSpecificPart())) {
+        if (FileTypeXlsx.instance().matches(uri.getSchemeSpecificPart())) {
             return FileTypeXlsx.instance().read(uri, in, options);
         }
-        if (FILETYPE_XLS.matches(uri.getSchemeSpecificPart())) {
+        if (FileTypeXls.instance().matches(uri.getSchemeSpecificPart())) {
             return FileTypeXls.instance().read(uri, in, options);
         }
         throw new IllegalArgumentException("cannot determine file type for reading");
