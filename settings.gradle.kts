@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.gradle.internal.extensions.stdlib.toDefaultLowerCase
 
 private val publishableModuleNames = listOf(
