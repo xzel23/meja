@@ -135,17 +135,6 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
         LangUtil.check(logicalCell == this, "Cell is not the top left cell of a merged region");
 
         getAbstractSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
-
-        int originalSpanX = getHorizontalSpan();
-        int originalSpanY = getVerticalSpan();
-        for (int i = getRowNumber(); i < getRowNumber() + originalSpanY; i++) {
-            for (int j = getColumnNumber(); j < getColumnNumber() + originalSpanX; j++) {
-                C mergedCell = row.getAbstractCellOrNull(j);
-                if (mergedCell != null) {
-                    mergedCell.removedFromMergedRegion();
-                }
-            }
-        }
     }
 
     /**

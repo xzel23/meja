@@ -46,7 +46,7 @@ public abstract class WorkbookReader {
      * @return the workbook read
      * @throws IOException if the workbook could not be read
      */
-    protected abstract <W extends Workbook> W read(WorkbookFactory<W> factory, URI uri, InputStream in) throws IOException;
+    public abstract <W extends Workbook> W read(WorkbookFactory<W> factory, URI uri, InputStream in) throws IOException;
 
     /**
      * Read workbook from URI.
@@ -57,6 +57,7 @@ public abstract class WorkbookReader {
      * @return the workbook read
      * @throws IOException if the workbook could not be read
      */
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public <W extends Workbook> W read(WorkbookFactory<W> factory, URI uri) throws IOException {
         try (InputStream in = new BufferedInputStream(uri.toURL().openStream())) {
             return read(factory, uri, in);

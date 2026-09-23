@@ -66,13 +66,20 @@ public final class CsvWorkbookWriter implements WorkbookWriter {
                 for (Cell cell : row) {
                     writer.addField(cell.getOrDefault(null));
                 }
-                updateProgress.accept((double) processedRows / totalRows);
+                processedRows++;
+                if (totalRows > 0) {
+                    updateProgress.accept((double) processedRows / totalRows);
+                }
                 writer.nextRow();
             }
             writer.nextRow();
         }
+        if (totalRows == 0) {
+            updateProgress.accept(1.0);
+        }
     }
 
+    @SuppressWarnings("ParameterHidesMemberVariable")
     @Override
     public void setOptions(Arguments options) {
         this.options = options;

@@ -16,7 +16,6 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.meja.io.FileFormatException;
-import com.dua3.meja.model.Workbook;
 import com.dua3.meja.model.WorkbookFactory;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiHssfWorkbook;
 import com.dua3.meja.model.poi.PoiWorkbook.PoiXssfWorkbook;
@@ -90,7 +89,8 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @see #createXlsx()
      * @see #createXlsxStreaming()
      */
-    public Workbook createXls() {
+    @SuppressWarnings("MethodMayBeStatic")
+    public PoiWorkbook createXls() {
         return new PoiHssfWorkbook(new HSSFWorkbook(), null);
     }
 
@@ -103,6 +103,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @see #createXls()
      * @see #createXlsxStreaming()
      */
+    @SuppressWarnings("MethodMayBeStatic")
     public PoiWorkbook createXlsx() {
         return new PoiXssfWorkbook(new XSSFWorkbook(), null);
     }
@@ -116,6 +117,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @see #createXlsx()
      * @see #createXls()
      */
+    @SuppressWarnings("MethodMayBeStatic")
     public PoiWorkbook createXlsxStreaming() {
         return new PoiXssfWorkbook(new SXSSFWorkbook(), null);
     }
@@ -133,6 +135,7 @@ public class PoiWorkbookFactory extends WorkbookFactory<PoiWorkbook> {
      * @throws FileFormatException if the file format is invalid or the file is corrupted
      * @see #open(URI)
      */
+    @SuppressWarnings("OverlyBroadThrowsClause")
     @Override
     public PoiWorkbook open(URI uri, Arguments importSettings, InputStream in) throws IOException {
         try {

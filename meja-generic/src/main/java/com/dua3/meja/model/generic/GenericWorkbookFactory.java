@@ -73,7 +73,7 @@ public class GenericWorkbookFactory extends WorkbookFactory<GenericWorkbook> {
         WorkbookReader reader = CsvWorkbookReader.create();
         reader.setOptions(importSettings);
 
-        return reader.read(instance(), uri);
+        return reader.read(instance(), uri, in);
     }
 
 }

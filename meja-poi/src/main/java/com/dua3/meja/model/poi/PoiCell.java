@@ -42,12 +42,10 @@ import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalQueries;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -97,8 +95,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
             // rather than CellType.DATE, only test for dates if cell is numeric.
             if (isCellDateTime(poiCell, poiType)) {
                 type = CellType.DATE_TIME;
-            }
-            if (isCellDateFormatted(poiCell, poiType)) {
+            } else if (isCellDateFormatted(poiCell, poiType)) {
                 type = CellType.DATE;
             }
         }
@@ -134,15 +131,14 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
      * @return true if the cell contains both date and time values
      */
     private static boolean isCellDateTime(org.apache.poi.ss.usermodel.Cell poiCell, org.apache.poi.ss.usermodel.CellType poiType) {
-        // check if date formatted and time is exactly midnight
+        // check if date formatted and time is not midnight
         if (!isCellDateFormatted(poiCell, poiType)) {
             return false;
         }
 
         // check time
-        Instant instant = poiCell.getDateCellValue().toInstant();
-        LocalTime time = instant.query(TemporalQueries.localTime());
-        return time != null;
+        LocalDateTime ldt = poiCell.getLocalDateTimeCellValue();
+        return ldt != null && !ldt.toLocalTime().equals(LocalTime.MIDNIGHT);
     }
 
     final org.apache.poi.ss.usermodel.Cell poiCell;
@@ -187,6 +183,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
 
     @Override
     public void clear() {
+        clearHyperlink();
         if (!isEmpty()) {
             Object old = getOrDefault(null);
             poiCell.setBlank();
@@ -353,9 +350,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         }
 
         org.apache.poi.ss.usermodel.CellStyle style = cellStyle.poiCellStyle;
-        int i = style.getDataFormat();
-        String f = style.getDataFormatString();
-        return DateUtil.isADateFormat(i, f);
+        return DateUtil.isADateFormat(style.getDataFormat(), style.getDataFormatString());
     }
 
     @Override
@@ -412,6 +407,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
+    @SuppressWarnings("java:S2259") // false positive
     public PoiCell set(@Nullable Number arg) {
         if (arg == null) {
             clear();
@@ -428,24 +424,25 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
-    public Cell set(@Nullable RichText s) {
-        if (s == null) {
+    @SuppressWarnings("java:S2259") // false positive
+    public Cell set(@Nullable RichText text) {
+        if (text == null) {
             clear();
             return this;
         }
 
-        s = getWorkbook().cache(s);
+        text = getWorkbook().cache(text);
         Object old = getOrDefault(null);
         PoiWorkbook workbook = getAbstractWorkbook();
-        RichTextString richText = workbook.createRichTextString(s.toString());
-        for (Run run : s) {
+        RichTextString richText = workbook.createRichTextString(text.toString());
+        for (Run run : text) {
             PoiFont font = workbook.getPoiFont(FontUtil.getInstance().deriveFont(getCellStyle().getFont(), run.getFontDef()));
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
         poiCell.setCellValue(richText);
         setCellStylePlain();
         updateRow();
-        valueChanged(old, s);
+        valueChanged(old, text);
 
         return this;
     }
@@ -676,11 +673,13 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         }
     }
 
+    @SuppressWarnings({"SuspiciousGetterSetter", "ParameterHidesMemberVariable"})
     @Override
     protected void setVerticalSpan(int spanY) {
         this.spanY = spanY;
     }
 
+    @SuppressWarnings({"SuspiciousGetterSetter", "ParameterHidesMemberVariable"})
     @Override
     protected void setHorizontalSpan(int spanX) {
         this.spanX = spanX;

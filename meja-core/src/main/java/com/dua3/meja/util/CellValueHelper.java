@@ -19,8 +19,11 @@ import com.dua3.meja.model.Cell;
 
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.util.Optional;
 
@@ -65,9 +68,9 @@ public class CellValueHelper {
         }
 
         // boolean
-        Optional<Boolean> b = parseBoolean(valueString);
-        if (b.isPresent()) {
-            cell.set(b.get());
+        Optional<Boolean> bl = parseBoolean(valueString);
+        if (bl.isPresent()) {
+            cell.set(bl.get());
             return;
         }
 
@@ -133,18 +136,27 @@ public class CellValueHelper {
         text = text.trim();
         ParsePosition pos = new ParsePosition(0);
 
-        // dry run first: try a complete parse first, but do not resolve fields
-        // (to avoid exceptions if this is not a date)
-        TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);
-        if (ta == null || pos.getErrorIndex() >= 0 || pos.getIndex() != text.length()) {
-            // an error occurred or parsing did not use all the available input
+        try {
+            // dry run first: try a complete parse first, but do not resolve fields
+            // (to avoid exceptions if this is not a date)
+            TemporalAccessor ta = dateFormatter.parseUnresolved(text, pos);
+            if (ta == null || pos.getErrorIndex() >= 0 || pos.getIndex() != text.length()) {
+                // an error occurred or parsing did not use all the available input
+                return Optional.empty();
+            }
+
+            // everything ok? then get the real data
+            ta = dateFormatter.parse(text);
+            if (ta.isSupported(ChronoField.HOUR_OF_DAY)) {
+                return Optional.of(LocalDateTime.from(ta));
+            } else if (ta.isSupported(ChronoField.EPOCH_DAY) || (ta.isSupported(ChronoField.DAY_OF_MONTH) && ta.isSupported(ChronoField.MONTH_OF_YEAR) && ta.isSupported(ChronoField.YEAR))) {
+                return Optional.of(LocalDate.from(ta).atStartOfDay());
+            } else {
+                return Optional.empty();
+            }
+        } catch (DateTimeException e) {
             return Optional.empty();
         }
-
-        // everything ok? then get the real data
-        ta = dateFormatter.parse(text);
-        LocalDateTime dateTime = LocalDateTime.from(ta);
-        return Optional.of(dateTime);
     }
 
 }

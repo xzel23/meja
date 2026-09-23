@@ -61,8 +61,8 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
         return Optional.ofNullable(attributes.get(name));
     }
 
-    private void setAttribute(Attribute name, @Nullable Object value) {
-        if (value == null) {
+    private void setAttribute(Attribute name, @Nullable Object v) {
+        if (v == null) {
             if (attributes != null) {
                 attributes.remove(name);
                 if (attributes.isEmpty()) {
@@ -76,7 +76,7 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
             attributes = new EnumMap<>(GenericCell.Attribute.class);
         }
 
-        attributes.put(name, value);
+        attributes.put(name, v);
     }
 
     /**
@@ -116,6 +116,7 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
         Object old = value;
         setCellType(CellType.BLANK);
         this.value = null;
+        this.attributes = null;
         valueChanged(old, null);
     }
 
@@ -126,10 +127,11 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
 
     @Override
     public RichText getAsText(Locale locale) {
-        assert value != null || getCellType() == CellType.BLANK;
+        assert value != null || getCellType() == CellType.BLANK || getCellType() == CellType.ERROR;
 
         return switch (getCellType()) {
             case BLANK -> RichText.emptyText();
+            case ERROR -> RichText.valueOf(ERROR_TEXT);
             case TEXT -> getText();
             case NUMERIC -> RichText.valueOf(cellStyle.format((Number) value, locale));
             case DATE -> RichText.valueOf(cellStyle.format((LocalDate) value, locale));
@@ -277,12 +279,12 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
     }
 
     @Override
-    public GenericCell set(@Nullable RichText s) {
-        if (s == null || s.isEmpty()) {
+    public GenericCell set(@Nullable RichText text) {
+        if (text == null || text.isEmpty()) {
             clear();
             return this;
         } else {
-            return set(s, CellType.TEXT);
+            return set(text, CellType.TEXT);
         }
     }
 
@@ -374,10 +376,11 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
 
     @Override
     public String toString(Locale locale) {
-        assert value != null || getCellType() == CellType.BLANK;
+        assert value != null || getCellType() == CellType.BLANK || getCellType() == CellType.ERROR;
 
         return switch (getCellType()) {
             case BLANK -> "";
+            case ERROR -> Cell.ERROR_TEXT;
             case NUMERIC -> cellStyle.format((Number) value, locale);
             case DATE -> cellStyle.format((LocalDate) value, locale);
             case DATE_TIME -> cellStyle.format((LocalDateTime) value, locale);

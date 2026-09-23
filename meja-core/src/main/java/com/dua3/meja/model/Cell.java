@@ -406,6 +406,7 @@ public interface Cell {
      * @param arg the value
      * @return this cell
      */
+    @SuppressWarnings("java:S2259") // false positive
     default Cell set(@Nullable Object arg) {
         if (arg == null) {
             clear();
@@ -427,10 +428,10 @@ public interface Cell {
     /**
      * Set cell value to string with markup.
      *
-     * @param s rich text string
+     * @param text rich text string
      * @return this cell
      */
-    Cell set(@Nullable RichText s);
+    Cell set(@Nullable RichText text);
 
     /**
      * Set cell value to string.
@@ -545,6 +546,7 @@ public interface Cell {
      *
      * @return the calculated dimension of the cell in typographical points (1/72 inch)
      */
+    @SuppressWarnings("NumericCastThatLosesPrecision")
     default Dimension2f calcCellDimension() {
         // calculate the exact width
         String text = toString();

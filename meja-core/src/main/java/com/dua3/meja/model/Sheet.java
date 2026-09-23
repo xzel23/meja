@@ -74,6 +74,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param subscriber the previously registered subscriber to remove
      */
+    @SuppressWarnings("unused")
     void unsubscribe(Flow.Subscriber<SheetEvent> subscriber);
 
     /**
@@ -115,6 +116,7 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param rowIndex the row to resize (0-based index)
      */
+    @SuppressWarnings("unused")
     void autoSizeRow(int rowIndex);
 
     /**
@@ -521,16 +523,14 @@ public interface Sheet extends Iterable<Row> {
      * @return the column name
      */
     static String getColumnName(int colIndex) {
+        LangUtil.checkArg(colIndex >= 0, "invalid column index: %d", colIndex);
         StringBuilder sb = new StringBuilder();
-        // noinspection CharUsedInArithmeticContext
-        sb.append((char) ('A' + colIndex % 26));
-        colIndex /= 26;
-        while (colIndex > 0) {
-            // noinspection CharUsedInArithmeticContext
-            sb.insert(0, (char) ('A' + colIndex % 26 - 1));
-            colIndex /= 26;
+        int col = colIndex;
+        while (col >= 0) {
+            sb.insert(0, (char) ('A' + (col % 26)));
+            col = (col / 26) - 1;
         }
-        return new String(sb);
+        return sb.toString();
     }
 
     /**
@@ -542,11 +542,12 @@ public interface Sheet extends Iterable<Row> {
      *                                  name
      */
     static int getColumnNumber(String colName) {
+        LangUtil.checkArg(!colName.isEmpty(), "empty column name");
         final int stride = 'z' - 'a' + 1;
         int col = 0;
         for (char c : colName.toLowerCase(Locale.ROOT).toCharArray()) {
             if (c < 'a' || 'z' < c) {
-                throw new IllegalArgumentException("'" + colName + "' ist no valid column name.");
+                throw new IllegalArgumentException("'" + colName + "' is no valid column name.");
             }
 
             int d = c - 'a' + 1;
@@ -562,6 +563,7 @@ public interface Sheet extends Iterable<Row> {
      * @return the row name (in Excel convention, i.e. "1" for row index 0)
      */
     static String getRowName(int rowIndex) {
+        LangUtil.checkArg(rowIndex >= 0, "invalid row index: %d", rowIndex);
         return Integer.toString(rowIndex + 1);
     }
 
