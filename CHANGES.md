@@ -1,6 +1,6 @@
 # Meja Changelog
 
-## Version 12.2.x
+## Version 12.3.0
 
 - fix a circular dependency in static initialization of FileTypeExcel, FileTypeXlsx, and FileTypeXls that could lead 
   to NullPointerException when trying to load or save Workbooks.
