@@ -77,6 +77,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Flow;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Swing component for displaying instances of {@link Sheet}.
@@ -93,7 +94,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
 
     private final transient SwingSheetViewDelegate delegate;
     private final transient SwingSheetPane sheetPane;
-    private final transient SwingSearchDialog searchDialog = new SwingSearchDialog(this);
+    private final transient AtomicReference<@Nullable SwingSearchDialog> searchDialog = new AtomicReference<>();
     private final transient ScaledTextEditorPane editor = new ScaledTextEditorPane();
     private final transient JLayeredPane layeredPane;
     private final transient KeyEventDispatcher editingKeyEventDispatcher = this::dispatchEditingKeyEvent;
@@ -131,10 +132,10 @@ public final class SwingSheetView extends JPanel implements SheetView {
 
     private transient Flow.@Nullable Subscription sheetSubscription;
 
-    private boolean editable;
-    private boolean allowOpenLinks;
+    private volatile boolean editable;
+    private volatile boolean allowOpenLinks;
     private boolean updating;
-    private boolean editingDispatcherInstalled;
+    private volatile boolean editingDispatcherInstalled;
     private transient @Nullable Container toolbarParent;
 
     /**
@@ -183,8 +184,15 @@ public final class SwingSheetView extends JPanel implements SheetView {
             sheetSubscription.cancel();
             sheetSubscription = null;
         }
-        searchDialog.dispose();
+        disposeSearchDialog();
         super.removeNotify();
+    }
+
+    private void disposeSearchDialog() {
+        var dlg = searchDialog.getAndSet(null);
+        if (dlg != null) {
+            dlg.dispose();
+        }
     }
 
     @Override
@@ -419,12 +427,18 @@ public final class SwingSheetView extends JPanel implements SheetView {
         }
     }
 
+    @SuppressWarnings("DataFlowIssue") // false positive
+    private SwingSearchDialog getSearchDialog() {
+        return searchDialog.updateAndGet(dlg -> dlg != null ? dlg : new SwingSearchDialog(this));
+    }
+
     /**
      * Show the search dialog.
      */
     @Override
+    @SuppressWarnings("java:S2259")
     public void showSearchDialog() {
-        searchDialog.setVisible(true);
+        getSearchDialog().setVisible(true);
     }
 
     /**
@@ -445,7 +459,11 @@ public final class SwingSheetView extends JPanel implements SheetView {
             editor.setCellText(cell.getCellType() == CellType.FORMULA ? RichText.valueOf("=" + cell.getFormula()) : cell.getAsText(getLocale()));
             editor.selectAll();
             editor.setToolbarApplicationParent(toolbarParent);
-            editor.setToolbarLocation(toolbarParent == null ? DetachableNode.Location.FLOATING : DetachableNode.Location.APPLICATION);
+            if (!GraphicsEnvironment.isHeadless()) {
+                editor.setToolbarLocation(toolbarParent == null ? DetachableNode.Location.FLOATING : DetachableNode.Location.APPLICATION);
+            } else if (toolbarParent != null) {
+                editor.setToolbarLocation(DetachableNode.Location.APPLICATION);
+            }
             editor.setEditable(true);
             editor.setVisible(true);
             layeredPane.moveToFront(editor);
@@ -616,6 +634,9 @@ public final class SwingSheetView extends JPanel implements SheetView {
      * @return the screen resolution in DPI
      */
     static int getDpi() {
+        if (GraphicsEnvironment.isHeadless()) {
+            return 96;
+        }
         return Toolkit.getDefaultToolkit().getScreenResolution();
     }
 
