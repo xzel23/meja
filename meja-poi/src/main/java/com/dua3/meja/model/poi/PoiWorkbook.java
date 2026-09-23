@@ -127,7 +127,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
     }
 
     @Override
-    public Sheet createSheet(String sheetName) {
+    public PoiSheet createSheet(String sheetName) {
         org.apache.poi.ss.usermodel.Sheet poiSheet = poiWorkbook.createSheet(sheetName);
         PoiSheet sheet = new PoiSheet(this, poiSheet);
         sheets.add(sheet);

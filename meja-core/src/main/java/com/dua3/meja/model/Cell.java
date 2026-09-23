@@ -103,7 +103,7 @@ public interface Cell {
             case BLANK -> clear();
             case BOOLEAN -> set(other.getBoolean());
             case ERROR -> setError();
-            case FORMULA -> set(other.getFormula());
+            case FORMULA -> setFormula(other.getFormula());
             case NUMERIC -> set(other.getNumber());
             case DATE -> set(other.getDate());
             case DATE_TIME -> set(other.getDateTime());

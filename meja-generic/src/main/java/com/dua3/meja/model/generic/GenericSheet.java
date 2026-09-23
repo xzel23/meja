@@ -65,8 +65,18 @@ public final class GenericSheet extends AbstractSheet<GenericSheet, GenericRow, 
     public void clear() {
         LOG.trace("clearing the sheet");
 
+        clearMergedRegions();
         rows.clear();
-        copy(new GenericSheet(workbook, sheetName));
+        columnWidth.clear();
+        rowHeight.clear();
+        numberOfColumns = 0;
+        splitRow = 0;
+        splitColumn = 0;
+        autoFilterRow = -1;
+        zoom = 1.0f;
+        currentRow = 0;
+        currentColumn = 0;
+        layoutChanged();
     }
 
     @Override

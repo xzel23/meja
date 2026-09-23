@@ -28,6 +28,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * POI implementation of the {@link com.dua3.meja.model.Sheet} interface.
  */
@@ -97,6 +99,8 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
     @Override
     public void clear() {
         LOG.trace("clearing the sheet");
+
+        clearMergedRegions();
 
         // determine sheet number
         int sheetNr = workbook.poiWorkbook.getSheetIndex(poiSheet);
@@ -287,7 +291,7 @@ public final class PoiSheet extends AbstractSheet<PoiSheet, PoiRow, PoiCell> {
         LangUtil.checkArg(cell.getSheet() == this, "cell  belongs to another sheet");
 
         Cell old = getCurrentCell();
-        if (cell == old) {
+        if (Objects.equals(cell, old)) {
             return false;
         }
 

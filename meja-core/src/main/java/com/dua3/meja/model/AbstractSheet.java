@@ -273,6 +273,13 @@ public abstract class AbstractSheet<S extends AbstractSheet<S, R, C>, R extends 
         LOG.debug("removed merged region at [{},{}]", rowNumber, columnNumber);
     }
 
+    /**
+     * Clears all merged regions from the sheet.
+     */
+    protected void clearMergedRegions() {
+        mergedRegions.clear();
+    }
+
     @Override
     public final Workbook getWorkbook() {
         return getAbstractWorkbook();

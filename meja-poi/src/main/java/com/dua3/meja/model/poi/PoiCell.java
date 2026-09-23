@@ -194,7 +194,10 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        return obj instanceof PoiCell other && poiCell.equals(other.poiCell);
+        return obj instanceof PoiCell other
+                && getSheet().equals(other.getSheet())
+                && getRowNumber() == other.getRowNumber()
+                && getColumnNumber() == other.getColumnNumber();
     }
 
     @Override

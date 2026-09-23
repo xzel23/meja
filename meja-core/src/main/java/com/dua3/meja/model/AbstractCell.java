@@ -130,11 +130,22 @@ public abstract class AbstractCell<S extends AbstractSheet<S, R, C>, R extends A
     }
 
     @Override
+    public Cell merge(int spanX, int spanY) {
+        Cell.super.merge(spanX, spanY);
+        if (!isMerged()) {// fixme why is this needed?
+            //noinspection unchecked
+            addedToMergedRegion((C) this, spanX, spanY);
+        }
+        return this;
+    }
+
+    @Override
     public void unMerge() {
         //noinspection ObjectEquality
         LangUtil.check(logicalCell == this, "Cell is not the top left cell of a merged region");
 
         getAbstractSheet().removeMergedRegion(getRowNumber(), getColumnNumber());
+        removedFromMergedRegion(); // fixme override needed?
     }
 
     /**

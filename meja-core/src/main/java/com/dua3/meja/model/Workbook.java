@@ -258,7 +258,7 @@ public interface Workbook extends AutoCloseable, Iterable<Sheet> {
      * @return the sheet with the name passed as argument
      */
     default Sheet getOrCreateSheet(String sheetName) {
-        return findSheetByName(sheetName).orElse(createSheet(sheetName));
+        return findSheetByName(sheetName).orElseGet(() -> createSheet(sheetName));
     }
 
     /**
