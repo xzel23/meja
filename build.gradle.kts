@@ -712,6 +712,7 @@ private fun validateReleaseBundle(plan: PreparedPlan) {
 
 val cleanPreparedReleaseStaging = tasks.register<Delete>("cleanPreparedReleaseStaging") {
     group = "release"
+    description = "Removes stale staging artifacts before a prepared release is staged."
     delete(stagingDirectory)
 }
 
@@ -742,14 +743,27 @@ val verifyCiReleaseBundle = tasks.register("verifyCiReleaseBundle") {
 
 tasks.register("publishSnapshotsToMavenLocal") {
     group = "publishing"
+    description = "Publishes every library module and the BOM to the local Maven repository for snapshot development."
     onlyIf { isSnapshot }
     dependsOn(publishableModuleNames.map { ":$it:publishToMavenLocal" } + ":meja-bom:publishToMavenLocal")
 }
 
 val jreleaserDeploy = tasks.named("jreleaserDeploy")
-tasks.register("stagePreparedRelease") { dependsOn("verifyPreparedRelease", "checkReleaseCompatibility", cleanPreparedReleaseStaging, "publishToStagingDirectory") }
-tasks.register("publishPreparedRelease") { dependsOn("stagePreparedRelease", jreleaserDeploy) }
-tasks.register("publishPreparedReleaseFromCi") { dependsOn("verifyPreparedRelease", verifyCiReleaseBundle, "checkReleaseCompatibility", jreleaserDeploy) }
+tasks.register("stagePreparedRelease") {
+    group = "release"
+    description = "Builds, verifies, signs, and stages only the artifacts selected by the prepared release plan."
+    dependsOn("verifyPreparedRelease", "checkReleaseCompatibility", cleanPreparedReleaseStaging, "publishToStagingDirectory")
+}
+tasks.register("publishPreparedRelease") {
+    group = "release"
+    description = "Deploys the verified prepared release to Maven Central."
+    dependsOn("stagePreparedRelease", jreleaserDeploy)
+}
+tasks.register("publishPreparedReleaseFromCi") {
+    group = "release"
+    description = "Signs and deploys the exact publication bundle verified by CI."
+    dependsOn("verifyPreparedRelease", verifyCiReleaseBundle, "checkReleaseCompatibility", jreleaserDeploy)
+}
 jreleaserDeploy.configure { mustRunAfter("verifyPreparedRelease", verifyCiReleaseBundle, "checkReleaseCompatibility") }
 
 tasks.register("finalizeRelease") {
