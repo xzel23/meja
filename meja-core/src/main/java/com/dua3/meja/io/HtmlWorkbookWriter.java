@@ -55,6 +55,7 @@ import java.util.function.Predicate;
  * HtmlWorkbookWriter is a class that implements the WorkbookWriter interface.
  * It is used to write a workbook as HTML.
  */
+@SuppressWarnings("java:S3457")
 public final class HtmlWorkbookWriter implements WorkbookWriter {
 
     private final Object lock = new Object();
@@ -103,6 +104,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
         return new HtmlWorkbookWriter();
     }
 
+    @SuppressWarnings("java:2259") // - false positive
     private void writeSheets(Workbook workbook, Formatter out, Locale locale, DoubleConsumer updateProgress) {
         long totalRows = 0;
         out.format("<div class=\"meja-tabbar\">\n");
@@ -177,8 +179,10 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
             for (Direction direction : Direction.values()) {
                 Cell borderCell = switch (direction) {
                     case NORTH, WEST -> cell;
-                    case EAST -> cell.getSheet().getCell(cell.getRowNumber(), cell.getColumnNumber() + cell.getHorizontalSpan() - 1);
-                    case SOUTH -> cell.getSheet().getCell(cell.getRowNumber() + cell.getVerticalSpan() - 1, cell.getColumnNumber());
+                    case EAST ->
+                            cell.getSheet().getCell(cell.getRowNumber(), cell.getColumnNumber() + cell.getHorizontalSpan() - 1);
+                    case SOUTH ->
+                            cell.getSheet().getCell(cell.getRowNumber() + cell.getVerticalSpan() - 1, cell.getColumnNumber());
                 };
                 BorderStyle borderStyle = borderCell.getCellStyle().getBorderStyle(direction);
                 if (!borderStyle.equals(cellStyle.getBorderStyle(direction))) {
@@ -428,6 +432,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param updateProgress callback for progress updates
      * @throws IOException if an input/output error occurs
      */
+    @SuppressWarnings("OverlyBroadThrowsClause")
     public void write(Workbook workbook, OutputStream out, Locale locale, DoubleConsumer updateProgress) throws IOException {
         synchronized (lock) {
             generateNewWorkbookId();
@@ -463,6 +468,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param fmt   the {@code Formatter} used to write the HTML output
      * @param sheet the sheet to export as HTML
      */
+    @SuppressWarnings("unused")
     public void exportSingleSheetWithoutHtmlHeader(Formatter fmt, Sheet sheet) {
         doExportSheet(fmt, sheet, false);
     }
@@ -476,6 +482,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
      * @param workbook  the workbook containing the sheets to export
      * @param predicate a {@code Predicate} used to filter which sheets to export
      */
+    @SuppressWarnings("unused")
     public void exportSheets(Formatter fmt, Workbook workbook, Predicate<Sheet> predicate) {
         synchronized (lock) {
             generateNewWorkbookId();
@@ -655,7 +662,7 @@ public final class HtmlWorkbookWriter implements WorkbookWriter {
 
         // write user defined styles in sorted order to get reproducible results (i.e. in unit tests)
         SortedMap<String, CellStyle> styles = new TreeMap<>();
-        sheet.rows().forEach(row -> row.cells().map(Cell::getCellStyle).forEach(s -> styles.putIfAbsent(s.getName(), s)));
+        sheet.rows().forEach(row -> row.cells().map(Cell::getCellStyle).forEach(cs -> styles.putIfAbsent(cs.getName(), cs)));
         styles.values().forEach(cs -> writeCellStyle(out, cs));
 
         out.format(Locale.ROOT, "  </style>\n");
