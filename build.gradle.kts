@@ -379,6 +379,12 @@ subprojects {
                 html.required.set(false)
             }
 
+            // Skip report generation when no execution data exists
+            // (e.g. test JVM crashed before JaCoCo could write *.exec).
+            onlyIf {
+                executionData.files.any { it.exists() }
+            }
+
             // use Cabe instrumented classes if they exist
             val cabeClasses = project.layout.buildDirectory.dir("classes-cabe/main")
             classDirectories.setFrom(project.provider {
@@ -392,6 +398,7 @@ subprojects {
         }
 
         tasks.withType<Test> {
+            maxHeapSize = "1g"
             useJUnitPlatform()
             finalizedBy(tasks.jacocoTestReport)
         }
@@ -451,6 +458,7 @@ subprojects {
                     targets {
                         all {
                             testTask {
+                                maxHeapSize = "1g"
                                 // enable assertions and use headless mode for AWT in unit tests
                                 jvmArgs(
                                     "-ea",

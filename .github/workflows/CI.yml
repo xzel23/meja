@@ -17,13 +17,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Setup JDK 21 for build
-      - name: 'Set up JDK 21'
+      - name: 'Set up JDK'
         uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'gradle'
+          distribution: 'liberica'
+          java-version: |
+            21
+            25
+          java-package: 'jdk+fx'
+          check-latest: true
 
       # Extract Gradle version from wrapper properties for cache key
       - name: 'Extract Gradle Version'
@@ -94,14 +96,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # Setup JDK 25 + JavaFX
-      - name: 'Set up JDK 25 with JavaFX'
+      - name: 'Set up JDK'
         uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           distribution: 'liberica'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
-          cache: 'gradle'
+          check-latest: true
 
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
@@ -154,14 +157,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # Setup JDK 25 with JavaFX
-      - name: 'Set up JDK 25 with JavaFX'
+      - name: 'Set up JDK'
         uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           distribution: 'liberica'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
-          cache: 'gradle'
+          check-latest: true
 
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
@@ -191,7 +195,7 @@ jobs:
             toolchains
 
       - name: Run tests
-        run: gradle --no-daemon --build-cache test
+        run: gradle --no-daemon --build-cache test -x jacocoTestReport --max-workers=2
 
   sonar:
     needs: test-linux
@@ -202,14 +206,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Setup JDK 25 with JavaFX
-      - name: 'Set up JDK 25 with JavaFX'
+      - name: 'Set up JDK'
         uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           distribution: 'liberica'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
-          cache: 'gradle'
+          check-latest: true
 
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
@@ -268,14 +273,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # Setup JDK 25 with JavaFX
-      - name: 'Set up JDK 25 with JavaFX'
+      - name: 'Set up JDK'
         uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           distribution: 'liberica'
-          java-version: '25'
+          java-version: |
+            21
+            25
           java-package: 'jdk+fx'
-          cache: 'gradle'
+          check-latest: true
 
       # Download build artifacts first to get the Gradle version file
       - name: Download build artifacts
