@@ -1,5 +1,10 @@
 # Meja Changelog
 
+## Version 14.0.0
+
+- update utility to fix problems when opening workbooks on deduplicated Windows network shares
+- change hyperlink handling in Excel formats
+
 ## Version 12.3.0
 
 - fix a circular dependency in static initialization of FileTypeExcel, FileTypeXlsx, and FileTypeXls that could lead 
