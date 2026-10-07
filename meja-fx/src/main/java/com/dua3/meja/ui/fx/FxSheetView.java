@@ -200,6 +200,15 @@ public final class FxSheetView extends StackPane implements SheetView {
         getChildren().add(gridPane);
         initEditor();
 
+        // The editor is positioned in this StackPane, while the cell rows are
+        // laid out by the segment controls.  A cell can therefore be opened
+        // before the segment layout has reached its final position (most
+        // notably directly after scrolling the current cell into view).  Keep
+        // the editor in sync with the actual segment geometry so the next
+        // layout pass corrects its position without requiring another scroll.
+        topSegment.boundsInParentProperty().addListener((v, o, n) -> updateEditorBounds());
+        bottomSegment.boundsInParentProperty().addListener((v, o, n) -> updateEditorBounds());
+
         hScrollbar.setValue(0);
         vScrollbar.setValue(0);
 
@@ -639,10 +648,10 @@ public final class FxSheetView extends StackPane implements SheetView {
     private void updateEditorBounds() {
         delegate.getEditingCell().ifPresent(cell -> {
             Rectangle2f cellRectInLocal = getCellRectInLocal(cell);
-            double x = cellRectInLocal.x() + 1;
-            double y = cellRectInLocal.y() + 1;
-            double minWidth = Math.max(1.0, cellRectInLocal.width() - 2);
-            double minHeight = Math.max(1.0, cellRectInLocal.height() - 2);
+            double x = cellRectInLocal.x();
+            double y = cellRectInLocal.y() + 2;
+            double minWidth = Math.max(1.0, cellRectInLocal.width());
+            double minHeight = Math.max(1.0, cellRectInLocal.height());
             boolean styleWrapping = cell.getCellStyle().isStyleWrapping();
 
             EditorSize editorSize = computeEditorSize(x, y, minWidth, minHeight, styleWrapping);
