@@ -61,6 +61,13 @@ public class CellValueHelper {
 
         String valueString = value.toString();
 
+        // Match Excel's leading apostrophe convention: it forces the rest of
+        // the input to be stored as text, without storing the apostrophe.
+        if (valueString.startsWith("'")) {
+            cell.set(valueString.substring(1));
+            return;
+        }
+
         // formula
         if (valueString.startsWith("=")) {
             cell.setFormula(valueString.substring(1));
