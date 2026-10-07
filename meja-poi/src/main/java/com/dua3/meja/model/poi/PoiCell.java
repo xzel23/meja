@@ -42,6 +42,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -554,6 +555,13 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
     }
 
     @Override
+    public Cell setHyperlink(Path target) {
+        Hyperlink link = getAbstractWorkbook().createHyperLink(target);
+        poiCell.setHyperlink(link);
+        return this;
+    }
+
+    @Override
     public PoiCell clearHyperlink() {
         poiCell.removeHyperlink();
         return this;
@@ -601,15 +609,12 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
             int start = rts.getIndexOfFormattingRun(i);
             int end = i + 1 < rts.numFormattingRuns() ? rts.getIndexOfFormattingRun(i + 1) : rts.length();
 
-            if (start == end) {
-                // skip empty
-                continue;
+            if (start != end) {
+                Style style = Style.create(getFontForFormattingRun(rts, i));
+                rtb.push(style);
+                rtb.append(text, start, end);
+                rtb.pop(style);
             }
-
-            Style style = Style.create(getFontForFormattingRun(rts, i));
-            rtb.push(style);
-            rtb.append(text, start, end);
-            rtb.pop(style);
         }
         // append the remainder
         rtb.append(text, rtb.length(), text.length());

@@ -57,6 +57,8 @@ import org.jspecify.annotations.Nullable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -441,7 +443,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
      */
     public Hyperlink createHyperLink(URI target) {
         HyperlinkType type;
-        String address = target.toString();
         type = switch (Optional.ofNullable(target.getScheme()).map(s -> s.toLowerCase(Locale.ROOT)).orElse("")) {
             case "http", "https" -> HyperlinkType.URL;
             case "file" -> HyperlinkType.FILE;
@@ -449,8 +450,26 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
             case "" -> HyperlinkType.FILE; // workbook-relative link
             default -> throw new IllegalArgumentException("unsupported protocol: " + target.getScheme());
         };
+
+        if (type == HyperlinkType.FILE) {
+            return createHyperLink(Paths.get(target.toString()));
+        }
+
         Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(type);
-        link.setAddress(address);
+        link.setAddress(target.toString());
+
+        return link;
+    }
+
+    /**
+     * Creates a hyperlink based on the target Path.
+     *
+     * @param target the target Path for the hyperlink.
+     * @return a Hyperlink object representing the created hyperlink.
+     */
+    public Hyperlink createHyperLink(Path target) {
+        Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(HyperlinkType.FILE);
+        link.setAddress(target.toString());
         return link;
     }
 
@@ -468,7 +487,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
      * The {@code FactorWidth} class is a utility class responsible for calculating
      * and maintaining the width factor for a workbook. The width factor is used
      * to determine the cell dimensions. The calculation uses Excel's weird units,
-     * specifically 1/256ths of the default workbbok font's width of the '0' character.
+     * specifically 1/256ths of the default workbook font's width of the '0' character.
      *
      * <p>This class is designed to handle both graphical and headless environments,
      * ensuring consistent behavior for text dimension calculations. In headless mode,
