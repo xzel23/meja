@@ -4,15 +4,20 @@ import com.dua3.meja.model.Cell;
 import com.dua3.meja.model.CellType;
 import com.dua3.meja.model.Row;
 import com.dua3.meja.model.Sheet;
+import com.dua3.meja.util.CellValueHelper;
+import com.dua3.meja.util.MejaHelper;
 import com.dua3.meja.util.RectangularRegion;
 import com.dua3.utility.text.RichText;
+import com.dua3.utility.text.Style;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -48,6 +53,91 @@ class PoiCellTest {
         assertFalse(cell.isEmpty());
         assertEquals("POI Text", cell.getText().toString());
         assertEquals("POI Text", cell.getAsText(Locale.US).toString());
+    }
+
+    @Test
+    void testTextCellIsUpdatedCorrectlyUpdated() {
+        Cell cell = row.getCell(0);
+
+        cell.set(RichText.valueOf("old text"));
+        assertEquals(CellType.TEXT, cell.getCellType());
+        assertEquals("old text", cell.getText().toString());
+
+        cell.set(RichText.valueOf("new text"));
+        assertEquals(CellType.TEXT, cell.getCellType());
+        assertEquals("new text", cell.getText().toString());
+    }
+
+    @Test
+    void testTextCellCanBeUpdatedUsingCellValueHelper() {
+        Cell cell = row.getCell(0);
+        cell.set("old text");
+
+        CellValueHelper helper = new CellValueHelper(
+                NumberFormat.getNumberInstance(Locale.US),
+                DateTimeFormatter.ISO_LOCAL_DATE
+        );
+        helper.setCellValue(cell, RichText.valueOf("new text", Style.BOLD));
+
+        assertEquals(CellType.TEXT, cell.getCellType());
+        assertEquals("new text", cell.getText().toString());
+    }
+
+    @Test
+    void testTextCellCanBeUpdatedUsingCellValueHelperInStreamingXlsx() {
+        try (PoiWorkbook streamingWorkbook = PoiWorkbookFactory.instance().createXlsxStreaming()) {
+            Cell cell = streamingWorkbook.createSheet("TestSheet").getCell(0, 0);
+            cell.set("old text");
+
+            CellValueHelper helper = new CellValueHelper(
+                    NumberFormat.getNumberInstance(Locale.US),
+                    DateTimeFormatter.ISO_LOCAL_DATE
+            );
+            helper.setCellValue(cell, RichText.valueOf("new text", Style.BOLD));
+
+            assertEquals(CellType.TEXT, cell.getCellType());
+            assertEquals("new text", cell.getText().toString());
+        } catch (Exception ex) {
+            fail(ex);
+        }
+    }
+
+    @Test
+    void testTextCellCanBeUpdatedUsingCellValueHelperInXls() {
+        try (PoiWorkbook xlsWorkbook = PoiWorkbookFactory.instance().createXls()) {
+            Cell cell = xlsWorkbook.createSheet("TestSheet").getCell(0, 0);
+            cell.set(RichText.valueOf("old text", Style.BOLD));
+
+            CellValueHelper helper = new CellValueHelper(
+                    NumberFormat.getNumberInstance(Locale.US),
+                    DateTimeFormatter.ISO_LOCAL_DATE
+            );
+            helper.setCellValue(cell, RichText.valueOf("new text", Style.BOLD));
+
+            assertEquals(CellType.TEXT, cell.getCellType());
+            assertEquals("new text", cell.getText().toString());
+        } catch (Exception ex) {
+            fail(ex);
+        }
+    }
+
+    @Test
+    void testRichTextCellLoadedFromXlsxCanBeUpdatedUsingCellValueHelper() {
+        Path file = Path.of("../testdata/colored text.xlsx").toAbsolutePath().normalize();
+        try (PoiWorkbook loadedWorkbook = (PoiWorkbook) MejaHelper.openWorkbook(file)) {
+            Cell cell = loadedWorkbook.getSheet(0).getCell(0, 0);
+            assertEquals(CellType.TEXT, cell.getCellType());
+
+            CellValueHelper helper = new CellValueHelper(
+                    NumberFormat.getNumberInstance(Locale.US),
+                    DateTimeFormatter.ISO_LOCAL_DATE
+            );
+            helper.setCellValue(cell, RichText.valueOf("replacement", Style.BOLD));
+
+            assertEquals("replacement", cell.getText().toString());
+        } catch (Exception ex) {
+            fail(ex);
+        }
     }
 
     @Test
