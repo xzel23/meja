@@ -438,9 +438,13 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         Object old = getOrDefault(null);
         PoiWorkbook workbook = getAbstractWorkbook();
         RichTextString richText = workbook.createRichTextString(text.toString());
+        int s = -1;
         for (Run run : text) {
+            if (s == -1) {
+                s = run.getStart();
+            }
             PoiFont font = workbook.getPoiFont(FontUtil.getInstance().deriveFont(getCellStyle().getFont(), run.getFontDef()));
-            richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
+            richText.applyFont(run.getStart() - s, run.getEnd() - s, font.getPoiFont());
         }
 
         poiCell.setBlank(); // Looks like a POI bug: setCellValue() sometimes has no effect unless cell is cleared beforeehand
