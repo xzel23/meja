@@ -28,6 +28,7 @@ import com.dua3.utility.data.Color;
 import com.dua3.utility.data.DataUtil;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.lang.LangUtil;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.options.Arguments;
 import com.dua3.utility.text.FontUtil;
 import org.apache.logging.log4j.LogManager;
@@ -622,7 +623,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         public PoiFont createFont(com.dua3.utility.text.Font font) {
             Font poiFont = poiWorkbook.createFont();
             poiFont.setFontName(font.getFamily());
-            poiFont.setFontHeight(((short) Math.round(20 * font.getSizeInPoints())));
+            poiFont.setFontHeight((MathUtil.roundToShort(20 * font.getSizeInPoints())));
             poiFont.setColor(getPoiColor(font.getColor()).getIndex());
             poiFont.setBold(font.isBold());
             poiFont.setItalic(font.isItalic());
@@ -740,7 +741,7 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
         public PoiFont createFont(com.dua3.utility.text.Font font) {
             XSSFFont poiFont = (XSSFFont) poiWorkbook.createFont();
             poiFont.setFontName(font.getFamily());
-            poiFont.setFontHeight(((short) Math.round(20 * font.getSizeInPoints())));
+            poiFont.setFontHeight((MathUtil.roundToShort(20 * font.getSizeInPoints())));
             poiFont.setColor(getPoiColor(font.getColor()));
             poiFont.setBold(font.isBold());
             poiFont.setItalic(font.isItalic());

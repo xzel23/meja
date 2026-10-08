@@ -16,6 +16,7 @@
 package com.dua3.meja.model.poi;
 
 import com.dua3.utility.data.Color;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.text.Font;
 import com.dua3.utility.text.FontDef;
 import com.dua3.utility.text.FontUtil;
@@ -58,7 +59,7 @@ public class PoiFont {
 
     private static org.apache.poi.ss.usermodel.Font createPoiFont(PoiWorkbook workbook, Font other) {
         org.apache.poi.ss.usermodel.Font poiFont = workbook.getPoiWorkbook().createFont();
-        poiFont.setFontHeightInPoints((short) Math.round(other.getSizeInPoints()));
+        poiFont.setFontHeightInPoints(MathUtil.roundToShort(other.getSizeInPoints()));
         poiFont.setFontName(other.getFamily());
 
         final org.apache.poi.ss.usermodel.Color poiTextColor = workbook.getPoiColor(other.getColor());

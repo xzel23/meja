@@ -24,6 +24,7 @@ import com.dua3.meja.model.SheetEvent;
 import com.dua3.meja.ui.CellRenderer;
 import com.dua3.meja.ui.SheetView;
 import com.dua3.meja.util.CellValueHelper;
+import com.dua3.utility.math.MathUtil;
 import com.dua3.utility.math.geometry.Rectangle2f;
 import com.dua3.utility.math.geometry.Scale2f;
 import com.dua3.utility.swing.SwingUtil;
@@ -689,10 +690,10 @@ public final class SwingSheetView extends JPanel implements SheetView {
 
             EditorSize editorSize = computeEditorSize(x, minWidth, minHeight, styleWrapping);
             editor.setWrapText(editorSize.wrapText());
-            int left = (int) Math.round(x + 1);
-            int top = (int) Math.round(y + 1);
-            int right = (int) Math.round(x + editorSize.width());
-            int bottom = (int) Math.round(y + editorSize.height());
+            int left = MathUtil.roundToInt(x + 1);
+            int top = MathUtil.roundToInt(y + 1);
+            int right = MathUtil.roundToInt(x + editorSize.width());
+            int bottom = MathUtil.roundToInt(y + editorSize.height());
             editor.setBounds(
                     left,
                     top,
@@ -797,13 +798,13 @@ public final class SwingSheetView extends JPanel implements SheetView {
             return;
         }
 
-        Point editorTopLeftOnScreen = new Point((int) Math.round(editorX), (int) Math.round(editorY));
+        Point editorTopLeftOnScreen = new Point(MathUtil.roundToInt(editorX), MathUtil.roundToInt(editorY));
         SwingUtilities.convertPointToScreen(editorTopLeftOnScreen, this);
         Rectangle editorBoundsOnScreen = new Rectangle(
                 editorTopLeftOnScreen.x,
                 editorTopLeftOnScreen.y,
-                Math.max(1, (int) Math.round(editorWidth)),
-                Math.max(1, (int) Math.round(editorHeight))
+                Math.max(1, MathUtil.roundToInt(editorWidth)),
+                Math.max(1, MathUtil.roundToInt(editorHeight))
         );
 
         Rectangle visualBounds = getVisualBounds(editorBoundsOnScreen);
@@ -826,7 +827,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
                 Math.max(visualBounds.getMinY(), visualBounds.getMaxY() - toolbarHeight)
         );
 
-        toolbarWindow.setLocation((int) Math.round(x), (int) Math.round(y));
+        toolbarWindow.setLocation(MathUtil.roundToInt(x), MathUtil.roundToInt(y));
     }
 
     private Rectangle getVisualBounds(Rectangle editorBoundsOnScreen) {
@@ -844,8 +845,8 @@ public final class SwingSheetView extends JPanel implements SheetView {
     private GraphicsConfiguration findGraphicsConfiguration(Rectangle editorBoundsOnScreen) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         Point probe = new Point(
-                (int) Math.round(editorBoundsOnScreen.getCenterX()),
-                (int) Math.round(editorBoundsOnScreen.getCenterY())
+                MathUtil.roundToInt(editorBoundsOnScreen.getCenterX()),
+                MathUtil.roundToInt(editorBoundsOnScreen.getCenterY())
         );
 
         for (GraphicsDevice device : ge.getScreenDevices()) {
