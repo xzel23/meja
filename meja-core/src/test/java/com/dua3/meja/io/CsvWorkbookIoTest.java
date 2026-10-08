@@ -16,6 +16,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -97,7 +98,10 @@ class CsvWorkbookIoTest {
         String csvContent = "Col1,Col2\nVal1,123.45\n";
 
         CsvWorkbookReader reader = CsvWorkbookReader.create();
-        reader.setOptions(Arguments.of(Arguments.createEntry(IoOptions.OPTION_FIELD_SEPARATOR, ',')));
+        reader.setOptions(Arguments.of(
+                Arguments.createEntry(IoOptions.OPTION_FIELD_SEPARATOR, ','),
+                Arguments.createEntry(IoOptions.OPTION_LOCALE, Locale.US))
+        );
 
         try (BufferedReader br = new BufferedReader(new StringReader(csvContent));
              GenericWorkbook wb1 = reader.read(GenericWorkbookFactory.instance(), br, URI.create("buffered.csv"))) {

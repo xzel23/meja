@@ -16,11 +16,12 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CsvWorkbookIoTest {
+class CsvGenericWorkbookIoTest {
 
     @Test
     void testCsvWriterSingleAndMultiSheet() throws IOException {
@@ -74,6 +75,10 @@ class CsvWorkbookIoTest {
 
         CsvWorkbookReader reader = CsvWorkbookReader.create();
         reader.setOptions(Arguments.of(Arguments.createEntry(IoOptions.OPTION_FIELD_SEPARATOR, ',')));
+        reader.setOptions(Arguments.of(
+                Arguments.createEntry(IoOptions.OPTION_FIELD_SEPARATOR, ','),
+                Arguments.createEntry(IoOptions.OPTION_LOCALE, Locale.US))
+        );
 
         // Read from BufferedReader
         try (BufferedReader br = new BufferedReader(new StringReader(csvContent));
