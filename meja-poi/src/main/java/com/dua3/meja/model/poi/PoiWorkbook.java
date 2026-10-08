@@ -58,7 +58,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -451,10 +450,6 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
             default -> throw new IllegalArgumentException("unsupported protocol: " + target.getScheme());
         };
 
-        if (type == HyperlinkType.FILE) {
-            return createHyperLink(Paths.get(target.toString()));
-        }
-
         Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(type);
         link.setAddress(target.toString());
 
@@ -469,7 +464,12 @@ public abstract class PoiWorkbook extends AbstractWorkbook<PoiSheet, PoiRow, Poi
      */
     public Hyperlink createHyperLink(Path target) {
         Hyperlink link = poiWorkbook.getCreationHelper().createHyperlink(HyperlinkType.FILE);
-        link.setAddress(target.toString());
+        String path = target.toString().replace('\\', '/');
+        try {
+            link.setAddress(new URI(null, null, path, null).toString());
+        } catch (java.net.URISyntaxException e) {
+            throw new IllegalArgumentException("invalid file hyperlink target: " + target, e);
+        }
         return link;
     }
 
