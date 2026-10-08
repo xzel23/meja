@@ -68,6 +68,7 @@ import java.util.Optional;
  * keyboard inputs for navigation. It also entangles scrollbar movements to ensure synchronized scrolling
  * across different quadrants.
  */
+@SuppressWarnings("NumericCastThatLosesPrecision")
 public final class FxSheetView extends StackPane implements SheetView {
     private static final Logger LOG = LogManager.getLogger(FxSheetView.class);
     private static final double FLOATING_TOOLBAR_GAP = 4.0;
@@ -649,7 +650,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         delegate.getEditingCell().ifPresent(cell -> {
             Rectangle2f cellRectInLocal = getCellRectInLocal(cell);
             double x = cellRectInLocal.x();
-            double y = cellRectInLocal.y() + 2;
+            double y = cellRectInLocal.y();
             double minWidth = Math.max(1.0, cellRectInLocal.width());
             double minHeight = Math.max(1.0, cellRectInLocal.height());
             boolean styleWrapping = cell.getCellStyle().isStyleWrapping();
@@ -842,18 +843,41 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     private record EditorSize(double width, double height, boolean wrapText) {}
 
-    private Rectangle2f getCellRectInLocal(Cell cell) {
+    Rectangle2f getCellRectInLocal(Cell cell) {
         Rectangle2f cellRectInSheet = delegate.getCellRect(cell.getLogicalCell());
         double xMin = toLocalX(cellRectInSheet.xMin(), true);
         double xMax = toLocalX(cellRectInSheet.xMax(), false);
         double yMin = toLocalY(cellRectInSheet.yMin(), true);
         double yMax = toLocalY(cellRectInSheet.yMax(), false);
+        Double renderedRowY = getRenderedRowYInLocal(cell);
+        if (renderedRowY != null) {
+            double yOffset = renderedRowY - yMin;
+            yMin = renderedRowY;
+            yMax += yOffset;
+        }
         return Rectangle2f.of(
                 (float) xMin,
-                (float) yMin + 1,
+                (float) yMin,
                 (float) Math.max(1.0, xMax - xMin),
-                (float) Math.max(1.0, yMax - yMin + 1)
+                (float) Math.max(1.0, yMax - yMin)
         );
+    }
+
+    private @Nullable Double getRenderedRowYInLocal(Cell cell) {
+        Cell logicalCell = cell.getLogicalCell();
+        int rowNumber = logicalCell.getRowNumber();
+        int splitRow = delegate.getSplitRow();
+        if (rowNumber < splitRow) {
+            return null;
+        }
+
+        FxRow row = bottomSegment.getFlow().getVisibleCell(rowNumber - splitRow);
+        if (row == null) {
+            return null;
+        }
+
+        Bounds rowBoundsInScene = row.localToScene(row.getBoundsInLocal());
+        return rowBoundsInScene == null ? null : sceneToLocal(rowBoundsInScene).getMinY();
     }
 
     private double toLocalX(float xInPoints, boolean leadingEdge) {
