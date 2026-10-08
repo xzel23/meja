@@ -591,7 +591,7 @@ public final class FxSheetView extends StackPane implements SheetView {
                 editor.selectAll();
                 Pane toolbarParent = toolbarParentProperty().getValue();
                 editor.setToolbarApplicationParent(toolbarParent);
-                editor.setToolbarLocation(toolbarParent == null ? DetachableNode.Location.FLOATING : DetachableNode.Location.APPLICATION);
+                editor.setToolbarLocation(toolbarParent == null ? DetachableNode.Location.FLOATING : DetachableNode.Location.EMBEDDED);
                 editor.setEditable(true);
 
                 editor.setVisible(true);

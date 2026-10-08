@@ -15,7 +15,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ToolBar;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -65,7 +64,6 @@ public final class FxExcelViewer {
      * start the JavaFX platform before {@code main()} is called.
      */
     public static class FxExcelViewerApplication extends Application {
-        private final HBox toolbarParent = new HBox();
         private final FxWorkbookView fxWorkbookView = new FxWorkbookView();
 
         /**
@@ -120,11 +118,8 @@ public final class FxExcelViewer {
                             .max(2)
                             .blockIncrement(0.25)
                             .bindBidirectional(fxWorkbookView.currentViewZoomProperty())
-                            .build(),
-                    toolbarParent
+                            .build()
             );
-
-            fxWorkbookView.setToolbarParent(toolbarParent);
 
             // layout
             VBox root = new VBox();
