@@ -641,9 +641,14 @@ public final class SwingSheetView extends JPanel implements SheetView {
     }
 
     private void updateCellContent(Cell cell) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
-        NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
-        new CellValueHelper(numberFormat, dateFormatter).setCellValue(cell, editor.getText());
+        RichText text = editor.getText();
+        if (text.startsWith("'")) {
+            cell.set(text.subSequence(1, text.length()));
+        } else {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+            NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
+            new CellValueHelper(numberFormat, dateFormatter).setCellValue(cell, editor.getText());
+        }
     }
 
     private void onKeyTyped(KeyEvent event) {
