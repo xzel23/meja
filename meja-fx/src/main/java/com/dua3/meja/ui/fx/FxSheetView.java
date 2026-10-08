@@ -643,9 +643,13 @@ public final class FxSheetView extends StackPane implements SheetView {
 
     private void updateCellContent(Cell cell) {
         RichText text = editor.getText();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
-        NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
-        new CellValueHelper(numberFormat, dateFormatter).setCellValue(cell, text);
+        if (text.startsWith("'")) {
+            cell.set(text.subSequence(1, text.length()));
+        } else {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
+            NumberFormat numberFormat = NumberFormat.getInstance(getLocale());
+            new CellValueHelper(numberFormat, dateFormatter).setCellValue(cell, text);
+        }
     }
 
     private void updateEditorBounds() {
