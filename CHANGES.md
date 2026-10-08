@@ -4,6 +4,7 @@
 
 - fix unnecessary caching
 - fix UI issues with in-place editor in FxSheetView
+- cell editor: a single apostrophe marks text, even if entered text would match a numerical format
 - update utility to fix problems when opening workbooks on deduplicated Windows network shares on JDK 27
 - improve hyperlink handling in Excel formats
 
