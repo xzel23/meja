@@ -266,8 +266,7 @@ public class GenericCell extends AbstractCell<GenericSheet, GenericRow, GenericC
         if (arg == null) {
             clear();
         } else {
-            GenericSheet sheet = getAbstractSheet();
-            arg = sheet.getWorkbook().cache(arg);
+            arg = getAbstractSheet().getWorkbook().cache(arg);
             if (arg != value || type != getCellType()) {
                 Object old = value;
                 setCellType(type);

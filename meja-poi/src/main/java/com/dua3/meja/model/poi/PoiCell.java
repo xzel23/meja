@@ -374,7 +374,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
         }
 
         Object old = getOrDefault(null);
-        b = getWorkbook().cache(b);
+
         poiCell.setCellValue(b);
         setCellStylePlain();
         updateRow();
@@ -435,7 +435,6 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
             return this;
         }
 
-        text = getWorkbook().cache(text);
         Object old = getOrDefault(null);
         PoiWorkbook workbook = getAbstractWorkbook();
         RichTextString richText = workbook.createRichTextString(text.toString());
@@ -443,6 +442,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
             PoiFont font = workbook.getPoiFont(FontUtil.getInstance().deriveFont(getCellStyle().getFont(), run.getFontDef()));
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
+
         poiCell.setCellValue(richText);
         setCellStylePlain();
         updateRow();
@@ -458,7 +458,6 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
             return this;
         }
 
-        s = getWorkbook().cache(s);
         Object old = getOrDefault(null);
         poiCell.setCellValue(s);
         setCellStylePlain();
