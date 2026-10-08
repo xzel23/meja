@@ -413,7 +413,6 @@ public interface Cell {
             return this;
         }
 
-        arg = getWorkbook().cache(arg);
         switch (arg) {
             case Number n -> set(n);
             case Boolean b -> set(b);
