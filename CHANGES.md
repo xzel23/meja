@@ -1,9 +1,11 @@
 # Meja Changelog
 
-## Version 14.0.0
+## Version 13.0.0
 
-- update utility to fix problems when opening workbooks on deduplicated Windows network shares
-- change hyperlink handling in Excel formats
+- fix unnecessary caching
+- fix UI issues with in-place editor in FxSheetView
+- update utility to fix problems when opening workbooks on deduplicated Windows network shares on JDK 27
+- improve hyperlink handling in Excel formats
 
 ## Version 12.3.0
 
