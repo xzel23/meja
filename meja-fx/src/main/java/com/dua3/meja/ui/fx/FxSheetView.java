@@ -30,6 +30,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Rectangle2D;
 import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
@@ -889,13 +890,28 @@ public final class FxSheetView extends StackPane implements SheetView {
             return null;
         }
 
-        FxRow row = bottomSegment.getFlow().getVisibleCell(rowNumber - splitRow);
+        FxRow row = findRenderedRow(bottomSegment.getFlow(), rowNumber);
         if (row == null) {
             return null;
         }
 
         Bounds rowBoundsInScene = row.localToScene(row.getBoundsInLocal());
         return rowBoundsInScene == null ? null : sceneToLocal(rowBoundsInScene).getMinY();
+    }
+
+    private static @Nullable FxRow findRenderedRow(Node node, int rowNumber) {
+        if (node instanceof FxRow row) {
+            return !row.isEmpty() && row.getItem().rowNumber() == rowNumber ? row : null;
+        }
+        if (node instanceof Parent parent) {
+            for (Node child : parent.getChildrenUnmodifiable()) {
+                FxRow row = findRenderedRow(child, rowNumber);
+                if (row != null) {
+                    return row;
+                }
+            }
+        }
+        return null;
     }
 
     private double toLocalX(float xInPoints, boolean leadingEdge) {
