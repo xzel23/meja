@@ -299,6 +299,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         editor.setMinSize(0.0, 0.0);
         editor.setWrapText(false);
         editor.setEditable(false);
+        editor.displayScaleProperty().bind(sheetScaleYProperty);
         editor.setEnterKeyInsertsNewline(true);
         editor.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == javafx.scene.input.KeyCode.ENTER && !event.isShiftDown()) {
@@ -582,7 +583,6 @@ public final class FxSheetView extends StackPane implements SheetView {
             Platform.runLater(() -> {
                 CellStyle cellStyle = cell.getCellStyle();
                 editor.setTextFont(cellStyle.getFont());
-                editor.setDisplayScale(delegate.getScale().sy());
                 editor.setWrapText(cellStyle.isStyleWrapping());
                 editor.setText(cell.getCellType() == CellType.FORMULA ? "=" + cell.getFormula() : cell.getAsText(getLocale()));
                 editor.selectAll();
@@ -719,15 +719,14 @@ public final class FxSheetView extends StackPane implements SheetView {
         }
 
         for (Window window : Window.getWindows()) {
-            if (!(window instanceof Stage stage) || !stage.isShowing() || stage.getOwner() != owner) {
-                continue;
+            if (window instanceof Stage stage && stage.isShowing() && stage.getOwner() == owner) {
+                Scene windowScene = stage.getScene();
+                Node root = windowScene == null ? null : windowScene.getRoot();
+                if (root != null && root.getClass().getName().contains("ToolBarEx$FloatingPane")) {
+                    return stage;
+                }
             }
 
-            Scene windowScene = stage.getScene();
-            Node root = windowScene == null ? null : windowScene.getRoot();
-            if (root != null && root.getClass().getName().contains("ToolBarEx$FloatingPane")) {
-                return stage;
-            }
         }
 
         return null;
