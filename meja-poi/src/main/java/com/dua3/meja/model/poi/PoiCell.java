@@ -443,6 +443,7 @@ public final class PoiCell extends AbstractCell<PoiSheet, PoiRow, PoiCell> {
             richText.applyFont(run.getStart(), run.getEnd(), font.getPoiFont());
         }
 
+        poiCell.setBlank(); // Looks like a POI bug: setCellValue() sometimes has no effect unless cell is cleared beforeehand
         poiCell.setCellValue(richText);
         setCellStylePlain();
         updateRow();
