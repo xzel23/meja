@@ -5,6 +5,8 @@ import javafx.scene.control.IndexedCell;
 import javafx.scene.control.skin.VirtualFlow;
 
 final class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends VirtualFlow<T> {
+    private Runnable onLayout = () -> {};
+
     VirtualFlowWithHiddenScrollBars() {
         getChildren().remove(getVbar());
         getChildren().remove(getHbar());
@@ -13,5 +15,15 @@ final class VirtualFlowWithHiddenScrollBars<T extends IndexedCell<?>> extends Vi
 
         setPannable(false);
         setOnScroll(Event::consume);
+    }
+
+    void setOnLayout(Runnable onLayout) {
+        this.onLayout = onLayout;
+    }
+
+    @Override
+    protected void layoutChildren() {
+        super.layoutChildren();
+        onLayout.run();
     }
 }

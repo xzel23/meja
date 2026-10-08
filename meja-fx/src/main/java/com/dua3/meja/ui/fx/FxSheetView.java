@@ -90,6 +90,7 @@ public final class FxSheetView extends StackPane implements SheetView {
     private final BooleanProperty editableProperty = new SimpleBooleanProperty(false);
 
     private boolean updating = false;
+    private boolean editorBoundsUpdateQueued;
     private boolean allowOpenLinks;
     private @Nullable FxRow hoveredLinkRow;
 
@@ -209,6 +210,7 @@ public final class FxSheetView extends StackPane implements SheetView {
         // layout pass corrects its position without requiring another scroll.
         topSegment.boundsInParentProperty().addListener((v, o, n) -> updateEditorBounds());
         bottomSegment.boundsInParentProperty().addListener((v, o, n) -> updateEditorBounds());
+        bottomSegment.getFlow().setOnLayout(this::scheduleEditorBoundsUpdate);
 
         hScrollbar.setValue(0);
         vScrollbar.setValue(0);
@@ -661,6 +663,18 @@ public final class FxSheetView extends StackPane implements SheetView {
             configureEditorScrollPane();
             hideEditorScrollbars();
             updateFloatingToolbarPosition(x, y, editorSize.width(), editorSize.height());
+        });
+    }
+
+    private void scheduleEditorBoundsUpdate() {
+        if (editorBoundsUpdateQueued) {
+            return;
+        }
+
+        editorBoundsUpdateQueued = true;
+        Platform.runLater(() -> {
+            editorBoundsUpdateQueued = false;
+            updateEditorBounds();
         });
     }
 
