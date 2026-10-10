@@ -149,7 +149,7 @@ public abstract class SheetViewDelegate implements Flow.Subscriber<SheetEvent> {
      * If the layout hasn't changed since the last update, the method returns early
      * to avoid unnecessary recalculations.
      */
-    public void updateLayout() {
+    public final void updateLayout() {
         try (var ignored = writeLock("SheetViewDelegate.updateLayout()")) {
             if (!layoutChanged.compareAndSet(true, false)) {
                 LOG.trace("updateLayout() - layout is clean, nothing to do");

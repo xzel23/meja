@@ -32,12 +32,6 @@ public final class FxSheetViewDelegate extends SheetViewDelegate {
     }
 
     @Override
-    public void updateLayout() {
-        PlatformHelper.checkApplicationThread();
-        super.updateLayout();
-    }
-
-    @Override
     public void onNext(SheetEvent item) {
         PlatformHelper.runLater(() -> super.onNext(item));
     }

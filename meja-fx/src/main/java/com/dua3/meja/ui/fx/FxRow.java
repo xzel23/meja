@@ -42,7 +42,7 @@ public final class FxRow extends IndexedCell<FxRow.Index> {
      * This class extends {@code AnchorPane}, providing layout functionality
      * for placing its graphical components.
      */
-    public static class FxRowGraphics extends AnchorPane {
+    public static final class FxRowGraphics extends AnchorPane {
         private final Canvas left;
         private final Canvas right;
 
