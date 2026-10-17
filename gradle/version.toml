@@ -1,5 +1,5 @@
 [versions]
-projectVersion = "13.0.0"
+projectVersion = "13.0.1-SNAPSHOT"
 jdkVersion = "21"
 jdkprovider-plugin = "0.11.0"
 test-logger-plugin = "4.0.0"
@@ -9,7 +9,7 @@ sonar-plugin = "7.5.0.8588"
 jmh-plugin = "0.7.3"
 jreleaser-plugin = "1.26.0"
 
-dua3-utility = "25.1.0"
+dua3-utility = "25.2.0-SNAPSHOT"
 
 ikonli = "12.4.0"
 jspecify = "1.0.1"
