@@ -153,7 +153,7 @@ private val japicmpTool = configurations.create("japicmpTool") {
 }
 
 dependencies {
-    add(japicmpTool.name, "com.github.siom79.japicmp:japicmp:0.26.2:jar-with-dependencies") {
+    add(japicmpTool.name, "com.github.siom79.japicmp:japicmp:0.26.5:jar-with-dependencies") {
         isTransitive = false
     }
 }
