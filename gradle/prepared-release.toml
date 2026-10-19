@@ -1,0 +1,47 @@
+[release]
+schemaVersion = 1
+releaseType = "minor"
+bomVersion = "13.1.0"
+sourceRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
+
+[modules.meja-core]
+version = "13.1.0"
+sourceRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
+selected = true
+reason = "minor release"
+
+[modules.meja-db]
+version = "13.1.0"
+sourceRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
+selected = true
+reason = "minor release"
+
+[modules.meja-fx]
+version = "13.1.0"
+sourceRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
+selected = true
+reason = "minor release"
+
+[modules.meja-generic]
+version = "13.1.0"
+sourceRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
+selected = true
+reason = "minor release"
+
+[modules.meja-poi]
+version = "13.1.0"
+sourceRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
+selected = true
+reason = "minor release"
+
+[modules.meja-swing]
+version = "13.1.0"
+sourceRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
+selected = true
+reason = "minor release"
+
+[modules.meja-ui]
+version = "13.1.0"
+sourceRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
+selected = true
+reason = "minor release"
