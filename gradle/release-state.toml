@@ -1,39 +1,39 @@
 [release]
 schemaVersion = 2
-bomVersion = "13.0.0"
-publishedRevision = "a50c347058974ab96735da035fb4ab23ddb39720"
+bomVersion = "13.1.0"
+publishedRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
 
 [modules.meja-core]
-version = "13.0.0"
-publishedRevision = "a50c347058974ab96735da035fb4ab23ddb39720"
+version = "13.1.0"
+publishedRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
 paths = ["meja-core"]
 
 [modules.meja-db]
-version = "13.0.0"
-publishedRevision = "a50c347058974ab96735da035fb4ab23ddb39720"
+version = "13.1.0"
+publishedRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
 paths = ["meja-db"]
 
 [modules.meja-fx]
-version = "13.0.0"
-publishedRevision = "a50c347058974ab96735da035fb4ab23ddb39720"
+version = "13.1.0"
+publishedRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
 paths = ["meja-fx"]
 
 [modules.meja-generic]
-version = "13.0.0"
-publishedRevision = "a50c347058974ab96735da035fb4ab23ddb39720"
+version = "13.1.0"
+publishedRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
 paths = ["meja-generic"]
 
 [modules.meja-poi]
-version = "13.0.0"
-publishedRevision = "a50c347058974ab96735da035fb4ab23ddb39720"
+version = "13.1.0"
+publishedRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
 paths = ["meja-poi"]
 
 [modules.meja-swing]
-version = "13.0.0"
-publishedRevision = "a50c347058974ab96735da035fb4ab23ddb39720"
+version = "13.1.0"
+publishedRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
 paths = ["meja-swing"]
 
 [modules.meja-ui]
-version = "13.0.0"
-publishedRevision = "a50c347058974ab96735da035fb4ab23ddb39720"
+version = "13.1.0"
+publishedRevision = "3bad4aa5d04875993298eb1ec562e60c8e8dc00d"
 paths = ["meja-ui"]
