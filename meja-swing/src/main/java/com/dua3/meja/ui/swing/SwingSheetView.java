@@ -773,21 +773,21 @@ public final class SwingSheetView extends JPanel implements SheetView {
 
             if (lbm.getPosition() >= end) {
                 totalHeight += fm.getHeight();
-                continue;
-            }
-
-            while (lbm.getPosition() < end) {
-                TextLayout layout = lbm.nextLayout(width);
-                if (layout == null) {
-                    break;
+            } else {
+                while (lbm.getPosition() < end) {
+                    TextLayout layout = lbm.nextLayout(width);
+                    if (layout == null) {
+                        break;
+                    }
+                    totalHeight += layout.getAscent() + layout.getDescent() + layout.getLeading();
                 }
-                totalHeight += layout.getAscent() + layout.getDescent() + layout.getLeading();
             }
         }
 
         return Math.max(totalHeight, fm.getHeight());
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     private void updateFloatingToolbarPosition(double editorX, double editorY, double editorWidth, double editorHeight) {
         if (editor.getToolbarLocation() != DetachableNode.Location.FLOATING || !editor.isVisible()) {
             return;
@@ -881,11 +881,7 @@ public final class SwingSheetView extends JPanel implements SheetView {
         }
 
         for (Window window : Window.getWindows()) {
-            if (!(window instanceof JDialog dialog) || !dialog.isShowing() || dialog.getOwner() != owner) {
-                continue;
-            }
-
-            if (containsToolbar(dialog.getContentPane())) {
+            if (window instanceof JDialog dialog && dialog.isShowing() && dialog.getOwner() == owner && containsToolbar(dialog.getContentPane())) {
                 return dialog;
             }
         }
