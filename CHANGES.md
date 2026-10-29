@@ -1,8 +1,9 @@
 # Meja Changelog
 
-## Version 13.1.1
+## Version 14.0.0
 
 - fix Workbook saving failures in Xlsx/Xls formats fails when FileTypeXlsx/FileTypeXls is not accessed previously
+- update to next major release of Apache POI (6.0.0)
 
 ## Version 13.1.0
 
