@@ -25,11 +25,15 @@ import java.util.function.Function;
 public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
 
     private static final FileTypeExcel INSTANCE;
+    private static final FileTypeXlsx INSTANCE_XLSX;
+    private static final FileTypeXls INSTANCE_XLS;
 
     static {
         var instance = new FileTypeExcel();
         addType(instance);
         INSTANCE = instance;
+        INSTANCE_XLSX = FileTypeXlsx.instance();
+        INSTANCE_XLS = FileTypeXls.instance();
     }
 
     /**
@@ -67,10 +71,10 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     @Override
     public PoiWorkbook read(URI uri, InputStream in, Function<FileType<? extends PoiWorkbook>, Arguments> options) throws IOException {
         if (FileTypeXlsx.instance().matches(uri.getSchemeSpecificPart())) {
-            return FileTypeXlsx.instance().read(uri, in, options);
+            return INSTANCE_XLSX.read(uri, in, options);
         }
         if (FileTypeXls.instance().matches(uri.getSchemeSpecificPart())) {
-            return FileTypeXls.instance().read(uri, in, options);
+            return INSTANCE_XLS.read(uri, in, options);
         }
         throw new IllegalArgumentException("cannot determine file type for reading");
     }
