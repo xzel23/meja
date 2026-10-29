@@ -9,6 +9,7 @@ import com.dua3.meja.model.poi.PoiWorkbookFactory;
 import com.dua3.utility.io.FileType;
 import com.dua3.utility.io.OpenMode;
 import com.dua3.utility.options.Arguments;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +23,7 @@ import java.util.function.Function;
  * when reading, the user normally wants to have a filter that shows <em>all</em>
  * Excel files.
  */
-public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
+public final class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
 
     private static final FileTypeExcel INSTANCE;
     private static final FileTypeXlsx INSTANCE_XLSX;
@@ -82,5 +83,15 @@ public class FileTypeExcel extends FileTypeWorkbook<PoiWorkbook> {
     @Override
     public boolean isCompound() {
         return true;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object o) {
+        return o instanceof FileTypeExcel;
+    }
+
+    @Override
+    public int hashCode() {
+        return FileTypeExcel.class.hashCode();
     }
 }
