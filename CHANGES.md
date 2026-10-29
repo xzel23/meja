@@ -1,5 +1,15 @@
 # Meja Changelog
 
+## Version 13.1.1
+
+- fix Workbook saving failures in Xlsx/Xls formats fails when FileTypeXlsx/FileTypeXls is not accessed previously
+
+## Version 13.1.0
+
+- fix GitHub workflow issues
+- update plugins, dependencies
+- code cleanup and refactorings; fix sonar warnings
+
 ## Version 13.0.0
 
 - fix unnecessary caching
