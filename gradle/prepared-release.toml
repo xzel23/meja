@@ -1,0 +1,47 @@
+[release]
+schemaVersion = 1
+releaseType = "major"
+bomVersion = "14.0.0"
+sourceRevision = "00a58962022ec1492a3e100e89f8bcf7f94681cb"
+
+[modules.meja-core]
+version = "14.0.0"
+sourceRevision = "00a58962022ec1492a3e100e89f8bcf7f94681cb"
+selected = true
+reason = "major release"
+
+[modules.meja-db]
+version = "14.0.0"
+sourceRevision = "00a58962022ec1492a3e100e89f8bcf7f94681cb"
+selected = true
+reason = "major release"
+
+[modules.meja-fx]
+version = "14.0.0"
+sourceRevision = "00a58962022ec1492a3e100e89f8bcf7f94681cb"
+selected = true
+reason = "major release"
+
+[modules.meja-generic]
+version = "14.0.0"
+sourceRevision = "00a58962022ec1492a3e100e89f8bcf7f94681cb"
+selected = true
+reason = "major release"
+
+[modules.meja-poi]
+version = "14.0.0"
+sourceRevision = "00a58962022ec1492a3e100e89f8bcf7f94681cb"
+selected = true
+reason = "major release"
+
+[modules.meja-swing]
+version = "14.0.0"
+sourceRevision = "00a58962022ec1492a3e100e89f8bcf7f94681cb"
+selected = true
+reason = "major release"
+
+[modules.meja-ui]
+version = "14.0.0"
+sourceRevision = "00a58962022ec1492a3e100e89f8bcf7f94681cb"
+selected = true
+reason = "major release"
