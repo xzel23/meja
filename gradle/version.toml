@@ -6,7 +6,7 @@ test-logger-plugin = "4.0.0"
 spotbugs-plugin = "6.5.13"
 cabe-plugin = "4.5.0"
 sonar-plugin = "7.5.0.8588"
-jmh-plugin = "0.7.3"
+jmh-plugin = "0.7.4"
 jreleaser-plugin = "1.26.0"
 
 dua3-utility = "25.2.1"
